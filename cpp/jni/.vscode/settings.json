@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "vector": "cpp",
+        "string": "cpp",
+        "string_view": "cpp",
+        "__string": "cpp",
+        "algorithm": "cpp",
+        "initializer_list": "cpp",
+        "cstddef": "cpp"
+    }
+    
+}

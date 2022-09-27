@@ -1,0 +1,29 @@
+{
+    "configurations": [
+        {
+            "name": "Android",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "C:/Android/NDK-16/sysroot/usr/include",
+                "C:/Android/NDK-16/sysroot/usr/include/sys/",
+                "C:/Android/NDK-16/sysroot/usr/include/mipsel-linux-android/**",
+                "C:/Android/NDK-16/sources/cxx-stl/llvm-libc++/include/**",
+                "C:/Android/NDK-16/sources/cxx-stl/llvm-libc++/include"
+            ],
+            "defines": [
+                "__arm__", "__mips__"
+            ],
+            "compilerPath": "C:/Android/NDK-16/toolchains/llvm/prebuilt/windows-x86_64/bin/clang.exe",
+            "cStandard": "c11",
+            "cppStandard": "c++14",
+            "intelliSenseMode": "linux-clang-x86",
+            "configurationProvider": "vector-of-bool.cmake-tools"
+            //"compileCommands": "${workspaceFolder}/.vscode/compile_commands.json"
+            ,
+            "forcedInclude": [
+                "C:/Android/NDK-16/sysroot/usr/include/linux/stddef.h"
+            ]
+        }
+    ],
+    "version": 4
+}
