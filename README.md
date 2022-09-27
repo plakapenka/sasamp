@@ -1,0 +1,1 @@
+Client for LIVE RUSSIA Community developed by vl4sov
