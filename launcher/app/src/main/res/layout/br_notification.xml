@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:id="@+id/constraintLayout_notif">
+
+    <FrameLayout
+        android:id="@+id/br_not_bg"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/notify_background_green"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:id="@+id/br_not_fl"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dip"
+                android:layout_marginBottom="5dip">
+
+                <View
+                    android:id="@+id/br_not_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:background="@drawable/notify_ruble_bg" />
+
+                <ImageView
+                    android:id="@+id/br_not_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center"
+                    app:srcCompat="@drawable/notify_ruble" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/br_title_text"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginTop="2dip"
+                android:layout_marginRight="12dip"
+                android:layout_marginBottom="6dip"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/br_title_text_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="5dp"
+                    android:fontFamily="@font/din_pro_bold"
+                    android:text="Уведомление"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/br_title_text_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="23dp"
+                    android:fontFamily="@font/montserrat_medium"
+                    android:text="Текст уведомления"
+                    android:textColor="#C0BDBD"
+                    android:textSize="8sp" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/br_not_text"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginTop="2dip"
+                android:layout_marginRight="12dip"
+                android:layout_marginBottom="6dip"
+                android:fontFamily="@font/din_pro_bold"
+                android:gravity="center"
+                android:lineSpacingMultiplier="0.85"
+                android:minWidth="140.0dip"
+                android:text="Вы получили 100000"
+                android:textColor="#ffffffff"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/br_not_text2"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginTop="2dip"
+                android:layout_marginRight="12dip"
+                android:layout_marginBottom="6dip"
+                android:layout_weight="1"
+                android:fontFamily="@font/montserrat_medium"
+                android:gravity="center_vertical"
+                android:lineSpacingMultiplier="0.85"
+                android:minWidth="140.0dip"
+                android:text="Вы успешно привязали почту"
+                android:textColor="#C0BDBD"
+                android:textSize="10sp"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/br_not_firstbutton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginTop="8dip"
+                android:layout_marginRight="12.0dip"
+                android:layout_marginBottom="12dip"
+                android:background="@drawable/notify_firstbtn_bg"
+                android:fontFamily="@font/montserrat_bold"
+                android:minWidth="50.0dip"
+                android:minHeight="30.0dip"
+                android:paddingLeft="10.0dip"
+                android:paddingRight="10.0dip"
+                android:text="Принять"
+                android:textAllCaps="false"
+                android:textColor="#ffffffff"
+                android:textSize="11.0sp"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/br_not_secondbutton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginTop="8dip"
+                android:layout_marginRight="12.0dip"
+                android:layout_marginBottom="12dip"
+                android:layout_weight="1"
+                android:background="@drawable/notify_secondbtn_bg"
+                android:fontFamily="@font/montserrat_bold"
+                android:minWidth="50.0dip"
+                android:minHeight="30.0dip"
+                android:paddingLeft="10.0dip"
+                android:paddingRight="10.0dip"
+                android:text="Отказать"
+                android:textAllCaps="false"
+                android:textColor="#ffffffff"
+                android:textSize="11.0sp"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/br_not_progress"
+            style="?android:progressBarStyleHorizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="8.0dip"
+            android:layout_gravity="bottom"
+            android:max="1000"
+            android:progress="1000"
+            android:progressDrawable="@drawable/notify_progressbar_green" />
+
+    </FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,194 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:tools="http://schemas.android.com/tools"
+	 xmlns:android="http://schemas.android.com/apk/res/android" xmlns:custom="http://schemas.android.com/apk/res-auto" android:id="@+id/speedometer" android:layout_width="match_parent" android:layout_height="match_parent">
+
+	<androidx.constraintlayout.widget.ConstraintLayout
+		android:id="@+id/constraintLayout"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginBottom="@dimen/_8sdp"
+		custom:layout_constraintBottom_toBottomOf="parent"
+		custom:layout_constraintEnd_toEndOf="parent"
+		custom:layout_constraintStart_toStartOf="parent">
+
+		<ImageView
+			android:id="@+id/imageView5"
+			android:layout_width="@dimen/_80sdp"
+			android:layout_height="@dimen/_80sdp"
+			android:src="@drawable/speedometer_off"
+			custom:layout_constraintBottom_toBottomOf="parent"
+			custom:layout_constraintEnd_toEndOf="parent"
+			custom:layout_constraintStart_toStartOf="parent"
+			custom:layout_constraintTop_toTopOf="parent" />
+
+		<com.liverussia.cr.gui.util.SeekArc
+			android:id="@+id/speed_line"
+			android:layout_width="0dp"
+			android:layout_height="@dimen/_80sdp"
+			android:background="#00000000"
+			android:padding="@dimen/_5sdp"
+			android:rotation="270"
+			custom:arcColor="#00000000"
+			custom:enabled="false"
+			custom:layout_constraintBottom_toBottomOf="@id/imageView5"
+			custom:layout_constraintEnd_toEndOf="@id/imageView5"
+			custom:layout_constraintStart_toStartOf="@id/imageView5"
+			custom:layout_constraintTop_toTopOf="@id/imageView5"
+			custom:max="370"
+			custom:progress="233"
+			custom:progressColor="#FEC705"
+			custom:progressWidth="@dimen/_3sdp"
+			custom:sweepAngle="180"
+			custom:touchInside="true" />
+
+		<TextView
+			android:id="@+id/speed_text"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="18dp"
+			android:fontFamily="@font/visby_round_cf_extra_bold"
+			android:gravity="center"
+			android:text="47"
+			android:textColor="@color/white"
+			android:textSize="@dimen/_16sdp"
+			custom:layout_constraintBottom_toBottomOf="@id/imageView5"
+			custom:layout_constraintEnd_toEndOf="@+id/imageView5"
+			custom:layout_constraintStart_toStartOf="@id/imageView5"
+			custom:layout_constraintTop_toTopOf="parent" />
+
+		<ImageView
+			android:id="@+id/blinker"
+			android:layout_width="@dimen/_14sdp"
+			android:layout_height="@dimen/_14sdp"
+			android:layout_marginTop="13dp"
+			android:src="@drawable/speedometer_ablinker_off"
+			custom:layout_constraintEnd_toEndOf="@+id/imageView5"
+			custom:layout_constraintStart_toStartOf="@+id/imageView5"
+			custom:layout_constraintTop_toTopOf="@+id/imageView5" />
+
+		<TextView
+			android:id="@+id/textView2"
+			android:layout_width="@dimen/_36sdp"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="4dp"
+			android:fontFamily="@font/din_pro_medium"
+			android:gravity="center"
+			android:letterSpacing="0.45"
+			android:text="000002"
+			android:textColor="@color/white"
+			android:textSize="@dimen/_6sdp"
+			custom:layout_constraintBottom_toTopOf="@+id/linearLayout"
+			custom:layout_constraintEnd_toEndOf="@+id/imageView5"
+			custom:layout_constraintStart_toStartOf="@+id/imageView5" />
+
+		<LinearLayout
+			android:id="@+id/linearLayout"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="6dp"
+			custom:layout_constraintBottom_toBottomOf="parent"
+			custom:layout_constraintEnd_toEndOf="parent"
+			custom:layout_constraintStart_toStartOf="parent">
+
+			<ImageView
+				android:id="@+id/speed_lock_ico"
+				android:layout_width="@dimen/_10sdp"
+				android:layout_height="@dimen/_10sdp"
+				android:backgroundTint="#FF0000"
+				android:backgroundTintMode="src_in"
+				android:src="@drawable/speedometer_lock" />
+
+			<ImageView
+				android:id="@+id/speed_engine_ico"
+				android:layout_width="@dimen/_10sdp"
+				android:layout_height="@dimen/_10sdp"
+				android:src="@drawable/speedometer_belt" />
+
+		</LinearLayout>
+
+	</androidx.constraintlayout.widget.ConstraintLayout>
+
+	<ImageView
+		android:id="@+id/imageView9"
+		android:layout_width="@dimen/_40sdp"
+		android:layout_height="@dimen/_30sdp"
+		android:src="@drawable/speedometr_light_off"
+		custom:layout_constraintBottom_toBottomOf="@+id/constraintLayout"
+		custom:layout_constraintEnd_toStartOf="@+id/constraintLayout"
+		custom:layout_constraintTop_toTopOf="@+id/constraintLayout" />
+
+	<ImageView
+		android:id="@+id/imageView12"
+		android:layout_width="@dimen/_40sdp"
+		android:layout_height="@dimen/_30sdp"
+		android:src="@drawable/speedometr_engine_off"
+		custom:layout_constraintBottom_toBottomOf="@+id/constraintLayout"
+		custom:layout_constraintStart_toEndOf="@+id/constraintLayout"
+		custom:layout_constraintTop_toTopOf="@+id/constraintLayout" />
+
+	<ImageView
+		android:layout_width="@dimen/_60sdp"
+		android:layout_height="@dimen/_30sdp"
+		android:rotation="180"
+		android:src="@drawable/speedometr_turn_off"
+		custom:layout_constraintBottom_toBottomOf="@+id/imageView12"
+		custom:layout_constraintStart_toEndOf="@+id/imageView12"
+		custom:layout_constraintTop_toTopOf="@+id/imageView12" />
+
+	<ImageView
+		android:layout_width="@dimen/_60sdp"
+		android:layout_height="@dimen/_30sdp"
+		android:src="@drawable/speedometr_turn_off"
+		custom:layout_constraintBottom_toBottomOf="@+id/imageView9"
+		custom:layout_constraintEnd_toStartOf="@+id/imageView9"
+		custom:layout_constraintTop_toTopOf="@+id/imageView9" />
+
+	<ImageView
+		android:id="@+id/imageView8"
+		android:layout_width="0dp"
+		android:layout_height="@dimen/_40sdp"
+		android:layout_marginTop="1dp"
+		android:src="@drawable/speedometer_scale"
+		custom:layout_constraintEnd_toEndOf="@+id/constraintLayout"
+		custom:layout_constraintStart_toStartOf="@+id/constraintLayout"
+		custom:layout_constraintTop_toTopOf="@+id/constraintLayout" />
+
+	<TextView
+		android:id="@+id/textView"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="10dp"
+		android:fontFamily="@font/din_pro_bold"
+		android:text="150"
+		android:textColor="@color/white"
+		android:textSize="5sp"
+		custom:layout_constraintStart_toStartOf="@+id/constraintLayout"
+		custom:layout_constraintTop_toBottomOf="@+id/speed_fuel_text" />
+
+	<TextView
+		android:id="@+id/speed_car_hp_text"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginEnd="12dp"
+		android:layout_marginBottom="2dp"
+		android:fontFamily="@font/din_pro_bold"
+		android:text="88%"
+		android:textColor="@color/white"
+		android:textSize="6sp"
+		custom:layout_constraintBottom_toBottomOf="@+id/imageView8"
+		custom:layout_constraintEnd_toEndOf="@+id/constraintLayout" />
+
+	<TextView
+		android:id="@+id/speed_fuel_text"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="10dp"
+		android:layout_marginBottom="3dp"
+		android:fontFamily="@font/din_pro_bold"
+		android:text="150"
+		android:textColor="@color/white"
+		android:textSize="5sp"
+		custom:layout_constraintBottom_toBottomOf="@+id/imageView8"
+		custom:layout_constraintStart_toEndOf="@+id/imageView9"
+		custom:layout_constraintTop_toTopOf="@+id/imageView9" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

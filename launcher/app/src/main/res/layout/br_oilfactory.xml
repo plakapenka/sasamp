@@ -1,0 +1,141 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/br_oilfactory_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/oil_bg">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/imageView23"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginTop="15dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/oil_info" />
+
+        <ImageView
+            android:id="@+id/imageView24"
+            android:layout_width="50dp"
+            android:layout_height="275dp"
+            android:layout_marginEnd="150dp"
+            android:layout_marginBottom="15dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView23"
+            app:srcCompat="@drawable/oil_bar" />
+
+        <ProgressBar
+            android:id="@+id/oil_water_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginLeft="7dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginRight="7dp"
+            android:layout_marginBottom="12dp"
+            android:max="1000"
+            android:progress="0"
+            android:progressDrawable="@drawable/progressbar_oil_water"
+            app:layout_constraintBottom_toBottomOf="@+id/imageView24"
+            app:layout_constraintEnd_toEndOf="@+id/imageView24"
+            app:layout_constraintStart_toStartOf="@+id/imageView24"
+            app:layout_constraintTop_toTopOf="@+id/imageView24" />
+
+        <ImageView
+            android:id="@+id/imageView26"
+            android:layout_width="50dp"
+            android:layout_height="275dp"
+            android:layout_marginStart="150dp"
+            android:layout_marginBottom="15dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView23"
+            app:srcCompat="@drawable/oil_bar" />
+
+        <ProgressBar
+            android:id="@+id/oil_oil_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginLeft="7dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginRight="7dp"
+            android:layout_marginBottom="12dp"
+            android:max="1000"
+            android:progress="0"
+            android:progressDrawable="@drawable/progressbar_oil_oil"
+            app:layout_constraintBottom_toBottomOf="@+id/imageView26"
+            app:layout_constraintEnd_toEndOf="@+id/imageView26"
+            app:layout_constraintStart_toStartOf="@+id/imageView26"
+            app:layout_constraintTop_toTopOf="@+id/imageView26" />
+
+        <ImageView
+            android:id="@+id/oil_water_btn"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:layout_constraintBottom_toBottomOf="@+id/imageView24"
+            app:layout_constraintEnd_toStartOf="@+id/imageView24"
+            app:layout_constraintStart_toStartOf="@+id/imageView23"
+            app:srcCompat="@drawable/oil_waterbtn" />
+
+        <ImageView
+            android:id="@+id/oil_oil_btn"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:layout_constraintBottom_toBottomOf="@+id/imageView26"
+            app:layout_constraintEnd_toEndOf="@+id/imageView23"
+            app:layout_constraintStart_toEndOf="@+id/imageView26"
+            app:srcCompat="@drawable/oil_oilbtn" />
+
+        <TextView
+            android:id="@+id/oil_water_procent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/din_pro_bold"
+            android:text="0%"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="@+id/imageView24"
+            app:layout_constraintStart_toStartOf="@+id/imageView24"
+            app:layout_constraintTop_toBottomOf="@+id/imageView24" />
+
+        <TextView
+            android:id="@+id/oil_oil_procent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/din_pro_bold"
+            android:text="0%"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="@+id/imageView26"
+            app:layout_constraintStart_toStartOf="@+id/imageView26"
+            app:layout_constraintTop_toBottomOf="@+id/imageView26" />
+
+        <ImageView
+            android:id="@+id/imageView29"
+            android:layout_width="35dp"
+            android:layout_height="25dp"
+            app:layout_constraintBottom_toTopOf="@+id/imageView24"
+            app:layout_constraintEnd_toEndOf="@+id/imageView24"
+            app:layout_constraintStart_toStartOf="@+id/imageView24"
+            app:srcCompat="@drawable/oil_water" />
+
+        <ImageView
+            android:id="@+id/imageView30"
+            android:layout_width="35dp"
+            android:layout_height="30dp"
+            app:layout_constraintBottom_toTopOf="@+id/imageView26"
+            app:layout_constraintEnd_toEndOf="@+id/imageView26"
+            app:layout_constraintStart_toStartOf="@+id/imageView26"
+            app:srcCompat="@drawable/oil_oil" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

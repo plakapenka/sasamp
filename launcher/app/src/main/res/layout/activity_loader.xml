@@ -1,0 +1,245 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/_20sdp" >
+
+    <LinearLayout
+        android:id="@+id/linearLayout10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="@dimen/_135sdp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:src="@drawable/logo_download" />
+
+        <ImageView
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:src="@drawable/information" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout8"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/leftButton"
+                android:layout_width="@dimen/_25sdp"
+                android:layout_height="@dimen/_25sdp"
+                android:layout_gravity="center"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/arrow_left"
+                android:visibility="visible" />
+
+            <LinearLayout
+                android:layout_width="0.0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:background="@drawable/server_rectangle"
+                android:minHeight="@dimen/_50sdp"
+                android:orientation="vertical"
+                android:padding="@dimen/_10sdp">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/visby_cf_bold"
+                    android:gravity="center"
+                    android:text="А знаете ли вы, что?"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_16sdp" />
+
+                <com.smarteist.autoimageslider.SliderView
+                    android:id="@+id/loaderSliderView"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_50sdp"
+                    app:sliderIndicatorEnabled="false"
+                    app:sliderIndicatorGravity="center_horizontal|bottom"
+                    app:sliderIndicatorMarginBottom="@dimen/_23sdp"
+                    app:sliderIndicatorOrientation="horizontal" >
+
+                    <TextView
+                        android:id="@+id/WarnText1"
+                        android:layout_width="fill_parent"
+                        android:layout_height="@dimen/_50sdp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="5dp"
+                        android:clipChildren="false"
+                        android:clipToPadding="false"
+                        android:fontFamily="@font/roboto_medium"
+                        android:gravity="center"
+                        android:text="Главный Администратор выдаёт окончательный ответ в жалобах"
+                        android:textColor="#8A8A8A"
+                        android:textSize="@dimen/_13sdp" />
+
+                    <TextView
+                        android:id="@+id/WarnText2"
+                        android:layout_width="fill_parent"
+                        android:layout_height="@dimen/_50sdp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="5dp"
+                        android:clipChildren="false"
+                        android:clipToPadding="false"
+                        android:fontFamily="@font/roboto_medium"
+                        android:gravity="center"
+                        android:text="В нашей группе есть бот для привязки и восстановления доступа к аккаунту"
+                        android:textColor="#8A8A8A"
+                        android:textSize="@dimen/_13sdp"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/WarnText3"
+                        android:layout_width="fill_parent"
+                        android:layout_height="@dimen/_50sdp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="5dp"
+                        android:clipChildren="false"
+                        android:clipToPadding="false"
+                        android:fontFamily="@font/roboto_medium"
+                        android:gravity="center"
+                        android:text="Вид от 1-го лица включается обычным свайпом двумя пальцами"
+                        android:textColor="#8A8A8A"
+                        android:textSize="@dimen/_13sdp"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/WarnText4"
+                        android:layout_width="fill_parent"
+                        android:layout_height="@dimen/_50sdp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="5dp"
+                        android:clipChildren="false"
+                        android:clipToPadding="false"
+                        android:fontFamily="@font/roboto_medium"
+                        android:gravity="center"
+                        android:text="“LIVE RUSSIA” - самый крупный мобильный CRMP проект в СНГ"
+                        android:textColor="#8A8A8A"
+                        android:textSize="@dimen/_13sdp"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/WarnText5"
+                        android:layout_width="fill_parent"
+                        android:layout_height="@dimen/_50sdp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="5dp"
+                        android:clipChildren="false"
+                        android:clipToPadding="false"
+                        android:fontFamily="@font/roboto_medium"
+                        android:gravity="center"
+                        android:text="Администратор никогда не попросит Вашего пароля"
+                        android:textColor="#8A8A8A"
+                        android:textSize="@dimen/_13sdp"
+                        android:visibility="gone" />
+                </com.smarteist.autoimageslider.SliderView>
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/rightButton"
+                android:layout_width="@dimen/_25sdp"
+                android:layout_height="@dimen/_25sdp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/arrow_right" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout9"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/textView15"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout10">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/loadingText"
+                android:layout_width="0.0dip"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:layout_weight="1.0"
+                android:fontFamily="@font/roboto_medium"
+                android:text="Загрузка файлов игры..."
+                android:textColor="@color/white"
+                android:textSize="@dimen/_12sdp" />
+
+            <TextView
+                android:id="@+id/loadingPercent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:fontFamily="@font/roboto_medium"
+                android:gravity="center_horizontal"
+                android:text=""
+                android:textColor="@color/white"
+                android:textSize="@dimen/_12sdp" />
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@id/progressBar"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="18dp"
+            android:max="100"
+            android:progress="0"
+            android:progressDrawable="@drawable/progressbar" />
+
+        <TextView
+            android:id="@+id/fileName"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:alpha="0.5"
+            android:fontFamily="@font/pt_root_ui_medium"
+            android:gravity="center_horizontal"
+            android:text=""
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12sdp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView15"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto_medium"
+        android:gravity="center"
+        android:text="@string/downloadinfobottom"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
