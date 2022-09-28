@@ -102,7 +102,7 @@ CNetGame::CNetGame(const char *szHostOrIp, int iPort, const char *szPlayerName, 
 	pGame->EnableClock(false);
 	pGame->EnableZoneNames(false);
 	if (pChatWindow)
-		pChatWindow->AddDebugMessage("{bbbbbb}Клиент {ff0000}LIVE RUSSIA{bbbbbb} запущен{ffffff}");
+		pChatWindow->AddDebugMessage("{bbbbbb}пїЅпїЅпїЅпїЅпїЅпїЅ {ff0000}LIVE RUSSIA{bbbbbb} пїЅпїЅпїЅпїЅпїЅпїЅпїЅ{ffffff}");
 }
 
 CNetGame::~CNetGame()
@@ -229,14 +229,14 @@ void CNetGame::Process()
 				pPlayer->TeleportTo(1093.4f, -2036.5f, 82.7106f);
 
 
-			// Камера при подключении
+			// пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 			pCamera->SetPosition(1093.0f, -2036.0f, 90.0f, 0.0f, 0.0f, 0.0f);
 			pCamera->LookAtPoint(384.0f, -1557.0f, 20.0f, 2);
 			pGame->SetWorldWeather(m_byteWeather);
 			pGame->DisplayWidgets(false);
 			
 
-			/*  Сделать спавн при переполненном сервере
+			/*  пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 			PLAYER_SPAWN_INFO SpawnInfo;
 			SpawnInfo.iSkin = g_pJavaWrapper->RegisterSkinId;
 			SpawnInfo.vecPos.X = -82.9753;
@@ -259,7 +259,7 @@ void CNetGame::Process()
 			VECTOR *cameralookstart = {-321.099090, 226.183731, 273.327484};
 			VECTOR *cameralookend = {-321.097198, 226.184265, 273.329376};
 
-			// летающая камера при подключении
+			// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 			pCamera->InterpolateCameraPos(camerastart, cameraend, 1, 1);
 			pCamera->InterpolateCameraLookAt(cameralookstart, cameralookend, 1, 1);
 			pGame->SetWorldWeather(m_byteWeather);
@@ -378,7 +378,7 @@ void CNetGame::UpdateNetwork()
 			break;
 
 		case ID_INVALID_PASSWORD:
-			pChatWindow->AddDebugMessage("Некорректный пароль.");
+			pChatWindow->AddDebugMessage("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.");
 			m_pRakClient->Disconnect(0);
 			break;
 
@@ -474,7 +474,7 @@ void CNetGame::Packet_TrailerSync(Packet *p)
 #define RPC_CUSTOM_SET_LEVEL 17
 #define RPC_TOGGLE_GPS_INFO 18
 #define RPC_TOGGLE_GREENZONE 19
-#define RPC_TOGGLE_SAMWILL_GAME 20 // Входящий uint8 toggle, Исходящий uint8 quantity
+#define RPC_TOGGLE_SAMWILL_GAME 20 // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ uint8 toggle, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ uint8 quantity
 #define RPC_KILLLIST 21
 #define RPC_CLEAR_KILLLIST 22
 #define RPC_SHOW_DUELS_KILLS_LEFT 23
@@ -576,7 +576,7 @@ void CNetGame::Packet_AuthRPC(Packet *p)
 			if (toggle == 1)
 			{
 				g_pJavaWrapper->HideHud();
-				g_pJavaWrapper->ShowLogin();
+				g_pJavaWrapper->ShowLogin((jstring) "Antonio", 0);
 			}
 			else if (toggle == 0)
 			{
@@ -646,7 +646,7 @@ void CNetGame::Packet_SpecialCustomRPC(Packet *p)
 			{
 				g_pJavaWrapper->HideHud();
 				g_pJavaWrapper->HideServer();
-				g_pJavaWrapper->ShowSpawn();
+				g_pJavaWrapper->ShowSpawn(1, 1, 1, 1, 1);
 			}
 			else if (toggle == 0)
 			{
@@ -748,14 +748,14 @@ void CNetGame::Packet_CustomRPC(Packet *p)
 		if (pPlayerPool)
 		{
 			g_pJavaWrapper->UpdateHudInfo(pGame->FindPlayerPed()->GetHealth(),
-											pGame->FindPlayerPed()->GetArmour(),
-											level,
-											current,
-											max,
-											GamePool_FindPlayerPed()->WeaponSlots[GamePool_FindPlayerPed()->byteCurWeaponSlot].dwType,
-											GamePool_FindPlayerPed()->WeaponSlots[GamePool_FindPlayerPed()->byteCurWeaponSlot].dwAmmo,
-											GamePool_FindPlayerPed()->WeaponSlots[GamePool_FindPlayerPed()->byteCurWeaponSlot].dwAmmoInClip,
-											pGame->GetLocalMoney(), pGame->GetWantedLevel());
+												  pGame->FindPlayerPed()->GetArmour(),
+												  -1, // hung
+												  GamePool_FindPlayerPed()->WeaponSlots[GamePool_FindPlayerPed()->byteCurWeaponSlot].dwType,
+												  GamePool_FindPlayerPed()->WeaponSlots[GamePool_FindPlayerPed()->byteCurWeaponSlot].dwAmmo,
+												  GamePool_FindPlayerPed()->WeaponSlots[GamePool_FindPlayerPed()->byteCurWeaponSlot].dwAmmoInClip,
+												  pGame->GetLocalMoney(), 
+												  pGame->GetWantedLevel()
+												);
 		}
 		break;
 	}

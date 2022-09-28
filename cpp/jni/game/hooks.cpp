@@ -156,13 +156,13 @@ void ShowHud()
 				{
 					g_pJavaWrapper->UpdateHudInfo(pGame->FindPlayerPed()->GetHealth(),
 												  pGame->FindPlayerPed()->GetArmour(),
-												  -1,
-												  -1,
-												  -1,
+												  -1, // hung
 												  GamePool_FindPlayerPed()->WeaponSlots[GamePool_FindPlayerPed()->byteCurWeaponSlot].dwType,
 												  GamePool_FindPlayerPed()->WeaponSlots[GamePool_FindPlayerPed()->byteCurWeaponSlot].dwAmmo,
 												  GamePool_FindPlayerPed()->WeaponSlots[GamePool_FindPlayerPed()->byteCurWeaponSlot].dwAmmoInClip,
-												  pGame->GetLocalMoney(), pGame->GetWantedLevel());
+												  pGame->GetLocalMoney(), 
+												  pGame->GetWantedLevel()
+												);
 				}
 				if (pSettings && pSettings->GetReadOnly().iHud)
 				{

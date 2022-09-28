@@ -1491,7 +1491,7 @@ public abstract class NvEventQueueActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.legendaryrussia.launcher");
+                Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.liverussia.cr");
                 launchIntent.putExtra("minimize", true);
                 if(ResumeEventDone)
                 {

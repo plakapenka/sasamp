@@ -43,7 +43,7 @@ class CJavaWrapper
 	jmethodID s_updateRegisterSex;
 	jmethodID s_showSpawn;
     jmethodID s_hideSpawn;
-	jmethodID s_hideLoadingScreen;
+	//jmethodID s_hideLoadingScreen;
 	jmethodID s_updateLoadingScreen;
 	jmethodID s_showHud;
     jmethodID s_hideHud;
@@ -109,19 +109,19 @@ public:
 	JNIEnv* GetEnv();
 
 	std::string GetClipboardString();
-	void CallLauncherActivity(int type);
+	void CallLauncherActivity();
 
 	void ShowInputLayout();
 	void HideInputLayout();
 
 	void ShowClientSettings();
 
-	void UpdateHudInfo(int health, int armour, int level, int levelcurrent, int levelmax, int weaponid, int ammo, int ammoinclip, int money, int wanted);
+	void UpdateHudInfo(int health, int armour, int hunger, int weaponid, int ammo, int ammoclip, int money, int wanted);
 	void UpdateSamwill(int start, int progress, int check1, int check2, int check3, int check4, int check5);
 	void UpdateSamwillMoney(int money);
 	void UpdateRegisterSkinButtons(int btnidclicked);
 	void UpdateSpeedInfo(int speed, int fuel, int hp, int mileage, int engine, int light, int belt, int lock);
-	void ShowLogin();
+	void ShowLogin(jstring nick, int id);
     void HideLogin();
 	void ShowLoginTwo();
     void HideLoginTwo();
@@ -134,7 +134,7 @@ public:
 	void ShowRegisterSkin();
     void HideRegisterSkin();
 	void UpdateRegisterSex(int male);
-	void ShowSpawn();
+	void ShowSpawn(int organization, int station, int exit, int garage, int house);
     void HideSpawn();
 	void HideLoadingScreen();
 	void UpdateLoadingScreen(int procent);

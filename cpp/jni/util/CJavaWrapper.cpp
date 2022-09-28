@@ -82,7 +82,7 @@ std::string CJavaWrapper::GetClipboardString()
 	return str;
 }
 
-void CJavaWrapper::CallLauncherActivity(int type)
+void CJavaWrapper::CallLauncherActivity()
 {
 	JNIEnv* env = GetEnv();
 
@@ -92,7 +92,7 @@ void CJavaWrapper::CallLauncherActivity(int type)
 		return;
 	}
 
-	env->CallVoidMethod(activity, s_CallLauncherActivity, type);
+	env->CallVoidMethod(activity, s_CallLauncherActivity);
 
 	EXCEPTION_CHECK(env);
 }
@@ -878,7 +878,7 @@ extern "C"
 	}
 
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onAuthBackClick(JNIEnv *pEnv, jobject thiz) {
-		g_pJavaWrapper->HideLoginTwo();
+		//g_pJavaWrapper->HideLoginTwo();
 	}
 
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onRegClick(JNIEnv *pEnv, jobject thiz) {
@@ -1089,7 +1089,7 @@ extern "C"
 	}
 }
 
-void CJavaWrapper::ShowLogin()
+void CJavaWrapper::ShowLogin(jstring nick, int id)
 {
     JNIEnv* env = GetEnv();
 
@@ -1098,7 +1098,7 @@ void CJavaWrapper::ShowLogin()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_showLogin);
+    env->CallVoidMethod(this->activity, this->s_showLogin, nick, id);
 }
 
 void CJavaWrapper::HideLogin()
@@ -1122,7 +1122,7 @@ void CJavaWrapper::ShowLoginTwo()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_showLoginTwo);
+    //env->CallVoidMethod(this->activity, this->s_showLoginTwo);
 }
 
 void CJavaWrapper::HideLoginTwo()
@@ -1134,7 +1134,7 @@ void CJavaWrapper::HideLoginTwo()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_hideLoginTwo);
+   // env->CallVoidMethod(this->activity, this->s_hideLoginTwo);
 }
 
 void CJavaWrapper::ShowRegister()
@@ -1146,7 +1146,7 @@ void CJavaWrapper::ShowRegister()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_showRegister);
+    //env->CallVoidMethod(this->activity, this->s_showRegister);
 }
 
 void CJavaWrapper::HideRegister()
@@ -1170,7 +1170,7 @@ void CJavaWrapper::ShowRegisterTwo()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_showRegisterTwo);
+    //env->CallVoidMethod(this->activity, this->s_showRegisterTwo);
 }
 
 void CJavaWrapper::HideRegisterTwo()
@@ -1182,7 +1182,7 @@ void CJavaWrapper::HideRegisterTwo()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_hideRegisterTwo);
+    //env->CallVoidMethod(this->activity, this->s_hideRegisterTwo);
 }
 
 void CJavaWrapper::ShowRegisterSex()
@@ -1194,7 +1194,7 @@ void CJavaWrapper::ShowRegisterSex()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_showRegisterSex);
+    //env->CallVoidMethod(this->activity, this->s_showRegisterSex);
 	g_pJavaWrapper->HideHud();
 	g_pJavaWrapper->RegisterSexMale = 0;
 	g_pJavaWrapper->RegisterSkinValue = 1;
@@ -1209,7 +1209,7 @@ void CJavaWrapper::HideRegisterSex()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_hideRegisterSex);
+    //env->CallVoidMethod(this->activity, this->s_hideRegisterSex);
 }
 
 void CJavaWrapper::ShowRegisterSkin()
@@ -1221,7 +1221,7 @@ void CJavaWrapper::ShowRegisterSkin()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_showRegisterSkin);
+    //env->CallVoidMethod(this->activity, this->s_showRegisterSkin);
 	for (int i = 0; i < 7; i++)
 	{
 		pGame->ToggleHUDElement(i, false);
@@ -1237,7 +1237,7 @@ void CJavaWrapper::HideRegisterSkin()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_hideRegisterSkin);
+    //env->CallVoidMethod(this->activity, this->s_hideRegisterSkin);
 }
 
 void CJavaWrapper::UpdateRegisterSex(int male)
@@ -1249,10 +1249,10 @@ void CJavaWrapper::UpdateRegisterSex(int male)
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_updateRegisterSex, male);
+    //env->CallVoidMethod(this->activity, this->s_updateRegisterSex, male);
 }
 
-void CJavaWrapper::ShowSpawn()
+void CJavaWrapper::ShowSpawn(int organization, int station, int exit, int garage, int house)
 {
     JNIEnv* env = GetEnv();
 
@@ -1261,7 +1261,7 @@ void CJavaWrapper::ShowSpawn()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_showSpawn);
+    env->CallVoidMethod(this->activity, this->s_showSpawn, organization, station, exit, garage, house);
 	g_pJavaWrapper->ChooseSpawn = 0;
 }
 
@@ -1286,7 +1286,7 @@ void CJavaWrapper::HideLoadingScreen()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_hideLoadingScreen);
+  //  env->CallVoidMethod(this->activity, this->s_hideLoadingScreen);
 }
 
 void CJavaWrapper::UpdateLoadingScreen(int procent)
@@ -1298,7 +1298,7 @@ void CJavaWrapper::UpdateLoadingScreen(int procent)
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_updateLoadingScreen, procent);
+  //  env->CallVoidMethod(this->activity, this->s_updateLoadingScreen, procent);
 }
 
 void CJavaWrapper::ShowKilllist()
@@ -1310,7 +1310,7 @@ void CJavaWrapper::ShowKilllist()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_showKilllist);
+   // env->CallVoidMethod(this->activity, this->s_showKilllist);
 }
 
 void CJavaWrapper::HideKilllist()
@@ -1322,7 +1322,7 @@ void CJavaWrapper::HideKilllist()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_hideKilllist);
+    //env->CallVoidMethod(this->activity, this->s_hideKilllist);
 }
 
 void CJavaWrapper::ShowKilllistMulti()
@@ -1334,7 +1334,7 @@ void CJavaWrapper::ShowKilllistMulti()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_showKilllistMulti);
+   // env->CallVoidMethod(this->activity, this->s_showKilllistMulti);
 }
 
 void CJavaWrapper::HideKilllistMulti()
@@ -1346,7 +1346,7 @@ void CJavaWrapper::HideKilllistMulti()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_hideKilllistMulti);
+    //env->CallVoidMethod(this->activity, this->s_hideKilllistMulti);
 }
 
 void CJavaWrapper::ShowKilllisDuels()
@@ -1358,7 +1358,7 @@ void CJavaWrapper::ShowKilllisDuels()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_showKilllisDuels);
+    //env->CallVoidMethod(this->activity, this->s_showKilllisDuels);
 }
 
 void CJavaWrapper::HideKilllistDuels()
@@ -1370,7 +1370,7 @@ void CJavaWrapper::HideKilllistDuels()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_hideKilllistDuels);
+    //env->CallVoidMethod(this->activity, this->s_hideKilllistDuels);
 }
 
 void CJavaWrapper::UpdateKilllist(int kills, int deaths, int duelskills, int duelkillsmax)
@@ -1382,7 +1382,7 @@ void CJavaWrapper::UpdateKilllist(int kills, int deaths, int duelskills, int due
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_updateKilllist, kills, deaths, duelskills, duelkillsmax);
+   // env->CallVoidMethod(this->activity, this->s_updateKilllist, kills, deaths, duelskills, duelkillsmax);
 }
 
 void CJavaWrapper::UpdateTargetNotify(int type, char *text)
@@ -1400,7 +1400,7 @@ void CJavaWrapper::UpdateTargetNotify(int type, char *text)
     jbyteArray bytes0 = env->NewByteArray(strlen(text));
     env->SetByteArrayRegion(bytes0, 0, strlen(text), (jbyte*)text);
     jstring textstr = (jstring)env->NewObject(strClass0, ctorID0, bytes0, encoding0);
-    env->CallVoidMethod(this->activity, this->s_updateTargetNotify, type, textstr);
+    //env->CallVoidMethod(this->activity, this->s_updateTargetNotify, type, textstr);
 }
 
 
@@ -1433,7 +1433,7 @@ void CJavaWrapper::UpdateKilllistTop(char *one, char *two, char *three)
     jbyteArray bytes33 = env->NewByteArray(strlen(three));
     env->SetByteArrayRegion(bytes33, 0, strlen(three), (jbyte*)three);
     jstring threestr = (jstring)env->NewObject(strClass33, ctorID33, bytes33, encoding33);
-    env->CallVoidMethod(this->activity, this->s_updateKilllistTop, onestr, twostr, threestr);
+   // env->CallVoidMethod(this->activity, this->s_updateKilllistTop, onestr, twostr, threestr);
 }
 
 
@@ -1459,7 +1459,7 @@ void CJavaWrapper::UpdateKilllistOne(int team, int weapon, char *killer, char *k
     jbyteArray bytes222 = env->NewByteArray(strlen(killed));
     env->SetByteArrayRegion(bytes222, 0, strlen(killed), (jbyte*)killed);
     jstring killedstr = (jstring)env->NewObject(strClass222, ctorID222, bytes222, encoding222);
-    env->CallVoidMethod(this->activity, this->s_updateKilllistOne, team, weapon, killerstr, killedstr);
+   // env->CallVoidMethod(this->activity, this->s_updateKilllistOne, team, weapon, killerstr, killedstr);
 }
 
 void CJavaWrapper::UpdateKilllistTwo(int team, int weapon, char *killer, char *killed)
@@ -1484,7 +1484,7 @@ void CJavaWrapper::UpdateKilllistTwo(int team, int weapon, char *killer, char *k
     jbyteArray bytes2222 = env->NewByteArray(strlen(killed));
     env->SetByteArrayRegion(bytes2222, 0, strlen(killed), (jbyte*)killed);
     jstring killedstr = (jstring)env->NewObject(strClass2222, ctorID2222, bytes2222, encoding2222);
-    env->CallVoidMethod(this->activity, this->s_updateKilllistTwo, team, weapon, killerstr, killedstr);
+   // env->CallVoidMethod(this->activity, this->s_updateKilllistTwo, team, weapon, killerstr, killedstr);
 }
 
 void CJavaWrapper::UpdateKilllistThree(int team, int weapon, char *killer, char *killed)
@@ -1509,7 +1509,7 @@ void CJavaWrapper::UpdateKilllistThree(int team, int weapon, char *killer, char 
     jbyteArray bytes22222 = env->NewByteArray(strlen(killed));
     env->SetByteArrayRegion(bytes22222, 0, strlen(killed), (jbyte*)killed);
     jstring killedstr = (jstring)env->NewObject(strClass22222, ctorID22222, bytes22222, encoding22222);
-    env->CallVoidMethod(this->activity, this->s_updateKilllistThree, team, weapon, killerstr, killedstr);
+    //env->CallVoidMethod(this->activity, this->s_updateKilllistThree, team, weapon, killerstr, killedstr);
 }
 
 void CJavaWrapper::ClearKilllistDuels()
@@ -1521,7 +1521,7 @@ void CJavaWrapper::ClearKilllistDuels()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_clearKilllistDuels);
+   // env->CallVoidMethod(this->activity, this->s_clearKilllistDuels);
 }
 
 void CJavaWrapper::HideKilllistOne()
@@ -1533,7 +1533,7 @@ void CJavaWrapper::HideKilllistOne()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_hideKilllistOne);
+   // env->CallVoidMethod(this->activity, this->s_hideKilllistOne);
 	g_pJavaWrapper->ShowVoice();
 }
 
@@ -1546,7 +1546,7 @@ void CJavaWrapper::HideKilllistTwo()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_hideKilllistTwo);
+    //env->CallVoidMethod(this->activity, this->s_hideKilllistTwo);
 	g_pJavaWrapper->ShowVoice();
 }
 
@@ -1559,7 +1559,7 @@ void CJavaWrapper::HideKilllistThree()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_hideKilllistThree);
+   // env->CallVoidMethod(this->activity, this->s_hideKilllistThree);
 	g_pJavaWrapper->ShowVoice();
 }
 
@@ -1590,7 +1590,8 @@ void CJavaWrapper::UpdateAutosalon(char *vehname, int price, int quantity, int m
     jbyteArray bytes111111 = env->NewByteArray(strlen(vehname));
     env->SetByteArrayRegion(bytes111111, 0, strlen(vehname), (jbyte*)vehname);
     jstring vehnamestr = (jstring)env->NewObject(strClass111111, ctorID111111, bytes111111, encoding111111);
-    env->CallVoidMethod(this->activity, this->s_updateAutosalon, vehnamestr, price, quantity, maxspeed, overclocking);
+
+   // env->CallVoidMethod(this->activity, this->s_updateAutosalon, vehnamestr, price, quantity, maxspeed, overclocking);
 }
 
 void CJavaWrapper::ShowZavod(int type)
@@ -1602,7 +1603,7 @@ void CJavaWrapper::ShowZavod(int type)
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_showZavod, type);
+  //  env->CallVoidMethod(this->activity, this->s_showZavod, type);
 }
 
 void CJavaWrapper::HideZavod()
@@ -1614,7 +1615,7 @@ void CJavaWrapper::HideZavod()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_hideZavod);
+   // env->CallVoidMethod(this->activity, this->s_hideZavod);
 }
 
 void CJavaWrapper::ShowMine(int type)
@@ -1626,7 +1627,7 @@ void CJavaWrapper::ShowMine(int type)
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_showMine, type);
+  //  env->CallVoidMethod(this->activity, this->s_showMine, type);
 }
 
 void CJavaWrapper::HideMine()
@@ -1638,7 +1639,7 @@ void CJavaWrapper::HideMine()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_hideMine);
+    //env->CallVoidMethod(this->activity, this->s_hideMine);
 }
 
 void CJavaWrapper::ShowAutosalon()
@@ -1650,7 +1651,7 @@ void CJavaWrapper::ShowAutosalon()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_showAutosalon);
+  //  env->CallVoidMethod(this->activity, this->s_showAutosalon);
 }
 
 void CJavaWrapper::HideAutosalon()
@@ -1662,7 +1663,7 @@ void CJavaWrapper::HideAutosalon()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_hideAutosalon);
+  //  env->CallVoidMethod(this->activity, this->s_hideAutosalon);
 }
 
 void CJavaWrapper::UpdateNotification(int progress)
@@ -1674,7 +1675,7 @@ void CJavaWrapper::UpdateNotification(int progress)
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_updateNotification, progress);
+  //  env->CallVoidMethod(this->activity, this->s_updateNotification, progress);
 }
 
 void CJavaWrapper::ShowNotification(int type, char* text)
@@ -1692,7 +1693,7 @@ void CJavaWrapper::ShowNotification(int type, char* text)
     jbyteArray bytestext = env->NewByteArray(strlen(text));
     env->SetByteArrayRegion(bytestext, 0, strlen(text), (jbyte*)text);
     jstring textstr = (jstring)env->NewObject(strClasstext, ctorIDtext, bytestext, encodingtext);
-    env->CallVoidMethod(this->activity, this->s_showNotification, type, textstr);
+   // env->CallVoidMethod(this->activity, this->s_showNotification, type, textstr);
 }
 
 void CJavaWrapper::HideNotification()
@@ -1750,7 +1751,8 @@ void CJavaWrapper::ShowUpdateCasino(int tableid, int bet, int bank, int balance,
     jbyteArray bytesplayerid5 = env->NewByteArray(strlen(playerid5));
     env->SetByteArrayRegion(bytesplayerid5, 0, strlen(playerid5), (jbyte*)playerid5);
     jstring playerid5str = (jstring)env->NewObject(strplayerid5, ctorplayerid5, bytesplayerid5, encodingplayerid5);
-    env->CallVoidMethod(this->activity, this->s_showUpdateCasino, tableid, bet, bank, balance, playerid1str, playerstatus1, playerid2str, playerstatus2, playerid3str, playerstatus3, playerid4str, playerstatus4, playerid5str, playerstatus5);
+
+   // env->CallVoidMethod(this->activity, this->s_showUpdateCasino, tableid, bet, bank, balance, playerid1str, playerstatus1, playerid2str, playerstatus2, playerid3str, playerstatus3, playerid4str, playerstatus4, playerid5str, playerstatus5);
 }
 
 void CJavaWrapper::HideCasino()
@@ -1762,7 +1764,7 @@ void CJavaWrapper::HideCasino()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_hideCasino);
+    //env->CallVoidMethod(this->activity, this->s_hideCasino);
 }
 
 void CJavaWrapper::ShowUpdateBus(int timer)
@@ -1799,7 +1801,7 @@ void CJavaWrapper::ShowCasinoRoullete(int quantity)
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_showCasinoRoullete, quantity);
+   // env->CallVoidMethod(this->activity, this->s_showCasinoRoullete, quantity);
 }
 
 void CJavaWrapper::HideCasinoRoullete()
@@ -1811,7 +1813,7 @@ void CJavaWrapper::HideCasinoRoullete()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_hideCasinoRoullete);
+   // env->CallVoidMethod(this->activity, this->s_hideCasinoRoullete);
 }
 
 void CJavaWrapper::ShowCasinoChip(int type, int balance)
@@ -1823,7 +1825,7 @@ void CJavaWrapper::ShowCasinoChip(int type, int balance)
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_showCasinoChip, type, balance);
+    //env->CallVoidMethod(this->activity, this->s_showCasinoChip, type, balance);
 }
 
 void CJavaWrapper::HideCasinoChip()
@@ -1835,7 +1837,7 @@ void CJavaWrapper::HideCasinoChip()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_hideCasinoChip);
+   // env->CallVoidMethod(this->activity, this->s_hideCasinoChip);
 }
 
 void CJavaWrapper::ShowHud()
@@ -1874,7 +1876,7 @@ void CJavaWrapper::ShowVoice()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_showVoice);
+   // env->CallVoidMethod(this->activity, this->s_showVoice);
 }
 
 void CJavaWrapper::HideVoice()
@@ -1886,7 +1888,7 @@ void CJavaWrapper::HideVoice()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_hideVoice);
+    //env->CallVoidMethod(this->activity, this->s_hideVoice);
 }
 
 void CJavaWrapper::ShowServer(int server)
@@ -1994,7 +1996,7 @@ void CJavaWrapper::ShowSamwillMoney()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_showSamwillMoney);
+   // env->CallVoidMethod(this->activity, this->s_showSamwillMoney);
 }
 
 void CJavaWrapper::HideSamwillMoney()
@@ -2006,7 +2008,7 @@ void CJavaWrapper::HideSamwillMoney()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_hideSamwillMoney);
+   // env->CallVoidMethod(this->activity, this->s_hideSamwillMoney);
 }
 
 void CJavaWrapper::ShowMenu()
@@ -2038,7 +2040,7 @@ void CJavaWrapper::HideMenu()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_hideMenu);
+   // env->CallVoidMethod(this->activity, this->s_hideMenu);
 	g_pJavaWrapper->ShowHud();
 	g_pJavaWrapper->ShowServer(pSettings->GetReadOnly().szServer);
 	for (int i = 0; i < 7; i++)
@@ -2056,7 +2058,7 @@ void CJavaWrapper::ShowSpeedometr()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_showSpeedometr);
+   // env->CallVoidMethod(this->activity, this->s_showSpeedometr);
 }
 
 void CJavaWrapper::HideSpeedometr()
@@ -2068,10 +2070,10 @@ void CJavaWrapper::HideSpeedometr()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_hideSpeedometr);
+   // env->CallVoidMethod(this->activity, this->s_hideSpeedometr);
 }
 
-void CJavaWrapper::UpdateHudInfo(int health, int armour, int level, int levelcurrent, int levelmax, int weaponid, int ammo, int ammoinclip, int money, int wanted)
+void CJavaWrapper::UpdateHudInfo(int health, int armour, int hunger, int weaponid, int ammo, int ammoclip, int money, int wanted)
 {
 	JNIEnv* env = GetEnv();
 
@@ -2081,7 +2083,7 @@ void CJavaWrapper::UpdateHudInfo(int health, int armour, int level, int levelcur
 		return;
 	}
 
-	env->CallVoidMethod(this->activity, this->s_updateHudInfo, health, armour, level, levelcurrent, levelmax, weaponid, ammo, ammoinclip, money, wanted);
+	//env->CallVoidMethod(this->activity, this->s_updateHudInfo, health, armour, hunger, weaponid, ammo, ammoclip, money, wanted);
 }
 
 void CJavaWrapper::UpdateSamwill(int start, int progress, int check1, int check2, int check3, int check4, int check5)
@@ -2094,7 +2096,7 @@ void CJavaWrapper::UpdateSamwill(int start, int progress, int check1, int check2
 		return;
 	}
 
-	env->CallVoidMethod(this->activity, this->s_updateSamwill, start, progress, check1, check2, check3, check4, check5);
+	//env->CallVoidMethod(this->activity, this->s_updateSamwill, start, progress, check1, check2, check3, check4, check5);
 }
 
 void CJavaWrapper::UpdateRegisterSkinButtons(int btnidclicked)
@@ -2107,7 +2109,7 @@ void CJavaWrapper::UpdateRegisterSkinButtons(int btnidclicked)
 		return;
 	}
 
-	env->CallVoidMethod(this->activity, this->s_updateRegisterSkinButtons, btnidclicked);
+	//env->CallVoidMethod(this->activity, this->s_updateRegisterSkinButtons, btnidclicked);
 }
 
 void CJavaWrapper::UpdateSamwillMoney(int money)
@@ -2120,7 +2122,7 @@ void CJavaWrapper::UpdateSamwillMoney(int money)
 		return;
 	}
 
-	env->CallVoidMethod(this->activity, this->s_updateSamwillMoney, money);
+	//env->CallVoidMethod(this->activity, this->s_updateSamwillMoney, money);
 }
 
 void CJavaWrapper::UpdateSpeedInfo(int speed, int fuel, int hp, int mileage, int engine, int light, int belt, int lock)
@@ -2181,7 +2183,7 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 		return;
 	}
 
-	s_CallLauncherActivity = env->GetMethodID(nvEventClass, "callLauncherActivity", "(I)V");
+	s_CallLauncherActivity = env->GetMethodID(nvEventClass, "callLauncherActivity", "()V");
 	s_GetClipboardText = env->GetMethodID(nvEventClass, "getClipboardText", "()[B");
 
 	s_ShowInputLayout = env->GetMethodID(nvEventClass, "showInputLayout", "()V");
@@ -2192,66 +2194,67 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 	s_MakeDialog = env->GetMethodID(nvEventClass, "showDialog", "(IILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
 	s_hideDialogWithoutReset = env->GetMethodID(nvEventClass, "hideDialogWithoutReset", "()V");
 
-	s_updateHudInfo = env->GetMethodID(nvEventClass, "updateHudInfo", "(IIIIIIIIII)V");
-	s_updateSamwill = env->GetMethodID(nvEventClass, "updateSamwill", "(IIIIIII)V");
-	s_updateSamwillMoney = env->GetMethodID(nvEventClass, "updateSamwillMoney", "(I)V");
-	s_updateRegisterSkinButtons = env->GetMethodID(nvEventClass, "updateRegisterSkinButtons", "(I)V");
-	s_updateSpeedometr = env->GetMethodID(nvEventClass, "UpdateSpeedInfo", "(IIIIIIII)V");
-	s_showLogin = env->GetMethodID(nvEventClass, "showLogin", "()V");
-    s_hideLogin = env->GetMethodID(nvEventClass, "hideLogin", "()V");
-	s_showLoginTwo = env->GetMethodID(nvEventClass, "showLoginTwo", "()V");
-    s_hideLoginTwo = env->GetMethodID(nvEventClass, "hideLoginTwo", "()V");
-	s_showRegister = env->GetMethodID(nvEventClass, "showRegister", "()V");
-    s_hideRegister = env->GetMethodID(nvEventClass, "hideRegister", "()V");
-	s_showRegisterTwo = env->GetMethodID(nvEventClass, "showRegisterTwo", "()V");
-    s_hideRegisterTwo = env->GetMethodID(nvEventClass, "hideRegisterTwo", "()V");
-	s_showRegisterSex = env->GetMethodID(nvEventClass, "showRegisterSex", "()V");
-    s_hideRegisterSex = env->GetMethodID(nvEventClass, "hideRegisterSex", "()V");
-	s_showRegisterSkin = env->GetMethodID(nvEventClass, "showRegisterSkin", "()V");
-    s_hideRegisterSkin = env->GetMethodID(nvEventClass, "hideRegisterSkin", "()V");
-	s_updateRegisterSex = env->GetMethodID(nvEventClass, "updateRegisterSex", "(I)V");
-	s_showSpawn = env->GetMethodID(nvEventClass, "showSpawn", "()V");
-    s_hideSpawn = env->GetMethodID(nvEventClass, "hideSpawn", "()V");
-	s_hideLoadingScreen = env->GetMethodID(nvEventClass, "hideLoadingScreen", "()V");
-	s_updateLoadingScreen = env->GetMethodID(nvEventClass, "updateLoadingScreen", "(I)V");
-	s_clearKilllistDuels = env->GetMethodID(nvEventClass, "clearKilllistDuels", "()V");
-	s_hideKilllistOne = env->GetMethodID(nvEventClass, "hideKilllistOne", "()V");
-	s_hideKilllistThree = env->GetMethodID(nvEventClass, "hideKilllistThree", "()V");
-	s_hideKilllistTwo = env->GetMethodID(nvEventClass, "hideKilllistTwo", "()V");
+	s_updateHudInfo = env->GetMethodID(nvEventClass, "UpdateHudInfo", "(IIIIIIII)V");
+	//s_updateSamwill = env->GetMethodID(nvEventClass, "updateSamwill", "(IIIIIII)V");
+	//s_updateSamwillMoney = env->GetMethodID(nvEventClass, "updateSamwillMoney", "(I)V");
+	//s_updateRegisterSkinButtons = env->GetMethodID(nvEventClass, "updateRegisterSkinButtons", "(I)V");
+	s_updateSpeedometr = env->GetMethodID(nvEventClass, "updateSpeedInfo", "(IIIIIIII)V");
+	s_showLogin = env->GetMethodID(nvEventClass, "showAuthorization", "(Ljava/lang/String;I)V");
+    s_hideLogin = env->GetMethodID(nvEventClass, "hideAuthorization", "()V");
+
+	// s_showLoginTwo = env->GetMethodID(nvEventClass, "showLoginTwo", "()V");
+    // s_hideLoginTwo = env->GetMethodID(nvEventClass, "hideLoginTwo", "()V");
+	//s_showRegister = env->GetMethodID(nvEventClass, "showRegistration", "()V");
+    s_hideRegister = env->GetMethodID(nvEventClass, "hideRegistration", "()V");
+	// s_showRegisterTwo = env->GetMethodID(nvEventClass, "showRegisterTwo", "()V");
+    // s_hideRegisterTwo = env->GetMethodID(nvEventClass, "hideRegisterTwo", "()V");
+	// s_showRegisterSex = env->GetMethodID(nvEventClass, "showRegisterSex", "()V");
+    // s_hideRegisterSex = env->GetMethodID(nvEventClass, "hideRegisterSex", "()V");
+	// s_showRegisterSkin = env->GetMethodID(nvEventClass, "showRegisterSkin", "()V");
+    // s_hideRegisterSkin = env->GetMethodID(nvEventClass, "hideRegisterSkin", "()V");
+	// s_updateRegisterSex = env->GetMethodID(nvEventClass, "updateRegisterSex", "(I)V");
+	s_showSpawn = env->GetMethodID(nvEventClass, "showChooseSpawn", "(IIIII)V");
+    s_hideSpawn = env->GetMethodID(nvEventClass, "hideChooseSpawn", "()V");
+	//s_hideLoadingScreen = env->GetMethodID(nvEventClass, "hideLoadingScreen", "()V");
+	//s_updateLoadingScreen = env->GetMethodID(nvEventClass, "updateLoadingScreen", "(I)V");
+	//s_clearKilllistDuels = env->GetMethodID(nvEventClass, "clearKilllistDuels", "()V");
+	//s_hideKilllistOne = env->GetMethodID(nvEventClass, "hideKilllistOne", "()V");
+	//s_hideKilllistThree = env->GetMethodID(nvEventClass, "hideKilllistThree", "()V");
+//	s_hideKilllistTwo = env->GetMethodID(nvEventClass, "hideKilllistTwo", "()V");
 
 	s_hideTargetNotify = env->GetMethodID(nvEventClass, "hideTargetNotify", "()V");
-	s_showNotification = env->GetMethodID(nvEventClass, "showNotification", "(ILjava/lang/String;)V");
+	s_showNotification = env->GetMethodID(nvEventClass, "showNotification", "(ILjava/lang/String;ILjava/lang/String;Ljava/lang/String;I)V");
 	s_hideNotification = env->GetMethodID(nvEventClass, "hideNotification", "()V");
-	s_updateNotification = env->GetMethodID(nvEventClass, "updateNotification", "(I)V");
+	//s_updateNotification = env->GetMethodID(nvEventClass, "updateNotification", "(I)V");
 
-	s_showUpdateBus = env->GetMethodID(nvEventClass, "showUpdateBus", "(I)V");
-	s_hideBus = env->GetMethodID(nvEventClass, "hideBus", "()V");
-
-
-	s_showCasinoRoullete = env->GetMethodID(nvEventClass, "showCasinoRoullete", "(I)V");
-	s_hideCasinoRoullete = env->GetMethodID(nvEventClass, "hideCasinoRoullete", "()V");
-
-	s_showCasinoChip = env->GetMethodID(nvEventClass, "showCasinoChip", "(II)V");
-	s_hideCasinoChip = env->GetMethodID(nvEventClass, "hideCasinoChip", "()V");
-
-	s_showUpdateCasino = env->GetMethodID(nvEventClass, "showUpdateCasino", "(IIIILjava/lang/String;ILjava/lang/String;ILjava/lang/String;ILjava/lang/String;ILjava/lang/String;I)V");
-	s_hideCasino = env->GetMethodID(nvEventClass, "hideCasino", "()V");
+	s_showUpdateBus = env->GetMethodID(nvEventClass, "showBusInfo", "(I)V");
+	s_hideBus = env->GetMethodID(nvEventClass, "hideBusInfo", "()V");
 
 
-	s_updateAutosalon = env->GetMethodID(nvEventClass, "updateAutosalon", "(Ljava/lang/String;IIII)V");
-	s_hideAutosalon = env->GetMethodID(nvEventClass, "hideAutosalon", "()V");
-	s_showAutosalon = env->GetMethodID(nvEventClass, "showAutosalon", "()V");
+	//s_showCasinoRoullete = env->GetMethodID(nvEventClass, "showCasinoRoullete", "(I)V");
+	//s_hideCasinoRoullete = env->GetMethodID(nvEventClass, "hideCasinoRoullete", "()V");
+
+	//s_showCasinoChip = env->GetMethodID(nvEventClass, "showCasinoChip", "(II)V");
+//	s_hideCasinoChip = env->GetMethodID(nvEventClass, "hideCasinoChip", "()V");
+
+//	s_showUpdateCasino = env->GetMethodID(nvEventClass, "showUpdateCasino", "(IIIILjava/lang/String;ILjava/lang/String;ILjava/lang/String;ILjava/lang/String;ILjava/lang/String;I)V");
+//	s_hideCasino = env->GetMethodID(nvEventClass, "hideCasino", "()V");
 
 
-	s_showZavod = env->GetMethodID(nvEventClass, "showZavod", "(I)V");
-	s_hideZavod = env->GetMethodID(nvEventClass, "hideZavod", "()V");
-	s_showMine = env->GetMethodID(nvEventClass, "showMine", "(I)V");
-	s_hideMine = env->GetMethodID(nvEventClass, "hideMine", "()V");
+	//s_updateAutosalon = env->GetMethodID(nvEventClass, "updateAutosalon", "(Ljava/lang/String;IIII)V");
+//	s_hideAutosalon = env->GetMethodID(nvEventClass, "hideAutosalon", "()V");
+	//s_showAutosalon = env->GetMethodID(nvEventClass, "showAutosalon", "()V");
+
+
+	//s_showZavod = env->GetMethodID(nvEventClass, "showZavod", "(I)V");
+	//s_hideZavod = env->GetMethodID(nvEventClass, "hideZavod", "()V");
+	//s_showMine = env->GetMethodID(nvEventClass, "showMine", "(I)V");
+	//s_hideMine = env->GetMethodID(nvEventClass, "hideMine", "()V");
 
     s_showHud = env->GetMethodID(nvEventClass, "showHud", "()V");
     s_hideHud = env->GetMethodID(nvEventClass, "hideHud", "()V");
-	s_showVoice = env->GetMethodID(nvEventClass, "showVoice", "()V");
-    s_hideVoice = env->GetMethodID(nvEventClass, "hideVoice", "()V");
+	//s_showVoice = env->GetMethodID(nvEventClass, "showVoice", "()V");
+   // s_hideVoice = env->GetMethodID(nvEventClass, "hideVoice", "()V");
 	s_showServer = env->GetMethodID(nvEventClass, "showServer", "(I)V");
     s_hideServer = env->GetMethodID(nvEventClass, "hideServer", "()V");
 	s_showGPS = env->GetMethodID(nvEventClass, "showGPS", "()V");
@@ -2260,24 +2263,24 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
     s_hideGreenZone = env->GetMethodID(nvEventClass, "hideGreenZone", "()V");
 	s_showSamwill = env->GetMethodID(nvEventClass, "showSamwill", "()V");
     s_hideSamwill = env->GetMethodID(nvEventClass, "hideSamwill", "()V");
-	s_showSamwillMoney = env->GetMethodID(nvEventClass, "showSamwillMoney", "()V");
-    s_hideSamwillMoney = env->GetMethodID(nvEventClass, "hideSamwillMoney", "()V");
+	//s_showSamwillMoney = env->GetMethodID(nvEventClass, "showSamwillMoney", "()V");
+  //  s_hideSamwillMoney = env->GetMethodID(nvEventClass, "hideSamwillMoney", "()V");
 	s_showMenu = env->GetMethodID(nvEventClass, "showMenu", "()V");
-    s_hideMenu = env->GetMethodID(nvEventClass, "hideMenu", "()V");
-	s_showSpeedometr = env->GetMethodID(nvEventClass, "showSpeedometr", "()V");
-    s_hideSpeedometr = env->GetMethodID(nvEventClass, "hideSpeedometr", "()V");
-	s_showKilllist = env->GetMethodID(nvEventClass, "showKilllist", "()V");
-    s_hideKilllist = env->GetMethodID(nvEventClass, "hideKilllist", "()V");
-	s_showKilllistMulti = env->GetMethodID(nvEventClass, "showKilllistMulti", "()V");
-    s_hideKilllistMulti = env->GetMethodID(nvEventClass, "hideKilllistMulti", "()V");
-	s_showKilllisDuels = env->GetMethodID(nvEventClass, "showKilllisDuels", "()V");
-    s_hideKilllistDuels = env->GetMethodID(nvEventClass, "hideKilllistDuels", "()V");
-	s_updateKilllist = env->GetMethodID(nvEventClass, "updateKilllist", "(IIII)V");
-	s_updateTargetNotify = env->GetMethodID(nvEventClass, "updateTargetNotify", "(ILjava/lang/String;)V");
-	s_updateKilllistTop = env->GetMethodID(nvEventClass, "updateKilllistTop", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
-	s_updateKilllistOne = env->GetMethodID(nvEventClass, "updateKilllistOne", "(IILjava/lang/String;Ljava/lang/String;)V");
-	s_updateKilllistTwo = env->GetMethodID(nvEventClass, "updateKilllistTwo", "(IILjava/lang/String;Ljava/lang/String;)V");
-	s_updateKilllistThree = env->GetMethodID(nvEventClass, "updateKilllistThree", "(IILjava/lang/String;Ljava/lang/String;)V");
+   // s_hideMenu = env->GetMethodID(nvEventClass, "hideMenu", "()V");
+	//s_showSpeedometr = env->GetMethodID(nvEventClass, "showSpeedometr", "()V");
+    //s_hideSpeedometr = env->GetMethodID(nvEventClass, "hideSpeedometr", "()V");
+	//s_showKilllist = env->GetMethodID(nvEventClass, "showKilllist", "()V");
+    //s_hideKilllist = env->GetMethodID(nvEventClass, "hideKilllist", "()V");
+	//s_showKilllistMulti = env->GetMethodID(nvEventClass, "showKilllistMulti", "()V");
+    //s_hideKilllistMulti = env->GetMethodID(nvEventClass, "hideKilllistMulti", "()V");
+	//s_showKilllisDuels = env->GetMethodID(nvEventClass, "showKilllisDuels", "()V");
+    //s_hideKilllistDuels = env->GetMethodID(nvEventClass, "hideKilllistDuels", "()V");
+	//s_updateKilllist = env->GetMethodID(nvEventClass, "updateKilllist", "(IIII)V");
+	//s_updateTargetNotify = env->GetMethodID(nvEventClass, "updateTargetNotify", "(ILjava/lang/String;)V");
+	//s_updateKilllistTop = env->GetMethodID(nvEventClass, "updateKilllistTop", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
+	//s_updateKilllistOne = env->GetMethodID(nvEventClass, "updateKilllistOne", "(IILjava/lang/String;Ljava/lang/String;)V");
+	//s_updateKilllistTwo = env->GetMethodID(nvEventClass, "updateKilllistTwo", "(IILjava/lang/String;Ljava/lang/String;)V");
+	//s_updateKilllistThree = env->GetMethodID(nvEventClass, "updateKilllistThree", "(IILjava/lang/String;Ljava/lang/String;)V");
 
 	s_setPauseState = env->GetMethodID(nvEventClass, "setPauseState", "(Z)V");
 
