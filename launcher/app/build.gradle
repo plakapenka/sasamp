@@ -29,6 +29,16 @@ android {
         ndk {
             abiFilters 'armeabi-v7a'
         }
+        externalNativeBuild {
+            ndkBuild {
+                cppFlags ''
+            }
+        }
+    }
+    externalNativeBuild {
+        ndkBuild {
+            path file('../../cpp/jni/Android.mk')
+        }
     }
 }
 

@@ -32,7 +32,7 @@ CKeyBoard::CKeyBoard()
 	static const ImWchar icon_ranges[] = {ICON_MIN_FA, ICON_MAX_FA, 0};
 	fonticon = io.Fonts->AddFontFromMemoryTTF(iconfont, sizeof(iconfont), 20.0f, &config, icon_ranges);
 
-	chatfuncfont = pGUI->LoadFont("visby-cf-bold.ttf", 22);
+	chatfuncfont = pGUI->LoadFont("visby-round-cf-extra-bold.ttf", 22);
 
 	m_fChatPosX = pGUI->ScaleX(pSettings->GetReadOnly().fChatPosX);
 	m_fChatPosY = pGUI->ScaleY(pSettings->GetReadOnly().fChatPosY);

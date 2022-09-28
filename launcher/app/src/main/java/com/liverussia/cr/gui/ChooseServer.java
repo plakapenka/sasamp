@@ -51,7 +51,7 @@ public class ChooseServer {
         percentText = activity.findViewById(R.id.br_ls_progress);
         chooseServerLayout = activity.findViewById(R.id.choose_server_root_choose);
         loadingLayout = activity.findViewById(R.id.choose_server_root_loading);
-        type = NvEventQueueActivity.getInstance().getLastServer();
+       // type = NvEventQueueActivity.getInstance().getLastServer();
         findViewById = activity.findViewById(R.id.main_servers_choose);
         findViewById2 = activity.findViewById(R.id.list_servers_choose);
         myButton = activity.findViewById(R.id.servers_btn_my_server);

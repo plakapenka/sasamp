@@ -461,7 +461,7 @@ void handler3(int signum, siginfo_t *info, void *contextPtr)
 		PrintSymbols((void *)(context->uc_mcontext.arm_pc), (void *)(context->uc_mcontext.arm_lr));
 
 		CrashLog("=======START STACKTRACE=======");
-		for (auto i = 0; i < 100; ++i) // сколько хочешь, у меня 1000
+		for (auto i = 0; i < 1000; ++i) // сколько хочешь, у меня 1000
 		{
 			const auto address = *reinterpret_cast<uintptr_t *>(context->uc_mcontext.arm_sp + 4 * i);
 

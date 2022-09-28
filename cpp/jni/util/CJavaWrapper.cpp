@@ -2181,7 +2181,7 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 		return;
 	}
 
-	//s_CallLauncherActivity = env->GetMethodID(nvEventClass, "callLauncherActivity", "(I)V");
+	s_CallLauncherActivity = env->GetMethodID(nvEventClass, "callLauncherActivity", "(I)V");
 	s_GetClipboardText = env->GetMethodID(nvEventClass, "getClipboardText", "()[B");
 
 	s_ShowInputLayout = env->GetMethodID(nvEventClass, "showInputLayout", "()V");

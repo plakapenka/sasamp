@@ -248,7 +248,7 @@ public abstract class NvEventQueueActivity
     // 2 - Сервер
     public native void sendRPC(int type, byte[] str, int action);
 
-    public native int getLastServer();
+    //public native int getLastServer();
 
     public String getHudElementColor(int id)
     {
