@@ -1566,7 +1566,7 @@ public abstract class NvEventQueueActivity
         return instance;
     }
 
-    public native void sendDialogResponse(int i, int i2, int i3, byte[] str);
+    public native void sendDialogResponse(int i, int i2, int i3, String str);
 
     public void updateHudInfo(int health, int armour, int hunger, int weaponid, int ammo, int ammoclip, int money, int wanted) { runOnUiThread(() -> { mHudManager.UpdateHudInfo(health, armour, hunger, weaponid, ammo, ammoclip, money, wanted); }); }
 

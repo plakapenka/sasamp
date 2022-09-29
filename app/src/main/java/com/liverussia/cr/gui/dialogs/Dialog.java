@@ -142,13 +142,11 @@ public class Dialog {
             this.mCurrentInputText = this.mInput.getText().toString();
         }
         ((InputMethodManager) NvEventQueueActivity.getInstance().getSystemService("input_method")).hideSoftInputFromWindow(this.mInput.getWindowToken(), 0);
-        try {
-            NvEventQueueActivity.getInstance().sendDialogResponse(btnId, this.mCurrentDialogId, this.mCurrentListItem, this.mCurrentInputText.getBytes("windows-1251"));
-            Utils.HideLayout(this.mMainLayout, true);
-        }
-        catch (UnsupportedEncodingException e){
-            e.printStackTrace();
-        }
+
+        NvEventQueueActivity.getInstance().sendDialogResponse(btnId, this.mCurrentDialogId, this.mCurrentListItem, this.mCurrentInputText);
+        Utils.HideLayout(this.mMainLayout, true);
+
+
     }
 
     private void loadTabList(String content) {
