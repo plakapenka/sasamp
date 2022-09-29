@@ -2,7 +2,7 @@
 #include "../util/armhook.h"
 #include "common.h"
 
-#include "..//..//santrope-tea-gtasa/encryption/common.h"
+#include "..//santrope-tea-gtasa/encryption/common.h"
 
 #define UNVERIFIED_FLAG0	0x00328212
 #define VERIFIED_FLAG0	OBFUSCATE_DATA(66)

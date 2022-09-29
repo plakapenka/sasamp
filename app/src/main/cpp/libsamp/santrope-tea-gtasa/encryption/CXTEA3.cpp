@@ -1,7 +1,7 @@
 #include "CXTEA3.h"
 
 #ifndef _MSC_VER
-#include "..//..//jni/cryptors/XTEA3_result.h"
+#include "cryptors/XTEA3_result.h"
 #endif
 
 static uint32_t rol(uint32_t base, uint32_t shift)

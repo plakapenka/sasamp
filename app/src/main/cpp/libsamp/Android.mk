@@ -18,8 +18,8 @@ FILE_LIST += $(wildcard $(LOCAL_PATH)/game/RW/RenderWare.cpp)
 FILE_LIST += $(wildcard $(LOCAL_PATH)/gui/*.cpp)
 FILE_LIST += $(wildcard $(LOCAL_PATH)/cryptors/*.cpp)
 FILE_LIST += $(wildcard $(LOCAL_PATH)/graphics/*.cpp)
-FILE_LIST += $(wildcard $(LOCAL_PATH)/../santrope-tea-gtasa/encryption/*.cpp)
-FILE_LIST += $(wildcard $(LOCAL_PATH)/../santrope-tea-gtasa/encryption/*.c)
+FILE_LIST += $(wildcard $(LOCAL_PATH)/santrope-tea-gtasa/encryption/*.cpp)
+FILE_LIST += $(wildcard $(LOCAL_PATH)/santrope-tea-gtasa/encryption/*.c)
 
 # gtasa
 FILE_LIST += $(wildcard $(LOCAL_PATH)/gtasa/*.cpp)

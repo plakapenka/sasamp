@@ -4,8 +4,8 @@
 #include "game.h"
 #include "../net/netgame.h"
 #include "../gui/gui.h"
-#include "..///..//santrope-tea-gtasa/encryption/CTinyEncrypt.h"
-#include "..///..//santrope-tea-gtasa/encryption/encrypt.h"
+#include "santrope-tea-gtasa/encryption/CTinyEncrypt.h"
+#include "santrope-tea-gtasa/encryption/encrypt.h"
 #include "../CAudioStream.h"
 #include "../chatwindow.h"
 #include "../util/patch.h"
@@ -28,7 +28,7 @@ extern CSettings *pSettings;
 
 extern "C"
 {
-#include "..//..//santrope-tea-gtasa/encryption/aes.h"
+#include "..//santrope-tea-gtasa/encryption/aes.h"
 }
 
 char (*CStreaming__ConvertBufferToObject)(int, int, int);
