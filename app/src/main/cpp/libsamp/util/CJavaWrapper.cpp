@@ -224,12 +224,9 @@ extern "C"
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_sendDialogResponse(JNIEnv* pEnv, jobject thiz, jint i3, jint i, jint i2, jstring str)
 	{
 		const char *inputText = pEnv->GetStringUTFChars(str, nullptr);
-		char inputtext1[2048];
-		// cp1251_to_utf8(inputtext1, inputText, 2048);
-		convertUtf8ToCp1251(inputText, inputtext1);
 
 		if(pNetGame) {
-			pNetGame->SendDialogResponse(i, i3, i2, (char*)inputtext1);
+			pNetGame->SendDialogResponse(i, i3, i2, (char*)inputText);
 			pGame->FindPlayerPed()->TogglePlayerControllable(true);
 			g_pJavaWrapper->ShowHud();
 			g_pJavaWrapper->ShowServer(pSettings->GetReadOnly().szServer);
@@ -237,7 +234,7 @@ extern "C"
 
 		g_pJavaWrapper->isDialogActive = false;
 
-		Log("sendDialogResponse: inputtext1 - %s, inputText - %s", inputtext1, inputText);
+	//	Log("sendDialogResponse: inputtext1 - %s, inputText - %s", inputtext1, inputText);
 
 		pEnv->ReleaseStringUTFChars(str, inputText);
 	}
