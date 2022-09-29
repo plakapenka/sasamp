@@ -37,7 +37,7 @@ android {
     }
     externalNativeBuild {
         ndkBuild {
-            path file('../../cpp/jni/Android.mk')
+            path file('src/main/cpp/libsamp/Android.mk')
         }
     }
 }

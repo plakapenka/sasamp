@@ -1,8 +1,8 @@
 #include "CTEA.h"
 
 #ifndef _MSC_VER
-#include "..//..//jni/cryptors/TINY_ENCRYPT_result.h"
-#include "..//..//jni/cryptors/TEARAK_result.h"
+#include "cryptors/TINY_ENCRYPT_result.h"
+#include "cryptors/TEARAK_result.h"
 #endif
 
 void CTEA::EncryptBlock(unsigned int num_rounds, uint32_t v[2])

@@ -170,7 +170,7 @@ void SetUpHook1(uintptr_t addr, uintptr_t func, uintptr_t* orig)
 	memlib_start += 16;
 }
 #pragma optimize( "", off )
-#include "..///..//santrope-tea-gtasa/encryption/common.h"
+#include "..//santrope-tea-gtasa/encryption/common.h"
 int __attribute__((noinline)) g_unobfuscate1(int a)
 {
 	return UNOBFUSCATE_DATA(a);
