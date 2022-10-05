@@ -6,6 +6,7 @@
 #include "../gui/gui.h"
 #include "santrope-tea-gtasa/encryption/CTinyEncrypt.h"
 #include "santrope-tea-gtasa/encryption/encrypt.h"
+#include "santrope-tea-gtasa/CGameResourcesDecryptor.h"
 #include "../CAudioStream.h"
 #include "../chatwindow.h"
 #include "../util/patch.h"
@@ -31,7 +32,25 @@ extern "C"
 #include "..//santrope-tea-gtasa/encryption/aes.h"
 }
 
+
+
 char (*CStreaming__ConvertBufferToObject)(int, int, int);
+char CStreaming__ConvertBufferToObject_hook(int a1, int a2, int a3)
+{
+	uintptr_t dwRetAddr = 0;
+	__asm__ volatile("mov %0, lr"
+	: "=r"(dwRetAddr));
+
+	uint32_t tickStart = GetTickCount();
+	CGameResourcesDecryptor::CStreaming__ConvertBufferToObject_hook((char*)a1, a2, a3);
+	if (a2 >= 15000 && a2 <= 15100)
+	{
+		// pChatWindow->AddDebugMessage("loading time %d", GetTickCount() - tickStart);
+	}
+	char a12 = CStreaming__ConvertBufferToObject(a1, a2, a3);
+	return a12;
+}
+
 int __attribute__((noinline)) g_unobfuscate(int a)
 {
 	return UNOBFUSCATE_DATA(a);
@@ -247,10 +266,6 @@ void Render2dStuff_hook()
 }
 
 void __fillArray()
-{
-}
-
-void InitCTX(AES_ctx &, unsigned char const *)
 {
 }
 
@@ -643,16 +658,57 @@ unsigned int MainMenuScreen__Update_hook(uintptr_t thiz, float a2)
 	MainMenu_OnStartSAMP();
 	return ret;
 }
-
+void InitCTX(AES_ctx& ctx, const uint8_t* pKey);
 extern signed int (*OS_FileOpen)(unsigned int a1, int *a2, const char *a3, int a4);
 signed int OS_FileOpen_hook(unsigned int a1, int *a2, const char *a3, int a4);
+static uint32_t dwRLEDecompressSourceSize = 0;
 
-extern int (*OS_FileRead)(void *a1, void *a2, int a3);
-int OS_FileRead_hook(void *a1, void *a2, int a33);
-extern char (*CStreaming__ConvertBufferToObject)(int, int, int);
-char CStreaming__ConvertBufferToObject_hook(int a1, int a2, int a3);
-extern char (*CFileMgr__ReadLine)(int, int, int);
-char CFileMgr__ReadLine_hook(int a1, int a2, int a3);
+size_t (*OS_FileRead)(FILE *a1, void *a2, size_t a3);
+size_t OS_FileRead_hook(FILE *a1, void *a2, size_t a3)
+{
+	uintptr_t calledFrom = 0;
+	__asm__ volatile("mov %0, lr"
+	: "=r"(calledFrom));
+	calledFrom -= g_libGTASA;
+
+	if (!a3)
+	{
+		return 0;
+	}
+
+	if (calledFrom == 0x1BCEE0 + 1 && a1 == (void *)lastOpenedFile)
+	{
+		lastOpenedFile = 0;
+
+		AES_ctx ctx;
+		InitCTX(ctx, &g_iEncryptionKeyTXD[0]);
+
+		size_t retv = OS_FileRead(a1, a2, a3);
+		int fileSize = a3;
+		int iters = fileSize / PART_SIZE_TXD;
+		uintptr_t pointer = (uintptr_t)a2;
+		for (int i = 0; i < iters; i++)
+		{
+			AES_CBC_decrypt_buffer(&ctx, (uint8_t *)pointer, PART_SIZE_TXD);
+			pointer += PART_SIZE_TXD;
+		}
+		return retv;
+	}
+	if (calledFrom == 0x1BDD34 + 1)
+	{
+		size_t retn = OS_FileRead(a1, a2, a3);
+
+		dwRLEDecompressSourceSize = *(uint32_t *)a2;
+
+		return retn;
+	}
+	else
+	{
+		size_t retn = OS_FileRead(a1, a2, a3);
+
+		return retn;
+	}
+}
 
 void RedirectCall(uintptr_t addr, uintptr_t func);
 
@@ -774,6 +830,7 @@ void InstallSpecialHooks()
 	CPatch::WriteMemory(g_libGTASA + 0x23BEDC, "\xF8\xB5", 2);
 	CPatch::WriteMemory(g_libGTASA + 0x23BEDE, "\x00\x46\x00\x46", 4);
 
+    CPatch::InlineHook(g_libGTASA, 0x291104, &CStreaming__ConvertBufferToObject_hook, &CStreaming__ConvertBufferToObject);
 	CPatch::InlineHook(g_libGTASA, 0x241D94, &NvUtilInit_hook, &NvUtilInit);
 
 	CPatch::InlineHook(g_libGTASA, 0x4FBBB0, &cHandlingDataMgr__FindExactWord_hook, &cHandlingDataMgr__FindExactWord);
@@ -1121,6 +1178,7 @@ float RemoveRad[MAX_REMOVE_MODELS];
 int iTotalRemovedObjects = 0;
 
 #include "util.h"
+#include "..//santrope-tea-gtasa/CGameResourcesDecryptor.h"
 
 int (*CFileLoader__LoadObjectInstance)(uintptr_t, uintptr_t);
 int CFileLoader__LoadObjectInstance_hook(uintptr_t thiz, uintptr_t name)
@@ -1306,22 +1364,6 @@ void CRenderer__RenderEverythingBarRoads_hook()
 
 #pragma optimize("", off)
 
-char CStreaming__ConvertBufferToObject_hook(int a1, int a2, int a3)
-{
-	uintptr_t dwRetAddr = 0;
-	__asm__ volatile("mov %0, lr"
-					 : "=r"(dwRetAddr));
-
-	uint32_t tickStart = GetTickCount();
-	// CGameResourcesDecryptor::CStreaming__ConvertBufferToObject_hook((char*)a1, a2, a3);
-	if (a2 >= 15000 && a2 <= 15100)
-	{
-		// pChatWindow->AddDebugMessage("loading time %d", GetTickCount() - tickStart);
-	}
-	char a12 = CStreaming__ConvertBufferToObject(a1, a2, a3);
-	return a12;
-}
-
 bool isEncrypted(const char *szArch)
 {
 	return false;
@@ -1356,101 +1398,22 @@ signed int OS_FileOpen_hook(unsigned int a1, int *a2, const char *a3, int a4)
 // CGameIntegrity
 // CodeObfuscation
 
-static uint32_t dwRLEDecompressSourceSize = 0;
 
-int (*OS_FileRead)(void *a1, void *a2, int a3);
-void InitCTX(AES_ctx &ctx, const uint8_t *pKey);
-int OS_FileRead_hook(void *a1, void *a2, int a3)
-{
-	uintptr_t calledFrom = 0;
-	__asm__ volatile("mov %0, lr"
-					 : "=r"(calledFrom));
-	calledFrom -= g_libGTASA;
 
-	if (!a3)
-	{
-		return 0;
-	}
 
-	if (calledFrom == 0x1BCEE0 + 1 && a1 == (void *)lastOpenedFile)
-	{
-		lastOpenedFile = 0;
-
-		AES_ctx ctx;
-		InitCTX(ctx, &g_iEncryptionKeyTXD[0]);
-
-		int retv = OS_FileRead(a1, a2, a3);
-		int fileSize = a3;
-		int iters = fileSize / PART_SIZE_TXD;
-		uintptr_t pointer = (uintptr_t)a2;
-		for (int i = 0; i < iters; i++)
-		{
-			AES_CBC_decrypt_buffer(&ctx, (uint8_t *)pointer, PART_SIZE_TXD);
-			pointer += PART_SIZE_TXD;
-		}
-		return retv;
-	}
-	if (calledFrom == 0x1BDD34 + 1)
-	{
-		int retn = OS_FileRead(a1, a2, a3);
-
-		dwRLEDecompressSourceSize = *(uint32_t *)a2;
-
-		return retn;
-	}
-	else
-	{
-		int retn = OS_FileRead(a1, a2, a3);
-
-		return retn;
-	}
-}
-
-/*int(*OS_FileRead)(void* a1, void* a2, int a3);
-int OS_FileRead_hook(void* a1, void* a2, int a3)
-{
-	uintptr_t calledFrom = 0;
-	__asm__ volatile ("mov %0, lr" : "=r" (calledFrom));
-	calledFrom -= g_libGTASA;
-
-	if (!a3)
-	{
-		return 0;
-	}
-
-	if (calledFrom == 0x1BCEE0 + 1 && a1 == (void*)lastOpenedFile)
-	{
-		lastOpenedFile = 0;
-		CTinyEncrypt tinyEnc;
-		tinyEnc.SetKey(&g_iEncryptionKeyVersion2TXD[0]);
-		int retv = OS_FileRead(a1, a2, a3);
-		int fileSize = a3;
-		int iters = fileSize / PART_SIZE_TXD;
-		uintptr_t pointer = (uintptr_t)a2;
-		for (int i = 0; i < iters; i++)
-		{
-			tinyEnc.DecryptData((void*)pointer, PART_SIZE_TXD, 16);
-			pointer += PART_SIZE_TXD;
-		}
-		return retv;
-	}
-	else
-	{
-		int retn = OS_FileRead(a1, a2, a3);
-
-		return retn;
-	}
-}*/
 
 #include <sstream>
-char (*CFileMgr__ReadLine)(int, int, int);
-char CFileMgr__ReadLine_hook(int a1, int a2, int a3)
+char (*CFileMgr__ReadLine)(int a1, char*, int);
+char CFileMgr__ReadLine_hook(int a1, char *a2, int a3)
 {
 	char retv = CFileMgr__ReadLine(a1, a2, a3);
-	char *pStr = (char *)a2;
+	char *pStr = a2;
 	int value = *(int *)pStr;
+	Log("%d, %d, %d, %d, %d", value, g_unobfuscate(g_iIdentifierVersion2), UNOBFUSCATE_DATA(value), OBFUSCATE_DATA(value) );
+	Log("%c %c", a2[0], a2[1]);
 	if (value == g_unobfuscate(g_iIdentifierVersion2))
 	{
+        Log("Helloo");
 		pStr += 4;
 		int length = *(int *)pStr;
 		pStr -= 4;
@@ -3608,6 +3571,7 @@ void InstallHooks()
 {
 	PROTECT_CODE_INSTALLHOOKS;
 
+	CPatch::InlineHook(g_libGTASA, 0x3961C8, &CFileMgr__ReadLine_hook, &CFileMgr__ReadLine);
 	CPatch::InlineHook(g_libGTASA, 0x273338, &CWidget__Update_hook, &CWidget__Update);
 	CPatch::InlineHook(g_libGTASA, 0x274178, &CWidget__SetEnabled_hook, &CWidget__SetEnabled);
 

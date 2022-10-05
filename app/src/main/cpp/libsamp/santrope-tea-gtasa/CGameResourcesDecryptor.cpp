@@ -9,24 +9,7 @@ extern "C"
 {
 #include "..//santrope-tea-gtasa/encryption/aes.h"
 }
-/*
-static void InitCTX(AES_ctx& ctx, const uint8_t* pKey)
-{
-	uint8_t key[16];
-	memcpy(&key[0], &pKey[0], 16);
-	for (int i = 0; i < 16; i++)
-	{
-		key[i] = XOR_UNOBFUSCATE(key[i]);
-	}
-	uint8_t iv[16];
-	memcpy(&iv[0], &g_iIV, 16);
-	for (int i = 0; i < 16; i++)
-	{
-		iv[i] = XOR_UNOBFUSCATE(iv[i]);
-	}
-	AES_init_ctx_iv(&ctx, &key[0], &iv[0]);
-}
-*/
+
 void CGameResourcesDecryptor::DecryptBinaryStreamVersion2(char* pStream)
 {
 	CTinyEncrypt tinyEnc;
@@ -50,6 +33,23 @@ void CGameResourcesDecryptor::DecryptBinaryStreamVersion2(char* pStream)
 	pStream -= 12;
 }
 
+void InitCTX(AES_ctx& ctx, const uint8_t* pKey)
+{
+	uint8_t key[16];
+	memcpy(&key[0], &pKey[0], 16);
+	for (int i = 0; i < 16; i++)
+	{
+		key[i] = XOR_UNOBFUSCATE(key[i]);
+	}
+	uint8_t iv[16];
+	memcpy(&iv[0], &g_iIV, 16);
+	for (int i = 0; i < 16; i++)
+	{
+		iv[i] = XOR_UNOBFUSCATE(iv[i]);
+	}
+	AES_init_ctx_iv(&ctx, &key[0], &iv[0]);
+}
+
 void CGameResourcesDecryptor::DecryptBinaryStreamVersion3(char* pStream)
 {
 
@@ -58,7 +58,7 @@ void CGameResourcesDecryptor::DecryptBinaryStreamVersion3(char* pStream)
 	AES_ctx ctx;
 
 
-	//InitCTX(ctx, &g_iEncryptionKey[0]);
+	InitCTX(ctx, &g_iEncryptionKey[0]);
 
 	uint8_t* pBufferChunk = (uint8_t*)pStream;
 	

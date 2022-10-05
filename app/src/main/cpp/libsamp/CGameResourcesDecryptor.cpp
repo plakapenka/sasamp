@@ -1,4 +1,4 @@
-#include "CGameResourcesDecryptor.h"
+#include "..//santrope-tea-gtasa/CGameResourcesDecryptor.h"
 #include "main.h"
 #include "game/game.h"
 
@@ -12,13 +12,6 @@ extern "C"
 {
 #include "..//santrope-tea-gtasa/encryption/aes.h"
 }
-
-#include "cryptors/GAME_RESOURCES1_result.h"
-#include "cryptors/GAME_RESOURCES2_result.h"
-#include "cryptors/GAME_RESOURCES3_result.h"
-
-
-/*
 void InitCTX(AES_ctx& ctx, const uint8_t* pKey)
 {
 	uint8_t key[16];
@@ -35,7 +28,10 @@ void InitCTX(AES_ctx& ctx, const uint8_t* pKey)
 	}
 	AES_init_ctx_iv(&ctx, &key[0], &iv[0]);
 }
-*/
+#include "cryptors/GAME_RESOURCES1_result.h"
+#include "cryptors/GAME_RESOURCES2_result.h"
+#include "cryptors/GAME_RESOURCES3_result.h"
+
 void CGameResourcesDecryptor::DecryptBinaryStreamVersion2(char* pStream)
 {
 	CTinyEncrypt tinyEnc;
@@ -70,7 +66,7 @@ void CGameResourcesDecryptor::DecryptBinaryStreamVersion3(char* pStream)
 	AES_ctx ctx;
 
 
-	//InitCTX(ctx, &g_iEncryptionKey[0]);
+	InitCTX(ctx, &g_iEncryptionKey[0]);
 
 	uint8_t* pBufferChunk = (uint8_t*)pStream;
 	uint32_t tickStart = GetTickCount();

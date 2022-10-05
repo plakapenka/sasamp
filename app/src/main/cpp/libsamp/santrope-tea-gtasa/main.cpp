@@ -1,10 +1,12 @@
 #define _CRT_SECURE_NO_WARNINGS
+#define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
+
 #include <iostream>
 #include <fstream>
 #include <cmath>
 #include <vector>
 #include <string>
-#include <filesystem>
+#include <experimental/filesystem>
 #include <Windows.h>
 #include "encryption/common.h"
 #include "encryption/encrypt.h"
@@ -13,6 +15,10 @@
 extern "C"
 {
 #include "encryption/aes.h"
+}
+
+namespace std {
+	namespace filesystem = experimental::filesystem::v1;
 }
 
 std::vector<std::string> get_filenames(std::experimental::filesystem::path path)
@@ -74,24 +80,7 @@ inline std::ostream& white(std::ostream& s)
 		FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 	return s;
 }
-/*
-void InitCTX(AES_ctx& ctx, const uint8_t* pKey)
-{
-	uint8_t key[16];
-	memcpy(&key[0], &pKey[0], 16);
-	for (int i = 0; i < 16; i++)
-	{
-		key[i] = XOR_UNOBFUSCATE(key[i]);
-	}
-	uint8_t iv[16];
-	memcpy(&iv[0], &g_iIV, 16);
-	for (int i = 0; i < 16; i++)
-	{
-		iv[i] = XOR_UNOBFUSCATE(iv[i]);
-	}
-	AES_init_ctx_iv(&ctx, &key[0], &iv[0]);
-}
-*/
+
 void EncryptBinaryStreamVersion5(std::vector<std::string>& fileNames)
 {
 	for (size_t i = 0; i < fileNames.size(); i++)
@@ -204,7 +193,7 @@ void EncryptTextFileVersion2(std::vector<std::string>& fileNames)
 		std::cout << "[OK] Encrypted string " << fileNames[i] << std::endl;
 	}
 }
-
+void InitCTX(AES_ctx& ctx, const uint8_t* pKey);
 void EncryptTextureDatabaseVersion1(std::vector<std::string>& fileNames)
 {
 	for (size_t i = 0; i < fileNames.size(); i++)
@@ -223,7 +212,7 @@ void EncryptTextureDatabaseVersion1(std::vector<std::string>& fileNames)
 
 		AES_ctx ctx;
 
-		//InitCTX(ctx, &g_iEncryptionKeyTXD[0]);
+		InitCTX(ctx, &g_iEncryptionKeyTXD[0]);
 
 		uint8_t pBufferChunk[PART_SIZE_TXD];
 

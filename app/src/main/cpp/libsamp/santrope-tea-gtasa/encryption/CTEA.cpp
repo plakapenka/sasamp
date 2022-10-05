@@ -76,7 +76,7 @@ void CTEA::SetKey(const uint32_t* pKey)
 {
 	for (int i = 0; i < 4; i++)
 	{
-		m_aKey[i] = UNOBFUSCATE_DATA(pKey[i]);
+		m_aKey[i] = OBFUSCATE_DATA(pKey[i]);
 	}
 }
 
