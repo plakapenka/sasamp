@@ -1422,31 +1422,20 @@ void CNetGame::Packet_CustomRPC(Packet *p)
 		bs.Read(bVinyls[1]);
 		bs.Read(bPlateType);
 
-		if (bPlateType == 1 || bPlateType == 4 || bPlateType == 5 || bPlateType == 6 || bPlateType == 7)
+		bs.Read(bLen);
+		if (bLen >= sizeof(szText) - 1)
 		{
-			bs.Read(bLen);
-			if (bLen >= sizeof(szText) - 1)
-			{
-				return;
-			}
-			bs.Read(&szText[0], bLen);
+			return;
+		}
+		bs.Read(&szText[0], bLen);
 
-			bs.Read(bLen);
-			if (bLen >= sizeof(szRegion) - 1)
-			{
-				return;
-			}
-			bs.Read(&szRegion[0], bLen);
-		}
-		else if (bPlateType == 2 || bPlateType == 3)
+		bs.Read(bLen);
+		if (bLen >= sizeof(szRegion) - 1)
 		{
-			bs.Read(bLen);
-			if (bLen >= sizeof(szText) - 1)
-			{
-				return;
-			}
-			bs.Read(&szText[0], bLen);
+			return;
 		}
+		bs.Read(&szRegion[0], bLen);
+		
 
 		uint8_t bShadowColor[3];
 		uint8_t bShadowSizeX, bShadowSizeY;
