@@ -36,6 +36,8 @@ CPlayerPed::CPlayerPed()
 	m_bHaveBulletData = false;
 
 	m_iCameraState = 0;
+	m_iPissingState = false;
+	m_dwPissParticlesHandle = 0;
 }
 
 CPlayerPed::CPlayerPed(uint8_t bytePlayerNumber, int iSkin, float fX, float fY, float fZ, float fRotation)
@@ -48,6 +50,8 @@ CPlayerPed::CPlayerPed(uint8_t bytePlayerNumber, int iSkin, float fX, float fY, 
 	m_pPed = nullptr;
 	m_dwGTAId = 0;
 	m_dwArrow = 0;
+	m_iPissingState = false;
+	m_dwPissParticlesHandle = 0;
 
 	m_bLockControllable = false;
 
@@ -1033,41 +1037,36 @@ void CPlayerPed::ClearAllTasks()
 }
 void CPlayerPed::SetPlayerSpecialAction(int iAction)
 {
-	if (iAction == -1)
+	if (iAction == SPECIAL_ACTION_NONE)
 	{
 		ClearAllTasks();
 
 		MATRIX4X4 mat;
 		GetMatrix(&mat);
 		TeleportTo(mat.pos.X, mat.pos.Y, mat.pos.Z);
-
-		return;
-	}
-	if (iAction == 0)
-	{
-		ClearAllTasks();
-
-		MATRIX4X4 mat;
-		GetMatrix(&mat);
-		TeleportTo(mat.pos.X, mat.pos.Y, mat.pos.Z);
-		//pChatWindow->AddDebugMessage("RESET ACTION");
-		m_iSpecialAction = -1;
-		return;
 	}
 
 	m_iSpecialAction = iAction;
 }
 void CPlayerPed::ProcessSpecialAction()
 {
-	if (m_iSpecialAction == 0 || m_iSpecialAction == -1)
+	if (m_iSpecialAction == SPECIAL_ACTION_NONE )
 	{
 		return;
+	}
+	if(!IsPissing() && m_iSpecialAction == SPECIAL_ACTION_PISSING) {
+		StartPissing();
+	}
+
+	// pissing:stop
+	if(IsPissing() && m_iSpecialAction != SPECIAL_ACTION_PISSING) {
+		StopPissing();
 	}
 	if (m_iSpecialAction == SPECIAL_ACTION_CARRY)
 	{
 		if (IsInVehicle())
 		{
-			SetPlayerSpecialAction(-1);
+			SetPlayerSpecialAction(0);
 			return;
 		}
 		
@@ -1672,6 +1671,8 @@ void CPlayerPed::ApplyAnimation( char *szAnimName, char *szAnimFile, float fT,
 	if(!m_pPed) return;
 	if(!GamePool_Ped_GetAt(m_dwGTAId)) return;
 
+	if(IsPissing()) StopPissing();
+
 	if(!strcasecmp(szAnimFile,"SEX")) return;
 
 	if(!pGame->IsAnimationLoaded(szAnimFile))
@@ -2022,4 +2023,48 @@ void CPlayerPed::SetCameraOnPlayerPed(uint32_t m_dwGTAId)
 {
 	ScriptCommand(&camera_on_actor, m_dwGTAId, 3, 2);
 	m_iCameraState = 2;
+}
+
+void CPlayerPed::StartPissing()
+{
+	if(!m_pPed) return;
+	if(!GamePool_Ped_GetAt(m_dwGTAId)) return;
+
+	if(m_iPissingState) {
+		// already started
+		return;
+	}
+
+	ApplyAnimation("PISS_LOOP", "PAULNMAC", 4.0f, 1, 0, 0, 0, -1);
+
+	ScriptCommand(&attach_particle_to_actor, "PETROLCAN", m_dwGTAId, 0.0f, 10.0f, 2.0f, 1, &m_dwPissParticlesHandle);
+	ScriptCommand(&make_particle_visible, m_dwPissParticlesHandle);
+
+	m_iPissingState = true;
+}
+
+void CPlayerPed::StopPissing()
+{
+	if(!m_pPed) return;
+	if(!GamePool_Ped_GetAt(m_dwGTAId)) return;
+	if(!m_iPissingState) return;
+
+	if(m_dwPissParticlesHandle) {
+		ScriptCommand(&destroy_particle,m_dwPissParticlesHandle);
+		m_dwPissParticlesHandle = 0;
+	}
+
+	MATRIX4X4 mat;
+	GetMatrix(&mat);
+	TeleportTo(mat.pos.X,mat.pos.Y,mat.pos.Z);
+
+	//ApplyAnimation("PISS_OUT", "PAULNMAC", 4.0f, 0, 0, 0, 0, -1);
+
+	m_iPissingState = 0;
+}
+bool CPlayerPed::IsPissing()
+{
+	if(!m_pPed) return 0;
+	if(!GamePool_Ped_GetAt(m_dwGTAId)) return 0;
+	return m_iPissingState;
 }

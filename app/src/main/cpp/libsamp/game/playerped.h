@@ -17,6 +17,9 @@ public:
 	void SetCurrentAim(CAMERA_AIM *pAim);
 
 	uint16_t GetCameraMode();
+	void StopPissing();
+	bool IsPissing();
+	void StartPissing();
 
 	void SetCameraMode(uint16_t byteCamMode);
 
@@ -149,6 +152,8 @@ public:
 	PED_TYPE*	m_pPed;
 	uint8_t		m_bytePlayerNumber;
 	uint32_t	m_dwArrow;
+	bool 		m_iPissingState;
+	int 		m_dwPissParticlesHandle;
 
 	int m_iSpecialAction;
 
