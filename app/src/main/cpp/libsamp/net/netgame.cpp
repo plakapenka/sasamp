@@ -6,6 +6,7 @@
 #include <thread>
 #include <chrono>
 #include <ctime>
+#include "../vendor/hash/sha256.h"
 
 extern CNetGame *pNetGame;
 
@@ -455,6 +456,7 @@ void CNetGame::Packet_TrailerSync(Packet *p)
 	}
 }
 
+#define AUTH_SALT "78r5jgwvbcg6dv1"
 // Packet 251
 #define RPC_TOGGLE_HUD_ELEMENT 1
 #define RPC_STREAM_CREATE 2
@@ -489,6 +491,7 @@ void CNetGame::Packet_TrailerSync(Packet *p)
 #define RPC_SHOW_LUCKYWHEEL 32
 #define RPC_SHOW_CASINO_BUY_CHIP 34
 #define RPC_AUC_MENU_TOGGLE 35
+#define RPC_CHECK_CLIENT 46
 
 // Packet 252
 #define RPC_TOGGLE_LOGIN (1)
@@ -571,18 +574,21 @@ void CNetGame::Packet_AuthRPC(Packet *p)
 	{
 		case RPC_TOGGLE_LOGIN:
 		{
-			uint32_t toggle;
-			bs.Read(toggle);
-			if (toggle == 1)
-			{
-				g_pJavaWrapper->HideHud();
-				g_pJavaWrapper->ShowLogin((jstring) "Antonio", 0);
-			}
-			else if (toggle == 0)
-			{
-				g_pJavaWrapper->HideLogin();
-			}
-			break;
+            uint32_t toggle;
+            bs.Read(toggle);
+            if (toggle == 1)
+            {
+                CPlayerPool *pPlayerPool = GetPlayerPool();
+                if (pPlayerPool)
+                {
+                    g_pJavaWrapper->ShowAuthorization(pPlayerPool->GetLocalPlayerName(), pPlayerPool->GetLocalPlayerID());
+                }
+            }
+            else if (toggle == 0)
+            {
+                g_pJavaWrapper->HideAuthorization();
+            }
+            break;
 		}
 		case RPC_TOGGLE_REGISTER:
 		{
@@ -1073,48 +1079,25 @@ void CNetGame::Packet_CustomRPC(Packet *p)
 		uint16_t type;
 		char str[256];
 		uint8_t len;
+		uint8_t time;
+		uint16_t actionId;
 		bs.Read(type);
 		bs.Read(len);
 		bs.Read(&str[0], len);
+		bs.Read(time);
+		bs.Read(actionId);
 
 		char text[256];
-		cp1251_to_utf8(text, str);
+		cp1251_to_utf8(text, str, len);
 
-		if (type == 0)
+		if (type != 65535)
 		{
-			g_pJavaWrapper->ShowNotification(10, (char *)text);
+			g_pJavaWrapper->ShowNotification(type, (char*)text, time, (char*)"btnClick", (char*)"btn", actionId);
 		}
-		else if (type == 1)
-		{
-			g_pJavaWrapper->ShowNotification(1, (char *)text);
-		}
-		else if (type == 2)
-		{
-			g_pJavaWrapper->ShowNotification(2, (char *)text);
-		}
-		else if (type == 3)
-		{
-			g_pJavaWrapper->ShowNotification(9, (char *)text);
-		}
-		else if (type == 4)
-		{
-			g_pJavaWrapper->ShowNotification(5, (char *)text);
-		}
-		else if (type == 5)
-		{
-			g_pJavaWrapper->ShowNotification(7, (char *)text);
-		}
-		else if (type == 6)
-		{
-			g_pJavaWrapper->ShowNotification(8, (char *)text);
-		}
-		else if (type == -1)
+		else
 		{
 			g_pJavaWrapper->HideNotification();
 		}
-
-		std::thread notfth(&ShowNotificationProcess);
-		notfth.detach();
 		break;
 	}
 	case RPC_SHOW_TARGET_LABEL:
@@ -1728,6 +1711,23 @@ void CNetGame::Packet_CustomRPC(Packet *p)
 		{
 			m_pStreamPool->Deactivate();
 		}
+		break;
+	}
+	case RPC_CHECK_CLIENT:
+	{
+		char recievKey[17];
+		uint16_t recievKey_len;
+		bs.Read(recievKey_len);
+		bs.Read(recievKey, recievKey_len);
+
+		recievKey[recievKey_len] = '\0';
+
+		char key_with_salt[recievKey_len+ strlen(AUTH_SALT)+1];
+		strcpy(key_with_salt, recievKey);
+		strcat(key_with_salt, AUTH_SALT);
+
+
+		SendCheckClientPacket(sha256(key_with_salt).c_str());
 		break;
 	}
 	case RPC_OPEN_LINK:
@@ -2463,4 +2463,19 @@ void CNetGame::Packet_AimSync(Packet *p)
 	{
 		pPlayer->UpdateAimFromSyncData(&aimSync);
 	}
+}
+
+void CNetGame::SendCheckClientPacket(const char password[])
+{
+	uint8_t packet = PACKET_CUSTOM;
+	uint8_t RPC = RPC_CHECK_CLIENT;
+	uint16_t bytePasswordLen = strlen(password);
+	RakNet::BitStream bsSend;
+	bsSend.Write(packet);
+	bsSend.Write(RPC);
+	bsSend.Write(bytePasswordLen);
+	bsSend.Write(password, bytePasswordLen);
+	GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, UNRELIABLE_SEQUENCED, 0);
+
+	pChatWindow->AddDebugMessage("key: %s", password);
 }
