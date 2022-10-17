@@ -14,6 +14,9 @@
 
 class CJavaWrapper
 {
+	jmethodID s_showAuthorization;
+	jmethodID s_hideAuthorization;
+
 	jobject activity;
 
 	jmethodID s_GetClipboardText;
@@ -27,11 +30,6 @@ class CJavaWrapper
 	jmethodID s_MakeDialog;
 	jmethodID s_hideDialogWithoutReset;
 
-
-	jmethodID s_showLogin;
-    jmethodID s_hideLogin;
-	jmethodID s_showLoginTwo;
-    jmethodID s_hideLoginTwo;
 	jmethodID s_showRegister;
     jmethodID s_hideRegister;
 	jmethodID s_showRegisterTwo;
@@ -57,32 +55,8 @@ class CJavaWrapper
     jmethodID s_hideGreenZone;
 	jmethodID s_showSamwill;
     jmethodID s_hideSamwill;
-	jmethodID s_showSamwillMoney;
-    jmethodID s_hideSamwillMoney;
 	jmethodID s_showMenu;
-    jmethodID s_hideMenu;
-	jmethodID s_updateHudInfo;
-	jmethodID s_updateSamwill;
-	jmethodID s_updateRegisterSkinButtons;
-	jmethodID s_updateSamwillMoney;
-	jmethodID s_showSpeedometr;
-    jmethodID s_hideSpeedometr;
 	jmethodID s_updateSpeedometr;
-	jmethodID s_showKilllist;
-	jmethodID s_hideKilllist;
-	jmethodID s_showKilllistMulti;
-	jmethodID s_hideKilllistMulti;
-	jmethodID s_showKilllisDuels;
-	jmethodID s_hideKilllistDuels;
-	jmethodID s_updateKilllist;
-	jmethodID s_updateKilllistOne;
-	jmethodID s_updateKilllistTwo;
-	jmethodID s_updateKilllistThree;
-	jmethodID s_clearKilllistDuels;
-	jmethodID s_hideKilllistOne;
-	jmethodID s_hideKilllistTwo;
-	jmethodID s_hideKilllistThree;
-	jmethodID s_updateKilllistTop;
 	jmethodID s_hideTargetNotify;
 	jmethodID s_updateTargetNotify;
 	jmethodID s_showNotification;
@@ -105,6 +79,7 @@ class CJavaWrapper
 	jmethodID s_hideCasinoRoullete;
 
 	jmethodID s_setPauseState;
+	jmethodID s_updateHudInfo;
 public:
 	JNIEnv* GetEnv();
 
@@ -121,10 +96,8 @@ public:
 	void UpdateSamwillMoney(int money);
 	void UpdateRegisterSkinButtons(int btnidclicked);
 	void UpdateSpeedInfo(int speed, int fuel, int hp, int mileage, int engine, int light, int belt, int lock);
-	void ShowLogin(jstring nick, int id);
-    void HideLogin();
-	void ShowLoginTwo();
-    void HideLoginTwo();
+	void ShowAuthorization(char *nick, int id);
+	void HideAuthorization();
 	void ShowRegister();
     void HideRegister();
 	void ShowRegisterTwo();
@@ -141,7 +114,7 @@ public:
 	void UpdateTargetNotify(int type, char *text);
 	void HideTargetNotify();
 	void HideNotification();
-	void ShowNotification(int type, char *text);
+	void ShowNotification(int type, char* text, int duration, char* actionforBtn, char* textBtn, int actionId);
 	void UpdateNotification(int progress);
 	void HideBus();
 	void ShowUpdateBus(int timer);

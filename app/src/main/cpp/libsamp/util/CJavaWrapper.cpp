@@ -870,14 +870,6 @@ extern "C"
 		g_pJavaWrapper->SpeedTurn = true;
 	}
 
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onAuthClick(JNIEnv *pEnv, jobject thiz) {
-		g_pJavaWrapper->ShowLoginTwo();
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onAuthBackClick(JNIEnv *pEnv, jobject thiz) {
-		//g_pJavaWrapper->HideLoginTwo();
-	}
-
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onRegClick(JNIEnv *pEnv, jobject thiz) {
 		g_pJavaWrapper->ShowRegisterTwo();
 	}
@@ -1084,54 +1076,53 @@ extern "C"
 		g_pJavaWrapper->HideMenu();
 		pNetGame->SendChatCommand("/report");
 	}
-}
 
-void CJavaWrapper::ShowLogin(jstring nick, int id)
+	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onLoginClick(JNIEnv *pEnv, jobject thiz, jstring password) {
+		const char *inputPassword = pEnv->GetStringUTFChars(password, nullptr);
+
+		if (pNetGame) {
+			pNetGame->SendLoginPacket((char *) inputPassword);
+		}
+		Log("onAuthPlayClick: inputPassword - %s", inputPassword);
+
+		pEnv->ReleaseStringUTFChars(password, inputPassword);
+	}
+	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onChooseSpawnClick(JNIEnv *pEnv, jobject thiz, jint spawnid) {
+		pNetGame->SendCustomPacket(253, 2, spawnid);
+		Log("SendChooseSpawn: SpawnId - %d", spawnid);
+	}
+}
+void CJavaWrapper::ShowAuthorization(char *nick, int id)
 {
-    JNIEnv* env = GetEnv();
+	JNIEnv* env = GetEnv();
 
 	if (!env)
 	{
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_showLogin, nick, id);
+
+	jclass strClass = env->FindClass("java/lang/String");
+	jmethodID ctorID = env->GetMethodID(strClass, "<init>", "([BLjava/lang/String;)V");
+	jstring encoding = env->NewStringUTF("UTF-8");
+
+	jbyteArray bytes = env->NewByteArray(strlen(nick));
+	env->SetByteArrayRegion(bytes, 0, strlen(nick), (jbyte*)nick);
+	jstring jnick = (jstring) env->NewObject(strClass, ctorID, bytes, encoding);
+
+	env->CallVoidMethod(this->activity, this->s_showAuthorization, jnick, id);
 }
 
-void CJavaWrapper::HideLogin()
+void CJavaWrapper::HideAuthorization()
 {
-    JNIEnv* env = GetEnv();
+	JNIEnv* env = GetEnv();
 
 	if (!env)
 	{
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_hideLogin);
-}
-
-void CJavaWrapper::ShowLoginTwo()
-{
-    JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-    //env->CallVoidMethod(this->activity, this->s_showLoginTwo);
-}
-
-void CJavaWrapper::HideLoginTwo()
-{
-    JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-   // env->CallVoidMethod(this->activity, this->s_hideLoginTwo);
+	env->CallVoidMethod(this->activity, this->s_hideAuthorization);
 }
 
 void CJavaWrapper::ShowRegister()
@@ -1675,22 +1666,33 @@ void CJavaWrapper::UpdateNotification(int progress)
   //  env->CallVoidMethod(this->activity, this->s_updateNotification, progress);
 }
 
-void CJavaWrapper::ShowNotification(int type, char* text)
+void CJavaWrapper::ShowNotification(int type, char* text, int duration, char* actionforBtn, char* textBtn, int actionId)
 {
-    JNIEnv* env = GetEnv();
+	JNIEnv* env = GetEnv();
 
 	if (!env)
 	{
 		Log("No env");
 		return;
 	}
-	jclass strClasstext = env->FindClass("java/lang/String");
-    jmethodID ctorIDtext = env->GetMethodID(strClasstext, "<init>", "([BLjava/lang/String;)V");
-    jstring encodingtext = env->NewStringUTF("UTF-8");
-    jbyteArray bytestext = env->NewByteArray(strlen(text));
-    env->SetByteArrayRegion(bytestext, 0, strlen(text), (jbyte*)text);
-    jstring textstr = (jstring)env->NewObject(strClasstext, ctorIDtext, bytestext, encodingtext);
-   // env->CallVoidMethod(this->activity, this->s_showNotification, type, textstr);
+
+	jclass strClass = env->FindClass("java/lang/String");
+	jmethodID ctorID = env->GetMethodID(strClass, "<init>", "([BLjava/lang/String;)V");
+	jstring encoding = env->NewStringUTF("UTF-8");
+
+	jbyteArray bytes = env->NewByteArray(strlen(text));
+	env->SetByteArrayRegion(bytes, 0, strlen(text), (jbyte*)text);
+	jstring jtext = (jstring) env->NewObject(strClass, ctorID, bytes, encoding);
+
+	bytes = env->NewByteArray(strlen(actionforBtn));
+	env->SetByteArrayRegion(bytes, 0, strlen(actionforBtn), (jbyte*)actionforBtn);
+	jstring jactionforBtn = (jstring) env->NewObject(strClass, ctorID, bytes, encoding);
+
+	bytes = env->NewByteArray(strlen(textBtn));
+	env->SetByteArrayRegion(bytes, 0, strlen(textBtn), (jbyte*)textBtn);
+	jstring jtextBtn = (jstring) env->NewObject(strClass, ctorID, bytes, encoding);
+
+	env->CallVoidMethod(this->activity, this->s_showNotification, type, jtext, duration, jactionforBtn, jtextBtn, actionId);
 }
 
 void CJavaWrapper::HideNotification()
@@ -2196,8 +2198,9 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 	//s_updateSamwillMoney = env->GetMethodID(nvEventClass, "updateSamwillMoney", "(I)V");
 	//s_updateRegisterSkinButtons = env->GetMethodID(nvEventClass, "updateRegisterSkinButtons", "(I)V");
 	s_updateSpeedometr = env->GetMethodID(nvEventClass, "updateSpeedInfo", "(IIIIIIII)V");
-	s_showLogin = env->GetMethodID(nvEventClass, "showAuthorization", "(Ljava/lang/String;I)V");
-    s_hideLogin = env->GetMethodID(nvEventClass, "hideAuthorization", "()V");
+
+	s_showAuthorization = env->GetMethodID(nvEventClass, "showAuthorization", "(Ljava/lang/String;I)V");
+	s_hideAuthorization = env->GetMethodID(nvEventClass, "hideAuthorization", "()V");
 
 	// s_showLoginTwo = env->GetMethodID(nvEventClass, "showLoginTwo", "()V");
     // s_hideLoginTwo = env->GetMethodID(nvEventClass, "hideLoginTwo", "()V");
@@ -2220,7 +2223,7 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 //	s_hideKilllistTwo = env->GetMethodID(nvEventClass, "hideKilllistTwo", "()V");
 
 	s_hideTargetNotify = env->GetMethodID(nvEventClass, "hideTargetNotify", "()V");
-	s_showNotification = env->GetMethodID(nvEventClass, "showNotification", "(ILjava/lang/String;ILjava/lang/String;Ljava/lang/String;I)V");
+	s_showNotification = env->GetMethodID(nvEventClass, "showNotification","(ILjava/lang/String;ILjava/lang/String;Ljava/lang/String;I)V");
 	s_hideNotification = env->GetMethodID(nvEventClass, "hideNotification", "()V");
 	//s_updateNotification = env->GetMethodID(nvEventClass, "updateNotification", "(I)V");
 
@@ -2294,3 +2297,4 @@ CJavaWrapper::~CJavaWrapper()
 }
 
 CJavaWrapper* g_pJavaWrapper = nullptr;
+

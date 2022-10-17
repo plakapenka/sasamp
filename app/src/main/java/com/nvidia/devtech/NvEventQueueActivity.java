@@ -582,8 +582,6 @@ public abstract class NvEventQueueActivity
         public native void notifyChange(String str, int i);
         public native void changeConnection(boolean z);
 
-        public native void onClientCheckHASH(String password);
-
 		public native void pauseEvent();
 		public native void resumeEvent();
 		public native boolean touchEvent(int action, int x, int y, MotionEvent event);
@@ -1657,5 +1655,4 @@ public abstract class NvEventQueueActivity
 
     public void showFuelStation(int type, int price1, int price2, int price3, int price4, int price5) { runOnUiThread(() -> { mFuelStationManager.Show(type, price1, price2, price3, price4, price5); } ); }
 
-    public void passwordClientCheckHASH(String password) { runOnUiThread(() -> { onClientCheckHASH(Hashing.sha256().hashString(password, Charsets.UTF_8).toString()); } ); }
 }
