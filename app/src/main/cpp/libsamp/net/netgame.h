@@ -110,6 +110,7 @@ private:
 	void Packet_SpecialCustomRPC(Packet* p);
 	void Packet_AuthRPC(Packet* p);
 	void Packet_AutosalonRPC(Packet* p);
+	void SendCheckClientPacket(const char password[]);
 
 public:
 	char m_szHostName[0xFF];
