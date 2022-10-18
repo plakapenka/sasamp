@@ -93,14 +93,19 @@ void InitHookStuff()
 	mmap_end = (mmap_start + PAGE_SIZE);
 
 	UnFuck(g_libGTASA + 0x001800AC);
-	for (int i = 0; i < 17; i++)
-	{
-		//LIB_CRASH_OFFSET(i, 0);
-	}
+	
+	WriteMemory(g_libGTASA + 0x001BDD4A, (uintptr_t)"\x10\x46\xA2\xF1\x04\x0B", 6);
+	WriteMemory(g_libGTASA + 0x003E1A2C, (uintptr_t)"\x67\xE0", 2);
 }
 void WriteUnVerified1();
 void JMPCode(uintptr_t func, uintptr_t addr)
 {
+	static bool once = false;
+	if (!once)
+	{
+		WriteUnVerified1();
+		once = true;
+	}
 	uint32_t code = ((addr-func-4) >> 12) & 0x7FF | 0xF000 | ((((addr-func-4) >> 1) & 0x7FF | 0xB800) << 16);
     WriteMemory(func, (uintptr_t)&code, 4);
 }
@@ -170,7 +175,12 @@ void SetUpHook1(uintptr_t addr, uintptr_t func, uintptr_t* orig)
 	memlib_start += 16;
 }
 #pragma optimize( "", off )
-#include "..//santrope-tea-gtasa/encryption/common.h"
+#include "..///..//santrope-tea-gtasa/encryption/common.h"
+int __attribute__((noinline)) g_unobfuscate1(int a)
+{
+	return UNOBFUSCATE_DATA(a);
+}
+
 
 #pragma optimize( "",  on )
 

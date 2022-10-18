@@ -68,6 +68,15 @@ void CStreamPool::Activate()
 	bufferedCommands.WriteUnlock();
 }
 
+CStream* CStreamPool::GetStream(int iID)
+{
+	if (iID > 0 && iID <= MAX_STREAMS)
+	{
+		return m_pStreams[iID];
+	}
+	return nullptr;
+}
+
 CStream* CStreamPool::AddStream(int iID, VECTOR* pPos, int iVirtualWorld, int iInterior, float fDistance, const char* szUrl) // ready
 {
 	if (iID < 0 || iID >= MAX_STREAMS) return nullptr;

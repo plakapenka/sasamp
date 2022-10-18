@@ -1,69 +1,60 @@
 #include "../main.h"
 #include "game.h"
-#include <algorithm>
-#include "../chatwindow.h"
-#include "../net/netgame.h"
-#include "util.h"
 
-extern CGame *pGame;
-extern CNetGame* pNetGame;
-extern CPlayerPed* g_pCurrentFiredPed;
+extern CGame* pGame;
+#include "..//CDebugInfo.h"
+
+#include "..//chatwindow.h"
 extern CChatWindow* pChatWindow;
-
-VEHICLE_TYPE* pLastVehicle;
-uint8_t bInProcessDetachTrailer;
-
-void GamePrepareTrain(VEHICLE_TYPE* pVehicle)
-{
-	PED_TYPE* pDriver = pVehicle->pDriver;
-
-	if (pDriver)
-	{
-		if (pDriver->dwPedType != 0 && pDriver->dwPedType != 1) {
-			((void (*)(PED_TYPE*))(*(void**)(pDriver->entity.vtable + 0x4)))(pDriver);
-			pVehicle->pDriver = 0;
-		}
-	}
-}
 
 CVehicle::CVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRotation, bool bSiren)
 {
-	m_pCustomHandling = nullptr;
+	Log("CVehicle(%d, %4.f, %4.f, %4.f, %4.f)", iType, fPosX, fPosY, fPosZ, fRotation);
+	uint32_t tickStart = GetTickCount();
 
+	CDebugInfo::uiStreamedVehicles++;
 	MATRIX4X4 mat;
 	uint32_t dwRetID = 0;
+
+	m_pCustomHandling = nullptr;
 
 	m_pVehicle = nullptr;
 	m_dwGTAId = 0;
 	m_pTrailer = nullptr;
 
-	if( (iType != TRAIN_PASSENGER_LOCO) &&
+	if ((iType != TRAIN_PASSENGER_LOCO) &&
 		(iType != TRAIN_FREIGHT_LOCO) &&
 		(iType != TRAIN_PASSENGER) &&
 		(iType != TRAIN_FREIGHT) &&
-		(iType != TRAIN_TRAM)) 
+		(iType != TRAIN_TRAM))
 	{
 		// normal vehicle
 		if (!pGame->IsModelLoaded(iType))
 		{
 			pGame->RequestModel(iType);
 			pGame->LoadRequestedModels();
-			while (!pGame->IsModelLoaded(iType)) sleep(0);
+			while (!pGame->IsModelLoaded(iType)) usleep(10);
 		}
+		if (bSiren)
+		{
 
+		}
+		else
+		{
+
+		}
 		ScriptCommand(&create_car, iType, fPosX, fPosY, fPosZ, &dwRetID);
 		ScriptCommand(&set_car_z_angle, dwRetID, fRotation);
-		ScriptCommand(&car_gas_tank_explosion,dwRetID, 0);
+		ScriptCommand(&car_gas_tank_explosion, dwRetID, 0);
 		ScriptCommand(&set_car_hydraulics, dwRetID, 0);
 		ScriptCommand(&toggle_car_tires_vulnerable, dwRetID, 0);
-
 		m_pVehicle = (VEHICLE_TYPE*)GamePool_Vehicle_GetAt(dwRetID);
 		m_pEntity = (ENTITY_TYPE*)m_pVehicle;
 		m_dwGTAId = dwRetID;
 
-		if(m_pVehicle)
+		if (m_pVehicle)
 		{
-			m_pVehicle->m_nDoorLock = 0;
+			m_pVehicle->dwDoorsLocked = 0;
 			m_bIsLocked = false;
 
 			GetMatrix(&mat);
@@ -71,111 +62,23 @@ CVehicle::CVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRota
 			mat.pos.Y = fPosY;
 			mat.pos.Z = fPosZ;
 
-			if( GetVehicleSubtype() != VEHICLE_SUBTYPE_BIKE && 
+			if (GetVehicleSubtype() != VEHICLE_SUBTYPE_BIKE &&
 				GetVehicleSubtype() != VEHICLE_SUBTYPE_PUSHBIKE)
 				mat.pos.Z += 0.25f;
 
 			SetMatrix(mat);
 		}
-
-		Remove();
-		pGame->RemoveModel(iType, false);
 	}
-	else if((iType == TRAIN_PASSENGER_LOCO) ||
-			(iType == TRAIN_FREIGHT_LOCO) ||
-			(iType == TRAIN_TRAM))
+	else if ((iType == TRAIN_PASSENGER_LOCO) ||
+		(iType == TRAIN_FREIGHT_LOCO) ||
+		(iType == TRAIN_TRAM))
 	{
 		// train locomotives
-		uint32_t* dwTrainTypes = (uint32_t*)(g_libGTASA + 0x60FB60);
-
-		memset((void*)dwTrainTypes, 0, 32 * sizeof(uint32_t));
-
-		if (iType == TRAIN_PASSENGER_LOCO)
-		{
-			dwTrainTypes[0] = TRAIN_PASSENGER_LOCO;
-			dwTrainTypes[1] = TRAIN_PASSENGER;
-			dwTrainTypes[2] = TRAIN_PASSENGER;
-			dwTrainTypes[3] = TRAIN_PASSENGER;
-
-			if (!pGame->IsModelLoaded(TRAIN_PASSENGER_LOCO))
-			{
-				pGame->RequestModel(TRAIN_PASSENGER_LOCO);
-				pGame->LoadRequestedModels();
-				while (!pGame->IsModelLoaded(TRAIN_PASSENGER_LOCO)) usleep(100);
-			}
-
-			if (!pGame->IsModelLoaded(TRAIN_PASSENGER))
-			{
-				pGame->RequestModel(TRAIN_PASSENGER);
-				pGame->LoadRequestedModels();
-				while (!pGame->IsModelLoaded(TRAIN_PASSENGER)) usleep(100);
-			}
-		}
-		else if (iType == TRAIN_FREIGHT_LOCO)
-		{
-			dwTrainTypes[0] = TRAIN_FREIGHT_LOCO;
-			dwTrainTypes[1] = TRAIN_FREIGHT;
-			dwTrainTypes[2] = TRAIN_FREIGHT;
-			dwTrainTypes[3] = TRAIN_FREIGHT;
-
-			if (!pGame->IsModelLoaded(TRAIN_FREIGHT_LOCO))
-			{
-				pGame->RequestModel(TRAIN_FREIGHT_LOCO);
-				pGame->LoadRequestedModels();
-				while (!pGame->IsModelLoaded(TRAIN_FREIGHT_LOCO)) usleep(100);
-			}
-
-			if (!pGame->IsModelLoaded(TRAIN_FREIGHT))
-			{
-				pGame->RequestModel(TRAIN_FREIGHT);
-				pGame->LoadRequestedModels();
-				while (!pGame->IsModelLoaded(TRAIN_FREIGHT)) usleep(100);
-			}
-		}
-		else if (iType == TRAIN_TRAM)
-		{
-			dwTrainTypes[0] = TRAIN_TRAM;
-			if (!pGame->IsModelLoaded(TRAIN_TRAM))
-			{
-				pGame->RequestModel(TRAIN_TRAM);
-				pGame->LoadRequestedModels();
-				while (!pGame->IsModelLoaded(TRAIN_TRAM)) usleep(100);
-			}
-		}
-
-		ScriptCommand(&create_train, 0, fPosX, fPosY, fPosZ, fRotation!=0.0f, &dwRetID);
-
-		m_pVehicle = GamePool_Vehicle_GetAt(dwRetID);
-		m_pEntity = (ENTITY_TYPE*)m_pVehicle;
-		m_dwGTAId = dwRetID;
-		pLastVehicle = m_pVehicle;
-
-		GamePrepareTrain(m_pVehicle);
 	}
-	else if((iType == TRAIN_PASSENGER) ||
-			iType == TRAIN_FREIGHT)
+	else if ((iType == TRAIN_PASSENGER) ||
+		iType == TRAIN_FREIGHT)
 	{
-		if (!pLastVehicle) {
-			m_pEntity = 0;
-			m_pVehicle = 0;
-			pLastVehicle = 0;
-			return;
-		}
 
-		m_pVehicle = (VEHICLE_TYPE*)pLastVehicle->m_prevCarriage;
-
-		if (!m_pVehicle) {
-			pChatWindow->AddDebugMessage("Warning: Bad train carriages");
-			m_pEntity = 0;
-			m_pVehicle = 0;
-			pLastVehicle = 0;
-			return;
-		}
-
-		dwRetID = GamePool_Vehicle_GetIndex(m_pVehicle);
-		m_pEntity = (ENTITY_TYPE*)m_pVehicle;
-		m_dwGTAId = dwRetID;
-		pLastVehicle = m_pVehicle;
 	}
 
 	m_byteObjectiveVehicle = 0;
@@ -183,15 +86,6 @@ CVehicle::CVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRota
 	m_bDoorsLocked = false;
 	m_dwMarkerID = 0;
 	m_bIsInvulnerable = false;
-
-	m_bEngineState = 0;
-
-	m_byteLightStatus = 0;
-	m_byteTyreStatus = 0;
-	m_dwDoorStatus = 0;
-	m_dwPanelStatus = 0;
-
-	m_bAddSiren = bSiren;
 	uint8_t defComp = 0;
 	BIT_SET(defComp, 0);
 	for (int i = 0; i < E_CUSTOM_COMPONENTS::ccMax; i++)
@@ -255,21 +149,21 @@ CVehicle::CVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRota
 
 	if (pWheelLF && pWheelRF && pWheelRB && pWheelLB)
 	{
-		memcpy(&m_vInitialWheelMatrix[0], (const void*) & (pWheelLF->modelling), sizeof(MATRIX4X4));
-		memcpy(&m_vInitialWheelMatrix[1], (const void*) & (pWheelRF->modelling), sizeof(MATRIX4X4));
-		memcpy(&m_vInitialWheelMatrix[2], (const void*) & (pWheelRB->modelling), sizeof(MATRIX4X4));
-		memcpy(&m_vInitialWheelMatrix[3], (const void*) & (pWheelLB->modelling), sizeof(MATRIX4X4));
+		memcpy(&m_vInitialWheelMatrix[0], (const void*)&(pWheelLF->modelling), sizeof(MATRIX4X4));
+		memcpy(&m_vInitialWheelMatrix[1], (const void*)&(pWheelRF->modelling), sizeof(MATRIX4X4));
+		memcpy(&m_vInitialWheelMatrix[2], (const void*)&(pWheelRB->modelling), sizeof(MATRIX4X4));
+		memcpy(&m_vInitialWheelMatrix[3], (const void*)&(pWheelLB->modelling), sizeof(MATRIX4X4));
 	}
 
-	m_bEngineOn = false;
-	m_bLightsOn = false;
+	//pChatWindow->AddDebugMessage("time for CVehicle::CVehicle %d", GetTickCount() - tickStart);
 }
 
 CVehicle::~CVehicle()
 {
-	m_bReplacedTexture = false;
-
+	CDebugInfo::uiStreamedVehicles--;
 	m_pVehicle = GamePool_Vehicle_GetAt(m_dwGTAId);
+
+	m_bReplacedTexture = false;
 
 	for (size_t i = 0; i < MAX_REPLACED_TEXTURES; i++)
 	{
@@ -300,11 +194,9 @@ CVehicle::~CVehicle()
 		}
 	}
 
-	if(m_pVehicle)
+	if (m_pVehicle)
 	{
-		SetInvulnerable(false);
-
-		if(m_dwMarkerID)
+		if (m_dwMarkerID)
 		{
 			ScriptCommand(&disable_marker, m_dwMarkerID);
 			m_dwMarkerID = 0;
@@ -312,11 +204,9 @@ CVehicle::~CVehicle()
 
 		RemoveEveryoneFromVehicle();
 
-		if(m_pTrailer)
+		if (m_pTrailer)
 		{
-			bInProcessDetachTrailer = 1;
-			ScriptCommand(&detach_trailer_from_cab, m_pTrailer->m_dwGTAId, m_dwGTAId);
-			m_pTrailer = NULL;
+			// detach trailer
 		}
 
 		if (m_pCustomHandling)
@@ -325,8 +215,8 @@ CVehicle::~CVehicle()
 			m_pCustomHandling = nullptr;
 		}
 
-		if( m_pVehicle->entity.nModelIndex == TRAIN_PASSENGER_LOCO ||
-			m_pVehicle->entity.nModelIndex == TRAIN_FREIGHT_LOCO )
+		if (m_pVehicle->entity.nModelIndex == TRAIN_PASSENGER_LOCO ||
+			m_pVehicle->entity.nModelIndex == TRAIN_FREIGHT_LOCO)
 		{
 			ScriptCommand(&destroy_train, m_dwGTAId);
 		}
@@ -335,15 +225,353 @@ CVehicle::~CVehicle()
 			int nModelIndex = m_pVehicle->entity.nModelIndex;
 			ScriptCommand(&destroy_car, m_dwGTAId);
 
-			if( !GetModelReferenceCount(nModelIndex) &&
+			if (!GetModelReferenceCount(nModelIndex) &&
 				//!m_bKeepModelLoaded &&
 				//(pGame->GetVehicleModelsCount() > 80) &&
 				pGame->IsModelLoaded(nModelIndex))
 			{
 				// CStreaming::RemoveModel
-				(( void (*)(int))(g_libGTASA+0x290C4C+1))(nModelIndex);
+				((void (*)(int))(g_libGTASA + 0x290C4C + 1))(nModelIndex);
 			}
 		}
+	}
+}
+
+void CVehicle::LinkToInterior(int iInterior)
+{
+	if (GamePool_Vehicle_GetAt(m_dwGTAId))
+	{
+		ScriptCommand(&link_vehicle_to_interior, m_dwGTAId, iInterior);
+	}
+}
+
+void CVehicle::SetColor(int iColor1, int iColor2)
+{
+	if (iColor1 >= 256 || iColor1 < 0)
+	{
+		iColor1 = 0;
+	}
+	if (iColor2 >= 256 || iColor2 < 0)
+	{
+		iColor2 = 0;
+	}
+	if (m_pVehicle)
+	{
+		if (GamePool_Vehicle_GetAt(m_dwGTAId))
+		{
+			m_pVehicle->byteColor1 = (uint8_t)iColor1;
+			m_pVehicle->byteColor2 = (uint8_t)iColor2;
+		}
+	}
+
+	m_byteColor1 = (uint8_t)iColor1;
+	m_byteColor2 = (uint8_t)iColor2;
+	m_bColorChanged = true;
+}
+
+#include "..//net/netgame.h"
+extern CNetGame* pNetGame;
+void CVehicle::AttachTrailer()
+{
+	if (m_pTrailer)
+	{
+		ScriptCommand(&put_trailer_on_cab, m_pTrailer->m_dwGTAId, m_dwGTAId);
+	}
+}
+
+//-----------------------------------------------------------
+
+void CVehicle::DetachTrailer()
+{
+	if (m_pTrailer)
+	{
+		ScriptCommand(&detach_trailer_from_cab, m_pTrailer->m_dwGTAId, m_dwGTAId);
+	}
+}
+
+//-----------------------------------------------------------
+
+void CVehicle::SetTrailer(CVehicle* pTrailer)
+{
+	m_pTrailer = pTrailer;
+}
+
+//-----------------------------------------------------------
+
+CVehicle* CVehicle::GetTrailer()
+{
+	if (!m_pVehicle) return NULL;
+
+	// Try to find associated trailer
+	uint32_t dwTrailerGTAPtr = m_pVehicle->dwTrailer;
+
+	if (pNetGame && dwTrailerGTAPtr) {
+		CVehiclePool* pVehiclePool = pNetGame->GetVehiclePool();
+		VEHICLEID TrailerID = (VEHICLEID)pVehiclePool->FindIDFromGtaPtr((VEHICLE_TYPE*)dwTrailerGTAPtr);
+		if (TrailerID < MAX_VEHICLES && pVehiclePool->GetSlotState(TrailerID)) {
+			return pVehiclePool->GetAt(TrailerID);
+		}
+	}
+
+	return NULL;
+}
+
+void CVehicle::SetHealth(float fHealth)
+{
+	if (m_pVehicle)
+	{
+		m_pVehicle->fHealth = fHealth;
+	}
+}
+
+float CVehicle::GetHealth()
+{
+	if (m_pVehicle) return m_pVehicle->fHealth;
+	else return 0.0f;
+}
+
+// 0.3.7
+void CVehicle::SetInvulnerable(bool bInv)
+{
+	if (!m_pVehicle) return;
+	if (!GamePool_Vehicle_GetAt(m_dwGTAId)) return;
+	if (m_pVehicle->entity.vtable == g_libGTASA + 0x5C7358) return;
+
+	if (bInv)
+	{
+		ScriptCommand(&set_car_immunities, m_dwGTAId, 1, 1, 1, 1, 1);
+		ScriptCommand(&toggle_car_tires_vulnerable, m_dwGTAId, 0);
+		m_bIsInvulnerable = true;
+	}
+	else
+	{
+		ScriptCommand(&set_car_immunities, m_dwGTAId, 0, 0, 0, 0, 0);
+		ScriptCommand(&toggle_car_tires_vulnerable, m_dwGTAId, 1);
+		m_bIsInvulnerable = false;
+	}
+}
+
+// 0.3.7
+bool CVehicle::IsDriverLocalPlayer()
+{
+	if (m_pVehicle)
+	{
+		if ((PED_TYPE*)m_pVehicle->pDriver == GamePool_FindPlayerPed())
+			return true;
+	}
+
+	return false;
+}
+
+// 0.3.7
+bool CVehicle::HasSunk()
+{
+	if (!m_pVehicle) return false;
+	return ScriptCommand(&has_car_sunk, m_dwGTAId);
+}
+
+void CVehicle::RemoveEveryoneFromVehicle()
+{
+	if (!m_pVehicle) return;
+	if (!GamePool_Vehicle_GetAt(m_dwGTAId)) return;
+
+	float fPosX = m_pVehicle->entity.mat->pos.X;
+	float fPosY = m_pVehicle->entity.mat->pos.Y;
+	float fPosZ = m_pVehicle->entity.mat->pos.Z;
+
+	int iPlayerID = 0;
+	if (m_pVehicle->pDriver)
+	{
+		iPlayerID = GamePool_Ped_GetIndex(m_pVehicle->pDriver);
+		ScriptCommand(&remove_actor_from_car_and_put_at, iPlayerID, fPosX, fPosY, fPosZ + 2.0f);
+	}
+
+	for (int i = 0; i < 7; i++)
+	{
+		if (m_pVehicle->pPassengers[i] != nullptr)
+		{
+			iPlayerID = GamePool_Ped_GetIndex(m_pVehicle->pPassengers[i]);
+			ScriptCommand(&remove_actor_from_car_and_put_at, iPlayerID, fPosX, fPosY, fPosZ + 2.0f);
+		}
+	}
+}
+
+// 0.3.7
+bool CVehicle::IsOccupied()
+{
+	if (m_pVehicle)
+	{
+		if (m_pVehicle->pDriver) return true;
+		if (m_pVehicle->pPassengers[0]) return true;
+		if (m_pVehicle->pPassengers[1]) return true;
+		if (m_pVehicle->pPassengers[2]) return true;
+		if (m_pVehicle->pPassengers[3]) return true;
+		if (m_pVehicle->pPassengers[4]) return true;
+		if (m_pVehicle->pPassengers[5]) return true;
+		if (m_pVehicle->pPassengers[6]) return true;
+	}
+
+	return false;
+}
+
+void CVehicle::ProcessMarkers()
+{
+	if (!m_pVehicle) return;
+
+	if (m_byteObjectiveVehicle)
+	{
+		if (!m_bSpecialMarkerEnabled)
+		{
+			if (m_dwMarkerID)
+			{
+				ScriptCommand(&disable_marker, m_dwMarkerID);
+				m_dwMarkerID = 0;
+			}
+
+			ScriptCommand(&tie_marker_to_car, m_dwGTAId, 1, 3, &m_dwMarkerID);
+			ScriptCommand(&set_marker_color, m_dwMarkerID, 1006);
+			ScriptCommand(&show_on_radar, m_dwMarkerID, 3);
+			m_bSpecialMarkerEnabled = true;
+		}
+
+		return;
+	}
+
+	if (m_byteObjectiveVehicle && m_bSpecialMarkerEnabled)
+	{
+		if (m_dwMarkerID)
+		{
+			ScriptCommand(&disable_marker, m_dwMarkerID);
+			m_bSpecialMarkerEnabled = false;
+			m_dwMarkerID = 0;
+		}
+	}
+
+	if (GetDistanceFromLocalPlayerPed() < 200.0f && !IsOccupied())
+	{
+		if (!m_dwMarkerID)
+		{
+			// show
+			ScriptCommand(&tie_marker_to_car, m_dwGTAId, 1, 2, &m_dwMarkerID);
+			ScriptCommand(&set_marker_color, m_dwMarkerID, 1004);
+		}
+	}
+
+	else if (IsOccupied() || GetDistanceFromLocalPlayerPed() >= 200.0f)
+	{
+		// remove
+		if (m_dwMarkerID)
+		{
+			ScriptCommand(&disable_marker, m_dwMarkerID);
+			m_dwMarkerID = 0;
+		}
+	}
+}
+
+void CVehicle::SetWheelPopped(uint8_t bytePopped)
+{
+	
+
+	if (!m_pVehicle || !m_dwGTAId)
+	{
+		return;
+	}
+
+	if (!GamePool_Vehicle_GetAt(m_dwGTAId))
+	{
+		return;
+	}
+
+	if (m_pVehicle)
+	{
+		if (!bytePopped)
+		{
+			if (GetVehicleSubtype() == VEHICLE_SUBTYPE_CAR)
+			{
+				((void(*)(VEHICLE_TYPE*))(g_libGTASA + 0x004D5CA4 + 1))(m_pVehicle); // CAutomobile::Fix
+			}
+
+			if (GetVehicleSubtype() == VEHICLE_SUBTYPE_BIKE)
+			{
+				((void(*)(VEHICLE_TYPE*))(g_libGTASA + 0x004E9234 + 1))(m_pVehicle); // CBike::Fix
+			}
+
+			return;
+		}
+	}
+}
+
+void CVehicle::SetDoorState(int iState)
+{
+	if (!m_pVehicle) return;
+	if (iState)
+	{
+		m_pVehicle->dwDoorsLocked = 2;
+		m_bDoorsLocked = true;
+		CVehicle::fDoorState = 1;
+	}
+	else
+	{
+		m_pVehicle->dwDoorsLocked = 0;
+		m_bDoorsLocked = false;
+		CVehicle::fDoorState = 0;
+	}
+}
+
+int CVehicle::GetDoorState(){
+	return CVehicle::fDoorState;
+}
+
+void CVehicle::SetLightsState(int iState)
+{
+	if (GamePool_Vehicle_GetAt(m_dwGTAId))
+	{
+		ScriptCommand(&force_car_lights, m_dwGTAId, iState > 0 ? 2 : 1);
+		int bLights = iState > 0 ? 2 : 1;
+	}
+}
+
+int CVehicle::GetLightsState(){
+	return CVehicle::bLights;
+}
+
+void CVehicle::SetBootAndBonnetState(int iBoot, int iBonnet)
+{
+	if (GamePool_Vehicle_GetAt(m_dwGTAId) && m_pVehicle)
+	{
+		if (iBoot == 1)
+		{
+			SetComponentAngle(1, 17, 1.0f);
+		}
+		else
+		{
+			SetComponentAngle(1, 17, 0.0f);
+		}
+
+		if (iBonnet == 1)
+		{
+			SetComponentAngle(0, 16, 1.0f);
+		}
+		else
+		{
+			SetComponentAngle(0, 16, 0.0f);
+		}
+	}
+}
+
+void CVehicle::RemoveComponent(uint16_t uiComponent)
+{
+	
+	int component = (uint16_t)uiComponent;
+
+	if (!m_dwGTAId || !m_pVehicle)
+	{
+		return;
+	}
+
+	if (GamePool_Vehicle_GetAt(m_dwGTAId))
+	{
+		ScriptCommand(&remove_component, m_dwGTAId, component);
 	}
 }
 
@@ -352,7 +580,7 @@ extern CChatWindow* pChatWindow;
 
 void CVehicle::SetComponentVisible(uint8_t group, uint16_t components)
 {
-
+	
 	if (group == E_CUSTOM_COMPONENTS::ccExtra)
 	{
 		for (int i = 0; i < 16; i++)
@@ -419,7 +647,7 @@ uint8_t* GetCollisionDataFromModel(int nModelIndex)
 }
 void CVehicle::SetHandlingData(std::vector<SHandlingData>& vHandlingData)
 {
-
+	
 
 	if (!m_pVehicle || !m_dwGTAId)
 	{
@@ -581,7 +809,7 @@ void CVehicle::SetHandlingData(std::vector<SHandlingData>& vHandlingData)
 
 void CVehicle::ResetVehicleHandling()
 {
-
+	
 	if (!m_pVehicle || !m_dwGTAId)
 	{
 		return;
@@ -672,7 +900,7 @@ void CVehicle::ApplyToner(uint8_t bSlot, uint8_t bID)
 
 RwObject* GetAllAtomicObjectCB(RwObject* object, void* data)
 {
-
+	
 	std::vector<RwObject*>& result = *((std::vector<RwObject*>*) data);
 	result.push_back(object);
 	return object;
@@ -681,7 +909,7 @@ RwObject* GetAllAtomicObjectCB(RwObject* object, void* data)
 // Get all atomics for this frame (even if they are invisible)
 void GetAllAtomicObjects(RwFrame* frame, std::vector<RwObject*>& result)
 {
-
+	
 	((uintptr_t(*)(RwFrame*, void*, uintptr_t))(g_libGTASA + 0x001AEE2C + 1))(frame, (void*)GetAllAtomicObjectCB, (uintptr_t)& result);
 }
 
@@ -947,7 +1175,7 @@ void CVehicle::SetCustomShadow(uint8_t r, uint8_t g, uint8_t b, float fSizeX, fl
 	m_Shadow.b = b;
 	m_Shadow.fSizeX = fSizeX;
 	m_Shadow.fSizeY = fSizeY;
-	m_Shadow.pTexture = (RwTexture*)LoadTextureFromDB("gui", szTex);
+	m_Shadow.pTexture = (RwTexture*)LoadTextureFromDB("samp", szTex);
 }
 
 void CVehicle::ProcessWheelOffset(RwFrame* pFrame, bool bLeft, float fValue, int iID)
@@ -964,9 +1192,9 @@ void CVehicle::ProcessWheelOffset(RwFrame* pFrame, bool bLeft, float fValue, int
 	VECTOR vecOut;
 	RwMatrixMultiplyByVector(&vecOut, &(m_vInitialWheelMatrix[iID]), &vecOffset);
 
-	pFrame->modelling.pos.x = vecOut.X;
-	pFrame->modelling.pos.y = vecOut.Y;
-	pFrame->modelling.pos.z = vecOut.Z;
+	pFrame->modelling.pos.X = vecOut.X;
+	pFrame->modelling.pos.Y = vecOut.Y;
+	pFrame->modelling.pos.Z = vecOut.Z;
 }
 
 void CVehicle::SetComponentAngle(bool bUnk, int iID, float angle)
@@ -981,7 +1209,7 @@ void CVehicle::SetComponentAngle(bool bUnk, int iID, float angle)
 
 void CVehicle::SetComponentVisibleInternal(const char* szComponent, bool bVisible)
 {
-
+	
 	PROTECT_CODE_COMPONENT_VISIBLE_INTERNAL;
 	if (!m_pVehicle || !m_dwGTAId)
 	{
@@ -1056,7 +1284,7 @@ void CVehicle::SetComponentVisibleInternal(const char* szComponent, bool bVisibl
 
 std::string CVehicle::GetComponentNameByIDs(uint8_t group, int subgroup)
 {
-
+	
 	if (group == E_CUSTOM_COMPONENTS::ccExtra && subgroup >= EXTRA_COMPONENT_BOOT)
 	{
 		switch (subgroup)
@@ -1154,251 +1382,6 @@ void CVehicle::CopyGlobalSuspensionLinesToPrivate()
 	}
 }
 
-void CVehicle::LinkToInterior(int iInterior)
-{
-	
-
-	if(GamePool_Vehicle_GetAt(m_dwGTAId)) 
-	{
-		ScriptCommand(&link_vehicle_to_interior, m_dwGTAId, iInterior);
-	}
-}
-
-void CVehicle::SetColor(int iColor1, int iColor2)
-{
-	
-
-	if(m_pVehicle)
-	{
-		if(GamePool_Vehicle_GetAt(m_dwGTAId))
-		{
-			m_pVehicle->m_nPrimaryColor = (uint8_t)iColor1;
-			m_pVehicle->m_nSecondaryColor = (uint8_t)iColor2;
-		}
-	}
-
-	m_byteColor1 = (uint8_t)iColor1;
-	m_byteColor2 = (uint8_t)iColor2;
-	m_bColorChanged = true;
-}
-
-void CVehicle::SetHealth(float fHealth)
-{
-	if(m_pVehicle)
-	{
-		m_pVehicle->fHealth = fHealth;
-	}
-}
-
-float CVehicle::GetHealth()
-{
-	if(m_pVehicle) return m_pVehicle->fHealth;
-	else return 0.0f;
-}
-
-// 0.3.7
-void CVehicle::SetInvulnerable(bool bInv)
-{
-	
-
-	if(!m_pVehicle) return;
-	if(!GamePool_Vehicle_GetAt(m_dwGTAId)) return;
-	if(m_pVehicle->entity.vtable == g_libGTASA+0x5C7358) return;
-
-	if(bInv) 
-	{
-		ScriptCommand(&set_car_immunities, m_dwGTAId, 1,1,1,1,1);
-		ScriptCommand(&toggle_car_tires_vulnerable, m_dwGTAId, 0);
-		m_bIsInvulnerable = true;
-	} 
-	else 
-	{ 
-		ScriptCommand(&set_car_immunities, m_dwGTAId, 0,0,0,0,0);
-		ScriptCommand(&toggle_car_tires_vulnerable, m_dwGTAId, 1);
-		m_bIsInvulnerable = false;
-	}
-}
-
-void CVehicle::ToggleTiresInvulnerable(bool bToggle)
-{
-	
-
-	if (!m_pVehicle) return;
-	if (!GamePool_Vehicle_GetAt(m_dwGTAId)) return;
-	if (m_pVehicle->entity.vtable == g_libGTASA + 0x5C7358) return;
-
-	if (bToggle)
-	{
-		ScriptCommand(&toggle_car_tires_vulnerable, m_dwGTAId, 0);
-	}
-	else
-	{
-		ScriptCommand(&toggle_car_tires_vulnerable, m_dwGTAId, 1);
-	}
-}
-
-// Feature
-bool CVehicle::IsInvulnerable()
-{
-	
-
-	return m_bIsInvulnerable;
-}
-
-// 0.3.7
-bool CVehicle::IsDriverLocalPlayer()
-{
-	
-
-	if(m_pVehicle)
-	{
-		if((PED_TYPE*)m_pVehicle->pDriver == GamePool_FindPlayerPed())
-			return true;
-	}
-
-	return false;
-}
-
-// 0.3.7
-bool CVehicle::HasSunk()
-{
-	
-
-	if(!m_pVehicle) return false;
-	return ScriptCommand(&has_car_sunk, m_dwGTAId);
-}
-
-void CVehicle::RemoveEveryoneFromVehicle()
-{
-	
-
-	if(!m_pVehicle) return;
-	if(!GamePool_Vehicle_GetAt(m_dwGTAId)) return;
-
-	float fPosX = m_pVehicle->entity.mat->pos.X;
-	float fPosY = m_pVehicle->entity.mat->pos.Y;
-	float fPosZ = m_pVehicle->entity.mat->pos.Z;
-
-	int iPlayerID = 0;
-	if(m_pVehicle->pDriver)
-	{
-		iPlayerID = GamePool_Ped_GetIndex( m_pVehicle->pDriver );
-		ScriptCommand(&remove_actor_from_car_and_put_at, iPlayerID, fPosX, fPosY, fPosZ + 2.0f);
-	}
-
-	for(int i = 0; i<7; i++)
-	{
-		if(m_pVehicle->pPassengers[i] != nullptr)
-		{
-			iPlayerID = GamePool_Ped_GetIndex( m_pVehicle->pPassengers[i] );
-			ScriptCommand(&remove_actor_from_car_and_put_at, iPlayerID, fPosX, fPosY, fPosZ + 2.0f);
-		}
-	}
-}
-
-// 0.3.7
-bool CVehicle::IsOccupied()
-{
-	
-
-	if(m_pVehicle)
-	{
-		if(m_pVehicle->pDriver) return true;
-		if(m_pVehicle->pPassengers[0]) return true;
-		if(m_pVehicle->pPassengers[1]) return true;
-		if(m_pVehicle->pPassengers[2]) return true;
-		if(m_pVehicle->pPassengers[3]) return true;
-		if(m_pVehicle->pPassengers[4]) return true;
-		if(m_pVehicle->pPassengers[5]) return true;
-		if(m_pVehicle->pPassengers[6]) return true;
-	}
-
-	return false;
-}
-
-void CVehicle::ProcessMarkers()
-{
-	
-
-	if(!m_pVehicle) return;
-
-	if(m_byteObjectiveVehicle)
-	{
-		if(!m_bSpecialMarkerEnabled)
-		{
-			if(m_dwMarkerID)
-			{
-				ScriptCommand(&disable_marker, m_dwMarkerID);
-				m_dwMarkerID = 0;
-			}
-
-			ScriptCommand(&tie_marker_to_car, m_dwGTAId, 1, 3, &m_dwMarkerID);
-			ScriptCommand(&set_marker_color, m_dwMarkerID, 1006);
-			ScriptCommand(&show_on_radar, m_dwMarkerID, 3);
-			m_bSpecialMarkerEnabled = true;
-		}
-
-		return;
-	}
-
-	if(m_byteObjectiveVehicle && m_bSpecialMarkerEnabled)
-	{
-		if(m_dwMarkerID)
-		{
-			ScriptCommand(&disable_marker, m_dwMarkerID);
-			m_bSpecialMarkerEnabled = false;
-			m_dwMarkerID = 0;
-		}
-	}
-
-	if(GetDistanceFromLocalPlayerPed() < 200.0f && !IsOccupied())
-	{
-		if(!m_dwMarkerID)
-		{
-			// show
-			ScriptCommand(&tie_marker_to_car, m_dwGTAId, 1, 2, &m_dwMarkerID);
-			ScriptCommand(&set_marker_color, m_dwMarkerID, 1004);
-		}
-	}
-
-	else if(IsOccupied() || GetDistanceFromLocalPlayerPed() >= 200.0f)
-	{
-		// remove
-		if(m_dwMarkerID)
-		{
-			ScriptCommand(&disable_marker, m_dwMarkerID);
-			m_dwMarkerID = 0;
-		}
-	}
-}
-
-void CVehicle::SetWheelPopped(uint8_t bytePopped)
-{
-
-}
-
-void CVehicle::SetDoorState(int iState)
-{
-	
-
-	if (!m_pVehicle) return;
-
-	if(iState) 
-	{
-		m_pVehicle->m_nDoorLock = 2;
-		m_bDoorsLocked = true;
-	} 
-	else 
-	{
-		m_pVehicle->m_nDoorLock = 0;
-		m_bDoorsLocked = false;
-	}
-}
-
-int CVehicle::GetDoorState() {
-	return m_bDoorsLocked;
-}
-
 void CVehicle::SetEngineState(int iState)
 {
 	if (!GamePool_Vehicle_GetAt(m_dwGTAId)) {
@@ -1408,544 +1391,79 @@ void CVehicle::SetEngineState(int iState)
 	if (iState)
 	{
 		m_pVehicle->m_nVehicleFlags.bEngineOn = 1;
+		bEngine = 1;
 		m_pVehicle->m_nVehicleFlags.bEngineBroken = 0;
-		m_bEngineOn = true;
 	}
 	else
 	{
 		m_pVehicle->m_nVehicleFlags.bEngineOn = 0;
+		bEngine = 0;
 		m_pVehicle->m_nVehicleFlags.bEngineBroken = 1;
-		m_bEngineOn = false;
-	}
-}
-int CVehicle::GetEngineState() {
-	return m_bEngineOn;
-}
-
-void CVehicle::SetLightsState(int iState)
-{
-	if (GamePool_Vehicle_GetAt(m_dwGTAId))
-	{
-		ScriptCommand(&force_car_lights, m_dwGTAId, iState > 0 ? 2 : 1);
-		m_bLightsOn = iState;
 	}
 }
 
-int CVehicle::GetLightsState() {
-	return m_bLightsOn;
+int CVehicle::GetEngineState(){
+	return bEngine;
 }
 
-void CVehicle::UpdateDamageStatus(uint32_t dwPanelDamage, uint32_t dwDoorDamage, uint8_t byteLightDamage, uint8_t byteTireDamage)
+void CVehicle::UpdateDamageStatus(uint32_t dwPanelDamage, uint32_t dwDoorDamage, uint8_t byteLightDamage)
 {
-	if (HasDamageModel())
-	{
-		SetPanelStatus(dwPanelDamage);
-		SetDoorStatus(dwDoorDamage, false);
+	
 
-		SetLightStatus(eLights::LEFT_HEADLIGHT, byteLightDamage & 1);
-		SetLightStatus(eLights::RIGHT_HEADLIGHT, (byteLightDamage >> 2) & 1);
-		if ((byteLightDamage >> 6) & 1)
+	if (!m_pVehicle || !m_dwGTAId)
+	{
+		return;
+	}
+
+	if (!GamePool_Vehicle_GetAt(m_dwGTAId))
+	{
+		return;
+	}
+
+	// handle only fix, not damaging
+	if (m_pVehicle && GetVehicleSubtype() == VEHICLE_SUBTYPE_CAR)
+	{
+		if (!dwPanelDamage && !dwDoorDamage && !byteLightDamage)
 		{
-			SetLightStatus(eLights::LEFT_TAIL_LIGHT, 1);
-			SetLightStatus(eLights::RIGHT_TAIL_LIGHT, 1);
+			((void(*)(VEHICLE_TYPE*))(g_libGTASA + 0x004D5CA4 + 1))(m_pVehicle); // CAutomobile::Fix
+			return;
 		}
-
-		SetWheelStatus(eWheelPosition::REAR_RIGHT_WHEEL, byteTireDamage & 1);
-		SetWheelStatus(eWheelPosition::FRONT_RIGHT_WHEEL, (byteTireDamage >> 1) & 1);
-		SetWheelStatus(eWheelPosition::REAR_LEFT_WHEEL, (byteTireDamage >> 2) & 1);
-		SetWheelStatus(eWheelPosition::FRONT_LEFT_WHEEL, (byteTireDamage >> 3) & 1);
-	}
-	else if (GetVehicleSubtype() == VEHICLE_SUBTYPE_BIKE)
-	{
-		SetBikeWheelStatus(1, byteTireDamage & 1);
-		SetBikeWheelStatus(0, (byteTireDamage >> 1) & 1);
 	}
 }
 
 unsigned int CVehicle::GetVehicleSubtype()
 {
-	if(m_pVehicle)
+	if (m_pVehicle)
 	{
-		if(m_pVehicle->entity.vtable == g_libGTASA+0x5CC9F0) // 0x871120
+		if (m_pVehicle->entity.vtable == g_libGTASA + 0x5CC9F0) // 0x871120
 		{
 			return VEHICLE_SUBTYPE_CAR;
 		}
-		else if(m_pVehicle->entity.vtable == g_libGTASA+0x5CCD48) // 0x8721A0
+		else if (m_pVehicle->entity.vtable == g_libGTASA + 0x5CCD48) // 0x8721A0
 		{
 			return VEHICLE_SUBTYPE_BOAT;
 		}
-		else if(m_pVehicle->entity.vtable == g_libGTASA+0x5CCB18) // 0x871360
+		else if (m_pVehicle->entity.vtable == g_libGTASA + 0x5CCB18) // 0x871360
 		{
 			return VEHICLE_SUBTYPE_BIKE;
 		}
-		else if(m_pVehicle->entity.vtable == g_libGTASA+0x5CD0B0) // 0x871948
+		else if (m_pVehicle->entity.vtable == g_libGTASA + 0x5CD0B0) // 0x871948
 		{
 			return VEHICLE_SUBTYPE_PLANE;
 		}
-		else if(m_pVehicle->entity.vtable == g_libGTASA+0x5CCE60) // 0x871680
+		else if (m_pVehicle->entity.vtable == g_libGTASA + 0x5CCE60) // 0x871680
 		{
 			return VEHICLE_SUBTYPE_HELI;
 		}
-		else if(m_pVehicle->entity.vtable == g_libGTASA+0x5CCC30) // 0x871528
+		else if (m_pVehicle->entity.vtable == g_libGTASA + 0x5CCC30) // 0x871528
 		{
 			return VEHICLE_SUBTYPE_PUSHBIKE;
 		}
-		else if(m_pVehicle->entity.vtable == g_libGTASA+0x5CD428) // 0x872370
+		else if (m_pVehicle->entity.vtable == g_libGTASA + 0x5CD428) // 0x872370
 		{
 			return VEHICLE_SUBTYPE_TRAIN;
 		}
 	}
 
 	return 0;
-}
-
-uint8_t CVehicle::GetSirenState()
-{
-	
-
-	if (!m_pVehicle) return 0;
-	return m_pVehicle->m_nVehicleFlags.bSirenOrAlarm;
-}
-
-void CVehicle::SetSirenState(uint8_t state)
-{
-	
-
-	if (!m_pVehicle) return;
-	m_pVehicle->m_nVehicleFlags.bSirenOrAlarm = state ? 1 : 0;
-}
-
-VEHICLE_TYPE* CVehicle::GetVehiclePtr()
-{
-	
-
-	return m_pVehicle;
-}
-
-
-void CVehicle::RemoveComponent(uint16_t uiComponent)
-{
-
-	int component = (uint16_t)uiComponent;
-
-	if (!m_dwGTAId || !m_pVehicle)
-	{
-		return;
-	}
-
-	if (GamePool_Vehicle_GetAt(m_dwGTAId))
-	{
-		ScriptCommand(&remove_component, m_dwGTAId, component);
-	}
-}
-
-bool CVehicle::IsSirenAdded()
-{
-	
-
-	return m_bAddSiren;
-}
-
-uint8_t CVehicle::GetRailTrack()
-{
-	
-
-	if (!m_pVehicle) return 0xFF; // 'invalid' track id to prevent any changes
-	return m_pVehicle->m_ucRailTrackID;
-}
-
-void CVehicle::SetRailTrack(uint8_t ucTrackID)
-{
-	sizeof(VEHICLE_TYPE);
-
-	if (!m_pVehicle) return;
-
-	if (ucTrackID >= 4)
-		return;
-
-	if (m_pVehicle->m_ucRailTrackID != ucTrackID)
-	{
-		m_pVehicle->m_ucRailTrackID = ucTrackID;
-		if (!IsDerailed())
-		{
-			// CTrain::FindPositionOnTrackFromCoors
-			((int(*)(uintptr_t))(g_libGTASA + 0x508F98 + 1))((uintptr_t)m_pVehicle);
-		}
-	}
-}
-
-bool CVehicle::IsDerailed()
-{
-	
-
-	if (!m_pVehicle) return false;
-	return m_pVehicle->trainFlags.bIsDerailed;
-}
-
-float CVehicle::GetTrainPosition()
-{
-	
-
-	if (!m_pVehicle) return 0.0f;
-	return m_pVehicle->m_fTrainRailDistance;
-}
-
-float CVehicle::GetTrainSpeed()
-{
-	
-
-	if (!m_pVehicle) return 0.0f;
-	return *(float*)((uintptr_t)m_pVehicle + 1460);
-}
-
-void CVehicle::SetTrainSpeed(float fTrainSpeed)
-{
-	
-
-	if (!m_pVehicle) return;
-	*(float*)((uintptr_t)m_pVehicle + 1460) = fTrainSpeed;
-}
-
-void CVehicle::AttachTrailer()
-{
-	
-
-	if (m_pTrailer)
-		ScriptCommand(&put_trailer_on_cab, m_pTrailer->m_dwGTAId, m_dwGTAId);
-
-	bInProcessDetachTrailer = 0;
-}
-
-void CVehicle::DetachTrailer()
-{
-	
-
-	if (m_pTrailer)
-		ScriptCommand(&detach_trailer_from_cab, m_pTrailer->m_dwGTAId, m_dwGTAId);
-
-	bInProcessDetachTrailer = 1;
-}
-
-void CVehicle::SetTrailer(CVehicle* pTrailer)
-{
-	
-
-	m_pTrailer = pTrailer;
-}
-
-CVehicle* CVehicle::GetTrailer()
-{
-	
-
-	if (!m_pVehicle) return NULL;
-
-	// Try to find associated trailer
-	uint32_t dwTrailerGTAPtr = m_pVehicle->dwTrailer;
-
-	if (pNetGame && dwTrailerGTAPtr) {
-		CVehiclePool* pVehiclePool = pNetGame->GetVehiclePool();
-		VEHICLEID TrailerID = (VEHICLEID)pVehiclePool->FindIDFromGtaPtr((VEHICLE_TYPE*)dwTrailerGTAPtr);
-		if (TrailerID < MAX_VEHICLES && pVehiclePool->GetSlotState(TrailerID)) {
-			return pVehiclePool->GetAt(TrailerID);
-		}
-	}
-
-	return NULL;
-}
-
-void CVehicle::ProcessDamage()
-{
-	if (pNetGame)
-	{
-		VEHICLEID vehId = pNetGame->GetVehiclePool()->FindIDFromGtaPtr(m_pVehicle);
-		if (vehId != INVALID_VEHICLE_ID)
-		{
-			if (HasDamageModel())
-			{
-				uint8_t byteTyreFlags, byteLightFlags;
-				uint32_t dwDoorFlags, dwPanelFlags;
-
-				GetDamageStatusEncoded(&byteTyreFlags, &byteLightFlags, &dwDoorFlags, &dwPanelFlags);
-				if (byteTyreFlags != m_byteTyreStatus || byteLightFlags != m_byteLightStatus ||
-					dwDoorFlags != m_dwDoorStatus || dwPanelFlags != m_dwPanelStatus)
-				{
-					m_byteLightStatus = byteLightFlags;
-					m_byteTyreStatus = byteTyreFlags;
-					m_dwDoorStatus = dwDoorFlags;
-					m_dwPanelStatus = dwPanelFlags;
-
-					RakNet::BitStream bsDamage;
-
-					bsDamage.Write(vehId);
-					bsDamage.Write(dwPanelFlags);
-					bsDamage.Write(dwDoorFlags);
-					bsDamage.Write(byteLightFlags);
-					bsDamage.Write(byteTyreFlags);
-
-					pNetGame->GetRakClient()->RPC(&RPC_VehicleDamage, &bsDamage, HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, false, UNASSIGNED_NETWORK_ID, nullptr);
-				}
-			}
-			else if (GetVehicleSubtype() == VEHICLE_SUBTYPE_BIKE)
-			{
-				uint8_t byteTyreFlags = GetBikeWheelStatus(1) | (GetBikeWheelStatus(0) << 1);
-				if (m_byteTyreStatus != byteTyreFlags)
-				{
-					m_byteTyreStatus = byteTyreFlags;
-
-					RakNet::BitStream bsDamage;
-					bsDamage.Write(vehId);
-					bsDamage.Write((uint32_t)0);
-					bsDamage.Write((uint32_t)0);
-					bsDamage.Write((uint8_t)0);
-					bsDamage.Write(byteTyreFlags);
-
-					pNetGame->GetRakClient()->RPC(&RPC_VehicleDamage, &bsDamage, HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, false, UNASSIGNED_NETWORK_ID, nullptr);
-				}
-			}
-		}
-	}
-}
-
-void CVehicle::GetDamageStatusEncoded(uint8_t* byteTyreFlags, uint8_t* byteLightFlags, uint32_t* dwDoorFlags, uint32_t* dwPanelFlags)
-{
-	if (byteTyreFlags) *byteTyreFlags = GetWheelStatus(eWheelPosition::REAR_RIGHT_WHEEL) | (GetWheelStatus(eWheelPosition::FRONT_RIGHT_WHEEL) << 1)
-		| (GetWheelStatus(eWheelPosition::REAR_LEFT_WHEEL) << 2) | (GetWheelStatus(eWheelPosition::FRONT_LEFT_WHEEL) << 3);
-
-	if (byteLightFlags) *byteLightFlags = GetLightStatus(eLights::LEFT_HEADLIGHT) | (GetLightStatus(eLights::RIGHT_HEADLIGHT) << 2);
-	if (GetLightStatus(eLights::LEFT_TAIL_LIGHT) && GetLightStatus(eLights::RIGHT_TAIL_LIGHT))
-		*byteLightFlags |= (1 << 6);
-
-	if (dwDoorFlags) *dwDoorFlags = GetDoorStatus(eDoors::BONNET) | (GetDoorStatus(eDoors::BOOT) << 8) |
-		(GetDoorStatus(eDoors::FRONT_LEFT_DOOR) << 16) | (GetDoorStatus(eDoors::FRONT_RIGHT_DOOR) << 24);
-
-	if (dwPanelFlags) *dwPanelFlags = GetPanelStatus(ePanels::FRONT_LEFT_PANEL) | (GetPanelStatus(ePanels::FRONT_RIGHT_PANEL) << 4)
-		| (GetPanelStatus(ePanels::REAR_LEFT_PANEL) << 8) | (GetPanelStatus(ePanels::REAR_RIGHT_PANEL) << 12)
-		| (GetPanelStatus(ePanels::WINDSCREEN_PANEL) << 16) | (GetPanelStatus(ePanels::FRONT_BUMPER) << 20)
-		| (GetPanelStatus(ePanels::REAR_BUMPER) << 24);
-}
-
-bool CVehicle::HasDamageModel()
-{
-	if (GetVehicleSubtype() == VEHICLE_SUBTYPE_CAR)
-		return true;
-	return false;
-}
-
-void CVehicle::SetBonnetAndBootStatus(bool bBonnet, bool bBoot)
-{
-	if (!m_pVehicle || GetVehicleSubtype() != VEHICLE_SUBTYPE_CAR) return;
-
-	ScriptCommand(&open_car_door_a_bit, m_dwGTAId, 0, (int)bBonnet ? 90.0 : 0.0); //bonnet
-	ScriptCommand(&open_car_door_a_bit, m_dwGTAId, 1, (int)bBoot ? 90.0 : 0.0); //boot
-}
-
-void CVehicle::SetDoorOpenStatus(bool bDriver, bool bPassenger, bool bBackLeft, bool bBackRight)
-{
-	if (!m_pVehicle) return;
-
-	ScriptCommand(&open_car_door_a_bit, m_dwGTAId, 2, (int)bDriver ? 90.0 : 0.0); //Front left door (driver)
-	ScriptCommand(&open_car_door_a_bit, m_dwGTAId, 3, (int)bPassenger ? 90.0 : 0.0); //Front right door (passenger)
-	ScriptCommand(&open_car_door_a_bit, m_dwGTAId, 4, (int)bBackLeft ? 90.0 : 0.0); //Rear left door
-	ScriptCommand(&open_car_door_a_bit, m_dwGTAId, 5, (int)bBackRight ? 90.0 : 0.0); //Rear right door
-}
-
-uint8_t CVehicle::GetWheelStatus(eWheelPosition bWheel)
-{
-	if (m_pVehicle && bWheel < MAX_WHEELS)
-	{
-		return ((uint8_t(*)(uintptr_t, uint8_t))(g_libGTASA + 0x4F9400 + 1))(((uintptr_t)m_pVehicle + 1456), bWheel);
-	}
-	return 0;
-}
-
-void CVehicle::SetWheelStatus(eWheelPosition bWheel, uint8_t bTireStatus)
-{
-	if (m_pVehicle && bWheel < MAX_WHEELS)
-	{
-		uintptr_t* pDamageManager = (uintptr_t*)((uintptr_t)m_pVehicle + 1456);
-		((uint8_t(*)(uintptr_t, uint8_t, uint8_t))(g_libGTASA + 0x4F93F0 + 1))(((uintptr_t)m_pVehicle + 1456), bWheel, bTireStatus);
-	}
-}
-
-void CVehicle::SetPanelStatus(uint8_t bPanel, uint8_t bPanelStatus)
-{
-	if (m_pVehicle && bPanel < MAX_PANELS && bPanelStatus <= 3)
-	{
-		if (GetPanelStatus(bPanel) != bPanelStatus)
-		{
-			uintptr_t* pDamageManager = (uintptr_t*)((uintptr_t)m_pVehicle + 1456);
-			((uint8_t(*)(uintptr_t, uint8_t, uint8_t))(g_libGTASA + 0x4F93B8 + 1))(((uintptr_t)m_pVehicle + 1456), bPanel, bPanelStatus);
-
-			if (bPanelStatus == DT_PANEL_INTACT)
-			{
-				// Grab the car node index for the given panel
-				static int s_iCarNodeIndexes[7] = { 0x0F, 0x0E, 0x00 /*?*/, 0x00 /*?*/, 0x12, 0x0C, 0x0D };
-				int iCarNodeIndex = s_iCarNodeIndexes[bPanel];
-
-				// CAutomobile::FixPanel
-				((uint8_t(*)(uintptr_t, uint32_t, uint32_t))(g_libGTASA + 0x4DD238 + 1))((uintptr_t)m_pVehicle, iCarNodeIndex, static_cast<uint32_t>(bPanel));
-			}
-			else
-			{
-				((uint8_t(*)(uintptr_t, uint32_t, bool))(g_libGTASA + 0x4DB024 + 1))((uintptr_t)m_pVehicle, static_cast<uint32_t>(bPanel), false);
-			}
-		}
-	}
-}
-
-void CVehicle::SetPanelStatus(uint32_t ulPanelStatus)
-{
-	if (m_pVehicle)
-	{
-		for (uint8_t uiIndex = 0; uiIndex < MAX_PANELS; uiIndex++)
-		{
-			SetPanelStatus(uiIndex, static_cast<uint8_t>(ulPanelStatus));
-			ulPanelStatus >>= 4;
-		}
-	}
-}
-
-void CVehicle::SetDoorStatus(uint32_t dwDoorStatus, bool spawnFlyingComponen)
-{
-	if (m_pVehicle)
-	{
-		for (uint8_t uiIndex = 0; uiIndex < MAX_DOORS; uiIndex++)
-		{
-			SetDoorStatus(static_cast<eDoors>(uiIndex), static_cast<uint8_t>(dwDoorStatus), spawnFlyingComponen);
-			dwDoorStatus >>= 8;
-		}
-	}
-}
-
-uint8_t CVehicle::GetPanelStatus(uint8_t bPanel)
-{
-	if (m_pVehicle && bPanel < MAX_PANELS)
-	{
-		uintptr_t* pDamageManager = (uintptr_t*)((uintptr_t)m_pVehicle + 1456);
-		return ((uint8_t(*)(uintptr_t, uint8_t))(g_libGTASA + 0x4F93D8 + 1))(((uintptr_t)m_pVehicle + 1456), bPanel);
-	}
-	return 0;
-}
-
-uint32_t CVehicle::GetPanelStatus()
-{
-	if (m_pVehicle)
-	{
-		DAMAGE_MANAGER_INTERFACE* pDamageManager = (DAMAGE_MANAGER_INTERFACE*)((uintptr_t)m_pVehicle + 1456);
-		if (pDamageManager) return pDamageManager->Panels;
-	}
-	return 0;
-}
-
-void CVehicle::SetLightStatus(uint8_t bLight, uint8_t bLightStatus)
-{
-	if (m_pVehicle && bLight < MAX_LIGHTS)
-	{
-		uintptr_t* pDamageManager = (uintptr_t*)((uintptr_t)m_pVehicle + 1456);
-		((uint8_t(*)(uintptr_t, uint8_t, uint8_t))(g_libGTASA + 0x4F9380 + 1))(((uintptr_t)m_pVehicle + 1456), bLight, bLightStatus);
-	}
-}
-
-void CVehicle::SetLightStatus(uint8_t ucStatus)
-{
-	if (m_pVehicle)
-	{
-		DAMAGE_MANAGER_INTERFACE* pDamageManager = (DAMAGE_MANAGER_INTERFACE*)((uintptr_t)m_pVehicle + 1456);
-		if (pDamageManager) pDamageManager->Lights = static_cast<uint32_t>(ucStatus);
-	}
-}
-
-uint8_t CVehicle::GetLightStatus(uint8_t bLight)
-{
-	if (m_pVehicle && bLight < MAX_LIGHTS)
-	{
-		uintptr_t* pDamageManager = (uintptr_t*)((uintptr_t)m_pVehicle + 1456);
-		return ((uint8_t(*)(uintptr_t, uint8_t))(g_libGTASA + 0x4F93A0 + 1))(((uintptr_t)m_pVehicle + 1456), bLight);
-	}
-	return 0;
-}
-
-uint8_t CVehicle::GetDoorStatus(eDoors bDoor)
-{
-	if (m_pVehicle && bDoor < MAX_DOORS)
-	{
-		DAMAGE_MANAGER_INTERFACE* pDamageManager = (DAMAGE_MANAGER_INTERFACE*)((uintptr_t)m_pVehicle + 1456);
-		if (pDamageManager) return pDamageManager->Door[bDoor];
-	}
-	return 0;
-}
-
-void CVehicle::SetDoorStatus(eDoors bDoor, uint8_t bDoorStatus, bool spawnFlyingComponen)
-{
-	if (m_pVehicle && bDoor < MAX_DOORS)
-	{
-		if (GetDoorStatus(bDoor) != bDoorStatus)
-		{
-			uintptr_t* pDamageManager = (uintptr_t*)((uintptr_t)m_pVehicle + 1456);
-			((uint8_t(*)(uintptr_t, uint8_t, uint8_t, bool))(g_libGTASA + 0x4F9410 + 1))(((uintptr_t)m_pVehicle + 1456), bDoor, bDoorStatus, spawnFlyingComponen);
-
-			if (bDoorStatus == DT_DOOR_INTACT || bDoorStatus == DT_DOOR_SWINGING_FREE)
-			{
-				// Grab the car node index for the given door id
-				static int s_iCarNodeIndexes[6] = { 0x10, 0x11, 0x0A, 0x08, 0x0B, 0x09 };
-				int iCarNodeIndex = s_iCarNodeIndexes[bDoor];
-
-				// CAutomobile::FixDoor
-				((uint8_t(*)(uintptr_t, uint32_t, uint32_t))(g_libGTASA + 0x4DD13C + 1))((uintptr_t)m_pVehicle, iCarNodeIndex, static_cast<uint32_t>(bDoor));
-			}
-			else
-			{
-				bool bQuiet = !spawnFlyingComponen;
-				((uint8_t(*)(uintptr_t, uint32_t, bool))(g_libGTASA + 0x4DB174 + 1))((uintptr_t)m_pVehicle, static_cast<uint32_t>(bDoor), bQuiet);
-			}
-		}
-	}
-}
-
-void CVehicle::SetBikeWheelStatus(uint8_t bWheel, uint8_t bTireStatus)
-{
-	if (m_pVehicle && bWheel < 2)
-	{
-		if (bWheel == 0)
-		{
-			*(uint8_t*)((uintptr_t)m_pVehicle + 1644) = bTireStatus;
-		}
-		else
-		{
-			*(uint8_t*)((uintptr_t)m_pVehicle + 1645) = bTireStatus;
-		}
-	}
-}
-
-uint8_t CVehicle::GetBikeWheelStatus(uint8_t bWheel)
-{
-	if (m_pVehicle && bWheel < 2)
-	{
-		if (bWheel == 0)
-		{
-			return *(uint8_t*)((uintptr_t)m_pVehicle + 1644);
-		}
-		else
-		{
-			return *(uint8_t*)((uintptr_t)m_pVehicle + 1645);
-		}
-	}
-	return 0;
-}
-
-bool CVehicle::IsTrain()
-{
-    int nModel;
-
-    if(m_pVehicle) {
-        nModel = m_pVehicle->entity.nModelIndex;
-
-        if(nModel == TRAIN_PASSENGER_LOCO) return true;
-        if(nModel == TRAIN_PASSENGER) return true;
-        if(nModel == TRAIN_FREIGHT_LOCO) return true;
-        if(nModel == TRAIN_FREIGHT) return true;
-        if(nModel == TRAIN_TRAM) return true;
-    }
-
-    return false;
 }

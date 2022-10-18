@@ -456,8 +456,8 @@ RwTexture* CCustomPlateManager::ProcessRuPlate(SCustomPlate& plate)
 
 	m_pRenderTarget->Begin();
 	m_pRuSprite->Draw(0.0f, 0.0f, 256.0f, 64.0f, white);
-	pText->Draw(22.0f, 10.0f, 160.0f, 40.0f, white); // x y width height
-	pRegion->Draw(206.0f, 14.0f, 38.0f, 20.0f, white); // x y width height
+	pText->Draw(22.0f, 10.0f, 160.0f, 40.0f, white); // x y width height ÒÅÊÑÒ
+	pRegion->Draw(206.0f, 14.0f, 38.0f, 20.0f, white); // x y width height ÐÅÃÈÎÍ
 	RwTexture* pTexture = m_pRenderTarget->End();
 
 	delete pText;

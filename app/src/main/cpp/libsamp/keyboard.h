@@ -2,9 +2,6 @@
 #include "keyboardhistory.h"
 #include "vendor/raknet/SingleProducerConsumer.h"
 #include <jni.h>
-/*
-	зачем я это высрал?
-*/
 
 #define LAYOUT_ENG 0
 #define LAYOUT_RUS 1

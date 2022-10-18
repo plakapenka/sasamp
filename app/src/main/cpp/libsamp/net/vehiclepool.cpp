@@ -25,59 +25,22 @@ CVehiclePool::~CVehiclePool()
 
 void CVehiclePool::Process()
 {
-	CVehicle* pVehicle;
+	CVehicle *pVehicle;
 	CPlayerPool* pPlayerPool = pNetGame->GetPlayerPool();
 	CLocalPlayer* pLocalPlayer = pPlayerPool->GetLocalPlayer();
 
-	for (VEHICLEID x = 0; x < MAX_VEHICLES; x++)
+	for(VEHICLEID x = 0; x < MAX_VEHICLES; x++)
 	{
-		if (GetSlotState(x))
+		if(GetSlotState(x))
 		{
 			pVehicle = m_pVehicles[x];
 
-			if (m_bIsActive[x])
-			{	
-				pVehicle->SetEngineState(pVehicle->m_bEngineOn);
-				pVehicle->SetLightsState(pVehicle->m_bLightsOn);
-				/*if (pVehicle->m_bIsInvulnerable)
-				{
-					if (pVehicle->m_pVehicle->pDriver)
-						pVehicle->SetInvulnerable(false);
-				}
-				else
-				{
-					if (!pVehicle->m_pVehicle->pDriver)
-						pVehicle->SetInvulnerable(true);
-				}*/
+			if(m_bIsActive[x])
+			{
+				/*if(pVehicle->IsDriverLocalPlayer()) pVehicle->SetInvulnerable(false);
+				else pVehicle->SetInvulnerable(true);
 
-				pVehicle->ProcessDamage();
-
-				if (pVehicle->GetDistanceFromLocalPlayerPed() < 200.0f)
-				{
-					if (!pVehicle->IsAdded())
-					{
-						pVehicle->Add();
-						pVehicle->SetColor(pVehicle->m_byteColor1, pVehicle->m_byteColor2);
-					}
-
-					CVehicle* pTrailer = pVehicle->GetTrailer();
-					if (pTrailer && !pTrailer->IsAdded())
-					{
-						MATRIX4X4 matPos;
-						pVehicle->GetMatrix(&matPos);
-						pTrailer->TeleportTo(matPos.pos.X, matPos.pos.Y, matPos.pos.Z);
-						pTrailer->Add();
-					}
-				}
-				else {
-					if (pVehicle->IsAdded())
-					{
-						pVehicle->Remove();
-					}
-				}
-			}
-
-				/*if(pVehicle->GetHealth() == 0.0f)
+				if(pVehicle->GetHealth() == 0.0f)
 				{
 						NotifyVehicleDeath(x);
 						continue;
@@ -96,6 +59,9 @@ void CVehiclePool::Process()
 					m_pGTAVehicles[x] = pVehicle->m_pVehicle;
 
 				pVehicle->ProcessMarkers();*/
+
+
+			}
 		}
 	}
 }
@@ -114,8 +80,8 @@ bool CVehiclePool::New(NEW_VEHICLE *pNewVehicle)
 	m_pVehicles[pNewVehicle->VehicleID] = pGame->NewVehicle(pNewVehicle->iVehicleType,
 		pNewVehicle->vecPos.X, pNewVehicle->vecPos.Y, pNewVehicle->vecPos.Z, 
 		pNewVehicle->fRotation, pNewVehicle->byteAddSiren);
-		
-			int random = rand() % 10;
+
+	int random = rand() % 10;
 	switch (random)
 	{
 		case 0:
@@ -203,7 +169,7 @@ bool CVehiclePool::New(NEW_VEHICLE *pNewVehicle)
 			m_pVehicles[pNewVehicle->VehicleID]->UpdateDamageStatus(
 				pNewVehicle->dwPanelDamageStatus, 
 				pNewVehicle->dwDoorDamageStatus,
-				pNewVehicle->byteLightDamageStatus, pNewVehicle->byteTireDamageStatus);
+				pNewVehicle->byteLightDamageStatus);
 		}
 
 		m_pVehicles[pNewVehicle->VehicleID]->SetWheelPopped(pNewVehicle->byteTireDamageStatus);

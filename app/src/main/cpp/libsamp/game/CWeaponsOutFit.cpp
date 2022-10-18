@@ -134,6 +134,7 @@ void CWeaponsOutFit::ParseDatFile()
 
 	if (!pFile)
 	{
+		Log("Cannot parse DAT file, no weapons outfit");
 		m_bParsed = false;
 		return;
 	}

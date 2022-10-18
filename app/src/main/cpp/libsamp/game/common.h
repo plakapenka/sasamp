@@ -42,103 +42,6 @@ typedef unsigned short PLAYERID;
 
 //-----------------------------------------------------------
 
-//-----------------------------------------------------------
-
-#define WEAPON_MODEL_BRASSKNUCKLE		331 // was 332
-#define WEAPON_MODEL_GOLFCLUB			333
-#define WEAPON_MODEL_NITESTICK			334
-#define WEAPON_MODEL_KNIFE				335
-#define WEAPON_MODEL_BAT				336
-#define WEAPON_MODEL_SHOVEL				337
-#define WEAPON_MODEL_POOLSTICK			338
-#define WEAPON_MODEL_KATANA				339
-#define WEAPON_MODEL_CHAINSAW			341
-#define WEAPON_MODEL_DILDO				321
-#define WEAPON_MODEL_DILDO2				322
-#define WEAPON_MODEL_VIBRATOR			323
-#define WEAPON_MODEL_VIBRATOR2			324
-#define WEAPON_MODEL_FLOWER				325
-#define WEAPON_MODEL_CANE				326
-#define WEAPON_MODEL_GRENADE			342 // was 327
-#define WEAPON_MODEL_TEARGAS			343 // was 328
-#define WEAPON_MODEL_MOLOTOV			344 // was 329
-#define WEAPON_MODEL_COLT45				346
-#define WEAPON_MODEL_SILENCED			347
-#define WEAPON_MODEL_DEAGLE				348
-#define WEAPON_MODEL_SHOTGUN			349
-#define WEAPON_MODEL_SAWEDOFF			350
-#define WEAPON_MODEL_SHOTGSPA			351
-#define WEAPON_MODEL_UZI				352
-#define WEAPON_MODEL_MP5				353
-#define WEAPON_MODEL_AK47				355
-#define WEAPON_MODEL_M4					356
-#define WEAPON_MODEL_TEC9				372
-#define WEAPON_MODEL_RIFLE				357
-#define WEAPON_MODEL_SNIPER				358
-#define WEAPON_MODEL_ROCKETLAUNCHER		359
-#define WEAPON_MODEL_HEATSEEKER			360
-#define WEAPON_MODEL_FLAMETHROWER		361
-#define WEAPON_MODEL_MINIGUN			362
-#define WEAPON_MODEL_SATCHEL			363
-#define WEAPON_MODEL_BOMB				364
-#define WEAPON_MODEL_SPRAYCAN			365
-#define WEAPON_MODEL_FIREEXTINGUISHER	366
-#define WEAPON_MODEL_CAMERA				367
-#define WEAPON_MODEL_NIGHTVISION		368	// newly added
-#define WEAPON_MODEL_INFRARED			369	// newly added
-#define WEAPON_MODEL_JETPACK			370	// newly added
-#define WEAPON_MODEL_PARACHUTE			371
-
-#define WEAPON_MODEL_PARACHUTE			371
-#define WEAPON_FIST                        0
-#define WEAPON_BRASSKNUCKLE                1
-#define WEAPON_GOLFCLUB                    2
-#define WEAPON_NITESTICK                3
-#define WEAPON_KNIFE                    4
-#define WEAPON_BAT                        5
-#define WEAPON_SHOVEL                    6
-#define WEAPON_POOLSTICK                7
-#define WEAPON_KATANA                    8
-#define WEAPON_CHAINSAW                    9
-#define WEAPON_DILDO                    10
-#define WEAPON_DILDO2                    11
-#define WEAPON_VIBRATOR                    12
-#define WEAPON_VIBRATOR2                13
-#define WEAPON_FLOWER                    14
-#define WEAPON_CANE                        15
-#define WEAPON_GRENADE                    16
-#define WEAPON_TEARGAS                    17
-#define WEAPON_MOLTOV                    18
-#define WEAPON_COLT45                    22
-#define WEAPON_SILENCED                    23
-#define WEAPON_DEAGLE                    24
-#define WEAPON_SHOTGUN                    25
-#define WEAPON_SAWEDOFF                    26
-#define WEAPON_SHOTGSPA                    27
-#define WEAPON_UZI                        28
-#define WEAPON_MP5                        29
-#define WEAPON_AK47                        30
-#define WEAPON_M4                        31
-#define WEAPON_TEC9                        32
-#define WEAPON_RIFLE                    33
-#define WEAPON_SNIPER                    34
-#define WEAPON_ROCKETLAUNCHER            35
-#define WEAPON_HEATSEEKER                36
-#define WEAPON_FLAMETHROWER                37
-#define WEAPON_MINIGUN                    38
-#define WEAPON_SATCHEL                    39
-#define WEAPON_BOMB                        40
-#define WEAPON_SPRAYCAN                    41
-#define WEAPON_FIREEXTINGUISHER            42
-#define WEAPON_CAMERA                    43
-#define WEAPON_PARACHUTE                46
-#define WEAPON_VEHICLE                    49
-#define WEAPON_HELIBLADES				50
-#define WEAPON_EXPLOSION				51
-#define WEAPON_DROWN                    53
-#define WEAPON_COLLISION                54
-#define WEAPON_UNKNOWN					0xFF
-
 #define MAKE_PROFILE(var, var_t) \
 	uint32_t (var) = GetTickCount(); \
 	static uint32_t (var_t) = GetTickCount();
@@ -152,32 +55,15 @@ typedef unsigned short PLAYERID;
 	}
 
 
-#pragma pack(1)
-enum eAxis
-{
-	X = 0,
-	Y,
-	Z
-};
-
 //#define _CDEBUG
 
-//#define GAME_EDITION_CR
+#define GAME_EDITION_CR
 
 #ifdef GAME_EDITION_CR
 #pragma message "Compiling for CR"
 #else
 #pragma message "Compiling for GTASA"
 #endif
-
-#pragma pack(1)
-typedef struct _RES_ENTRY_OBJ
-{
-	PADDING(_pad0, 48); 	// 0-48
-	uintptr_t validate; 	//48-52
-	PADDING(_pad1, 4); 		//52-56
-} RES_ENTRY_OBJ;
-static_assert(sizeof(_RES_ENTRY_OBJ) == 56);
 
 #pragma pack(1)
 typedef struct _VECTOR 
@@ -272,16 +158,42 @@ typedef struct _MATRIX4X4
 //-----------------------------------------------------------
 
 #define RW_FRAME_NAME_LENGTH      23
-#pragma pack(1)
-struct MaterialInfo
+#pragma pack(push, 1)
+struct RwListEntry
 {
-	uint8_t m_bCreated;
-	uint16_t wModelID;
-	uint32_t dwColor;
-
-	uint32_t oldFlags;
-	struct RwTexture* pTex;
+	RwListEntry* next, * prev;
 };
+
+struct RwList
+{
+	RwListEntry root;
+};
+
+struct RwObject
+{
+	unsigned char type;
+	unsigned char subtype;
+	unsigned char flags;
+	unsigned char privateFlags;
+	void* parent;            // should be RwFrame with RpClump
+};
+
+struct RwFrame
+{
+	RwObject        object;                 // 0
+	void* pad1, * pad2;            // 8
+	MATRIX4X4        modelling;              // 16
+	MATRIX4X4        ltm;                    // 32
+	RwList          objects;                // 48
+	struct RwFrame* child;                  // 56
+	struct RwFrame* next;                   // 60
+	struct RwFrame* root;                   // 64
+
+	// Rockstar Frame extension (0x253F2FE) (24 bytes)
+	unsigned char pluginData[8];                               // padding
+	char          szName[RW_FRAME_NAME_LENGTH + 1];            // name (as stored in the frame extension)
+};
+#pragma pack(pop)
 
 #define ATOMIC_ID_FLAG_TWO_VERSIONS_DAMAGED     2
 
@@ -331,88 +243,42 @@ typedef struct _ATTACHED_OBJECT_INFO
 	uint32_t dwColor[2];
 } ATTACHED_OBJECT_INFO;
 
+struct RpHAnimHierarchy
+{
+	int32_t             flags;          /**< Flags for the hierarchy  */
+	int32_t             numNodes;      /**< Number of nodes in the hierarchy  */
 
+	MATRIX4X4* pMatrixArray;   /**< Pointer to node matrices*/
+};
 
 
 #pragma pack(1)
-typedef struct _ENTITY_TYPE {
-	uint32_t vtable;
+struct MaterialInfo
+{
+	uint8_t m_bCreated;
+	uint16_t wModelID;
+	uint32_t dwColor;
 
-	PADDING(_pad0, 12);
+	uint32_t oldFlags;
+	struct RwTexture* pTex;
+};
 
-	float fRotZBeforeMat;
+#pragma pack(1)
+typedef struct _ENTITY_TYPE
+{
+	// ENTITY STUFF
+	uint32_t vtable; 		// 0-4		;vtable
+	PADDING(_pad91, 16);	// 4-20
+	MATRIX4X4 *mat; 		// 20-24	;mat
+	uintptr_t m_RwObject;	// 24 - 28
+	PADDING(_pad92, 6);	// 28-34
+	uint16_t nModelIndex; 	// 34-36	;ModelIndex
+	PADDING(_pad93, 32);	// 36-68
+	VECTOR vecMoveSpeed; 	// 68-80	;vecMoveSpeed
+	VECTOR vecTurnSpeed; 	// 80-92	;vecTurnSpeed
+	PADDING(_pad94, 88);	// 92-180
+	uintptr_t dwUnkModelRel; // 180-184 ;сотка инфа
 
-	MATRIX4X4* mat;
-
-	union {
-		uintptr_t m_RwObject;
-		uintptr_t m_pRpClump;
-		uintptr_t m_pRpAtomic;
-	};
-
-	union {
-		uint32_t m_nEntityFlags;
-		struct {
-			uint32_t m_bUsesCollision : 1;
-			uint32_t m_bCollisionProcessed : 1;
-			uint32_t m_bIsStatic : 1;
-			uint32_t m_bHasContacted : 1;
-			uint32_t m_bIsStuck : 1;
-			uint32_t m_bIsInSafePosition : 1;
-			uint32_t m_bWasPostponed : 1;
-			uint32_t m_bIsVisible : 1;
-
-			uint32_t m_bIsBIGBuilding : 1;
-			uint32_t m_bRenderDamaged : 1;
-			uint32_t m_bStreamingDontDelete : 1;
-			uint32_t m_bRemoveFromWorld : 1;
-			uint32_t m_bHasHitWall : 1;
-			uint32_t m_bImBeingRendered : 1;
-			uint32_t m_bDrawLast : 1;
-			uint32_t m_bDistanceFade : 1;
-
-			uint32_t m_bDontCastShadowsOn : 1;
-			uint32_t m_bOffscreen : 1;
-			uint32_t m_bIsStaticWaitingForCollision : 1;
-			uint32_t m_bDontStream : 1;
-			uint32_t m_bUnderwater : 1;
-			uint32_t m_bHasPreRenderEffects : 1;
-			uint32_t m_bIsTempBuilding : 1;
-			uint32_t m_bDontUpdateHierarchy : 1;
-
-			uint32_t m_bHasRoadsignText : 1;
-			uint32_t m_bDisplayedSuperLowLOD : 1;
-			uint32_t m_bIsProcObject : 1;
-			uint32_t m_bBackfaceCulled : 1;
-			uint32_t m_bLightObject : 1;
-			uint32_t m_bUnimportantStream : 1;
-			uint32_t m_bTunnel : 1;
-			uint32_t m_bTunnelTransition : 1;
-		} nEntityFlags;
-	};
-
-	unsigned short nRandomSeed;
-	uint16_t nModelIndex;
-
-	PADDING(_pad2, 32);
-
-	VECTOR vecMoveSpeed;
-	VECTOR vecTurnSpeed;
-	VECTOR vecFrictionMoveSpeed;
-	VECTOR vecFrictionTurnSpeed;
-	VECTOR vecForce;
-	VECTOR vecTorque;
-	float fMass;
-	float fTurnMass;
-	float fVelocityFrequency;
-	float fAirResistance;
-	float fElasticity;
-	float fBuoyancyConstant;
-	VECTOR vecCentreOfMass;
-
-	PADDING(_pad3, 4);
-
-	uint32_t dwUnkModelRel;
 } ENTITY_TYPE;
 
 //-----------------------------------------------------------
@@ -469,28 +335,28 @@ typedef struct _PED_TYPE
 } PED_TYPE;
 
 #pragma pack(1)
-typedef struct _AIM_SYNC_DATA
+struct AIM_SYNC_DATA
 {
 	uint8_t	byteCamMode;
-	VECTOR vecAimf;
-	VECTOR vecAimPos;
-	float fAimZ;
-	uint8_t byteCamExtZoom : 6;
-	uint8_t byteWeaponState : 2;
-	uint8_t aspect_ratio;
-} AIM_SYNC_DATA;
+	float	vecAimf1[3];
+	float	vecAimPos[3];
+	float	fAimZ;
+	uint8_t	byteCamExtZoom : 6;	// 0-63 normalized
+	uint8_t	byteWeaponState : 2;		// see eWeaponState
+	uint8_t	bUnk;
+};
 //-----------------------------------------------------------
 
 #pragma pack(1)
-typedef struct _BULLET_SYNC_DATA
+struct BULLET_SYNC
 {
-	uint8_t byteHitType;			// +0
-	uint16_t PlayerID;				// +1
-	VECTOR vecOrigin;				// +3
-	VECTOR vecPos;					// +12
-	VECTOR vecOffset;				// +20
-	uint8_t byteWeaponID;			// +28
-} BULLET_SYNC_DATA;					// size = 29
+	uint8_t hitType;
+	uint16_t hitId;
+	float origin[3];
+	float hitPos[3];
+	float offsets[3];
+	uint8_t weapId;
+};
 
 enum eVehicleLightsSize : unsigned char {
 	LIGHTS_LONG,
@@ -697,30 +563,12 @@ struct tHandlingData {
 #pragma pack(pop)
 
 #pragma pack(1)
-struct CTrainFlags
+typedef struct _VEHICLE_TYPE
 {
-	unsigned char unknown1 : 3;
-	unsigned char bIsTheChainEngine : 1;            // Only the first created train on the chain gets this set to true, others get it set to false.
-	unsigned char unknown2 : 1;                     // This is always set to true in mission trains construction.
-	unsigned char bIsAtNode : 1;
-	unsigned char bDirection : 1;
-	unsigned char unknown3 : 1;            // If the mission train was placed at the node, this is set to false in construction.
-
-	unsigned char bIsDerailed : 1;
-	unsigned char unknown4 : 1;
-	unsigned char bIsDrivenByBrownSteak : 1;
-	unsigned char unknown5 : 5;
-
-	unsigned char unknown6 : 8;
-
-	unsigned char unknown7 : 8;
-};
-typedef struct _VEHICLE_TYPE {
 	ENTITY_TYPE entity;			// 0000-0184	;entity
 	PADDING(_pad201, 716);		// 0184-900
 	tHandlingData* pHandling;	// 900-904
 	PADDING(_pad212, 160);		// 904 - 1076
-
 	struct {
 		unsigned char bIsLawEnforcer : 1; // Is this guy chasing the player at the moment
 		unsigned char bIsAmbulanceOnDuty : 1; // Ambulance trying to get to an accident
@@ -792,87 +640,18 @@ typedef struct _VEHICLE_TYPE {
 	} m_nVehicleFlags;
 
 	unsigned int m_nCreationTime;
-
-	uint8_t m_nPrimaryColor;
-	uint8_t m_nSecondaryColor;
-	uint8_t m_nTertiaryColor;
-	uint8_t m_nQuaternaryColor;
-
-	PADDING(_pad203, 32);
-	float m_fWheelScale;
-	unsigned short m_nAlarmState;
-	short  m_nForcedRandomRouteSeed; // if this is non-zero the random wander gets deterministic
-
-	PED_TYPE* pDriver;
-	PED_TYPE* pPassengers[8];
-	uint8_t m_nNumPassengers;
-
-	PADDING(_pad204, 67);
-
-	float fHealth;
-
-	PADDING(_pad240, 4);		// 1220-1224
-	uint32_t dwTrailer;			// 1224-1228
-	PADDING(_pad241, 48);		// 1228-1272
-	uint32_t m_nDoorLock;		// 1272-1276
-	PADDING(_pad242, 24);		// 1276-1300
-
-	unsigned int m_isUsingHornOrSecondarySiren; // 1300-1304
-
-	PADDING(_pad243, 112); // 1304-1416
-
-	uintptr_t m_pCustomPlateTexture; // 1416-1420
-
-	PADDING(_pad244, 4);  // 1420-1424
-	// 1424
-	uint8_t m_type;		// 0 = car/plane, 5 = boat, 6 = train, 9 = bike
-	PADDING(_pad245, 15); // 1425-1440
-
-	// 1440
-	uint8_t m_ucTrackNodeID; // Current node on train tracks
-	PADDING(_pad246, 3); // 1441-1444
-
-	float m_fTrainSpeed; // 1444-1448
-	// 1448-1452
-	float m_fTrainRailDistance; // Distance along rail starting from first rail node (determines train position when on rails)
-
-	float m_fDistanceToNextCarriage; // 1452-1456
-	uint32_t _pad247[2]; // 1456-1464
-
-	CTrainFlags trainFlags; // 1464-1468
-	uint32_t m_uiLastTimeUpdated; // 1468-1472
-
-	uint8_t m_ucRailTrackID; // 1472-1473
-	PADDING(_pad248, 15); // 1473-1488
-
-	uintptr_t m_prevCarriage; // 1488-1492
-	uintptr_t m_nextCarriage; // 1492-1496
+	uint8_t byteColor1;			// 1076-1077	;byteColor1
+	uint8_t byteColor2;			// 1077-1078	;byteColor2
+	PADDING(_pad204, 42);		// 1078-1120
+	PED_TYPE* pDriver;			// 1120-1124	;driver
+	PED_TYPE* pPassengers[7];	// 1124-1152	;pPassengers
+	PADDING(_pad202, 72);		// 1152-1224
+	float fHealth;				// 1224-1228	;fHealth
+	uint32_t unk;				// 1228 - 1232 - unk
+	uint32_t dwTrailer;			// 1232 - 1236 - trailer
+	PADDING(_pad203, 48);		// 1236-1284
+	uint32_t dwDoorsLocked;
 } VEHICLE_TYPE;
-
-typedef struct _BULLET_DATA {
-	uint32_t unk;
-	VECTOR vecOrigin;
-	VECTOR vecPos;
-	VECTOR vecOffset;
-	ENTITY_TYPE* pEntity;
-} BULLET_DATA;
-
-#pragma pack(1)
-typedef struct _VEHICLE_PARAMS_STATUS
-{
-	int bEngine;
-	int bLights;
-	int bAlarm;
-	int bDoors;
-	int bBonnet;
-	int bBoot;
-	int bObjective;
-	//doors
-	int bDriver;
-	int bPassenger;
-	int bBackleft;
-	int bBackright;
-} VEHICLE_PARAMS_STATUS;
 typedef struct _RECT
 {
 	float fLeft;
@@ -880,175 +659,6 @@ typedef struct _RECT
 	float fRight;
 	float fTop;
 } RECT, * PRECT;
-
-enum ePedBones
-{
-	BONE_PELVIS1 = 1,
-	//BONE_PELVIS = 2,
-	BONE_SPINE1 = 3,
-	BONE_UPPERTORSO = 4,
-	BONE_NECK = 5,
-	BONE_HEAD2 = 6,
-	BONE_HEAD1 = 7,
-	BONE_HEAD = 8,
-	BONE_RIGHTUPPERTORSO = 21,
-	BONE_RIGHTSHOULDER = 22,
-	BONE_RIGHTELBOW = 23,
-	BONE_RIGHTWRIST = 24,
-	BONE_RIGHTHAND = 25,
-	BONE_RIGHTTHUMB = 26,
-	BONE_LEFTUPPERTORSO = 31,
-	BONE_LEFTSHOULDER = 32,
-	BONE_LEFTELBOW = 33,
-	BONE_LEFTWRIST = 34,
-	BONE_LEFTHAND = 35,
-	BONE_LEFTTHUMB = 36,
-	BONE_LEFTHIP = 41,
-	BONE_LEFTKNEE = 42,
-	BONE_LEFTANKLE = 43,
-	BONE_LEFTFOOT = 44,
-	BONE_RIGHTHIP = 51,
-	BONE_RIGHTKNEE = 52,
-	BONE_RIGHTANKLE = 53,
-	BONE_RIGHTFOOT = 54,
-};
-
-// VEHICLE DAMAGE COMPONENTS
-enum eVehicleDamageComponent {
-	COMPONENT_WHEEL_LF = 1,
-	COMPONENT_WHEEL_RF = 2,
-	COMPONENT_WHEEL_LR = 3,
-	COMPONENT_WHEEL_RR = 4,
-	COMPONENT_BONNET = 5,
-	COMPONENT_BOOT = 6,
-	COMPONENT_DOOR_LF = 7,
-	COMPONENT_DOOR_RF = 8,
-	COMPONENT_DOOR_LR = 9,
-	COMPONENT_DOOR_RR = 10,
-	COMPONENT_WING_LF = 11,
-	COMPONENT_WING_RF = 12,
-	COMPONENT_WING_LR = 13,
-	COMPONENT_WING_RR = 14,
-	COMPONENT_WINDSCREEN = 15,
-	COMPONENT_BUMP_FRONT = 16,
-	COMPONENT_BUMP_REAR = 17
-};
-
-enum eWheelStatus
-{
-	DT_WHEEL_INTACT = 0,
-	//  DT_WHEEL_CAP_MISSING,
-	//  DT_WHEEL_WARPED,
-	DT_WHEEL_BURST,
-	DT_WHEEL_MISSING,
-
-	// MTA custom state
-	DT_WHEEL_INTACT_COLLISIONLESS,
-};
-
-enum eDoorStatus
-{
-	DT_DOOR_INTACT = 0,
-	DT_DOOR_SWINGING_FREE,
-	DT_DOOR_BASHED,
-	DT_DOOR_BASHED_AND_SWINGING_FREE,
-	DT_DOOR_MISSING
-};
-
-enum ePlaneComponentStatus
-{
-	DT_PLANE_INTACT = 0,
-	DT_PLANE_BASHED,
-	//  DT_PLANE_BASHED2,
-	DT_PLANE_MISSING
-};
-
-enum eComponentStatus
-{
-	DT_PANEL_INTACT = 0,
-	//  DT_PANEL_SHIFTED,
-	DT_PANEL_BASHED,
-	DT_PANEL_BASHED2,
-	DT_PANEL_MISSING
-};
-
-enum eLightStatus
-{
-	DT_LIGHT_OK = 0,
-	DT_LIGHT_SMASHED
-};
-
-enum eDoors
-{
-	BONNET = 0,
-	BOOT,
-	FRONT_LEFT_DOOR,
-	FRONT_RIGHT_DOOR,
-	REAR_LEFT_DOOR,
-	REAR_RIGHT_DOOR,
-	MAX_DOORS
-};
-
-enum ePanels
-{
-	FRONT_LEFT_PANEL = 0,
-	FRONT_RIGHT_PANEL,
-	REAR_LEFT_PANEL,
-	REAR_RIGHT_PANEL,
-	WINDSCREEN_PANEL,            // needs to be in same order as in component.h
-	FRONT_BUMPER,
-	REAR_BUMPER,
-
-	MAX_PANELS            // MUST BE 8 OR LESS
-};
-
-enum eLights
-{
-	// these have to correspond to their respective panels
-	LEFT_HEADLIGHT = 0,
-	RIGHT_HEADLIGHT,
-	LEFT_TAIL_LIGHT,
-	RIGHT_TAIL_LIGHT,
-	/*  LEFT_BRAKE_LIGHT,
-		RIGHT_BRAKE_LIGHT,
-		FRONT_LEFT_INDICATOR,
-		FRONT_RIGHT_INDICATOR,
-		REAR_LEFT_INDICATOR,
-		REAR_RIGHT_INDICATOR,*/
-
-	MAX_LIGHTS            // MUST BE 16 OR LESS
-};
-
-enum eWheelPosition
-{
-	FRONT_LEFT_WHEEL = 0,
-	REAR_LEFT_WHEEL,
-	FRONT_RIGHT_WHEEL,
-	REAR_RIGHT_WHEEL,
-
-	MAX_WHEELS
-
-};
-
-typedef struct _DAMAGE_MANAGER_INTERFACE            // 28 bytes due to the way its packed (24 containing actual data)
-{
-	float fWheelDamageEffect;
-	uint8_t  bEngineStatus;            // old - wont be used
-	uint8_t  Wheel[MAX_WHEELS];
-	uint8_t  Door[MAX_DOORS];
-	uint32_t Lights;            // 2 bits per light
-	uint32_t Panels;            // 4 bits per panel
-} DAMAGE_MANAGER_INTERFACE;
-
-typedef struct _TRAIN_NODE_INTERFACE
-{
-	short x;
-	short y;
-	short z;
-	unsigned short m_nDistanceFromStart;
-	bool m_nSurfaceLighting;
-	bool m_bSurfLightingFound;
-} TRAIN_NODE_INTERFACE;
 
 //-----------------------------------------------------------
 
@@ -1126,7 +736,51 @@ typedef struct _TRAIN_NODE_INTERFACE
 #define WEAPON_MODEL_PARACHUTE			371
 
 #define WEAPON_MODEL_PARACHUTE			371
-
+#define WEAPON_FIST                        0
+#define WEAPON_BRASSKNUCKLE                1
+#define WEAPON_GOLFCLUB                    2
+#define WEAPON_NITESTICK                3
+#define WEAPON_KNIFE                    4
+#define WEAPON_BAT                        5
+#define WEAPON_SHOVEL                    6
+#define WEAPON_POOLSTICK                7
+#define WEAPON_KATANA                    8
+#define WEAPON_CHAINSAW                    9
+#define WEAPON_DILDO                    10
+#define WEAPON_DILDO2                    11
+#define WEAPON_VIBRATOR                    12
+#define WEAPON_VIBRATOR2                13
+#define WEAPON_FLOWER                    14
+#define WEAPON_CANE                        15
+#define WEAPON_GRENADE                    16
+#define WEAPON_TEARGAS                    17
+#define WEAPON_MOLTOV                    18
+#define WEAPON_COLT45                    22
+#define WEAPON_SILENCED                    23
+#define WEAPON_DEAGLE                    24
+#define WEAPON_SHOTGUN                    25
+#define WEAPON_SAWEDOFF                    26
+#define WEAPON_SHOTGSPA                    27
+#define WEAPON_UZI                        28
+#define WEAPON_MP5                        29
+#define WEAPON_AK47                        30
+#define WEAPON_M4                        31
+#define WEAPON_TEC9                        32
+#define WEAPON_RIFLE                    33
+#define WEAPON_SNIPER                    34
+#define WEAPON_ROCKETLAUNCHER            35
+#define WEAPON_HEATSEEKER                36
+#define WEAPON_FLAMETHROWER                37
+#define WEAPON_MINIGUN                    38
+#define WEAPON_SATCHEL                    39
+#define WEAPON_BOMB                        40
+#define WEAPON_SPRAYCAN                    41
+#define WEAPON_FIREEXTINGUISHER            42
+#define WEAPON_CAMERA                    43
+#define WEAPON_PARACHUTE                46
+#define WEAPON_VEHICLE                    49
+#define WEAPON_DROWN                    53
+#define WEAPON_COLLISION                54
 
 #define OBJECT_PARACHUTE				3131
 #define OBJECT_CJ_CIGGY					1485

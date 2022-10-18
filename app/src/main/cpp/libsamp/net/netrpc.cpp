@@ -3,13 +3,17 @@
 #include "netgame.h"
 #include "../chatwindow.h"
 #include "../dialog.h"
+#include "../CSettings.h"
 #include "../util/CJavaWrapper.h"
+#include "../voice/CVoiceChatClient.h"
 
-
+extern CVoiceChatClient* pVoice;
+bool g_IsVoiceServer();
 extern CGame *pGame;
 extern CNetGame *pNetGame;
 extern CChatWindow *pChatWindow;
 extern CDialogWindow *pDialogWindow;
+extern CSettings *pSettings;
 
 int iNetModeNormalOnfootSendRate	= NETMODE_ONFOOT_SENDRATE;
 int iNetModeNormalInCarSendRate		= NETMODE_INCAR_SENDRATE;
@@ -84,8 +88,17 @@ void InitGame(RPCParameters *rpcParams)
 	pGame->SetWorldWeather(pNetGame->m_byteWeather);
 	pGame->ToggleCJWalk(pNetGame->m_bUseCJWalk);
 
+	if (!pVoice)
+			{
+				pVoice = new CVoiceChatClient();
+				if (g_IsVoiceServer())
+				{
+					pVoice->Connect(pNetGame->m_szHostOrIp, pNetGame->m_iPort + 2);
+				}
+				//Log("Created voice");
+			}
 
-	// if(pChatWindow) pChatWindow->AddDebugMessage("Connected to {B9C9BF}%.64s", pNetGame->m_szHostName);
+	if(pChatWindow) pChatWindow->AddDebugMessage("Подключено к {B9C9BF}%.64s", pNetGame->m_szHostName);
 }
 
 void ServerJoin(RPCParameters *rpcParams)
@@ -241,7 +254,7 @@ void RequestSpawn(RPCParameters *rpcParams)
 	if(pLocalPlayer)
 	{
 		if(byteRequestOutcome == 2 || (byteRequestOutcome && pLocalPlayer->m_bWaitingForSpawnRequestReply))
-			pLocalPlayer->Spawn();
+			 pLocalPlayer->Spawn();
 		else
 			pLocalPlayer->m_bWaitingForSpawnRequestReply = false;
 	}
@@ -354,21 +367,22 @@ void SetCheckpoint(RPCParameters *rpcParams)
 	Extent.Y = fSize;
 	Extent.Z = fSize;
 
-	pGame->SetCheckpoint(&pos, &Extent);
+	pGame->SetCheckpointInformation(&pos, &Extent);
+	pGame->ToggleCheckpoints(true);
 }
 
 void DisableCheckpoint(RPCParameters *rpcParams)
 {
-	pGame->DisableCheckpoint();
+	pGame->ToggleCheckpoints(false);
 }
 
 void SetRaceCheckpoint(RPCParameters *rpcParams)
 {
-	unsigned char * Data = reinterpret_cast<unsigned char *>(rpcParams->input);
+	unsigned char *Data = reinterpret_cast<unsigned char *>(rpcParams->input);
 	int iBitLength = rpcParams->numberOfBitsOfData;
 
-	RakNet::BitStream bsData(Data,(iBitLength/8)+1,false);
-	float fX,fY,fZ;
+	RakNet::BitStream bsData(Data, (iBitLength / 8) + 1, false);
+	float fX, fY, fZ;
 	uint8_t byteType;
 	VECTOR pos, next;
 
@@ -390,7 +404,7 @@ void SetRaceCheckpoint(RPCParameters *rpcParams)
 	bsData.Read(fX);
 
 	pGame->SetRaceCheckpointInformation(byteType, &pos, &next, fX);
-	pGame->ToggleRaceCheckpoints(true);
+	pGame->ToggleCheckpoints(true);
 }
 
 void DisableRaceCheckpoint(RPCParameters *rpcParams)
@@ -530,8 +544,7 @@ void ExitVehicle(RPCParameters *rpcParams)
 			pPlayer->ExitVehicle();
 	}	
 }
-#include "../CSettings.h"
-extern CSettings *pSettings;
+
 void DialogBox(RPCParameters *rpcParams)
 {
 	unsigned char * Data = reinterpret_cast<unsigned char *>(rpcParams->input);
@@ -574,19 +587,22 @@ void DialogBox(RPCParameters *rpcParams)
 		pDialogWindow->SetInfo(szBuff, strlen(szBuff));
 
 		if(wDialogID < 0) return;
-
+		
 		if(pSettings->GetReadOnly().iDialog)
 		{
 			pGame->FindPlayerPed()->TogglePlayerControllable(false);
 			g_pJavaWrapper->MakeDialog(wDialogID, byteDialogStyle, title, info, button1, button2);
+			g_pJavaWrapper->HideHudDialog();
 		}
 		else
 			pDialogWindow->Show(true);
+			g_pJavaWrapper->HideHudDialog();
 }
 
 void GameModeRestart(RPCParameters *rpcParams)
 {
 	// pChatWindow->AddInfoMessage("The server is restarting..");
+	pChatWindow->AddInfoMessage("{ff0000}Принудительное переподключение к игре..{ffffff}");
 	pNetGame->ShutDownForGameRestart();
 }
 
@@ -1091,26 +1107,31 @@ void WorldPlayerDeath(RPCParameters* rpcParams)
 	}
 }
 
-void VehicleDamage(RPCParameters* rpcParams)
+void DamageVehicle(RPCParameters* rpcParams)
 {
-	RakNet::BitStream bsData(rpcParams->input, (rpcParams->numberOfBitsOfData / 8) + 1, false);
+	
+	uint8_t* Data = reinterpret_cast<uint8_t*>(rpcParams->input);
+	int iBitLength = rpcParams->numberOfBitsOfData;
 
-	VEHICLEID vehId;
-	bsData.Read(vehId);
+	RakNet::BitStream bsData(Data, (iBitLength / 8) + 1, false);
 
-	if (pNetGame->GetVehiclePool()->GetSlotState(vehId))
+	VEHICLEID VehicleID;
+	uint32_t	dwPanels;
+	uint32_t	dwDoors;
+	uint8_t		byteLights;
+	uint8_t		byteTires;
+
+	bsData.Read(VehicleID);
+	bsData.Read(dwPanels);
+	bsData.Read(dwDoors);
+	bsData.Read(byteLights);
+	bsData.Read(byteTires);
+
+	CVehicle* pVehicle = pNetGame->GetVehiclePool()->GetAt(VehicleID);
+	if (pVehicle) 
 	{
-		uint32_t dwPanelStatus, dwDoorStatus;
-		uint8_t byteLightStatus, byteTireStatus;
-
-		bsData.Read(dwPanelStatus);
-		bsData.Read(dwDoorStatus);
-		bsData.Read(byteLightStatus);
-		bsData.Read(byteTireStatus);
-
-		CVehicle* pVehicle = pNetGame->GetVehiclePool()->GetAt(vehId);
-		if (pVehicle)
-			pVehicle->UpdateDamageStatus(dwPanelStatus, dwDoorStatus, byteLightStatus, byteTireStatus);
+		pVehicle->UpdateDamageStatus(dwPanels, dwDoors, byteLights);
+		pVehicle->SetWheelPopped(byteTires);
 	}
 }
 
@@ -1327,30 +1348,6 @@ void UpdateScoresPingsIPs(RPCParameters* rpcParams)
 		pPlayerPool->UpdatePing(bytePlayerId, dwPlayerPing);
 	}
 }
-int RPC_ExtraParams = 201;
-#include "../gui/CHUD.h"
-void ExtraParams(RPCParameters* rpcParams)
-{
-	RakNet::BitStream bsData(rpcParams->input, (rpcParams->numberOfBitsOfData / 8) + 1, false);
-
-	//pChatWindow->AddDebugMessage("RPC 201");
-
-	uint16_t iHungry, iVehFuel, iVehLight, iVehEngine, iVehLock;
-	bsData.Read(iHungry);
-	bsData.Read(iVehFuel);
-	bsData.Read(iVehLight);
-	bsData.Read(iVehEngine);
-	bsData.Read(iVehLock);
-
-	CHUD::iHungry 		= iHungry;
-	CHUD::iVehEngine 	= iVehEngine;
-	CHUD::iVehFuel 		= iVehFuel;
-	CHUD::iVehLock 		= iVehLock;
-	CHUD::iVehLight 	= iVehLight;
-
-	//pChatWindow->AddDebugMessage("RPC: hungry %d fuel %d", iHungry, iFuel);
-
-}
 
 void RegisterRPCs(RakClientInterface* pRakClient)
 {
@@ -1391,7 +1388,7 @@ void RegisterRPCs(RakClientInterface* pRakClient)
 
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_WorldPlayerDeath, WorldPlayerDeath);
 
-	pRakClient->RegisterAsRemoteProcedureCall(&RPC_VehicleDamage, VehicleDamage);
+	pRakClient->RegisterAsRemoteProcedureCall(&RPC_DamageVehicle, DamageVehicle);
 
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ShowActor, WorldActorAdd);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_HideActor, WorldActorRemove);
@@ -1402,9 +1399,6 @@ void RegisterRPCs(RakClientInterface* pRakClient)
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_SetActorHealth, SetActorHealth);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ClearActorAnimations, ClearActorAnimations);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_UpdateScoresPingsIPs, UpdateScoresPingsIPs);
-
-	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ExtraParams, ExtraParams);
-	
 }
 
 void UnRegisterRPCs(RakClientInterface* pRakClient)
@@ -1447,7 +1441,7 @@ void UnRegisterRPCs(RakClientInterface* pRakClient)
 
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_WorldPlayerDeath);
 
-	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_VehicleDamage);
+	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_DamageVehicle);
 
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_ShowActor);
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_HideActor);
@@ -1457,6 +1451,4 @@ void UnRegisterRPCs(RakClientInterface* pRakClient)
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_SetActorPos);
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_SetActorHealth);
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_ClearActorAnimations);
-
-	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_ExtraParams);
 }

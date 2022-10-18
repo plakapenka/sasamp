@@ -17,7 +17,7 @@ Version: $Id: textdraw.cpp,v 1.4 2008-04-16 08:54:17 kyecvs Exp $
 #include <sstream>
 #include "../chatwindow.h"
 extern CChatWindow* pChatWindow;
-extern CGame *pGame;
+extern CGame* pGame;
 #include "..//net/netgame.h"
 extern CNetGame* pNetGame;
 
@@ -145,7 +145,7 @@ void CStream::Process(MATRIX4X4* pMatListener) // todo
 		//pChatWindow->AddDebugMessage("create stream");
 		CreateStream();
 	}
-	else if(fDistance > m_fDistance && m_hStream)
+	else if (fDistance > m_fDistance && m_hStream)
 	{
 		//pChatWindow->AddDebugMessage("destroy stream");
 		DestroyStream();

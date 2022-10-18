@@ -2,70 +2,12 @@
 #include "../game/game.h"
 #include "netgame.h"
 #include "../chatwindow.h"
-#include "../CAudioStream.h"
-#include "../deathmessage.h"
-
-
+#include "../gui/gui.h"
 
 extern CGame *pGame;
 extern CNetGame *pNetGame;
 extern CChatWindow *pChatWindow;
-extern CAudioStream* pAudioStream;
-extern CDeathMessage* pDeathMessage;
-
-void ScrDeathMessage(RPCParameters* rpcParams)
-{
-	Log("RPC: DeathMessage");
-    unsigned char* Data = reinterpret_cast<unsigned char *>(rpcParams->input);
-	int iBitLength = rpcParams->numberOfBitsOfData;
-	RakNet::BitStream bsData((unsigned char*)Data, (iBitLength / 8) + 1, false);
-
-	PLAYERID playerId, killerId;
-	uint8_t reason;
-
-	bsData.Read(killerId);
-	bsData.Read(playerId);
-	bsData.Read(reason);
-
-	std::string killername, playername;
-	unsigned int killercolor, playercolor;
-	killername.clear();
-	playername.clear();
-
-	CPlayerPool* pPlayerPool = pNetGame->GetPlayerPool();
-	if(pPlayerPool)
-	{
-		if(pPlayerPool->GetLocalPlayerID() == playerId)
-		{
-			playername = pPlayerPool->GetLocalPlayerName();
-			playercolor = pPlayerPool->GetLocalPlayer()->GetPlayerColorAsARGB();
-		}
-		else
-		{
-			if(pPlayerPool->GetSlotState(playerId))
-			{
-				playername = pPlayerPool->GetPlayerName(playerId);
-				playercolor = pPlayerPool->GetAt(playerId)->GetPlayerColorAsARGB();
-			}
-		}
-
-		if(pPlayerPool->GetLocalPlayerID() == killerId)
-		{
-			killername = pPlayerPool->GetLocalPlayerName();
-			killercolor = pPlayerPool->GetLocalPlayer()->GetPlayerColorAsARGB();
-		}
-		else
-		{
-			if(pPlayerPool->GetSlotState(killerId))
-			{
-				killername = pPlayerPool->GetPlayerName(killerId);
-				killercolor = pPlayerPool->GetAt(killerId)->GetPlayerColorAsARGB();
-			}
-		}
-	}
-
-	pDeathMessage->MakeRecord(playername.c_str(), playercolor, killername.c_str(), killercolor, reason);
-}
+extern CGUI *pGUI;
 
 void ScrDisplayGameText(RPCParameters *rpcParams)
 {
@@ -531,7 +473,7 @@ void ScrSetPlayerSpecialAction(RPCParameters *rpcParams)
 
 	uint8_t byteSpecialAction;
 	bsData.Read(byteSpecialAction);
- 
+
 	CPlayerPool *pPlayerPool = pNetGame->GetPlayerPool();
 	if(pPlayerPool) pPlayerPool->GetLocalPlayer()->ApplySpecialAction(byteSpecialAction);
 }
@@ -676,47 +618,44 @@ void ScrVehicleParams(RPCParameters *rpcParams)
 	pVehiclePool->AssignSpecialParamsToVehicle(VehicleID,byteObjectiveVehicle,byteDoorsLocked);
 }
 
-#pragma pack(1)
-typedef struct _VEHICLE_PARAMS_STATUS_EX
-{
-	uint8_t engine, lights, alarm, doors, bonnet, boot, objective;
-	uint8_t unk1;
-	uint8_t door_driver;
-	uint8_t unk[3];
-	uint8_t windor_driver;
-} VEHICLE_PARAMS_STATUS_EX;
-
 void ScrVehicleParamsEx(RPCParameters* rpcParams)
 {
+	Log("RPC: ScrVehicleParamsEx");
+
 	unsigned char* Data = reinterpret_cast<unsigned char*>(rpcParams->input);
 	int iBitLength = rpcParams->numberOfBitsOfData;
 
 	RakNet::BitStream bsData((unsigned char*)Data, (iBitLength / 8) + 1, false);
-	VEHICLE_PARAMS_STATUS_EX vehParams;
-	memset(&vehParams, 0, sizeof(vehParams));
 
 	VEHICLEID VehicleId;
+	uint8_t engine, lights, alarm, doors, bonnet, boot, objective;
 	bsData.Read(VehicleId);
-	bsData.Read((char*)& vehParams, sizeof(vehParams));
+	bsData.Read(engine);
+	bsData.Read(lights);
+	bsData.Read(alarm);
+	bsData.Read(doors);
+	bsData.Read(bonnet);
+	bsData.Read(boot);
+	bsData.Read(objective);
+	Log("VehicleId: %d", VehicleId);
+	Log("engine: %d, lights: %d, alarm: %d, doors: %d, bonnet: %d, boot: %d, obj: %d",
+		engine, lights, alarm, doors, bonnet, boot, objective);
 
 	if (pNetGame && pNetGame->GetVehiclePool())
 	{
 		if (pNetGame->GetVehiclePool()->GetSlotState(VehicleId))
 		{
-			CVehicle* pVehicle = pNetGame->GetVehiclePool()->GetAt(VehicleId);
-			if (pVehicle)
-			{
-				// doors
-				pVehicle->SetDoorState(vehParams.doors);
-				// engine
-				pVehicle->SetEngineState(vehParams.engine);
-				// lights
-				pVehicle->SetLightsState(vehParams.lights);
-				// bonnet and boot
-				pVehicle->SetBonnetAndBootStatus((vehParams.bonnet == 0xFF) ? 0 : vehParams.bonnet, (vehParams.boot == 0xFF) ? 0 : vehParams.boot);
-				// alarm
-				pVehicle->SetSirenState((vehParams.alarm == 0xFF) ? 0 : vehParams.alarm);
-			}
+			// doors
+			pNetGame->GetVehiclePool()->GetAt(VehicleId)->SetDoorState(doors);
+			pGUI->SetDoor(doors);
+			// engine
+			pNetGame->GetVehiclePool()->GetAt(VehicleId)->SetEngineState(engine);
+			pGUI->SetEngine(engine);
+			// lights
+			pNetGame->GetVehiclePool()->GetAt(VehicleId)->SetLightsState(lights);
+			pGUI->SetLights(lights);
+
+			pNetGame->GetVehiclePool()->GetAt(VehicleId)->SetBootAndBonnetState((int)boot, (int)bonnet);
 		}
 	}
 }
@@ -975,7 +914,6 @@ void ScrStopFlashGangZone(RPCParameters *rpcParams)
 
 int iTotalObjects = 0;
 
-
 uintptr_t GetTextureFromTXDStore(const char* szTxd, const char* szTexture);
 void ScrCreateObject(RPCParameters* rpcParams)
 {
@@ -1054,21 +992,6 @@ void ScrCreateObject(RPCParameters* rpcParams)
 			bsData.Read(texLength);
 			char* tex = new char[texLength + 1];
 			bsData.Read(tex, texLength);
-			uint32_t col;
-			bsData.Read(col);
-
-			union color
-			{
-				uint32_t dwColor;
-				uint8_t cols[4];
-			};
-
-			color rightColor;
-			rightColor.dwColor = col;
-			uint8_t temp = rightColor.cols[0];
-			rightColor.cols[0] = rightColor.cols[2];
-			rightColor.cols[2] = temp;
-			//col = rightColor.dwColor;
 
 			tex[texLength] = 0;
 			str[libLength] = 0;
@@ -1083,9 +1006,28 @@ void ScrCreateObject(RPCParameters* rpcParams)
 				pGame->LoadRequestedModels();
 				while (!pGame->IsModelLoaded(modelId)) sleep(1);
 			}
-			if (!strncmp(tex, "wall8", sizeof("wall8"))) strcpy(str, "samp");
-			pObject->SetMaterial(modelId, slot, str, tex, col);
-			
+			pObject->m_bMaterials = true;
+			pObject->m_pMaterials[slot].wModelID = modelId;
+			pObject->m_pMaterials[slot].pTex = (RwTexture*)GetTextureFromTXDStore(str, tex);
+			pObject->m_pMaterials[slot].m_bCreated = 1;
+			if (!strncmp(tex, "materialtext1", sizeof("materialtext1")))
+			{
+				tex = "MaterialText1";
+			}
+			if (!strncmp(tex, "sampblack", sizeof("sampblack")))
+			{
+				tex = "SAMPBlack";
+			}
+			if (!strncmp(tex, "carpet19-128x128", sizeof("carpet19-128x128")))
+			{
+				tex = "Carpet19-128x128";
+			}
+
+			if (!pObject->m_pMaterials[slot].pTex && strncmp(tex, "none", sizeof("none")))
+			{
+				pObject->m_pMaterials[slot].pTex = (RwTexture*)LoadTextureFromDB("samp", tex);
+			}
+			bsData.Read(pObject->m_pMaterials[i].dwColor);
 			if (!GetModelReferenceCount(modelId) && pGame->IsModelLoaded(modelId))
 			{
 				ScriptCommand(&release_model, modelId);
@@ -1134,8 +1076,8 @@ void ScrSetObjectPos(RPCParameters *rpcParams)
 	bsData.Read(vecPos.Z);
 	bsData.Read(fRotation);
 
-	Log("id: %d x: %.2f y: %.2f z: %.2f", wObjectID, vecPos.X, vecPos.Y, vecPos.Z);
-	Log("VecRot x: %.2f y: %.2f z: %.2f", vecRot.X, vecRot.Y, vecRot.Z);
+	//LOGI("id: %d x: %.2f y: %.2f z: %.2f", wObjectID, vecPos.X, vecPos.Y, vecPos.Z);
+	//LOGI("VecRot x: %.2f y: %.2f z: %.2f", vecRot.X, vecRot.Y, vecRot.Z);
 
 	CObjectPool*	pObjectPool =	pNetGame->GetObjectPool();
 	CObject*		pObject		=	pObjectPool->GetAt(wObjectID);
@@ -1225,7 +1167,6 @@ void ScrSetPlayerWantedLevel(RPCParameters *rpcParams)
 
 void ScrGivePlayerWeapon(RPCParameters* rpcParams)
 {
-	Log("RPC: ScrGivePlayerWepaon");
 	unsigned char * Data = reinterpret_cast<unsigned char *>(rpcParams->input);
 	int iBitLength = rpcParams->numberOfBitsOfData;
 
@@ -1236,6 +1177,27 @@ void ScrGivePlayerWeapon(RPCParameters* rpcParams)
 	int iAmmo;
 	bsData.Read(iWeaponID);
 	bsData.Read(iAmmo);
+
+	// pChatWindow->AddDebugMessage("giveweapon | weaponid: %d ammo: %d", iWeaponID, iAmmo);
+
+	CLocalPlayer* pPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer();
+	pPlayer->GetPlayerPed()->GiveWeapon(iWeaponID, iAmmo);
+}
+
+void ScrSetWeaponAmmo(RPCParameters* rpcParams)
+{
+	unsigned char * Data = reinterpret_cast<unsigned char *>(rpcParams->input);
+	int iBitLength = rpcParams->numberOfBitsOfData;
+
+	RakNet::BitStream bsData(Data, (iBitLength / 8) + 1, false);
+
+	PLAYERID wPlayerID;
+	uint8_t iWeaponID;
+	int16_t iAmmo;
+	bsData.Read(iWeaponID);
+	bsData.Read(iAmmo);
+
+	// pChatWindow->AddDebugMessage("setweaponammo | weaponid: %d ammo: %d", iWeaponID, iAmmo);
 
 	CLocalPlayer* pPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer();
 	pPlayer->GetPlayerPed()->GiveWeapon(iWeaponID, iAmmo);
@@ -1252,22 +1214,29 @@ void ScrTogglePlayerControllable(RPCParameters *rpcParams)
 	uint8_t byteControllable;
 	bsData.Read(byteControllable);
 	//Log("controllable = %d", byteControllable);
-	pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->LockControllable(!byteControllable);
 	pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->TogglePlayerControllable((int)byteControllable);
 }
+
+#define WEAPONTYPE_PISTOL_SKILL 69
+#define WEAPONTYPE_PISTOL_SILENCED_SKILL 70
+#define WEAPONTYPE_DESERT_EAGLE_SKILL 71
+#define WEAPONTYPE_SHOTGUN_SKILL 72
+#define WEAPONTYPE_SAWNOFF_SHOTGUN_SKILL 73
+#define WEAPONTYPE_SPAS12_SHOTGUN_SKILL 74
+#define WEAPONTYPE_MICRO_UZI_SKILL 75
+#define WEAPONTYPE_MP5_SKILL 76
+#define WEAPONTYPE_AK47_SKILL 77
+#define WEAPONTYPE_M4_SKILL 78
+#define WEAPONTYPE_SNIPERRIFLE_SKILL 79
 
 void ScrSetPlayerSkillLevel(RPCParameters *rpcParams)
 {
 	int iBitLength = rpcParams->numberOfBitsOfData;
-
-	CPlayerPool * pPlayerPool = pNetGame->GetPlayerPool();
-	if (!pPlayerPool) return;
-
-	RakNet::BitStream bsData(rpcParams->input, (iBitLength / 8) + 1, false);
-
 	PLAYERID bytePlayerID;
 	unsigned int ucSkillType;
 	unsigned short uiSkillLevel;
+	CPlayerPool * pPlayerPool = pNetGame->GetPlayerPool();
+	RakNet::BitStream bsData(rpcParams->input, (iBitLength / 8) + 1, false);
 
 	bsData.Read(bytePlayerID);
 	bsData.Read(ucSkillType);
@@ -1314,27 +1283,26 @@ void ScrSetPlayerSkillLevel(RPCParameters *rpcParams)
 	default:
 		return;
 	}
+	ScriptCommand(&change_stat, ucSkillType, uiSkillLevel);
+	//g_pGame->GetStats()->SetStatValue(ucSkillType, uiSkillLevel);
 
-	if (bytePlayerID == pPlayerPool->GetLocalPlayerID())
-	{
-		float* StatsTypesFloat = (float*)(g_libGTASA + 0x8C41A0);
-		StatsTypesFloat[ucSkillType] = uiSkillLevel;
-	}
+	unsigned char ucWeaponSkill;
+	if (uiSkillLevel >= 0 && uiSkillLevel < 333)
+		ucWeaponSkill = 0;
+	else if (uiSkillLevel >= 333 && uiSkillLevel < 666)
+		ucWeaponSkill = 1;
 	else
+		ucWeaponSkill = 2;
+
+	CPlayerPed *pPlayer = pGame->FindPlayerPed();
+	if (pPlayer)
 	{
-		CRemotePlayer* pRemotePlayer = pPlayerPool->GetAt(bytePlayerID);
-		if (!pRemotePlayer) return;
-
-		CPlayerPed* pPlayerPed = pRemotePlayer->GetPlayerPed();
-		if (!pPlayerPed) return;
-
-		pPlayerPed->SetFloatStat(ucSkillType, uiSkillLevel);
+		ScriptCommand(&set_char_weapon_skill, pPlayer->m_dwGTAId, ucWeaponSkill);
 	}
 }
 
 void ScrResetPlayerWeapons(RPCParameters* rpcParams)
-{	
-	Log("RPC: ScrResetPlayerWeapons");
+{
 	uint8_t* Data = reinterpret_cast<uint8_t*>(rpcParams->input);
 	int iBitLength = rpcParams->numberOfBitsOfData;
 	PlayerID sender = rpcParams->sender;
@@ -1531,41 +1499,7 @@ void ScrSetPlayerObjectMaterial(RPCParameters* rpcParams)
 	bsData.Read(wObjectID);
 	bsData.Read(materialType);
 	bsData.Read(matId);
-	if (materialType == 2)
-	{	
-		uint8_t 	byteMaterialSize;
-    	uint8_t 	byteFontNameLength;
-    	char 		szFontName[32];
-    	uint8_t 	byteFontSize;
-    	uint8_t 	byteFontBold;
-    	uint32_t 	dwFontColor;
-    	uint32_t 	dwBackgroundColor;
-    	uint8_t 	byteAlign;
-    	char 		szText[2048];
-
-		CObjectPool* pObjectPool = pNetGame->GetObjectPool();
-		CObject* pObject = pObjectPool->GetAt(wObjectID);
-
-        bsData.Read(byteMaterialSize);
-        bsData.Read(byteFontNameLength);
-        bsData.Read(szFontName, byteFontNameLength);
-        szFontName[byteFontNameLength] = '\0';
-        bsData.Read(byteFontSize);
-        bsData.Read(byteFontBold);
-        bsData.Read(dwFontColor);
-        bsData.Read(dwBackgroundColor);
-        bsData.Read(byteAlign);
-        stringCompressor->DecodeString(szText, 2048, &bsData);
-
-        if(strlen(szFontName) <= 32)
-        {
-            if (pObject)
-            {
-                pObject->SetMaterialText(matId, byteMaterialSize, szFontName, byteFontSize, byteFontBold, dwFontColor, dwBackgroundColor, byteAlign, szText);
-            }
-        }
-		return;
-	}
+	if (materialType == 2) return;
 	bsData.Read(modelId);
 	bsData.Read(libLength);
 	char* str = new char[libLength + 1];
@@ -1591,10 +1525,17 @@ void ScrSetPlayerObjectMaterial(RPCParameters* rpcParams)
 	uint8_t temp = rightColor.cols[0];
 	rightColor.cols[0] = rightColor.cols[2];
 	rightColor.cols[2] = temp;
-	//col = rightColor.dwColor;
+	col = rightColor.dwColor;
 
-	if (modelId == -1) return;
-	
+	if (modelId == -1)
+	{
+		pObj->m_bMaterials = true;
+		pObj->m_pMaterials[matId].m_bCreated = true;
+		pObj->m_pMaterials[matId].wModelID = 0xFFFF;
+		pObj->m_pMaterials[matId].pTex = nullptr;
+		pObj->m_pMaterials[matId].dwColor = col;
+		return;
+	}
 	if (modelId < 0 || modelId > 20000)
 	{
 		modelId = 18631;
@@ -1605,10 +1546,13 @@ void ScrSetPlayerObjectMaterial(RPCParameters* rpcParams)
 		pGame->LoadRequestedModels();
 		while (!pGame->IsModelLoaded(modelId)) sleep(1);
 	}
-	if (!strncmp(tex, "wall8", sizeof("wall8"))) strcpy(str, "samp");
-	pObj->SetMaterial(modelId, matId, str, tex, col);
+	pObj->m_bMaterials = true;
+	pObj->m_pMaterials[matId].m_bCreated = true;
+	pObj->m_pMaterials[matId].wModelID = modelId;
+	pObj->m_pMaterials[matId].pTex = (RwTexture*)GetTextureFromTXDStore(str, tex);
+	pObj->m_pMaterials[matId].dwColor = col;
 
-	/*if (!strncmp(tex, "materialtext1", sizeof("materialtext1")))
+	if (!strncmp(tex, "materialtext1", sizeof("materialtext1")))
 	{
 		tex = "MaterialText1";
 	}
@@ -1619,8 +1563,12 @@ void ScrSetPlayerObjectMaterial(RPCParameters* rpcParams)
 	if (!strncmp(tex, "carpet19-128x128", sizeof("carpet19-128x128")))
 	{
 		tex = "Carpet19-128x128";
-	}*/
-	
+	}
+	if (!pObj->m_pMaterials[matId].pTex && strncmp(tex, "none", sizeof("none"))
+		&& strncmp(tex, "wall8", sizeof("wall8")))
+	{
+		pObj->m_pMaterials[matId].pTex = (RwTexture*)LoadTextureFromDB("samp", tex);
+	}
 	if (!GetModelReferenceCount(modelId) && pGame->IsModelLoaded(modelId))
 	{
 		ScriptCommand(&release_model, modelId);
@@ -1744,8 +1692,6 @@ void ScrSetObjectRotation(RPCParameters* rpcParams)
 	bsData.Read(objectId);
 	bsData.Read((char*)&vecRot, sizeof(VECTOR));
 
-	Log("Object Rotate: %f %f %f", vecRot);
-
 	if (pNetGame->GetObjectPool()->GetAt(objectId))
 	{
 		pNetGame->GetObjectPool()->GetAt(objectId)->InstantRotate(vecRot.X, vecRot.Y, vecRot.Z);
@@ -1764,80 +1710,6 @@ void ScrSelectTextDraw(RPCParameters* rpcParams)
 	bsData.Read(dwColor);
 
 	pNetGame->GetTextDrawPool()->SetSelectState(bEnable ? true : false, dwColor);
-}
-
-void ScrPlayAudioStream(RPCParameters* rpcParams)
-{
-	RakNet::BitStream bsData(rpcParams->input, (rpcParams->numberOfBitsOfData / 8) + 1, false);
-
-	uint8_t byteTextLen;
-	char szURL[1024];
-
-	float X, Y, Z;
-	float fRadius;
-
-	bool bUsePos;
-
-	bsData.Read(byteTextLen);
-	bsData.Read(szURL, byteTextLen);
-
-	bsData.Read(X);
-	bsData.Read(Y);
-	bsData.Read(Z);
-
-	bsData.Read(fRadius);
-
-	bsData.Read(bUsePos);
-
-	szURL[byteTextLen] = '\0';
-
-	if (pAudioStream)
-	{
-		pAudioStream->PlayByURL(szURL, X, Y, Z, fRadius, bUsePos);
-		if (pChatWindow) {
-			// pChatWindow->AddInfoMessage("Audio Stream: %s", szURL);
-		}
-	}
-	else
-	{
-		if (pChatWindow) {
-			pChatWindow->AddInfoMessage("Failed to play Sound! Audio Stream is not initialized!");
-		}
-	}
-}
-
-void ScrStopAudioStream(RPCParameters* rpcParams)
-{
-	if (pAudioStream) pAudioStream->Stop();
-}
-
-void ScrSetPlayerArmed(RPCParameters* rpcParams)
-{
-	unsigned char* Data = reinterpret_cast<unsigned char*>(rpcParams->input);
-	int iBitLength = rpcParams->numberOfBitsOfData;
-	PlayerID sender = rpcParams->sender;
-
-	uint32_t weaponID;
-	RakNet::BitStream bsData(Data, (iBitLength / 8) + 1, false);
-	bsData.Read(weaponID);
-
-	pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->SetArmedWeapon(weaponID);
-}
-
-void ScrSetWeaponAmmo(RPCParameters* rpcParams)
-{
-	Log("RPC: ScrSetWeaponAmmo");
-	unsigned char* Data = reinterpret_cast<unsigned char*>(rpcParams->input);
-	int iBitLength = rpcParams->numberOfBitsOfData;
-	RakNet::BitStream bsData(Data, (iBitLength / 8) + 1, false);
-
-	uint8_t iWeaponID;
-	uint16_t iAmmo;
-	
-	bsData.Read(iWeaponID);
-	bsData.Read(iAmmo);
-
-	pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->SetWeaponAmmo(iWeaponID, iAmmo);
 }
 
 void RegisterScriptRPCs(RakClientInterface* pRakClient)
@@ -1887,12 +1759,15 @@ void RegisterScriptRPCs(RakClientInterface* pRakClient)
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrRemoveGangZone,ScrRemoveGangZone);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrFlashGangZone,ScrFlashGangZone);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrStopFlashGangZone,ScrStopFlashGangZone);
-	
-	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrPlaySound, ScrPlaySound); 
+	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrCreateObject, ScrCreateObject);
+	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrSetObjectPos, ScrSetObjectPos);
+	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrDestroyObject, ScrDestroyObject);
+	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrPlaySound, ScrPlaySound);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrSetPlayerWantedLevel, ScrSetPlayerWantedLevel);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrGivePlayerWeapon, ScrGivePlayerWeapon);
+	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrSetWeaponAmmo, ScrSetWeaponAmmo);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrTogglePlayerControllable, ScrTogglePlayerControllable);
-	
+	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrAttachObjectToPlayer, ScrAttachObjectToPlayer);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrResetPlayerWeapons, ScrResetPlayerWeapons);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrSetPlayerSkillLevel, ScrSetPlayerSkillLevel);
 
@@ -1900,14 +1775,9 @@ void RegisterScriptRPCs(RakClientInterface* pRakClient)
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrHideTextDraw, ScrHideTextDraw);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrEditTextDraw, ScrEditTextDraw);
 
-	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrCreateObject, ScrCreateObject);
-	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrSetObjectPos, ScrSetObjectPos);
-	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrDestroyObject, ScrDestroyObject);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrSetPlayerAttachedObject, ScrSetPlayerAttachedObject);
+
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrSetPlayerObjectMaterial, ScrSetPlayerObjectMaterial);
-	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrAttachObjectToPlayer, ScrAttachObjectToPlayer);
-	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrSetObjectRotation, ScrSetObjectRotation);
-	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrMoveObject, ScrMoveObject);
 
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrSetVehicleZAngle, ScrSetVehicleZAngle);
 
@@ -1916,17 +1786,8 @@ void RegisterScriptRPCs(RakClientInterface* pRakClient)
 
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrRemoveComponent, ScrRemoveComponent);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ClickTextDraw, ScrSelectTextDraw);
-	
-
-	pRakClient->RegisterAsRemoteProcedureCall(&RPC_PlayAudioStream, ScrPlayAudioStream);
-	pRakClient->RegisterAsRemoteProcedureCall(&RPC_StopAudioStream, ScrStopAudioStream);
-
-	pRakClient->RegisterAsRemoteProcedureCall(&RPC_SetArmedWeapon, ScrSetPlayerArmed);
-
-	
-	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrDeathMessage, ScrDeathMessage);
-
-	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrSetWeaponAmmo, ScrSetWeaponAmmo);
+	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrMoveObject, ScrMoveObject);
+	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrSetObjectRotation, ScrSetObjectRotation);
 }
 
 void UnRegisterScriptRPCs(RakClientInterface* pRakClient)
@@ -1950,6 +1811,7 @@ void UnRegisterScriptRPCs(RakClientInterface* pRakClient)
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_ScrSetPlayerSkillLevel);
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_ScrResetPlayerWeapons);
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_ScrGivePlayerWeapon);
+	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_ScrSetWeaponAmmo);
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_ScrDisplayGameText);
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_ScrSetGravity);
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_ScrForceSpawnSelection);
@@ -2004,14 +1866,5 @@ void UnRegisterScriptRPCs(RakClientInterface* pRakClient)
 
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_ScrRemoveComponent);
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_ScrSetObjectRotation);
-
-	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_PlayAudioStream);
-	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_StopAudioStream);
-
-	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_SetArmedWeapon);
-
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_ScrMoveObject);
-	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_ScrDeathMessage);
-
-	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_ScrSetWeaponAmmo);
 }

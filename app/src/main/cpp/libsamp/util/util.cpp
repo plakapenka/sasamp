@@ -33,7 +33,119 @@ done:
 
 	return address;
 }
+void CrashLog(const char* fmt, ...);
+#include "..//chatWindow.h"
+extern CChatWindow* pChatWindow;
+#include <algorithm>
+#include "..//cryptors/DUMPLIBRARIES_result.h"
+#include "..//str_obfuscator_no_template.hpp"
 
+#include <unistd.h> // system api
+#include <sys/mman.h>
+#include <assert.h> // assert()
+#include <dlfcn.h> // dlopen
+
+auto libarm = cryptor::create("/lib/arm/", 10);
+auto libarmeabi = cryptor::create("/lib/armeabi-v7a", 17);
+auto packetst = cryptor::create("com.santrope.game", 18);
+auto packetbh = cryptor::create("com.barvikha.game", 18);
+auto procmaps = cryptor::create("/proc/%d/maps", 14);
+#ifdef GAME_EDITION_CR
+auto pmpath1 = cryptor::create("/data/data/com.barvikha", 24);
+#else
+auto pmpath1 = cryptor::create("/data/data/com.santrope", 24);
+#endif
+auto pmpath2 = cryptor::create(".game/cache/libutil.so", 23);
+#include "..//cryptors/ISPMHERE_result.h"
+bool IsPMHere()
+{
+	PROTECT_CODE_ISPMHERE;
+
+	char path[255];
+	memset(path, 0, 255);
+
+	sprintf(path, "%s%s", pmpath1.decrypt(), pmpath2.decrypt());
+
+	if (dlopen(path, 3))
+	{
+		return true;
+	}
+
+	return false;
+}
+
+bool DumpLibraries(std::vector<std::string>& buff)
+{
+	PROTECT_CODE_DUMPLIBRARIES;
+
+	char filename[0xFF] = { 0 },
+		buffer[2048] = { 0 };
+
+	sprintf(filename, procmaps.decrypt(), getpid());
+
+	FILE* fp = fopen(filename, "rt");
+
+	if (!fp)
+	{
+		return false;
+	}
+
+
+
+	while (fgets(buffer, sizeof(buffer), fp))
+	{
+		if (strstr(&buffer[0], packetst.decrypt()) || strstr(&buffer[0], packetbh.decrypt()))
+		{
+			char* pBegin = strstr(&buffer[0], libarm.decrypt());
+			if (!pBegin)
+			{
+				pBegin = strstr(&buffer[0], libarmeabi.decrypt());
+			}
+			if (!pBegin)
+			{
+				pBegin = strstr(&buffer[0], pmpath1.decrypt());
+				continue;
+			}
+			if (!pBegin)
+			{
+				continue;
+			}
+			char* pEnd = pBegin + strlen(pBegin) - 1;
+
+			if (*pEnd == '\n')
+			{
+				*pEnd = 0;
+				pEnd--;
+			}
+
+			while (*pEnd != '/')
+			{
+				pEnd--;
+			}
+			pEnd++;
+
+			std::string toPush(pEnd);
+
+			bool bPush = true;
+
+			for (size_t i = 0; i < buff.size(); i++)
+			{
+				if (buff[i] == toPush)
+				{
+					bPush = false;
+				}
+			}
+
+			if (bPush)
+			{
+				buff.push_back(toPush);
+			}
+		}
+	}
+
+	fclose(fp);
+	return true;
+}
 
 void cp1251_to_utf8(char* out, const char* in, unsigned int len)
 {

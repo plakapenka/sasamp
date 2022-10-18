@@ -4,23 +4,23 @@
 #include "net/netgame.h"
 #include "gui/gui.h"
 #include "vendor/imgui/imgui_internal.h"
+#include "util/CJavaWrapper.h"
 #include "CSettings.h"
-#include "../util/CJavaWrapper.h"
-
+#include <jni.h>
 #ifndef min
-#define min(a, b) (((a) < (b)) ? (a) : (b))
+#define min(a,b) (((a) < (b)) ? (a) : (b))
 #endif
 
-extern CNetGame *pNetGame;
-extern CGame *pGame;
-extern CGUI *pGUI;
-extern CSettings *pSettings;
+extern CNetGame* pNetGame;
+extern CGame* pGame;
+extern CGUI* pGUI;
+extern CSettings* pSettings;
 
 ImGuiWindowFlags fScoreBoardFlags =
-    ImGuiWindowFlags_NoMove |
-    ImGuiWindowFlags_NoResize |
-    ImGuiWindowFlags_NoSavedSettings |
-    ImGuiWindowFlags_NoCollapse;
+ImGuiWindowFlags_NoMove |
+ImGuiWindowFlags_NoResize |
+ImGuiWindowFlags_NoSavedSettings |
+ImGuiWindowFlags_NoCollapse;
 
 CScoreBoard::CScoreBoard()
 {
@@ -39,7 +39,7 @@ CScoreBoard::CScoreBoard()
 
 CScoreBoard::~CScoreBoard() {}
 
-void SwapPlayerInfo(PLAYER_SCORE_INFO *psi1, PLAYER_SCORE_INFO *psi2)
+void SwapPlayerInfo(PLAYER_SCORE_INFO* psi1, PLAYER_SCORE_INFO* psi2)
 {
     PLAYER_SCORE_INFO plrinf;
     memcpy(&plrinf, psi1, sizeof(PLAYER_SCORE_INFO));
@@ -51,18 +51,18 @@ void CScoreBoard::Draw()
 {
     ProcessUpdating();
 
-    if (!m_bToggle)
-        return;
-    if (!m_pPlayers)
-        return;
+    if (!m_bToggle) return;
+    if (!m_pPlayers) return;
 
     PLAYERID endplayer = m_pPlayerCount;
     char szPlayerId[11], szScore[11], szPing[11], szServerAddress[512];
     unsigned char RGBcolors[3];
 
-    sprintf(szServerAddress, "LIVE RUSSIA Community | Test Server | Players: %d", m_pPlayerCount);
+    std::string serverUTF8 = pNetGame->m_szHostName;
 
-    ImGuiIO &io = ImGui::GetIO();
+    sprintf(szServerAddress, "%s | Players: %d", serverUTF8.c_str(), m_pPlayerCount);
+
+    ImGuiIO& io = ImGui::GetIO();
     ImVec2 size = ImGui::GetWindowSize();
 
     ImGui::SetNextWindowSize(ImVec2(m_fScoreBoardSizeX, m_fScoreBoardSizeY), NULL);
@@ -78,23 +78,14 @@ void CScoreBoard::Draw()
 
     ImGui::Columns(4, "Scoreboard");
 
-    ImGui::Text("ID");
-    ImGui::SetColumnWidth(-1, m_fScoreBoardSizeX / 100 * 10);
-    ImGui::NextColumn();
-    ImGui::Text("Nick_Name");
-    ImGui::SetColumnWidth(-1, m_fScoreBoardSizeX / 100 * 60);
-    ImGui::NextColumn();
-    ImGui::Text("Level");
-    ImGui::SetColumnWidth(-1, m_fScoreBoardSizeX / 100 * 15);
-    ImGui::NextColumn();
-    ImGui::Text("Ping");
-    ImGui::SetColumnWidth(-1, m_fScoreBoardSizeX / 100 * 15);
-    ImGui::NextColumn();
+    ImGui::Text("ID"); ImGui::SetColumnWidth(-1, m_fScoreBoardSizeX / 100 * 10); ImGui::NextColumn();
+    ImGui::Text("Name"); ImGui::SetColumnWidth(-1, m_fScoreBoardSizeX / 100 * 60); ImGui::NextColumn();
+    ImGui::Text("Score"); ImGui::SetColumnWidth(-1, m_fScoreBoardSizeX / 100 * 15); ImGui::NextColumn();
+    ImGui::Text("Ping"); ImGui::SetColumnWidth(-1, m_fScoreBoardSizeX / 100 * 15); ImGui::NextColumn();
 
     for (int x = m_iOffset; x < endplayer; x++)
     {
-        if (!m_bToggle || !m_pPlayers)
-            break; // crash fix
+        if (!m_bToggle || !m_pPlayers) break; // crash fix
 
         sprintf(szPlayerId, "%d", m_pPlayers[x].dwID);
         sprintf(szScore, "%d", m_pPlayers[x].iScore);
@@ -123,26 +114,23 @@ void CScoreBoard::Draw()
 
 void CScoreBoard::Toggle()
 {
-    m_bToggle = !m_bToggle;
+    /*m_bToggle = !m_bToggle;
     if (m_bToggle)
     {
         // Freeze player
         pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->TogglePlayerControllableWithoutLock(false);
-        g_pJavaWrapper->HideHud();
 
         // Get player list
         pNetGame->UpdatePlayerScoresAndPings();
 
-        CPlayerPool *pPlayerPool = pNetGame->GetPlayerPool();
+        CPlayerPool* pPlayerPool = pNetGame->GetPlayerPool();
         PLAYERID playercount = pPlayerPool->GetCount() + 1;
         m_pPlayerCount = playercount;
 
-        if (m_iOffset > (playercount - 20))
-            m_iOffset = (playercount - 20);
-        if (m_iOffset < 0)
-            m_iOffset = 0;
+        if (m_iOffset > (playercount - 20)) m_iOffset = (playercount - 20);
+        if (m_iOffset < 0) m_iOffset = 0;
 
-        m_pPlayers = (PLAYER_SCORE_INFO *)malloc(playercount * sizeof(PLAYER_SCORE_INFO));
+        m_pPlayers = (PLAYER_SCORE_INFO*)malloc(playercount * sizeof(PLAYER_SCORE_INFO));
         memset(m_pPlayers, 0, playercount * sizeof(PLAYER_SCORE_INFO));
         m_pPlayers[0].dwID = pPlayerPool->GetLocalPlayerID();
         m_pPlayers[0].szName = pPlayerPool->GetLocalPlayerName();
@@ -152,8 +140,7 @@ void CScoreBoard::Toggle()
         PLAYERID i = 1, x;
         for (x = 0; x < MAX_PLAYERS; x++)
         {
-            if (!pPlayerPool->GetSlotState(x))
-                continue;
+            if (!pPlayerPool->GetSlotState(x)) continue;
             m_pPlayers[i].dwID = x;
             m_pPlayers[i].szName = pPlayerPool->GetPlayerName(x);
             m_pPlayers[i].iScore = pPlayerPool->GetRemotePlayerScore(x);
@@ -182,8 +169,7 @@ void CScoreBoard::Toggle()
     {
         // Unfreeze player
         pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->TogglePlayerControllableWithoutLock(true);
-        g_pJavaWrapper->ShowHud();
-        g_pJavaWrapper->ShowServer(pSettings->GetReadOnly().szServer);
+
         if (m_pPlayers)
         {
             memset(m_pPlayers, 0, m_pPlayerCount * sizeof(PLAYER_SCORE_INFO));
@@ -191,12 +177,65 @@ void CScoreBoard::Toggle()
         }
         m_pPlayers = 0;
     }
+    */
+
+   // Freeze Player
+   pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->TogglePlayerControllableWithoutLock(false);
+
+    Update();
+
+    // Show Window
+   // g_pJavaWrapper->ShowTabWindow();
+}
+
+void CScoreBoard::Close() {
+
+    // Unfreeze player
+    pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->TogglePlayerControllableWithoutLock(true);
+
+    if (m_pPlayers)
+    {
+        memset(m_pPlayers, 0, m_pPlayerCount * sizeof(PLAYER_SCORE_INFO));
+        free(m_pPlayers);
+    }
+        m_pPlayers = 0;
+}
+
+void CScoreBoard::Update() {
+    
+    // Get player list
+    pNetGame->UpdatePlayerScoresAndPings();
+
+    CPlayerPool* pPlayerPool = pNetGame->GetPlayerPool();
+    PLAYERID playercount = pPlayerPool->GetCount() + 1;
+    m_pPlayerCount = playercount;
+
+    if (m_iOffset > (playercount - 20)) m_iOffset = (playercount - 20);
+    if (m_iOffset < 0) m_iOffset = 0;
+
+    m_pPlayers = (PLAYER_SCORE_INFO*)malloc(playercount * sizeof(PLAYER_SCORE_INFO));
+    memset(m_pPlayers, 0, playercount * sizeof(PLAYER_SCORE_INFO));
+    m_pPlayers[0].dwID = pPlayerPool->GetLocalPlayerID();
+    m_pPlayers[0].szName = pPlayerPool->GetLocalPlayerName();
+    m_pPlayers[0].iScore = pPlayerPool->GetLocalPlayerScore();
+    g_pJavaWrapper->SetTabStat(m_pPlayers[0].dwID, m_pPlayers[0].szName, m_pPlayers[0].iScore, m_pPlayers[0].dwPing);
+
+    PLAYERID i = 1, x;
+    for (x = 0; x < MAX_PLAYERS; x++)
+    {
+        if (!pPlayerPool->GetSlotState(x)) continue;
+        m_pPlayers[i].dwID = x;
+        m_pPlayers[i].szName = pPlayerPool->GetPlayerName(x);
+        m_pPlayers[i].iScore = pPlayerPool->GetRemotePlayerScore(x);
+        m_pPlayers[i].dwPing = pPlayerPool->GetRemotePlayerPing(x);
+        g_pJavaWrapper->SetTabStat(m_pPlayers[i].dwID, m_pPlayers[i].szName, m_pPlayers[i].iScore, m_pPlayers[i].dwPing);
+        i++;
+    }
 }
 
 bool CScoreBoard::OnTouchEvent(int type, bool multi, float x, float y)
 {
-    if (!m_bToggle)
-        return true;
+    if (!m_bToggle) return true;
 
     static bool bWannaCloseTab = false;
 
@@ -204,8 +243,9 @@ bool CScoreBoard::OnTouchEvent(int type, bool multi, float x, float y)
     {
     case TOUCH_PUSH:
         if (
-            x < (m_fDisplaySizeX * 0.5f - m_fWindowSizeX) || x > (m_fDisplaySizeX * 0.5f + m_fWindowSizeX) ||
-            y < (m_fDisplaySizeY * 0.5f - m_fWindowSizeY) || y > (m_fDisplaySizeY * 0.5f + m_fWindowSizeY))
+            x < (m_fDisplaySizeX * 0.5f - m_fWindowSizeX) || x >(m_fDisplaySizeX * 0.5f + m_fWindowSizeX) ||
+            y < (m_fDisplaySizeY * 0.5f - m_fWindowSizeY) || y >(m_fDisplaySizeY * 0.5f + m_fWindowSizeY)
+            )
         {
             bWannaCloseTab = true;
         }
@@ -213,9 +253,9 @@ bool CScoreBoard::OnTouchEvent(int type, bool multi, float x, float y)
     case TOUCH_POP:
         if (
             bWannaCloseTab &&
-                x < (m_fDisplaySizeX * 0.5f - m_fWindowSizeX) ||
-            x > (m_fDisplaySizeX * 0.5f + m_fWindowSizeX) ||
-            y < (m_fDisplaySizeY * 0.5f - m_fWindowSizeY) || y > (m_fDisplaySizeY * 0.5f + m_fWindowSizeY))
+            x < (m_fDisplaySizeX * 0.5f - m_fWindowSizeX) || x >(m_fDisplaySizeX * 0.5f + m_fWindowSizeX) ||
+            y < (m_fDisplaySizeY * 0.5f - m_fWindowSizeY) || y >(m_fDisplaySizeY * 0.5f + m_fWindowSizeY)
+            )
         {
             Toggle();
             bWannaCloseTab = false;

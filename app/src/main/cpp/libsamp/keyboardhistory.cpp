@@ -6,8 +6,8 @@
 #include "keyboardhistory.h"
 #include "keyboard.h"
 
-extern CGUI *pGUI;
-extern CKeyBoard *pKeyBoard;
+extern CGUI* pGUI;
+extern CKeyBoard* pKeyBoard;
 
 CKeyBoardHistory::CKeyBoardHistory()
 {
@@ -19,10 +19,10 @@ CKeyBoardHistory::~CKeyBoardHistory()
 {
 }
 
-void CKeyBoardHistory::AddStringToHistory(const std::string &msg)
+
+void CKeyBoardHistory::AddStringToHistory(const std::string& msg)
 {
-	if (msg.size() == 0)
-		return;
+	if (msg.size() == 0) return;
 	m_Buffer.insert(m_Buffer.begin(), msg);
 	while (m_Buffer.size() >= 20)
 	{
@@ -65,7 +65,7 @@ void CKeyBoardHistory::ResetPointer()
 	m_iCounter = 0;
 }
 
-void CKeyBoardHistory::AddTextToBuffer(const std::string &msg)
+void CKeyBoardHistory::AddTextToBuffer(const std::string& msg)
 {
 	if (pKeyBoard)
 	{

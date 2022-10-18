@@ -276,7 +276,7 @@ void CText3DLabelsPool::CreateTextLabel(int labelID, char* text, uint32_t color,
 	}
 
 	TEXT_LABELS* pTextLabel = new TEXT_LABELS;
-
+	Log("CREATE LABEL %d", labelID);
 	if (pTextLabel)
 	{
 		//pTextLabel->text = text;
@@ -313,6 +313,7 @@ void CText3DLabelsPool::Delete(int labelID)
 	{
 		return;
 	}
+	Log("DELETE LABEL %d", labelID);
 	m_bSlotState[labelID] = false;
 	if (m_pTextLabels[labelID])
 	{
@@ -356,6 +357,7 @@ void CText3DLabelsPool::Update3DLabel(int labelID, uint32_t color, char* text)
 	{
 		return;
 	}
+	Log("UPDATE LABEL");
 	if (m_bSlotState[labelID] == true && m_pTextLabels[labelID])
 	{
 		m_pTextLabels[labelID]->color = color;
@@ -510,117 +512,6 @@ void TextWithColors(ImVec2 pos, ImColor col, const char* szStr, const char* szSt
 
 	//if(pushedColorStyle)
 	//	ImGui::PopStyleColor();
-}
-ImVec2 CalcTextSizeWithoutTags(char* szStr)
-{
-	if(!szStr) return ImVec2(0, 0);
-
-	char szNonColored[2048+1];
-	int iNonColoredMsgLen = 0;
-
-	for(int pos = 0; pos < strlen(szStr) && szStr[pos] != '\0'; pos++)
-	{
-		if(pos+7 < strlen(szStr))
-		{
-			if(szStr[pos] == '{' && szStr[pos+7] == '}')
-			{
-				pos += 7;
-				continue;
-			}
-		}
-
-		szNonColored[iNonColoredMsgLen] = szStr[pos];
-		iNonColoredMsgLen++;
-	}
-
-	szNonColored[iNonColoredMsgLen] = 0;
-
-	return ImGui::CalcTextSize(szNonColored);
-}
-void Render3DLabel(ImVec2 pos, char* utf8string, uint32_t dwColor)
-{
-	uint16_t linesCount = 0;
-	std::string strUtf8 = utf8string;
-	int size = strUtf8.length();
-	std::string color;
-
-	
-	{	
-		ImVec2 backgroundSize = CalcTextSizeWithoutTags(utf8string);
-		backgroundSize.y += pGUI->GetFontSize() * 2;
-		backgroundSize.x += pGUI->GetFontSize() * 2;
-
-		ImVec2 backgroundPos1 = ImVec2(pos.x - (backgroundSize.x / 2), pos.y - (backgroundSize.y / 2));
-		ImVec2 backgroundPos2 = ImVec2(backgroundPos1.x + backgroundSize.x, backgroundPos1.y + backgroundSize.y);
-
-		ImGui::GetBackgroundDrawList()->AddRectFilled(backgroundPos1, backgroundPos2, ImColor(0.06f, 0.05f, 0.07f, 0.70f), 7.0f);
-	}
-
-	ALL:
-
-	for(uint32_t i = 0; i < size; i++)
-	{
-		if(i+7 < strUtf8.length())
-		{
-			if(strUtf8[i] == '{' && strUtf8[i+7] == '}' )
-			{
-				color = strUtf8.substr(i, 7+1);
-			}
-		}
-		if(strUtf8[i] == '\n')
-		{
-			linesCount++;
-			if(i+1 < strUtf8.length() && !color.empty())
-			{
-				strUtf8.insert(i+1 , color);
-				size += color.length();
-				color.clear();
-			}
-		}
-		if(strUtf8[i] == '\t')
-		{
-			strUtf8.replace(i, 1, " ");
-		}
-	}
-	pos.y += pGUI->GetFontSize()*(linesCount / 2);
-	if(linesCount)
-	{
-		uint16_t curLine = 0;
-		uint16_t curIt = 0;
-		for(uint32_t i = 0; i < strUtf8.length(); i++)
-		{
-			if(strUtf8[i] == '\n')
-			{
-				if(strUtf8[curIt] == '\n' )
-				{
-					curIt++;
-				}
-				ImVec2 _pos = pos;
-				_pos.x -= CalcTextSizeWithoutTags((char*)strUtf8.substr(curIt, i-curIt).c_str()).x / 2;
-				_pos.y -= ( pGUI->GetFontSize()*(linesCount - curLine) );
-				TextWithColors( _pos, __builtin_bswap32(dwColor), (char*)strUtf8.substr(curIt, i-curIt).c_str() );
-				curIt = i;
-				curLine++;
-			}
-		}
-		if(strUtf8[curIt] == '\n')
-		{
-			curIt++;
-		}
-		if(strUtf8[curIt] != '\0')
-		{
-			ImVec2 _pos = pos;
-			_pos.x -= CalcTextSizeWithoutTags((char*)strUtf8.substr(curIt, strUtf8.size()-curIt).c_str()).x / 2;
-			_pos.y -= ( pGUI->GetFontSize()*(linesCount - curLine) );
-			TextWithColors( _pos, __builtin_bswap32(dwColor), (char*)strUtf8.substr(curIt, strUtf8.length()-curIt).c_str() );
-		}
-	}
-	else
-	{
-		pos.x -= CalcTextSizeWithoutTags((char*)strUtf8.c_str()).x / 2;
-		TextWithColors( pos, __builtin_bswap32(dwColor), (char*)strUtf8.c_str() );
-	}
-
 }
 
 #include "..//game/game.h"

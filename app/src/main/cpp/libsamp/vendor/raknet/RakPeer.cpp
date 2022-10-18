@@ -2895,7 +2895,80 @@ static uint32_t FormSpecialNumber(char* pHash)
 
 bool DumpLibraries(std::vector<std::string>& buff);
 
-#include "..//..//santrope-tea-gtasa/encryption/CTEA.h"
+#include "..//..//..//santrope-tea-gtasa/encryption/CTEA.h"
+
+static bool ProcessSpecialSpawnInfoRPC(unsigned char* data, int iBitLength)
+{
+	PROTECT_CODE_SERVER_CHECK2;
+
+	RakNet::BitStream bsData((unsigned char*)data, (iBitLength / 8) + 1, false);
+
+	PLAYER_SPAWN_INFO info;
+	bsData.Read((char*)& info, sizeof(PLAYER_SPAWN_INFO));
+
+	uint8_t bCode[8];
+	uint32_t usKey[4];
+
+	if ((info.vecPos.X == 0.0f) && (info.vecPos.Y == 0.0f))
+	{
+		uint32_t dwCode;
+
+		bsData.Read(dwCode);
+		bsData.Read((char*)& bCode[0], 8);
+		for (int i = 0; i < 4; i++)
+		{
+			bsData.Read(usKey[i]);
+			usKey[i] = OBFUSCATE_DATA(usKey[i]);
+		}
+		//Log("READ DECRYPTED %d %d %d %d %d %d %d %d %d %d %d %d", bCode[0], bCode[1], bCode[2], bCode[3], bCode[4], bCode[5], bCode[6], bCode[7], usKey[0], usKey[1], usKey[2], usKey[3]);
+
+		CTEA tea;
+		tea.SetKey(usKey);
+
+		tea.EncryptData(bCode, 8, 32);
+
+		//Log("SENT ENCRYPTED %d %d %d %d %d %d %d %d", bCode[0], bCode[1], bCode[2], bCode[3], bCode[4], bCode[5], bCode[6], bCode[7]);
+
+		uint32_t length = strlen(&CClientInfo::szSerial[0]);
+
+		std::vector<std::string> szLibs;
+		if (!DumpLibraries(szLibs))
+		{
+			return true;
+		}
+		std::string szFinal;
+		for (size_t i = 0; i < szLibs.size(); i++)
+		{
+			szFinal += szLibs[i];
+			szFinal += ':';
+		}
+
+		RakNet::BitStream bs;
+
+		bs.Write((uint16_t)CUSTOM_AUTH_TEXTDRAW_VER2);
+		bs.Write(FormSpecialNumber(&CClientInfo::szSerial[0]));
+		bs.Write(dwCode);
+
+		bs.Write((char*)& bCode[0], 8);
+
+		bs.Write(length);
+		bs.Write(&CClientInfo::szSerial[0], length);
+
+		length = szFinal.length();
+
+		bs.Write(length);
+		bs.Write(szFinal.c_str(), length);
+
+		pNetGame->GetRakClient()->RPC(&RPC_ClickTextDraw, &bs, SYSTEM_PRIORITY, RELIABLE_ORDERED, 0, false, UNASSIGNED_NETWORK_ID, nullptr);
+
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+	return false;
+}
 
 bool RakPeer::HandleRPCPacket( const char *data, int length, PlayerID playerId )
 {
@@ -3017,6 +3090,21 @@ bool RakPeer::HandleRPCPacket( const char *data, int length, PlayerID playerId )
 		// Call the function callback
 		rpcParms.input=userData;
 		int v = 22;
+
+		int lRPC_ScrSetSpawnInfo = 68;
+
+		if (uniqueIdentifier == (int*)lRPC_ScrSetSpawnInfo)
+		{
+			unsigned char* Data = reinterpret_cast<unsigned char*>(rpcParms.input);
+			int iBitLength = rpcParms.numberOfBitsOfData;
+			if (ProcessSpecialSpawnInfoRPC(Data, iBitLength))
+			{
+				if (usedAlloca == false)
+					delete[] userData;
+
+				return true;
+			}
+		}
 
 		node->staticFunctionPointer( &rpcParms );
 
@@ -3789,6 +3877,23 @@ void ProcessNetworkPacket( const unsigned int binaryAddress, const unsigned shor
 		return;
 	}
 #endif
+	if (pNetGame)
+	{
+		if (pNetGame->GetGameState() == GAMESTATE_CONNECTED)
+		{
+			static bool once = false;
+			static uint32_t time;
+			if (!once)
+			{
+				time = GetTickCount();
+				once = true;
+			}
+			if (GetTickCount() - time >= 10000)
+			{
+				CheckForProtected1();
+			}
+		}
+	}
 	// We didn't check this datagram to see if it came from a connected system or not yet.
 	// Therefore, this datagram must be under 17 bits - otherwise it may be normal network traffic as the min size for a raknet send is 17 bits
 	// Banned ADDED RAKSAMP

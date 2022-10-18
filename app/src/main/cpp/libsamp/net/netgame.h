@@ -70,14 +70,18 @@ public:
 	void SendDialogResponse(uint16_t wDialogID, uint8_t byteButtonID, uint16_t wListboxItem, char* szInput);
 	void SendCustomPacket(uint8_t packet, uint8_t RPC, uint8_t Quantity);
 	void SendCustomCasinoChipPacket(uint8_t packet, uint8_t RPC, uint8_t type, uint8_t button, uint32_t money);
+	void SendCustomPacketFuelData(uint8_t packet, uint8_t RPC, uint8_t fueltype, uint32_t fuel);
 	void SendLoginPacket(char *password);
+	void SendCheckClientPacket(const char password[]);
+	void SendSpeedTurnPacket(uint8_t turnId, uint8_t state);
 	void SendRegisterPacket(char *password, char *mail, uint8_t sex, uint8_t skin);
+	void SendRegisterSkinPacket(uint32_t skinId);
+	void SendNotifyButtonPacket(uint16_t actionId, uint8_t buttonId);
 
 	void SetMapIcon(uint8_t byteIndex, float fX, float fY, float fZ, uint8_t byteIcon, int iColor, int style);
 	void DisableMapIcon(uint8_t byteIndex);
 
 	void UpdatePlayerScoresAndPings();
-	int GetLagCompensation() { return m_iLagCompensation; }
 private:
 	RakClientInterface* m_pRakClient;
 	CPlayerPool*		m_pPlayerPool;
@@ -109,8 +113,6 @@ private:
 	void Packet_CustomRPC(Packet* p);
 	void Packet_SpecialCustomRPC(Packet* p);
 	void Packet_AuthRPC(Packet* p);
-	void Packet_AutosalonRPC(Packet* p);
-	void SendCheckClientPacket(const char password[]);
 
 public:
 	char m_szHostName[0xFF];
@@ -137,10 +139,7 @@ public:
 
 	uint8_t* m_bChecked;
 
-
-
 	float 		m_fGravity;
-	int			killlistduels;
 	int 		m_iDeathDropMoney;
 	bool 		m_bInstagib;
 	int 		m_iLagCompensation;

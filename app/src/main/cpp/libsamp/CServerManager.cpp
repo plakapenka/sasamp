@@ -16,5 +16,5 @@ const CServerInstance::CServerInstanceEncrypted g_sEncryptedAddresses[MAX_SERVER
 	CServerInstance::create("46.174.49.47", 1, 20, 7793, false),
 	CServerInstance::create("46.174.49.47", 1, 20, 7825, false),
 	CServerInstance::create("46.174.49.47", 1, 20, 7788, false),
-	CServerInstance::create("127.0.0.1", 1, 20, 7777, false),
+	CServerInstance::create("46.174.49.47", 1, 20, 7862, false),
 	CServerInstance::create("127.0.0.1", 1, 20, 7777, false)};

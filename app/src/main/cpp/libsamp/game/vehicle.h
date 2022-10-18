@@ -1,27 +1,5 @@
 #pragma once
 
-#pragma pack(1)
-typedef struct _CAR_MOD_INFO
-{
-	uint8_t byteCarMod0;
-	uint8_t byteCarMod1;
-	uint8_t byteCarMod2;
-	uint8_t byteCarMod3;
-	uint8_t byteCarMod4;
-	uint8_t byteCarMod5;
-	uint8_t byteCarMod6;
-	uint8_t byteCarMod7;
-	uint8_t byteCarMod8;
-	uint8_t byteCarMod9;
-	uint8_t byteCarMod10;
-	uint8_t byteCarMod11;
-	uint8_t byteCarMod12;
-	uint8_t byteCarMod13;
-	uint8_t bytePaintJob;
-	int iColor0;
-	int iColor1;
-} CAR_MOD_INFO;
-
 enum E_CUSTOM_COMPONENTS
 {
 	ccBumperF = 0,
@@ -106,7 +84,6 @@ public:
 
 	// 0.3.7
 	void SetInvulnerable(bool bInv);
-	bool IsInvulnerable();
 	// 0.3.7
 	bool IsDriverLocalPlayer();
 	// 0.3.7
@@ -120,7 +97,12 @@ public:
 	void SetDoorState(int iState);
 	int GetDoorState();
 
-	void UpdateDamageStatus(uint32_t dwPanelDamage, uint32_t dwDoorDamage, uint8_t byteLightDamage, uint8_t byteTireDamage);
+	void UpdateDamageStatus(uint32_t dwPanelDamage, uint32_t dwDoorDamage, uint8_t byteLightDamage);
+
+	void AttachTrailer();
+	void DetachTrailer();
+	void SetTrailer(CVehicle* pTrailer);
+	CVehicle* GetTrailer();
 
 	unsigned int GetVehicleSubtype();
 
@@ -128,34 +110,7 @@ public:
 	int GetEngineState();
 	void SetLightsState(int iState);
 	int GetLightsState();
-
-	uint8_t GetSirenState();
-	void SetSirenState(uint8_t state);
-
-	VEHICLE_TYPE* GetVehiclePtr();
-	void ProcessDamage();
-	void GetDamageStatusEncoded(uint8_t* byteTyreFlags, uint8_t* byteLightFlags, uint32_t* dwDoorFlags, uint32_t *dwPanelFlags);
-
-	void ToggleTiresInvulnerable(bool bToggle);
-	bool HasDamageModel();
-
-	void SetBonnetAndBootStatus(bool bBonnet, bool bBoot);
-	void SetDoorOpenStatus(bool bDriver, bool bPassenger, bool bBackLeft, bool bBackRight);
-
-	bool IsSirenAdded();
-
-	uint8_t GetRailTrack();
-	void SetRailTrack(uint8_t ucTrackID);
-	bool IsDerailed();
-	float GetTrainPosition();
-
-	float GetTrainSpeed();
-	void SetTrainSpeed(float fTrainSpeed);
-
-	void AttachTrailer();
-	void DetachTrailer();
-	void SetTrailer(CVehicle* pTrailer);
-	CVehicle* GetTrailer();
+	void SetBootAndBonnetState(int iBoot, int iBonnet);
 
 	void RemoveComponent(uint16_t uiComponent);
 
@@ -180,24 +135,6 @@ public:
 
 	void SetCustomShadow(uint8_t r, uint8_t g, uint8_t b, float fSizeX, float fSizeY, const char* szTex);
 
-	/* CDamageManager functions */
-	uint8_t GetWheelStatus(eWheelPosition bWheel);
-	void SetWheelStatus(eWheelPosition bWheel, uint8_t bTireStatus);
-	void SetPanelStatus(uint8_t bPanel, uint8_t bPanelStatus);
-	void SetPanelStatus(uint32_t ulPanelStatus);
-	uint8_t GetPanelStatus(uint8_t bPanel);
-	uint32_t GetPanelStatus();
-	void SetLightStatus(uint8_t bLight, uint8_t bLightStatus);
-	void SetLightStatus(uint8_t ucStatus);
-	uint8_t GetLightStatus(uint8_t bLight);
-	uint8_t GetDoorStatus(eDoors bDoor);
-	void SetDoorStatus(eDoors bDoor, uint8_t bDoorStatus, bool spawnFlyingComponen);
-	void SetDoorStatus(uint32_t dwDoorStatus, bool spawnFlyingComponen);
-	void SetBikeWheelStatus(uint8_t bWheel, uint8_t bTireStatus);
-	uint8_t GetBikeWheelStatus(uint8_t bWheel);
-
-	bool IsTrain();
-
 private:
 	void ProcessWheelOffset(RwFrame* pFrame, bool bLeft, float fValue, int iID);
 	void SetComponentAngle(bool bUnk, int iID, float angle);
@@ -206,34 +143,20 @@ private:
 	std::string GetComponentNameByIDs(uint8_t group, int subgroup);
 
 	void CopyGlobalSuspensionLinesToPrivate();
-
-	
 public:
-	VEHICLE_TYPE	*m_pVehicle;
+	VEHICLE_TYPE* m_pVehicle;
 	bool 			m_bIsLocked;
-	CVehicle		*m_pTrailer;
+	CVehicle* m_pTrailer;
 	uint32_t		m_dwMarkerID;
 	bool 			m_bIsInvulnerable;
 	bool 			m_bDoorsLocked;
 	uint8_t			m_byteObjectiveVehicle; // Is this a special objective vehicle? 0/1
 	uint8_t			m_bSpecialMarkerEnabled;
-	uint8_t			m_bEngineState;
 
 
 	uint8_t			m_byteColor1;
 	uint8_t			m_byteColor2;
 	bool 			m_bColorChanged;
-
-	// Attached objects
-	std::list<CObject*> m_pAttachedObjects;
-
-	// Damage status
-	uint8_t			m_byteTyreStatus;
-	uint8_t			m_byteLightStatus;
-	uint32_t		m_dwDoorStatus;
-	uint32_t		m_dwPanelStatus;
-
-	bool			m_bAddSiren;
 
 	tHandlingData* m_pCustomHandling;
 
@@ -278,7 +201,7 @@ public:
 
 	SCustomCarShadow m_Shadow;
 	bool m_bShadow;
-	
-	bool m_bEngineOn;
-	bool m_bLightsOn;
+	int bEngine;
+	int fDoorState;
+	int bLights;
 };

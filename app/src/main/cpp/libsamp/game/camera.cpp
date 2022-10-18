@@ -68,8 +68,3 @@ void CCamera::InterpolateCameraLookAt(VECTOR *posFrom, VECTOR *posTo, int time, 
 	ScriptCommand(&lock_camera_position, 1);
 	ScriptCommand(&point_camera_transverse, posFrom->X, posFrom->Y, posFrom->Z, posTo->X, posTo->Y, posTo->Z, time, mode);
 }
-
-void CCamera::AttachToEntity(ENTITY_TYPE* target, short ModeToGoTo, short TypeOfSwitch)
-{	
-	((void (*) (uintptr_t, ENTITY_TYPE*, short, short, int))(g_libGTASA+0x3754F8+1))(g_libGTASA + 0x8B0808, target, ModeToGoTo, TypeOfSwitch, 1);
-}

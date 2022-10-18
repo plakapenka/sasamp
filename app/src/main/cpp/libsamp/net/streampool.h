@@ -31,6 +31,7 @@ public:
 	void Deactivate();
 	void Activate();
 
+	CStream* GetStream(int iID);
 	CStream* AddStream(int iID, VECTOR* pPos, int iVirtualWorld, int iInterior, float fDistance, const char* szUrl);
 	void DeleteStreamByID(int iID);
 

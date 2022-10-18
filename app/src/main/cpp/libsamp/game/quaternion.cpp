@@ -52,7 +52,7 @@ void CQuaternion::Normalize()
 	z /= n;
 }
 
-#define SLERP_DELTA 0.01
+#define SLERP_DELTA 0.1
 void CQuaternion::Slerp(CQuaternion *pQ1, CQuaternion *pQ2, float t)
 {
 
@@ -77,7 +77,7 @@ void CQuaternion::Slerp(CQuaternion *pQ1, CQuaternion *pQ2, float t)
 
 	if((1.0 - cosom) > SLERP_DELTA)
 	{
-		// (slerp)
+		// стандартный случай (slerp)
 		omega = acos(cosom);
 		sinom = sin(omega);
 		scale0 = sin((1.0 - t) * omega) / sinom;
@@ -85,6 +85,7 @@ void CQuaternion::Slerp(CQuaternion *pQ1, CQuaternion *pQ2, float t)
 	}
 	else
 	{
+		// если маленький угол - линейная интерполяция
 		scale0 = 1.0 - t;
 		scale1 = t;
 	}

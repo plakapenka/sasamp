@@ -7,7 +7,6 @@
 #define WIDGET_CHATHISTORY_DOWN	2
 #define WIDGET_MICROPHONE		3
 #define WIDGET_CAMERA_CYCLE		4
-#define WIDGET_ENTEREXIT		5
 
 class CWidgetManager
 {

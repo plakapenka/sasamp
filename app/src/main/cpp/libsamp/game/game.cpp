@@ -1,6 +1,5 @@
 #include "../main.h"
 #include "game.h"
-#include "../chatwindow.h"
 #include "../util/armhook.h"
 
 void ApplyPatches();
@@ -11,7 +10,6 @@ void InitScripting();
 
 uint16_t *szGameTextMessage;
 bool bUsedPlayerSlots[PLAYER_PED_SLOTS];
-extern CChatWindow* pChatWindow;
 
 void CGame::RemoveModel(int iModel, bool bFromStreaming)
 {
@@ -42,7 +40,8 @@ CGame::CGame()
 	m_pGamePlayer = nullptr;
 
 	m_bClockEnabled = true;
-	memset(&m_checkpointData, 0, sizeof(m_checkpointData));
+	m_bCheckpointsEnabled = false;
+	m_dwCheckpointMarker = 0;
 
 	m_bRaceCheckpointsEnabled = 0;
 	m_dwRaceCheckpointHandle = 0;
@@ -91,6 +90,7 @@ void CGame::RemovePlayer(CPlayerPed* pPlayer)
 // 0.3.7
 CVehicle* CGame::NewVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRotation, bool bAddSiren)
 {
+	Log("NewVehicle(%d, %4.f, %4.f, %4.f, %4.f)", iType, fPosX, fPosY, fPosZ, fRotation);
 	CVehicle *pVehicleNew = new	CVehicle(iType, fPosX, fPosY, fPosZ, fRotation, bAddSiren);
 	return pVehicleNew;
 }
@@ -178,6 +178,11 @@ void CGame::HandleChangedHUDStatus()
 	DisplayWidgets(aToggleStatusHUD[HUD_ELEMENT_BUTTONS]);
 }
 
+uint8_t CGame::GetWantedLevel()
+{
+	return *(uint8_t*)(g_libGTASA + 0x27D8D2);
+}
+
 void CGame::SetEnabledPCMoney(bool bEnabled)
 {
 	if (bEnabled)
@@ -198,41 +203,28 @@ float CGame::FindGroundZForCoord(float x, float y, float z)
 }
 
 // 0.3.7
-void CGame::SetCheckpoint(VECTOR *pos, VECTOR *extent)
+void CGame::SetCheckpointInformation(VECTOR *pos, VECTOR *extent)
 {
-	if (!pos || !extent) return;
+	Log("SetCheckpointInformation");
 
-	if (m_checkpointData.m_bIsActive)
+	memcpy(&m_vecCheckpointPos,pos,sizeof(VECTOR));
+	memcpy(&m_vecCheckpointExtent,extent,sizeof(VECTOR));
+
+	if(m_dwCheckpointMarker) 
 	{
-		DisableCheckpoint();
-	}
+		DisableMarker(m_dwCheckpointMarker);
+		m_dwCheckpointMarker = 0;
 
-	m_checkpointData.m_vecPosition.X = pos->X;
-	m_checkpointData.m_vecPosition.Y = pos->Y;
-	m_checkpointData.m_vecPosition.Z = pos->Z;
-
-	m_checkpointData.m_vecExtent.X = extent->X;
-	m_checkpointData.m_vecExtent.Y = extent->Y;
-	m_checkpointData.m_vecExtent.Z = extent->Z;
-
-	m_checkpointData.m_dwMarkerId = CreateRadarMarkerIcon(0, pos->X,
-		pos->Y, pos->Z, 1005, 0);
-
-	m_checkpointData.m_bIsActive = true;
-}
-
-void CGame::DisableCheckpoint()
-{
-	if (m_checkpointData.m_bIsActive)
-	{
-		DisableMarker(m_checkpointData.m_dwMarkerId);
-		m_checkpointData.m_bIsActive = false;
+		m_dwCheckpointMarker = CreateRadarMarkerIcon(0, m_vecCheckpointPos.X,
+			m_vecCheckpointPos.Y, m_vecCheckpointPos.Z, 1005, 0);
 	}
 }
 
 // 0.3.7
 void CGame::SetRaceCheckpointInformation(uint8_t byteType, VECTOR *pos, VECTOR *next, float fSize)
 {
+	Log("SetRaceCheckpointInformation");
+
 	memcpy(&m_vecRaceCheckpointPos,pos,sizeof(VECTOR));
 	memcpy(&m_vecRaceCheckpointNext,next,sizeof(VECTOR));
 	m_fRaceCheckpointSize = fSize;
@@ -254,6 +246,8 @@ void CGame::SetRaceCheckpointInformation(uint8_t byteType, VECTOR *pos, VECTOR *
 // 0.3.7
 void CGame::MakeRaceCheckpoint()
 {
+	Log("MakeRaceCheckpoint");
+
 	DisableRaceCheckpoint();
 
 	ScriptCommand(&create_racing_checkpoint, (int)m_byteRaceType,
@@ -267,6 +261,8 @@ void CGame::MakeRaceCheckpoint()
 // 0.3.7
 void CGame::DisableRaceCheckpoint()
 {
+	Log("DisableRaceCheckpoint");
+
 	if (m_dwRaceCheckpointHandle)
 	{
 		ScriptCommand(&destroy_racing_checkpoint, m_dwRaceCheckpointHandle);
@@ -278,18 +274,26 @@ void CGame::DisableRaceCheckpoint()
 // 0.3.7
 void CGame::UpdateCheckpoints()
 {
-	if(m_checkpointData.m_bIsActive) 
+	if(m_bCheckpointsEnabled) 
 	{
 		CPlayerPed *pPlayerPed = this->FindPlayerPed();
 		if(pPlayerPed) 
 		{
-			if (ScriptCommand(&is_actor_near_point_3d, pPlayerPed->m_dwGTAId,
-				m_checkpointData.m_vecPosition.X, m_checkpointData.m_vecPosition.Y, m_checkpointData.m_vecPosition.Z,
-				m_checkpointData.m_vecExtent.X, m_checkpointData.m_vecExtent.Y, m_checkpointData.m_vecExtent.Z, 1))
+			ScriptCommand(&is_actor_near_point_3d,pPlayerPed->m_dwGTAId,
+				m_vecCheckpointPos.X,m_vecCheckpointPos.Y,m_vecCheckpointPos.Z,
+				m_vecCheckpointExtent.X,m_vecCheckpointExtent.Y,m_vecCheckpointExtent.Z,1);
+			
+			if (!m_dwCheckpointMarker)
 			{
-				DisableCheckpoint();
+				m_dwCheckpointMarker = CreateRadarMarkerIcon(0, m_vecCheckpointPos.X,
+					m_vecCheckpointPos.Y, m_vecCheckpointPos.Z, 1005, 0);
 			}
 		}
+	}
+	else if(m_dwCheckpointMarker) 
+	{
+		DisableMarker(m_dwCheckpointMarker);
+		m_dwCheckpointMarker = 0;
 	}
 	
 	if(m_bRaceCheckpointsEnabled) 
@@ -316,6 +320,8 @@ void CGame::UpdateCheckpoints()
 // 0.3.7
 uint32_t CGame::CreateRadarMarkerIcon(int iMarkerType, float fX, float fY, float fZ, int iColor, int iStyle)
 {
+	Log("CreateRadarMarkerIcon");
+
 	uint32_t dwMarkerID = 0;
 
 	if(iStyle == 1) 
@@ -414,38 +420,10 @@ void CGame::DisplayWidgets(bool bDisp)
 		*(uint16_t*)(g_libGTASA+0x8B82A0+0x10C) = 1;
 }
 
+// допилить
 void CGame::PlaySound(int iSound, float fX, float fY, float fZ)
 {
-	//ScriptCommand(&play_sound, fX, fY, fZ, iSound);
-	Log("Sound %d pos %f %f %f", iSound, fX, fY, fZ);
-
-  if ( iSound )
-  {
-    if ( iSound == 1 )
-    {
-      //this[4] = 1;
-    }
-    else if ( iSound >= 1000 )
-    {
-      if ( iSound >= 2000 )
-      {
-        ScriptCommand(&clear_mission_audio, 1);
-        ScriptCommand(&load_mission_audio, 1, iSound);
-        ScriptCommand(&set_mission_audio_position, 1, fX, fY, fZ);
-      }
-      else
-      {
-        ScriptCommand(&play_sound, fX, fY, fZ, iSound);
-      }
-    }
-  }
-  else
-  {
-
-    ScriptCommand(&clear_mission_audio, 1);
-    
-    //this[4] = 0;
-  }
+	ScriptCommand(&play_sound, fX, fY, fZ, iSound);
 }
 
 void CGame::ToggleRadar(bool iToggle)
@@ -512,11 +490,6 @@ void CGame::SetMaxStats()
 void CGame::SetWantedLevel(uint8_t byteLevel)
 {
 	WriteMemory(g_libGTASA+0x27D8D2, (uintptr_t)&byteLevel, 1);
-}
-
-uint8_t CGame::GetWantedLevel()
-{
-	return *(uint8_t*)(g_libGTASA + 0x27D8D2);
 }
 
 bool CGame::IsAnimationLoaded(char *szAnimFile)
@@ -603,9 +576,4 @@ extern uint8_t bGZ;
 void CGame::DrawGangZone(float fPos[], uint32_t dwColor)
 {
     (( void (*)(float*, uint32_t*, uint8_t))(g_libGTASA+0x3DE7F8+1))(fPos, &dwColor, bGZ);
-}
-
-uint8_t CGame::IsGamePaused()
-{
-	return *(uint8_t*)(g_libGTASA + 0x8C9BA3);
 }

@@ -25,6 +25,8 @@ public:
 
     void ProcessUpdating();
     void Draw();
+    void Close();
+    void Update();
     void Toggle();
 
     bool OnTouchEvent(int type, bool multi, float x, float y);

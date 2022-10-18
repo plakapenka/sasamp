@@ -17,38 +17,38 @@ char CClientInfo::szIP[0xFF];
 uint16_t CClientInfo::usPort = 0;
 extern "C"
 {
-	/*JNIEXPORT void JNICALL Java_com_saint _game_core_GTASA_setClientIp(JNIEnv* pEnv, jobject thiz, jbyteArray ip)
+	/*JNIEXPORT void JNICALL Java_com_santrope_core_GTASA_setClientIp(JNIEnv* pEnv, jobject thiz, jbyteArray ip)
 	{
 		CClientInfo::SetClientIP(pEnv, thiz, ip);
 	}
 
-	JNIEXPORT void JNICALL Java_com_saint _game_core_GTASA_setClientPort(JNIEnv* pEnv, jobject thiz, jint port)
+	JNIEXPORT void JNICALL Java_com_santrope_core_GTASA_setClientPort(JNIEnv* pEnv, jobject thiz, jint port)
 	{
 		CClientInfo::SetClientPort(pEnv, thiz, port);
 	}
 
-	JNIEXPORT void JNICALL Java_com_saint _game_core_GTASA_setClientUuid(JNIEnv* pEnv, jobject thiz, jbyteArray uuid)
+	JNIEXPORT void JNICALL Java_com_santrope_core_GTASA_setClientUuid(JNIEnv* pEnv, jobject thiz, jbyteArray uuid)
 	{
 		CClientInfo::SetClientUUID(pEnv, thiz, uuid);
 	}
 
-	JNIEXPORT void JNICALL Java_com_saint _game_core_GTASA_setClientLauncherVersion(JNIEnv* pEnv, jobject thiz, jint version)
+	JNIEXPORT void JNICALL Java_com_santrope_core_GTASA_setClientLauncherVersion(JNIEnv* pEnv, jobject thiz, jint version)
 	{
 		CClientInfo::SetClientLauncherVersion(pEnv, thiz, version);
 	}
-	JNIEXPORT void JNICALL Java_com_saint _game_core_GTASA_setClientModpackVersion(JNIEnv* pEnv, jobject thiz, jint version)
+	JNIEXPORT void JNICALL Java_com_santrope_core_GTASA_setClientModpackVersion(JNIEnv* pEnv, jobject thiz, jint version)
 	{
 		CClientInfo::SetClientModPackVersion(pEnv, thiz, version);
 	}
-	JNIEXPORT void JNICALL Java_com_saint _game_core_GTASA_setClientMajorVersion(JNIEnv* pEnv, jobject thiz, jint version)
+	JNIEXPORT void JNICALL Java_com_santrope_core_GTASA_setClientMajorVersion(JNIEnv* pEnv, jobject thiz, jint version)
 	{
 		CClientInfo::SetClientMajorVersion(pEnv, thiz, version);
 	}
-	JNIEXPORT void JNICALL Java_com_saint _game_core_GTASA_setClientMinorVersion(JNIEnv* pEnv, jobject thiz, jint version)
+	JNIEXPORT void JNICALL Java_com_santrope_core_GTASA_setClientMinorVersion(JNIEnv* pEnv, jobject thiz, jint version)
 	{
 		CClientInfo::SetClientMinorVersion(pEnv, thiz, version);
 	}
-	JNIEXPORT jboolean JNICALL Java_com_saint _game_core_GTASA_isAPAKAndLibSame(JNIEnv* pEnv, jobject thiz, jint gameEdition)
+	JNIEXPORT jboolean JNICALL Java_com_santrope_core_GTASA_isAPAKAndLibSame(JNIEnv* pEnv, jobject thiz, jint gameEdition)
 	{
 		return CClientInfo::IsAPKAndGameEditionSame(pEnv, thiz, gameEdition);
 	}*/
@@ -100,8 +100,6 @@ void CClientInfo::SetClientIP(JNIEnv* pEnv, jobject thiz, jbyteArray ip)
 	memset(szIP, 0, sizeof(szIP) - 1);
 	memcpy(szIP, pIP, length);
 
-	Log("Setted ip: %s", szIP);
-
 	firebase::crashlytics::SetCustomKey("IP", szIP);
 
 	pEnv->ReleaseByteArrayElements(ip, pIP, JNI_ABORT);
@@ -112,8 +110,6 @@ void CClientInfo::SetClientIP(JNIEnv* pEnv, jobject thiz, jbyteArray ip)
 void CClientInfo::SetClientPort(JNIEnv* pEnv, jobject thiz, jint port)
 {
 	usPort = (uint16_t)port;
-
-	Log("Setted port: %d", usPort);
 }
 
 void CClientInfo::SetClientUUID(JNIEnv* pEnv, jobject thiz, jbyteArray uuid)

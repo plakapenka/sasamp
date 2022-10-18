@@ -14,9 +14,6 @@
 
 class CJavaWrapper
 {
-	jmethodID s_showAuthorization;
-	jmethodID s_hideAuthorization;
-
 	jobject activity;
 
 	jmethodID s_GetClipboardText;
@@ -28,181 +25,165 @@ class CJavaWrapper
 	jmethodID s_ShowClientSettings;
 	jmethodID s_SetUseFullScreen;
 	jmethodID s_MakeDialog;
-	jmethodID s_hideDialogWithoutReset;
 
-	jmethodID s_showRegister;
-    jmethodID s_hideRegister;
-	jmethodID s_showRegisterTwo;
-    jmethodID s_hideRegisterTwo;
-	jmethodID s_showRegisterSex;
-    jmethodID s_hideRegisterSex;
-	jmethodID s_showRegisterSkin;
-    jmethodID s_hideRegisterSkin;
-	jmethodID s_updateRegisterSex;
-	jmethodID s_showSpawn;
-    jmethodID s_hideSpawn;
-	//jmethodID s_hideLoadingScreen;
-	jmethodID s_updateLoadingScreen;
+	jmethodID s_showOilFactoryGame;
+	jmethodID s_showArmyGame;
+	jmethodID s_hideArmyGame;
+
+	jmethodID s_showFuelStation;
+
+	jmethodID s_showShopStoreManager;
+	jmethodID s_hideShopStoreManager;
+
+	jmethodID s_showGunShopManager;
+	jmethodID s_hideGunShopManager;
+
+	jmethodID s_showTabWindow;
+	jmethodID s_setTabStat;
+
 	jmethodID s_showHud;
     jmethodID s_hideHud;
-	jmethodID s_showVoice;
-    jmethodID s_hideVoice;
-	jmethodID s_showServer;
-    jmethodID s_hideServer;
-	jmethodID s_showGPS;
-    jmethodID s_hideGPS;
+	jmethodID s_showHudDialog;
+    jmethodID s_hideHudDialog;
 	jmethodID s_showGreenZone;
     jmethodID s_hideGreenZone;
+	jmethodID s_showGPS;
+    jmethodID s_hideGPS;
+	jmethodID s_showServer;
+    jmethodID s_hideServer;
+	jmethodID s_updateHudInfo;
+	jmethodID s_updateLevelInfo;
+
 	jmethodID s_showSamwill;
-    jmethodID s_hideSamwill;
-	jmethodID s_showMenu;
-	jmethodID s_updateSpeedometr;
-	jmethodID s_hideTargetNotify;
-	jmethodID s_updateTargetNotify;
+	jmethodID s_hideSamwill;
+
+	jmethodID s_showSpeed;
+    jmethodID s_hideSpeed;
+	jmethodID s_updateSpeedInfo;
+
 	jmethodID s_showNotification;
-	jmethodID s_updateNotification;
 	jmethodID s_hideNotification;
-	jmethodID s_updateAutosalon;
-	jmethodID s_hideAutosalon;
-	jmethodID s_showAutosalon;
-	jmethodID s_showZavod;
-	jmethodID s_hideZavod;
-	jmethodID s_showMine;
-	jmethodID s_hideMine;
-	jmethodID s_showUpdateBus;
-	jmethodID s_hideBus;
-	jmethodID s_showUpdateCasino;
-	jmethodID s_hideCasino;
-	jmethodID s_hideCasinoChip;
-	jmethodID s_showCasinoChip;
-	jmethodID s_showCasinoRoullete;
-	jmethodID s_hideCasinoRoullete;
+	jmethodID s_showMenu;
+
+	jmethodID s_showAuthorization;
+	jmethodID s_hideAuthorization;
+
+	jmethodID s_showRegistration;
+	jmethodID s_hideRegistration;
+
+	jmethodID s_showDeathInfo;
+	jmethodID s_hideDeathInfo;
+
+	jmethodID s_showAuctionManager;
+
+	jmethodID s_showChooseSpawn;
+	jmethodID s_hideChooseSpawn;
 
 	jmethodID s_setPauseState;
-	jmethodID s_updateHudInfo;
+
+	jmethodID s_showSplash;
+	jmethodID s_updateSplash;
+
+	jmethodID s_showBusInfo;
+	jmethodID s_hideBusInfo;
+
+	jmethodID s_showYernMoney;
+	jmethodID s_hideYernMoney;
+	jmethodID s_updateYearnMoney;
+	jmethodID s_showUpdateTargetNotify;
+	jmethodID s_hideTargetNotify;
+
 public:
 	JNIEnv* GetEnv();
 
 	std::string GetClipboardString();
-	void CallLauncherActivity();
+	void CallLauncherActivity(int type);
 
 	void ShowInputLayout();
 	void HideInputLayout();
 
 	void ShowClientSettings();
 
-	void UpdateHudInfo(int health, int armour, int hunger, int weaponid, int ammo, int ammoclip, int money, int wanted);
-	void UpdateSamwill(int start, int progress, int check1, int check2, int check3, int check4, int check5);
-	void UpdateSamwillMoney(int money);
-	void UpdateRegisterSkinButtons(int btnidclicked);
-	void UpdateSpeedInfo(int speed, int fuel, int hp, int mileage, int engine, int light, int belt, int lock);
-	void ShowAuthorization(char *nick, int id);
-	void HideAuthorization();
-	void ShowRegister();
-    void HideRegister();
-	void ShowRegisterTwo();
-    void HideRegisterTwo();
-	void ShowRegisterSex();
-    void HideRegisterSex();
-	void ShowRegisterSkin();
-    void HideRegisterSkin();
-	void UpdateRegisterSex(int male);
-	void ShowSpawn(int organization, int station, int exit, int garage, int house);
-    void HideSpawn();
-	void HideLoadingScreen();
-	void UpdateLoadingScreen(int procent);
-	void UpdateTargetNotify(int type, char *text);
-	void HideTargetNotify();
-	void HideNotification();
-	void ShowNotification(int type, char* text, int duration, char* actionforBtn, char* textBtn, int actionId);
-	void UpdateNotification(int progress);
-	void HideBus();
-	void ShowUpdateBus(int timer);
-	void HideCasinoRoullete();
-	void ShowCasinoRoullete(int quantity);
-	void HideCasinoChip();
-	void ShowCasinoChip(int type, int balance);
-	void HideCasino();
-	void ShowUpdateCasino(int tableid, int bet, int bank, int balance, char* playerid1, int playerstatus1, char* playerid2, int playerstatus2, char* playerid3, int playerstatus3, char* playerid4, int playerstatus4, char* playerid5, int playerstatus5);
-	void UpdateAutosalon(char *vehname, int price, int quantity, int maxspeed, int overclocking);
-	void HideAutosalon();
-	void ShowAutosalon();
-	void ShowZavod(int type);
-	void HideZavod();
-	void ShowMine(int type);
-	void HideMine();
+	void SetUseFullScreen(int b);
+
+	void UpdateHudInfo(int health, int armour, int hunger, int weaponid, int ammo, int ammoinclip, int money, int wanted);
+	void UpdateLevelInfo(int level, int currentexp, int maxexp);
 	void ShowHud();
     void HideHud();
-	void ShowVoice();
-    void HideVoice();
-	void ShowServer(int server);
-    void HideServer();
-	void ShowGPS();
-    void HideGPS();
+	void ShowHudDialog();
+    void HideHudDialog();
 	void ShowGreenZone();
     void HideGreenZone();
+	void ShowGPS();
+    void HideGPS();
+	void ShowServer(int serverid);
+    void HideServer();
+
+	void SetTabStat(int id, char* name, int score, int ping);
+	void ShowTabWindow();
+
+	void ShowOilFactoryGame();
+	void ShowArmyGame(int quantity);
+	void HideArmyGame();
+
+	void ShowFuelStation(int type, int price1, int price2, int price3, int price4, int price5);
+
+	void ShowAuctionManager(int itemId, int type, int price);
+
+	void ShowShopStoreManager(int type, int price);
+	void HideShopStoreManager();
+
+	void ShowGunShopManager();
+	void HideGunShopManager();
+
 	void ShowSamwill();
-    void HideSamwill();
-	void ShowSamwillMoney();
-    void HideSamwillMoney();
-	void ShowMenu();
-    void HideMenu();
-	void ShowSpeedometr();
-    void HideSpeedometr();
-	uint32_t ChangeRegisterSkin(int skin);
-	void ClearKilllistDuels();
-	void HideKilllistOne();
-	void HideKilllistTwo();
-	void HideKilllistThree();
+	void HideSamwill();
 
-	void UpdateKilllistOne(int team, int weapon, char *killer, char *killed);
-	void UpdateKilllistTwo(int team, int weapon, char *killer, char *killed);
-	void UpdateKilllistThree(int team, int weapon, char *killer, char *killed);
+	void UpdateSpeedInfo(int speed, int fuel, int hp, int mileage, int engine, int light, int belt, int lock);
+	void ShowSpeed();
+    void HideSpeed();
 
-	void UpdateKilllistTop(char *one, char *two, char *three);
+	void ShowBusInfo(int time);
+	void HideBusInfo();
 
-	void ShowKilllist();
-	void HideKilllist();
-	void ShowKilllistMulti();
-	void HideKilllistMulti();
-	void ShowKilllisDuels();
-	void HideKilllistDuels();
-	void UpdateKilllist(int kills, int deaths, int duelskills, int duelkillsmax);
+	void ShowYernMoney();
+    void HideYernMoney();
+    void UpdateYearnMoney(int money);
+    void ShowUpdateTargetNotify(int type, char *text);
+    void HideTargetNotify();
 
-	void SetUseFullScreen(int b);
 	void MakeDialog(int dialogId, int dialogTypeId, char* caption, char* content, char* leftBtnText, char* rightBtnText); // Диалоги
-	void HideDialogWithoutReset();
+	void ShowNotification(int type, char* text, int duration, char* actionforBtn, char* textBtn, int actionId);
+	void HideNotification();
+	void ShowMenu();
+
+	void ShowAuthorization(char *nick, int id);
+	void HideAuthorization();
+
+	void ShowDeathInfo(char *nick, int id);
+	void HideDeathInfo();
+
+	void ShowRegistration(char *nick, int id);
+	void HideRegistration();
+
+	void ShowChooseSpawn(int organization, int station, int exit, int garage, int house);
+	void HideChooseSpawn();
 
 	void SetPauseState(bool a1);
+
+	void ShowSplash();
+	void UpdateSplash(int progress);	
+
+	uint32_t ChangeRegisterSkin(int skin);
+
+	bool isHudToggle;
 
 	int RegisterSexMale;
 	int RegisterSkinValue;
 	int RegisterSkinId;
-
-	int ChooseSpawn;
-
-	uint16_t CasinoWheelID;
-
-	bool isHudToggle;
-
-	bool isDialogActive;
-
-	bool SpeedLeftTurn;
-	bool SpeedRightTurn;
-	bool SpeedTurn;
-
-	bool Samwillclicked;
-	int Samwillcheck1;
-	int Samwillcheck2;
-	int Samwillcheck3;
-	int Samwillcheck4;
-	int Samwillcheck5;
 
 	CJavaWrapper(JNIEnv* env, jobject activity);
 	~CJavaWrapper();
 };
 
 extern CJavaWrapper* g_pJavaWrapper;
-
-// edited source code by x 1 y 2 z
-// if you delete this code i fuck ur mom

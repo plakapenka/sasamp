@@ -13,7 +13,7 @@ Version: $Id: textdrawpool.h,v 1.3 2008-02-15 07:20:36 kyecvs Exp $
 
 #include "..//gui/ITouchListener.h"
 
-class CTextDrawPool
+class CTextDrawPool : public ITouchListener
 {
 private:
 
@@ -22,8 +22,6 @@ private:
 
 public:
 	bool			m_bSelectState;
-	uint32_t            m_dwHoverColor;
-    uint16_t            m_wClickedTextDrawID;
 
 	CTextDrawPool();
 	~CTextDrawPool();
@@ -31,8 +29,7 @@ public:
 	CTextDraw* New(uint16_t wText, TEXT_DRAW_TRANSMIT* TextDrawTransmit, char* szText);
 	void Delete(uint16_t wText);
 	void Draw();
-	bool OnTouchEvent(int type, bool multi, int x, int y);
-	void SendClickTextDraw();
+	bool OnTouchEvent(int type, int numClick, int posX, int posY) override;
 
 	void SnapshotProcess();
 

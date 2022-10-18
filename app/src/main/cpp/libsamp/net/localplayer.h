@@ -136,6 +136,7 @@ public:
 	void ResetAllSyncAttributes();
 
 	bool Process();
+	void SendBulletSyncData(PLAYERID byteHitID, uint8_t byteHitType, VECTOR vecHitPos);
 	void SendWastedNotification();
 
 	void HandleClassSelection();
@@ -174,13 +175,12 @@ public:
 	bool IsInRCMode() { return m_bInRCMode; };
 
 	void SendOnFootFullSyncData();
+	void SendOnKeyFullSyncData();
 	void SendInCarFullSyncData();
 	void SendPassengerFullSyncData();
 	void SendAimSyncData();
 	void SendStatsUpdate();
 	void CheckWeapons();
-
-	void GiveTakeDamage(bool bGiveOrTake, uint16_t wPlayerID, float damage_amount, uint32_t weapon_id, uint32_t bodypart);
 
 public:
 	bool				m_bWaitingForSpawnRequestReply;
@@ -196,6 +196,7 @@ public:
 	VEHICLEID			m_CurrentVehicle;
 	VEHICLEID 			m_LastVehicle;
 	bool				m_bIsActive;
+	int lToggle;
 
 private:
 	uint32_t			GetCurrentAnimationIndexFlag();

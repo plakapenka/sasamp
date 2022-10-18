@@ -1,8 +1,5 @@
 #pragma once
-
 #include "aimstuff.h"
-#include "CRemoteData.h"
-
 class CPlayerPed
 	: public CEntity
 {
@@ -17,9 +14,6 @@ public:
 	void SetCurrentAim(CAMERA_AIM *pAim);
 
 	uint16_t GetCameraMode();
-	void StopPissing();
-	bool IsPissing();
-	void StartPissing();
 
 	void SetCameraMode(uint16_t byteCamMode);
 
@@ -31,10 +25,7 @@ public:
 	void ResetCrouch();
 	bool IsCrouching();
 
-	void ProcessBulletData(BULLET_DATA* btData);
-
 	void SetCameraExtendedZoom(float fZoom);
-	void SetCameraExtendedZoom(float fZoom, float fAspectRatio);
 	void SetDead();
 	// 0.3.7
 	bool IsInVehicle();
@@ -79,7 +70,6 @@ public:
 	void GiveWeapon(int iWeaponID, int iAmmo);
 	uint8_t GetCurrentWeapon();
 	void SetArmedWeapon(int iWeaponID);
-	void SetWeaponAmmo(uint8_t iWeaponID, uint16_t iAmmo);
 
 	void SetPlayerAimState();
 	void ClearPlayerAimState();
@@ -137,35 +127,13 @@ public:
 
 	void SetMoveAnim(int iAnimGroup);
 
-	void FireInstant();
-	void GetWeaponInfoForFire(int bLeft, VECTOR* vecBone, VECTOR* vecOut);
-	VECTOR* GetCurrentWeaponFireOffset();
-
-	void LockControllable(bool bLock);
-
-	void SetFloatStat(unsigned char ucStat, float fLevel);
-
-	void SetCameraOnVehicle(uint32_t m_dwGTAId);
-	void SetCameraOnPlayerPed(uint32_t m_dwGTAId);
-
 public:
 	PED_TYPE*	m_pPed;
 	uint8_t		m_bytePlayerNumber;
 	uint32_t	m_dwArrow;
-	bool 		m_iPissingState;
-	int 		m_dwPissParticlesHandle;
+	int lToggle;
 
 	int m_iSpecialAction;
-
-	bool				m_bHaveBulletData;
-	BULLET_DATA 		m_bulletData;
-
-	bool				m_bLockControllable;
-
 	MATRIX4X4 m_HeadBoneMatrix;
 	ATTACHED_OBJECT_INFO_INTERNAL m_aAttachedObjects[MAX_ATTACHED_OBJECTS];
-
-	CRemoteDataStorage* m_pData;
-
-	int m_iCameraState;
 };

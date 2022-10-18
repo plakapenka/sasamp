@@ -2,17 +2,15 @@
 #include "../game/game.h"
 #include "netgame.h"
 #include "../gui/gui.h"
-#include "../keyboard.h"
 
 extern CGame* pGame;
-extern CNetGame* pNetGame;
 extern CGUI* pGUI;
-extern CKeyBoard* pKeyBoard;
 
 //----------------------------------------------------
 
 CTextDrawPool::CTextDrawPool()
 {
+	CTouchListenerLock(this);
 
 	int x = 0;
 	while (x != MAX_TEXT_DRAWS) {
@@ -27,6 +25,7 @@ CTextDrawPool::CTextDrawPool()
 
 CTextDrawPool::~CTextDrawPool()
 {
+	CTouchListenerLock(this);
 
 	int x = 0;
 	while (x != MAX_TEXT_DRAWS)
@@ -51,6 +50,7 @@ CTextDraw* CTextDrawPool::New(uint16_t wText, TEXT_DRAW_TRANSMIT* TextDrawTransm
 
 	if (pTextDraw)
 	{
+		CTouchListenerLock(this);
 
 		m_pTextDraw[wText] = pTextDraw;
 		m_bSlotState[wText] = TRUE;
@@ -66,6 +66,7 @@ void CTextDrawPool::Delete(uint16_t wText)
 {
 	if (m_pTextDraw[wText])
 	{
+		CTouchListenerLock(this);
 
 		delete m_pTextDraw[wText];
 		m_pTextDraw[wText] = NULL;
@@ -87,90 +88,79 @@ void CTextDrawPool::Draw()
 		x++;
 	}
 }
-
-bool CTextDrawPool::OnTouchEvent(int type, bool multi, int x, int y)
+#include "..//chatwindow.h"
+#include "..//dialog.h"
+extern CDialogWindow* pDialogWindow;
+extern CChatWindow* pChatWindow;
+bool CTextDrawPool::OnTouchEvent(int type, int num, int x, int y)
 {
+	CTouchListenerLock(this);
+	if (m_bSelectState == false) return true;
+	static bool bWannaClick = false;
 
-    if(pKeyBoard)
-    {
-        if(pKeyBoard->IsOpen()) 
-            return true;
-    }
+	if (pDialogWindow)
+	{
+		if (pDialogWindow->m_bRendered)
+		{
+			return true;
+		}
+	}
 
-    m_wClickedTextDrawID = 0xFFFF;
-    for(int i = 0; i < MAX_TEXT_DRAWS; i++)
-    {
-        if(m_bSlotState[i] && m_pTextDraw[i])
-        {
-            CTextDraw* pTextDraw = m_pTextDraw[i];
-            pTextDraw->m_bHovered = false;
-            pTextDraw->m_dwHoverColor = 0;
- 
-            if(pTextDraw->m_TextDrawData.byteSelectable)
-            {
-                if(IsPointInRect(x, y, &pTextDraw->m_rectArea))
-                {
-                    switch(type)
-                    {
-                        case TOUCH_PUSH:
-                        case TOUCH_MOVE:
-                        m_wClickedTextDrawID = 0xFFFF;
-                        pTextDraw->m_bHovered = true;
-                        pTextDraw->m_dwHoverColor = m_dwHoverColor;
-                        break;
- 
-                        case TOUCH_POP:
-                        m_wClickedTextDrawID = i;
-                        SendClickTextDraw();
-                        pTextDraw->m_bHovered = false;
-                        pTextDraw->m_dwHoverColor = 0;
-                        break;
-                    }
-                }
-            }
-        }
-    }
+	int id = 0;
 
-	return false;
+	while (id != MAX_TEXT_DRAWS)
+	{
+		if (m_bSlotState[id] && m_pTextDraw[id])
+		{
+			if (!m_pTextDraw[id]->m_TextDrawData.byteSelectable)
+			{
+				id++;
+				continue;
+			}
+
+			switch (type)
+			{
+			case TOUCH_PUSH:
+				if (IsPointInRect(x, y, &(m_pTextDraw[id]->m_rectArea)))
+				{
+					bWannaClick = true;
+					return false;
+				}
+				break;
+
+			case TOUCH_POP:
+				if (IsPointInRect(x, y, &(m_pTextDraw[id]->m_rectArea)))
+				{
+					//Log("%f %f %f %f", m_pTextDraw[id]->m_rectArea.fLeft, m_pTextDraw[id]->m_rectArea.fRight, m_pTextDraw[id]->m_rectArea.fBottom, m_pTextDraw[id]->m_rectArea.fTop);
+					pGUI->PushToBufferedQueueTextDrawPressed((uint16_t)id);
+					return false;
+				}
+				bWannaClick = false;
+				break;
+
+			case TOUCH_MOVE:
+				break;
+			}
+		}
+		id++;
+	}
+
+	return true;
 }
 
 void CTextDrawPool::SetSelectState(bool bState, uint32_t dwColor)
 {
-		if(bState) 
-    {
+	if (bState)
+	{
 		m_bSelectState = true;
-		m_dwHoverColor = dwColor;
-        m_wClickedTextDrawID = 0xFFFF;
-		//pGame->DisplayHUD(false);
-		//pGame->FindPlayerPed()->TogglePlayerControllableWithoutLock(false);
+		pGame->DisplayHUD(false);
+		pGame->FindPlayerPed()->TogglePlayerControllable(false);
 	}
-	else 
-    {
+	else {
 		m_bSelectState = false;
-		m_dwHoverColor = 0;
-		m_wClickedTextDrawID = 0xFFFF;
-		//pGame->DisplayHUD(true);
-		//pGame->FindPlayerPed()->TogglePlayerControllableWithoutLock(true);
-
-		//SendClickTextDraw();
-
-		for(int i = 0; i < MAX_TEXT_DRAWS; i++)
-		{
-			if(m_bSlotState[i] && m_pTextDraw[i]) 
-            {
-				CTextDraw* pTextDraw = m_pTextDraw[i];
-				pTextDraw->m_bHovered = false;
-				pTextDraw->m_dwHoverColor = 0;
-			}
-		}
+		pGame->DisplayHUD(true);
+		pGame->FindPlayerPed()->TogglePlayerControllable(true);
 	}
-}
-
-void CTextDrawPool::SendClickTextDraw()
-{
-	RakNet::BitStream bsSend;
-	bsSend.Write(m_wClickedTextDrawID);
-	pNetGame->GetRakClient()->RPC(&RPC_ClickTextDraw, &bsSend, HIGH_PRIORITY, RELIABLE, 0, false, UNASSIGNED_NETWORK_ID, 0);
 }
 
 void CTextDrawPool::SnapshotProcess()

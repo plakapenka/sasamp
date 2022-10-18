@@ -119,8 +119,11 @@
     <ClCompile Include="keyboardhistory.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="net\CActorPool.cpp" />
+    <ClCompile Include="net\CAddress.cpp" />
     <ClCompile Include="net\CRawData.cpp" />
+    <ClCompile Include="net\CUDPSocket.cpp" />
     <ClCompile Include="net\gangzonepool.cpp" />
+    <ClCompile Include="net\ISocket.cpp" />
     <ClCompile Include="net\localplayer.cpp" />
     <ClCompile Include="net\netgame.cpp" />
     <ClCompile Include="net\netrpc.cpp" />
@@ -284,8 +287,11 @@
     <ClInclude Include="keyboardhistory.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="net\CActorPool.h" />
+    <ClInclude Include="net\CAddress.h" />
     <ClInclude Include="net\CRawData.h" />
+    <ClInclude Include="net\CUDPSocket.h" />
     <ClInclude Include="net\gangzonepool.h" />
+    <ClInclude Include="net\ISocket.h" />
     <ClInclude Include="net\localplayer.h" />
     <ClInclude Include="net\netgame.h" />
     <ClInclude Include="net\objectpool.h" />

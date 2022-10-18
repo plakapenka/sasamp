@@ -59,7 +59,6 @@ public:
 	char* GetPlayerName(PLAYERID playerId){ return m_szPlayerNames[playerId]; }
 
 	PLAYERID FindRemotePlayerIDFromGtaPtr(PED_TYPE * pActor);
-	PLAYERID FindRemotePlayerIDFromGtaEntity(ENTITY_TYPE* pEntity);
 
 private:
 	// LOCAL

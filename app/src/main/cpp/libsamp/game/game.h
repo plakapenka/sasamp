@@ -1,5 +1,4 @@
 #pragma once
-#include "RW/RenderWare.h"
 #include "rgba.h"
 #include "common.h"
 #include "aimstuff.h"
@@ -31,7 +30,6 @@
 #include "CAdjustableHudScale.h"
 #include "CFirstPersonCamera.h"
 #include "CSnow.h"
-#include "crosshair.h"
 #include "snapshothelper.h"
 
 class CGame
@@ -91,10 +89,11 @@ public:
 	void DisplayHUD(bool bDisp);
 
 	// 0.3.7
-	void SetCheckpoint(VECTOR* pos, VECTOR* extent);
-	void DisableCheckpoint();
+	void ToggleCheckpoints(bool bEnabled) { m_bCheckpointsEnabled = bEnabled; }
 	// 0.3.7
 	void ToggleRaceCheckpoints(bool bEnabled) { m_bRaceCheckpointsEnabled = bEnabled; }
+	// 0.3.7
+	void SetCheckpointInformation(VECTOR *pos, VECTOR *extent);
 	// 0.3.7
 	void SetRaceCheckpointInformation(uint8_t byteType, VECTOR *pos, VECTOR *next, float fSize);
 	// 0.3.7
@@ -142,13 +141,16 @@ public:
 
 	void DrawGangZone(float fPos[], uint32_t dwColor);
 
-	uint8_t IsGamePaused();
-
 private:
 	bool aToggleStatusHUD[HUD_MAX];
 	CCamera* 		m_pGameCamera;
 	CPlayerPed*		m_pGamePlayer;
 
+	// checkpoint
+	bool			m_bCheckpointsEnabled;
+	uint32_t		m_dwCheckpointMarker;
+	VECTOR			m_vecCheckpointPos;
+	VECTOR			m_vecCheckpointExtent;
 	// race checkpoint
 	bool			m_bRaceCheckpointsEnabled;
 	uint32_t		m_dwRaceCheckpointHandle;
@@ -159,12 +161,4 @@ private:
 	VECTOR			m_vecRaceCheckpointNext;
 
 	bool 			m_bClockEnabled;
-
-	struct
-	{
-		bool m_bIsActive;
-		VECTOR m_vecPosition;
-		VECTOR m_vecExtent;
-		uint32_t m_dwMarkerId;
-	} m_checkpointData;
 };

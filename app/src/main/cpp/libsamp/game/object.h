@@ -56,7 +56,4 @@ public:
 
 	void ApplyMoveSpeed();
 	void GetRotation(float* pfX, float* pfY, float* pfZ);
-	void SetMaterialText(int iMaterialIndex, uint8_t byteMaterialSize, const char *szFontName, uint8_t byteFontSize, uint8_t byteFontBold, uint32_t dwFontColor, uint32_t dwBackgroundColor, uint8_t byteAlign, const char *szText);
-	void SetMaterial(int iModel, int iMaterialIndex, char* txdname, char* texturename, uint32_t dwColor);
-   
 };

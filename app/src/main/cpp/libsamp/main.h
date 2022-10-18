@@ -5,10 +5,7 @@
 #include <vector>
 #include <list>
 #include <unistd.h>
-#include <sstream>
-#include <algorithm>
-
-#define SA_ADDR(addr) (g_libGTASA + (addr))
+#include "game/common.h"
 
 #define SAMP_VERSION	"0.3.7"
 #define PORT_VERSION	"0.69"

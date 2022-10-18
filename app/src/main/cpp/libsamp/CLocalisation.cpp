@@ -12,8 +12,8 @@
 #include "CSettings.h"
 #include "util/armhook.h"
 
-extern CGUI *pGUI;
-extern CChatWindow *pChatWindow;
+extern CGUI* pGUI;
+extern CChatWindow* pChatWindow;
 
 char CLocalisation::m_szMessages[E_MSG::MSG_COUNT][MAX_LOCALISATION_LENGTH] = {
 	"{bbbbbb}Соединение к LIVE RUSSIA{ffffff}",
@@ -26,15 +26,17 @@ char CLocalisation::m_szMessages[E_MSG::MSG_COUNT][MAX_LOCALISATION_LENGTH] = {
 	"{bbbbbb}Проблемы с сетью, переподключение...{ffffff}",
 	"{bbbbbb}Сервер полон{ffffff}"};
 
-void CLocalisation::Initialise(const char *szFile)
+void CLocalisation::Initialise(const char* szFile)
 {
+	Log("Initializing localisation...");
 	char buff[MAX_LOCALISATION_LENGTH];
 
 	sprintf(&buff[0], "%sSAMP/%s", g_pszStorage, szFile);
 
-	FILE *pFile = fopen(&buff[0], "r");
+	FILE* pFile = fopen(&buff[0], "r");
 	if (!pFile)
 	{
+		Log("Localisation | Cannot initialise");
 		return;
 	}
 
@@ -50,16 +52,17 @@ void CLocalisation::Initialise(const char *szFile)
 			break;
 		}
 
-		memcpy((void *)&m_szMessages[counter][0], (const void *)(&buff[0]), MAX_LOCALISATION_LENGTH);
+		memcpy((void*)& m_szMessages[counter][0], (const void*)(&buff[0]), MAX_LOCALISATION_LENGTH);
 		counter++;
 	}
 	fclose(pFile);
+	Log("Localisation initialized");
 }
 
-char *CLocalisation::GetMessage(E_MSG msg)
+char* CLocalisation::GetMessage(E_MSG msg)
 {
-	// Log("SYMBOLS debug %x %x %x %x %x %x %x %x %x", m_szMessages[msg][0], m_szMessages[msg][1], m_szMessages[msg][2], m_szMessages[msg][3], m_szMessages[msg][4], m_szMessages[msg][5],
-	// m_szMessages[msg][6], m_szMessages[msg][7], m_szMessages[msg][8]);
-	// Log("SYMBOLS debug %s", &m_szMessages[msg][0]);
+	//Log("SYMBOLS debug %x %x %x %x %x %x %x %x %x", m_szMessages[msg][0], m_szMessages[msg][1], m_szMessages[msg][2], m_szMessages[msg][3], m_szMessages[msg][4], m_szMessages[msg][5],
+		//m_szMessages[msg][6], m_szMessages[msg][7], m_szMessages[msg][8]);
+	//Log("SYMBOLS debug %s", &m_szMessages[msg][0]);
 	return &m_szMessages[msg][0];
 }

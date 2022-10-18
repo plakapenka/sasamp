@@ -27,10 +27,6 @@ struct SCRIPT_COMMAND
 
 int ScriptCommand(const SCRIPT_COMMAND* pScriptCommand, ...);
 
-const SCRIPT_COMMAND clear_mission_audio						= { 0x040D, "i" }; 	// id 
-const SCRIPT_COMMAND load_mission_audio							= { 0x03CF, "ii" }; // int asId, int name
-const SCRIPT_COMMAND set_mission_audio_position					= { 0x03D7, "ifff" }; //(int id, float locationX, float locationY, float locationZ)
-
 /*const SCRIPT_COMMAND create_player						= { 0x0053, "vfffv" }; 	// 0, x, y, z, $PLAYER_CHAR
 const SCRIPT_COMMAND create_actor_from_player			= { 0x01F5, "vv" };		// PLAYER_CHAR, PLAYER_ACTOR
 const SCRIPT_COMMAND set_camera_behind_player			= { 0x0373, "" };

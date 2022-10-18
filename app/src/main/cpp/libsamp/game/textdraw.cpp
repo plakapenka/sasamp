@@ -197,11 +197,11 @@ void CTextDraw::DrawTextured()
 	rect.fRight = m_rectArea.fRight;
 	rect.fTop = m_rectArea.fBottom;
 	if (m_bHovered) {
-		if(TextDrawTexture[m_TextDrawData.iTextureSlot] != 0)DrawTextureUV(TextDrawTexture[m_TextDrawData.iTextureSlot], &rect, m_dwHoverColor,
+		DrawTextureUV(TextDrawTexture[m_TextDrawData.iTextureSlot], &rect, m_dwHoverColor,
 			m_TextDrawData.dwStyle == 5 ? uv_reflected : uv_normal);
 	}
 	else {
-		if(TextDrawTexture[m_TextDrawData.iTextureSlot] != 0)DrawTextureUV(TextDrawTexture[m_TextDrawData.iTextureSlot], &rect, m_TextDrawData.dwLetterColor,
+		DrawTextureUV(TextDrawTexture[m_TextDrawData.iTextureSlot], &rect, m_TextDrawData.dwLetterColor,
 			m_TextDrawData.dwStyle == 5 ? uv_reflected : uv_normal);
 	}
 }
@@ -235,7 +235,7 @@ void CTextDraw::LoadTexture()
 		strcpy(texturename, ++szTexture);
 
 		if (m_TextDrawData.iTextureSlot != -1) {
-			TextDrawTexture[m_TextDrawData.iTextureSlot] = ::LoadFromTxdSlot(txdname, texturename);
+			TextDrawTexture[m_TextDrawData.iTextureSlot] = LoadTextureFromDB("txd", texturename);
 		}
 	}
 }

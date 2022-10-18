@@ -8,13 +8,14 @@
 #include "../game/common.h"
 #include "..//keyboard.h"
 #include "..//chatwindow.h"
-#include "CSettings.h"
+#include "../CSettings.h"
+#include "../util/CJavaWrapper.h"
 extern CKeyBoard* pKeyBoard;
 extern CChatWindow* pChatWindow;
-extern CSettings *pSettings;
 
 extern CGame *pGame;
 extern CNetGame *pNetGame;
+extern CSettings *pSettings;
 
 bool bFirstSpawn = true;
 
@@ -111,34 +112,42 @@ void CLocalPlayer::SendStatsUpdate()
 void CLocalPlayer::CheckWeapons()
 {
 	if (m_pPlayerPed->IsInVehicle()) return;
-	unsigned char i;
+	uint8_t i;
+	uint8_t byteCurWep = m_pPlayerPed->GetCurrentWeapon();
 	bool bMSend = false;
 
 	RakNet::BitStream bsWeapons;
-	bsWeapons.Write((unsigned char)ID_WEAPONS_UPDATE);
+	bsWeapons.Write((BYTE)ID_WEAPONS_UPDATE);
 	bsWeapons.Write((uint16_t)INVALID_PLAYER_ID);
 	bsWeapons.Write((uint16_t)INVALID_PLAYER_ID);
-
 	for (i = 0; i < 13; i++)
 	{
-		bool bSend = false;
-		if (m_byteLastWeapon[i] != m_pPlayerPed->m_pPed->WeaponSlots[i].dwType)
+		if (m_byteLastWeapon[i] != byteCurWep)
 		{
-			m_byteLastWeapon[i] = (unsigned char)m_pPlayerPed->m_pPed->WeaponSlots[i].dwType;
-			bSend = true;
-		}
-		if (m_dwLastAmmo[i] != m_pPlayerPed->m_pPed->WeaponSlots[i].dwAmmo)
-		{
-			m_dwLastAmmo[i] = m_pPlayerPed->m_pPed->WeaponSlots[i].dwAmmo;
-			bSend = true;
-		}
-		if (bSend)
-		{
-			//pChatWindow->AddDebugMessage("Id: %u, Weapon: %u, Ammo: %d\n", i, m_byteLastWeapon[i], m_dwLastAmmo[i]);
-			bsWeapons.Write((unsigned char)i);
-			bsWeapons.Write((unsigned char)m_byteLastWeapon[i]);
-			bsWeapons.Write((unsigned short)m_dwLastAmmo[i]);
-			bMSend = true;
+			//bsWeapons.Write(i);
+			bool bSend = false;
+			if (m_byteLastWeapon[i] != m_pPlayerPed->m_pPed->WeaponSlots[i].dwType)
+			{
+				// non-current weapon has changed
+				m_byteLastWeapon[i] = (BYTE)m_pPlayerPed->m_pPed->WeaponSlots[i].dwType;
+				bSend = true;
+			}
+			//bsWeapons.Write(m_byteLastWeapon[i]);
+			if (m_dwLastAmmo[i] != m_pPlayerPed->m_pPed->WeaponSlots[i].dwAmmo)
+			{
+				// non-current ammo has changed
+				m_dwLastAmmo[i] = m_pPlayerPed->m_pPed->WeaponSlots[i].dwAmmo;
+				bSend = true;
+			}
+			//bsWeapons.Write(m_dwLastAmmo[i]);
+			if (bSend)
+			{
+				//pChatWindow->AddDebugMessage("Id: %u, Weapon: %u, Ammo: %d\n", i, m_byteLastWeapon[i], m_dwLastAmmo[i]);
+				bsWeapons.Write((uint8_t)i);
+				bsWeapons.Write((uint8_t)m_byteLastWeapon[i]);
+				bsWeapons.Write((uint16_t)m_dwLastAmmo[i]);
+				bMSend = true;
+			}
 		}
 	}
 	if (bMSend)
@@ -146,7 +155,6 @@ void CLocalPlayer::CheckWeapons()
 		pNetGame->GetRakClient()->Send(&bsWeapons, HIGH_PRIORITY, UNRELIABLE, 0);
 	}
 }
-
 uint32_t CLocalPlayer::GetCurrentAnimationIndexFlag()
 {
 	uint32_t dwAnim = 0;
@@ -253,9 +261,6 @@ bool CLocalPlayer::Process()
 				m_CurrentVehicle = pVehiclePool->FindIDFromGtaPtr(m_pPlayerPed->GetGtaVehicle());
 			pVehicle = pVehiclePool->GetAt(m_CurrentVehicle);
 
-			if(pVehicle->IsTrain() && m_pPlayerPed->m_iCameraState == 2) m_pPlayerPed->SetCameraOnVehicle(pVehicle->m_dwGTAId);
-			else m_pPlayerPed->m_iCameraState = 1;
-
 			if((dwThisTick - m_dwLastSendTick) > (unsigned int)GetOptimumInCarSendRate())
 			{
 				m_dwLastSendTick = GetTickCount();
@@ -267,7 +272,7 @@ bool CLocalPlayer::Process()
 		{
 			UpdateSurfing();
 
-			if ((dwThisTick - m_dwLastHeadUpdate) > 1000 && pSettings->GetReadOnly().szHeadMove) {
+			if ((dwThisTick - m_dwLastHeadUpdate) > 1000 && g_uiHeadMoveEnabled) {
 				VECTOR LookAt;
 				CAMERA_AIM* Aim = GameGetInternalAim();
 				LookAt.X = Aim->pos1x + (Aim->f1x * 20.0f);
@@ -283,15 +288,21 @@ bool CLocalPlayer::Process()
 				m_CurrentVehicle = INVALID_VEHICLE_ID;
 			}
 
-			if(m_pPlayerPed->m_iCameraState == 1) { pGame->GetCamera()->SetBehindPlayer(); m_pPlayerPed->m_iCameraState = 2; }
-			else m_pPlayerPed->m_iCameraState = 2;
-
-			if((dwThisTick - m_dwLastSendTick) > (unsigned int)GetOptimumOnFootSendRate() || LocalPlayerKeys.bKeys[ePadKeys::KEY_YES] || LocalPlayerKeys.bKeys[ePadKeys::KEY_NO] || LocalPlayerKeys.bKeys[ePadKeys::KEY_CTRL_BACK])
+			if((dwThisTick - m_dwLastSendTick) > (unsigned int)GetOptimumOnFootSendRate())
 			{
 				m_dwLastSendTick = GetTickCount();
+				// Log("[DEBUG] Send Packet SyncData RPC");
 				SendOnFootFullSyncData();
 			}
-			
+
+			if((dwThisTick - m_dwLastSendTick) > (unsigned int)GetOptimumOnFootSendRate() || LocalPlayerKeys.bKeys[ePadKeys::KEY_WALK] || LocalPlayerKeys.bKeys[ePadKeys::KEY_YES] || LocalPlayerKeys.bKeys[ePadKeys::KEY_NO] || LocalPlayerKeys.bKeys[ePadKeys::KEY_CTRL_BACK])
+			{
+
+				m_dwLastSendTick = GetTickCount();
+				// Log("[DEBUG] Send Packet Key RPC");
+				SendOnKeyFullSyncData();
+
+			}
 			// TIMING FOR ONFOOT AIM SENDS
 			uint16_t lrAnalog, udAnalog;
 			uint16_t wKeys = m_pPlayerPed->GetKeys(&lrAnalog, &udAnalog);
@@ -355,11 +366,9 @@ bool CLocalPlayer::Process()
 	}
 
 	// handle needs to respawn
-	if(m_bIsWasted && (m_pPlayerPed->GetActionTrigger() != ACTION_WASTED) && 
-		(m_pPlayerPed->GetActionTrigger() != ACTION_DEATH) )
+	if(m_bIsWasted && (m_pPlayerPed->GetActionTrigger() != ACTION_WASTED) && (m_pPlayerPed->GetActionTrigger() != ACTION_DEATH) )
 	{
-		if( m_bClearedToSpawn && !m_bWantsAnotherClass &&
-			pNetGame->GetGameState() == GAMESTATE_CONNECTED)
+		if( m_bClearedToSpawn && !m_bWantsAnotherClass && pNetGame->GetGameState() == GAMESTATE_CONNECTED)
 		{
 			if(m_pPlayerPed->GetHealth() > 0.0f)
 				Spawn();
@@ -370,7 +379,6 @@ bool CLocalPlayer::Process()
 			HandleClassSelection();
 			m_bWantsAnotherClass = false;
 		}
-
 		return true;
 	}
 
@@ -378,6 +386,63 @@ bool CLocalPlayer::Process()
 }
 
 extern float                    m_fWeaponDamages[43 + 1];
+
+void CLocalPlayer::SendBulletSyncData(PLAYERID byteHitID, uint8_t byteHitType, VECTOR vecHitPos)
+{
+	if (!m_pPlayerPed) return;
+	switch (byteHitType)
+	{
+	case ENTITY_TYPE_UNKNOWN:
+		break;
+	case ENTITY_TYPE_PED: //player
+		if (!pNetGame->GetPlayerPool()->GetSlotState((PLAYERID)byteHitID)) return;
+		break;
+	default: return; //unknown type
+	}
+	uint8_t byteCurrWeapon = m_pPlayerPed->GetCurrentWeapon(), byteShotWeapon;
+
+	BULLET_SYNC blSync;
+
+	blSync.hitId = byteHitID;
+	blSync.hitType = byteHitType;
+
+	if (byteHitType == ENTITY_TYPE_PED)
+	{
+		float fDistance = pNetGame->GetPlayerPool()->GetAt((PLAYERID)byteHitID)->GetPlayerPed()->GetDistanceFromLocalPlayerPed();
+		if (byteCurrWeapon != 0 && fDistance < 1.0f)
+			byteShotWeapon = 0;
+		else
+			byteShotWeapon = byteCurrWeapon;
+	}
+	blSync.weapId = byteShotWeapon;
+
+	FindDeathReasonPlayer = byteShotWeapon;
+
+	blSync.hitPos[0] = vecHitPos.X;
+	blSync.hitPos[1] = vecHitPos.Y;
+	blSync.hitPos[2] = vecHitPos.Z;
+	blSync.offsets[0] = 0.0f;
+	blSync.offsets[1] = 0.0f;
+	blSync.offsets[2] = 0.0f;
+	MATRIX4X4 mat;
+	m_pPlayerPed->GetMatrix(&mat);
+	blSync.origin[0] = mat.pos.X;
+	blSync.origin[1] = mat.pos.Y;
+	blSync.origin[2] = mat.pos.Z;
+	RakNet::BitStream bsBulletSync;
+	bsBulletSync.Write((uint8_t)ID_BULLET_SYNC);
+	bsBulletSync.Write((const char*)& blSync, sizeof(BULLET_SYNC));
+	pNetGame->GetRakClient()->Send(&bsBulletSync, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0);
+
+	RakNet::BitStream bsRPC;
+	bsRPC.Write((bool)false);
+	bsRPC.Write((PLAYERID)blSync.hitId);
+	bsRPC.Write((float)m_fWeaponDamages[blSync.weapId]);
+	bsRPC.Write((uint32_t)blSync.weapId);
+	bsRPC.Write((uint32_t)1);
+	pNetGame->GetRakClient()->RPC(&RPC_PlayerGiveTakeDamage, &bsRPC, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0, false, UNASSIGNED_NETWORK_ID, nullptr);
+	Log("[BULLET_SYNC] sent.");
+}
 
 void CLocalPlayer::SendWastedNotification()
 {
@@ -592,7 +657,7 @@ void CLocalPlayer::SetSpawnInfo(PLAYER_SPAWN_INFO *pSpawn)
 	memcpy(&m_SpawnInfo, pSpawn, sizeof(PLAYER_SPAWN_INFO));
 	m_bHasSpawnInfo = true;
 }
-#include "../util/CJavaWrapper.h"
+
 bool CLocalPlayer::Spawn()
 {
 	if(!m_bHasSpawnInfo) return false;
@@ -600,15 +665,15 @@ bool CLocalPlayer::Spawn()
 	if(pSettings && pSettings->GetReadOnly().iHud)
 	{
 		*(uint8_t*)(g_libGTASA+0x7165E8) = 0;
-		g_pJavaWrapper->ShowServer(pSettings->GetReadOnly().szServer);
+		g_pJavaWrapper->ShowHud();
 	}
 	else
 	{
 		*(uint8_t*)(g_libGTASA+0x7165E8) = 1;
 		g_pJavaWrapper->HideHud();
 	}
-	g_pJavaWrapper->ShowServer(pSettings->GetReadOnly().szServer);
-
+   
+    //g_pJavaWrapper->ShowSpeed();
 	CCamera *pGameCamera;
 	pGameCamera = pGame->GetCamera();
 	pGameCamera->Restore();
@@ -703,6 +768,17 @@ uint8_t CLocalPlayer::DetermineNumberOfPlayersInLocalRange()
 }
 #include "..//chatwindow.h"
 extern CChatWindow* pChatWindow;
+
+void CLocalPlayer::SendOnKeyFullSyncData()
+{
+	RakNet::BitStream bsPlayerSync;
+	//MATRIX4X4 matPlayer;
+
+
+	uint8_t exKeys = GetPlayerPed()->GetExtendedKeys();
+}
+
+
 void CLocalPlayer::SendOnFootFullSyncData()
 {
 	RakNet::BitStream bsPlayerSync;
@@ -817,11 +893,15 @@ void CLocalPlayer::SendInCarFullSyncData()
 		icSync.vecMoveSpeed.Y = vecMoveSpeed.Y;
 		icSync.vecMoveSpeed.Z = vecMoveSpeed.Z;
 
+		if (pVehicle->GetHealth() <= 300.0f)
+		{
+			pVehicle->SetHealth(300.0f);
+		}
+
 		icSync.fCarHealth = pVehicle->GetHealth();
 		icSync.bytePlayerHealth = (uint8_t)m_pPlayerPed->GetHealth();
 		icSync.bytePlayerArmour = (uint8_t)m_pPlayerPed->GetArmour();
 
-		icSync.byteSirenOn = pVehicle->GetSirenState();
 		//icSync.byteSirenOn = pVehicle->IsSirenOn() != 0;
 		//icSync.byteLandingGearState = pVehicle->GetLandingGearState() != 0;
 		uint8_t exKeys = GetPlayerPed()->GetExtendedKeys();
@@ -846,14 +926,6 @@ void CLocalPlayer::SendInCarFullSyncData()
 				icSync.TrailerID = 0;
 			}
 		}
-
-		if ((pVehicle->m_pEntity->nModelIndex == TRAIN_PASSENGER_LOCO) ||
-			(pVehicle->m_pEntity->nModelIndex == TRAIN_FREIGHT_LOCO) ||
-			(pVehicle->m_pEntity->nModelIndex == TRAIN_TRAM))
-		{
-			icSync.fTrainSpeed = pVehicle->GetTrainSpeed();
-		}
-
 		if (icSync.TrailerID && icSync.TrailerID < MAX_VEHICLES)
 		{
 			MATRIX4X4 matTrailer;
@@ -940,31 +1012,40 @@ void CLocalPlayer::SendPassengerFullSyncData()
 
 void CLocalPlayer::SendAimSyncData()
 {
+	RakNet::BitStream bsAimSync;
 	AIM_SYNC_DATA aimSync;
+	CAMERA_AIM * caAim = m_pPlayerPed->GetCurrentAim();
 
-	CAMERA_AIM* caAim = m_pPlayerPed->GetCurrentAim();
+	aimSync.byteCamMode = (uint8_t)m_pPlayerPed->GetCameraMode();
+	aimSync.vecAimf1[0] = caAim->f1x;
+	aimSync.vecAimf1[1] = caAim->f1y;
+	aimSync.vecAimf1[2] = caAim->f1z;
+	aimSync.vecAimPos[0] = caAim->pos1x;
+	aimSync.vecAimPos[1] = caAim->pos1y;
+	aimSync.vecAimPos[2] = caAim->pos1z;
 
-	aimSync.byteCamMode = m_pPlayerPed->GetCameraMode();
-	aimSync.vecAimf.X = caAim->f1x;
-	aimSync.vecAimf.Y = caAim->f1y;
-	aimSync.vecAimf.Z = caAim->f1z;
-	aimSync.vecAimPos.X = caAim->pos1x;
-	aimSync.vecAimPos.Y = caAim->pos1y;
-	aimSync.vecAimPos.Z = caAim->pos1z;
 	aimSync.fAimZ = m_pPlayerPed->GetAimZ();
-	aimSync.aspect_ratio = GameGetAspectRatio() * 255.0f;
+
+#ifdef GAME_EDITION_CR
+	aimSync.bUnk = pKeyBoard->IsOpen();
+#else
+	aimSync.bUnk = 0;
+#endif
+
 	aimSync.byteCamExtZoom = (uint8_t)(m_pPlayerPed->GetCameraExtendedZoom() * 63.0f);
 
 	WEAPON_SLOT_TYPE* pwstWeapon = m_pPlayerPed->GetCurrentWeaponSlot();
-	if (pwstWeapon->dwState == 2) {
+	if (pwstWeapon->dwState == 2)
+	{
 		aimSync.byteWeaponState = WS_RELOADING;
-}
-	else {
+	}
+	else
+	{
 		aimSync.byteWeaponState = (pwstWeapon->dwAmmoInClip > 1) ? WS_MORE_BULLETS : pwstWeapon->dwAmmoInClip;
 	}
 
-	RakNet::BitStream bsAimSync;
-	bsAimSync.Write((char)ID_AIM_SYNC);
+	
+	bsAimSync.Write((uint8_t)ID_AIM_SYNC);
 	bsAimSync.Write((char*)&aimSync, sizeof(AIM_SYNC_DATA));
 	pNetGame->GetRakClient()->Send(&bsAimSync, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0);
 }
@@ -1048,8 +1129,7 @@ void CLocalPlayer::ProcessSpectating()
 			if(pPlayerPed)
 			{
 				dwGTAId = pPlayerPed->m_dwGTAId;
-				pGame->GetCamera()->AttachToEntity(pPlayerPed->m_pEntity, m_byteSpectateMode, SWITCHTYPE_JUMPCUT);
-
+				ScriptCommand(&camera_on_actor, dwGTAId, m_byteSpectateMode, 2);
 				m_bSpectateProcessed = true;
 			}
 		}
@@ -1109,21 +1189,4 @@ void CLocalPlayer::SpectateVehicle(VEHICLEID VehicleID)
 		m_SpectateID = VehicleID;
 		m_bSpectateProcessed = false;
 	}
-}
-
-void CLocalPlayer::GiveTakeDamage(bool bGiveOrTake, uint16_t wPlayerID, float damage_amount, uint32_t weapon_id, uint32_t bodypart)
-{
-	RakNet::BitStream bitStream;
-
-	bitStream.Write((bool)bGiveOrTake);
-	bitStream.Write((uint16_t)wPlayerID);
-	bitStream.Write((float)damage_amount);
-	bitStream.Write((uint32_t)weapon_id);
-	bitStream.Write((uint32_t)bodypart);
-
-	FindDeathReasonPlayer = weapon_id;
-
-	// pChatWindow->AddDebugMessage("Id: %d, Weapon: %d, Damage: %d", wPlayerID, weapon_id, damage_amount);
-
-	pNetGame->GetRakClient()->RPC(&RPC_PlayerGiveTakeDamage, &bitStream, HIGH_PRIORITY, RELIABLE_ORDERED, 0, false, UNASSIGNED_NETWORK_ID, nullptr);
 }

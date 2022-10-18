@@ -22,7 +22,6 @@ typedef struct
 	eChatMessageType	eType;
 	char 				utf8Message[MAX_MESSAGE_LENGTH * 3 + 1];
 	char 				szNick[MAX_PLAYER_NAME + 1];
-	char				szTimeStamp[16];
 	uint32_t			dwTextColor;
 	uint32_t 			dwNickColor;
 } CHAT_WINDOW_ENTRY;

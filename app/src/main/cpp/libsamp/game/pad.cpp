@@ -2,15 +2,13 @@
 #include "game.h"
 #include "../net/netgame.h"
 #include "../util/armhook.h"
-#include "../util/patch.h"
-#include "CStats.h"
-#include "chatwindow.h"
+#include "../scoreboard.h"
 
 #include <jni.h>
 
 extern CGame *pGame;
 extern CNetGame *pNetGame;
-extern CChatWindow* pChatWindow;
+extern CScoreBoard *pScoreBoard;
 
 PAD_KEYS LocalPlayerKeys;
 PAD_KEYS RemotePlayerKeys[PLAYER_PED_SLOTS];
@@ -18,22 +16,18 @@ PAD_KEYS RemotePlayerKeys[PLAYER_PED_SLOTS];
 uintptr_t dwCurPlayerActor = 0;
 uint8_t byteCurPlayer = 0;
 uint8_t byteCurDriver = 0;
-float localStatsTypesFloat[MAX_FLOAT_STATS];
 
-extern uintptr_t dwPlayerPedPtrs[PLAYER_PED_SLOTS];
-
-uint16_t(*CPad__GetPedWalkLeftRight)(uintptr_t thiz);
+uint16_t (*CPad__GetPedWalkLeftRight)(uintptr_t thiz);
 uint16_t CPad__GetPedWalkLeftRight_hook(uintptr_t thiz)
 {
-
-	if (dwCurPlayerActor && (byteCurPlayer != 0))
+	if(dwCurPlayerActor && (byteCurPlayer != 0))
 	{
 		// Remote player
 		uint16_t dwResult = RemotePlayerKeys[byteCurPlayer].wKeyLR;
-		if ((dwResult == 0xFF80 || dwResult == 0x80) &&
+		if((dwResult == 0xFF80 || dwResult == 0x80) &&  
 			RemotePlayerKeys[byteCurPlayer].bKeys[ePadKeys::KEY_WALK])
 		{
-			dwResult = 0x20;
+			dwResult = 0x40;
 		}
 		return dwResult;
 	}
@@ -45,18 +39,17 @@ uint16_t CPad__GetPedWalkLeftRight_hook(uintptr_t thiz)
 	}
 }
 
-uint16_t(*CPad__GetPedWalkUpDown)(uintptr_t thiz);
+uint16_t (*CPad__GetPedWalkUpDown)(uintptr_t thiz);
 uint16_t CPad__GetPedWalkUpDown_hook(uintptr_t thiz)
 {
-
-	if (dwCurPlayerActor && (byteCurPlayer != 0))
+	if(dwCurPlayerActor && (byteCurPlayer != 0))
 	{
 		// Remote player
 		uint16_t dwResult = RemotePlayerKeys[byteCurPlayer].wKeyUD;
-		if ((dwResult == 0xFF80 || dwResult == 0x80) &&
+		if((dwResult == 0xFF80 || dwResult == 0x80) &&  
 			RemotePlayerKeys[byteCurPlayer].bKeys[ePadKeys::KEY_WALK])
 		{
-			dwResult = 0x20;
+			dwResult = 0x40;
 		}
 		return dwResult;
 	}
@@ -192,7 +185,6 @@ uint32_t CPad__DuckJustDown_hook(uintptr_t thiz, int unk)
 uint32_t (*CPad__MeleeAttackJustDown)(uintptr_t thiz);
 uint32_t CPad__MeleeAttackJustDown_hook(uintptr_t thiz)
 {
-
 	if(dwCurPlayerActor && (byteCurPlayer != 0))
 	{
 		if( RemotePlayerKeys[byteCurPlayer].bKeys[ePadKeys::KEY_HANDBRAKE] &&
@@ -342,120 +334,21 @@ uint32_t CPad__GetHandBrake_hook(uintptr_t thiz)
 	}
 }
 
-uint32_t(*CPad__GetHorn)(uintptr_t thiz, uint8_t a2);
-uint32_t CPad__GetHorn_hook(uintptr_t thiz, uint8_t a2)
+uint32_t (*CPad__GetHorn)(uintptr_t thiz);
+uint32_t CPad__GetHorn_hook(uintptr_t thiz)
 {
-	if (byteCurDriver != 0)
+	if(byteCurDriver != 0)
 	{
 		// remote player
 		return RemotePlayerKeys[byteCurDriver].bKeys[ePadKeys::KEY_CROUCH];
 	}
 	else
 	{
-		CPlayerPed* pPlayerPed = pGame->FindPlayerPed();
-		if (pPlayerPed)
-		{
-			if (!pPlayerPed->IsInVehicle() || pPlayerPed->IsAPassenger())
-				return 0;
-		}
-
 		// local player
-		LocalPlayerKeys.bKeys[ePadKeys::KEY_CROUCH] = CPad__GetHorn(thiz, a2);
+		//Log("horn: %d", horn);
+		LocalPlayerKeys.bKeys[ePadKeys::KEY_CROUCH] = CPad__GetHorn(thiz);
 		return LocalPlayerKeys.bKeys[ePadKeys::KEY_CROUCH];
 	}
-}
-
-uint32_t(*CPad__GetNitroFired)(uintptr_t thiz);
-uint32_t CPad__GetNitroFired_hook(uintptr_t thiz)
-{
-	if (byteCurDriver != 0)
-	{
-		// remote player
-		return RemotePlayerKeys[byteCurDriver].bKeys[ePadKeys::KEY_FIRE];
-	}
-	else
-	{
-		CPlayerPed* pPlayerPed = pGame->FindPlayerPed();
-		if (pPlayerPed)
-		{
-			if (!pPlayerPed->IsInVehicle() || pPlayerPed->IsAPassenger())
-				return 0;
-		}
-
-		// local player
-		//LocalPlayerKeys.bKeys[ePadKeys::KEY_FIRE] = CPad__GetNitroFired(thiz);
-		//return LocalPlayerKeys.bKeys[ePadKeys::KEY_FIRE];
-		return CPad__GetNitroFired(thiz);
-	}
-}
-
-uint32_t(*CPad__GetHydraulicJump)(uintptr_t thiz);
-uint32_t CPad__GetHydraulicJump_hook(uintptr_t thiz)
-{
-	if (byteCurDriver != 0)
-	{
-		// remote player
-		return RemotePlayerKeys[byteCurDriver].bKeys[ePadKeys::KEY_CROUCH];
-	}
-	else
-	{
-		CPlayerPed* pPlayerPed = pGame->FindPlayerPed();
-		if (pPlayerPed)
-		{
-			if (!pPlayerPed->IsInVehicle() || pPlayerPed->IsAPassenger())
-				return 0;
-		}
-
-		// local player
-		uint32_t result = CPad__GetHydraulicJump(thiz);
-		LocalPlayerKeys.bKeys[ePadKeys::KEY_CROUCH] = result;
-		return LocalPlayerKeys.bKeys[ePadKeys::KEY_CROUCH];
-	}
-}
-
-uint32_t(*CPad__HornJustDown)(uintptr_t thiz);
-uint32_t CPad__HornJustDown_hook(uintptr_t thiz)
-{
-	uint32_t result = 0;
-	if (byteCurDriver != 0)
-	{
-		PED_TYPE* pPedPlayer = (PED_TYPE*)dwPlayerPedPtrs[byteCurDriver];
-		if (pPedPlayer && pPedPlayer->pVehicle)
-		{
-			VEHICLE_TYPE* pVehicle = (VEHICLE_TYPE*)pPedPlayer->pVehicle;
-			if (pVehicle)
-			{
-				if (!pVehicle->m_nVehicleFlags.bSirenOrAlarm)
-				{
-					*((uint32_t*)(uintptr_t)pVehicle + 328) = RemotePlayerKeys[byteCurDriver].bKeys[ePadKeys::KEY_CROUCH] ? 1 : 0;
-				}
-			}
-		}
-	}
-	else
-	{
-		CPlayerPed* pPlayerPed = pGame->FindPlayerPed();
-		if (pPlayerPed)
-		{
-			if (!pPlayerPed->IsInVehicle() || pPlayerPed->IsAPassenger())
-				return 0;
-		}
-
-		result = CPad__HornJustDown(thiz);
-		PED_TYPE* pPedPlayer = GamePool_FindPlayerPed();
-		if (pPedPlayer && pPedPlayer->pVehicle)
-		{
-			VEHICLE_TYPE* pVehicle = (VEHICLE_TYPE*)pPedPlayer->pVehicle;
-			if (pVehicle)
-			{
-				if (!pVehicle->m_nVehicleFlags.bSirenOrAlarm)
-				{
-					LocalPlayerKeys.bKeys[ePadKeys::KEY_CROUCH] = CPad__GetHorn(thiz, 0);
-				}
-			}
-		}
-	}
-	return result;
 }
 
 uint32_t (*CPad__ExitVehicleJustDown)(uintptr_t thiz, int a2, uintptr_t vehicle, int a4, uintptr_t vec);
@@ -506,24 +399,11 @@ void CPed__ProcessControl_hook(uintptr_t thiz)
 		uint16_t wSavedCameraMode2 = *wCameraMode2;
 		*wCameraMode2 = GameGetPlayerCameraMode(byteCurPlayer);
 		if (*wCameraMode2 == 4)* wCameraMode2 = 0;
-
 		// CPed::UpdatePosition nulled from CPed::ProcessControl
 		NOP(g_libGTASA + 0x439B7A, 2);
-
 		*(uint8_t*)(g_libGTASA + 0x008E864C) = byteCurPlayer;
-
-		// Update remote player stats
-		CRemoteDataStorage* pData = CRemoteData::GetRemoteDataStorage((PED_TYPE*)thiz);
-		if (pData)
-		{
-			// Store local stats
-			memcpy(localStatsTypesFloat, (float*)(g_libGTASA + 0x8C41A0), sizeof(localStatsTypesFloat));
-
-			// Set stats to remote player
-			memcpy((float*)(g_libGTASA + 0x8C41A0), pData->GetStatsTypesFloat(), sizeof(localStatsTypesFloat));
-		}
-
 		// call original
+		
 		CPed__ProcessControl(thiz);
 		// restore
 		WriteMemory(g_libGTASA + 0x439B7A, (uintptr_t)"\xFA\xF7\x1D\xF8", 4);
@@ -533,12 +413,6 @@ void CPed__ProcessControl_hook(uintptr_t thiz)
 		GameSetLocalPlayerCameraExtZoom();
 		GameSetLocalPlayerAim();
 		*wCameraMode2 = wSavedCameraMode2;
-
-		if (pData)
-		{
-			// Restore local stats
-			memcpy((float*)(g_libGTASA + 0x8C41A0), localStatsTypesFloat, sizeof(localStatsTypesFloat));
-		}
 	}
 	else
 	{
@@ -632,24 +506,6 @@ void AllVehicles__ProcessControl_hook(uintptr_t thiz)
 		(( void (*)(uintptr_t))(g_libGTASA+0x364B64+1))(thiz+0x138);
 	}
 
-	// Tyre burst fix
-	if (pVehicle->pDriver)
-	{
-		if (pVehicle->m_nVehicleFlags.bTyresDontBurst)
-		{
-			pVehicle->m_nVehicleFlags.bTyresDontBurst = 0;
-		}
-		if(!pVehicle->m_nVehicleFlags.bCanBeDamaged) pVehicle->m_nVehicleFlags.bCanBeDamaged = true;
-	}
-	else
-	{
-		if (!pVehicle->m_nVehicleFlags.bTyresDontBurst)
-		{
-			pVehicle->m_nVehicleFlags.bTyresDontBurst = 1;
-		}
-		if (pVehicle->m_nVehicleFlags.bCanBeDamaged) pVehicle->m_nVehicleFlags.bCanBeDamaged = false;
-	}
-
 	// VEHTYPE::ProcessControl()
     (( void (*)(VEHICLE_TYPE*))(g_libGTASA+call_addr+1))(pVehicle);
 }
@@ -672,6 +528,8 @@ uint32_t CPad__GetWeapon_hook(uintptr_t thiz, uintptr_t ped, bool unk)
 		return value;
 	}
 }
+#include "../chatwindow.h"
+extern CChatWindow* pChatWindow;
 
 uintptr_t g_playerPed;
 uintptr_t(*ProcessPlayerWeapon)(uintptr_t thiz, uintptr_t playerPed);
@@ -778,32 +636,15 @@ uint32_t TaskProcess(uintptr_t thiz, uintptr_t ped, int unk, int unk1)
 	return result;
 }
 
-uint32_t (*CCamera_IsTargetingActive)(uintptr_t thiz);
-uint32_t CCamera_IsTargetingActive_hook(uintptr_t thiz)
-{
-	uintptr_t dwRetAddr = 0;
- 	__asm__ volatile ("mov %0, lr" : "=r" (dwRetAddr));
- 	dwRetAddr -= g_libGTASA;
-
- 	if(dwRetAddr == 0x003ADAD7) {
- 		return CCamera_IsTargetingActive(thiz);
- 	}
-
- 	if(dwRetAddr == 0x00387455) {
- 		return CCamera_IsTargetingActive(thiz);
- 	}
-
-	if(dwCurPlayerActor && (byteCurPlayer != 0)) {
-		return RemotePlayerKeys[byteCurPlayer].bKeys[ePadKeys::KEY_HANDBRAKE] ? 1 : 0;
-	} else {
-		*(uint8_t*)(g_libGTASA + 0x008E864C) = 0;
-		LocalPlayerKeys.bKeys[ePadKeys::KEY_HANDBRAKE] = CCamera_IsTargetingActive(thiz);
-		return LocalPlayerKeys.bKeys[ePadKeys::KEY_HANDBRAKE];
+extern "C" {
+	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_showTab(JNIEnv *pEnv, jobject thiz) {
+		pScoreBoard->Toggle();
 	}
 }
 
-// говнокодер григорян
 bool bWeaponClicked;
+
+//switch weapons
 extern "C" {
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onWeaponChanged(JNIEnv *pEnv, jobject thiz) {
 		//pGame->FindPlayerPed()->SwitchWeapon();
@@ -818,21 +659,19 @@ extern "C" {
 	}
 }
 
-uint32_t (*CPad__CycleWeaponLeftJustDown)(uintptr_t thiz);
-uint32_t CPad__CycleWeaponLeftJustDown_hook(uintptr_t thiz)
+uint32_t (*CPad__CycleWeaponRightJustDown)(uintptr_t thiz);
+uint32_t CPad__CycleWeaponRightJustDown_hook(uintptr_t thiz)
 {
 	if(dwCurPlayerActor && (byteCurPlayer != 0)) return 0;
 
 	if(!bWeaponClicked) {
-		//Log("bWeaponClicked: %d", bWeaponClicked);
-		//Log("bWeaponClicked: %d", bWeaponClicked);
 		return 0;
 	}
 	else {
 		bWeaponClicked = false;
 		return 1;
 	}
-	return CPad__CycleWeaponLeftJustDown(thiz);
+	return CPad__CycleWeaponRightJustDown(thiz);
 }
 
 void HookCPad()
@@ -843,7 +682,7 @@ void HookCPad()
 	//memcpy((void*)(g_libGTASA + 0x008C3E20), , )
 
 	// CPed::ProcessControl
-	CPatch::SetUpHook(g_libGTASA+0x45A280, &CPed__ProcessControl_hook, &CPed__ProcessControl);
+	SetUpHook(g_libGTASA+0x45A280, (uintptr_t)CPed__ProcessControl_hook, (uintptr_t*)&CPed__ProcessControl);
 	// all vehicles ProcessControl
 	InstallMethodHook(g_libGTASA+0x5CCA1C, (uintptr_t)AllVehicles__ProcessControl_hook); // CAutomobile::ProcessControl
 	InstallMethodHook(g_libGTASA+0x5CCD74, (uintptr_t)AllVehicles__ProcessControl_hook); // CBoat::ProcessControl
@@ -858,44 +697,40 @@ void HookCPad()
 	//InstallMethodHook(g_libGTASA + 0x005CC1D4, (uintptr_t)TaskProcess);
 
 	// lr/ud (onfoot)
-	CPatch::SetUpHook(g_libGTASA+0x39D08C, &CPad__GetPedWalkLeftRight_hook, &CPad__GetPedWalkLeftRight);
-	CPatch::SetUpHook(g_libGTASA+0x39D110, &CPad__GetPedWalkUpDown_hook, &CPad__GetPedWalkUpDown);
+	SetUpHook(g_libGTASA+0x39D08C, (uintptr_t)CPad__GetPedWalkLeftRight_hook, (uintptr_t*)&CPad__GetPedWalkLeftRight);
+	SetUpHook(g_libGTASA+0x39D110, (uintptr_t)CPad__GetPedWalkUpDown_hook, (uintptr_t*)&CPad__GetPedWalkUpDown);
 
-	// Nitro/Hydraulic sync support
-	CPatch::SetUpHook(g_libGTASA + 0x39D54C, &CPad__GetNitroFired_hook, &CPad__GetNitroFired);
-	CPatch::SetUpHook(g_libGTASA + 0x39D528, &CPad__GetHydraulicJump_hook, &CPad__GetHydraulicJump);
+	//SetUpHook(g_libGTASA + 0x)
 
 	// sprint/jump stuff
-	CPatch::SetUpHook(g_libGTASA+0x39EAA4, &CPad__GetSprint_hook, &CPad__GetSprint);
-	CPatch::SetUpHook(g_libGTASA+0x39E9B8, &CPad__JumpJustDown_hook, &CPad__JumpJustDown);
-	CPatch::SetUpHook(g_libGTASA+0x39E96C, &CPad__GetJump_hook, &CPad__GetJump);
-	CPatch::SetUpHook(g_libGTASA+0x39E824, &CPad__GetAutoClimb_hook, &CPad__GetAutoClimb);
-	CPatch::SetUpHook(g_libGTASA+0x39E8C0, &CPad__GetAbortClimb_hook, &CPad__GetAbortClimb);
+	SetUpHook(g_libGTASA+0x39EAA4, (uintptr_t)CPad__GetSprint_hook, (uintptr_t*)&CPad__GetSprint);
+	SetUpHook(g_libGTASA+0x39E9B8, (uintptr_t)CPad__JumpJustDown_hook, (uintptr_t*)&CPad__JumpJustDown);
+	SetUpHook(g_libGTASA+0x39E96C, (uintptr_t)CPad__GetJump_hook, (uintptr_t*)&CPad__GetJump);
+	SetUpHook(g_libGTASA+0x39E824, (uintptr_t)CPad__GetAutoClimb_hook, (uintptr_t*)&CPad__GetAutoClimb);
+	SetUpHook(g_libGTASA+0x39E8C0, (uintptr_t)CPad__GetAbortClimb_hook, (uintptr_t*)&CPad__GetAbortClimb);
 
 	// swimm
-	CPatch::SetUpHook(g_libGTASA+0x39EA0C, &CPad__DiveJustDown_hook, &CPad__DiveJustDown);
-	CPatch::SetUpHook(g_libGTASA+0x39EA4C, &CPad__SwimJumpJustDown_hook, &CPad__SwimJumpJustDown);
+	SetUpHook(g_libGTASA+0x39EA0C, (uintptr_t)CPad__DiveJustDown_hook, (uintptr_t*)&CPad__DiveJustDown);
+	SetUpHook(g_libGTASA+0x39EA4C, (uintptr_t)CPad__SwimJumpJustDown_hook, (uintptr_t*)&CPad__SwimJumpJustDown);
 
-	CPatch::SetUpHook(g_libGTASA+0x39DD9C, &CPad__MeleeAttackJustDown_hook, &CPad__MeleeAttackJustDown);
+	SetUpHook(g_libGTASA+0x39DD9C, (uintptr_t)CPad__MeleeAttackJustDown_hook, (uintptr_t*)&CPad__MeleeAttackJustDown);
 
-	CPatch::SetUpHook(g_libGTASA + 0x0039E038, &CPad__GetWeapon_hook, &CPad__GetWeapon);
-	CPatch::SetUpHook(g_libGTASA + 0x0039E498, &CPad__GetEnterTargeting_hook, &CPad__GetEnterTargeting);
-	CPatch::SetUpHook(g_libGTASA + 0x0039E418, &GetTarget_hook, & GetTarget);
-	CPatch::SetUpHook(g_libGTASA + 0x004C1748, ProcessPlayerWeapon_hook, & ProcessPlayerWeapon);
+	SetUpHook(g_libGTASA + 0x0039E038, (uintptr_t)CPad__GetWeapon_hook, (uintptr_t*)&CPad__GetWeapon);
+	SetUpHook(g_libGTASA + 0x0039E498, (uintptr_t)CPad__GetEnterTargeting_hook, (uintptr_t*)&CPad__GetEnterTargeting);
+	SetUpHook(g_libGTASA + 0x0039E418, (uintptr_t)GetTarget_hook, (uintptr_t*)& GetTarget);
+	SetUpHook(g_libGTASA + 0x004C1748, (uintptr_t)ProcessPlayerWeapon_hook, (uintptr_t*)& ProcessPlayerWeapon);
 
-	CPatch::SetUpHook(g_libGTASA+0x39E7B0, &CPad__DuckJustDown_hook, &CPad__DuckJustDown);
-	CPatch::SetUpHook(g_libGTASA+0x39DB50, &CPad__GetBlock_hook, &CPad__GetBlock);
-    CPatch::SetUpHook(g_libGTASA+0x0037440C, &CCamera_IsTargetingActive_hook, &CCamera_IsTargetingActive);
+	SetUpHook(g_libGTASA+0x39E7B0, (uintptr_t)CPad__DuckJustDown_hook, (uintptr_t*)&CPad__DuckJustDown);
+	SetUpHook(g_libGTASA+0x39DB50, (uintptr_t)CPad__GetBlock_hook, (uintptr_t*)&CPad__GetBlock);
+
 	// steering lr/ud (incar)
-	CPatch::SetUpHook(g_libGTASA+0x39C9E4, &CPad__GetSteeringLeftRight_hook, &CPad__GetSteeringLeftRight);
-	CPatch::SetUpHook(g_libGTASA+0x39CBF0, &CPad__GetSteeringUpDown_hook, &CPad__GetSteeringUpDown);
+	SetUpHook(g_libGTASA+0x39C9E4, (uintptr_t)CPad__GetSteeringLeftRight_hook, (uintptr_t*)&CPad__GetSteeringLeftRight);
+	SetUpHook(g_libGTASA+0x39CBF0, (uintptr_t)CPad__GetSteeringUpDown_hook, (uintptr_t*)&CPad__GetSteeringUpDown);
 
-	CPatch::SetUpHook(g_libGTASA+0x39DB7C, &CPad__GetAccelerate_hook, &CPad__GetAccelerate);
-	CPatch::SetUpHook(g_libGTASA+0x39D938, &CPad__GetBrake_hook, &CPad__GetBrake);
-	CPatch::SetUpHook(g_libGTASA+0x39D754, &CPad__GetHandBrake_hook, &CPad__GetHandBrake);
-	CPatch::SetUpHook(g_libGTASA+0x39D4F8, &CPad__HornJustDown_hook, &CPad__HornJustDown);
-	CPatch::SetUpHook(g_libGTASA+0x39D4C8, &CPad__GetHorn_hook, &CPad__GetHorn);
-	CPatch::SetUpHook(g_libGTASA+0x39DA1C, &CPad__ExitVehicleJustDown_hook, &CPad__ExitVehicleJustDown);
-
-	CPatch::SetUpHook(g_libGTASA+0x39DCC4, &CPad__CycleWeaponLeftJustDown_hook, &CPad__CycleWeaponLeftJustDown);
+	SetUpHook(g_libGTASA+0x39DB7C, (uintptr_t)CPad__GetAccelerate_hook, (uintptr_t*)&CPad__GetAccelerate);
+	SetUpHook(g_libGTASA+0x39D938, (uintptr_t)CPad__GetBrake_hook, (uintptr_t*)&CPad__GetBrake);
+	SetUpHook(g_libGTASA+0x39D754, (uintptr_t)CPad__GetHandBrake_hook, (uintptr_t*)&CPad__GetHandBrake);
+	SetUpHook(g_libGTASA+0x39D4C8, (uintptr_t)CPad__GetHorn_hook, (uintptr_t*)&CPad__GetHorn);
+	SetUpHook(g_libGTASA+0x39DA1C, (uintptr_t)CPad__ExitVehicleJustDown_hook, (uintptr_t*)&CPad__ExitVehicleJustDown);
+	SetUpHook(g_libGTASA+0x39DD30, (uintptr_t)CPad__CycleWeaponRightJustDown_hook, (uintptr_t*)&CPad__CycleWeaponRightJustDown);
 }

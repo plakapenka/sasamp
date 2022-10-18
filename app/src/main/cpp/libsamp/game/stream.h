@@ -31,6 +31,6 @@ public:
 	void SetIsDeactivated(bool bIsDeactivated);
 
 	void Process(MATRIX4X4* pMatListener);
-	
+
 	void SetPosition(VECTOR vec);
 };

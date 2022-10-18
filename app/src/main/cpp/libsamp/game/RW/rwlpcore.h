@@ -117,6 +117,12 @@ struct RwSphere
     RwReal radius;  /**< Sphere radius */
 };
 
+struct RwMemory
+{
+	RwUInt8* start; /**< Starting address. */
+	RwUInt32    length; /**< Length in bytes. */
+};
+
 typedef struct RwLine RwLine;
 /**
  * \ingroup geometricaltypes
@@ -648,4 +654,59 @@ struct RwRGBA
     RwUInt8 green;  /**< green component */
     RwUInt8 blue;   /**< blue component */
     RwUInt8 alpha;  /**< alpha component */
+};
+
+
+struct RwSurfaceProperties
+{
+	RwReal ambient;   /**< ambient reflection coefficient */
+	RwReal specular;  /**< specular reflection coefficient */
+	RwReal diffuse;   /**< reflection coefficient */
+};
+
+struct RpMaterial
+{
+	struct RwTexture* texture; /**< texture */
+	RwRGBA              color; /**< color */
+	struct RxPipeline* pipeline; /**< pipeline */
+	RwSurfaceProperties surfaceProps; /**< surfaceProps */
+	RwInt16             refCount;          /* C.f. rwsdk/world/bageomet.h:RpGeometry */
+	RwInt16             pad;
+};
+
+struct RpMaterialList
+{
+	RpMaterial** materials;
+	RwInt32        numMaterials;
+	RwInt32        space;
+};
+
+struct RpGeometry
+{
+	RwUInt32            object;     /* Generic type */
+	RwUInt32			pad;
+
+	RwUInt32            flags;      /* Geometry flags */
+
+	RwUInt16            lockedSinceLastInst; /* What has been locked since we last instanced - for re-instancing */
+	RwInt16             refCount;   /* Reference count (for keeping track of atomics referencing geometry) */
+
+	RwInt32             numTriangles; /* Quantity of various things (polys, verts and morph targets) */
+	RwInt32             numVertices;
+	RwInt32             numMorphTargets;
+	RwInt32             numTexCoordSets;
+
+	RpMaterialList      matList;
+
+	struct RpTriangle* triangles;  /* The triangles */
+
+	RwRGBA* preLitLum;  /* The pre-lighting values */
+
+	RwTexCoords* texCoords[8]; /* Texture coordinates */
+
+	struct RpMeshHeader* mesh;   /* The mesh - groups polys of the same material */
+
+	struct RwResEntry* repEntry;       /* Information for an instance */
+
+	struct RpMorphTarget* morphTarget;    /* The Morph Target */
 };

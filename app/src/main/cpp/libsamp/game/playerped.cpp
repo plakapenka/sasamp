@@ -3,16 +3,12 @@
 #include "../net/netgame.h"
 #include "../util/armhook.h"
 #include "common.h"
-#include "chatwindow.h"
 #include "vehicle.h"
+
 #include "..//CDebugInfo.h"
 
 extern CGame* pGame;
 extern CNetGame *pNetGame;
-extern CChatWindow* pChatWindow;
-
-CPlayerPed* g_pCurrentFiredPed;
-BULLET_DATA* g_pCurrentBulletData;
 
 CPlayerPed::CPlayerPed()
 {
@@ -27,17 +23,11 @@ CPlayerPed::CPlayerPed()
 	ScriptCommand(&set_actor_can_be_decapitated, m_dwGTAId, 0);
 	m_dwArrow = 0;
 
-	m_bLockControllable = false;
-
 	for (int i = 0; i < MAX_ATTACHED_OBJECTS; i++)
 	{
 		m_aAttachedObjects[i].bState = false;
 	}
-	m_bHaveBulletData = false;
-
-	m_iCameraState = 0;
-	m_iPissingState = false;
-	m_dwPissParticlesHandle = 0;
+	m_iSpecialAction = -1;
 }
 
 CPlayerPed::CPlayerPed(uint8_t bytePlayerNumber, int iSkin, float fX, float fY, float fZ, float fRotation)
@@ -46,14 +36,10 @@ CPlayerPed::CPlayerPed(uint8_t bytePlayerNumber, int iSkin, float fX, float fY, 
 
 	uint32_t dwPlayerActorID = 0;
 	int iPlayerNum = bytePlayerNumber;
-	m_bHaveBulletData = false;
+
 	m_pPed = nullptr;
 	m_dwGTAId = 0;
 	m_dwArrow = 0;
-	m_iPissingState = false;
-	m_dwPissParticlesHandle = 0;
-
-	m_bLockControllable = false;
 
 	ScriptCommand(&create_player, &iPlayerNum, fX, fY, fZ, &dwPlayerActorID);
 	ScriptCommand(&create_actor_from_player, &iPlayerNum, &dwPlayerActorID);
@@ -61,9 +47,6 @@ CPlayerPed::CPlayerPed(uint8_t bytePlayerNumber, int iSkin, float fX, float fY, 
 	m_dwGTAId = dwPlayerActorID;
 	m_pPed = GamePool_Ped_GetAt(m_dwGTAId);
 	m_pEntity = (ENTITY_TYPE*)GamePool_Ped_GetAt(m_dwGTAId);
-
-	m_pData = new CRemoteDataStorage();
-	CRemoteData::AddRemoteDataStorage(m_pPed, m_pData);
 
 	m_bytePlayerNumber = bytePlayerNumber;
 	SetPlayerPedPtrRecord(m_bytePlayerNumber, (uintptr_t)m_pPed);
@@ -77,7 +60,7 @@ CPlayerPed::CPlayerPed(uint8_t bytePlayerNumber, int iSkin, float fX, float fY, 
 
 	SetModelIndex(iSkin);
 	ForceTargetRotation(fRotation);
-
+	m_iSpecialAction = -1;
 	MATRIX4X4 mat;
 	GetMatrix(&mat);
 	mat.pos.X = fX;
@@ -95,7 +78,6 @@ CPlayerPed::CPlayerPed(uint8_t bytePlayerNumber, int iSkin, float fX, float fY, 
 
 CPlayerPed::~CPlayerPed()
 {
-	CRemoteData::RemoveRemoteDataStorage(m_pPed);
 	Destroy();
 }
 
@@ -115,10 +97,6 @@ void CPlayerPed::Destroy()
 		return;
 	}
 
-	/*
-		if(m_dwParachute)
-	*/
-
 	Log("Removing from vehicle..");
 	if(IN_VEHICLE(m_pPed))
 		RemoveFromVehicleAndPutAt(100.0f, 100.0f, 10.0f);
@@ -132,249 +110,6 @@ void CPlayerPed::Destroy()
 
 	m_pPed = nullptr;
 	m_pEntity = nullptr;
-}
-
-extern uint32_t(*CWeapon__FireInstantHit)(WEAPON_SLOT_TYPE* thiz, PED_TYPE* pFiringEntity, VECTOR* vecOrigin, VECTOR* muzzlePosn, ENTITY_TYPE* targetEntity, VECTOR* target, VECTOR* originForDriveBy, int arg6, int muzzle);
-void CPlayerPed::FireInstant() {
-	if(!m_pPed) return;
-	
-	uint8_t byteSavedCameraMode = 0;
-	uint16_t wSavedCameraMode2 = 0;
-	if(m_bytePlayerNumber != 0)
-	{
-		byteSavedCameraMode = *pbyteCameraMode;
-		*pbyteCameraMode = GameGetPlayerCameraMode(m_bytePlayerNumber);
-		
-		wSavedCameraMode2 = *wCameraMode2;
-		*wCameraMode2 = GameGetPlayerCameraMode(m_bytePlayerNumber);
-		if(*wCameraMode2 == 4) *wCameraMode2 = 0;
-
-		GameStoreLocalPlayerCameraExtZoom();
-		GameSetRemotePlayerCameraExtZoom(m_bytePlayerNumber);
-
-		GameStoreLocalPlayerAim();
-		GameSetRemotePlayerAim(m_bytePlayerNumber);
-
-	}
-
-	g_pCurrentFiredPed = this;
-
-	if(m_bHaveBulletData)
-	{
-		g_pCurrentBulletData = &m_bulletData;
-	}
-	else
-	{
-		g_pCurrentBulletData = nullptr;
-	}
-
-	WEAPON_SLOT_TYPE *pSlot = GetCurrentWeaponSlot();
-	if(pSlot)
-	{
-		if(GetCurrentWeapon() == WEAPON_SNIPER) 
-		{
-			if(pSlot)
-				Weapon_FireSniper(pSlot, m_pPed);
-			else
-				Weapon_FireSniper(nullptr, nullptr);
-		} 
-		else 
-		{
-			VECTOR vecBonePos;
-			VECTOR vecOut;
-
-			GetWeaponInfoForFire(false, &vecBonePos, &vecOut);
-			CWeapon__FireInstantHit(pSlot, m_pPed, &vecBonePos, &vecOut, nullptr, nullptr, nullptr, 0, 1);
-		}
-	}
-
-	g_pCurrentFiredPed = nullptr;
-	g_pCurrentBulletData = nullptr;
-
-	if(m_bytePlayerNumber)
-	{
-		*pbyteCameraMode = byteSavedCameraMode;
-		*wCameraMode2 = wSavedCameraMode2;
-
-		GameSetLocalPlayerCameraExtZoom();
-		GameSetLocalPlayerAim();
-	}
-}
-
-void CPlayerPed::GetWeaponInfoForFire(int bLeft, VECTOR* vecBone, VECTOR* vecOut) {
-	if (!IsValidGamePed(m_pPed) || !GamePool_Ped_GetAt(m_dwGTAId)) {
-		return;
-	}
-
-	if (IsGameEntityArePlaceable(&m_pPed->entity)) {
-		return;
-	}
-
-	VECTOR* pFireOffset = GetCurrentWeaponFireOffset();
-	if (pFireOffset && vecBone && vecOut) {
-		vecOut->X = pFireOffset->X;
-		vecOut->Y = pFireOffset->Y;
-		vecOut->Z = pFireOffset->Z;
-
-		int bone_id = 24;
-		if (bLeft) {
-			bone_id = 34;
-		}
-
-		// CPed::GetBonePosition
-		((void (*)(PED_TYPE*, VECTOR*, int, bool))(g_libGTASA + 0x00436590 + 1))(m_pPed, vecBone, bone_id, false);
-
-		vecBone->Z += pFireOffset->Z + 0.15f;
-
-		// CPed::GetTransformedBonePosition
-		((void (*)(PED_TYPE*, VECTOR*, int, bool))(g_libGTASA + 0x004383C0 + 1))(m_pPed, vecOut, bone_id, false);
-	}
-}
-
-VECTOR* CPlayerPed::GetCurrentWeaponFireOffset() {
-	if (!IsValidGamePed(m_pPed) || !GamePool_Ped_GetAt(m_dwGTAId)) {
-		return nullptr;
-	}
-
-	WEAPON_SLOT_TYPE* pSlot = GetCurrentWeaponSlot();
-	if (pSlot) {
-		return (VECTOR*)(GetWeaponInfo(pSlot->dwType, 1) + 0x24);
-	}
-	return nullptr;
-}
-
-void CPlayerPed::ProcessBulletData(BULLET_DATA* btData)
-{
-	if (!m_pPed || !GamePool_Ped_GetAt(m_dwGTAId)) {
-		return;
-	}
-
-	BULLET_SYNC_DATA bulletSyncData;
-
-	if (btData) {
-		m_bHaveBulletData = true;
-		m_bulletData.pEntity = btData->pEntity;
-		m_bulletData.vecOrigin.X = btData->vecOrigin.X;
-		m_bulletData.vecOrigin.Y = btData->vecOrigin.Y;
-		m_bulletData.vecOrigin.Z = btData->vecOrigin.Z;
-
-		m_bulletData.vecPos.X = btData->vecPos.X;
-		m_bulletData.vecPos.Y = btData->vecPos.Y;
-		m_bulletData.vecPos.Z = btData->vecPos.Z;
-
-		m_bulletData.vecOffset.X = btData->vecOffset.X;
-		m_bulletData.vecOffset.Y = btData->vecOffset.Y;
-		m_bulletData.vecOffset.Z = btData->vecOffset.Z;
-
-		uint8_t byteHitType = 0;
-		unsigned short InstanceID = 0xFFFF;
-
-		if (m_bytePlayerNumber == 0)
-		{
-			if (pNetGame)
-			{
-				CPlayerPool* pPlayerPool = pNetGame->GetPlayerPool();
-				if (pPlayerPool)
-				{
-					CPlayerPed* pPlayerPed = pPlayerPool->GetLocalPlayer()->GetPlayerPed();
-					if (pPlayerPed)
-					{
-						memset(&bulletSyncData, 0, sizeof(BULLET_SYNC_DATA));
-						if (pPlayerPed->GetCurrentWeapon() != WEAPON_SNIPER || btData->pEntity)
-						{
-							if (btData->pEntity)
-							{
-								CVehiclePool* pVehiclePool = pNetGame->GetVehiclePool();
-								CObjectPool* pObjectPool = pNetGame->GetObjectPool();
-
-								uint16_t PlayerID;
-								uint16_t VehicleID;
-								uint16_t ObjectID;
-
-								if (pVehiclePool && pObjectPool)
-								{
-									PlayerID = pPlayerPool->FindRemotePlayerIDFromGtaPtr((PED_TYPE*)btData->pEntity);
-									if (PlayerID == INVALID_PLAYER_ID)
-									{
-										VehicleID = pVehiclePool->FindIDFromGtaPtr((VEHICLE_TYPE*)btData->pEntity);
-										if (VehicleID == INVALID_VEHICLE_ID)
-										{
-											ObjectID = pObjectPool->FindIDFromGtaPtr(btData->pEntity);
-											if (ObjectID == INVALID_OBJECT_ID)
-											{
-												VECTOR vecOut;
-												vecOut.X = 0.0f;
-												vecOut.Y = 0.0f;
-												vecOut.Z = 0.0f;
-
-												if (btData->pEntity->mat)
-												{
-													ProjectMatrix(&vecOut, btData->pEntity->mat, &btData->vecOffset);
-													btData->vecOffset.X = vecOut.X;
-													btData->vecOffset.Y = vecOut.Y;
-													btData->vecOffset.Z = vecOut.Z;
-												}
-												else
-												{
-													btData->vecOffset.X = btData->pEntity->mat->pos.X + btData->vecOffset.X;
-													btData->vecOffset.Y = btData->pEntity->mat->pos.Y + btData->vecOffset.Y;
-													btData->vecOffset.Z = btData->pEntity->mat->pos.Z + btData->vecOffset.Z;
-												}
-											}
-											else
-											{
-												// object
-												byteHitType = 3;
-												InstanceID = ObjectID;
-											}
-										}
-										else
-										{
-											// vehicle
-											byteHitType = 2;
-											InstanceID = VehicleID;
-										}
-									}
-									else
-									{
-										// player
-										byteHitType = 1;
-										InstanceID = PlayerID;
-									}
-								}
-							}
-
-							bulletSyncData.vecOrigin.X = btData->vecOrigin.X;
-							bulletSyncData.vecOrigin.Y = btData->vecOrigin.Y;
-							bulletSyncData.vecOrigin.Z = btData->vecOrigin.Z;
-
-							bulletSyncData.vecPos.X = btData->vecPos.X;
-							bulletSyncData.vecPos.Y = btData->vecPos.Y;
-							bulletSyncData.vecPos.Z = btData->vecPos.Z;
-
-							bulletSyncData.vecOffset.X = btData->vecOffset.X;
-							bulletSyncData.vecOffset.Y = btData->vecOffset.Y;
-							bulletSyncData.vecOffset.Z = btData->vecOffset.Z;
-
-							bulletSyncData.byteHitType = byteHitType;
-							bulletSyncData.PlayerID = InstanceID;
-							bulletSyncData.byteWeaponID = pPlayerPed->GetCurrentWeapon();
-
-							RakNet::BitStream bsBullet;
-							bsBullet.Write((char)ID_BULLET_SYNC);
-							bsBullet.Write((char*)&bulletSyncData, sizeof(BULLET_SYNC_DATA));
-							pNetGame->GetRakClient()->Send(&bsBullet, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0);
-						}
-					}
-				}
-			}
-		}
-	}
-	else
-	{
-		m_bHaveBulletData = false;
-		memset(&m_bulletData, 0, sizeof(BULLET_DATA));
-	}
 }
 
 CAMERA_AIM * CPlayerPed::GetCurrentAim()
@@ -457,11 +192,6 @@ bool CPlayerPed::IsCrouching()
 void CPlayerPed::SetCameraExtendedZoom(float fZoom)
 {
 	GameSetPlayerCameraExtZoom(m_bytePlayerNumber, fZoom);
-}
-
-void CPlayerPed::SetCameraExtendedZoom(float fZoom, float fAspectRatio)
-{
-	GameSetPlayerCameraExtZoom(m_bytePlayerNumber, fZoom, fAspectRatio);
 }
 
 void CPlayerPed::SetDead()
@@ -664,15 +394,6 @@ void CPlayerPed::GiveWeapon(int iWeaponID, int iAmmo)
 	((int(*)(uintptr_t, unsigned int))(g_libGTASA + 0x00434528 + 1))((uintptr_t)m_pPed, iWeaponID);	// CPed::SetCurrentWeapon(thisptr, weapid)
 }
 
-void CPlayerPed::SetWeaponAmmo(uint8_t iWeaponID, uint16_t iAmmo)
-{
-	for(int i = 0; i < 13; i++) 
-	{
-		WEAPON_SLOT_TYPE* weaponSlot = &m_pPed->WeaponSlots[i];
-		if(weaponSlot->dwType == iWeaponID) weaponSlot->dwAmmo = iAmmo; 
-	}
-}
-
 void CPlayerPed::SetArmedWeapon(int iWeaponID)
 {
 	if (!m_pPed || !m_dwGTAId)
@@ -868,19 +589,6 @@ void CPlayerPed::PutDirectlyInVehicle(int iVehicleID, int iSeat)
 
 	if(m_pPed == GamePool_FindPlayerPed() && IN_VEHICLE(m_pPed))
 		pGame->GetCamera()->SetBehindPlayer();
-
-	if(pNetGame)
-	{
-        CVehiclePool* pVehiclePool = pNetGame->GetVehiclePool();
-        VEHICLEID TrainVehicleId = pVehiclePool->FindIDFromGtaPtr(pVehicle);
-        if(TrainVehicleId == INVALID_VEHICLE_ID || TrainVehicleId > MAX_VEHICLES) return;
-
-        CVehicle* pVehicle = pVehiclePool->GetAt(TrainVehicleId);
-
-        if ( pVehicle && pVehicle->IsTrain() && this == pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed() ) {
-            SetCameraOnVehicle(pVehicle->m_dwGTAId);
-        }
-	}
 }
 
 void CPlayerPed::EnterVehicle(int iVehicleID, bool bPassenger)
@@ -965,32 +673,23 @@ void CPlayerPed::TogglePlayerControllable(bool bToggle)
 {
 	MATRIX4X4 mat;
 
-	if (!GamePool_Ped_GetAt(m_dwGTAId)) return;
+	lToggle = bToggle;
 
-	if (!bToggle)
+	if(!GamePool_Ped_GetAt(m_dwGTAId)) return;
+
+	if(!bToggle)
 	{
 		ScriptCommand(&toggle_player_controllable, m_bytePlayerNumber, 0);
 		ScriptCommand(&lock_actor, m_dwGTAId, 1);
-		// Turn off invulnerability
-		*(uint8_t*)((uintptr_t)m_pPed + 66) &= 0xBF;
-		*(uint8_t*)((uintptr_t)m_pPed + 66) &= 0xFB;
-		*(uint8_t*)((uintptr_t)m_pPed + 66) &= 0xF7;
-		*(uint8_t*)((uintptr_t)m_pPed + 66) &= 0x7F;
-		*(uint8_t*)((uintptr_t)m_pPed + 66) &= 0xEF;
-		*(uint8_t*)((uintptr_t)m_pPed + 66) &= 0xDF;
-		*(uint8_t*)(*(uint32_t*)((uintptr_t)m_pPed + 1088) + 52) |= 0x10;
 	}
 	else
 	{
-		if (!m_bLockControllable)
+		ScriptCommand(&toggle_player_controllable, m_bytePlayerNumber, 1);
+		ScriptCommand(&lock_actor, m_dwGTAId, 0);
+		if(!IsInVehicle()) 
 		{
-			ScriptCommand(&toggle_player_controllable, m_bytePlayerNumber, 1);
-			ScriptCommand(&lock_actor, m_dwGTAId, 0);
-			if (!IsInVehicle())
-			{
-				GetMatrix(&mat);
-				TeleportTo(mat.pos.X, mat.pos.Y, mat.pos.Z);
-			}
+			GetMatrix(&mat);
+			TeleportTo(mat.pos.X, mat.pos.Y, mat.pos.Z);
 		}
 	}
 }
@@ -1035,52 +734,82 @@ void CPlayerPed::ClearAllTasks()
 
 	ScriptCommand(&clear_char_tasks, m_dwGTAId);
 }
+#include "..//chatwindow.h"
+extern CChatWindow* pChatWindow;
+
 void CPlayerPed::SetPlayerSpecialAction(int iAction)
 {
-	if (iAction == SPECIAL_ACTION_NONE)
+	if (iAction == -1)
 	{
 		ClearAllTasks();
 
 		MATRIX4X4 mat;
 		GetMatrix(&mat);
 		TeleportTo(mat.pos.X, mat.pos.Y, mat.pos.Z);
+
+		return;
+	}
+	if (iAction == 0)
+	{
+		ClearAllTasks();
+
+		MATRIX4X4 mat;
+		GetMatrix(&mat);
+		TeleportTo(mat.pos.X, mat.pos.Y, mat.pos.Z);
+		//pChatWindow->AddDebugMessage("RESET ACTION");
+		m_iSpecialAction = -1;
+		return;
 	}
 
 	m_iSpecialAction = iAction;
 }
 void CPlayerPed::ProcessSpecialAction()
 {
-	if (m_iSpecialAction == SPECIAL_ACTION_NONE )
+	if (m_iSpecialAction == 0 || m_iSpecialAction == -1)
 	{
 		return;
 	}
-	if(!IsPissing() && m_iSpecialAction == SPECIAL_ACTION_PISSING) {
-		StartPissing();
-	}
-
-	// pissing:stop
-	if(IsPissing() && m_iSpecialAction != SPECIAL_ACTION_PISSING) {
-		StopPissing();
-	}
 	if (m_iSpecialAction == SPECIAL_ACTION_CARRY)
 	{
-		if (IsInVehicle())
-		{
-			SetPlayerSpecialAction(0);
-			return;
-		}
-		
-		if (!IsAnimationPlaying("CRRY_PRTIAL")) {
-			ApplyAnimation("CRRY_PRTIAL", "CARRY", 4.1, 0, 0, 0, 1, 1);
-		}
+		if (IsInVehicle()) { SetPlayerSpecialAction(-1); return; }
+		if (!IsAnimationPlaying("CRRY_PRTIAL")) { ApplyAnimation("CRRY_PRTIAL", "CARRY", 4.1, 0, 0, 0, 1, 1); }
 	}
+	else if (m_iSpecialAction == SPECIAL_ACTION_USEJETPACK)
+	{
+		if (IsInVehicle()) { SetPlayerSpecialAction(-1); return; }
+		if (!IsAnimationPlaying("JETPACK_IDLE")) { ApplyAnimation("JETPACK_IDLE", "PED", 4.1, 0, 0, 0, 1, 1); }
+	}
+	else if (m_iSpecialAction == SPECIAL_ACTION_USECELLPHONE)
+	{
+		if (IsInVehicle()) { SetPlayerSpecialAction(-1); return; }
+		if (!IsAnimationPlaying("PHONE_IN")) { ApplyAnimation("PHONE_IN", "PED", 4.1, 0, 0, 0, 1, 1); }
+	}
+	else if (m_iSpecialAction == SPECIAL_ACTION_STOPUSECELLPHONE)
+	{
+		if (IsInVehicle()) { SetPlayerSpecialAction(-1); return; }
+		if (!IsAnimationPlaying("PHONE_OUT")) { ApplyAnimation("PHONE_OUT", "PED", 4.1, 0, 0, 0, 1, 1); }
+	}
+	else if (m_iSpecialAction == SPECIAL_ACTION_SMOKE_CIGGY)
+	{
+		if (IsInVehicle()) { SetPlayerSpecialAction(-1); return; }
+		if (!IsAnimationPlaying("SMKCIG_PRTL")) { ApplyAnimation("SMKCIG_PRTL", "GANGS", 4.1, 0, 0, 0, 1, 1); }
+	}
+	else if (m_iSpecialAction == SPECIAL_ACTION_HANDSUP)
+	{
+		if (IsInVehicle()) { SetPlayerSpecialAction(-1); return; }
+		if (!IsAnimationPlaying("SHP_HANDSUP_SCR")) { ApplyAnimation("SHP_HANDSUP_SCR", "ROB_BANK", 4.1, 0, 0, 0, 1, 1); }
+	}
+//	else if (m_iSpecialAction == SPECIAL_ACTION_CUFFED)
+//	{
+//		if (IsInVehicle()) { SetPlayerSpecialAction(-1); return; }
+//		if (!IsAnimationPlaying("M_smk_drag")) { ApplyAnimation("M_smk_drag", "SMOKING", 4.1, 0, 0, 0, 1, 1); }
+//	}
 }
 
 void CPlayerPed::DestroyFollowPedTask()
 {
 
 }
-
 
 void CPlayerPed::ClearAllWeapons()
 {
@@ -1092,7 +821,6 @@ void CPlayerPed::ClearAllWeapons()
 
 	*(uint8_t*)(g_libGTASA + 0x008E864C) = old;
 }
-
 
 void CPlayerPed::ResetDamageEntity()
 {
@@ -1211,6 +939,8 @@ void CPlayerPed::TogglePlayerControllableWithoutLock(bool bToggle)
 	MATRIX4X4 mat;
 
 	if (!GamePool_Ped_GetAt(m_dwGTAId)) return;
+
+	lToggle = bToggle;
 
 	if (!bToggle)
 	{
@@ -1662,16 +1392,12 @@ void CPlayerPed::SetFightingStyle(int iStyle)
 }
 
 // 0.3.7
-void CPlayerPed::ApplyAnimation( char *szAnimName, char *szAnimFile, float fT,
-								 int opt1, int opt2, int opt3, int opt4, int iUnk )
+void CPlayerPed::ApplyAnimation( char *szAnimName, char *szAnimFile, float fT, int opt1, int opt2, int opt3, int opt4, int iUnk )
 {
-	if(!strcmp(szAnimFile, "SAMP")) return; // FIX!!!
 	int iWaitAnimLoad = 0;
 
 	if(!m_pPed) return;
 	if(!GamePool_Ped_GetAt(m_dwGTAId)) return;
-
-	if(IsPissing()) StopPissing();
 
 	if(!strcasecmp(szAnimFile,"SEX")) return;
 
@@ -1999,72 +1725,4 @@ float CPlayerPed::GetAimZ()
 		return 0.0f;
 	}
 	return *(float*)(*((uintptr_t*)m_pPed + 272) + 84);
-}
-
-void CPlayerPed::LockControllable(bool bLock)
-{
-	m_bLockControllable = bLock;
-}
-
-void CPlayerPed::SetFloatStat(unsigned char ucStat, float fLevel)
-{
-	if (!m_pData) return;
-	if (ucStat > MAX_FLOAT_STATS) return;
-	m_pData->GetStatsTypesFloat()[ucStat] = fLevel;
-}
-
-void CPlayerPed::SetCameraOnVehicle(uint32_t m_dwGTAId)
-{
-	ScriptCommand(&camera_on_vehicle, m_dwGTAId, 3, 2);
-	m_iCameraState = 1;
-}
-
-void CPlayerPed::SetCameraOnPlayerPed(uint32_t m_dwGTAId)
-{
-	ScriptCommand(&camera_on_actor, m_dwGTAId, 3, 2);
-	m_iCameraState = 2;
-}
-
-void CPlayerPed::StartPissing()
-{
-	if(!m_pPed) return;
-	if(!GamePool_Ped_GetAt(m_dwGTAId)) return;
-
-	if(m_iPissingState) {
-		// already started
-		return;
-	}
-
-	ApplyAnimation("PISS_LOOP", "PAULNMAC", 4.0f, 1, 0, 0, 0, -1);
-
-	ScriptCommand(&attach_particle_to_actor, "PETROLCAN", m_dwGTAId, 0.0f, 10.0f, 2.0f, 1, &m_dwPissParticlesHandle);
-	ScriptCommand(&make_particle_visible, m_dwPissParticlesHandle);
-
-	m_iPissingState = true;
-}
-
-void CPlayerPed::StopPissing()
-{
-	if(!m_pPed) return;
-	if(!GamePool_Ped_GetAt(m_dwGTAId)) return;
-	if(!m_iPissingState) return;
-
-	if(m_dwPissParticlesHandle) {
-		ScriptCommand(&destroy_particle,m_dwPissParticlesHandle);
-		m_dwPissParticlesHandle = 0;
-	}
-
-	MATRIX4X4 mat;
-	GetMatrix(&mat);
-	TeleportTo(mat.pos.X,mat.pos.Y,mat.pos.Z);
-
-	//ApplyAnimation("PISS_OUT", "PAULNMAC", 4.0f, 0, 0, 0, 0, -1);
-
-	m_iPissingState = 0;
-}
-bool CPlayerPed::IsPissing()
-{
-	if(!m_pPed) return 0;
-	if(!GamePool_Ped_GetAt(m_dwGTAId)) return 0;
-	return m_iPissingState;
 }

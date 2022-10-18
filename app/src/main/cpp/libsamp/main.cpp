@@ -1,15 +1,15 @@
+///* weikton $ 2022
+///myaski gay\\\
 #include <jni.h>
 #include <android/log.h>
 #include <ucontext.h>
 #include <pthread.h>
 
 #include "main.h"
-#include "util/patch.h"
 #include "game/game.h"
 #include "game/RW/RenderWare.h"
 #include "net/netgame.h"
 #include "gui/gui.h"
-#include "gui/interface.h"
 #include "chatwindow.h"
 #include "playertags.h"
 #include "dialog.h"
@@ -17,15 +17,12 @@
 #include "CSettings.h"
 #include "CClientInfo.h"
 #include "scoreboard.h"
-#include "CAudioStream.h"
-#include "deathmessage.h"
+
 #include "util/armhook.h"
 #include "CCheckFileHash.h"
 #include "str_obfuscator_no_template.hpp"
 
-#include "game/materialtext.h"
-#include "gui/CHUD.h"
-
+#include "voice/CVoiceChatClient.h"
 #include "crashlytics.h"
 
 #include <netdb.h>
@@ -33,29 +30,25 @@
 #include <arpa/inet.h>
 
 uintptr_t g_libGTASA = 0;
-const char *g_pszStorage = nullptr;
+const char* g_pszStorage = nullptr;
 
 #include "CServerManager.h"
 #include "CLocalisation.h"
 
 const cryptor::string_encryptor encLib = cryptor::create("libsamp.so", 11);
-void CrashLog(const char *fmt, ...);
+void CrashLog(const char* fmt, ...);
 CGame *pGame = nullptr;
 CNetGame *pNetGame = nullptr;
-CChatWindow *pChatWindow = nullptr;
+CChatWindow *pChatWindow = nullptr; 
 CPlayerTags *pPlayerTags = nullptr;
 CDialogWindow *pDialogWindow = nullptr;
-CSnapShotHelper *pSnapShotHelper = nullptr;
-CScoreBoard *pScoreBoard = nullptr;
-CAudioStream *pAudioStream = nullptr;
-CDeathMessage *pDeathMessage = nullptr;
+CVoiceChatClient* pVoice = nullptr;
+CSnapShotHelper* pSnapShotHelper = nullptr;
+CScoreBoard* pScoreBoard = nullptr;
+
 CGUI *pGUI = nullptr;
 CKeyBoard *pKeyBoard = nullptr;
-// CJavaWrapper *pJavaWrapper      = nullptr;
 CSettings *pSettings = nullptr;
-CMaterialText *pMaterialText = nullptr;
-CCrossHair *pCrossHair = nullptr;
-CInterface *pInterface = nullptr;
 
 void InitHookStuff();
 void InstallSpecialHooks();
@@ -66,7 +59,8 @@ void MainLoop();
 
 void PrintBuildInfo()
 {
-	Log("Build time: %s %s", __TIME__, __DATE__);
+	Log("SA:MP version: %d.%01d", SAMP_MAJOR_VERSION, SAMP_MINOR_VERSION);
+	Log("Build times: %s %s", __TIME__, __DATE__);
 }
 
 #ifdef GAME_EDITION_CR
@@ -82,7 +76,10 @@ extern uintptr_t g_dwRenderQueueOffset;
 
 void PrintBuildCrashInfo()
 {
-	CrashLog("Build time: %s %s", __TIME__, __DATE__);
+	CrashLog("SA:MP version: %d.%01d", SAMP_MAJOR_VERSION, SAMP_MINOR_VERSION);
+	CrashLog("Build times: %s %s", __TIME__, __DATE__);
+	CrashLog("Last processed auto and entity: %d %d", g_usLastProcessedModelIndexAutomobile, g_iLastProcessedModelIndexAutoEnt);
+	CrashLog("Last processed skin and entity: %d %d", g_iLastProcessedSkinCollision, g_iLastProcessedEntityCollision);
 }
 
 #include <sstream>
@@ -92,19 +89,17 @@ void PrintBuildCrashInfo()
 #include "util/CJavaWrapper.h"
 #include "cryptors/INITSAMP_result.h"
 #include "CDebugInfo.h"
-void InitSAMP(JNIEnv *pEnv, jobject thiz);
+void InitSAMP(JNIEnv* pEnv, jobject thiz);
 extern "C"
 {
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_initSAMP(JNIEnv *pEnv, jobject thiz)
+	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_initSAMP(JNIEnv* pEnv, jobject thiz)
 	{
 		InitSAMP(pEnv, thiz);
-		//   pJavaWrapper = new CJavaWrapper(pEnv, thiz);
-		//	pJavaWrapper->SetUseFullScreen(pSettings->Get().iCutout);
 	}
 }
 
 void InitBASSFuncs();
-void InitSAMP(JNIEnv *pEnv, jobject thiz)
+void InitSAMP(JNIEnv* pEnv, jobject thiz)
 {
 	PROTECT_CODE_INITSAMP;
 
@@ -113,9 +108,9 @@ void InitSAMP(JNIEnv *pEnv, jobject thiz)
 	InitBASSFuncs();
 	BASS_Init(-1, 44100, BASS_DEVICE_3D, 0, NULL);
 
-	g_pszStorage = /*(const char*)(g_libGTASA+0x63C4B8)*/ "/storage/emulated/0/Android/data/com.liverussia.cr/files/";
+	g_pszStorage = "/storage/emulated/0/Android/data/com.liverussia.cr/files/";
 
-	if (!g_pszStorage)
+	if(!g_pszStorage)
 	{
 		Log("Error: storage path not found!");
 		std::terminate();
@@ -131,6 +126,7 @@ void InitSAMP(JNIEnv *pEnv, jobject thiz)
 	CWeaponsOutFit::SetEnabled(pSettings->GetReadOnly().iOutfitGuns);
 	CRadarRect::SetEnabled(pSettings->GetReadOnly().iRadarRect);
 	CGame::SetEnabledPCMoney(pSettings->GetReadOnly().iPCMoney);
+	CDebugInfo::SetDrawFPS(pSettings->GetReadOnly().szDebug);
 	CInfoBarText::SetEnabled(pSettings->GetReadOnly().iHPArmourText);
 	CSnow::SetCurrentSnow(pSettings->GetReadOnly().iSnow);
 
@@ -144,34 +140,27 @@ void InitSAMP(JNIEnv *pEnv, jobject thiz)
 
 	CWeaponsOutFit::ParseDatFile();
 
-	if (!CCheckFileHash::IsFilesValid())
+	if(!CCheckFileHash::IsFilesValid())
 	{
-		// CClientInfo::bSAMPModified = false;
+		CClientInfo::bSAMPModified = false;
 		return;
 	}
 }
-extern CSnapShotHelper *pSnapShotHelper;
+extern CSnapShotHelper* pSnapShotHelper;
 void ProcessCheckForKeyboard();
-void GTASAInit();
+
 void InitInMenu()
 {
-	GTASAInit();
-
 	pGame = new CGame();
 	pGame->InitInMenu();
 
 	pGUI = new CGUI();
-	pInterface = new CInterface();
 	pKeyBoard = new CKeyBoard();
 	pChatWindow = new CChatWindow();
 	pPlayerTags = new CPlayerTags();
 	pDialogWindow = new CDialogWindow();
 	pScoreBoard = new CScoreBoard();
 	pSnapShotHelper = new CSnapShotHelper();
-	pAudioStream = new CAudioStream();
-	pDeathMessage = new CDeathMessage();
-	pMaterialText = new CMaterialText();
-	pCrossHair = new CCrossHair();
 
 	ProcessCheckForKeyboard();
 
@@ -180,17 +169,17 @@ void InitInMenu()
 #include <unistd.h> // system api
 #include <sys/mman.h>
 #include <assert.h> // assert()
-#include <dlfcn.h>	// dlopen
-bool unique_library_handler(const char *library)
+#include <dlfcn.h> // dlopen
+bool unique_library_handler(const char* library)
 {
 	Dl_info info;
 	if (dladdr(__builtin_return_address(0), &info) != 0)
 	{
-		void *current_library_addr = dlopen(info.dli_fname, RTLD_NOW);
+		void* current_library_addr = dlopen(info.dli_fname, RTLD_NOW);
 		if (!current_library_addr)
 			return false;
 
-		// Log("%p | %p", current_library_addr, dlopen(library, RTLD_NOW));
+		//Log("%p | %p", current_library_addr, dlopen(library, RTLD_NOW));
 
 		if (dlopen(library, RTLD_NOW) != current_library_addr)
 			return false;
@@ -213,12 +202,14 @@ void ProcessCheckForKeyboard()
 void ObfuscatedForceExit3()
 {
 	// CEntity::PreRender
+	
 }
 #ifdef GAME_EDITION_CR
-int g_iServer = 0;
+int g_iServer = 1;
 #else
-int g_iServer = 0;
+int g_iServer = 1;
 #endif
+#include "net/CUDPSocket.h"
 void InitInGame()
 {
 
@@ -234,53 +225,25 @@ void InitInGame()
 		pGame->InitInGame();
 		pGame->SetMaxStats();
 
-		/*pDialogWindow->Clear();
-
-		pDialogWindow->SetCurrentDialogId(0xFFF7);
-		pDialogWindow->SetCurrentDialogStyle(DIALOG_STYLE_LIST);
-		cp1251_to_utf8(pDialogWindow->m_utf8Title, "Select Server");
-
-		cp1251_to_utf8(pDialogWindow->m_utf8Button1, "Select");
-
-		cp1251_to_utf8(pDialogWindow->m_utf8Button2, "");
-
-
-		char szBuff[400];
-		memset(szBuff, 0, sizeof(szBuff));
-		for (int i = 0; i < MAX_SERVERS; i++)
-		{
-			strcat(&szBuff[0], g_szServerNames[i]);
-			strcat(&szBuff[0], "\n");
-		}
-		pDialogWindow->SetInfo(szBuff, strlen(szBuff));
-
-		pDialogWindow->Show(true);*/
-
-		// Ïîäêëþ÷åíèå ê ñåðâåðó
-		pNetGame = new CNetGame(
-			g_sEncryptedAddresses[pSettings->GetReadOnly().szServer - 1].decrypt(),
-			g_sEncryptedAddresses[pSettings->GetReadOnly().szServer - 1].getPort(),
-			pSettings->GetReadOnly().szNickName,
-			pSettings->GetReadOnly().szPassword);
-
+		g_pJavaWrapper->UpdateSplash(101);
+		g_pJavaWrapper->ShowServer(pSettings->GetReadOnly().szServer);
 		bGameInited = true;
 
 		return;
 	}
 
-	CGangZonePool* pGangZonePool = pNetGame->GetGangZonePool();
-	if (pGangZonePool)
-	{
-		uint32_t dwColorYellow = 0x9008E8DE;
-		uint32_t dwColorGreen = 0x9000ff00;
-		pGangZonePool->New(1, 1960.60, 1353.00, 2150.70, 1465.35, dwColorYellow);
-		pGangZonePool->New(2, 350.00, -2519.15, 595.50, -2304.50, dwColorYellow);
-		// pGangZonePool->New(3, 1036.12, 1860.87, 2045.35, 1495.17, dwColorGreen);
-	}
-
 	if (!bNetworkInited)
 	{
-		// HERE IS
+		// Ïîäêëþ÷åíèå ê ñåðâåðó
+		if (pChatWindow)
+			pChatWindow->AddDebugMessage("{bbbbbb}Êëèåíò {ff0000}LIVE RUSSIA{bbbbbb} çàïóùåí{ffffff}");
+
+		pNetGame = new CNetGame(
+			g_sEncryptedAddresses[pSettings->GetReadOnly().szServer].decrypt(),
+			g_sEncryptedAddresses[pSettings->GetReadOnly().szServer].getPort(),
+			pSettings->GetReadOnly().szNickName,
+			pSettings->GetReadOnly().szPassword);
+
 		bNetworkInited = true;
 		return;
 	}
@@ -299,11 +262,10 @@ void CTimer__StartUserPause_hook()
 				pKeyBoard->Close();
 			}
 		}
-
 		g_pJavaWrapper->SetPauseState(true);
 	}
 
-	*(uint8_t *)(g_libGTASA + 0x008C9BA3) = 1;
+	*(uint8_t*)(g_libGTASA + 0x008C9BA3) = 1;
 }
 
 void (*CTimer__EndUserPause)();
@@ -315,7 +277,7 @@ void CTimer__EndUserPause_hook()
 		g_pJavaWrapper->SetPauseState(false);
 	}
 
-	*(uint8_t *)(g_libGTASA + 0x008C9BA3) = 0;
+	*(uint8_t*)(g_libGTASA + 0x008C9BA3) = 0;
 }
 
 #include "CDebugInfo.h"
@@ -323,8 +285,7 @@ void MainLoop()
 {
 	InitInGame();
 
-	if (pNetGame)
-		pNetGame->Process();
+	if(pNetGame) pNetGame->Process();
 
 	if (pNetGame)
 	{
@@ -332,7 +293,7 @@ void MainLoop()
 		{
 			if (pNetGame->GetPlayerPool()->GetLocalPlayer())
 			{
-				CVehicle *pVeh = pNetGame->GetVehiclePool()->GetAt(pNetGame->GetPlayerPool()->GetLocalPlayer()->m_CurrentVehicle);
+				CVehicle* pVeh = pNetGame->GetVehiclePool()->GetAt(pNetGame->GetPlayerPool()->GetLocalPlayer()->m_CurrentVehicle);
 				if (pVeh)
 				{
 					VECTOR vec;
@@ -342,20 +303,11 @@ void MainLoop()
 			}
 		}
 	}
-	else
-	{
-		if (pGame)
-		{
-			pGame->SetWorldTime(12, 0);
-			pGame->DisplayWidgets(false);
-		}
-	}
 }
 extern int g_iLastRenderedObject;
-extern int V15lastest;
-void PrintSymbols(void *pc, void *lr)
+
+void PrintSymbols(void* pc, void* lr)
 {
-	CrashLog("PIPELINE: %d - 0x%X", V15lastest, V15lastest);
 	Dl_info info_pc, info_lr;
 	if (dladdr(pc, &info_pc) != 0)
 	{
@@ -365,49 +317,17 @@ void PrintSymbols(void *pc, void *lr)
 	{
 		CrashLog("LR: %s", info_lr.dli_sname);
 	}
-	CrashLog("PIPELINE: %d - 0x%X", V15lastest, V15lastest);
 }
 
-void printAddressBacktrace(const unsigned address, void *pc, void *lr)
-{
-	char filename[0xFF];
-	sprintf(filename, "/proc/%d/maps", getpid());
-	FILE *m_fp = fopen(filename, "rt");
-	if (m_fp == nullptr)
-	{
-		CrashLog("ERROR: can't open file %s", filename);
-		return;
-	}
-	Dl_info info_pc, info_lr;
-	memset(&info_pc, 0, sizeof(Dl_info));
-	memset(&info_lr, 0, sizeof(Dl_info));
-	dladdr(pc, &info_pc);
-	dladdr(lr, &info_lr);
-
-	rewind(m_fp);
-	char buffer[2048] = {0};
-	while (fgets(buffer, sizeof(buffer), m_fp))
-	{
-		const auto start_address = strtoul(buffer, nullptr, 16);
-		const auto end_address = strtoul(strchr(buffer, '-') + 1, nullptr, 16);
-
-		if (start_address <= address && end_address > address)
-		{
-			if (*(strchr(buffer, ' ') + 3) == 'x')
-				CrashLog("Call: %X (GTA: %X PC: %s LR: %s) (SAMP: %X) (libc: %X)", address, address - g_libGTASA, info_pc.dli_sname, info_lr.dli_sname, address - FindLibrary("libsamp.so"), address - FindLibrary("libc.so"));
-			break;
-		}
-	}
-}
 
 struct sigaction act_old;
 struct sigaction act1_old;
 struct sigaction act2_old;
 struct sigaction act3_old;
 
-void handler3(int signum, siginfo_t *info, void *contextPtr)
+void handler3(int signum, siginfo_t* info, void* contextPtr)
 {
-	ucontext *context = (ucontext_t *)contextPtr;
+	ucontext* context = (ucontext_t*)contextPtr;
 
 	if (act3_old.sa_sigaction)
 	{
@@ -417,7 +337,7 @@ void handler3(int signum, siginfo_t *info, void *contextPtr)
 	if (info->si_signo == SIGBUS)
 	{
 		int crashId = (int)rand() % 20000;
-		Log("Crashed. handler3 - %d", crashId);
+		Log("Crashed - 1. %d", crashId);
 		CrashLog(" ");
 		PrintBuildCrashInfo();
 		CrashLog("ID: %d", crashId);
@@ -428,25 +348,25 @@ void handler3(int signum, siginfo_t *info, void *contextPtr)
 		CrashLog("libc base address: 0x%X", FindLibrary("libc.so"));
 		CrashLog("register states:");
 		CrashLog("r0: 0x%X, r1: 0x%X, r2: 0x%X, r3: 0x%X",
-				 context->uc_mcontext.arm_r0,
-				 context->uc_mcontext.arm_r1,
-				 context->uc_mcontext.arm_r2,
-				 context->uc_mcontext.arm_r3);
+			context->uc_mcontext.arm_r0,
+			context->uc_mcontext.arm_r1,
+			context->uc_mcontext.arm_r2,
+			context->uc_mcontext.arm_r3);
 		CrashLog("r4: 0x%x, r5: 0x%x, r6: 0x%x, r7: 0x%x",
-				 context->uc_mcontext.arm_r4,
-				 context->uc_mcontext.arm_r5,
-				 context->uc_mcontext.arm_r6,
-				 context->uc_mcontext.arm_r7);
+			context->uc_mcontext.arm_r4,
+			context->uc_mcontext.arm_r5,
+			context->uc_mcontext.arm_r6,
+			context->uc_mcontext.arm_r7);
 		CrashLog("r8: 0x%x, r9: 0x%x, sl: 0x%x, fp: 0x%x",
-				 context->uc_mcontext.arm_r8,
-				 context->uc_mcontext.arm_r9,
-				 context->uc_mcontext.arm_r10,
-				 context->uc_mcontext.arm_fp);
+			context->uc_mcontext.arm_r8,
+			context->uc_mcontext.arm_r9,
+			context->uc_mcontext.arm_r10,
+			context->uc_mcontext.arm_fp);
 		CrashLog("ip: 0x%x, sp: 0x%x, lr: 0x%x, pc: 0x%x",
-				 context->uc_mcontext.arm_ip,
-				 context->uc_mcontext.arm_sp,
-				 context->uc_mcontext.arm_lr,
-				 context->uc_mcontext.arm_pc);
+			context->uc_mcontext.arm_ip,
+			context->uc_mcontext.arm_sp,
+			context->uc_mcontext.arm_lr,
+			context->uc_mcontext.arm_pc);
 
 		CrashLog("backtrace:");
 		CrashLog("1: libGTASA.so + 0x%X", context->uc_mcontext.arm_pc - g_libGTASA);
@@ -455,22 +375,11 @@ void handler3(int signum, siginfo_t *info, void *contextPtr)
 		CrashLog("1: libsamp.so + 0x%X", context->uc_mcontext.arm_pc - FindLibrary("libsamp.so"));
 		CrashLog("2: libsamp.so + 0x%X", context->uc_mcontext.arm_lr - FindLibrary("libsamp.so"));
 
+
 		CrashLog("1: libc.so + 0x%X", context->uc_mcontext.arm_pc - FindLibrary("libc.so"));
 		CrashLog("2: libc.so + 0x%X", context->uc_mcontext.arm_lr - FindLibrary("libc.so"));
 
-		PrintSymbols((void *)(context->uc_mcontext.arm_pc), (void *)(context->uc_mcontext.arm_lr));
-
-		CrashLog("=======START STACKTRACE=======");
-		for (auto i = 0; i < 1000; ++i) // ÑÐºÐ¾Ð»ÑŒÐºÐ¾ Ñ…Ð¾Ñ‡ÐµÑˆÑŒ, Ñƒ Ð¼ÐµÐ½Ñ 1000
-		{
-			const auto address = *reinterpret_cast<uintptr_t *>(context->uc_mcontext.arm_sp + 4 * i);
-
-			printAddressBacktrace(address, (void *)(context->uc_mcontext.arm_pc + 4 * i), (void *)(context->uc_mcontext.arm_lr + 4 * i));
-		}
-
-		CrashLog("========END STACKTRACE========");
-
-		// DumpLibraries();
+		//DumpLibraries();
 
 		exit(0);
 	}
@@ -478,20 +387,20 @@ void handler3(int signum, siginfo_t *info, void *contextPtr)
 	return;
 }
 
-void handler(int signum, siginfo_t *info, void *contextPtr)
+void handler(int signum, siginfo_t *info, void* contextPtr)
 {
-	ucontext *context = (ucontext_t *)contextPtr;
+	ucontext* context = (ucontext_t*)contextPtr;
 
 	if (act_old.sa_sigaction)
 	{
 		act_old.sa_sigaction(signum, info, contextPtr);
 	}
 
-	if (info->si_signo == SIGSEGV)
+	if(info->si_signo == SIGSEGV)
 	{
 
 		int crashId = (int)rand() % 20000;
-		Log("Crashed. handler - %d", crashId);
+		Log("Crashed - 2. %d", crashId);
 		CrashLog(" ");
 		PrintBuildCrashInfo();
 		CrashLog("ID: %d", crashId);
@@ -502,25 +411,25 @@ void handler(int signum, siginfo_t *info, void *contextPtr)
 		CrashLog("libc base address: 0x%X", FindLibrary("libc.so"));
 		CrashLog("register states:");
 		CrashLog("r0: 0x%X, r1: 0x%X, r2: 0x%X, r3: 0x%X",
-				 context->uc_mcontext.arm_r0,
-				 context->uc_mcontext.arm_r1,
-				 context->uc_mcontext.arm_r2,
-				 context->uc_mcontext.arm_r3);
+			context->uc_mcontext.arm_r0, 
+			context->uc_mcontext.arm_r1, 
+			context->uc_mcontext.arm_r2,
+			context->uc_mcontext.arm_r3);
 		CrashLog("r4: 0x%x, r5: 0x%x, r6: 0x%x, r7: 0x%x",
-				 context->uc_mcontext.arm_r4,
-				 context->uc_mcontext.arm_r5,
-				 context->uc_mcontext.arm_r6,
-				 context->uc_mcontext.arm_r7);
+			context->uc_mcontext.arm_r4,
+			context->uc_mcontext.arm_r5,
+			context->uc_mcontext.arm_r6,
+			context->uc_mcontext.arm_r7);
 		CrashLog("r8: 0x%x, r9: 0x%x, sl: 0x%x, fp: 0x%x",
-				 context->uc_mcontext.arm_r8,
-				 context->uc_mcontext.arm_r9,
-				 context->uc_mcontext.arm_r10,
-				 context->uc_mcontext.arm_fp);
+			context->uc_mcontext.arm_r8,
+			context->uc_mcontext.arm_r9,
+			context->uc_mcontext.arm_r10,
+			context->uc_mcontext.arm_fp);
 		CrashLog("ip: 0x%x, sp: 0x%x, lr: 0x%x, pc: 0x%x",
-				 context->uc_mcontext.arm_ip,
-				 context->uc_mcontext.arm_sp,
-				 context->uc_mcontext.arm_lr,
-				 context->uc_mcontext.arm_pc);
+			context->uc_mcontext.arm_ip,
+			context->uc_mcontext.arm_sp,
+			context->uc_mcontext.arm_lr,
+			context->uc_mcontext.arm_pc);
 
 		CrashLog("backtrace:");
 		CrashLog("1: libGTASA.so + 0x%X", context->uc_mcontext.arm_pc - g_libGTASA);
@@ -532,19 +441,7 @@ void handler(int signum, siginfo_t *info, void *contextPtr)
 		CrashLog("1: libc.so + 0x%X", context->uc_mcontext.arm_pc - FindLibrary("libc.so"));
 		CrashLog("2: libc.so + 0x%X", context->uc_mcontext.arm_lr - FindLibrary("libc.so"));
 
-		PrintSymbols((void *)(context->uc_mcontext.arm_pc), (void *)(context->uc_mcontext.arm_lr));
-
-		CrashLog("=======START STACKTRACE=======");
-		for (auto i = 0; i < 100; ++i) // ÑÐºÐ¾Ð»ÑŒÐºÐ¾ Ñ…Ð¾Ñ‡ÐµÑˆÑŒ, Ñƒ Ð¼ÐµÐ½Ñ 1000
-		{
-			const auto address = *reinterpret_cast<uintptr_t *>(context->uc_mcontext.arm_sp + 4 * i);
-
-			printAddressBacktrace(address, (void *)(context->uc_mcontext.arm_pc + 4 * i), (void *)(context->uc_mcontext.arm_lr + 4 * i));
-		}
-
-		CrashLog("========END STACKTRACE========");
-
-		// DumpLibraries();
+		//DumpLibraries();
 
 		exit(0);
 	}
@@ -552,9 +449,9 @@ void handler(int signum, siginfo_t *info, void *contextPtr)
 	return;
 }
 
-void handler2(int signum, siginfo_t *info, void *contextPtr)
+void handler2(int signum, siginfo_t* info, void* contextPtr)
 {
-	ucontext *context = (ucontext_t *)contextPtr;
+	ucontext* context = (ucontext_t*)contextPtr;
 
 	if (act2_old.sa_sigaction)
 	{
@@ -565,7 +462,7 @@ void handler2(int signum, siginfo_t *info, void *contextPtr)
 	{
 
 		int crashId = (int)rand() % 20000;
-		Log("Crashed. handler2 - %d", crashId);
+		Log("Crashed - 3. %d", crashId);
 		CrashLog(" ");
 		PrintBuildCrashInfo();
 		CrashLog("ID: %d", crashId);
@@ -576,25 +473,25 @@ void handler2(int signum, siginfo_t *info, void *contextPtr)
 		CrashLog("libc base address: 0x%X", FindLibrary("libc.so"));
 		CrashLog("register states:");
 		CrashLog("r0: 0x%X, r1: 0x%X, r2: 0x%X, r3: 0x%X",
-				 context->uc_mcontext.arm_r0,
-				 context->uc_mcontext.arm_r1,
-				 context->uc_mcontext.arm_r2,
-				 context->uc_mcontext.arm_r3);
+			context->uc_mcontext.arm_r0,
+			context->uc_mcontext.arm_r1,
+			context->uc_mcontext.arm_r2,
+			context->uc_mcontext.arm_r3);
 		CrashLog("r4: 0x%x, r5: 0x%x, r6: 0x%x, r7: 0x%x",
-				 context->uc_mcontext.arm_r4,
-				 context->uc_mcontext.arm_r5,
-				 context->uc_mcontext.arm_r6,
-				 context->uc_mcontext.arm_r7);
+			context->uc_mcontext.arm_r4,
+			context->uc_mcontext.arm_r5,
+			context->uc_mcontext.arm_r6,
+			context->uc_mcontext.arm_r7);
 		CrashLog("r8: 0x%x, r9: 0x%x, sl: 0x%x, fp: 0x%x",
-				 context->uc_mcontext.arm_r8,
-				 context->uc_mcontext.arm_r9,
-				 context->uc_mcontext.arm_r10,
-				 context->uc_mcontext.arm_fp);
+			context->uc_mcontext.arm_r8,
+			context->uc_mcontext.arm_r9,
+			context->uc_mcontext.arm_r10,
+			context->uc_mcontext.arm_fp);
 		CrashLog("ip: 0x%x, sp: 0x%x, lr: 0x%x, pc: 0x%x",
-				 context->uc_mcontext.arm_ip,
-				 context->uc_mcontext.arm_sp,
-				 context->uc_mcontext.arm_lr,
-				 context->uc_mcontext.arm_pc);
+			context->uc_mcontext.arm_ip,
+			context->uc_mcontext.arm_sp,
+			context->uc_mcontext.arm_lr,
+			context->uc_mcontext.arm_pc);
 
 		CrashLog("backtrace:");
 		CrashLog("1: libGTASA.so + 0x%X", context->uc_mcontext.arm_pc - g_libGTASA);
@@ -603,22 +500,11 @@ void handler2(int signum, siginfo_t *info, void *contextPtr)
 		CrashLog("1: libsamp.so + 0x%X", context->uc_mcontext.arm_pc - FindLibrary("libsamp.so"));
 		CrashLog("2: libsamp.so + 0x%X", context->uc_mcontext.arm_lr - FindLibrary("libsamp.so"));
 
+
 		CrashLog("1: libc.so + 0x%X", context->uc_mcontext.arm_pc - FindLibrary("libc.so"));
 		CrashLog("2: libc.so + 0x%X", context->uc_mcontext.arm_lr - FindLibrary("libc.so"));
 
-		PrintSymbols((void *)(context->uc_mcontext.arm_pc), (void *)(context->uc_mcontext.arm_lr));
-
-		CrashLog("=======START STACKTRACE=======");
-		for (auto i = 0; i < 100; ++i) // ÑÐºÐ¾Ð»ÑŒÐºÐ¾ Ñ…Ð¾Ñ‡ÐµÑˆÑŒ, Ñƒ Ð¼ÐµÐ½Ñ 1000
-		{
-			const auto address = *reinterpret_cast<uintptr_t *>(context->uc_mcontext.arm_sp + 4 * i);
-
-			printAddressBacktrace(address, (void *)(context->uc_mcontext.arm_pc + 4 * i), (void *)(context->uc_mcontext.arm_lr + 4 * i));
-		}
-
-		CrashLog("========END STACKTRACE========");
-
-		// DumpLibraries();
+		//DumpLibraries();
 
 		exit(0);
 	}
@@ -626,9 +512,9 @@ void handler2(int signum, siginfo_t *info, void *contextPtr)
 	return;
 }
 
-void handler1(int signum, siginfo_t *info, void *contextPtr)
+void handler1(int signum, siginfo_t* info, void* contextPtr)
 {
-	ucontext *context = (ucontext_t *)contextPtr;
+	ucontext* context = (ucontext_t*)contextPtr;
 
 	if (act1_old.sa_sigaction)
 	{
@@ -639,7 +525,7 @@ void handler1(int signum, siginfo_t *info, void *contextPtr)
 	{
 
 		int crashId = (int)rand() % 20000;
-		Log("Crashed. handler1 - %d", crashId);
+		Log("Crashed - 4. %d", crashId);
 		CrashLog(" ");
 		PrintBuildCrashInfo();
 		CrashLog("ID: %d", crashId);
@@ -651,31 +537,30 @@ void handler1(int signum, siginfo_t *info, void *contextPtr)
 		CrashLog("libc base address: 0x%X", FindLibrary("libc.so"));
 		CrashLog("register states:");
 		CrashLog("r0: 0x%X, r1: 0x%X, r2: 0x%X, r3: 0x%X",
-				 context->uc_mcontext.arm_r0,
-				 context->uc_mcontext.arm_r1,
-				 context->uc_mcontext.arm_r2,
-				 context->uc_mcontext.arm_r3);
+			context->uc_mcontext.arm_r0,
+			context->uc_mcontext.arm_r1,
+			context->uc_mcontext.arm_r2,
+			context->uc_mcontext.arm_r3);
 		CrashLog("r4: 0x%x, r5: 0x%x, r6: 0x%x, r7: 0x%x",
-				 context->uc_mcontext.arm_r4,
-				 context->uc_mcontext.arm_r5,
-				 context->uc_mcontext.arm_r6,
-				 context->uc_mcontext.arm_r7);
+			context->uc_mcontext.arm_r4,
+			context->uc_mcontext.arm_r5,
+			context->uc_mcontext.arm_r6,
+			context->uc_mcontext.arm_r7);
 		CrashLog("r8: 0x%x, r9: 0x%x, sl: 0x%x, fp: 0x%x",
-				 context->uc_mcontext.arm_r8,
-				 context->uc_mcontext.arm_r9,
-				 context->uc_mcontext.arm_r10,
-				 context->uc_mcontext.arm_fp);
+			context->uc_mcontext.arm_r8,
+			context->uc_mcontext.arm_r9,
+			context->uc_mcontext.arm_r10,
+			context->uc_mcontext.arm_fp);
 		CrashLog("ip: 0x%x, sp: 0x%x, lr: 0x%x, pc: 0x%x",
-				 context->uc_mcontext.arm_ip,
-				 context->uc_mcontext.arm_sp,
-				 context->uc_mcontext.arm_lr,
-				 context->uc_mcontext.arm_pc);
+			context->uc_mcontext.arm_ip,
+			context->uc_mcontext.arm_sp,
+			context->uc_mcontext.arm_lr,
+			context->uc_mcontext.arm_pc);
 
 		CrashLog("backtrace:");
 		CrashLog("1: libGTASA.so + 0x%X", context->uc_mcontext.arm_pc - g_libGTASA);
 		CrashLog("2: libGTASA.so + 0x%X", context->uc_mcontext.arm_lr - g_libGTASA);
 
-		PrintSymbols((void *)(context->uc_mcontext.arm_pc), (void *)(context->uc_mcontext.arm_lr));
 
 		CrashLog("1: libsamp.so + 0x%X", context->uc_mcontext.arm_pc - FindLibrary("libsamp.so"));
 		CrashLog("2: libsamp.so + 0x%X", context->uc_mcontext.arm_lr - FindLibrary("libsamp.so"));
@@ -683,17 +568,8 @@ void handler1(int signum, siginfo_t *info, void *contextPtr)
 		CrashLog("1: libc.so + 0x%X", context->uc_mcontext.arm_pc - FindLibrary("libc.so"));
 		CrashLog("2: libc.so + 0x%X", context->uc_mcontext.arm_lr - FindLibrary("libc.so"));
 
-		CrashLog("=======START STACKTRACE=======");
-		for (auto i = 0; i < 100; ++i) // ÑÐºÐ¾Ð»ÑŒÐºÐ¾ Ñ…Ð¾Ñ‡ÐµÑˆÑŒ, Ñƒ Ð¼ÐµÐ½Ñ 1000
-		{
-			const auto address = *reinterpret_cast<uintptr_t *>(context->uc_mcontext.arm_sp + 4 * i);
 
-			printAddressBacktrace(address, (void *)(context->uc_mcontext.arm_pc + 4 * i), (void *)(context->uc_mcontext.arm_lr + 4 * i));
-		}
-
-		CrashLog("========END STACKTRACE========");
-
-		// DumpLibraries();
+		//DumpLibraries();
 
 		exit(0);
 	}
@@ -703,15 +579,15 @@ void handler1(int signum, siginfo_t *info, void *contextPtr)
 
 extern "C"
 {
-	JavaVM *javaVM = NULL;
-	JavaVM *alcGetJavaVM(void)
-	{
+	JavaVM* javaVM = NULL;
+	JavaVM* alcGetJavaVM(void) {
 		return javaVM;
 	}
 }
+extern "C" AL_API jint AL_APIENTRY JNI_OnLoad_alc(JavaVM* vm, void* reserved);
 
-void (*RQ_Command_rqSetAlphaTest)(char **);
-void RQ_Command_rqSetAlphaTest_hook(char **a1)
+void (*RQ_Command_rqSetAlphaTest)(char**);
+void RQ_Command_rqSetAlphaTest_hook(char** a1)
 {
 	return;
 }
@@ -719,8 +595,8 @@ void RQ_Command_rqSetAlphaTest_hook(char **a1)
 #include "CFPSFix.h"
 CFPSFix g_fps;
 
-void (*ANDRunThread)(void *a1);
-void ANDRunThread_hook(void *a1)
+void (*ANDRunThread)(void* a1);
+void ANDRunThread_hook(void* a1)
 {
 	g_fps.PushThread(gettid());
 
@@ -729,12 +605,15 @@ void ANDRunThread_hook(void *a1)
 
 jint JNI_OnLoad(JavaVM *vm, void *reserved)
 {
+	JNI_OnLoad_alc(vm, reserved);
 	javaVM = vm;
 
 	Log("SAMP library loaded! Build time: " __DATE__ " " __TIME__);
+	
+
 
 	g_libGTASA = FindLibrary("libGTASA.so");
-	if (g_libGTASA == 0)
+	if(g_libGTASA == 0)
 	{
 		Log("ERROR: libGTASA.so address not found!");
 		return 0;
@@ -755,7 +634,7 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 
 	sprintf(str, "0x%x", libgtasa);
 	firebase::crashlytics::SetCustomKey("libGTASA.so", str);
-
+	
 	sprintf(str, "0x%x", libsamp);
 	firebase::crashlytics::SetCustomKey("libsamp.so", str);
 
@@ -764,18 +643,13 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 
 	srand(time(0));
 
-	CPatch::InitHookStuff();
+	InitHookStuff();
 
 	InitRenderWareFunctions();
 	InstallSpecialHooks();
-	CPatch::SetUpHook(g_libGTASA + 0x003BF784, &CTimer__StartUserPause_hook, &CTimer__StartUserPause);
-	CPatch::SetUpHook(g_libGTASA + 0x003BF7A0, &CTimer__EndUserPause_hook, &CTimer__EndUserPause);
-	WriteMemory(g_libGTASA + 0x001BDD4A, (uintptr_t) "\x10\x46\xA2\xF1\x04\x0B", 6);
-	WriteMemory(g_libGTASA + 0x003E1A2C, (uintptr_t) "\x67\xE0", 2);
-	CPatch::SetUpHook(g_libGTASA + 0x0023768C, &ANDRunThread_hook, &ANDRunThread);
 	// increase render memory buffer
-	WriteMemory(g_libGTASA + 0x001A7EF2, (uintptr_t) "\x4F\xF4\x40\x10\x4F\xF4\x40\x10", 8);
-	WriteMemory(g_libGTASA + 0x001A7F34, (uintptr_t) "\x4F\xF4\x40\x10\x4F\xF4\x40\x10", 8);
+	SetUpHook(g_libGTASA + 0x003BF784, (uintptr_t)CTimer__StartUserPause_hook, (uintptr_t*)& CTimer__StartUserPause);
+	SetUpHook(g_libGTASA + 0x003BF7A0, (uintptr_t)CTimer__EndUserPause_hook, (uintptr_t*)& CTimer__EndUserPause);
 
 	// yes, just nop-out this fucking shit
 	// this should prevent game from crashing when exiting(R*)
@@ -788,16 +662,6 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 	// maybe nop engine terminating ????
 	// terminate all stuff when exiting
 	// nop shit pause
-
-	if (!*(uintptr_t *)(g_libGTASA + 0x61B298))
-	{
-		uintptr_t test = ((uintptr_t(*)(const char *))(g_libGTASA + 0x00179A20))("glAlphaFuncQCOM");
-		if (!test)
-		{
-			NOP(g_libGTASA + 0x001A6164, 4);
-			CPatch::SetUpHook(g_libGTASA + 0x001A6164, &RQ_Command_rqSetAlphaTest_hook, &RQ_Command_rqSetAlphaTest);
-		}
-	}
 
 	ApplyPatches_level0();
 
@@ -829,14 +693,14 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 }
 
 void Log(const char *fmt, ...)
-{
-	char buffer[0xFFFD];
-	static FILE *flLog = nullptr;
+{	
+	char buffer[0xFF];
+	static FILE* flLog = nullptr;
 
-	if (flLog == nullptr && g_pszStorage != nullptr)
+	if(flLog == nullptr && g_pszStorage != nullptr)
 	{
 		sprintf(buffer, "%sSAMP/samp_log.txt", g_pszStorage);
-		flLog = fopen(buffer, "w");
+		flLog = fopen(buffer, "a");
 	}
 	memset(buffer, 0, sizeof(buffer));
 
@@ -845,29 +709,28 @@ void Log(const char *fmt, ...)
 	vsnprintf(buffer, sizeof(buffer), fmt, arg);
 	va_end(arg);
 
-	// firebase::crashlytics::Log(buffer);
+	firebase::crashlytics::Log(buffer);
 
-	// if(pDebug) pDebug->AddMessage(buffer);
+	//if(pDebug) pDebug->AddMessage(buffer);
 
-	__android_log_write(ANDROID_LOG_INFO, "AXL", buffer);
-
-	if (flLog == nullptr)
-		return;
+	if(flLog == nullptr) return;
 	fprintf(flLog, "%s\n", buffer);
 	fflush(flLog);
+
+	__android_log_write(ANDROID_LOG_INFO, "AXL", buffer);
 
 	return;
 }
 
-void CrashLog(const char *fmt, ...)
+void CrashLog(const char* fmt, ...)
 {
 	char buffer[0xFF];
-	static FILE *flLog = nullptr;
+	static FILE* flLog = nullptr;
 
 	if (flLog == nullptr && g_pszStorage != nullptr)
 	{
 		sprintf(buffer, "%sSAMP/crash_log.log", g_pszStorage);
-		flLog = fopen(buffer, "a+");
+		flLog = fopen(buffer, "a");
 	}
 
 	memset(buffer, 0, sizeof(buffer));
@@ -881,8 +744,7 @@ void CrashLog(const char *fmt, ...)
 
 	firebase::crashlytics::Log(buffer);
 
-	if (flLog == nullptr)
-		return;
+	if (flLog == nullptr) return;
 	fprintf(flLog, "%s\n", buffer);
 	fflush(flLog);
 
@@ -893,5 +755,5 @@ uint32_t GetTickCount()
 {
 	struct timeval tv;
 	gettimeofday(&tv, nullptr);
-	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
+	return (tv.tv_sec*1000+tv.tv_usec/1000);
 }

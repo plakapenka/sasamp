@@ -1,19 +1,17 @@
 #include "../main.h"
 #include "gui.h"
-#include "interface.h"
 #include "../game/game.h"
 #include "../net/netgame.h"
 #include "../game/RW/RenderWare.h"
-#include "../game/vehicle.h"
 #include "../chatwindow.h"
 #include "../playertags.h"
 #include "../dialog.h"
 #include "../keyboard.h"
 #include "../CSettings.h"
 #include "..//scoreboard.h"
-#include "../deathmessage.h"
-#include "util/CJavaWrapper.h"
-#include "CHUD.h"
+#include "../util/CJavaWrapper.h"
+#include "../util/util.h"
+#include "../game/vehicle.h"
 
 extern CScoreBoard* pScoreBoard;
 extern CChatWindow *pChatWindow;
@@ -22,10 +20,6 @@ extern CDialogWindow *pDialogWindow;
 extern CSettings *pSettings;
 extern CKeyBoard *pKeyBoard;
 extern CNetGame *pNetGame;
-extern CDeathMessage* pDeathMessage;
-extern CCrossHair	*pCrossHair;
-extern CInterface *pInterface;
-extern CGame *pGame;
 extern CJavaWrapper *g_pJavaWrapper;
 
 /* imgui_impl_renderware.h */
@@ -36,9 +30,6 @@ void ImGui_ImplRenderWare_ShutDown();
 
 #define MULT_X	0.00052083333f	// 1/1920
 #define MULT_Y	0.00092592592f 	// 1/1080
-
-/*#define PRIMARY_COLOR 	ImVec4(1.0 / 255 * 204, 1.0 / 255 * 59, 1.0 / 255 * 202, 1.0f)
-#define SECONDARY_COLOR ImVec4(1.0 / 255 * 204, 1.0 / 255 * 59, 1.0 / 255 * 202, 1.0f)*/
 
 CGUI::CGUI()
 {
@@ -69,7 +60,6 @@ CGUI::CGUI()
 	style.ScrollbarSize = ScaleY(55.0f);
 	style.WindowBorderSize = 0.0f;
 	ImGui::StyleColorsDark();
-	SetupDefaultStyle();
 
 	// load fonts
 	char path[0xFF];
@@ -97,16 +87,9 @@ CGUI::CGUI()
 	m_pSplashTexture = (RwTexture*)LoadTextureFromDB("txd", "splash_icon");
 
 	CRadarRect::LoadTextures();
-    
-	m_fuel = 0;
 
-	m_fChatPosX = ScaleX(pSettings->GetReadOnly().fChatPosX);
-	m_fChatPosY = ScaleY(pSettings->GetReadOnly().fChatPosY);
-	m_fChatSizeX = ScaleX(pSettings->GetReadOnly().fChatSizeX);
-	m_fChatSizeY = ScaleY(pSettings->GetReadOnly().fChatSizeY);
-
+	m_bKeysStatus = false;
 }
-
 
 ImFont* CGUI::LoadFont(char *font, float fontsize)
 {
@@ -137,6 +120,17 @@ CGUI::~CGUI()
 	ImGui_ImplRenderWare_ShutDown();
 	ImGui::DestroyContext();
 }
+#include "..//CServerManager.h"
+bool g_IsVoiceServer()
+{
+	return true;
+}
+
+extern float g_fMicrophoneButtonPosX;
+extern float g_fMicrophoneButtonPosY;
+extern uint32_t g_uiLastTickVoice;
+#include "..//voice/CVoiceChatClient.h"
+extern CVoiceChatClient* pVoice;
 
 void CGUI::PreProcessInput()
 {
@@ -170,73 +164,39 @@ void CGUI::PostProcessInput()
 		m_bNextClear = true;
 	}
 }
+#include "..//CDebugInfo.h"
+extern CGame* pGame;
 
-void CGUI::SetupDefaultStyle() {
-
-    ImGuiStyle* style = &ImGui::GetStyle();
-    ImVec4* colors = style->Colors;
-
-    style->WindowPadding = ImVec2(7, 7);
-    style->WindowRounding = 0.2f;
-    style->FramePadding = ImVec2(4, 4);
-    style->FrameRounding = 10.0f;
-    style->ItemSpacing = ImVec2(11, 7);
-    style->ItemInnerSpacing = ImVec2(6, 4);
-    style->IndentSpacing = 15.0f;
-    style->ScrollbarSize = ScaleY(30.0f);
-    style->ScrollbarRounding = 0.0f;
-    style->GrabMinSize = 3.0f;
-    style->GrabRounding = 2.0f;
-
-    style->WindowBorderSize = 0.0f;
-    style->ChildBorderSize  = 0.1f;
-    style->PopupBorderSize  = 0.1f;
-    style->FrameBorderSize  = 2.0f;
-
-    colors[ImGuiCol_Text] = ImVec4(0.80f, 0.80f, 0.83f, 1.00f);
-    colors[ImGuiCol_TextDisabled] = ImVec4(0.24f, 0.23f, 0.29f, 1.00f);
-    colors[ImGuiCol_WindowBg] = ImVec4(0.06f, 0.05f, 0.07f, 0.70f);
-    colors[ImGuiCol_ChildBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-    colors[ImGuiCol_PopupBg] = ImVec4(0.07f, 0.07f, 0.09f, 1.00f);
-    colors[ImGuiCol_Border] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
-    colors[ImGuiCol_BorderShadow] = ImVec4(1.00f, 1.00f, 1.00f, 0.0f);
-    colors[ImGuiCol_FrameBg] = ImVec4(0.10f, 0.09f, 0.12f, 0.80f);
-    colors[ImGuiCol_FrameBgHovered] = ImVec4(0.24f, 0.23f, 0.29f, 0.90f);
-    colors[ImGuiCol_FrameBgActive] = ImVec4(0.56f, 0.56f, 0.58f, 1.00f);
-    colors[ImGuiCol_TitleBg] = ImVec4(0.10f, 0.09f, 0.12f, 1.00f);
-    colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.10f, 0.10f, 0.10f, 0.75f);
-    colors[ImGuiCol_TitleBgActive] = ImVec4(0.07f, 0.07f, 0.09f, 1.00f);
-    colors[ImGuiCol_MenuBarBg] = ImVec4(0.10f, 0.09f, 0.12f, 1.00f);
-    colors[ImGuiCol_ScrollbarBg] = ImVec4(0.10f, 0.09f, 0.12f, 1.00f);
-    colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.80f, 0.80f, 0.83f, 0.31f);
-    colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.56f, 0.56f, 0.58f, 1.00f);
-    colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.06f, 0.05f, 0.07f, 1.00f);
-    colors[ImGuiCol_CheckMark] = ImVec4(0.80f, 0.80f, 0.83f, 0.31f);
-    colors[ImGuiCol_SliderGrab] = ImVec4(0.80f, 0.80f, 0.83f, 0.31f);
-    colors[ImGuiCol_SliderGrabActive] = ImVec4(0.06f, 0.05f, 0.07f, 1.00f);
-
-    colors[ImGuiCol_Button] = ImVec4(0.10f, 0.09f, 0.12f, 1.00f);
-    colors[ImGuiCol_ButtonHovered] = ImVec4(0.24f, 0.23f, 0.29f, 1.00f);
-    colors[ImGuiCol_ButtonActive] = ImVec4(0.56f, 0.56f, 0.58f, 1.00f);
-
-    colors[ImGuiCol_Header] = ImVec4(0.10f, 0.09f, 0.12f, 1.00f);
-    colors[ImGuiCol_HeaderHovered] = ImVec4(0.56f, 0.56f, 0.58f, 1.00f);
-    colors[ImGuiCol_HeaderActive] = ImVec4(0.06f, 0.05f, 0.07f, 1.00f);
-    colors[ImGuiCol_ResizeGrip] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-    colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.56f, 0.56f, 0.58f, 1.00f);
-    colors[ImGuiCol_ResizeGripActive] = ImVec4(0.06f, 0.05f, 0.07f, 1.00f);
-    colors[ImGuiCol_PlotLines] = ImVec4(0.40f, 0.39f, 0.38f, 0.63f);
-    colors[ImGuiCol_PlotLinesHovered] = ImVec4(0.25f, 1.00f, 0.00f, 1.00f);
-    colors[ImGuiCol_PlotHistogram] = ImVec4(0.40f, 0.39f, 0.38f, 0.63f);
-    colors[ImGuiCol_PlotHistogramHovered] = ImVec4(0.25f, 1.00f, 0.00f, 1.00f);
-    colors[ImGuiCol_TextSelectedBg] = ImVec4(0.25f, 1.00f, 0.00f, 0.43f);
-    colors[ImGuiCol_ModalWindowDarkening] = ImVec4(1.00f, 0.98f, 0.95f, 0.73f);
-
+void CGUI::SetHealth(float fhpcar){
+   bHealth = static_cast<int>(fhpcar);
 }
-pthread_t threadBut;
+
+int CGUI::GetHealth(){
+	return 1;//static_cast<int>(pVehicle->GetHealth());
+}
+
+void CGUI::SetDoor(int door){
+	bDoor = door;
+}
+
+void CGUI::SetEngine(int engine){
+	bEngine = engine;
+}
+
+void CGUI::SetLights(int lights){
+	bLights = lights;
+}
 
 void CGUI::SetMeliage(float meliage){
 	bMeliage = static_cast<int>(meliage);
+}
+
+void CGUI::SetEat(float eate){
+	eat = static_cast<int>(eate);
+}
+
+int CGUI::GetEat(){
+	return eat;
 }
 
 void CGUI::SetFuel(float fuel){
@@ -244,16 +204,19 @@ void CGUI::SetFuel(float fuel){
 }
 
 void CGUI::ShowSpeed(){
-	if (pGame && pNetGame)
-	{
-		if (!pGame->FindPlayerPed()->IsInVehicle() || pGame->FindPlayerPed()->IsAPassenger() || pDialogWindow->m_bRendered || pKeyBoard->IsOpen() || g_pJavaWrapper->isDialogActive) {
-			g_pJavaWrapper->HideSpeedometr();
-			bMeliage =0;
-			m_fuel = 0;
-			return;
-		}
+	if (!pGame || !pNetGame || !pGame->FindPlayerPed()->IsInVehicle()) {
+		g_pJavaWrapper->HideSpeed();
+		bMeliage =0;
+		m_fuel = 0;
+		return;
 	}
-	
+	if (pGame->FindPlayerPed()->IsAPassenger()) {
+		g_pJavaWrapper->HideSpeed();
+		bMeliage =0;
+		m_fuel = 0;
+		return;
+	}
+
 	int i_speed = 0;
 	bDoor =0;
 	bEngine = 0;
@@ -278,17 +241,15 @@ void CGUI::ShowSpeed(){
             bLights = pVehicle->GetLightsState();
         }
     }
-	g_pJavaWrapper->ShowSpeedometr();
+	g_pJavaWrapper->ShowSpeed();
 	g_pJavaWrapper->UpdateSpeedInfo(i_speed, m_fuel, bHealth, bMeliage, bEngine, bLights, 0, bDoor);
 }
 
-#include "..//CDebugInfo.h"
-extern CGame* pGame;
 void CGUI::Render()
 {
-	//PreProcessInput();
+	PreProcessInput();
 
-	//ProcessPushedTextdraws();
+	ProcessPushedTextdraws();
 	if (pChatWindow)
 	{
 		pChatWindow->ProcessPushedCommands();
@@ -297,8 +258,10 @@ void CGUI::Render()
 	ImGui_ImplRenderWare_NewFrame();
 	ImGui::NewFrame();
 
+	
+
+	RenderVersion();
 	//RenderRakNetStatistics();
-	if(pCrossHair) pCrossHair->Render(); // fix crosshair game
 
 	if (pKeyBoard)
 	{
@@ -313,12 +276,136 @@ void CGUI::Render()
 	}
 
 	if (pChatWindow) pChatWindow->Render();
+	if(pGame) CGUI::ShowSpeed();
 	if (pScoreBoard) pScoreBoard->Draw();
 	if (pKeyBoard) pKeyBoard->Render();
 	if (pDialogWindow) pDialogWindow->Render();
-    CPlayerPed *pPlayerPed = pGame->FindPlayerPed();
-	if(pDeathMessage)   pDeathMessage->Render();
-	if(pGame) CGUI::ShowSpeed();
+
+	/*if (pNetGame && !pDialogWindow->m_bIsActive && pGame->IsToggledHUDElement(HUD_ELEMENT_BUTTONS))
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		ImVec2 vecButSize = ImVec2(ImGui::GetFontSize() * 3.5, ImGui::GetFontSize() * 2.5);
+		ImGui::SetNextWindowPos(ImVec2(2.0f, io.DisplaySize.y / 2.8 - vecButSize.x / 2));
+		ImGui::Begin("###keys", nullptr,
+			ImGuiWindowFlags_NoTitleBar |
+			ImGuiWindowFlags_NoResize |
+			ImGuiWindowFlags_NoScrollbar |
+			ImGuiWindowFlags_NoSavedSettings |
+			ImGuiWindowFlags_AlwaysAutoResize);
+
+		if (ImGui::Button(m_bKeysStatus ? "<<" : ">>", vecButSize))
+		{
+			if (m_bKeysStatus)
+				m_bKeysStatus = false;
+			else
+				m_bKeysStatus = true;
+		}
+
+
+		ImGui::SameLine();
+		if (ImGui::Button("Alt", vecButSize))
+		{
+			CPlayerPool* pPlayerPool = pNetGame->GetPlayerPool();
+			if (pPlayerPool)
+			{
+				CLocalPlayer* pLocalPlayer;
+				if (!pPlayerPool->GetLocalPlayer()->GetPlayerPed()->IsInVehicle() && !pPlayerPool->GetLocalPlayer()->GetPlayerPed()->IsAPassenger())
+					LocalPlayerKeys.bKeys[ePadKeys::KEY_WALK] = true;
+				else
+					LocalPlayerKeys.bKeys[ePadKeys::KEY_FIRE] = true;
+			}
+		}
+
+		ImGui::SameLine();
+		CVehiclePool* pVehiclePool = pNetGame->GetVehiclePool();
+		if (pVehiclePool)
+		{
+			VEHICLEID ClosetVehicleID = pVehiclePool->FindNearestToLocalPlayerPed();
+			if (ClosetVehicleID < MAX_VEHICLES && pVehiclePool->GetSlotState(ClosetVehicleID))
+			{
+				CVehicle* pVehicle = pVehiclePool->GetAt(ClosetVehicleID);
+				if (pVehicle)
+				{
+					if (pVehicle->GetDistanceFromLocalPlayerPed() < 5.0f)
+					{
+						CPlayerPool* pPlayerPool = pNetGame->GetPlayerPool();
+						if (pPlayerPool)
+						{
+							CLocalPlayer* pLocalPlayer;
+							if (!pPlayerPool->GetLocalPlayer()->GetPlayerPed()->IsInVehicle() && !pPlayerPool->GetLocalPlayer()->GetPlayerPed()->IsAPassenger())
+							{
+								if (ImGui::Button("G", vecButSize))
+								{
+									if (pNetGame)
+									{
+										if (pPlayerPool)
+										{
+											pLocalPlayer = pPlayerPool->GetLocalPlayer();
+											if (pLocalPlayer)
+											{
+												pLocalPlayer->HandlePassengerEntryEx();
+											}
+										}
+									}
+								}
+							}
+							else
+								if (pPlayerPool->GetLocalPlayer()->GetPlayerPed()->IsInVehicle() && !pPlayerPool->GetLocalPlayer()->GetPlayerPed()->IsAPassenger())
+								{
+									if (ImGui::Button("L. Ctrl", vecButSize))
+									{
+										LocalPlayerKeys.bKeys[ePadKeys::KEY_ACTION] = true;
+									}
+								}
+							ImGui::SameLine();
+						}
+					}
+				}
+			}
+		}
+		if (m_bKeysStatus)
+		{
+			ImGui::SameLine();
+			if (ImGui::Button("Y", vecButSize))
+				LocalPlayerKeys.bKeys[ePadKeys::KEY_YES] = true;
+			ImGui::SameLine();
+			if (ImGui::Button("N", vecButSize))
+				LocalPlayerKeys.bKeys[ePadKeys::KEY_NO] = true;
+			ImGui::SameLine();
+			if (ImGui::Button("H", vecButSize))
+				LocalPlayerKeys.bKeys[ePadKeys::KEY_CTRL_BACK] = true;
+
+		}
+		ImGui::End();
+	}
+
+	if (pNetGame)
+	{
+		if (pVoice && g_IsVoiceServer())
+		{
+			if (pVoice->IsRecording() && GetTickCount() - g_uiLastTickVoice >= 20000)
+			{
+				char buf[64];
+				sprintf(&buf[0], "%d", (int)((30000 - (GetTickCount() - g_uiLastTickVoice)) / 1000) + 1);
+				ImVec2 test(ScaleX(pSettings->GetReadOnly().fButtonMicrophoneX + pSettings->GetReadOnly().fButtonMicrophoneSize / 2.0f) - ImGui::CalcTextSize(&buf[0]).x / 2.0f, ScaleY(g_fMicrophoneButtonPosY) - GetFontSize() * 2.6f);
+				//RenderText(test, 0xFF0000FF, true, &buf[0]);
+			}
+			ImVec2 centre(ScaleX(35.0f), ScaleY(35.0f));
+			if (pVoice->IsDisconnected())
+			{
+				ImGui::GetBackgroundDrawList()->AddCircleFilled(centre, 18.0f, ImColor(1.0f, 0.0f, 0.0f));
+			}
+			if (pVoice->GetNetworkState() == VOICECHAT_CONNECTING || pVoice->GetNetworkState() == VOICECHAT_WAIT_CONNECT)
+			{
+				ImGui::GetBackgroundDrawList()->AddCircleFilled(centre, 18.0f, ImColor(1.0f, 1.0f, 0.0f));
+			}
+			if (pVoice->GetNetworkState() == VOICECHAT_CONNECTED)
+			{
+				ImGui::GetBackgroundDrawList()->AddCircleFilled(centre, 18.0f, ImColor(0.0f, 1.0f, 0.0f));
+			}
+		}
+	}
+	*/
 
 	CDebugInfo::Draw();
 
@@ -331,84 +418,63 @@ void CGUI::Render()
 
 bool CGUI::OnTouchEvent(int type, bool multi, int x, int y)
 {
-    ImGuiIO& io = ImGui::GetIO();
-
 	if(!pKeyBoard->OnTouchEvent(type, multi, x, y)) return false;
 
 	if (!pScoreBoard->OnTouchEvent(type, multi, x, y)) return false;
 
+	bool bFalse = true;
 	if (pNetGame)
 	{
 		if (pNetGame->GetTextDrawPool()->OnTouchEvent(type, multi, x, y))
 		{
-			
+			if (!pChatWindow->OnTouchEvent(type, multi, x, y)) return false;
+		}
+		else
+		{
+			bFalse = false;
 		}
 	}
 
-	if (!pChatWindow->OnTouchEvent(type, multi, x, y)) return false;
+	switch(type)
+	{
+		case TOUCH_PUSH:
+		{
+			m_vTouchPos = ImVec2(x, y);
+			m_bMouseDown = true;
+			m_bNeedClearMousePos = false;
+			break;
+		}
 
-    switch(type)
-    {
-        case TOUCH_PUSH:
-            io.MousePos = ImVec2(x, y);
-            io.MouseDown[0] = true;
-            break;
+		case TOUCH_POP:
+		{
+			m_bMouseDown = false;
+			m_bNeedClearMousePos = true;
+			break;
+		}
 
-        case TOUCH_POP:
-            io.MouseDown[0] = false;
-            m_bNeedClearMousePos = true;
-            break;
-
-        case TOUCH_MOVE:
-            io.MousePos = ImVec2(x, y);
-
-            ScrollDialog(x, y);
-            m_iLastPosY = y;
-
-			if (x >= m_fChatPosX && x <= m_fChatPosX + m_fChatSizeX && y >= m_fChatPosY && y <= m_fChatPosY + m_fChatSizeY)
-			{
-				ScrollChat(x, y);
-				m_iLastPosChatY = y;
-			}
-
-            break;
-    }
-
-    return true;
+		case TOUCH_MOVE:
+		{
+			m_bNeedClearMousePos = false;
+			m_vTouchPos = ImVec2(x, y);
+			break;
+		}
+	}
+	if (!bFalse)
+	{
+		return false;
+	}
+	return true;
 }
-void SetWindowScrollY(ImGuiWindow* window, float new_scroll_y)
+
+void CGUI::RenderVersion()
 {
-    window->DC.CursorMaxPos.y += window->Scroll.y; // SizeContents is generally computed based on CursorMaxPos which is affected by scroll position, so we need to apply our change to it.
-    window->Scroll.y = new_scroll_y;
-    window->DC.CursorMaxPos.y -= window->Scroll.y;
+	return;
+
+	ImGui::GetOverlayDrawList()->AddText(
+		ImVec2(ScaleX(10), ScaleY(10)), 
+		ImColor(IM_COL32_BLACK), PORT_VERSION);
 }
 
-
-void CGUI::ScrollDialog(float x, float y)
-{
-    if (m_imWindow != nullptr)
-    {
-        if (m_iLastPosY > y)
-            SetWindowScrollY(m_imWindow, m_imWindow->Scroll.y + ImGui::GetFontSize() / 2);
-
-        if (m_iLastPosY < y)
-            SetWindowScrollY(m_imWindow, m_imWindow->Scroll.y - ImGui::GetFontSize() / 2);
-    }
-}
-
-void CGUI::ScrollChat(float x, float y)
-{
-    if (m_imWindowChat != nullptr)
-    {
-        if (m_iLastPosChatY > y)
-            SetWindowScrollY(m_imWindowChat, m_imWindowChat->Scroll.y + ImGui::GetFontSize() / 5);
-
-        if (m_iLastPosChatY < y)
-            SetWindowScrollY(m_imWindowChat, m_imWindowChat->Scroll.y - ImGui::GetFontSize() / 5);
-    }
-}
-
-#include "../str_obfuscator_no_template.hpp"
 void CGUI::ProcessPushedTextdraws()
 {
 	BUFFERED_COMMAND_TEXTDRAW* pCmd = nullptr;
@@ -425,7 +491,7 @@ void CGUI::RenderRakNetStatistics()
 {
 		//StatisticsToString(rss, message, 0);
 
-		/*ImGui::GetBackgroundDrawList()->AddText(
+		/*ImGui::GetOverlayDrawList()->AddText(
 			ImVec2(ScaleX(10), ScaleY(400)),
 			ImColor(IM_COL32_BLACK), message);*/
 }
@@ -524,61 +590,4 @@ void CGUI::RenderText(ImVec2& posCur, ImU32 col, bool bOutline, const char* text
 	}
 
 	ImGui::GetBackgroundDrawList()->AddText(posCur, col, text_begin, text_end);
-}
-
-void CGUI::RenderTextDeathMessage(ImVec2& posCur, ImU32 col, bool bOutline, const char* text_begin, const char* text_end, float font_size, ImFont *font, bool bOutlineUseTextColor)
-{
-	int iOffset = bOutlineUseTextColor ? 1 : pSettings->Get().iFontOutline;
-	if(bOutline)
-	{
-		// left
-		posCur.x -= iOffset;
-		ImGui::GetBackgroundDrawList()->AddText(font == nullptr ? GetFont() : font, font_size == 0.0f ? GetFontSize() : font_size, posCur, bOutlineUseTextColor ? ImColor(col) : ImColor(IM_COL32_BLACK), text_begin, text_end);
-		posCur.x += iOffset;
-		// right
-		posCur.x += iOffset;
-		ImGui::GetBackgroundDrawList()->AddText(font == nullptr ? GetFont() : font, font_size == 0.0f ? GetFontSize() : font_size, posCur, bOutlineUseTextColor ? ImColor(col) : ImColor(IM_COL32_BLACK), text_begin, text_end);
-		posCur.x -= iOffset;
-		// above
-		posCur.y -= iOffset;
-		ImGui::GetBackgroundDrawList()->AddText(font == nullptr ? GetFont() : font, font_size == 0.0f ? GetFontSize() : font_size, posCur, bOutlineUseTextColor ? ImColor(col) : ImColor(IM_COL32_BLACK), text_begin, text_end);
-		posCur.y += iOffset;
-		// below
-		posCur.y += iOffset;
-		ImGui::GetBackgroundDrawList()->AddText(font == nullptr ? GetFont() : font, font_size == 0.0f ? GetFontSize() : font_size, posCur, bOutlineUseTextColor ? ImColor(col) : ImColor(IM_COL32_BLACK), text_begin, text_end);
-		posCur.y -= iOffset;
-	}
-
-	ImGui::GetBackgroundDrawList()->AddText(font == nullptr ? GetFont() : font, font_size == 0.0f ? GetFontSize() : font_size, posCur, col, text_begin, text_end);
-}
-
-void CGUI::RenderTextWithSize(ImVec2& posCur, ImU32 col, bool bOutline, const char* text_begin, const char* text_end, float font_size)
-{
-    int iOffset = pSettings->Get().iFontOutline;
-
-	ImColor colOutline = ImColor(IM_COL32_BLACK);
-	ImColor colDef = ImColor(col);
-	colOutline.Value.w = colDef.Value.w;
-
-    if (bOutline)
-    {
-        // left
-        posCur.x -= iOffset;
-        ImGui::GetBackgroundDrawList()->AddText(m_pFont, font_size, posCur, colOutline, text_begin, text_end);
-        posCur.x += iOffset;
-        // right
-        posCur.x += iOffset;
-        ImGui::GetBackgroundDrawList()->AddText(m_pFont, font_size, posCur, colOutline, text_begin, text_end);
-        posCur.x -= iOffset;
-        // above
-        posCur.y -= iOffset;
-        ImGui::GetBackgroundDrawList()->AddText(m_pFont, font_size, posCur, colOutline, text_begin, text_end);
-        posCur.y += iOffset;
-        // below
-        posCur.y += iOffset;
-        ImGui::GetBackgroundDrawList()->AddText(m_pFont, font_size, posCur, colOutline, text_begin, text_end);
-        posCur.y -= iOffset;
-    }
-
-    ImGui::GetBackgroundDrawList()->AddText(m_pFont, font_size, posCur, col, text_begin, text_end);
 }

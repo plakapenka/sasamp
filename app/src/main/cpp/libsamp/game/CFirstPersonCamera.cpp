@@ -76,7 +76,7 @@ void CFirstPersonCamera::ProcessCameraInVeh(uintptr_t pCam, CPlayerPed* pPed, CV
 
 	uint16_t modelIndex = pPed->GetGtaVehicle()->entity.nModelIndex;
 
-/*#ifdef GAME_EDITION_CR
+#ifdef GAME_EDITION_CR
 	if (modelIndex >= 15072 && modelIndex <= 15080)
 	{
 		vecOffset.X = 0.05f;
@@ -88,7 +88,7 @@ void CFirstPersonCamera::ProcessCameraInVeh(uintptr_t pCam, CPlayerPed* pPed, CV
 	{
 		((RwCamera * (*)(RwCamera*, float))(g_libGTASA + 0x001AD6F4 + 1))(*(RwCamera * *)(g_libGTASA + 0x95B064), 0.01f);
 	}
-#else*/
+#else
 	if (modelIndex == 581 || modelIndex == 509 || modelIndex == 481 || modelIndex == 462 || modelIndex == 521 || modelIndex == 463 || modelIndex == 510 ||
 		modelIndex == 522 || modelIndex == 461 || modelIndex == 468 || modelIndex == 448 || modelIndex == 586)
 	{
@@ -101,7 +101,7 @@ void CFirstPersonCamera::ProcessCameraInVeh(uintptr_t pCam, CPlayerPed* pPed, CV
 	{
 		((RwCamera * (*)(RwCamera*, float))(g_libGTASA + 0x001AD6F4 + 1))(*(RwCamera * *)(g_libGTASA + 0x95B064), 0.01f);
 	}
-//#endif
+#endif
 	if (CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_FIRSTPERSON_VEH).X != -1)
 	{
 		vecOffset.X += (float)(CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_FIRSTPERSON_VEH).X - 200) / 100.0f;
@@ -171,7 +171,7 @@ void CFirstPersonCamera::SetEnabled(bool bEnabled)
 
 void CFirstPersonCamera::Toggle()
 {
-	m_bEnabled = !m_bEnabled;
+	m_bEnabled ^= 1;
 }
 
 bool CFirstPersonCamera::IsEnabled()

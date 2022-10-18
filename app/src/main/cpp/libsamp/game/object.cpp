@@ -1,10 +1,8 @@
 #include "../main.h"
 #include "game.h"
 #include "../net/netgame.h"
-#include "materialtext.h"
 #include <cmath>
 
-extern CMaterialText *pMaterialText;
 extern CGame *pGame;
 extern CNetGame *pNetGame;
 
@@ -12,7 +10,6 @@ float fixAngle(float angle)
 {
 	if (angle > 180.0f) angle -= 360.0f;
 	if (angle < -180.0f) angle += 360.0f;
-
 	return angle;
 }
 
@@ -39,7 +36,6 @@ CObject::CObject(int iModel, float fPosX, float fPosY, float fPosZ, VECTOR vecRo
 	m_bNeedRotate = false;
 
 	m_bMaterials = false;
-	m_bMaterialsText = false;
 
 	m_bAttachedType = 0;
 	m_usAttachedVehicle = 0xFFFF;
@@ -48,8 +44,6 @@ CObject::CObject(int iModel, float fPosX, float fPosY, float fPosZ, VECTOR vecRo
 	{
 		m_pMaterials[i].m_bCreated = 0;
 		m_pMaterials[i].pTex = nullptr;
-		m_MaterialTextTexture[i].m_bCreated = 0;
-		m_MaterialTextTexture[i].pTex = nullptr;
 	}
 
 	InstantRotate(vecRot.X, vecRot.Y, vecRot.Z);
@@ -58,7 +52,6 @@ CObject::CObject(int iModel, float fPosX, float fPosY, float fPosZ, VECTOR vecRo
 CObject::~CObject()
 {
 	m_bMaterials = false;
-	m_bMaterialsText = false;
 	for (int i = 0; i < MAX_MATERIALS; i++)
 	{
 		if (m_pMaterials[i].m_bCreated && m_pMaterials[i].pTex)
@@ -66,15 +59,6 @@ CObject::~CObject()
 			m_pMaterials[i].m_bCreated = 0;
 			RwTextureDestroy(m_pMaterials[i].pTex);
 			m_pMaterials[i].pTex = nullptr;
-
-			
-		}
-
-		if(m_MaterialTextTexture[i].m_bCreated && m_MaterialTextTexture[i].pTex)
-		{
-			m_MaterialTextTexture[i].m_bCreated = 0;
-			RwTextureDestroy(m_MaterialTextTexture[i].pTex);
-			m_MaterialTextTexture[i].pTex = nullptr;
 		}
 	}
 	m_pEntity = GamePool_Object_GetAt(m_dwGTAId);
@@ -203,6 +187,7 @@ void CObject::Process(float fElapsedTime)
 
 float CObject::DistanceRemaining(MATRIX4X4 *matPos)
 {
+
 	float	fSX,fSY,fSZ;
 	fSX = (matPos->pos.X - m_matTarget.pos.X) * (matPos->pos.X - m_matTarget.pos.X);
 	fSY = (matPos->pos.Y - m_matTarget.pos.Y) * (matPos->pos.Y - m_matTarget.pos.Y);
@@ -285,20 +270,7 @@ void CObject::MoveTo(float fX, float fY, float fZ, float fSpeed, float fRotX, fl
 			pPlayerPool->GetLocalPlayer()->UpdateSurfing();
 		}
 	}
-
-	// sub_1009F070
-	m_pEntity->m_nEntityFlags &= 0xFFFFFFF7;
 }
-
-float CObject::RotaionRemaining(VECTOR matPos)
-{
-	float fSX, fSY, fSZ;
-	fSX = (matPos.X - m_vecTargetRot.X) * (matPos.X - m_vecTargetRot.X);
-	fSY = (matPos.Y - m_vecTargetRot.Y) * (matPos.Y - m_vecTargetRot.Y);
-	fSZ = (matPos.Z - m_vecTargetRot.Z) * (matPos.Z - m_vecTargetRot.Z);
-	return (float)sqrt(fSX + fSY + fSZ);
-}
-
 
 void CObject::AttachToVehicle(uint16_t usVehID, VECTOR* pVecOffset, VECTOR* pVecRot)
 {
@@ -317,8 +289,6 @@ void CObject::ProcessAttachToVehicle(CVehicle* pVehicle)
 {
 	if (GamePool_Object_GetAt(m_dwGTAId))
 	{
-		*(uint32_t*)((uintptr_t)m_pEntity + 28) &= 0xFFFFFFFE;
-
 		if (!ScriptCommand(&is_object_attached, m_dwGTAId))
 		{
 			ScriptCommand(&attach_object_to_car, m_dwGTAId, pVehicle->m_dwGTAId, m_vecAttachedOffset.X,
@@ -373,34 +343,5 @@ void CObject::GetRotation(float* pfX, float* pfY, float* pfZ)
 		*pfX = *pfX * 57.295776 * -1.0;
 		*pfY = *pfY * 57.295776 * -1.0;
 		*pfZ = *pfZ * 57.295776 * -1.0;
-	}
-}
-
-void CObject::SetMaterial(int iModel, int iMaterialIndex, char* txdname, char* texturename, uint32_t dwColor)
-{	
-	
-	if (iMaterialIndex < 16)
-	{
-		if (m_pMaterials[iMaterialIndex].m_bCreated) 
-		{
-			RwTextureDestroy(m_pMaterials[iMaterialIndex].pTex);
-			m_pMaterials[iMaterialIndex].m_bCreated = 0;
-		}
-		m_pMaterials[iMaterialIndex].dwColor = dwColor;
-
-		Log("Object color: 0x%X", dwColor);
-		m_pMaterials[iMaterialIndex].pTex = (RwTexture*)LoadFromTxdSlot(txdname, texturename);
-		m_pMaterials[iMaterialIndex].m_bCreated = true;
-		m_bMaterials = true;
-	}
-}
-
-void CObject::SetMaterialText(int iMaterialIndex, uint8_t byteMaterialSize, const char *szFontName, uint8_t byteFontSize, uint8_t byteFontBold, uint32_t dwFontColor, uint32_t dwBackgroundColor, uint8_t byteAlign, const char *szText)
-{	 
-    if(iMaterialIndex < 16)
-	{	
-		m_bMaterialsText = true;
-		m_MaterialTextTexture[iMaterialIndex].pTex = pMaterialText->Generate(byteMaterialSize, szFontName, byteFontSize, byteFontBold, dwFontColor, dwBackgroundColor, byteAlign, szText);
-		m_MaterialTextTexture[iMaterialIndex].m_bCreated = true;
 	}
 }

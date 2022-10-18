@@ -445,6 +445,15 @@
       <Filter>game</Filter>
     </ClCompile>
     <ClCompile Include="scoreboard.cpp" />
+    <ClCompile Include="net\CUDPSocket.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="net\ISocket.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="net\CAddress.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="chatwindow.h" />
@@ -1056,6 +1065,15 @@
       <Filter>game</Filter>
     </ClInclude>
     <ClInclude Include="scoreboard.h" />
+    <ClInclude Include="net\ISocket.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="net\CUDPSocket.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="net\CAddress.h">
+      <Filter>net</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="game">

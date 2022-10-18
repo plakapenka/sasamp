@@ -80,7 +80,7 @@ void CScrollbar::Draw()
 	ImVec2 a(m_fX, m_fY);
 	ImVec2 b(m_fX + m_fWidthBox, m_fY + m_fHeightBox);
 	ImColor co(0xFF, 0xA5, 0x00, 255);
-	ImGui::GetBackgroundDrawList()->AddRectFilled(a, b, co, 0.0f);
+	ImGui::GetOverlayDrawList()->AddRectFilled(a, b, co, 0.0f);
 }
 
 int CScrollbar::GetValue() const

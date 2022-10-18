@@ -114,7 +114,7 @@ bool RakClient::Send( RakNet::BitStream * bitStream, PacketPriority priority, Pa
 
 #include "../../str_obfuscator_no_template.hpp"
 #include "../../game/common.h"
-#include "..//..//santrope-tea-gtasa/encryption/common.h"
+#include "..//..//..//santrope-tea-gtasa/encryption/common.h"
 const auto secDWORD = cryptor::create((const char[]) { 0xDD, 0xAA, 0x88, 0xFA }, 4); // to change
 const int g_iKey = 0xDF;
 
@@ -129,7 +129,9 @@ void WriteUnVerified1();
 void WriteUnVerified0();
 
 void CheckForProtected0();
-
+#include "..//..//voice/CVoiceChatClient.h"
+extern CVoiceChatClient* pVoice;
+bool g_IsVoiceServer();
 Packet* RakClient::Receive( void )
 {
 	Packet * packet = RakPeer::Receive();

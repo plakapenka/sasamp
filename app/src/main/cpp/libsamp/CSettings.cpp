@@ -51,6 +51,11 @@ void CSettings::Save(int iIgnoreCategory)
 
 	ini_table_create_entry(config, "client", "name", m_Settings.szNickName);
 	ini_table_create_entry(config, "client", "password", m_Settings.szPassword);
+	
+	ini_table_create_entry_as_int(config, "client", "autologin", m_Settings.szAutoLogin);
+	
+
+
 	ini_table_create_entry_as_int(config, "client", "server", m_Settings.szServer);
 	ini_table_create_entry_as_int(config, "client", "debug", m_Settings.szDebug);
 	ini_table_create_entry_as_int(config, "client", "headmove", m_Settings.szHeadMove);
@@ -208,6 +213,7 @@ void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 
 	const char *szName = ini_table_get_entry(config, "client", "name");
 	const char *szPassword = ini_table_get_entry(config, "client", "password");
+	m_Settings.szAutoLogin = ini_table_get_entry_as_int(config, "client", "autologin", 0);
 	m_Settings.szServer = ini_table_get_entry_as_int(config, "client", "server", 0);
 	m_Settings.szDebug = ini_table_get_entry_as_int(config, "client", "debug", 0);
 	m_Settings.szHeadMove = ini_table_get_entry_as_int(config, "client", "headmove", 0);

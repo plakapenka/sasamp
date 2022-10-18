@@ -41,7 +41,7 @@ public:
 	}
 	uint8_t GetState() { return m_byteState; };
 
-	void StoreBulletSyncData(BULLET_SYNC_DATA* blSync);
+	void StoreBulletSyncData(BULLET_SYNC* blSync);
 	void SetID(PLAYERID playerId) { m_PlayerID = playerId; }
 	PLAYERID GetID() { return m_PlayerID; }
 
@@ -74,8 +74,6 @@ public:
 	void StoreTrailerFullSyncData(TRAILER_SYNC_DATA* trSync);
 	void UpdateOnFootTargetPosition();
 	void SlerpRotation();
-
-	void UpdateTrainDriverMatrixAndSpeed(MATRIX4X4* matWorld, VECTOR* vecMoveSpeed, float fTrainSpeed);
 
 	void UpdateInCarMatrixAndSpeed(MATRIX4X4* mat, VECTOR* pos, VECTOR* speed);
 	void UpdateInCarTargetPosition();

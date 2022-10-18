@@ -298,10 +298,10 @@ void CKeyBoard::Open(keyboard_callback *handler, bool bHiden)
 	m_bEnable = true;
 	m_bInputFlag = bHiden;
 
-	g_pJavaWrapper->HideVoice();
-	g_pJavaWrapper->HideServer();
-	g_pJavaWrapper->HideSamwillMoney();
-	g_pJavaWrapper->HideSpeedometr();
+	//g_pJavaWrapper->HideVoice();
+	//g_pJavaWrapper->HideServer();
+	//g_pJavaWrapper->HideSamwillMoney();
+	//g_pJavaWrapper->HideSpeedometr();
 
 	if (m_bNewKeyboard)
 	{
@@ -324,7 +324,7 @@ void CKeyBoard::Close()
 	m_pHandler = nullptr;
 
 	g_pJavaWrapper->ShowServer(pSettings->GetReadOnly().szServer);
-	g_pJavaWrapper->ShowVoice();
+	//g_pJavaWrapper->ShowVoice();
 
 	if (m_bNewKeyboard)
 	{
@@ -620,7 +620,7 @@ void CKeyBoard::Send()
 	}
 	m_bEnable = false;
 	g_pJavaWrapper->ShowServer(pSettings->GetReadOnly().szServer);
-	g_pJavaWrapper->ShowVoice();
+	//g_pJavaWrapper->ShowVoice();
 }
 
 kbKey *CKeyBoard::GetKeyFromPos(int x, int y)

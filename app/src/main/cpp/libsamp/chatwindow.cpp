@@ -7,57 +7,46 @@
 #include "net/netgame.h"
 #include "vendor/bass/bass.h"
 #include <dlfcn.h>
-#include <time.h>
 #include "scrollbar.h"
-#include "gui/CHUD.h"
+#include "voice/CVoiceChatClient.h"
 
 extern CGUI *pGUI;
 extern CKeyBoard *pKeyBoard;
 extern CSettings *pSettings;
 extern CNetGame *pNetGame;
-extern CAMERA_AIM *pcaInternalAim;
-extern CGame *pGame;
-extern CChatWindow *pChatWindow;
+extern CAMERA_AIM * pcaInternalAim;
+extern CGame * pGame;
+extern CVoiceChatClient* pVoice;
+extern CChatWindow* pChatWindow;
 
-#define NUM_OF_MESSAGES 100
+bool g_bShowVoiceList = false;
 
-template <typename T>
-T GetBASSFunc(void *handle, const char *szFunc)
+#define NUM_OF_MESSAGES	100
+
+template<typename T> T GetBASSFunc(void* handle, const char* szFunc)
 {
 	return (T)dlsym(handle, szFunc);
 }
 
-BOOL(*BASS_Init_func)
-(int device, DWORD freq, DWORD flags, void *win, void *dsguid);
-HSTREAM(*BASS_StreamCreateURL_func)
-(const char *url, DWORD offset, DWORD flags, DOWNLOADPROC *proc, void *user);
-BOOL(*BASS_ChannelPlay_func)
-(DWORD handlee, BOOL restart);
+BOOL(*BASS_Init_func)(int device, DWORD freq, DWORD flags, void* win, void* dsguid);
+HSTREAM(*BASS_StreamCreateURL_func)(const char* url, DWORD offset, DWORD flags, DOWNLOADPROC* proc, void* user);
+BOOL(*BASS_ChannelPlay_func)(DWORD handlee, BOOL restart);
 int (*BASS_ErrorGetCode_func)();
-BOOL(*BASS_ChannelSet3DPosition_func)
-(DWORD handlee, const BASS_3DVECTOR *pos, const BASS_3DVECTOR *orient, const BASS_3DVECTOR *vel);
-BOOL(*BASS_StreamFree_func)
-(HSTREAM handlee);
+BOOL(*BASS_ChannelSet3DPosition_func)(DWORD handlee, const BASS_3DVECTOR* pos, const BASS_3DVECTOR* orient, const BASS_3DVECTOR* vel);
+BOOL(*BASS_StreamFree_func)(HSTREAM handlee);
 void (*BASS_Apply3D_func)();
-BOOL(*BASS_Set3DPosition_func)
-(const BASS_3DVECTOR *pos, const BASS_3DVECTOR *vel, const BASS_3DVECTOR *front, const BASS_3DVECTOR *top);
-BOOL(*BASS_ChannelSet3DAttributes_func)
-(DWORD handlee, int mode, float min, float max, int iangle, int oangle, float outvol);
-BOOL(*BASS_ChannelSetAttribute_func)
-(DWORD handle, DWORD attrib, float value);
-DWORD(*BASS_ChannelFlags_func)
-(DWORD handle, DWORD flags, DWORD mask);
-BOOL(*BASS_ChannelStop_func)
-(DWORD handle);
-BOOL(*BASS_ChannelPause_func)
-(DWORD handle);
+BOOL(*BASS_Set3DPosition_func)(const BASS_3DVECTOR* pos, const BASS_3DVECTOR* vel, const BASS_3DVECTOR* front, const BASS_3DVECTOR* top);
+BOOL(*BASS_ChannelSet3DAttributes_func)(DWORD handlee, int mode, float min, float max, int iangle, int oangle, float outvol);
+BOOL(*BASS_ChannelSetAttribute_func)(DWORD handle, DWORD attrib, float value);
+DWORD (*BASS_ChannelFlags_func)(DWORD handle, DWORD flags, DWORD mask);
 
-BOOL BASS_Init(int device, DWORD freq, DWORD flags, void *win, void *dsguid)
+
+BOOL BASS_Init(int device, DWORD freq, DWORD flags, void* win, void* dsguid)
 {
 	return BASS_Init_func(device, freq, flags, win, dsguid);
 }
 
-HSTREAM BASS_StreamCreateURL(const char *url, DWORD offset, DWORD flags, DOWNLOADPROC *proc, void *user)
+HSTREAM BASS_StreamCreateURL(const char* url, DWORD offset, DWORD flags, DOWNLOADPROC* proc, void* user)
 {
 	return BASS_StreamCreateURL_func(url, offset, flags, proc, user);
 }
@@ -77,7 +66,7 @@ int BASS_ErrorGetCode()
 	return BASS_ErrorGetCode_func();
 }
 
-BOOL BASS_ChannelSet3DPosition(DWORD handlee, const BASS_3DVECTOR *pos, const BASS_3DVECTOR *orient, const BASS_3DVECTOR *vel)
+BOOL BASS_ChannelSet3DPosition(DWORD handlee, const BASS_3DVECTOR* pos, const BASS_3DVECTOR* orient, const BASS_3DVECTOR* vel)
 {
 	return BASS_ChannelSet3DPosition_func(handlee, pos, orient, vel);
 }
@@ -92,7 +81,7 @@ void BASS_Apply3D()
 	return BASS_Apply3D_func();
 }
 
-BOOL BASS_Set3DPosition(const BASS_3DVECTOR *pos, const BASS_3DVECTOR *vel, const BASS_3DVECTOR *front, const BASS_3DVECTOR *top)
+BOOL BASS_Set3DPosition(const BASS_3DVECTOR* pos, const BASS_3DVECTOR* vel, const BASS_3DVECTOR* front, const BASS_3DVECTOR* top)
 {
 	return BASS_Set3DPosition_func(pos, vel, front, top);
 }
@@ -107,19 +96,9 @@ BOOL BASS_ChannelSetAttribute(DWORD handle, DWORD attrib, float value)
 	return BASS_ChannelSetAttribute_func(handle, attrib, value);
 }
 
-BOOL BASS_ChannelStop(DWORD handle)
-{
-	return BASS_ChannelStop_func(handle);
-}
-
-BOOL BASS_ChannelPause(DWORD handle)
-{
-	return BASS_ChannelPause_func(handle);
-}
-
 void InitBASSFuncs()
 {
-	void *handle;
+	void* handle;
 
 #ifdef GAME_EDITION_CR
 	handle = dlopen("/data/data/com.liverussia.cr/lib/libbass.so", 3);
@@ -132,31 +111,27 @@ void InitBASSFuncs()
 		return;
 	}
 
-	BASS_Init_func = GetBASSFunc<BOOL (*)(int device, DWORD freq, DWORD flags, void *win, void *)>(handle, "BASS_Init");
+	BASS_Init_func = GetBASSFunc<BOOL(*)(int device, DWORD freq, DWORD flags, void* win, void*)>(handle, "BASS_Init");
 
-	BASS_StreamCreateURL_func = GetBASSFunc<HSTREAM (*)(const char *url, DWORD offset, DWORD flags, DOWNLOADPROC *proc, void *user)>(handle, "BASS_StreamCreateURL");
+	BASS_StreamCreateURL_func = GetBASSFunc<HSTREAM(*)(const char* url, DWORD offset, DWORD flags, DOWNLOADPROC * proc, void* user)>(handle, "BASS_StreamCreateURL");
 
-	BASS_ChannelPlay_func = GetBASSFunc<BOOL (*)(DWORD handlee, BOOL restart)>(handle, "BASS_ChannelPlay");
+	BASS_ChannelPlay_func = GetBASSFunc<BOOL(*)(DWORD handlee, BOOL restart)>(handle, "BASS_ChannelPlay");
 
-	BASS_ErrorGetCode_func = GetBASSFunc<int (*)()>(handle, "BASS_ErrorGetCode");
+	BASS_ErrorGetCode_func = GetBASSFunc<int (*)() >(handle, "BASS_ErrorGetCode");
 
-	BASS_ChannelSet3DPosition_func = GetBASSFunc<BOOL (*)(DWORD handlee, const BASS_3DVECTOR *pos, const BASS_3DVECTOR *orient, const BASS_3DVECTOR *vel)>(handle, "BASS_ChannelSet3DPosition");
+	BASS_ChannelSet3DPosition_func = GetBASSFunc< BOOL(*)(DWORD handlee, const BASS_3DVECTOR * pos, const BASS_3DVECTOR * orient, const BASS_3DVECTOR * vel)>(handle, "BASS_ChannelSet3DPosition");
 
-	BASS_StreamFree_func = GetBASSFunc<BOOL (*)(HSTREAM handlee)>(handle, "BASS_StreamFree");
+	BASS_StreamFree_func = GetBASSFunc<BOOL(*)(HSTREAM handlee)>(handle, "BASS_StreamFree");
 
 	BASS_Apply3D_func = GetBASSFunc<void (*)()>(handle, "BASS_Apply3D");
 
-	BASS_Set3DPosition_func = GetBASSFunc<BOOL (*)(const BASS_3DVECTOR *pos, const BASS_3DVECTOR *vel, const BASS_3DVECTOR *front, const BASS_3DVECTOR *top)>(handle, "BASS_Set3DPosition");
+	BASS_Set3DPosition_func = GetBASSFunc<BOOL(*)(const BASS_3DVECTOR * pos, const BASS_3DVECTOR * vel, const BASS_3DVECTOR * front, const BASS_3DVECTOR * top)>(handle, "BASS_Set3DPosition");
 
-	BASS_ChannelSet3DAttributes_func = GetBASSFunc<BOOL (*)(DWORD handlee, int mode, float min, float max, int iangle, int oangle, float outvol)>(handle, "BASS_ChannelSet3DAttributes");
+	BASS_ChannelSet3DAttributes_func = GetBASSFunc<BOOL(*)(DWORD handlee, int mode, float min, float max, int iangle, int oangle, float outvol)>(handle, "BASS_ChannelSet3DAttributes");
 
-	BASS_ChannelSetAttribute_func = GetBASSFunc<BOOL (*)(DWORD handle, DWORD attrib, float value)>(handle, "BASS_ChannelSetAttribute");
+	BASS_ChannelSetAttribute_func = GetBASSFunc<BOOL(*)(DWORD handle, DWORD attrib, float value)>(handle, "BASS_ChannelSetAttribute");
 
-	BASS_ChannelFlags_func = GetBASSFunc<DWORD (*)(DWORD handle, DWORD flags, DWORD mask)>(handle, "BASS_ChannelFlags");
-
-	BASS_ChannelPause_func = GetBASSFunc<BOOL (*)(DWORD handle)>(handle, "BASS_ChannelPause");
-
-	BASS_ChannelStop_func = GetBASSFunc<BOOL (*)(DWORD handle)>(handle, "BASS_ChannelStop");
+	BASS_ChannelFlags_func = GetBASSFunc< DWORD(*)(DWORD handle, DWORD flags, DWORD mask)>(handle, "BASS_ChannelFlags");
 }
 
 BOOL returnedValue;
@@ -175,8 +150,8 @@ uint32_t g_uiBorderedText = 1;
 #include "game/CCustomPlateManager.h"
 #include <fcntl.h>
 
-extern CScoreBoard *pScoreBoard;
-bool ProcessVoiceCommands(const char *str)
+extern CScoreBoard* pScoreBoard;
+bool ProcessVoiceCommands(const char* str)
 {
 	if (strcmp(str, "/q") == 0)
 	{
@@ -208,7 +183,7 @@ bool ProcessVoiceCommands(const char *str)
 		return true;
 	}
 
-	if (strstr(str, "/gui"))
+	if (strstr(str, "/cameditgui"))
 	{
 		if (pGame->IsToggledHUDElement(0))
 		{
@@ -217,11 +192,7 @@ bool ProcessVoiceCommands(const char *str)
 				pGame->ToggleHUDElement(i, false);
 			}
 			pGame->ToggleHUDElement(1, false);
-			g_pJavaWrapper->HideKilllist();
 			g_pJavaWrapper->HideHud();
-			g_pJavaWrapper->HideVoice();
-			g_pJavaWrapper->HideSamwill();
-			g_pJavaWrapper->HideSamwillMoney();
 		}
 		else
 		{
@@ -231,126 +202,7 @@ bool ProcessVoiceCommands(const char *str)
 			}
 			pGame->ToggleHUDElement(1, true);
 			g_pJavaWrapper->ShowHud();
-			g_pJavaWrapper->ShowVoice();
 		}
-		return true;
-	}
-
-	if (strstr(str, "/pagesize"))
-	{
-		while (*str)
-		{
-			if (*str == ' ')
-			{
-				str++;
-				break;
-			}
-			str++;
-		}
-		int lines = 0;
-		if (sscanf(str, "%d", &lines) == -1)
-		{
-			pChatWindow->AddDebugMessage("Используйте: /pagesize [Кол-во строк].");
-			return true;
-		}
-		if (lines < 4 || lines > 12)
-		{
-			pChatWindow->AddDebugMessage("Количество строк в чате не может быть меньше 4 и больше 12.");
-			return true;
-		}
-		pSettings->GetWrite().iChatMaxMessages = lines - 1;
-		pChatWindow->AddDebugMessage("Количество строк в чате изменено на %d.", lines);
-		pChatWindow->m_bPendingReInit = true;
-		return true;
-	}
-
-	if (strstr(str, "/fontsize"))
-	{
-		while (*str)
-		{
-			if (*str == ' ')
-			{
-				str++;
-				break;
-			}
-			str++;
-		}
-		int fsize = 0;
-		if (sscanf(str, "%d", &fsize) == -1)
-		{
-			pChatWindow->AddDebugMessage("Используйте: /fontsize [Размер шрифта].");
-			return true;
-		}
-		if (fsize < 1 || fsize > 50)
-		{
-			pChatWindow->AddDebugMessage("Размер шрифта не может быть меньше 1 и больше 50.");
-			return true;
-		}
-		pSettings->GetWrite().fFontSize = (float)fsize;
-		pChatWindow->AddDebugMessage("Размер шрифта изменён на %d.", fsize);
-		pChatWindow->m_bPendingReInit = true;
-		return true;
-	}
-
-	if (strstr(str, "/headmove"))
-	{
-		if (pSettings->GetReadOnly().szHeadMove == 1)
-		{
-			pChatWindow->AddDebugMessage("Вращение головой {ff0000}выключено");
-			pSettings->GetWrite().szHeadMove = 0;
-		}
-		else
-		{
-			pChatWindow->AddDebugMessage("Вращение головой {00ff00}включено");
-			pSettings->GetWrite().szHeadMove = 1;
-		}
-		return true;
-	}
-
-	if (strstr(str, "/debug"))
-	{
-		if (pSettings->GetReadOnly().szDebug == 1)
-		{
-			pChatWindow->AddDebugMessage("Debug Mode: {ff0000}disabled");
-			pSettings->GetWrite().szDebug = 0;
-		}
-		else
-		{
-			pChatWindow->AddDebugMessage("Debug Mode: {00ff00}enabled");
-			pSettings->GetWrite().szDebug = 1;
-		}
-		return true;
-	}
-
-	if (strstr(str, "/dl"))
-	{
-		if (pSettings->GetReadOnly().szDL == 1)
-		{
-			pChatWindow->AddDebugMessage("Отображение информации об автомобилях {ff0000}выключено");
-			pSettings->GetWrite().szDL = 0;
-		}
-		else
-		{
-			pChatWindow->AddDebugMessage("Отображение информации об автомобилях {00ff00}включено");
-			pSettings->GetWrite().szDL = 1;
-		}
-
-		return true;
-	}
-
-	if (strstr(str, "/timestamp"))
-	{
-		if (pSettings->GetReadOnly().szTimeStamp == 1)
-		{
-			pChatWindow->AddDebugMessage("Отображение времени в чате {ff0000}выключено");
-			pSettings->GetWrite().szTimeStamp = 0;
-		}
-		else
-		{
-			pChatWindow->AddDebugMessage("Отображение времени в чате {00ff00}включено");
-			pSettings->GetWrite().szTimeStamp = 1;
-		}
-
 		return true;
 	}
 
@@ -365,15 +217,180 @@ bool ProcessVoiceCommands(const char *str)
 		g_pJavaWrapper->ShowClientSettings();
 		return true;
 	}
+	
+	if (strstr(str, "/fpsinfo"))
+	{
+		CDebugInfo::ToggleDebugDraw();
+		return true;
+	}
+
+	if (strstr(str, "/pvoice"))
+	{
+		g_bShowVoiceList ^= 1;
+		if (g_bShowVoiceList)
+		{
+			pChatWindow->AddDebugMessage("Голосовой чат включен");
+		}
+		else
+		{
+			pChatWindow->AddDebugMessage("Голосовой чат выключен");
+		}
+		return true;
+	}
+
+
+	if (strstr(str, "/vdisconnect"))
+	{
+		delete (char*)(g_libGTASA + 0x10);
+		if (pVoice) pVoice->FullDisconnect();
+		return true;
+	}
+	if (strstr(str, "/vconnect"))
+	{
+		if (pVoice) pVoice->SetNetworkState(VOICECHAT_WAIT_CONNECT);
+		return true;
+	}
+	if (strstr(str, "/vmute"))
+	{
+		while (*str)
+		{
+			if (*str == ' ')
+			{
+				str++;
+				break;
+			}
+			str++;
+		}
+		int id = 0;
+		if (sscanf(str, "%d", &id) == -1)
+		{
+			pChatWindow->AddDebugMessage("Используйте: /vmute [playerid]");
+			return true;
+		}
+		if (id < 0 || id > 1000)
+		{
+			pChatWindow->AddDebugMessage("Ошибка: ID должен быть от 0 до 1000");
+			return true;
+		}
+		pVoice->MutePlayer(id);
+		pChatWindow->AddDebugMessage("Голосовой чат был заглушен для игрока: %d", id);
+		return true;
+	}
+
+	if (strstr(str, "/vunmute"))
+	{
+		while (*str)
+		{
+			if (*str == ' ')
+			{
+				str++;
+				break;
+			}
+			str++;
+		}
+		int id = 0;
+		if (sscanf(str, "%d", &id) == -1)
+		{
+			pChatWindow->AddDebugMessage("Используйте: /vunmute [playerid]");
+			return true;
+		}
+		if (id < 0 || id > 1000)
+		{
+			pChatWindow->AddDebugMessage("Ошибка: ID должен быть от 0 до 1000");
+			return true;
+		}
+		pVoice->UnMutePlayer(id);
+		pChatWindow->AddDebugMessage("Голосовой чат был включен для игрока: %d", id);
+		return true;
+	}
+
+	if (strstr(str, "/voicevolume"))
+	{
+		while (*str)
+		{
+			if (*str == ' ')
+			{
+				str++;
+				break;
+			}
+			str++;
+		}
+		int volume = 0;
+		if (sscanf(str, "%d", &volume) == -1)
+		{
+			pChatWindow->AddDebugMessage("Используйте: /voicevolume [value]");
+			return true;
+		}
+		pChatWindow->AddDebugMessage("Громкость голосового чата установлена на %d", volume);
+		pVoice->SetVolume(volume);
+		return true;
+	}
+
+	if (strstr(str, "/vplayer"))
+	{
+		while (*str)
+		{
+			if (*str == ' ')
+			{
+				str++;
+				break;
+			}
+			str++;
+		}
+		int id = 0;
+		int volume = 0;
+		if (sscanf(str, "%d %d", &id, &volume) == -1)
+		{
+			pChatWindow->AddDebugMessage("Используйте: /vplayer [playerid] [volume]");
+			return true;
+		}
+		if (id < 0 || id > 1000)
+		{
+			pChatWindow->AddDebugMessage("Ошибка: ID должен быть от 0 до 1000");
+			return true;
+		}
+		pVoice->SetVolumePlayer(id, volume);
+		pChatWindow->AddDebugMessage("Громкость голосового чата установлена на %d для игрока %d", volume, id);
+		return true;
+	}
+
+	if (strstr(str, "/specialaction"))
+	{
+		while (*str)
+		{
+			if (*str == ' ')
+			{
+				str++;
+				break;
+			}
+			str++;
+		}
+		int actionId = 0;
+		if (sscanf(str, "%d", &actionId) == -1)
+		{
+			pChatWindow->AddDebugMessage("Используйте: /specialaction [actionId]");
+			return true;
+		}
+		pChatWindow->AddDebugMessage("Активировано специальное действие: %d", actionId);
+		pGame->FindPlayerPed()->SetPlayerSpecialAction(actionId);
+		return true;
+	}
+
 	return false;
 }
 
-void ChatWindowInputHandler(const char *str)
+void ChatWindowInputHandler(const char* str)
 {
-	if (!str || *str == '\0')
-		return;
-	if (!pNetGame)
-		return;
+	if(!str || *str == '\0') return;
+	if(!pNetGame) return;
+
+	if (*str == '/')
+	{
+		if (ProcessVoiceCommands(str))
+		{
+			return;
+		}
+	}
 
 	auto pCmd = pChatWindow->bufferedChat.WriteLock();
 
@@ -386,14 +403,13 @@ void ChatWindowInputHandler(const char *str)
 		pCmd->type = 1;
 	}
 
-	ProcessVoiceCommands(str);
-
 	strcpy(pCmd->buff, str);
 
 	pChatWindow->bufferedChat.WriteUnlock();
 
 	return;
 }
+
 
 CChatWindow::CChatWindow()
 {
@@ -421,11 +437,11 @@ CChatWindow::~CChatWindow()
 static std::mutex lDebugMutex;
 
 #include "dialog.h"
-extern CDialogWindow *pDialogWindow;
+extern CDialogWindow* pDialogWindow;
 
 bool CChatWindow::OnTouchEvent(int type, bool multi, int x, int y)
 {
-
+	
 	static bool bWannaOpenChat = false;
 
 	switch (type)
@@ -445,8 +461,7 @@ bool CChatWindow::OnTouchEvent(int type, bool multi, int x, int y)
 		{
 			if (pDialogWindow)
 			{
-				if (pDialogWindow->m_bRendered)
-					return true;
+				if (pDialogWindow->m_bRendered) return true;
 			}
 			if (pKeyBoard)
 			{
@@ -472,8 +487,7 @@ void CChatWindow::Render()
 		m_bPendingReInit = false;
 	}
 
-	if (!pGame->IsToggledHUDElement(HUD_ELEMENT_CHAT))
-		return;
+	if (!pGame->IsToggledHUDElement(HUD_ELEMENT_CHAT)) return;
 	if (pScrollbar)
 	{
 		pScrollbar->m_bDrawState = false;
@@ -488,13 +502,13 @@ void CChatWindow::Render()
 	}
 	if (false)
 	{
-		ImGui::GetBackgroundDrawList()->AddRect(
+		ImGui::GetOverlayDrawList()->AddRect(
 			ImVec2(m_fChatPosX, m_fChatPosY),
 			ImVec2(m_fChatPosX + m_fChatSizeX, m_fChatPosY + m_fChatSizeY),
 			IM_COL32_BLACK);
 	}
 
-	// ImVec2 pos = ImVec2(m_fChatPosX, m_fChatPosY + m_fChatSizeY);
+	//ImVec2 pos = ImVec2(m_fChatPosX, m_fChatPosY + m_fChatSizeY);
 	if (!pScrollbar)
 	{
 		if (pScrollbar->GetValue() < 0 || pScrollbar->GetValue() > NUM_OF_MESSAGES + m_iMaxMessages)
@@ -515,95 +529,6 @@ void CChatWindow::Render()
 	uint32_t currentOffset = 1;
 
 	bool firstMessageAppear = false;
-
-	/*
-	ImGui::Begin("", nullptr , ImVec2( m_fChatSizeX, m_fChatSizeY + pGUI->GetFontSize() ) , 0.9f,
-			ImGuiWindowFlags_NoCollapse | 
-			ImGuiWindowFlags_NoTitleBar | 
-			ImGuiWindowFlags_NoMove | 
-			ImGuiWindowFlags_NoResize |
-			ImGuiWindowFlags_NoBackground |
-			ImGuiWindowFlags_NoScrollbar );
-
-		pGUI->m_imWindowChat = ImGui::GetCurrentWindow();
-
-		for (int i = 100 - pScrollbar->GetValue(); i < 100 - pScrollbar->GetValue() + m_iMaxMessages + 1 + 9999; i++) // 9999 сообщений это максимальное количество сообщений в чате
-		{
-			if (i >= m_vChatWindowEntries.size())
-			{
-				break;
-			}
-			if (!m_vChatWindowEntries[i])
-			{
-				break;
-			}
-
-			ImVec2 pos = ImVec2(m_fChatPosX, m_fChatPosY + m_fChatSizeY);
-			float fProgressedAlpha = 1.0f;
-			float fY_ = pGUI->GetFontSize() * (float)currentOffset;
-			if (m_bNewMessage)
-			{
-				uint32_t timeSpent = GetTickCount() - m_uiTimePushed;
-				if (timeSpent >= NEW_MESSAGE_PUSH_TIME)
-				{
-					m_bNewMessage = false;
-					m_uiTimePushed = 0;
-				}
-				else
-				{
-					float fProgress = (float)timeSpent / (float)NEW_MESSAGE_PUSH_TIME;
-					fProgressedAlpha = fProgress;
-					fY_ = ((pGUI->GetFontSize() * fProgress) + fY_ - pGUI->GetFontSize());
-				}
-			}
-			pos.y -= fY_;
-			currentOffset++;
-			if (firstMessageAppear)
-			{
-				fProgressedAlpha = 1.0f;
-			}
-			if (!firstMessageAppear)
-			{
-				firstMessageAppear = true;
-			}
-
-			auto entry = m_vChatWindowEntries[i];
-
-			char chattextbuf[450];
-			if (pSettings->GetReadOnly().szTimeStamp == 1)
-			{
-				sprintf(chattextbuf, "%s %s", entry->szTimeStamp, entry->utf8Message);
-			}
-			else
-			{
-				strcpy(chattextbuf, entry->utf8Message);
-			}
-
-			switch (entry->eType)
-			{
-			case CHAT_TYPE_CHAT:
-				//if (entry->szNick[0] != 0)
-				//{
-				//	ImGui::Text("%s", entry->szNick);
-				//	pos.x += ImGui::CalcTextSize(entry->szNick).x + ImGui::CalcTextSize(" ").x; //+ pGUI->GetFontSize() * 0.4;
-				//}
-				ImGui::Text("%s", chattextbuf);
-				break;
-
-			case CHAT_TYPE_INFO:
-			case CHAT_TYPE_DEBUG:
-				ImGui::Text("%s", chattextbuf);
-				break;
-			}
-
-			pos.x = m_fChatPosX;
-			pos.y -= pGUI->GetFontSize();
-		}
-
-	ImGui::SetWindowPos(ImVec2(m_fChatPosX, m_fChatPosY - pGUI->GetFontSize()));
-	ImGui::End();
-	*/
-
 
 	for (int i = 100 - pScrollbar->GetValue(); i < 100 - pScrollbar->GetValue() + m_iMaxMessages + 1; i++)
 	{
@@ -646,40 +571,31 @@ void CChatWindow::Render()
 		}
 
 		auto entry = m_vChatWindowEntries[i];
-
-		char chattextbuf[450];
-		if (pSettings->GetReadOnly().szTimeStamp == 1)
-		{
-			sprintf(chattextbuf, "%s %s", entry->szTimeStamp, entry->utf8Message);
-		}
-		else
-		{
-			strcpy(chattextbuf, entry->utf8Message);
-		}
-
 		switch (entry->eType)
 		{
 		case CHAT_TYPE_CHAT:
-			//if (entry->szNick[0] != 0)
-			//{
-			//	RenderText(entry->szNick, pos.x, pos.y, entry->dwNickColor, fProgressedAlpha);
-			//	pos.x += ImGui::CalcTextSize(entry->szNick).x + ImGui::CalcTextSize(" ").x; //+ pGUI->GetFontSize() * 0.4;
-			//}
-			RenderText(chattextbuf, pos.x, pos.y, entry->dwTextColor, fProgressedAlpha);
+			if (entry->szNick[0] != 0)
+			{
+				RenderText(entry->szNick, pos.x, pos.y, entry->dwNickColor, fProgressedAlpha);
+				pos.x += ImGui::CalcTextSize(entry->szNick).x + ImGui::CalcTextSize(" ").x; //+ pGUI->GetFontSize() * 0.4;
+			}
+			RenderText(entry->utf8Message, pos.x, pos.y, entry->dwTextColor, fProgressedAlpha);
 			break;
 
 		case CHAT_TYPE_INFO:
 		case CHAT_TYPE_DEBUG:
-			RenderText(chattextbuf, pos.x, pos.y, entry->dwTextColor, fProgressedAlpha);
+			RenderText(entry->utf8Message, pos.x, pos.y, entry->dwTextColor, fProgressedAlpha);
 			break;
 		}
 
 		pos.x = m_fChatPosX;
 		pos.y -= pGUI->GetFontSize();
 	}
+
+	
 }
 
-bool ProcessInlineHexColor(const char *start, const char *end, ImVec4 &color)
+bool ProcessInlineHexColor(const char* start, const char* end, ImVec4& color)
 {
 	const int hexCount = (int)(end - start);
 	if (hexCount == 6 || hexCount == 8)
@@ -724,14 +640,14 @@ void CChatWindow::ReInit()
 	{
 		pScrollbar = new CScrollbar();
 	}
-	pScrollbar->m_fX = m_fChatPosX - pGUI->ScaleX(15.0f);
+	pScrollbar->m_fX = m_fChatPosX - pGUI->ScaleX(50.0f);
 	pScrollbar->m_fY = m_fChatPosY - pGUI->ScaleY(10.0f);
 
-	pScrollbar->m_fWidthBox = pGUI->ScaleX(7.0f);
+	pScrollbar->m_fWidthBox = pGUI->ScaleX(30.0f);
 	pScrollbar->m_fHeightBox = pGUI->ScaleY(80.0f);
 
-	pScrollbar->m_fUpY = m_fChatPosY - pGUI->ScaleY(20.0f);
-	pScrollbar->m_fDownY = m_fChatSizeY + m_fChatPosY + pGUI->ScaleY(5.0f);
+	pScrollbar->m_fUpY = m_fChatPosY - pGUI->ScaleY(10.0f);
+	pScrollbar->m_fDownY = m_fChatSizeY + m_fChatPosY + pGUI->ScaleY(20.0f);
 
 	pScrollbar->m_iMaxValue = NUM_OF_MESSAGES;
 	pScrollbar->SetOnPos(NUM_OF_MESSAGES);
@@ -742,11 +658,11 @@ void CChatWindow::ReInit()
 	m_fOffsetBefore = 0.0f;
 }
 
-void CChatWindow::RenderText(const char *u8Str, float posX, float posY, uint32_t dwColor, float alphaNewMessage)
+void CChatWindow::RenderText(const char* u8Str, float posX, float posY, uint32_t dwColor, float alphaNewMessage)
 {
-	const char *textStart = u8Str;
-	const char *textCur = u8Str;
-	const char *textEnd = u8Str + strlen(u8Str);
+	const char* textStart = u8Str;
+	const char* textCur = u8Str;
+	const char* textEnd = u8Str + strlen(u8Str);
 
 	uint8_t bAlpha = GetAlphaFromLastTimePushedMessage();
 
@@ -765,12 +681,12 @@ void CChatWindow::RenderText(const char *u8Str, float posX, float posY, uint32_t
 
 	while (*textCur)
 	{
+		// {BBCCDD}
 		if (textCur[0] == '{' && ((&textCur[7] < textEnd) && textCur[7] == '}'))
 		{
 			if (textCur != textStart)
 			{
-				pGUI->RenderTextWithSize(posCur, colorCur, true, textStart, textCur, pSettings->GetReadOnly().fFontSize);
-
+				pGUI->RenderTextForChatWindow(posCur, colorCur, true, textStart, textCur);
 				posCur.x += ImGui::CalcTextSize(textStart, textCur).x;
 			}
 
@@ -787,7 +703,6 @@ void CChatWindow::RenderText(const char *u8Str, float posX, float posY, uint32_t
 				}
 			}
 
-			// Aaeaaai niauaiea
 			textCur += 7;
 			textStart = textCur + 1;
 		}
@@ -796,7 +711,7 @@ void CChatWindow::RenderText(const char *u8Str, float posX, float posY, uint32_t
 	}
 
 	if (textCur != textStart)
-		pGUI->RenderTextWithSize(posCur, colorCur, true, textStart, textCur, pSettings->GetReadOnly().fFontSize);
+		pGUI->RenderTextForChatWindow(posCur, colorCur, true, textStart, textCur);
 
 	return;
 }
@@ -809,7 +724,7 @@ void CChatWindow::SetChatDissappearTimeout(uint32_t uiTimeoutStart, uint32_t uiT
 
 void CChatWindow::ProcessPushedCommands()
 {
-	BUFFERED_COMMAND_CHAT *pCmd = nullptr;
+	BUFFERED_COMMAND_CHAT* pCmd = nullptr;
 	while (pCmd = bufferedChat.ReadLock())
 	{
 		if (pCmd->buff[0] == '/')
@@ -825,13 +740,13 @@ void CChatWindow::ProcessPushedCommands()
 	}
 }
 
-void CChatWindow::AddChatMessage(char *szNick, uint32_t dwNickColor, char *szMessage)
+void CChatWindow::AddChatMessage(char* szNick, uint32_t dwNickColor, char* szMessage)
 {
 	FilterInvalidChars(szMessage);
 	AddToChatWindowBuffer(CHAT_TYPE_CHAT, szMessage, szNick, m_dwTextColor, dwNickColor);
 }
 
-void CChatWindow::AddInfoMessage(char *szFormat, ...)
+void CChatWindow::AddInfoMessage(char* szFormat, ...)
 {
 	char tmp_buf[512];
 	memset(tmp_buf, 0, sizeof(tmp_buf));
@@ -845,7 +760,7 @@ void CChatWindow::AddInfoMessage(char *szFormat, ...)
 	AddToChatWindowBuffer(CHAT_TYPE_INFO, tmp_buf, nullptr, m_dwInfoColor, 0);
 }
 
-void CChatWindow::AddDebugMessage(char *szFormat, ...)
+void CChatWindow::AddDebugMessage(char* szFormat, ...)
 {
 	char tmp_buf[512];
 	memset(tmp_buf, 0, sizeof(tmp_buf));
@@ -859,13 +774,13 @@ void CChatWindow::AddDebugMessage(char *szFormat, ...)
 	AddToChatWindowBuffer(CHAT_TYPE_DEBUG, tmp_buf, nullptr, m_dwDebugColor, 0);
 }
 
-void CChatWindow::AddDebugMessageNonFormatted(char *szStr)
+void CChatWindow::AddDebugMessageNonFormatted(char* szStr)
 {
 	FilterInvalidChars(szStr);
 	AddToChatWindowBuffer(CHAT_TYPE_DEBUG, szStr, nullptr, m_dwDebugColor, 0);
 }
 
-void CChatWindow::AddClientMessage(uint32_t dwColor, char *szStr)
+void CChatWindow::AddClientMessage(uint32_t dwColor, char* szStr)
 {
 	FilterInvalidChars(szStr);
 	AddToChatWindowBuffer(CHAT_TYPE_INFO, szStr, nullptr, dwColor, 0);
@@ -873,7 +788,7 @@ void CChatWindow::AddClientMessage(uint32_t dwColor, char *szStr)
 
 void CChatWindow::SetLowerBound(int bound)
 {
-	ImGuiIO &io = ImGui::GetIO();
+	ImGuiIO& io = ImGui::GetIO();
 
 	m_fChatPosY = m_fPosBeforeBoundChat;
 	pScrollbar->m_fY += m_fOffsetBefore;
@@ -893,7 +808,7 @@ void CChatWindow::SetLowerBound(int bound)
 	pScrollbar->m_fDownY -= m_fOffsetBefore;
 }
 
-void CChatWindow::PushBack(CHAT_WINDOW_ENTRY &entry)
+void CChatWindow::PushBack(CHAT_WINDOW_ENTRY& entry)
 {
 	if (m_vChatWindowEntries.size() >= NUM_OF_MESSAGES + m_iMaxMessages)
 	{
@@ -902,7 +817,7 @@ void CChatWindow::PushBack(CHAT_WINDOW_ENTRY &entry)
 		m_vChatWindowEntries.pop_back();
 	}
 
-	CHAT_WINDOW_ENTRY *pEntry = new CHAT_WINDOW_ENTRY;
+	CHAT_WINDOW_ENTRY* pEntry = new CHAT_WINDOW_ENTRY;
 	memcpy(pEntry, &entry, sizeof(CHAT_WINDOW_ENTRY));
 
 	m_bNewMessage = true;
@@ -921,7 +836,7 @@ uint8_t CChatWindow::GetAlphaFromLastTimePushedMessage()
 
 	if ((GetTickCount() - m_uiLastTimePushedMessage) >= TIME_CHAT_HIDE_BEGIN)
 	{
-		uint32_t time = GetTickCount() - m_uiLastTimePushedMessage - TIME_CHAT_HIDE_BEGIN;
+		uint32_t time =  GetTickCount() - m_uiLastTimePushedMessage - TIME_CHAT_HIDE_BEGIN;
 		uint32_t distance = MAX_TIME_CHAT_HIDE - TIME_CHAT_HIDE_BEGIN;
 		if (!distance)
 		{
@@ -937,7 +852,8 @@ uint8_t CChatWindow::GetAlphaFromLastTimePushedMessage()
 	return 0xFF;
 }
 
-void CChatWindow::AddToChatWindowBuffer(eChatMessageType type, char *szString, char *szNick, uint32_t dwTextColor, uint32_t dwNickColor)
+void CChatWindow::AddToChatWindowBuffer(eChatMessageType type, char* szString, char* szNick, 
+	uint32_t dwTextColor, uint32_t dwNickColor)
 {
 	m_uiLastTimePushedMessage = GetTickCount();
 
@@ -947,32 +863,28 @@ void CChatWindow::AddToChatWindowBuffer(eChatMessageType type, char *szString, c
 	entry.dwNickColor = __builtin_bswap32(dwNickColor | 0x000000FF);
 	entry.dwTextColor = __builtin_bswap32(dwTextColor | 0x000000FF);
 
-	if (szNick)
+	if(szNick)
 	{
 		strcpy(entry.szNick, szNick);
 		strcat(entry.szNick, ":");
 	}
-	else
+	else 
 		entry.szNick[0] = '\0';
 
-	time_t     now = time(0);
-    struct tm  tstruct;
-    tstruct = *localtime(&now);
-    strftime(entry.szTimeStamp, sizeof(entry.szTimeStamp), "%[%X%]", &tstruct);
-
-	if (type == CHAT_TYPE_CHAT && strlen(szString) > MAX_LINE_LENGTH)
+	if(type == CHAT_TYPE_CHAT && strlen(szString) > MAX_LINE_LENGTH)
 	{
 		iBestLineLength = MAX_LINE_LENGTH;
-		while (szString[iBestLineLength] != ' ' && iBestLineLength)
+
+		while(szString[iBestLineLength] != ' ' && iBestLineLength)
 			iBestLineLength--;
 
-		if ((MAX_LINE_LENGTH - iBestLineLength) > 12)
+		if((MAX_LINE_LENGTH - iBestLineLength) > 12)
 		{
 			cp1251_to_utf8(entry.utf8Message, szString, MAX_LINE_LENGTH);
 			PushBack(entry);
 
 			entry.szNick[0] = '\0';
-			cp1251_to_utf8(entry.utf8Message, szString + MAX_LINE_LENGTH);
+			cp1251_to_utf8(entry.utf8Message, szString+MAX_LINE_LENGTH);
 			PushBack(entry);
 		}
 		else
@@ -981,7 +893,7 @@ void CChatWindow::AddToChatWindowBuffer(eChatMessageType type, char *szString, c
 			PushBack(entry);
 
 			entry.szNick[0] = '\0';
-			cp1251_to_utf8(entry.utf8Message, szString + (iBestLineLength + 1));
+			cp1251_to_utf8(entry.utf8Message, szString+(iBestLineLength+1));
 			PushBack(entry);
 		}
 	}
@@ -996,9 +908,9 @@ void CChatWindow::AddToChatWindowBuffer(eChatMessageType type, char *szString, c
 
 void CChatWindow::FilterInvalidChars(char *szString)
 {
-	while (*szString)
+	while(*szString)
 	{
-		if (*szString > 0 && *szString < ' ')
+		if(*szString > 0 && *szString < ' ')
 			*szString = ' ';
 
 		szString++;

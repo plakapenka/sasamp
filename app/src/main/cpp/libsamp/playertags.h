@@ -13,9 +13,9 @@ public:
 	~CPlayerTags();
 
 	void Render();
-	void AddChatBubble(PLAYERID playerId, char *szText, uint32_t dwColor, float fDistance, uint32_t dwTime);
+	void AddChatBubble(PLAYERID playerId, char* szText, uint32_t dwColor, float fDistance, uint32_t dwTime);
 	void ResetChatBubble(PLAYERID playerId);
-	void DrawChatBubble(PLAYERID playerId, VECTOR *vec, float fDistance);
+	void DrawChatBubble(PLAYERID playerId, VECTOR* vec, float fDistance);
 
 private:
 	ImVec2 HealthBarBDR1;
@@ -29,16 +29,17 @@ private:
 	ImColor HealthBarBGColor;
 	ImColor HealthBarBDRColor;
 
-	RwTexture *m_pAfk_icon;
-	RwTexture *m_pKeyboard_icon;
+	RwTexture* m_pAfk_icon;
+	RwTexture* m_pVoice_icon;
+	RwTexture* m_pKeyboard_icon;
 
 	uint32_t m_dwColors[MAX_PLAYERS];
 	float m_fDistance[MAX_PLAYERS];
 	float m_fTrueX[MAX_PLAYERS];
 	uint32_t m_dwTime[MAX_PLAYERS];
 	uint32_t m_dwStartTime[MAX_PLAYERS];
-	char *m_pSzText[MAX_PLAYERS];
-	char *m_pSzTextWithoutColors[MAX_PLAYERS];
+	char* m_pSzText[MAX_PLAYERS];
+	char* m_pSzTextWithoutColors[MAX_PLAYERS];
 	bool m_bChatBubbleStatus[MAX_PLAYERS];
 	int m_iOffset[MAX_PLAYERS];
 
@@ -46,6 +47,6 @@ private:
 	uint32_t m_iLastVoiceTimeUpdated[MAX_PLAYERS];
 	PLAYERID m_iPlayerIDs[MAX_PLAYERS];
 
-	void Draw(VECTOR *vec, char *szNick, uint32_t dwColor,
-			  float fDist, float fHealth, float fArmour, bool bAfk, bool bVoice, bool bKeyboard);
+	void Draw(VECTOR* vec, char* szNick, uint32_t dwColor, 
+	float fDist, float fHealth, float fArmour, bool bAfk, bool bVoice, bool bKeyboard);
 };
