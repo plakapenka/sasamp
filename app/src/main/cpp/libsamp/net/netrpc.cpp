@@ -98,7 +98,7 @@ void InitGame(RPCParameters *rpcParams)
 				//Log("Created voice");
 			}
 
-	if(pChatWindow) pChatWindow->AddDebugMessage("Подключено к {B9C9BF}%.64s", pNetGame->m_szHostName);
+	if(pChatWindow) pChatWindow->AddDebugMessage("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ {B9C9BF}%.64s", pNetGame->m_szHostName);
 }
 
 void ServerJoin(RPCParameters *rpcParams)
@@ -404,7 +404,7 @@ void SetRaceCheckpoint(RPCParameters *rpcParams)
 	bsData.Read(fX);
 
 	pGame->SetRaceCheckpointInformation(byteType, &pos, &next, fX);
-	pGame->ToggleCheckpoints(true);
+	pGame->ToggleRaceCheckpoints(true);
 }
 
 void DisableRaceCheckpoint(RPCParameters *rpcParams)
@@ -602,7 +602,7 @@ void DialogBox(RPCParameters *rpcParams)
 void GameModeRestart(RPCParameters *rpcParams)
 {
 	// pChatWindow->AddInfoMessage("The server is restarting..");
-	pChatWindow->AddInfoMessage("{ff0000}Принудительное переподключение к игре..{ffffff}");
+	pChatWindow->AddInfoMessage("{ff0000}пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ..{ffffff}");
 	pNetGame->ShutDownForGameRestart();
 }
 
@@ -621,21 +621,21 @@ void ConnectionRejected(RPCParameters *rpcParams)
 	bsData.Read(byteRejectReason);
 
 	if(byteRejectReason == REJECT_REASON_BAD_VERSION)
-		pChatWindow->AddInfoMessage("СОЕДИНЕНИЕ ОТКЛОНЕНО: Некорректная версия.");
+		pChatWindow->AddInfoMessage("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.");
 	else if(byteRejectReason == REJECT_REASON_BAD_NICKNAME)
 	{
-		pChatWindow->AddInfoMessage("СОЕДИНЕНИЕ ОТКЛОНЕНО: Неприемлимый NickName");
-		pChatWindow->AddInfoMessage("Пожалуйста, выберите другой ник от 3 до 20 символов");
-		pChatWindow->AddInfoMessage("Пожалуйста, используйте только a-z, A-Z, 0-9");
-		pChatWindow->AddInfoMessage("Используйте /quit для выхода");
+		pChatWindow->AddInfoMessage("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ NickName");
+		pChatWindow->AddInfoMessage("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅ 3 пїЅпїЅ 20 пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ");
+		pChatWindow->AddInfoMessage("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ a-z, A-Z, 0-9");
+		pChatWindow->AddInfoMessage("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ /quit пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ");
 	}
 	else if(byteRejectReason == REJECT_REASON_BAD_MOD)
 	{
-		pChatWindow->AddInfoMessage("СОЕДИНЕНИЕ ОТКЛОНЕНО: Некорректная версия мода.");
+		pChatWindow->AddInfoMessage("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ.");
 	}
 	else if(byteRejectReason == REJECT_REASON_BAD_PLAYERID)
 	{
-		pChatWindow->AddInfoMessage("СОЕДИНЕНИЕ ОТКЛОНЕНО: Не удалось выделить слот для игрока.");
+		pChatWindow->AddInfoMessage("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.");
 	}
 
 	pNetGame->GetRakClient()->Disconnect(500);
