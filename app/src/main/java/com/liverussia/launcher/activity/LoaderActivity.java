@@ -1,6 +1,12 @@
 package com.liverussia.launcher.activity;
 
+import static com.liverussia.cr.core.Config.APP_PATH;
+import static com.liverussia.cr.core.Config.GAME_PATH;
+import static com.liverussia.cr.core.Config.PATH_DOWNLOADS;
+import static com.liverussia.cr.core.Config.URL_FILES;
+
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -12,36 +18,38 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.ParcelFileDescriptor;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.util.zip.*;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.liverussia.cr.R;
-
-
 import com.liverussia.cr.core.Utils;
 
-import static com.liverussia.cr.core.Config.PATH_DOWNLOADS;
-import static com.liverussia.cr.core.Config.URL_FILES;
-
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class LoaderActivity extends AppCompatActivity {
+    static final int BUFFER = 2048;
     private static final int DATA_STATE_NONE = 0;
     private static final int DATA_STATE_DOWNLOADING = 1;
     private static final int DATA_STATE_DOWNLOAD_SUCESS = 2;
 
-    private DownloadManager mgr = null;
+    private DownloadManager mDownloadManager = null;
     private long downloadid = 0;
-    private TextView loading;
+    private TextView loadingText;
     private TextView loadingPercent;
     private ProgressBar progressBar;
     private TextView fileName;
@@ -56,6 +64,8 @@ public class LoaderActivity extends AppCompatActivity {
         setContentView(R.layout.activity_loader);
         progressBar = findViewById(R.id.progressBar);
         loadingPercent = findViewById(R.id.loadingPercent);
+        mDownloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+        loadingText = findViewById(R.id.loadingText);
 
         registerReceiver(onComplete,
                 new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
@@ -106,11 +116,11 @@ public class LoaderActivity extends AppCompatActivity {
         int type = Utils.getType();
         switch (type) {
             case DATA_STATE_NONE: {
-                DownloadManager mDownloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+
 
                 DownloadManager.Request request = new DownloadManager.Request(resource);
 
-                request.setDestinationInExternalPublicDir(PATH_DOWNLOADS, "tempcache.png");
+                request.setDestinationInExternalPublicDir(PATH_DOWNLOADS, "tempcache.zip");
 
                 request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE | DownloadManager.Request.NETWORK_WIFI);
                 request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
@@ -127,12 +137,148 @@ public class LoaderActivity extends AppCompatActivity {
                 Utils.setType(DATA_STATE_DOWNLOADING);
                 break;
             }
+            case DATA_STATE_DOWNLOAD_SUCESS: {
+                String zipFile = Environment.getExternalStorageDirectory() + APP_PATH+"tempcache.zip";
+                String unzipLocation = GAME_PATH;
 
-            default:
-                throw new IllegalStateException("Unexpected value: " + type);
+                Log.d("Unzip", "Zipfile: " + zipFile);
+                Log.d("Unzip", "location: " + unzipLocation);
+
+                Decompress d = new Decompress(zipFile, unzipLocation);
+               // d.unzip();
+
+                loadingText.setText("Распаковка файлов игры...");
+                loadingPercent.setText("0%");
+                progressBar.setProgress(0);
+            }
         }
     }
 
+    public void SetStatusText(String text)
+    {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                loadingText.setText(text);
+            }
+        });
+
+    }
+    public void SetPercentText(String text)
+    {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                    loadingPercent.setText(text);
+            }
+        });
+
+    }
+    public void SetProgress(int progress)
+    {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                progressBar.setProgress(progress);
+            }
+        });
+
+    }
+
+    public class Decompress extends Thread {
+        private String _zipFile;
+        private String _location;
+
+        public Decompress(String zipFile, String location) {
+
+            _zipFile = zipFile;
+            _location = location;
+
+            _dirChecker("");
+            // Создаём новый поток
+           // super("Второй поток");
+            Log.i("asdf", "Создан второй поток " + this);
+            start(); // Запускаем поток
+        }
+
+        @SuppressLint("SetTextI18n")
+        public void run() {
+
+            try {
+                byte[] buffer = new byte[8192];
+                FileInputStream inputStream = new FileInputStream(_zipFile);
+                ZipInputStream zipStream = new ZipInputStream(inputStream);
+                int totalSize = 0;
+
+                ZipEntry zEntry = null;
+                while ((zEntry = zipStream.getNextEntry()) != null)
+                {
+                    totalSize += zEntry.getSize();
+                }
+               // progressBar.setMax(totalSize);
+                zipStream.close();
+                inputStream = new FileInputStream(_zipFile);
+                zipStream = new ZipInputStream(inputStream);
+                int readedByte = 0;
+                zEntry = null;
+                float percent = 0;
+
+                    while ((zEntry = zipStream.getNextEntry()) != null) {
+                        Log.d("asdf", "File = " + zEntry.getName());
+                        if (zEntry.isDirectory()) {
+                            hanldeDirectory(zEntry.getName());
+                        } else {
+                            FileOutputStream fout = new FileOutputStream(
+                                    this._location + "/" + zEntry.getName());
+                            BufferedOutputStream bufout = new BufferedOutputStream(fout);
+
+                            int read = 0;
+
+                            while ((read = zipStream.read(buffer)) != -1) {
+
+                                readedByte += read;
+                                bufout.write(buffer, 0, read);
+                                percent = (((float)readedByte / (float)totalSize) * 100);
+                                if(read % 100 == 0)
+                                {
+                                    String _str = String.format("%.2f %%", percent);
+                                    SetPercentText(_str);
+                                    SetProgress((int)percent);
+                                }
+
+                               // progressBar.setProgress(readedByte);
+                            }
+
+                            zipStream.closeEntry();
+                            bufout.close();
+                            fout.close();
+                            SetPercentText("100 %");
+                        }
+                    }
+
+
+                zipStream.close();
+                SetStatusText("Распаковка завершена");
+            } catch (Exception e) {
+                SetStatusText("Ошибка распаковки");
+                e.printStackTrace();
+            }
+
+        }
+        public void hanldeDirectory(String dir) {
+            File f = new File(this._location + dir);
+            if (!f.isDirectory()) {
+                f.mkdirs();
+            }
+        }
+        private void _dirChecker(String dir) {
+            File f = new File(_location + dir);
+
+            if(!f.isDirectory()) {
+                f.mkdirs();
+            }
+        }
+    }
     public class DownloadObserver extends ContentObserver {
         private long downid;
         private Handler handler;
@@ -148,6 +294,7 @@ public class LoaderActivity extends AppCompatActivity {
 
         @Override
         public void onChange(boolean selfChange) {
+            if(Utils.getType() == DATA_STATE_DOWNLOAD_SUCESS) return ;
             DownloadManager.Query query = new DownloadManager.Query().setFilterById(downloadid);
             DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
             //这个就是数据库查询啦
@@ -157,12 +304,14 @@ public class LoaderActivity extends AppCompatActivity {
                 float mDownload_all = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
                 float mProgress = ( (mDownload_so_far / mDownload_all)*100 );
 
-                loadingPercent.setText(mProgress + "%");
                 progressBar.setProgress((int) mProgress);
-                Log.d("avc", "mDownload_so_far = " + mDownload_so_far +", mDownload_all = " + mDownload_all + " mProgress = " + mProgress);
+                String _str = String.format("%.2f %%",mProgress);
+                loadingPercent.setText(_str);
+
 
             }
             cursor.close();
         }
     }
+
 }
