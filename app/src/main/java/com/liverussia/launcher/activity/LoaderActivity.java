@@ -118,7 +118,7 @@ public class LoaderActivity extends AppCompatActivity {
 
                 DownloadManager.Request request = new DownloadManager.Request(resource);
 
-                request.setDestinationInExternalPublicDir(PATH_DOWNLOADS, "tempcache.zip");
+                request.setDestinationInExternalPublicDir("Android/data/com.liverussia.cr/", "tempcache.zip");
 
                 request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE | DownloadManager.Request.NETWORK_WIFI);
                 request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
@@ -217,7 +217,7 @@ public class LoaderActivity extends AppCompatActivity {
                 Charset CP866 = Charset.forName("CP437");
                 ZipInputStream zipStream = new ZipInputStream(inputStream, CP866);
 
-                int totalSize = 3113640;
+                long totalSize = 3113640;
 
                 ZipEntry zEntry = null;
                 //while ((zEntry = zipStream.getNextEntry()) != null)
@@ -226,7 +226,7 @@ public class LoaderActivity extends AppCompatActivity {
                  //   totalSize += zEntry.getSize();
                 //}
 
-                SetMaxProgress(totalSize);
+                //SetMaxProgress(totalSize);
                 //zipStream.close();
                // inputStream = new FileInputStream(_zipFile);
                // zipStream = new ZipInputStream(inputStream);
