@@ -1,7 +1,6 @@
 package com.liverussia.launcher.activity;
 
 import static com.liverussia.cr.core.Config.APP_PATH;
-import static com.liverussia.cr.core.Config.GAME_PATH;
 import static com.liverussia.cr.core.Config.PATH_DOWNLOADS;
 import static com.liverussia.cr.core.Config.URL_FILES;
 
@@ -18,26 +17,24 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.ParcelFileDescriptor;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import java.io.*;
-import java.nio.charset.Charset;
-import java.util.zip.*;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.liverussia.cr.R;
 import com.liverussia.cr.core.Utils;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.nio.charset.Charset;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -86,6 +83,7 @@ public class LoaderActivity extends AppCompatActivity {
                 requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1000);
             } else {
                 InstallGame();
+                // InstallGame();
             }
         } else {
             InstallGame();
@@ -138,8 +136,8 @@ public class LoaderActivity extends AppCompatActivity {
                 break;
             }
             case DATA_STATE_DOWNLOAD_SUCESS: {
-                String zipFile = Environment.getExternalStorageDirectory() + APP_PATH+"tempcache.zip";
-                String unzipLocation = GAME_PATH;
+                String zipFile = APP_PATH+"tempcache.zip";
+                String unzipLocation = APP_PATH;
 
                 Log.d("Unzip", "Zipfile: " + zipFile);
                 Log.d("Unzip", "location: " + unzipLocation);
@@ -182,6 +180,15 @@ public class LoaderActivity extends AppCompatActivity {
                 progressBar.setProgress(progress);
             }
         });
+    }
+    public void SetMaxProgress(int progress)
+    {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                progressBar.setMax(progress);
+            }
+        });
 
     }
 
@@ -205,26 +212,31 @@ public class LoaderActivity extends AppCompatActivity {
         public void run() {
 
             try {
-                byte[] buffer = new byte[8192];
+                byte[] buffer = new byte[4096];
                 FileInputStream inputStream = new FileInputStream(_zipFile);
-                ZipInputStream zipStream = new ZipInputStream(inputStream);
-                int totalSize = 0;
+                Charset CP866 = Charset.forName("CP437");
+                ZipInputStream zipStream = new ZipInputStream(inputStream, CP866);
+
+                int totalSize = 3113640;
 
                 ZipEntry zEntry = null;
-                while ((zEntry = zipStream.getNextEntry()) != null)
-                {
-                    totalSize += zEntry.getSize();
-                }
-               // progressBar.setMax(totalSize);
-                zipStream.close();
-                inputStream = new FileInputStream(_zipFile);
-                zipStream = new ZipInputStream(inputStream);
-                int readedByte = 0;
-                zEntry = null;
+                //while ((zEntry = zipStream.getNextEntry()) != null)
+                //{
+                //    Log.d("adf", "scan");
+                 //   totalSize += zEntry.getSize();
+                //}
+
+                SetMaxProgress(totalSize);
+                //zipStream.close();
+               // inputStream = new FileInputStream(_zipFile);
+               // zipStream = new ZipInputStream(inputStream);
+                long readedByte = 0;
+                //zEntry = null;
                 float percent = 0;
 
                     while ((zEntry = zipStream.getNextEntry()) != null) {
-                        Log.d("asdf", "File = " + zEntry.getName());
+                        //Log.d("asdf", "File = " + zEntry.getName());
+                        SetStatusText("Распаковка " + zEntry.getName());
                         if (zEntry.isDirectory()) {
                             hanldeDirectory(zEntry.getName());
                         } else {
@@ -238,7 +250,7 @@ public class LoaderActivity extends AppCompatActivity {
 
                                 readedByte += read;
                                 bufout.write(buffer, 0, read);
-                                percent = (((float)readedByte / (float)totalSize) * 100);
+                                percent = ((((float)readedByte/1000) / (float)totalSize) * 100);
                                 if(read % 100 == 0)
                                 {
                                     String _str = String.format("%.2f %%", percent);
@@ -253,10 +265,11 @@ public class LoaderActivity extends AppCompatActivity {
                             bufout.close();
                             fout.close();
                             SetPercentText("100 %");
+
                         }
                     }
 
-
+                Log.d("Adsfasdf", "readedByte = " + readedByte);
                 zipStream.close();
                 SetStatusText("Распаковка завершена");
             } catch (Exception e) {
