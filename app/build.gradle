@@ -11,6 +11,7 @@ android {
 
     defaultConfig {
         minSdkVersion 17
+        //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 28
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -58,15 +59,11 @@ dependencies {
     implementation 'com.makeramen:roundedimageview:2.3.0'
     implementation 'com.github.bumptech.glide:glide:4.13.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.13.0'
-    implementation 'com.mindorks.android:prdownloader:0.6.0'
+    //noinspection GradleDependency
     implementation 'com.google.firebase:firebase-database:20.0.4'
-    implementation 'com.github.hzy3774:AndroidP7zip:v1.7.2'
-    implementation 'com.hzy:un7zip:+'
     implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
     implementation 'com.github.smarteist:autoimageslider:1.4.0'
     implementation platform('com.google.firebase:firebase-bom:29.2.1')
-    implementation 'com.liulishuo.okdownload:okdownload:1.0.3'
-    implementation 'com.liulishuo.filedownloader:library:1.7.7'
     implementation("com.google.guava:guava:31.1-jre")
     api("com.google.guava:guava:31.1-jre")
     implementation("com.google.guava:guava:31.1-android")
