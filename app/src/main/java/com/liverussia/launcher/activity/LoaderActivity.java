@@ -1,7 +1,5 @@
 package com.liverussia.launcher.activity;
 
-import static com.liverussia.cr.core.Config.APP_PATH;
-import static com.liverussia.cr.core.Config.PATH_DOWNLOADS;
 import static com.liverussia.cr.core.Config.URL_FILES;
 
 import android.Manifest;
@@ -17,6 +15,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -118,10 +117,11 @@ public class LoaderActivity extends AppCompatActivity {
 
                 DownloadManager.Request request = new DownloadManager.Request(resource);
 
-                request.setDestinationInExternalPublicDir("Android/data/com.liverussia.cr/", "tempcache.zip");
+                request.setDestinationInExternalFilesDir(this, Environment.DIRECTORY_DOWNLOADS, "cache.zip");
 
                 request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE | DownloadManager.Request.NETWORK_WIFI);
-                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
+                request.setTitle("Live Russia");
                 request.setVisibleInDownloadsUi(true);
 
                 downloadid = mDownloadManager.enqueue(request);
@@ -136,8 +136,9 @@ public class LoaderActivity extends AppCompatActivity {
                 break;
             }
             case DATA_STATE_DOWNLOAD_SUCESS: {
-                String zipFile = APP_PATH+"tempcache.zip";
-                String unzipLocation = APP_PATH;
+
+                String zipFile = this.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)+"/cache.zip";
+                File unzipLocation = this.getFilesDir();
 
                 Log.d("Unzip", "Zipfile: " + zipFile);
                 Log.d("Unzip", "location: " + unzipLocation);
@@ -194,9 +195,9 @@ public class LoaderActivity extends AppCompatActivity {
 
     public class Decompress extends Thread {
         private String _zipFile;
-        private String _location;
+        private File _location;
 
-        public Decompress(String zipFile, String location) {
+        public Decompress(String zipFile, File location) {
 
             _zipFile = zipFile;
             _location = location;
@@ -212,36 +213,29 @@ public class LoaderActivity extends AppCompatActivity {
         public void run() {
 
             try {
+
                 byte[] buffer = new byte[4096];
                 FileInputStream inputStream = new FileInputStream(_zipFile);
-                Charset CP866 = Charset.forName("CP437");
-                ZipInputStream zipStream = new ZipInputStream(inputStream, CP866);
+
+                ZipInputStream zipStream = new ZipInputStream(inputStream, Charset.forName("windows-1251"));
 
                 long totalSize = 3113640;
 
                 ZipEntry zEntry = null;
-                //while ((zEntry = zipStream.getNextEntry()) != null)
-                //{
-                //    Log.d("adf", "scan");
-                 //   totalSize += zEntry.getSize();
-                //}
 
-                //SetMaxProgress(totalSize);
-                //zipStream.close();
-               // inputStream = new FileInputStream(_zipFile);
-               // zipStream = new ZipInputStream(inputStream);
                 long readedByte = 0;
                 //zEntry = null;
                 float percent = 0;
-
+                _dirChecker("files");
                     while ((zEntry = zipStream.getNextEntry()) != null) {
+                      //  dirpart
                         //Log.d("asdf", "File = " + zEntry.getName());
                         SetStatusText("Распаковка " + zEntry.getName());
                         if (zEntry.isDirectory()) {
-                            hanldeDirectory(zEntry.getName());
+                            _dirChecker(zEntry.getName());
                         } else {
                             FileOutputStream fout = new FileOutputStream(
-                                    this._location + "/" + zEntry.getName());
+                                    this._location + zEntry.getName());
                             BufferedOutputStream bufout = new BufferedOutputStream(fout);
 
                             int read = 0;
@@ -278,12 +272,7 @@ public class LoaderActivity extends AppCompatActivity {
             }
 
         }
-        public void hanldeDirectory(String dir) {
-            File f = new File(this._location + dir);
-            if (!f.isDirectory()) {
-                f.mkdirs();
-            }
-        }
+
         private void _dirChecker(String dir) {
             File f = new File(_location + dir);
 

@@ -37,7 +37,8 @@
         android:largeHeap="true"
         android:logo="@drawable/adtlogo"
         android:usesCleartextTraffic="true"
-        android:requestLegacyExternalStorage="true">
+       >
+    // android:requestLegacyExternalStorage="true">
         <activity
             android:name="com.liverussia.launcher.activity.StoryActivity"
             android:exported="false"

@@ -11,7 +11,9 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
-import android.widget.*;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -24,14 +26,6 @@ import org.ini4j.Wini;
 
 import java.io.File;
 import java.io.IOException;
-
-import com.downloader.*;
-import com.downloader.Error;
-
-import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class SettingsFragment extends Fragment {
 
