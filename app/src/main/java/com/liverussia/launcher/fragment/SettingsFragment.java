@@ -56,7 +56,7 @@ public class SettingsFragment extends Fragment {
                             public void onClick(View v) {
                                 v.startAnimation(animation);
 								File gameDirectory = (new File(Environment.getExternalStorageDirectory() + "/Blast"));
-								Utils.delete(gameDirectory);
+                                Utils.delete(gameDirectory);
 								startActivity(new Intent(getActivity(), com.liverussia.launcher.activity.LoaderActivity.class));
                             }
         });
