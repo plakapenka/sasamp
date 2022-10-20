@@ -38,7 +38,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class LoaderActivity extends AppCompatActivity {
-    static final int BUFFER = 2048;
     private static final int DATA_STATE_NONE = 0;
     private static final int DATA_STATE_DOWNLOADING = 1;
     private static final int DATA_STATE_DOWNLOAD_SUCESS = 2;
@@ -62,6 +61,7 @@ public class LoaderActivity extends AppCompatActivity {
         loadingPercent = findViewById(R.id.loadingPercent);
         mDownloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
         loadingText = findViewById(R.id.loadingText);
+        fileName = findViewById(R.id.fileName);
 
         registerReceiver(onComplete,
                 new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
@@ -137,8 +137,8 @@ public class LoaderActivity extends AppCompatActivity {
             }
             case DATA_STATE_DOWNLOAD_SUCESS: {
 
-                String zipFile = this.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)+"/cache.zip";
-                File unzipLocation = this.getFilesDir();
+                File zipFile = new File( this.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),"/cache.zip");
+                File unzipLocation =  this.getExternalFilesDir(null);
 
                 Log.d("Unzip", "Zipfile: " + zipFile);
                 Log.d("Unzip", "location: " + unzipLocation);
@@ -159,6 +159,16 @@ public class LoaderActivity extends AppCompatActivity {
             @Override
             public void run() {
                 loadingText.setText(text);
+            }
+        });
+
+    }
+    public void SetFileNameText(String text)
+    {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                fileName.setText(text);
             }
         });
 
@@ -194,18 +204,16 @@ public class LoaderActivity extends AppCompatActivity {
     }
 
     public class Decompress extends Thread {
-        private String _zipFile;
+        private File _zipFile;
         private File _location;
 
-        public Decompress(String zipFile, File location) {
+        public Decompress(File zipFile, File location) {
 
             _zipFile = zipFile;
             _location = location;
 
-            _dirChecker("");
-            // Создаём новый поток
-           // super("Второй поток");
-            Log.i("asdf", "Создан второй поток " + this);
+            //_dirChecker("");
+
             start(); // Запускаем поток
         }
 
@@ -230,7 +238,7 @@ public class LoaderActivity extends AppCompatActivity {
                     while ((zEntry = zipStream.getNextEntry()) != null) {
                       //  dirpart
                         //Log.d("asdf", "File = " + zEntry.getName());
-                        SetStatusText("Распаковка " + zEntry.getName());
+                        SetFileNameText(zEntry.getName());
                         if (zEntry.isDirectory()) {
                             _dirChecker(zEntry.getName());
                         } else {
@@ -258,14 +266,15 @@ public class LoaderActivity extends AppCompatActivity {
                             zipStream.closeEntry();
                             bufout.close();
                             fout.close();
+                            SetProgress(100);
                             SetPercentText("100 %");
 
                         }
                     }
 
-                Log.d("Adsfasdf", "readedByte = " + readedByte);
                 zipStream.close();
                 SetStatusText("Распаковка завершена");
+                _zipFile.delete();
             } catch (Exception e) {
                 SetStatusText("Ошибка распаковки");
                 e.printStackTrace();
@@ -304,6 +313,7 @@ public class LoaderActivity extends AppCompatActivity {
             while (cursor.moveToNext()) {
                 float mDownload_so_far = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
                 float mDownload_all = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
+
                 float mProgress = ( (mDownload_so_far / mDownload_all)*100 );
 
                 progressBar.setProgress((int) mProgress);
