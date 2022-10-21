@@ -225,7 +225,7 @@ void InitInGame()
 		pGame->InitInGame();
 		pGame->SetMaxStats();
 
-		g_pJavaWrapper->UpdateSplash(101);
+		g_pJavaWrapper->UpdateSplash(100);
 		g_pJavaWrapper->ShowServer(pSettings->GetReadOnly().szServer);
 		bGameInited = true;
 
@@ -236,7 +236,7 @@ void InitInGame()
 	{
 		// Подключение к серверу
 		if (pChatWindow)
-			pChatWindow->AddDebugMessage("{bbbbbb}Клиент {ff0000}LIVE RUSSIA{bbbbbb} запущен{ffffff}");
+			pChatWindow->AddDebugMessage("{bbbbbb}Клиент {ff0000}LIVE RUSSIA{bbbbbb} запущен");
 
 		pNetGame = new CNetGame(
 			g_sEncryptedAddresses[pSettings->GetReadOnly().szServer].decrypt(),

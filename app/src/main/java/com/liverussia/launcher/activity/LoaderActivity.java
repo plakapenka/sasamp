@@ -35,6 +35,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.charset.Charset;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 public class LoaderActivity extends AppCompatActivity {
@@ -69,9 +70,7 @@ public class LoaderActivity extends AppCompatActivity {
         getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_IMMERSIVE
                         | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
@@ -138,7 +137,7 @@ public class LoaderActivity extends AppCompatActivity {
             case DATA_STATE_DOWNLOAD_SUCESS: {
 
                 File zipFile = new File( this.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),"/cache.zip");
-                File unzipLocation =  this.getExternalFilesDir(null);
+                File unzipLocation =  new File (this.getExternalFilesDir(null), "");
 
                 Log.d("Unzip", "Zipfile: " + zipFile);
                 Log.d("Unzip", "location: " + unzipLocation);
@@ -219,74 +218,64 @@ public class LoaderActivity extends AppCompatActivity {
 
         @SuppressLint("SetTextI18n")
         public void run() {
-
             try {
-
+                int updateCounter = 0;
                 byte[] buffer = new byte[4096];
+                ZipFile zipFile = new ZipFile (_zipFile);
+
                 FileInputStream inputStream = new FileInputStream(_zipFile);
 
                 ZipInputStream zipStream = new ZipInputStream(inputStream, Charset.forName("windows-1251"));
 
                 long totalSize = 3113640;
-
+                File outFile = null;
                 ZipEntry zEntry = null;
 
                 long readedByte = 0;
-                //zEntry = null;
+
                 float percent = 0;
-                _dirChecker("files");
-                    while ((zEntry = zipStream.getNextEntry()) != null) {
-                      //  dirpart
-                        //Log.d("asdf", "File = " + zEntry.getName());
-                        SetFileNameText(zEntry.getName());
-                        if (zEntry.isDirectory()) {
-                            _dirChecker(zEntry.getName());
-                        } else {
-                            FileOutputStream fout = new FileOutputStream(
-                                    this._location + zEntry.getName());
-                            BufferedOutputStream bufout = new BufferedOutputStream(fout);
+                while ((zEntry = zipStream.getNextEntry()) != null)
+                {
+                    outFile = new File (_location + File.separator + zEntry.getName ()); // определить путь к выходному файлу
+                    if (! outFile.getParentFile().exists ()) {
+                        outFile.getParentFile().mkdir(); // Создать папку
+                    }
+                    SetFileNameText(zEntry.getName());
 
-                            int read = 0;
+                    FileOutputStream fout = new FileOutputStream(outFile);
+                    BufferedOutputStream bufout = new BufferedOutputStream(fout);
 
-                            while ((read = zipStream.read(buffer)) != -1) {
+                    int read = 0;
 
-                                readedByte += read;
-                                bufout.write(buffer, 0, read);
-                                percent = ((((float)readedByte/1000) / (float)totalSize) * 100);
-                                if(read % 100 == 0)
-                                {
-                                    String _str = String.format("%.2f %%", percent);
-                                    SetPercentText(_str);
-                                    SetProgress((int)percent);
-                                }
+                    while ((read = zipStream.read(buffer)) != -1)
+                    {
+                        updateCounter ++;
+                        readedByte += read;
+                        bufout.write(buffer, 0, read);
 
-                               // progressBar.setProgress(readedByte);
-                            }
-
-                            zipStream.closeEntry();
-                            bufout.close();
-                            fout.close();
-                            SetProgress(100);
-                            SetPercentText("100 %");
-
+                        if(updateCounter == 150)
+                        {
+                            percent = ((((float)readedByte/1000) / (float)totalSize) * 100);
+                            updateCounter = 0;
+                            String _str = String.format("%.2f %%", percent);
+                            SetPercentText(_str);
+                            SetProgress((int)percent);
                         }
                     }
+                    zipStream.closeEntry();
+                    bufout.close();
+                    fout.close();
+                    SetProgress(100);
+                    SetPercentText("100 %");
+                }
 
                 zipStream.close();
+                inputStream.close();
                 SetStatusText("Распаковка завершена");
                 _zipFile.delete();
             } catch (Exception e) {
                 SetStatusText("Ошибка распаковки");
                 e.printStackTrace();
-            }
-
-        }
-
-        private void _dirChecker(String dir) {
-            File f = new File(_location + dir);
-
-            if(!f.isDirectory()) {
-                f.mkdirs();
             }
         }
     }
@@ -315,6 +304,8 @@ public class LoaderActivity extends AppCompatActivity {
                 float mDownload_all = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
 
                 float mProgress = ( (mDownload_so_far / mDownload_all)*100 );
+                if(mProgress < 0)
+                    mProgress = 0;
 
                 progressBar.setProgress((int) mProgress);
                 String _str = String.format("%.2f %%",mProgress);

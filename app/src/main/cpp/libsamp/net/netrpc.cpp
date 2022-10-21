@@ -98,7 +98,7 @@ void InitGame(RPCParameters *rpcParams)
 				//Log("Created voice");
 			}
 
-	if(pChatWindow) pChatWindow->AddDebugMessage("���������� � {B9C9BF}%.64s", pNetGame->m_szHostName);
+	if(pChatWindow) pChatWindow->AddDebugMessage("Присоединено к {B9C9BF}%.64s", pNetGame->m_szHostName);
 }
 
 void ServerJoin(RPCParameters *rpcParams)

@@ -1,22 +1,15 @@
 package com.liverussia.launcher.activity;
 
-import android.os.Bundle;          
-import android.os.Environment;
+import android.content.pm.ActivityInfo;
+import android.os.Bundle;
 import android.os.Build;
-import android.content.pm.PackageManager;
-import android.os.StatFs;
 
 import android.widget.*;
-import android.content.pm.ApplicationInfo;
-import androidx.core.content.FileProvider;
 import android.graphics.PorterDuff;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.Context;
-import android.content.ComponentName;
-import android.net.Uri;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -27,12 +20,11 @@ import android.view.animation.Animation;
 
 import com.liverussia.cr.R;
 import com.liverussia.cr.core.Config;
-import com.liverussia.launcher.activity.SplashActivity;
+import com.liverussia.cr.gui.util.Utils;
 import com.liverussia.launcher.fragment.MonitoringFragment;
 import com.liverussia.launcher.fragment.ForumFragment;
 import com.liverussia.launcher.fragment.DonateFragment;
 import com.liverussia.launcher.fragment.SettingsFragment;
-import com.liverussia.launcher.activity.LoaderActivity;
 
 import java.io.File;
 
@@ -61,78 +53,81 @@ public class MainActivity extends AppCompatActivity {
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //setContentView(R.layout.pre_death);
+       // setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_IMMERSIVE
                         | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
+
 		Animation animation = AnimationUtils.loadAnimation(this, R.anim.button_click);
-		
+
 		monitoringTV = (TextView) findViewById(R.id.monitoringTV);
         settingsTV = (TextView) findViewById(R.id.settingsTV);
-        forumTV = (TextView) findViewById(R.id.forumTV);
+        forumTV = (TextView) findViewById(R.id.rouletteBut);
         donateTV = (TextView) findViewById(R.id.donateTV);
-		
+
         monitoringImage = (ImageView) findViewById(R.id.monitoringImage);
         settingsImage = (ImageView) findViewById(R.id.settingsImage);
         forumImage = (ImageView) findViewById(R.id.forumImage);
         donateImage = (ImageView) findViewById(R.id.donateImage);
         playImage = (ImageView) findViewById(R.id.playImage);
-		
+
         monitoringButton = (LinearLayout) findViewById(R.id.monitoringButton);
         settingsButton = (LinearLayout) findViewById(R.id.settingsButton);
         forumButton = (LinearLayout) findViewById(R.id.rouletteButton);
         donateButton = (LinearLayout) findViewById(R.id.donateButton);
         playButton = (LinearLayout) findViewById(R.id.playButton);
-		
+
 		monitoringFragment = new MonitoringFragment();
         settingsFragment = new SettingsFragment();
         forumFragment = new ForumFragment();
-        donateFragment = new DonateFragment(); 
-	
+        donateFragment = new DonateFragment();
+
 	    replaceFragment(monitoringFragment);
-		
+
 		monitoringButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 v.startAnimation(animation);
                 onClickMonitoring();
             }
         });
-		
+
         settingsButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 v.startAnimation(animation);
                 onClickSettings();
             }
         });
-		
+
         forumButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
               v.startAnimation(animation);
 			  onClickForum();
             }
         });
-		
+
         donateButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                v.startAnimation(animation);
 			   onClickDonate();
             }
         });
-		
+
         playButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                v.startAnimation(animation);
 			   startTimer();
             }
         });
+
     }
 	
 	public void onClickPlay() {
@@ -164,10 +159,7 @@ public class MainActivity extends AppCompatActivity {
     }
 	
     public void setTextColor(LinearLayout linearLayout, TextView textView, ImageView imageView) {
-        monitoringButton.setAlpha(0.45f);
-        settingsButton.setAlpha(0.45f);
-        forumButton.setAlpha(0.45f);
-        donateButton.setAlpha(0.45f);
+
         monitoringTV.setTextColor(getResources().getColor(R.color.menuTextDisable));
         settingsTV.setTextColor(getResources().getColor(R.color.menuTextDisable));
         forumTV.setTextColor(getResources().getColor(R.color.menuTextDisable));
@@ -176,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
         settingsImage.setColorFilter(getResources().getColor(R.color.menuTextDisable), PorterDuff.Mode.SRC_IN);
         forumImage.setColorFilter(getResources().getColor(R.color.menuTextDisable), PorterDuff.Mode.SRC_IN);
         donateImage.setColorFilter(getResources().getColor(R.color.menuTextDisable), PorterDuff.Mode.SRC_IN);
-        linearLayout.setAlpha(1.0f);
+
         textView.setTextColor(getResources().getColor(R.color.menuTextEnable));
         imageView.setColorFilter(getResources().getColor(R.color.menuTextEnable), PorterDuff.Mode.SRC_IN);
     }

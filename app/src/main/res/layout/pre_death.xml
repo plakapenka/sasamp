@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:id="@+id/pre_death_layout"
+    android:background="@drawable/pre_death_gradient_background"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|top">
+
+        <ImageView
+            android:contentDescription="icon"
+            android:layout_height="@dimen/_260sdp"
+            android:layout_width="@dimen/_300sdp"
+            android:src="@drawable/pre_death_smile_background"
+            android:adjustViewBounds="true"/>
+    </FrameLayout>
+<FrameLayout
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+
+
+    >
+    <LinearLayout
+        android:layout_gravity="center_horizontal|top"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+
+        android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_marginTop="@dimen/_40sdp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+
+        android:gravity="center_horizontal">
+
+        <ImageView
+            android:layout_weight="50"
+            android:layout_height="@dimen/_100sdp"
+            android:layout_width="@dimen/_97sdp"
+            android:src="@drawable/pre_death_smile"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="@dimen/_20sdp"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:orientation="horizontal"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#ffffff"
+                android:fontFamily="@font/din_pro_bold"
+                android:textFontWeight="700"
+                android:text="Вы были"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#FAC442"
+                android:fontFamily="@font/din_pro_bold"
+                android:text=" ранены "
+                android:textFontWeight="700"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/din_pro_bold"
+                android:textColor="#ffffff"
+                android:text="игроком"
+                android:textFontWeight="700"
+                />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24px"
+            android:fontFamily="@font/din_pro_bold"
+            android:textFontWeight="500"
+            android:textColor="#ffffff"
+            android:text="Leonid_Litvinenko (123)"/>
+
+    </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="@dimen/_25sdp"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_height="wrap_content">
+
+            <Button
+
+                style="@style/Widget.AppCompat.Button.Colored"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/pre_death_blue_butt"
+                android:fontFamily="@font/din_pro_bold"
+                android:paddingLeft="@dimen/_20sdp"
+                android:paddingRight="@dimen/_20sdp"
+                android:text="Ждать помощи"
+                android:textColor="#ffffff"
+                android:textFontWeight="700" />
+            <Button
+                android:layout_marginStart="@dimen/_50sdp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>
+
+
+</FrameLayout>

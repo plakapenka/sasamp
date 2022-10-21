@@ -45,7 +45,7 @@
     <color name="black20">#33000000</color>
     <color name="color_0F0F0F">#ff0f0f0f</color>
     <color name="color_056AA3">#ff056AA3</color>
-    <color name="menuTextDisable">#ffffffff</color>
+    <color name="menuTextDisable">#9D9D9D</color>
     <color name="menuTextEnable">#ffFCF90C</color>
     <color name="white25">#40ffffff</color>
     <color name="blue">#ff3ea2ff</color>

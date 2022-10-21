@@ -337,7 +337,7 @@ void CNetGame::UpdateNetwork()
 				break;
 
 			case ID_INVALID_PASSWORD:
-				pChatWindow->AddDebugMessage("������������ ������.");
+				pChatWindow->AddDebugMessage("Неверный пароль");
 				m_pRakClient->Disconnect(0);
 				break;
 
