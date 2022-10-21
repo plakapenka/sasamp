@@ -225,7 +225,7 @@ void InitInGame()
 		pGame->InitInGame();
 		pGame->SetMaxStats();
 
-		g_pJavaWrapper->UpdateSplash(100);
+		g_pJavaWrapper->UpdateSplash(101);
 		g_pJavaWrapper->ShowServer(pSettings->GetReadOnly().szServer);
 		bGameInited = true;
 
