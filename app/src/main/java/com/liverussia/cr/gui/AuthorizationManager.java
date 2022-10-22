@@ -99,7 +99,7 @@ public class AuthorizationManager {
 
     public void Show(String nick, int id) {
         String strnickid = String.format("%s [%d]", nick, id);
-        auth_nick.setText(String.valueOf(strnickid));
+        auth_nick.setText(strnickid);
         Utils.ShowLayout(br_authorization_layout, false);
     }
 

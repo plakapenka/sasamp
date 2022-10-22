@@ -144,7 +144,10 @@ public class HudManager {
         oil_oil_procent.setText(String.valueOf(stroiloilproc));
 
     }
-
+    public void HideAllLayout()
+    {
+        HideHud();
+    }
     public void ShowHud()
     {
         Utils.ShowLayout(hud_main_layout, false);
@@ -249,4 +252,6 @@ public class HudManager {
     }
 
     public void HideBusInfo() { Utils.HideLayout(bus_layout, true); }
+
+
 }

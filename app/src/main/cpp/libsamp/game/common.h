@@ -277,7 +277,7 @@ typedef struct _ENTITY_TYPE
 	VECTOR vecMoveSpeed; 	// 68-80	;vecMoveSpeed
 	VECTOR vecTurnSpeed; 	// 80-92	;vecTurnSpeed
 	PADDING(_pad94, 88);	// 92-180
-	uintptr_t dwUnkModelRel; // 180-184 ;сотка инфа
+	uintptr_t dwUnkModelRel; // 180-184 ;пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 
 } ENTITY_TYPE;
 
@@ -779,6 +779,8 @@ typedef struct _RECT
 #define WEAPON_CAMERA                    43
 #define WEAPON_PARACHUTE                46
 #define WEAPON_VEHICLE                    49
+#define WEAPON_HELIBLADES				50
+#define WEAPON_EXPLOSION				51
 #define WEAPON_DROWN                    53
 #define WEAPON_COLLISION                54
 

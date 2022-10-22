@@ -1,5 +1,7 @@
 #pragma once
 #include "aimstuff.h"
+#include "bass.h"
+
 class CPlayerPed
 	: public CEntity
 {
@@ -107,7 +109,7 @@ public:
 	// 0.3.7
 	void GetBonePosition(int iBoneID, VECTOR* vecOut);
 	// roflan
-	void FindDeathReasonAndResponsiblePlayer(PLAYERID *nPlayer);
+	BYTE FindDeathReasonAndResponsiblePlayer(PLAYERID *nPlayer);
 	PLAYERID FindDeathResponsiblePlayer();
 	void SetActionTrigger(uint8_t action);
 	PED_TYPE * GetGtaActor() { return m_pPed; };

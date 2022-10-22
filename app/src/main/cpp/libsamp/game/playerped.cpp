@@ -1459,52 +1459,105 @@ PLAYERID CPlayerPed::FindDeathResponsiblePlayer()
 	return INVALID_PLAYER_ID;
 }
 
-void CPlayerPed::FindDeathReasonAndResponsiblePlayer(PLAYERID *nPlayer)
+BYTE CPlayerPed::FindDeathReasonAndResponsiblePlayer(PLAYERID * nPlayer)
 {
-	CPlayerPool *pPlayerPool;
+	BYTE byteDeathReason;
+	PLAYERID PlayerIDWhoKilled;
 	CVehiclePool *pVehiclePool;
-	PLAYERID PlayerIDWhoKilled 	 = INVALID_PLAYER_ID;
-	
-	if(pNetGame) 
-	{
+	CPlayerPool *pPlayerPool;
+
+	// grab the vehicle/player pool now anyway, even though we may not need it.
+	if(pNetGame) {
 		pVehiclePool = pNetGame->GetVehiclePool();
 		pPlayerPool = pNetGame->GetPlayerPool();
 	}
-	else 
-	{ // just leave if there's no netgame.
+	else { // just leave if there's no netgame.
 		*nPlayer = INVALID_PLAYER_ID;
-		return;
+		return 0xFF;
 	}
 
 	if(m_pPed)
 	{
-		if(m_pPed->pdwDamageEntity)
-		{
-			PlayerIDWhoKilled = pPlayerPool->FindRemotePlayerIDFromGtaPtr((PED_TYPE *)m_pPed->pdwDamageEntity);
-			if(PlayerIDWhoKilled != INVALID_PLAYER_ID) 
-			{
+		byteDeathReason = (BYTE)m_pPed->dwWeaponUsed;
+		if(byteDeathReason < WEAPON_CAMERA || byteDeathReason == WEAPON_HELIBLADES || byteDeathReason == WEAPON_EXPLOSION) { // It's a weapon of some sort.
+
+			if(m_pPed->pdwDamageEntity) { // check for a player pointer.
+
+				PlayerIDWhoKilled = pPlayerPool->
+						FindRemotePlayerIDFromGtaPtr((PED_TYPE *)m_pPed->pdwDamageEntity);
+
+				if(PlayerIDWhoKilled != INVALID_PLAYER_ID) {
 					// killed by another player with a weapon, this is all easy.
 					*nPlayer = PlayerIDWhoKilled;
-					return;
+					return byteDeathReason;
+				} else { // could be a vehicle
+					if(pVehiclePool->FindIDFromGtaPtr((VEHICLE_TYPE *)m_pPed->pdwDamageEntity) != INVALID_VEHICLE_ID) {
+						VEHICLE_TYPE *pGtaVehicle = (VEHICLE_TYPE *)m_pPed->pdwDamageEntity;
+						PlayerIDWhoKilled = pPlayerPool->
+								FindRemotePlayerIDFromGtaPtr((PED_TYPE *)pGtaVehicle->pDriver);
+
+						if(PlayerIDWhoKilled != INVALID_PLAYER_ID) {
+							*nPlayer = PlayerIDWhoKilled;
+							return byteDeathReason;
+						}
+					}
+				}
 			}
-			else
-			{
-				if(pVehiclePool->FindIDFromGtaPtr((VEHICLE_TYPE *)m_pPed->pdwDamageEntity) != INVALID_VEHICLE_ID) 
+			//else { // weapon was used but who_killed is 0 (?)
+			*nPlayer = INVALID_PLAYER_ID;
+			return 0xFF;
+			//}
+		}
+		else if(byteDeathReason == WEAPON_DROWN) {
+			*nPlayer = INVALID_PLAYER_ID;
+			return WEAPON_DROWN;
+		}
+		else if(byteDeathReason == WEAPON_VEHICLE) {
+
+			if(m_pPed->pdwDamageEntity) {
+				// now, if we can find the vehicle
+				// we can probably derive the responsible player.
+				// Look in the vehicle pool for this vehicle.
+				if(pVehiclePool->FindIDFromGtaPtr((VEHICLE_TYPE *)m_pPed->pdwDamageEntity) != INVALID_VEHICLE_ID)
 				{
 					VEHICLE_TYPE *pGtaVehicle = (VEHICLE_TYPE *)m_pPed->pdwDamageEntity;
-					PlayerIDWhoKilled = pPlayerPool->FindRemotePlayerIDFromGtaPtr((PED_TYPE *)pGtaVehicle->pDriver);
-												
-					if(PlayerIDWhoKilled != INVALID_PLAYER_ID) 
-					{
+
+					PlayerIDWhoKilled = pPlayerPool->
+							FindRemotePlayerIDFromGtaPtr((PED_TYPE *)pGtaVehicle->pDriver);
+
+					if(PlayerIDWhoKilled != INVALID_PLAYER_ID) {
 						*nPlayer = PlayerIDWhoKilled;
-						return;
+						return WEAPON_VEHICLE;
 					}
+				}
+			}
+		}
+		else if(byteDeathReason == WEAPON_COLLISION) {
+
+			if(m_pPed->pdwDamageEntity) {
+				if(pVehiclePool->FindIDFromGtaPtr((VEHICLE_TYPE *)m_pPed->pdwDamageEntity) != INVALID_VEHICLE_ID)
+				{
+					VEHICLE_TYPE *pGtaVehicle = (VEHICLE_TYPE *)m_pPed->pdwDamageEntity;
+
+					PlayerIDWhoKilled = pPlayerPool->
+							FindRemotePlayerIDFromGtaPtr((PED_TYPE *)pGtaVehicle->pDriver);
+
+					if(PlayerIDWhoKilled != INVALID_PLAYER_ID) {
+						*nPlayer = PlayerIDWhoKilled;
+						return WEAPON_COLLISION;
+					}
+				}
+				else {
+					*nPlayer = INVALID_PLAYER_ID;
+					return WEAPON_COLLISION;
 				}
 			}
 		}
 	}
 
+	// Unhandled death type.
 	*nPlayer = INVALID_PLAYER_ID;
+	return 0xFF;
 }
 
 // 0.3.7

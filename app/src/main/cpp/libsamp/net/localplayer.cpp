@@ -447,24 +447,24 @@ void CLocalPlayer::SendBulletSyncData(PLAYERID byteHitID, uint8_t byteHitType, V
 void CLocalPlayer::SendWastedNotification()
 {
 	RakNet::BitStream bsPlayerDeath;
-	CPlayerPool *pPlayerPool = pNetGame->GetPlayerPool();
-	if(pPlayerPool)
-	{
-		PLAYERID WhoWasResponsible = m_pPlayerPed->FindDeathResponsiblePlayer();
-		bsPlayerDeath.Write(FindDeathReasonPlayer);
-		bsPlayerDeath.Write(WhoWasResponsible);
-		pNetGame->GetRakClient()->RPC(&RPC_Death, &bsPlayerDeath, HIGH_PRIORITY, RELIABLE_ORDERED, 0, false, UNASSIGNED_NETWORK_ID, nullptr);
-	}
+	BYTE byteDeathReason;
+	PLAYERID WhoWasResponsible;
 
-//	PLAYERID WhoWasResponsible = INVALID_PLAYER_ID; // Свой ID
-//	uint8_t byteDeathReason = 0;
+	byteDeathReason = m_pPlayerPed->FindDeathReasonAndResponsiblePlayer(&WhoWasResponsible);
+
+	bsPlayerDeath.Write(byteDeathReason);
+	bsPlayerDeath.Write(WhoWasResponsible);
+	pNetGame->GetRakClient()->RPC(&RPC_Death, &bsPlayerDeath, HIGH_PRIORITY, RELIABLE_ORDERED, 0, false, UNASSIGNED_NETWORK_ID, NULL);
 //
-//
-//	//uint8_t byteDeathReason = m_pPlayerPed->FindDeathReasonAndResponsiblePlayer(&WhoWasResponsible);
-//
-//	bsPlayerDeath.Write(byteDeathReason);
-//	bsPlayerDeath.Write(WhoWasResponsible);
-//	pNetGame->GetRakClient()->RPC(&RPC_Death, &bsPlayerDeath, HIGH_PRIORITY, RELIABLE_ORDERED, 0, false, UNASSIGNED_NETWORK_ID, nullptr);
+//	RakNet::BitStream bsPlayerDeath;
+//	CPlayerPool *pPlayerPool = pNetGame->GetPlayerPool();
+//	if(pPlayerPool)
+//	{
+//		PLAYERID WhoWasResponsible = m_pPlayerPed->FindDeathResponsiblePlayer();
+//		bsPlayerDeath.Write(FindDeathReasonPlayer);
+//		bsPlayerDeath.Write(WhoWasResponsible);
+//		pNetGame->GetRakClient()->RPC(&RPC_Death, &bsPlayerDeath, HIGH_PRIORITY, RELIABLE_ORDERED, 0, false, UNASSIGNED_NETWORK_ID, nullptr);
+//	}
 }
 
 bool CLocalPlayer::HandlePassengerEntryEx()

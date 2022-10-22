@@ -1089,7 +1089,6 @@ void CJavaWrapper::HideHud()
 		return;
 	}
     env->CallVoidMethod(this->activity, this->s_hideHud);
-	g_pJavaWrapper->isHudToggle = false;
 }
 
 void CJavaWrapper::ShowBusInfo(int time)
