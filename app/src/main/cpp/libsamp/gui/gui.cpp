@@ -202,21 +202,9 @@ int CGUI::GetEat(){
 void CGUI::SetFuel(float fuel){
    m_fuel = static_cast<int>(fuel);
 }
-
-void CGUI::ShowSpeed(){
-	if (!pGame || !pNetGame || !pGame->FindPlayerPed()->IsInVehicle()) {
-		g_pJavaWrapper->HideSpeed();
-		bMeliage =0;
-		m_fuel = 0;
-		return;
-	}
-	if (pGame->FindPlayerPed()->IsAPassenger()) {
-		g_pJavaWrapper->HideSpeed();
-		bMeliage =0;
-		m_fuel = 0;
-		return;
-	}
-
+bool showSpeedometr = false;
+void CGUI::ShowSpeed()
+{
 	int i_speed = 0;
 	bDoor =0;
 	bEngine = 0;
@@ -241,7 +229,6 @@ void CGUI::ShowSpeed(){
             bLights = pVehicle->GetLightsState();
         }
     }
-	g_pJavaWrapper->ShowSpeed();
 	g_pJavaWrapper->UpdateSpeedInfo(i_speed, m_fuel, bHealth, bMeliage, bEngine, bLights, 0, bDoor);
 }
 
@@ -276,7 +263,25 @@ void CGUI::Render()
 	}
 
 	if (pChatWindow) pChatWindow->Render();
-	if(pGame) CGUI::ShowSpeed();
+
+	if(pGame->FindPlayerPed()->IsInVehicle() && !pGame->FindPlayerPed()->IsAPassenger() && !pKeyBoard->IsOpen())
+	{
+		if(!showSpeedometr)
+		{
+			showSpeedometr = true;
+			g_pJavaWrapper->ShowSpeed();
+		}
+		CGUI::ShowSpeed();
+	}
+	else
+	{
+		if(showSpeedometr)
+		{
+			showSpeedometr = false;
+			g_pJavaWrapper->HideSpeed();
+		}
+	}
+
 	if (pScoreBoard) pScoreBoard->Draw();
 	if (pKeyBoard) pKeyBoard->Render();
 	if (pDialogWindow) pDialogWindow->Render();
