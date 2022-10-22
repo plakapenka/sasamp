@@ -299,9 +299,9 @@ void CKeyBoard::Open(keyboard_callback *handler, bool bHiden)
 	m_bInputFlag = bHiden;
 
 	//g_pJavaWrapper->HideVoice();
-	//g_pJavaWrapper->HideServer();
+	g_pJavaWrapper->HideServer();
 	//g_pJavaWrapper->HideSamwillMoney();
-	//g_pJavaWrapper->HideSpeedometr();
+	g_pJavaWrapper->HideSpeed();
 
 	if (m_bNewKeyboard)
 	{
