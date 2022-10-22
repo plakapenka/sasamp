@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="pre_death_kill_Text" translatable="false">Вы были <font color='#fbc02d'>ранены</font> игроком</string>
+
+</resources>
