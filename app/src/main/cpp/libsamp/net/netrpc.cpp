@@ -98,7 +98,7 @@ void InitGame(RPCParameters *rpcParams)
 				//Log("Created voice");
 			}
 
-	if(pChatWindow) pChatWindow->AddDebugMessage("РџСЂРёСЃРѕРµРґРёРЅРµРЅРѕ Рє {B9C9BF}%.64s", pNetGame->m_szHostName);
+	if(pChatWindow) pChatWindow->AddDebugMessage("Присоединено к {B9C9BF}%.64s", pNetGame->m_szHostName);
 }
 
 void ServerJoin(RPCParameters *rpcParams)
@@ -602,7 +602,7 @@ void DialogBox(RPCParameters *rpcParams)
 void GameModeRestart(RPCParameters *rpcParams)
 {
 	// pChatWindow->AddInfoMessage("The server is restarting..");
-	pChatWindow->AddInfoMessage("{ff0000}пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ..{ffffff}");
+	pChatWindow->AddInfoMessage("{ff0000}?????????????? ??????????????? ? ????..{ffffff}");
 	pNetGame->ShutDownForGameRestart();
 }
 
@@ -621,21 +621,21 @@ void ConnectionRejected(RPCParameters *rpcParams)
 	bsData.Read(byteRejectReason);
 
 	if(byteRejectReason == REJECT_REASON_BAD_VERSION)
-		pChatWindow->AddInfoMessage("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.");
+		pChatWindow->AddInfoMessage("?????????? ?????????: ???????????? ??????.");
 	else if(byteRejectReason == REJECT_REASON_BAD_NICKNAME)
 	{
-		pChatWindow->AddInfoMessage("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ NickName");
-		pChatWindow->AddInfoMessage("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅ 3 пїЅпїЅ 20 пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ");
-		pChatWindow->AddInfoMessage("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ a-z, A-Z, 0-9");
-		pChatWindow->AddInfoMessage("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ /quit пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ");
+		pChatWindow->AddInfoMessage("?????????? ?????????: ???????????? NickName");
+		pChatWindow->AddInfoMessage("??????????, ???????? ?????? ??? ?? 3 ?? 20 ????????");
+		pChatWindow->AddInfoMessage("??????????, ??????????? ?????? a-z, A-Z, 0-9");
+		pChatWindow->AddInfoMessage("??????????? /quit ??? ??????");
 	}
 	else if(byteRejectReason == REJECT_REASON_BAD_MOD)
 	{
-		pChatWindow->AddInfoMessage("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ.");
+		pChatWindow->AddInfoMessage("?????????? ?????????: ???????????? ?????? ????.");
 	}
 	else if(byteRejectReason == REJECT_REASON_BAD_PLAYERID)
 	{
-		pChatWindow->AddInfoMessage("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.");
+		pChatWindow->AddInfoMessage("?????????? ?????????: ?? ??????? ???????? ???? ??? ??????.");
 	}
 
 	pNetGame->GetRakClient()->Disconnect(500);
