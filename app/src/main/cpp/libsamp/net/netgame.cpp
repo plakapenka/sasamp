@@ -698,7 +698,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		{
 			uint16_t toggle;
 			uint16_t killerId;
-			char *killername;
+			char killername[25];
 			bs.Read(toggle);
 			bs.Read(killerId);
 
@@ -709,11 +709,12 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 				{
 					if(pPlayerPool->GetSlotState(killerId))
 					{
-						killername = pPlayerPool->GetPlayerName(killerId);
+						strcpy(killername, pPlayerPool->GetPlayerName(killerId));
+
 					}
 					else
 					{
-						killername = "None";
+						strcpy(killername, "None");
 					}
 
 					Log("RPC_PRE_DEATH: %s (%d)", killername, killerId);

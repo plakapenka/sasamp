@@ -57,6 +57,7 @@ import com.google.common.hash.Hashing;
 import com.liverussia.cr.R;
 import com.liverussia.cr.core.DialogClientSettings;
 import com.liverussia.cr.gui.HudManager;
+import com.liverussia.cr.gui.PreDeath;
 import com.liverussia.cr.gui.SamwillManager;
 import com.liverussia.cr.gui.dialogs.Dialog;
 import com.liverussia.cr.gui.Speedometer;
@@ -171,6 +172,7 @@ public abstract class NvEventQueueActivity
     private ShopStoreManager mShopStoreManager = null;
     private GunShopManager mGunShopManager = null;
     private ChooseSpawn mChooseSpawn = null;
+    private PreDeath mPreDeath = null;
     private Menu mMenu = null;
     private ChooseServer mChooseServer = null;
 
@@ -1005,6 +1007,10 @@ public abstract class NvEventQueueActivity
         return mSurfaceView;
     }
 
+    public void sukaaaaa(View view)
+    {
+        setContentView(view);
+    }
     protected boolean systemInit()
     {
         final NvEventQueueActivity act = this;
@@ -1039,6 +1045,7 @@ public abstract class NvEventQueueActivity
         mShopStoreManager = new ShopStoreManager(this);
         mGunShopManager = new GunShopManager(this);
         mChooseSpawn = new ChooseSpawn(this);
+        mPreDeath = new PreDeath(this);
         mDialog = new Dialog(this);
         mHudManager = new HudManager(this);
         mSamwillManager = new SamwillManager(this);
@@ -1614,6 +1621,8 @@ public abstract class NvEventQueueActivity
     public void showChooseSpawn(int organization, int station, int exit, int garage, int house) { runOnUiThread(() -> { mChooseSpawn.Show(organization, station, exit, garage, house); }); }
 
     public void hideChooseSpawn() { runOnUiThread(() -> { mChooseSpawn.Hide(); }); }
+
+    public void showPreDeath(String killerName, int killerID) { runOnUiThread(() -> { mPreDeath.Show(killerName, killerID); }); }
 
     public void showMenu() { runOnUiThread(() -> { mMenu.ShowMenu(); }); }
 

@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.text.Html;
 import android.text.Spanned;
+import android.util.Log;
 import android.view.View;
 import androidx.core.content.ContextCompat;
 import java.security.SecureRandom;
@@ -20,12 +21,17 @@ public class Utils {
 
     public static void ShowLayout(View view, boolean isAnim) {
         if (view != null) {
+            Log.d("dfs", "норм");
             view.setVisibility(View.VISIBLE);
             if (isAnim) {
                 fadeIn(view);
             } else {
                 view.setAlpha(1.0f);
             }
+        }
+        else
+        {
+            Log.d("dfs", "СХУЯ");
         }
     }
 

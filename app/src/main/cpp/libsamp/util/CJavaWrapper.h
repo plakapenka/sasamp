@@ -71,7 +71,7 @@ class CJavaWrapper
 	jmethodID s_showRegistration;
 	jmethodID s_hideRegistration;
 
-	jmethodID s_showDeathInfo;
+	jmethodID j_showDeathInfo;
 	jmethodID s_hideDeathInfo;
 
 	jmethodID s_showAuctionManager;
@@ -160,7 +160,7 @@ public:
 	void ShowAuthorization(char *nick, int id);
 	void HideAuthorization();
 
-	void ShowDeathInfo(char *nick, int id);
+	void ShowDeathInfo(std::string nick, int id);
 	void HideDeathInfo();
 
 	void ShowRegistration(char *nick, int id);

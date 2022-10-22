@@ -73,4 +73,5 @@
     <string name="dialog_join_from_launcher_msg">Вам необходимо зайти в игру используя лаунчер</string>
     <string name="dialog_join_from_launcher_ok">Принять</string>
     <string name="downloadinfobottom">Внимание! <font color='#5E5E5E'> Не закрывайте приложение во время установки. Если у вас возникли какие-то проблемы, советуем обратиться в</font> Техническую поддержку!</string>
+    <string name="image_load">Изображение загружается</string>
 </resources>

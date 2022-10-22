@@ -1,28 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout android:layout_width="fill_parent"
+<FrameLayout
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:id="@+id/pre_death_layout"
     android:background="@drawable/pre_death_gradient_background"
+    android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|top">
 
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"/>
         <ImageView
-            android:contentDescription="icon"
-            android:layout_height="@dimen/_260sdp"
-            android:layout_width="@dimen/_300sdp"
+            android:contentDescription="@string/image_load"
+            android:layout_height="fill_parent"
+            android:layout_width="fill_parent"
             android:src="@drawable/pre_death_smile_background"
             android:adjustViewBounds="true"/>
-    </FrameLayout>
-<FrameLayout
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
 
 
-    >
     <LinearLayout
         android:layout_gravity="center_horizontal|top"
         android:layout_width="fill_parent"
@@ -52,12 +50,6 @@
         android:layout_gravity="center_horizontal"
         android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:orientation="horizontal"
-            >
 
             <TextView
                 android:layout_width="wrap_content"
@@ -83,7 +75,6 @@
                 android:text="игроком"
                 android:textFontWeight="700"
                 />
-        </LinearLayout>
 
     </LinearLayout>
 
@@ -94,6 +85,7 @@
         android:layout_height="wrap_content">
 
         <TextView
+            android:id="@+id/pre_death_killer_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="24px"
@@ -103,34 +95,90 @@
             android:text="Leonid_Litvinenko (123)"/>
 
     </LinearLayout>
-
+    </LinearLayout>
         <LinearLayout
-            android:layout_marginTop="@dimen/_25sdp"
+            android:orientation="vertical"
             android:layout_width="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:layout_gravity="bottom|left"
+            android:paddingBottom="@dimen/_50sdp"
+            android:layout_marginStart="@dimen/_120sdp"
             android:layout_height="wrap_content">
 
-            <Button
-
-                style="@style/Widget.AppCompat.Button.Colored"
-
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/preDeath_wait_help_butt"
+                app:cornerRadius="15px"
+                android:paddingLeft="@dimen/_25sdp"
+                android:paddingRight="@dimen/_25sdp"
+                android:paddingTop="@dimen/_8sdp"
+                android:paddingBottom="@dimen/_8sdp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/pre_death_blue_butt"
-                android:fontFamily="@font/din_pro_bold"
-                android:paddingLeft="@dimen/_20sdp"
-                android:paddingRight="@dimen/_20sdp"
-                android:text="Ждать помощи"
+                android:backgroundTint="@color/darkblue"
+
                 android:textColor="#ffffff"
-                android:textFontWeight="700" />
-            <Button
-                android:layout_marginStart="@dimen/_50sdp"
+
+                android:textSize="@dimen/_10sdp"
+                android:textFontWeight="700"
+                android:fontFamily="@font/din_pro_bold"
+
+                android:clickable="true"
+
+                app:strokeWidth="1px"
+                app:strokeColor="#ffffff"
+                android:textAppearance="@style/TextStyle"
+                android:text="ЖДАТЬ ПОМОЩИ"
+                tools:ignore="SpeakableTextPresentCheck" />
+            <TextView
+                android:layout_gravity="center_vertical"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
+                android:layout_height="wrap_content"
+                android:text="*вызывает врача скорой помощи—\nпозволяет реанимировать Вас"
+                android:textColor="@color/white"
+                android:textSize="25px"
+                android:fontFamily="@font/din_pro_bold"
+                android:textFontWeight="500" />
         </LinearLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:paddingBottom="@dimen/_50sdp"
+        android:layout_marginEnd="@dimen/_120sdp"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/preDeath_to_hospital_button"
+            app:cornerRadius="15px"
+            android:paddingLeft="@dimen/_25sdp"
+            android:paddingRight="@dimen/_25sdp"
+            android:paddingTop="@dimen/_8sdp"
+            android:paddingBottom="@dimen/_8sdp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/yellow"
+
+            android:textColor="#ffffff"
+
+            android:textSize="@dimen/_10sdp"
+            android:textFontWeight="700"
+            android:fontFamily="@font/din_pro_bold"
+
+            app:strokeWidth="1px"
+            app:strokeColor="#ffffff"
+            android:textAppearance="@style/TextStyle"
+            android:text="В БОЛЬНИЦУ"
+            tools:ignore="SpeakableTextPresentCheck" />
+        <TextView
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="*отправляет Вас в больницу —\nдоступно через 15 секунд"
+            android:textColor="@color/white"
+            android:textSize="25px"
+            android:fontFamily="@font/din_pro_bold"
+            android:textFontWeight="500"
+            />
     </LinearLayout>
-</FrameLayout>
-
 
 </FrameLayout>
+

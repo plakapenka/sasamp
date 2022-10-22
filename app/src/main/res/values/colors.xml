@@ -40,6 +40,8 @@
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="gradient1">#ffFEF102</color>
+    <color name="yellow">#fbc02d</color>
+    <color name="darkblue">#002f6c</color>
     <color name="gradient2">#ffEB6820</color>
     <color name="white6">#14ffffff</color>
     <color name="black20">#33000000</color>

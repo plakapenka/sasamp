@@ -1468,16 +1468,17 @@ void CJavaWrapper::SetTabStat(int id, char* name, int score, int ping) {
 //	env->CallVoidMethod(this->activity, this->s_setTabStat, id, jname, score, ping);
 }
 
-void CJavaWrapper::ShowDeathInfo(char *nick, int id) 
+void CJavaWrapper::ShowDeathInfo(std::string nick, int id)
 {
-//	JNIEnv* env = GetEnv();
-//
-//	if (!env)
-//	{
-//		Log("No env");
-//		return;
-//	}
-//
+	JNIEnv* env = GetEnv();
+
+	if (!env)
+	{
+		Log("No env");
+		return;
+	}
+	jstring jStringParam = env->NewStringUTF( nick.c_str() );
+
 //	jclass strClass = env->FindClass("java/lang/String");
 //    jmethodID ctorID = env->GetMethodID(strClass, "<init>", "([BLjava/lang/String;)V");
 //    jstring encoding = env->NewStringUTF("UTF-8");
@@ -1485,8 +1486,8 @@ void CJavaWrapper::ShowDeathInfo(char *nick, int id)
 //	jbyteArray bytes = env->NewByteArray(strlen(nick));
 //    env->SetByteArrayRegion(bytes, 0, strlen(nick), (jbyte*)nick);
 //    jstring jnick = (jstring) env->NewObject(strClass, ctorID, bytes, encoding);
-//
-//	env->CallVoidMethod(this->activity, this->s_showDeathInfo, jnick, id);
+
+	env->CallVoidMethod(this->activity, this->j_showDeathInfo, jStringParam, id);
 }
 
 void CJavaWrapper::HideDeathInfo() 
@@ -1688,7 +1689,7 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 	s_showRegistration = env->GetMethodID(nvEventClass, "showRegistration", "(Ljava/lang/String;I)V");
 	s_hideRegistration = env->GetMethodID(nvEventClass, "hideRegistration", "()V");
 
-	//s_showDeathInfo = env->GetMethodID(nvEventClass, "showDeathInfo", "(Ljava/lang/String;I)V");
+	j_showDeathInfo = env->GetMethodID(nvEventClass, "showPreDeath", "(Ljava/lang/String;I)V");
 	//s_hideDeathInfo = env->GetMethodID(nvEventClass, "hideDeathInfo", "()V");
 
 	s_showChooseSpawn = env->GetMethodID(nvEventClass, "showChooseSpawn", "(IIIII)V");
