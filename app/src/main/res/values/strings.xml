@@ -74,4 +74,10 @@
     <string name="dialog_join_from_launcher_ok">Принять</string>
     <string name="downloadinfobottom">Внимание! <font color='#5E5E5E'> Не закрывайте приложение во время установки. Если у вас возникли какие-то проблемы, советуем обратиться в</font> Техническую поддержку!</string>
     <string name="image_load">Изображение загружается</string>
+    <string name="arrow_left"><![CDATA[<]]></string>
+    <string name="string_right"><![CDATA[>]]></string>
+    <string name="autoshop_max_speed">Макс. скорость</string>
+    <string name="autoshop_acceleration">Разгон от 0 до 100</string>
+    <string name="autoshop_available">Доступно к покупке</string>
+    <string name="autoshop_pricelabel">Стоимость транспортного средства:</string>
 </resources>
