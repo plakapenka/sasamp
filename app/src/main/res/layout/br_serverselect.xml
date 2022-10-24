@@ -1,14 +1,25 @@
-<FrameLayout android:id="@+id/br_serverselect_layout" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent" android:layout_height="match_parent">
+<FrameLayout
+    android:id="@+id/br_serverselect_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
+    android:layout_width="match_parent"
+
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:id="@+id/choose_server_root_loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+
         android:background="@drawable/mylogo"
         android:gravity="top"
         android:orientation="vertical"
         android:padding="10dp"
+
         android:weightSum="1">
+
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -34,8 +45,20 @@
 
 
             </FrameLayout>
+
+
         </LinearLayout>
+
     </LinearLayout>
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        app:indicatorColor="#67daff"
+        android:id="@+id/load_game_progressBar"
+        app:trackColor="#ffffff"
+        app:indicatorSize="64dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="15dp"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"/>
 
     <LinearLayout
         android:id="@+id/choose_server_root_choose"

@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.core.content.res.ResourcesCompat;
@@ -31,7 +32,7 @@ import java.util.ArrayList;
 import java.util.Formatter;
 
 public class ChooseServer {
-
+    private ProgressBar load_game_progressBar;
     private Activity aactivity;
     private FrameLayout serverLayout;
     private LinearLayout chooseServerLayout;
@@ -47,6 +48,8 @@ public class ChooseServer {
     public ChooseServer(Activity activity){
         aactivity = activity;
         mServers = Lists    .slist;
+
+        load_game_progressBar = activity.findViewById(R.id.load_game_progressBar);
         serverLayout = activity.findViewById(R.id.br_serverselect_layout);
         percentText = activity.findViewById(R.id.br_ls_progress);
         chooseServerLayout = activity.findViewById(R.id.choose_server_root_choose);
@@ -61,29 +64,33 @@ public class ChooseServer {
 
     public void Update(int percent) {
         if (percent <= 100)
-            percentText.setText(new Formatter().format("%d%s", Integer.valueOf(percent), "%").toString());
+        {
+            percentText.setText(String.format("%d%%", Integer.valueOf(percent)));
+            load_game_progressBar.setProgress(Integer.valueOf(percent));
+        }
         else {
-            chooseServerLayout.setVisibility(View.VISIBLE);
-            chooseServerLayout.setAlpha(0.0f);
-            chooseServerLayout.animate().setDuration(1500).alpha(1.0f).setListener(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationCancel(Animator animator) {
-                }
-
-                @Override
-                public void onAnimationRepeat(Animator animator) {
-                }
-
-                @Override
-                public void onAnimationStart(Animator animator) {
-                    initUi();
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animator) {
-                    loadingLayout.setVisibility(View.GONE);
-                }
-            }).start();
+            serverLayout.setVisibility(View.GONE);
+//            chooseServerLayout.setVisibility(View.VISIBLE);
+//            chooseServerLayout.setAlpha(0.0f);
+//            chooseServerLayout.animate().setDuration(1500).alpha(1.0f).setListener(new Animator.AnimatorListener() {
+//                @Override
+//                public void onAnimationCancel(Animator animator) {
+//                }
+//
+//                @Override
+//                public void onAnimationRepeat(Animator animator) {
+//                }
+//
+//                @Override
+//                public void onAnimationStart(Animator animator) {
+//                    initUi();
+//                }
+//
+//                @Override
+//                public void onAnimationEnd(Animator animator) {
+//                    loadingLayout.setVisibility(View.GONE);
+//                }
+//            }).start();
         }
     }
 
