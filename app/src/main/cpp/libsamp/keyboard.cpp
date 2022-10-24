@@ -9,6 +9,7 @@
 #include "scrollbar.h"
 #include "vendor/imgui/fontawesome.h"
 #include "vendor/imgui/fonts.h"
+#include "net/netgame.h"
 
 extern CGUI *pGUI;
 extern CJavaWrapper *pJavaWrapper;
@@ -299,7 +300,8 @@ void CKeyBoard::Open(keyboard_callback *handler, bool bHiden)
 	m_bInputFlag = bHiden;
 
 	//g_pJavaWrapper->HideVoice();
-	g_pJavaWrapper->HideServer();
+	if(pNetGame->m_GreenZoneState)g_pJavaWrapper->HideGreenZone();
+	g_pJavaWrapper->HideServerLogo();
 	//g_pJavaWrapper->HideSamwillMoney();
 	g_pJavaWrapper->HideSpeed();
 
@@ -323,7 +325,8 @@ void CKeyBoard::Close()
 	m_iPushedKey = -1;
 	m_pHandler = nullptr;
 
-	g_pJavaWrapper->ShowServer(pSettings->GetReadOnly().szServer);
+	g_pJavaWrapper->ShowServerLogo();
+	if(pNetGame->m_GreenZoneState)g_pJavaWrapper->ShowGreenZone();
 	//g_pJavaWrapper->ShowVoice();
 
 	if (m_bNewKeyboard)
@@ -619,7 +622,8 @@ void CKeyBoard::Send()
 			m_pkHistory->AddStringToHistory(m_sInput);
 	}
 	m_bEnable = false;
-	g_pJavaWrapper->ShowServer(pSettings->GetReadOnly().szServer);
+	g_pJavaWrapper->ShowServerLogo();
+	if(pNetGame->m_GreenZoneState)g_pJavaWrapper->ShowGreenZone();
 	//g_pJavaWrapper->ShowVoice();
 }
 

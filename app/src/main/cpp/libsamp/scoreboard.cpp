@@ -180,7 +180,6 @@ void CScoreBoard::Toggle()
     */
 
    // Freeze Player
-   pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->TogglePlayerControllableWithoutLock(false);
 
     Update();
 
@@ -189,9 +188,6 @@ void CScoreBoard::Toggle()
 }
 
 void CScoreBoard::Close() {
-
-    // Unfreeze player
-    pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->TogglePlayerControllableWithoutLock(true);
 
     if (m_pPlayers)
     {

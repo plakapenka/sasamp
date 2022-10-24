@@ -227,6 +227,7 @@ void InitInGame()
 
 		g_pJavaWrapper->UpdateSplash(101);
 		g_pJavaWrapper->ShowServer(pSettings->GetReadOnly().szServer);
+		g_pJavaWrapper->ShowServerLogo();
 		bGameInited = true;
 
 		return;

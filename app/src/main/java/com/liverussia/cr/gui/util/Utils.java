@@ -21,7 +21,6 @@ public class Utils {
 
     public static void ShowLayout(View view, boolean isAnim) {
         if (view != null) {
-            Log.d("dfs", "норм");
             view.setVisibility(View.VISIBLE);
             if (isAnim) {
                 fadeIn(view);
@@ -29,10 +28,7 @@ public class Utils {
                 view.setAlpha(1.0f);
             }
         }
-        else
-        {
-            Log.d("dfs", "СХУЯ");
-        }
+
     }
 
     public static void HideLayout(View view, boolean isAnim) {

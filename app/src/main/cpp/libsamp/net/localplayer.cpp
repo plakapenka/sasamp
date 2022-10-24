@@ -670,7 +670,7 @@ bool CLocalPlayer::Spawn()
 	else
 	{
 		*(uint8_t*)(g_libGTASA+0x7165E8) = 1;
-		g_pJavaWrapper->HideHud();
+		g_pJavaWrapper->HideHud(false);
 	}
    
     //g_pJavaWrapper->ShowSpeed();

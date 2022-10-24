@@ -590,19 +590,16 @@ void DialogBox(RPCParameters *rpcParams)
 		
 		if(pSettings->GetReadOnly().iDialog)
 		{
-			pGame->FindPlayerPed()->TogglePlayerControllable(false);
 			g_pJavaWrapper->MakeDialog(wDialogID, byteDialogStyle, title, info, button1, button2);
-			g_pJavaWrapper->HideHudDialog();
 		}
 		else
 			pDialogWindow->Show(true);
-			g_pJavaWrapper->HideHudDialog();
 }
 
 void GameModeRestart(RPCParameters *rpcParams)
 {
 	// pChatWindow->AddInfoMessage("The server is restarting..");
-	pChatWindow->AddInfoMessage("{ff0000}?????????????? ??????????????? ? ????..{ffffff}");
+	pChatWindow->AddInfoMessage("{ff0000}Сервер перезагружается...");
 	pNetGame->ShutDownForGameRestart();
 }
 

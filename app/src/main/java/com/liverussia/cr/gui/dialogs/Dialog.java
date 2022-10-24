@@ -126,7 +126,7 @@ public class Dialog {
         ((TextView) this.mRightBtn.getChildAt(0)).setText(Utils.transfromColors(rightBtnText));
         if (rightBtnText.equals("")) { this.mRightBtn.setVisibility(View.GONE); }
         else { this.mRightBtn.setVisibility(View.VISIBLE); }
-        Utils.ShowLayout(this.mMainLayout, true);
+        Utils.ShowLayout(this.mMainLayout, false);
     }
 
     public void hideWithoutReset() {
@@ -137,14 +137,16 @@ public class Dialog {
         Utils.ShowLayout(this.mMainLayout, false);
     }
 
-    public void sendDialogResponse(int btnId) {
+    public void sendDialogResponse(int btnId)
+    {
+
         if (this.mInputPasswordStyle) {
             this.mCurrentInputText = this.mInput.getText().toString();
         }
         ((InputMethodManager) NvEventQueueActivity.getInstance().getSystemService("input_method")).hideSoftInputFromWindow(this.mInput.getWindowToken(), 0);
 
         NvEventQueueActivity.getInstance().sendDialogResponse(btnId, this.mCurrentDialogId, this.mCurrentListItem, this.mCurrentInputText);
-        Utils.HideLayout(this.mMainLayout, true);
+        Utils.HideLayout(this.mMainLayout, false);
 
 
     }

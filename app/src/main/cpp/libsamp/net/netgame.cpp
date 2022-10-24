@@ -409,69 +409,6 @@ void CNetGame::Packet_TrailerSync(Packet* p)
 	}
 }
 
-#define AUTH_SALT "78r5jgwvbcg6dv1"
-
-// Packet 251
-#define RPC_TOGGLE_HUD_ELEMENT 1
-#define RPC_STREAM_CREATE 2
-#define RPC_STREAM_POS 3
-#define RPC_STREAM_DESTROY 4
-#define RPC_STREAM_INDIVIDUAL 5
-#define RPC_STREAM_VOLUME 6
-#define RPC_STREAM_ISENABLED 7
-#define RPC_OPEN_LINK 8
-#define RPC_TIMEOUT_CHAT 9
-#define RPC_CUSTOM_COMPONENT 10
-#define RPC_CUSTOM_HANDLING 11
-#define RPC_CUSTOM_VISUALS 13
-#define RPC_CUSTOM_HANDLING_DEFAULTS 14
-#define RPC_OPEN_SETTINGS 15
-#define RPC_CUSTOM_SET_FUEL 16
-#define RPC_CUSTOM_SET_LEVEL 17
-#define RPC_TOGGLE_GPS_INFO 18
-#define RPC_TOGGLE_GREENZONE 19
-#define RPC_TOGGLE_SAMWILL_GAME 20 // �������� uint8 toggle, ��������� uint8 quantity
-#define RPC_KILLLIST 21
-#define RPC_CLEAR_KILLLIST 22
-#define RPC_SHOW_DUELS_KILLS_LEFT 23
-#define RPC_DUELS_SHOW_LOCAL_TOP 24
-#define RPC_DUELS_SHOW_LOCAL_STAT 25
-#define RPC_SHOW_ACTION_LABEL 26
-#define RPC_SHOW_TARGET_LABEL 27
-#define RPC_SHOW_FACTORY_GAME 28
-#define RPC_SHOW_MINING_GAME 29
-#define RPC_SHOW_TD_BUS 30
-#define RPC_SHOW_DICE_TABLE 31
-#define RPC_SHOW_LUCKYWHEEL 32
-#define RPC_SHOW_OILGAME 33
-#define RPC_SHOW_CASINO_BUY_CHIP 34
-#define RPC_TOGGLE_BUY_MENU 35
-#define RPC_VEHICLE_DATA 36
-#define RPC_BUTTON_CLICKED 37
-#define RPC_FUELSTATION_BUY 38
-#define RPC_FUELSTATION_SEND 39
-#define RPC_TOGGLE_ACCESSORIES_MENU 40
-#define RPC_TOGGLE_CLOTHING_MENU 41
-#define RPC_SHOPSTORE_BUTTON 42
-#define RPC_GUNSTORE_TOGGLE 43
-#define RPC_GUNSTORETOGGLESEND 44
-#define RPC_SHOW_ARMY_GAME 45
-#define RPC_CHECK_CLIENT 46
-#define RPC_SHOW_CONTEINER_AUC 52
-#define RPC_PRE_DEATH 48
-
-// Packet 252
-#define RPC_TOGGLE_LOGIN (1)
-#define RPC_TOGGLE_REGISTER (2)
-
-// Packet 253
-#define RPC_CLEAR_ANIM (1)
-#define RPC_TOGGLE_CHOOSE_SPAWN (2)
-
-// other
-//#define RPC_CUSTOM_ACTOR_PUT_IN_VEH 0x20
-//#define RPC_CUSTOM_ACTOR_REMOVE_VEH 0x21
-//#define RPC_CUSTOM_ACTOR_ADD_ADDITIONAL 0x22
 
 #include "..//game/CCustomPlateManager.h"
 #include "..//util/CJavaWrapper.h"
@@ -886,43 +823,44 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 
 			break;
 		}
-		case RPC_TOGGLE_BUY_MENU:
+		case RPC_SHOW_AUTOSHOP:
 		{
 			uint32_t toggle;
 			bs.Read(toggle);
-			/*
+
 			if (toggle == 1)
 			{
-				g_pJavaWrapper->HideHud();
-				pGame->ToggleHUDElement(0, false);
-				g_pJavaWrapper->ShowAutosalon();
+
+				g_pJavaWrapper->ShowAutoShop();
 			}
 			else if (toggle == 0)
 			{
-				g_pJavaWrapper->HideAutosalon();
-				g_pJavaWrapper->ShowHud();
-				pGame->ToggleHUDElement(0, true);
+				g_pJavaWrapper->HideAutoShop();
 			}
-			*/
+
 			break;
 		}
-		case RPC_VEHICLE_DATA:
+		case RPC_UPDATE_AUTOSHOP:
 		{
 			uint32_t price;
-			uint32_t quantity;
-			uint32_t vehicleid;
-			char str[256];
+			uint32_t count;
+			float maxspeed;
+			float acceleration;
 			uint8_t len;
+
+
+			char name[256];
+
 			bs.Read(len);
-			bs.Read(&str[0], len);
+			bs.Read(name, len);
+			name[len] = '\0';
 			bs.Read(price);
-			bs.Read(quantity);
-			bs.Read(vehicleid);
-			/*
-			g_pJavaWrapper->HideHud();
-			pGame->ToggleHUDElement(0, false);
-			g_pJavaWrapper->UpdateAutosalon((char *)str, price, quantity, -1, -1);
-			*/
+			bs.Read(count);
+			bs.Read(maxspeed);
+			bs.Read(acceleration);
+
+			Log("%s %d %d %f %f", name, price, count, maxspeed, acceleration);
+			g_pJavaWrapper->UpdateAutoShop(name, price, count, maxspeed, acceleration);
 			break;
 		}
 		case RPC_CUSTOM_HANDLING_DEFAULTS:
@@ -1606,7 +1544,8 @@ void CNetGame::SendDialogResponse(uint16_t wDialogID, uint8_t byteButtonID, uint
 	bsSend.Write(respLen);
 	bsSend.Write(szInput, respLen);
 	m_pRakClient->RPC(&RPC_DialogResponse, &bsSend, HIGH_PRIORITY, RELIABLE_ORDERED, 0, false, UNASSIGNED_NETWORK_ID, NULL);
-	g_pJavaWrapper->ShowHudDialog();
+
+	g_pJavaWrapper->ShowHud();
 }
 
 void CNetGame::SetMapIcon(uint8_t byteIndex, float fX, float fY, float fZ, uint8_t byteIcon, int iColor, int style)

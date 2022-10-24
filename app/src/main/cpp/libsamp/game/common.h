@@ -7,8 +7,10 @@
 #define HUD_ELEMENT_HUD     4
 #define HUD_ELEMENT_VOICE	5
 #define HUD_ELEMENT_TEXTLABELS	6
+#define HUD_ELEMENT_FPS		7
 
-#define HUD_MAX	7
+
+#define HUD_MAX	8
 
 #define PLAYER_PED_SLOTS	120
 #define MAX_TEXT_DRAWS	3072

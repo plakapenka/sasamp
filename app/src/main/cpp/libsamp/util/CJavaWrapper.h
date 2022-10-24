@@ -43,8 +43,6 @@ class CJavaWrapper
 
 	jmethodID s_showHud;
     jmethodID s_hideHud;
-	jmethodID s_showHudDialog;
-    jmethodID s_hideHudDialog;
 	jmethodID s_showGreenZone;
     jmethodID s_hideGreenZone;
 	jmethodID s_showGPS;
@@ -74,6 +72,10 @@ class CJavaWrapper
 	jmethodID j_showDeathInfo;
 	jmethodID s_hideDeathInfo;
 
+	jmethodID j_showAutoShop;
+	jmethodID j_hideAutoShop;
+	jmethodID j_updateAutoShop;
+
 	jmethodID s_showAuctionManager;
 
 	jmethodID s_showChooseSpawn;
@@ -83,6 +85,9 @@ class CJavaWrapper
 
 	jmethodID s_showSplash;
 	jmethodID s_updateSplash;
+
+	jmethodID s_hideServerLogo;
+	jmethodID s_showServerLogo;
 
 	jmethodID s_showBusInfo;
 	jmethodID s_hideBusInfo;
@@ -109,7 +114,7 @@ public:
 	void UpdateHudInfo(int health, int armour, int hunger, int weaponid, int ammo, int ammoinclip, int money, int wanted);
 	void UpdateLevelInfo(int level, int currentexp, int maxexp);
 	void ShowHud();
-    void HideHud();
+    void HideHud(bool withChat);
 	void ShowHudDialog();
     void HideHudDialog();
 	void ShowGreenZone();
@@ -118,6 +123,8 @@ public:
     void HideGPS();
 	void ShowServer(int serverid);
     void HideServer();
+	void HideServerLogo();
+	void ShowServerLogo();
 
 	void SetTabStat(int id, char* name, int score, int ping);
 	void ShowTabWindow();
@@ -184,6 +191,12 @@ public:
 
 	CJavaWrapper(JNIEnv* env, jobject activity);
 	~CJavaWrapper();
+
+	void UpdateAutoShop(std::string name, int price, int count, float maxspeed, float acceleration);
+
+	void ShowAutoShop();
+
+	void HideAutoShop();
 };
 
 extern CJavaWrapper* g_pJavaWrapper;

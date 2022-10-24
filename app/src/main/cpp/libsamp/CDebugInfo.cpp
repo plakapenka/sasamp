@@ -35,6 +35,8 @@ void CDebugInfo::SetDrawFPS(uint32_t bDraw)
 
 void CDebugInfo::Draw()
 {
+	if (!pGame->IsToggledHUDElement(HUD_ELEMENT_FPS)) return;
+
 	char szStr[30];
 	char szStrMem[256];
 	char szStrPos[256];

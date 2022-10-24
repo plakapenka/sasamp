@@ -183,28 +183,6 @@ bool ProcessVoiceCommands(const char* str)
 		return true;
 	}
 
-	if (strstr(str, "/cameditgui"))
-	{
-		if (pGame->IsToggledHUDElement(0))
-		{
-			for (int i = 0; i < 7; i++)
-			{
-				pGame->ToggleHUDElement(i, false);
-			}
-			pGame->ToggleHUDElement(1, false);
-			g_pJavaWrapper->HideHud();
-		}
-		else
-		{
-			for (int i = 0; i < 7; i++)
-			{
-				pGame->ToggleHUDElement(i, true);
-			}
-			pGame->ToggleHUDElement(1, true);
-			g_pJavaWrapper->ShowHud();
-		}
-		return true;
-	}
 
 	if (strstr(str, "/tab"))
 	{

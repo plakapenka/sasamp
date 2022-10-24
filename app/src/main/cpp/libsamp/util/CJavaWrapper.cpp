@@ -215,9 +215,7 @@ extern "C"
 
 		if(pNetGame) {
 			pNetGame->SendDialogResponse(i, i3, i2, (char*)inputText);
-			pGame->FindPlayerPed()->TogglePlayerControllable(true);
-			g_pJavaWrapper->ShowHud();
-			g_pJavaWrapper->ShowServer(pSettings->GetReadOnly().szServer);
+
 		}
 
 		//g_pJavaWrapper->isDialogActive = false;
@@ -357,7 +355,7 @@ extern "C"
 			if(!b)
 			{
 				*(uint8_t*)(g_libGTASA+0x7165E8) = 1;
-				g_pJavaWrapper->HideHud();
+				g_pJavaWrapper->HideHud(true);
 			}
 			else
 			{
@@ -941,7 +939,7 @@ void CJavaWrapper::ShowAuctionManager(int itemId, int type, int price)
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_showAuctionManager, itemId, type, price);
+    //env->CallVoidMethod(this->activity, this->s_showAuctionManager, itemId, type, price);
 }
 
 void CJavaWrapper::ShowFuelStation(int type, int price1, int price2, int price3, int price4, int price5)
@@ -1040,32 +1038,6 @@ void CJavaWrapper::ShowOilFactoryGame()
     env->CallVoidMethod(this->activity, this->s_showOilFactoryGame);
 }
 
-void CJavaWrapper::ShowHudDialog()
-{
-//    JNIEnv* env = GetEnv();
-//
-//	if (!env)
-//	{
-//		Log("No env");
-//		return;
-//	}
-//    env->CallVoidMethod(this->activity, this->s_showHudDialog);
-//	g_pJavaWrapper->isHudToggle = true;
-}
-
-void CJavaWrapper::HideHudDialog()
-{
-    /*JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-    env->CallVoidMethod(this->activity, this->s_hideHudDialog);
-	g_pJavaWrapper->isHudToggle = false;*/
-}
-
 void CJavaWrapper::ShowHud()
 {
     JNIEnv* env = GetEnv();
@@ -1076,10 +1048,9 @@ void CJavaWrapper::ShowHud()
 		return;
 	}
     env->CallVoidMethod(this->activity, this->s_showHud);
-	g_pJavaWrapper->isHudToggle = true;
 }
 
-void CJavaWrapper::HideHud()
+void CJavaWrapper::HideHud(bool withChar)
 {
     JNIEnv* env = GetEnv();
 
@@ -1088,7 +1059,7 @@ void CJavaWrapper::HideHud()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_hideHud);
+    env->CallVoidMethod(this->activity, this->s_hideHud, withChar);
 }
 
 void CJavaWrapper::ShowBusInfo(int time)
@@ -1342,6 +1313,33 @@ void CJavaWrapper::UpdateSplash(int percent) {
 	env->CallVoidMethod(this->activity, this->s_updateSplash, percent);
 }
 
+
+void CJavaWrapper::ShowServerLogo() {
+
+	JNIEnv* env = GetEnv();
+
+	if (!env)
+	{
+		Log("No env");
+		return;
+	}
+
+	env->CallVoidMethod(this->activity, this->s_showServerLogo);
+}
+
+void CJavaWrapper::HideServerLogo() {
+
+	JNIEnv* env = GetEnv();
+
+	if (!env)
+	{
+		Log("No env");
+		return;
+	}
+
+	env->CallVoidMethod(this->activity, this->s_hideServerLogo);
+}
+
 void CJavaWrapper::ShowMenu() 
 {
 	JNIEnv* env = GetEnv();
@@ -1478,15 +1476,46 @@ void CJavaWrapper::ShowDeathInfo(std::string nick, int id)
 	}
 	jstring jStringParam = env->NewStringUTF( nick.c_str() );
 
-//	jclass strClass = env->FindClass("java/lang/String");
-//    jmethodID ctorID = env->GetMethodID(strClass, "<init>", "([BLjava/lang/String;)V");
-//    jstring encoding = env->NewStringUTF("UTF-8");
-//
-//	jbyteArray bytes = env->NewByteArray(strlen(nick));
-//    env->SetByteArrayRegion(bytes, 0, strlen(nick), (jbyte*)nick);
-//    jstring jnick = (jstring) env->NewObject(strClass, ctorID, bytes, encoding);
-
 	env->CallVoidMethod(this->activity, this->j_showDeathInfo, jStringParam, id);
+}
+
+void CJavaWrapper::ShowAutoShop()
+{
+	JNIEnv* env = GetEnv();
+
+	if (!env)
+	{
+		Log("No env");
+		return;
+	}
+
+	env->CallVoidMethod(this->activity, this->j_showAutoShop);
+}
+void CJavaWrapper::UpdateAutoShop(std::string name, int price, int count, float maxspeed, float acceleration)
+{
+	JNIEnv* env = GetEnv();
+
+	if (!env)
+	{
+		Log("No env");
+		return;
+	}
+	jstring jStringParam = env->NewStringUTF( name.c_str() );
+
+	env->CallVoidMethod(this->activity, this->j_updateAutoShop, jStringParam, price, count, maxspeed, acceleration);
+}
+
+void CJavaWrapper::HideAutoShop()
+{
+	JNIEnv* env = GetEnv();
+
+	if (!env)
+	{
+		Log("No env");
+		return;
+	}
+
+	env->CallVoidMethod(this->activity, this->j_hideAutoShop);
 }
 
 void CJavaWrapper::HideDeathInfo() 
@@ -1638,9 +1667,7 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 	s_updateHudInfo = env->GetMethodID(nvEventClass, "updateHudInfo", "(IIIIIIII)V");
 	s_updateLevelInfo = env->GetMethodID(nvEventClass, "updateLevelInfo", "(III)V");
     s_showHud = env->GetMethodID(nvEventClass, "showHud", "()V");
-    s_hideHud = env->GetMethodID(nvEventClass, "hideHud", "()V");
-	//s_showHudDialog = env->GetMethodID(nvEventClass, "showHudDialog", "()V");
-    //s_hideHudDialog = env->GetMethodID(nvEventClass, "hideHudDialog", "()V");
+    s_hideHud = env->GetMethodID(nvEventClass, "hideHud", "(G)V");
 	s_showGreenZone = env->GetMethodID(nvEventClass, "showGreenZone", "()V");
     s_hideGreenZone = env->GetMethodID(nvEventClass, "hideGreenZone", "()V");
 	s_showGPS = env->GetMethodID(nvEventClass, "showGPS", "()V");
@@ -1654,7 +1681,7 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 
 	s_showFuelStation = env->GetMethodID(nvEventClass, "showFuelStation", "(IIIIII)V");
 
-	s_showAuctionManager = env->GetMethodID(nvEventClass, "showAuctionManager", "(III)V");
+	//s_showAuctionManager = env->GetMethodID(nvEventClass, "showAuctionManager", "(III)V");
 
 	s_showShopStoreManager = env->GetMethodID(nvEventClass, "showShopStoreManager", "(II)V");
 	s_hideShopStoreManager = env->GetMethodID(nvEventClass, "hideShopStoreManager", "()V");
@@ -1691,6 +1718,10 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 	j_showDeathInfo = env->GetMethodID(nvEventClass, "showPreDeath", "(Ljava/lang/String;I)V");
 	//s_hideDeathInfo = env->GetMethodID(nvEventClass, "hideDeathInfo", "()V");
 
+	j_showAutoShop = env->GetMethodID(nvEventClass, "showAutoShop", "()V");
+	j_hideAutoShop = env->GetMethodID(nvEventClass, "hideAutoShop", "()V");
+	j_updateAutoShop = env->GetMethodID(nvEventClass, "updateAutoShop", "(Ljava/lang/String;IIFF)V");
+
 	s_showChooseSpawn = env->GetMethodID(nvEventClass, "showChooseSpawn", "(IIIII)V");
 	s_hideChooseSpawn = env->GetMethodID(nvEventClass, "hideChooseSpawn", "()V");
 
@@ -1698,6 +1729,9 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 
 	s_updateSplash = env->GetMethodID(nvEventClass, "updateSplash", "(I)V");
 	s_showSplash = env->GetMethodID(nvEventClass, "showSplash", "()V");
+
+	s_showServerLogo = env->GetMethodID(nvEventClass, "showServerLogo", "()V");
+	s_hideServerLogo = env->GetMethodID(nvEventClass, "hideServerLogo", "()V");
 	//s_showTabWindow = env->GetMethodID(nvEventClass, "showTabWindow", "()V");
 	//s_setTabStat = env->GetMethodID(nvEventClass, "setTabStat", "(ILjava/lang/String;II)V");
 
@@ -1714,3 +1748,33 @@ CJavaWrapper::~CJavaWrapper()
 }
 
 CJavaWrapper* g_pJavaWrapper = nullptr;
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_nvidia_devtech_NvEventQueueActivity_native_1SendAutoShopButton(JNIEnv *env, jobject thiz,
+																		jint button_id) {
+	uint8_t packet = ID_CUSTOM_RPC;
+	uint8_t RPC = RPC_CLICK_AUTOSHOP;
+	uint8_t button = button_id;
+
+
+	RakNet::BitStream bsSend;
+	bsSend.Write(packet);
+	bsSend.Write(RPC);
+	bsSend.Write(button);
+	pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_nvidia_devtech_NvEventQueueActivity_ToggleHud(JNIEnv *env, jobject thiz,
+													   jboolean toggle, jboolean withChat) {
+	//ScriptCommand(&toggle_hud, toggle); ?? не рабочая хуета судя по наблюдениям
+	//ScriptCommand(&toggle_radar_blank, toggle);?? не рабочая хуета судя по наблюдениям
+	g_pJavaWrapper->isHudToggle = toggle;
+	*(uint8_t*)(g_libGTASA+0x8EF36B) = (uint8_t)!toggle;
+
+	if(withChat)pGame->ToggleHUDElement(HUD_ELEMENT_CHAT, toggle);
+	pGame->ToggleHUDElement(HUD_ELEMENT_BUTTONS, toggle);
+    pGame->ToggleHUDElement(HUD_ELEMENT_FPS, toggle);
+}

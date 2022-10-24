@@ -2,6 +2,7 @@ package com.liverussia.cr.gui;
 
 import android.app.Activity;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -19,8 +20,9 @@ import java.util.ArrayList;
 import java.util.Formatter;
 
 public class HudManager {
+    private int hideCount;
     private Activity activity;
-    private ConstraintLayout hud_layout;
+    private ConstraintLayout hud_main;
     private ConstraintLayout hud_main_layout;
     private ConstraintLayout target_notify;
     private ConstraintLayout yearn_money;
@@ -49,10 +51,11 @@ public class HudManager {
 
     public HudManager(Activity aactivity) {
         activity = aactivity;
-        hud_layout = aactivity.findViewById(R.id.hud_main);
+        hud_main = aactivity.findViewById(R.id.hud_main);
+        hud_main.setVisibility(View.GONE);
 
         hud_main_layout = aactivity.findViewById(R.id.hud_layout);
-        hud_main_layout.setVisibility(View.GONE);
+        hud_main_layout.setVisibility(View.VISIBLE);
 
         bus_layout = aactivity.findViewById(R.id.bus_layout);
         bus_layout.setVisibility(View.GONE);
@@ -73,6 +76,7 @@ public class HudManager {
         hud_greenzone = aactivity.findViewById(R.id.hud_greenzone);
         hud_gpsactive = aactivity.findViewById(R.id.hud_gpsactive);
         hud_serverlogo = aactivity.findViewById(R.id.hud_logo);
+        hud_serverlogo.setVisibility(View.GONE);
         hud_serverinfo = aactivity.findViewById(R.id.hud_serverinfo);
 
         levelinfo = aactivity.findViewById(R.id.levelinfo);
@@ -144,18 +148,24 @@ public class HudManager {
         oil_oil_procent.setText(String.valueOf(stroiloilproc));
 
     }
-    public void HideAllLayout()
-    {
-        HideHud();
-    }
+
     public void ShowHud()
     {
-        Utils.ShowLayout(hud_main_layout, false);
+        hideCount --;
+        if(hideCount <= 0)
+        {
+            hideCount = 0;
+            Utils.ShowLayout(hud_main, false);
+            NvEventQueueActivity.getInstance().ToggleHud(true, true);
+        }
     }
 
-    public void HideHud()
+    public void HideHud(boolean withChar)
     {
-        Utils.HideLayout(hud_main_layout, false);
+        Log.d("sdfs", "HIDE!!!!!");
+        hideCount ++;
+        Utils.HideLayout(hud_main, false);
+        NvEventQueueActivity.getInstance().ToggleHud(false, withChar);
     }
 
     public void ShowGreenZone() { Utils.ShowLayout(hud_greenzone, true); }
@@ -199,7 +209,14 @@ public class HudManager {
         }
         Utils.ShowLayout(hud_serverinfo, true);
     }
-
+    public void HideServerLogo()
+    {
+        Utils.HideLayout(hud_serverlogo, false);
+    }
+    public void ShowServerLogo()
+    {
+        Utils.ShowLayout(hud_serverlogo, false);
+    }
     public void HideServer() { Utils.HideLayout(hud_serverinfo, true); }
 
     public void UpdateLevelInfo(int level, int currentexp, int maxexp) {

@@ -57,77 +57,77 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setContentView(R.layout.autoshop);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+//        setContentView(R.layout.autoshop);
+//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+            //    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
                 View.SYSTEM_UI_FLAG_IMMERSIVE
                         | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 //
-//		Animation animation = AnimationUtils.loadAnimation(this, R.anim.button_click);
-//
-//		monitoringTV = (TextView) findViewById(R.id.monitoringTV);
-//        settingsTV = (TextView) findViewById(R.id.settingsTV);
-//        forumTV = (TextView) findViewById(R.id.rouletteBut);
-//        donateTV = (TextView) findViewById(R.id.donateTV);
-//
-//        monitoringImage = (ImageView) findViewById(R.id.monitoringImage);
-//        settingsImage = (ImageView) findViewById(R.id.settingsImage);
-//        forumImage = (ImageView) findViewById(R.id.forumImage);
-//        donateImage = (ImageView) findViewById(R.id.donateImage);
-//        playImage = (ImageView) findViewById(R.id.playImage);
-//
-//        monitoringButton = (LinearLayout) findViewById(R.id.monitoringButton);
-//        settingsButton = (LinearLayout) findViewById(R.id.settingsButton);
-//        forumButton = (LinearLayout) findViewById(R.id.rouletteButton);
-//        donateButton = (LinearLayout) findViewById(R.id.donateButton);
-//        playButton = (LinearLayout) findViewById(R.id.playButton);
-//
-//		monitoringFragment = new MonitoringFragment();
-//        settingsFragment = new SettingsFragment();
-//        forumFragment = new ForumFragment();
-//        donateFragment = new DonateFragment();
-//
-//	    replaceFragment(monitoringFragment);
-//
-//		monitoringButton.setOnClickListener(new OnClickListener() {
-//            public void onClick(View v) {
-//                v.startAnimation(animation);
-//                onClickMonitoring();
-//            }
-//        });
-//
-//        settingsButton.setOnClickListener(new OnClickListener() {
-//            public void onClick(View v) {
-//                v.startAnimation(animation);
-//                onClickSettings();
-//            }
-//        });
-//
-//        forumButton.setOnClickListener(new OnClickListener() {
-//            public void onClick(View v) {
-//              v.startAnimation(animation);
-//			  onClickForum();
-//            }
-//        });
-//
-//        donateButton.setOnClickListener(new OnClickListener() {
-//            public void onClick(View v) {
-//               v.startAnimation(animation);
-//			   onClickDonate();
-//            }
-//        });
-//
-//        playButton.setOnClickListener(new OnClickListener() {
-//            public void onClick(View v) {
-//               v.startAnimation(animation);
-//			   startTimer();
-//            }
-//        });
+		Animation animation = AnimationUtils.loadAnimation(this, R.anim.button_click);
+
+		monitoringTV = (TextView) findViewById(R.id.monitoringTV);
+        settingsTV = (TextView) findViewById(R.id.settingsTV);
+        forumTV = (TextView) findViewById(R.id.rouletteBut);
+        donateTV = (TextView) findViewById(R.id.donateTV);
+
+        monitoringImage = (ImageView) findViewById(R.id.monitoringImage);
+        settingsImage = (ImageView) findViewById(R.id.settingsImage);
+        forumImage = (ImageView) findViewById(R.id.forumImage);
+        donateImage = (ImageView) findViewById(R.id.donateImage);
+        playImage = (ImageView) findViewById(R.id.playImage);
+
+        monitoringButton = (LinearLayout) findViewById(R.id.monitoringButton);
+        settingsButton = (LinearLayout) findViewById(R.id.settingsButton);
+        forumButton = (LinearLayout) findViewById(R.id.rouletteButton);
+        donateButton = (LinearLayout) findViewById(R.id.donateButton);
+        playButton = (LinearLayout) findViewById(R.id.playButton);
+
+		monitoringFragment = new MonitoringFragment();
+        settingsFragment = new SettingsFragment();
+        forumFragment = new ForumFragment();
+        donateFragment = new DonateFragment();
+
+	    replaceFragment(monitoringFragment);
+
+		monitoringButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                v.startAnimation(animation);
+                onClickMonitoring();
+            }
+        });
+
+        settingsButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                v.startAnimation(animation);
+                onClickSettings();
+            }
+        });
+
+        forumButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+              v.startAnimation(animation);
+			  onClickForum();
+            }
+        });
+
+        donateButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+               v.startAnimation(animation);
+			   onClickDonate();
+            }
+        });
+
+        playButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+               v.startAnimation(animation);
+			   startTimer();
+            }
+        });
 
     }
 	
