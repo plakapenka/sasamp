@@ -50,8 +50,8 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="D:\salon_obzor-svg.webp" />
-                                                <entry key="opacityPercent" value="80" />
+                                                <entry key="imagePath" value="D:\m_loadingstart_1.png" />
+                                                <entry key="opacityPercent" value="60" />
                                                 <entry key="trimmed" value="true" />
                                               </map>
                                             </option>
@@ -85,9 +85,8 @@
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
-                                      <entry key="imageAsset" value="D:\salon_obzor-svg.webp" />
-                                      <entry key="outputName" value="autoshop_preview" />
-                                      <entry key="theme" value="HOLO_DARK" />
+                                      <entry key="imageAsset" value="D:\m_loadingstart_1.png" />
+                                      <entry key="outputName" value="mylogo" />
                                       <entry key="themeColor" value="ffffff" />
                                     </map>
                                   </option>
@@ -391,8 +390,8 @@
                           <map>
                             <entry key="assetSourceType" value="FILE" />
                             <entry key="color" value="d0ca0d" />
-                            <entry key="outputName" value="salon_obzor__3_" />
-                            <entry key="sourceFile" value="D:\salon_obzor (3).svg" />
+                            <entry key="outputName" value="mylogo" />
+                            <entry key="sourceFile" value="D:\loading(start) 1.svg" />
                           </map>
                         </option>
                       </PersistentState>
