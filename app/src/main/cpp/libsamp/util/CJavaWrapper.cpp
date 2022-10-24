@@ -369,14 +369,6 @@ extern "C"
 		}
 	}
 
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_setNativeDialog(JNIEnv* pEnv, jobject thiz, jboolean b)
-	{
-		if (pSettings)
-		{
-			pSettings->GetWrite().iDialog = b;
-		}
-	}
-
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_setNativeHpArmourText(JNIEnv* pEnv, jobject thiz, jboolean b)
 	{
 		if (pSettings)
@@ -469,15 +461,6 @@ extern "C"
 		if (pSettings)
 		{
 			return pSettings->GetReadOnly().iHud;
-		}
-		return 0;
-	}
-
-	JNIEXPORT jboolean JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_getNativeDialog(JNIEnv* pEnv, jobject thiz)
-	{
-		if (pSettings)
-		{
-			return pSettings->GetReadOnly().iDialog;
 		}
 		return 0;
 	}

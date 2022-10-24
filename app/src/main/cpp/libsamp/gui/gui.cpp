@@ -5,7 +5,6 @@
 #include "../game/RW/RenderWare.h"
 #include "../chatwindow.h"
 #include "../playertags.h"
-#include "../dialog.h"
 #include "../keyboard.h"
 #include "../CSettings.h"
 #include "..//scoreboard.h"
@@ -16,7 +15,6 @@
 extern CScoreBoard* pScoreBoard;
 extern CChatWindow *pChatWindow;
 extern CPlayerTags *pPlayerTags;
-extern CDialogWindow *pDialogWindow;
 extern CSettings *pSettings;
 extern CKeyBoard *pKeyBoard;
 extern CNetGame *pNetGame;
@@ -284,7 +282,6 @@ void CGUI::Render()
 
 	if (pScoreBoard) pScoreBoard->Draw();
 	if (pKeyBoard) pKeyBoard->Render();
-	if (pDialogWindow) pDialogWindow->Render();
 
 	/*if (pNetGame && !pDialogWindow->m_bIsActive && pGame->IsToggledHUDElement(HUD_ELEMENT_BUTTONS))
 	{

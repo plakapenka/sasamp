@@ -2,7 +2,6 @@
 #include "../game/game.h"
 #include "netgame.h"
 #include "../chatwindow.h"
-#include "../dialog.h"
 #include "../CSettings.h"
 #include "../util/CJavaWrapper.h"
 #include "../voice/CVoiceChatClient.h"
@@ -12,7 +11,6 @@ bool g_IsVoiceServer();
 extern CGame *pGame;
 extern CNetGame *pNetGame;
 extern CChatWindow *pChatWindow;
-extern CDialogWindow *pDialogWindow;
 extern CSettings *pSettings;
 
 int iNetModeNormalOnfootSendRate	= NETMODE_ONFOOT_SENDRATE;
@@ -560,40 +558,31 @@ void DialogBox(RPCParameters *rpcParams)
 
 	bsData.Read(wDialogID);
 		bsData.Read(byteDialogStyle);
-		pDialogWindow->m_wDialogID = wDialogID;
-		pDialogWindow->m_byteDialogStyle = byteDialogStyle;
 		// title
 		bsData.Read(len);
 		bsData.Read(szBuff, len);
 		szBuff[len] = '\0';
 		cp1251_to_utf8(title, szBuff);
-		cp1251_to_utf8(pDialogWindow->m_utf8Title, szBuff);
 		// button1
 		bsData.Read(len);
 		bsData.Read(szBuff, len);
 		szBuff[len] = '\0';
 		cp1251_to_utf8(button1, szBuff);
-		cp1251_to_utf8(pDialogWindow->m_utf8Button1, szBuff);
 		// button2
 		bsData.Read(len);
 		bsData.Read(szBuff, len);
 		szBuff[len] = '\0';
 		cp1251_to_utf8(button2, szBuff);
-		cp1251_to_utf8(pDialogWindow->m_utf8Button2, szBuff);
 
 		// info
 		stringCompressor->DecodeString(szBuff, 4096, &bsData);
 		cp1251_to_utf8(info, szBuff);
-		pDialogWindow->SetInfo(szBuff, strlen(szBuff));
 
 		if(wDialogID < 0) return;
 		
-		if(pSettings->GetReadOnly().iDialog)
-		{
-			g_pJavaWrapper->MakeDialog(wDialogID, byteDialogStyle, title, info, button1, button2);
-		}
-		else
-			pDialogWindow->Show(true);
+		g_pJavaWrapper->MakeDialog(wDialogID, byteDialogStyle, title, info, button1, button2);
+
+
 }
 
 void GameModeRestart(RPCParameters *rpcParams)

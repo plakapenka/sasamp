@@ -55,8 +55,7 @@ struct stSettings
 	int iPCMoney;
 	int iSkyBox;
 	int iSnow;
-	
-	int iDialog;
+
 	int iHud;
 };
 

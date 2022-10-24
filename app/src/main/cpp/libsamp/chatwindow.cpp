@@ -414,9 +414,6 @@ CChatWindow::~CChatWindow()
 #include <mutex>
 static std::mutex lDebugMutex;
 
-#include "dialog.h"
-extern CDialogWindow* pDialogWindow;
-
 bool CChatWindow::OnTouchEvent(int type, bool multi, int x, int y)
 {
 	
@@ -437,10 +434,6 @@ bool CChatWindow::OnTouchEvent(int type, bool multi, int x, int y)
 			x >= m_fChatPosX && x <= m_fChatPosX + m_fChatSizeX &&
 			y >= m_fChatPosY && y <= m_fChatPosY + m_fChatSizeY)
 		{
-			if (pDialogWindow)
-			{
-				if (pDialogWindow->m_bRendered) return true;
-			}
 			if (pKeyBoard)
 			{
 				pKeyBoard->Open(&ChatWindowInputHandler);
@@ -469,9 +462,9 @@ void CChatWindow::Render()
 	if (pScrollbar)
 	{
 		pScrollbar->m_bDrawState = false;
-		if (pKeyBoard && pDialogWindow)
+		if (pKeyBoard)
 		{
-			if (pKeyBoard->IsOpen() && !pDialogWindow->m_bRendered)
+			if (pKeyBoard->IsOpen())
 			{
 				pScrollbar->m_bDrawState = true;
 			}

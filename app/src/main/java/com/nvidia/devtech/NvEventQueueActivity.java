@@ -200,7 +200,6 @@ public abstract class NvEventQueueActivity
     public native void setNativeRadarrect(boolean b);
     public native void setNativePcMoney(boolean b);
     public native void setNativeSkyBox(boolean b);
-    public native void setNativeDialog(boolean b);
     public native void setNativeHud(boolean b);
 
     public native boolean getNativeCutoutSettings();
@@ -211,7 +210,6 @@ public abstract class NvEventQueueActivity
     public native boolean getNativeRadarrect();
     public native boolean getNativePcMoney();
     public native boolean getNativeSkyBox();
-    public native boolean getNativeDialog();
     public native boolean getNativeHud();
 
     public native void setNativeHudElementColor(int id, int a, int r, int g, int b);

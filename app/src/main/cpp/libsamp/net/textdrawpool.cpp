@@ -89,8 +89,7 @@ void CTextDrawPool::Draw()
 	}
 }
 #include "..//chatwindow.h"
-#include "..//dialog.h"
-extern CDialogWindow* pDialogWindow;
+
 extern CChatWindow* pChatWindow;
 bool CTextDrawPool::OnTouchEvent(int type, int num, int x, int y)
 {
@@ -98,13 +97,6 @@ bool CTextDrawPool::OnTouchEvent(int type, int num, int x, int y)
 	if (m_bSelectState == false) return true;
 	static bool bWannaClick = false;
 
-	if (pDialogWindow)
-	{
-		if (pDialogWindow->m_bRendered)
-		{
-			return true;
-		}
-	}
 
 	int id = 0;
 

@@ -87,18 +87,6 @@
                         android:textColor="@android:color/white"
                         android:textSize="12sp" />
 
-                    <androidx.appcompat.widget.SwitchCompat
-                        android:id="@+id/switch_dialog"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
-                        android:fontFamily="@font/roboto_regular"
-                        android:text="Новые диалоги"
-                        android:textColor="@android:color/white"
-                        android:textSize="12sp" />
-
                 </LinearLayout>
 
                 <LinearLayout

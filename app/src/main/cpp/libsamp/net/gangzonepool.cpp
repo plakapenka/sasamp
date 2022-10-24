@@ -57,8 +57,7 @@ void CGangZonePool::Delete(uint16_t wZone)
 		m_bSlotState[wZone] = false;
 	}
 }
-#include "..//dialog.h"
-extern CDialogWindow* pDialogWindow;
+
 void CGangZonePool::Draw()
 {
 	static uint32_t dwLastTick = 0;
@@ -70,15 +69,7 @@ void CGangZonePool::Draw()
 		alt = ~alt;
 		dwLastTick = dwTick;
 	}
-	bool bDraw = true;
-	if (pDialogWindow)
-	{
-		if (pDialogWindow->m_bRendered)
-		{
-			bDraw = false;
-		}
-	}
-	if (!bDraw) return;
+
 	for(uint16_t wZone = 0; wZone < MAX_GANG_ZONES; wZone++)
 	{
 		if(m_bSlotState[wZone])

@@ -103,7 +103,7 @@ void CSettings::Save(int iIgnoreCategory)
 		ini_table_create_entry_as_int(config, "gui", "androidKeyboard", m_Settings.iAndroidKeyboard);
 		ini_table_create_entry_as_int(config, "gui", "outfit", m_Settings.iOutfitGuns);
 		ini_table_create_entry_as_int(config, "gui", "radarrect", m_Settings.iRadarRect);
-		ini_table_create_entry_as_int(config, "gui", "dialog", m_Settings.iDialog);
+
 		ini_table_create_entry_as_int(config, "gui", "hud", m_Settings.iHud);
 		// ini_table_create_entry_as_int(config, "gui", "hparmourtext", m_Settings.iHPArmourText);
 		// ini_table_create_entry_as_int(config, "gui", "pcmoney", m_Settings.iPCMoney);
@@ -283,7 +283,6 @@ void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 	m_Settings.iSkyBox = ini_table_get_entry_as_int(config, "gui", "ctimecyc", 1);
 	m_Settings.iSnow = ini_table_get_entry_as_int(config, "gui", "snow", 1);
 	m_Settings.iHud = ini_table_get_entry_as_int(config, "gui", "hud", 1);
-	m_Settings.iDialog = ini_table_get_entry_as_int(config, "gui", "dialog", 1);
 	for (int i = 0; i < E_HUD_ELEMENT::HUD_SIZE; i++)
 	{
 		char buff[30];

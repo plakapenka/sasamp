@@ -12,7 +12,6 @@
 #include "gui/gui.h"
 #include "chatwindow.h"
 #include "playertags.h"
-#include "dialog.h"
 #include "keyboard.h"
 #include "CSettings.h"
 #include "CClientInfo.h"
@@ -41,7 +40,6 @@ CGame *pGame = nullptr;
 CNetGame *pNetGame = nullptr;
 CChatWindow *pChatWindow = nullptr; 
 CPlayerTags *pPlayerTags = nullptr;
-CDialogWindow *pDialogWindow = nullptr;
 CVoiceChatClient* pVoice = nullptr;
 CSnapShotHelper* pSnapShotHelper = nullptr;
 CScoreBoard* pScoreBoard = nullptr;
@@ -158,7 +156,6 @@ void InitInMenu()
 	pKeyBoard = new CKeyBoard();
 	pChatWindow = new CChatWindow();
 	pPlayerTags = new CPlayerTags();
-	pDialogWindow = new CDialogWindow();
 	pScoreBoard = new CScoreBoard();
 	pSnapShotHelper = new CSnapShotHelper();
 

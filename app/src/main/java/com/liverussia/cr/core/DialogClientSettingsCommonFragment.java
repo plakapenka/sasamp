@@ -28,7 +28,6 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
     private SwitchCompat mSwitchPCMoney;
     private SwitchCompat mSwitchSkyBox;
     private SwitchCompat mSwitchHud;
-    private SwitchCompat mSwitchDialog;
 
     private NvEventQueueActivity mContext = null;
 
@@ -83,7 +82,6 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
         mSwitchRadarrect = mRootView.findViewById(R.id.switch_radar_rect);
         mSwitchPCMoney = mRootView.findViewById(R.id.switch_pc_money);
         mSwitchSkyBox = mRootView.findViewById(R.id.switch_skybox);
-        mSwitchDialog = mRootView.findViewById(R.id.switch_dialog);
         mSwitchHud = mRootView.findViewById(R.id.switch_hud);
 
         getValues();
@@ -104,13 +102,6 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 mContext.setNativeSkyBox(b);
-            }
-        });
-
-        mSwitchDialog.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                mContext.setNativeDialog(b);
             }
         });
 
@@ -246,7 +237,6 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
         mSwitchPCMoney.setChecked(mContext.getNativePcMoney());
         mSwitchRadarrect.setChecked(mContext.getNativeRadarrect());
         mSwitchSkyBox.setChecked(mContext.getNativeSkyBox());
-        mSwitchDialog.setChecked(mContext.getNativeDialog());
         mSwitchHud.setChecked(mContext.getNativeHud());
 
         bChangeAllowed = false;

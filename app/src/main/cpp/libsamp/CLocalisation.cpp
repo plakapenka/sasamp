@@ -7,7 +7,6 @@
 #include "game/RW/RenderWare.h"
 #include "chatwindow.h"
 #include "playertags.h"
-#include "dialog.h"
 #include "keyboard.h"
 #include "CSettings.h"
 #include "util/armhook.h"
