@@ -1,23 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/autoshop_main_layout"
     android:padding="10px"
     android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
 
         <TextView
             android:id="@+id/autoshop_pricelabel"
             android:layout_width="210dp"
             android:layout_height="25dp"
 
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="2dp"
             android:background="@drawable/blue_rounded"
             android:fontFamily="@font/din_pro_bold"
             android:gravity="center_vertical"
@@ -124,21 +119,23 @@
             android:id="@+id/autoshop_modelname"
             android:layout_width="320dp"
             android:layout_height="29dp"
+            android:layout_marginBottom="75dp"
             android:background="@drawable/yellow_gradient_rounded"
             android:fontFamily="@font/din_pro_bold"
             android:gravity="center_horizontal|center_vertical"
             android:paddingTop="7dp"
             android:paddingBottom="7dp"
-            android:shadowColor="@color/black"
 
+            android:shadowColor="@color/black"
             android:shadowDx="1"
             android:shadowRadius="2"
             android:text="BMW M3"
             android:textColor="@color/white"
             android:textFontWeight="700"
             android:textSize="12dp"
-            app:layout_constraintBottom_toTopOf="@+id/autoshop_leftbutt"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.499"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
@@ -416,20 +413,20 @@
             app:layout_constraintStart_toStartOf="@+id/autoshop_colorlabel" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/autoshop_previewbutt"
+            android:id="@+id/autoshop_camerabutt"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:background="@drawable/autoshop_preview"
             android:foreground="?android:attr/selectableItemBackground"
             app:backgroundTint="@null"
             app:backgroundTintMode="@null"
-            app:layout_constraintBottom_toBottomOf="@+id/autoshop_rughtbutt"
+            app:layout_constraintBottom_toBottomOf="@+id/autoshop_rightbutt"
             app:layout_constraintEnd_toEndOf="@+id/autoshop_infolabel"
             app:layout_constraintHorizontal_bias="0.532"
-            app:layout_constraintStart_toEndOf="@+id/autoshop_rughtbutt" />
+            app:layout_constraintStart_toEndOf="@+id/autoshop_rightbutt" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/autoshop_rughtbutt"
+            android:id="@+id/autoshop_rightbutt"
             android:layout_width="60dp"
             android:layout_height="60dp"
 
@@ -443,5 +440,4 @@
             app:layout_constraintBottom_toBottomOf="@+id/autoshop_leftbutt"
             app:layout_constraintStart_toStartOf="@+id/autoshop_infolabel" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

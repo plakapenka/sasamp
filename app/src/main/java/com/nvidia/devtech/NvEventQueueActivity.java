@@ -56,6 +56,7 @@ import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
 import com.liverussia.cr.R;
 import com.liverussia.cr.core.DialogClientSettings;
+import com.liverussia.cr.gui.AutoShop;
 import com.liverussia.cr.gui.HudManager;
 import com.liverussia.cr.gui.PreDeath;
 import com.liverussia.cr.gui.SamwillManager;
@@ -163,6 +164,7 @@ public abstract class NvEventQueueActivity
     private HudManager mHudManager = null;
     private SamwillManager mSamwillManager = null;
     private Speedometer mSpeedometer = null;
+    private AutoShop mAutoShop = null;
     private Notification mNotification = null;
     private AuthorizationManager mAuthorizationManager = null;
     private RegistrationManager mRegistrationManager = null;
@@ -229,6 +231,8 @@ public abstract class NvEventQueueActivity
     public native void onNotifyFirstClick(int actionId);
     public native void onNotifySecondClick(int actionId);
 
+    public native void ToggleHud(boolean toggle, boolean withChat);
+    public native void native_SendAutoShopButton(int buttonID);
     public native void onRegisterChooseSkinClick(int choosesex);
     public native void onRegisterSkinBackClick();
     public native void onRegisterSkinNextClick();
@@ -1050,6 +1054,7 @@ public abstract class NvEventQueueActivity
         mHudManager = new HudManager(this);
         mSamwillManager = new SamwillManager(this);
         mSpeedometer = new Speedometer(this);
+        mAutoShop = new AutoShop(this);
         mMenu = new Menu(this);
         mChooseServer = new ChooseServer(this);
 
@@ -1530,8 +1535,12 @@ public abstract class NvEventQueueActivity
         });
     }
 
-    public void showDialog(int dialogId, int dialogTypeId, String caption, String content, String leftBtnText, String rightBtnText) {
-        runOnUiThread(() -> { this.mDialog.show(dialogId, dialogTypeId, caption, content, leftBtnText, rightBtnText); });
+    public void showDialog(int dialogId, int dialogTypeId, String caption, String content, String leftBtnText, String rightBtnText)
+    {
+        runOnUiThread(() -> {
+            mHudManager.HideHud(false);
+            this.mDialog.show(dialogId, dialogTypeId, caption, content, leftBtnText, rightBtnText);
+        });
     }
 
     public void hideDialogWithoutReset() { runOnUiThread(() -> { this.mDialog.hideWithoutReset(); }); }
@@ -1579,7 +1588,7 @@ public abstract class NvEventQueueActivity
 
     public void showHud() { runOnUiThread(() -> { mHudManager.ShowHud(); }); }
 
-    public void hideHud() { runOnUiThread(() -> { mHudManager.HideHud(); }); }
+    public void hideHud(boolean withChat) { runOnUiThread(() -> { mHudManager.HideHud(withChat); }); }
 
     public void showGreenZone() { runOnUiThread(() -> { mHudManager.ShowGreenZone(); }); }
 
@@ -1600,6 +1609,25 @@ public abstract class NvEventQueueActivity
         runOnUiThread(() -> mAndroidUI.setVisibility(z2 ? View.GONE:View.VISIBLE));
     }
 
+    public void showAutoShop()
+    {
+        runOnUiThread(() -> {
+            mHudManager.HideHud(false);
+            mAutoShop.Show();
+        });
+    }
+    public void updateAutoShop(String name, int price, int count, float maxspeed, float acceleration)
+    {
+        runOnUiThread(() -> { mAutoShop.Update(name, price, count, maxspeed, acceleration); });
+    }
+    public void hideAutoShop()
+    {
+
+        runOnUiThread(() -> {
+            mAutoShop.Hide();
+            mHudManager.ShowHud();
+        });
+    }
     public void updateSpeedInfo(int speed, int fuel, int hp, int mileage, int engine, int light, int belt, int lock) { runOnUiThread(() -> { mSpeedometer.UpdateSpeedInfo(speed, fuel, hp, mileage, engine, light, belt, lock); }); }
 
     public void showSpeed() { runOnUiThread(() -> { mSpeedometer.ShowSpeed(); }); }
@@ -1624,8 +1652,6 @@ public abstract class NvEventQueueActivity
 
     public void showPreDeath(String killerName, int killerID)
     {
-        mSpeedometer.HideSpeed();
-        HideAllLayout();
         runOnUiThread(() -> { mPreDeath.Show(killerName, killerID); });
     }
 
@@ -1639,6 +1665,14 @@ public abstract class NvEventQueueActivity
 
     public void showSplash() { runOnUiThread(() -> { mChooseServer.Show(); } ); }
 
+    public void hideServerLogo()
+    {
+        { runOnUiThread(() -> { mHudManager.HideServerLogo(); } ); }
+    }
+    public void showServerLogo()
+    {
+        { runOnUiThread(() -> { mHudManager.ShowServerLogo(); } ); }
+    }
     public void showYernMoney() { runOnUiThread(() -> { mHudManager.ShowYernMoney(); } ); }
 
     public void hideYernMoney() { runOnUiThread(() -> { mHudManager.HideYernMoney(); } ); }
@@ -1669,12 +1703,5 @@ public abstract class NvEventQueueActivity
 
     public void showFuelStation(int type, int price1, int price2, int price3, int price4, int price5) { runOnUiThread(() -> { mFuelStationManager.Show(type, price1, price2, price3, price4, price5); } ); }
 
-    public void HideAllLayout()
-    {
-        runOnUiThread(() -> {
-            mHudManager.HideHud();
-
-        });
-    }
 
 }

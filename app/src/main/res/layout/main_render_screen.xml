@@ -92,5 +92,6 @@
         <include layout="@layout/br_notification" />
         <include layout="@layout/sd_dialog" />
         <include layout="@layout/pre_death" />
+        <include layout="@layout/autoshop" />
     </FrameLayout>
 </FrameLayout>
