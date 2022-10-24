@@ -209,20 +209,24 @@ extern "C"
 			pKeyBoard->OnNewKeyboardInput(pEnv, thiz, str);
 		}
 	}
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_sendDialogResponse(JNIEnv* pEnv, jobject thiz, jint i3, jint i, jint i2, jstring str)
+	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_sendDialogResponse(JNIEnv* pEnv, jobject thiz, jint i3, jint i, jint i2, jbyteArray str)
 	{
-		const char *inputText = pEnv->GetStringUTFChars(str, nullptr);
+		jbyte* pMsg = pEnv->GetByteArrayElements(str, nullptr);
+		jsize length = pEnv->GetArrayLength(str);
+
+		std::string szStr((char*)pMsg, length);
+		//const char *inputText = pEnv->GetStringUTFChars(str, nullptr);
 
 		if(pNetGame) {
-			pNetGame->SendDialogResponse(i, i3, i2, (char*)inputText);
+			pNetGame->SendDialogResponse(i, i3, i2, const_cast<char *>(szStr.c_str()));
 
 		}
-
+		pEnv->ReleaseByteArrayElements(str, pMsg, JNI_ABORT);
 		//g_pJavaWrapper->isDialogActive = false;
 
 		//	Log("sendDialogResponse: inputtext1 - %s, inputText - %s", inputtext1, inputText);
 
-		pEnv->ReleaseStringUTFChars(str, inputText);
+		//pEnv->ReleaseStringUTFChars(str, inputText);
 	}
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_sendCommand(JNIEnv* pEnv, jobject thiz, jbyteArray str)
 	{
