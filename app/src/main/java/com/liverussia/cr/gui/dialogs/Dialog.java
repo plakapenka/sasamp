@@ -17,6 +17,8 @@ import com.liverussia.cr.gui.util.CustomRecyclerView;
 import com.liverussia.cr.gui.util.Utils;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class Dialog {
@@ -139,14 +141,28 @@ public class Dialog {
 
     public void sendDialogResponse(int btnId)
     {
-
         if (this.mInputPasswordStyle) {
             this.mCurrentInputText = this.mInput.getText().toString();
         }
-        ((InputMethodManager) NvEventQueueActivity.getInstance().getSystemService("input_method")).hideSoftInputFromWindow(this.mInput.getWindowToken(), 0);
+        try {
 
-        NvEventQueueActivity.getInstance().sendDialogResponse(btnId, this.mCurrentDialogId, this.mCurrentListItem, this.mCurrentInputText);
-        Utils.HideLayout(this.mMainLayout, false);
+            ((InputMethodManager) NvEventQueueActivity.getInstance().getSystemService("input_method")).hideSoftInputFromWindow(this.mInput.getWindowToken(), 0);
+
+            NvEventQueueActivity.getInstance().sendDialogResponse(btnId, this.mCurrentDialogId, this.mCurrentListItem, this.mCurrentInputText.getBytes("windows-1251"));
+
+
+            Utils.HideLayout(this.mMainLayout, false);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+//            Charset w1251 = Charset.forName("Windows-1251");
+//            Charset utf8 = Charset.forName("UTF-8");
+//
+//            String string = new String (buffer, w1251);
+
+           // String utf8String= new String(this.mCurrentInputText.getBytes("windows-1251"), "UTF-8");
+
 
 
     }
