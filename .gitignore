@@ -1,6 +1,8 @@
 # Project exclude paths
 /.gradle/
 /app/build/
+/app/debug/
+/app/release/
 /app/build/intermediates/javac/debug/classes/
 /build/
 
@@ -40,3 +42,5 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+*.apl
