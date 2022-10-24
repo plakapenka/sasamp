@@ -162,9 +162,9 @@ public class HudManager {
 
     public void HideHud(boolean withChar)
     {
-        Log.d("sdfs", "HIDE!!!!!");
         hideCount ++;
-        Utils.HideLayout(hud_main, false);
+        hud_main.setVisibility(View.GONE);
+
         NvEventQueueActivity.getInstance().ToggleHud(false, withChar);
     }
 

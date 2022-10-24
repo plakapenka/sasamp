@@ -411,10 +411,7 @@ void CGame::EnableZoneNames(bool bEnable)
 
 void CGame::DisplayWidgets(bool bDisp)
 {
-	if(bDisp)
-		*(uint16_t*)(g_libGTASA+0x8B82A0+0x10C) = 0;
-	else
-		*(uint16_t*)(g_libGTASA+0x8B82A0+0x10C) = 1;
+	*(uint16_t*)(g_libGTASA+0x8B82A0+0x10C) = !bDisp;
 }
 
 // ��������

@@ -17,6 +17,8 @@ import com.nvidia.devtech.NvEventQueueActivity;
 import java.util.Formatter;
 
 public class Speedometer {
+    private boolean blinker;
+    private ConstraintLayout spedometr_layout;
     private Activity activity;
     private TextView mCarHP;
     private ImageView mEngine;
@@ -31,6 +33,7 @@ public class Speedometer {
 
     public Speedometer(Activity activity){
         ConstraintLayout relativeLayout = activity.findViewById(R.id.speedometer);
+        spedometr_layout = activity.findViewById(R.id.spedometr_layout);
         mInputLayout = relativeLayout;
         mSpeed = activity.findViewById(R.id.speed_text);
         mFuel = activity.findViewById(R.id.speed_fuel_text);
@@ -63,6 +66,15 @@ public class Speedometer {
                 NvEventQueueActivity.getInstance().onSpeedEngineClick();
             }
         });
+
+        spedometr_layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                blinker = !blinker;
+                NvEventQueueActivity.getInstance().onSpeedEngineClick();
+            }
+        });
+
 
         mLight.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -743,9 +743,9 @@ void CPlayerPed::SetPlayerSpecialAction(int iAction)
 	{
 		ClearAllTasks();
 
-		MATRIX4X4 mat;
-		GetMatrix(&mat);
-		TeleportTo(mat.pos.X, mat.pos.Y, mat.pos.Z);
+//		MATRIX4X4 mat;
+//		GetMatrix(&mat);
+//		TeleportTo(mat.pos.X, mat.pos.Y, mat.pos.Z);
 
 		return;
 	}
@@ -753,9 +753,9 @@ void CPlayerPed::SetPlayerSpecialAction(int iAction)
 	{
 		ClearAllTasks();
 
-		MATRIX4X4 mat;
-		GetMatrix(&mat);
-		TeleportTo(mat.pos.X, mat.pos.Y, mat.pos.Z);
+//		MATRIX4X4 mat;
+//		GetMatrix(&mat);
+//		TeleportTo(mat.pos.X, mat.pos.Y, mat.pos.Z);
 		//pChatWindow->AddDebugMessage("RESET ACTION");
 		m_iSpecialAction = -1;
 		return;
@@ -771,7 +771,6 @@ void CPlayerPed::ProcessSpecialAction()
 	}
 	if (m_iSpecialAction == SPECIAL_ACTION_CARRY)
 	{
-		if (IsInVehicle()) { SetPlayerSpecialAction(-1); return; }
 		if (!IsAnimationPlaying("CRRY_PRTIAL")) { ApplyAnimation("CRRY_PRTIAL", "CARRY", 4.1, 0, 0, 0, 1, 1); }
 	}
 	else if (m_iSpecialAction == SPECIAL_ACTION_USEJETPACK)

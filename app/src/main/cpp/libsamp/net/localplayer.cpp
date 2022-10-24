@@ -733,15 +733,6 @@ void CLocalPlayer::ApplySpecialAction(uint8_t byteSpecialAction)
 	{
 		m_pPlayerPed->SetPlayerSpecialAction(byteSpecialAction);
 	}
-
-	switch(byteSpecialAction)
-	{
-		case SPECIAL_ACTION_NONE:
-		break;
-
-		case SPECIAL_ACTION_USEJETPACK:
-		break;
-	}
 }
 
 int CLocalPlayer::GetOptimumOnFootSendRate()

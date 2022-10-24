@@ -242,8 +242,9 @@ void ScrClearPlayerAnimations(RPCParameters *rpcParams)
 		
 		if(pPlayerPed) 
 		{
-			pPlayerPed->GetMatrix(&mat);
-			pPlayerPed->TeleportTo(mat.pos.X, mat.pos.Y, mat.pos.Z);
+			pPlayerPed->ClearAllTasks();
+			//pPlayerPed->GetMatrix(&mat);
+			//pPlayerPed->TeleportTo(mat.pos.X, mat.pos.Y, mat.pos.Z);
 		}
 	}
 }

@@ -2,7 +2,7 @@
 	 xmlns:android="http://schemas.android.com/apk/res/android" xmlns:custom="http://schemas.android.com/apk/res-auto" android:id="@+id/speedometer" android:layout_width="match_parent" android:layout_height="match_parent">
 
 	<androidx.constraintlayout.widget.ConstraintLayout
-		android:id="@+id/constraintLayout"
+		android:id="@+id/spedometr_layout"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_marginBottom="@dimen/_8sdp"
@@ -69,15 +69,15 @@
 			android:id="@+id/textView2"
 			android:layout_width="@dimen/_36sdp"
 			android:layout_height="wrap_content"
-			android:layout_marginBottom="4dp"
+			android:layout_marginBottom="24dp"
 			android:fontFamily="@font/din_pro_medium"
 			android:gravity="center"
 			android:letterSpacing="0.45"
 			android:text="000002"
 			android:textColor="@color/white"
 			android:textSize="@dimen/_6sdp"
-			custom:layout_constraintBottom_toTopOf="@+id/linearLayout"
-			custom:layout_constraintEnd_toEndOf="@+id/imageView5"
+			custom:layout_constraintBottom_toBottomOf="@+id/imageView5"
+			custom:layout_constraintEnd_toEndOf="parent"
 			custom:layout_constraintStart_toStartOf="@+id/imageView5" />
 
 		<LinearLayout
@@ -112,18 +112,18 @@
 		android:layout_width="@dimen/_40sdp"
 		android:layout_height="@dimen/_30sdp"
 		android:src="@drawable/speedometr_light_off"
-		custom:layout_constraintBottom_toBottomOf="@+id/constraintLayout"
-		custom:layout_constraintEnd_toStartOf="@+id/constraintLayout"
-		custom:layout_constraintTop_toTopOf="@+id/constraintLayout" />
+		custom:layout_constraintBottom_toBottomOf="@+id/spedometr_layout"
+		custom:layout_constraintEnd_toStartOf="@+id/spedometr_layout"
+		custom:layout_constraintTop_toTopOf="@+id/spedometr_layout" />
 
 	<ImageView
 		android:id="@+id/imageView12"
 		android:layout_width="@dimen/_40sdp"
 		android:layout_height="@dimen/_30sdp"
 		android:src="@drawable/speedometr_engine_off"
-		custom:layout_constraintBottom_toBottomOf="@+id/constraintLayout"
-		custom:layout_constraintStart_toEndOf="@+id/constraintLayout"
-		custom:layout_constraintTop_toTopOf="@+id/constraintLayout" />
+		custom:layout_constraintBottom_toBottomOf="@+id/spedometr_layout"
+		custom:layout_constraintStart_toEndOf="@+id/spedometr_layout"
+		custom:layout_constraintTop_toTopOf="@+id/spedometr_layout" />
 
 	<ImageView
 		android:layout_width="@dimen/_60sdp"
@@ -148,9 +148,9 @@
 		android:layout_height="@dimen/_40sdp"
 		android:layout_marginTop="1dp"
 		android:src="@drawable/speedometer_scale"
-		custom:layout_constraintEnd_toEndOf="@+id/constraintLayout"
-		custom:layout_constraintStart_toStartOf="@+id/constraintLayout"
-		custom:layout_constraintTop_toTopOf="@+id/constraintLayout" />
+		custom:layout_constraintEnd_toEndOf="@+id/spedometr_layout"
+		custom:layout_constraintStart_toStartOf="@+id/spedometr_layout"
+		custom:layout_constraintTop_toTopOf="@+id/spedometr_layout" />
 
 	<TextView
 		android:id="@+id/textView"
@@ -161,7 +161,7 @@
 		android:text="150"
 		android:textColor="@color/white"
 		android:textSize="5sp"
-		custom:layout_constraintStart_toStartOf="@+id/constraintLayout"
+		custom:layout_constraintStart_toStartOf="@+id/spedometr_layout"
 		custom:layout_constraintTop_toBottomOf="@+id/speed_fuel_text" />
 
 	<TextView
@@ -175,7 +175,7 @@
 		android:textColor="@color/white"
 		android:textSize="6sp"
 		custom:layout_constraintBottom_toBottomOf="@+id/imageView8"
-		custom:layout_constraintEnd_toEndOf="@+id/constraintLayout" />
+		custom:layout_constraintEnd_toEndOf="@+id/spedometr_layout" />
 
 	<TextView
 		android:id="@+id/speed_fuel_text"

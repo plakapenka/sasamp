@@ -565,7 +565,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			}
 			// pChatWindow->AddDebugMessage("hud %d toggle %d", hud, toggle);
 			pGame->ToggleHUDElement(hud, toggle);
-			pGame->HandleChangedHUDStatus();
+			//pGame->HandleChangedHUDStatus();
 			break;
 		}
 		case RPC_SHOW_TARGET_LABEL:

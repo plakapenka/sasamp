@@ -1772,9 +1772,10 @@ Java_com_nvidia_devtech_NvEventQueueActivity_ToggleHud(JNIEnv *env, jobject thiz
 	//ScriptCommand(&toggle_hud, toggle); ?? не рабочая хуета судя по наблюдениям
 	//ScriptCommand(&toggle_radar_blank, toggle);?? не рабочая хуета судя по наблюдениям
 	g_pJavaWrapper->isHudToggle = toggle;
-	*(uint8_t*)(g_libGTASA+0x8EF36B) = (uint8_t)!toggle;
+	*(uint8_t*)(g_libGTASA+0x8EF36B) = !toggle;
 
 	if(withChat)pGame->ToggleHUDElement(HUD_ELEMENT_CHAT, toggle);
 	pGame->ToggleHUDElement(HUD_ELEMENT_BUTTONS, toggle);
+	pGame->DisplayWidgets(toggle);
     pGame->ToggleHUDElement(HUD_ELEMENT_FPS, toggle);
 }
