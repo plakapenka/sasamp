@@ -41,8 +41,7 @@ class CJavaWrapper
 	jmethodID s_showTabWindow;
 	jmethodID s_setTabStat;
 
-	jmethodID s_showHud;
-    jmethodID s_hideHud;
+    jmethodID s_toggleAllHud;
 	jmethodID s_showGreenZone;
     jmethodID s_hideGreenZone;
 	jmethodID s_showGPS;
@@ -72,8 +71,7 @@ class CJavaWrapper
 	jmethodID j_showDeathInfo;
 	jmethodID s_hideDeathInfo;
 
-	jmethodID j_showAutoShop;
-	jmethodID j_hideAutoShop;
+	jmethodID j_toggleAutoShop;
 	jmethodID j_updateAutoShop;
 
 	jmethodID s_showAuctionManager;
@@ -114,7 +112,7 @@ public:
 	void UpdateHudInfo(int health, int armour, int hunger, int weaponid, int ammo, int ammoinclip, int money, int wanted);
 	void UpdateLevelInfo(int level, int currentexp, int maxexp);
 	void ShowHud();
-    void HideHud(bool withChat);
+    void ToggleAllHud(bool toggle);
 	void ShowHudDialog();
     void HideHudDialog();
 	void ShowGreenZone();
@@ -159,7 +157,7 @@ public:
     void ShowUpdateTargetNotify(int type, char *text);
     void HideTargetNotify();
 
-	void MakeDialog(int dialogId, int dialogTypeId, char* caption, char* content, char* leftBtnText, char* rightBtnText); // Диалоги
+	void MakeDialog(int dialogId, int dialogTypeId, std::string caption, std::string info, std::string button1, std::string button2); // Диалоги
 	void ShowNotification(int type, char* text, int duration, char* actionforBtn, char* textBtn, int actionId);
 	void HideNotification();
 	void ShowMenu();
@@ -183,8 +181,6 @@ public:
 
 	uint32_t ChangeRegisterSkin(int skin);
 
-	bool isHudToggle;
-
 	int RegisterSexMale;
 	int RegisterSkinValue;
 	int RegisterSkinId;
@@ -194,9 +190,9 @@ public:
 
 	void UpdateAutoShop(std::string name, int price, int count, float maxspeed, float acceleration);
 
-	void ShowAutoShop();
+	void ToggleAutoShop(bool toggle);
 
-	void HideAutoShop();
+	void ClearScreen();
 };
 
 extern CJavaWrapper* g_pJavaWrapper;

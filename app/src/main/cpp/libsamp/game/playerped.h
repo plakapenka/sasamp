@@ -22,7 +22,7 @@ public:
 	float GetCameraExtendedZoom();
 	void ClumpUpdateAnimations(float step, int flag);
 	uint8_t GetExtendedKeys();
-	void TogglePlayerControllableWithoutLock(bool bToggle);
+
 	void ApplyCrouch();
 	void ResetCrouch();
 	bool IsCrouching();
@@ -47,7 +47,7 @@ public:
 	float GetHealth();
 	float GetArmour();
 	// 0.3.7
-	void TogglePlayerControllable(bool bToggle);
+	void TogglePlayerControllable(bool bToggle, bool isTemp = false);
 	// 0.3.7
 	void SetModelIndex(unsigned int uiModel);
 
@@ -133,7 +133,7 @@ public:
 	PED_TYPE*	m_pPed;
 	uint8_t		m_bytePlayerNumber;
 	uint32_t	m_dwArrow;
-	int lToggle;
+	bool lToggle;
 
 	int m_iSpecialAction;
 	MATRIX4X4 m_HeadBoneMatrix;

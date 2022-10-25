@@ -91,7 +91,6 @@
 #define RPC_TOGGLE_REGISTER (2)
 
 // Packet 253
-#define RPC_CLEAR_ANIM (1)
 #define RPC_TOGGLE_CHOOSE_SPAWN (2)
 
 // other

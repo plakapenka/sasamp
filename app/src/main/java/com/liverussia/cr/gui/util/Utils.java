@@ -26,6 +26,7 @@ public class Utils {
                 fadeIn(view);
             } else {
                 view.setAlpha(1.0f);
+                view.invalidate();
             }
         }
 

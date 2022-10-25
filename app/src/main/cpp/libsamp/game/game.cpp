@@ -1,7 +1,10 @@
 #include "../main.h"
 #include "game.h"
 #include "../util/armhook.h"
+#include "util/CJavaWrapper.h"
+#include "net/netgame.h"
 
+bool isToggleHud = false;
 void ApplyPatches();
 void ApplyInGamePatches();
 void InstallHooks();
@@ -151,6 +154,31 @@ void CGame::InitInGame()
 	InitScripting();
 	
 	GameResetRadarColors();
+}
+
+
+void CGame::ToggleAllHud(bool toggle, bool withchat)
+{
+	if(!toggle)
+	{
+		hudhideCount ++;
+	}
+	else
+	{
+		hudhideCount--;
+		if(hudhideCount > 0)return;
+		else hudhideCount = 0;
+	}
+	isHudToggle = toggle;
+	DisplayHUD(toggle);
+
+	if(withchat)ToggleHUDElement(HUD_ELEMENT_CHAT, toggle);
+	ToggleHUDElement(HUD_ELEMENT_BUTTONS, toggle);
+	//pGame->DisplayWidgets(toggle); ?? не работает тоже
+    pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->TogglePlayerControllable(toggle, true);
+	ToggleHUDElement(HUD_ELEMENT_FPS, toggle);
+
+	g_pJavaWrapper->ToggleAllHud(toggle);
 }
 
 void CGame::ToggleHUDElement(int iID, bool bToggle)

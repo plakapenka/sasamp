@@ -1,6 +1,7 @@
 #include "../main.h"
 #include "../game/game.h"
 #include "../gui/gui.h"
+#include "..//util/CJavaWrapper.h"
 #include "netgame.h"
 #include <thread>
 #include <chrono>
@@ -143,6 +144,7 @@ CNetGame::~CNetGame()
 		delete m_pStreamPool;
 		m_pStreamPool = nullptr;
 	}
+	g_pJavaWrapper->ClearScreen();
 
 }
 
@@ -411,7 +413,7 @@ void CNetGame::Packet_TrailerSync(Packet* p)
 
 
 #include "..//game/CCustomPlateManager.h"
-#include "..//util/CJavaWrapper.h"
+
 
 void CNetGame::Packet_AuthRPC(Packet *p)
 {
@@ -474,31 +476,7 @@ void CNetGame::Packet_SpecialCustomRPC(Packet *p)
 
 	switch (rpcID)
 	{
-		case RPC_CLEAR_ANIM:
-		{
-			uint8_t toggle;
-			bs.Read(toggle);
-			if (toggle == 1)
-			{
-				MATRIX4X4 mat;
-				uint8_t byteSpecialAction;
-				byteSpecialAction = 0;
-				CPlayerPool *pPlayerPool = GetPlayerPool();
 
-				if(pPlayerPool) {
-					CPlayerPed *pPlayerPed = pPlayerPool->GetLocalPlayer()->GetPlayerPed();
-					if(pPlayerPed) 
-					{
-						pPlayerPool->GetLocalPlayer()->ApplySpecialAction(byteSpecialAction);
-						pPlayerPed->GetMatrix(&mat);
-						pPlayerPed->TeleportTo(mat.pos.X, mat.pos.Y, mat.pos.Z);
-					}
-				}
-
-				Log("Custom RPC_CLEAR_ANIM");
-			}
-			break;
-		}
 		case RPC_TOGGLE_CHOOSE_SPAWN:
 		{
 			uint8_t toggle;
@@ -828,15 +806,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			uint32_t toggle;
 			bs.Read(toggle);
 
-			if (toggle == 1)
-			{
-
-				g_pJavaWrapper->ShowAutoShop();
-			}
-			else if (toggle == 0)
-			{
-				g_pJavaWrapper->HideAutoShop();
-			}
+			g_pJavaWrapper->ToggleAutoShop((bool)toggle);
 
 			break;
 		}
@@ -1545,7 +1515,6 @@ void CNetGame::SendDialogResponse(uint16_t wDialogID, uint8_t byteButtonID, uint
 	bsSend.Write(szInput, respLen);
 	m_pRakClient->RPC(&RPC_DialogResponse, &bsSend, HIGH_PRIORITY, RELIABLE_ORDERED, 0, false, UNASSIGNED_NETWORK_ID, NULL);
 
-	g_pJavaWrapper->ShowHud();
 }
 
 void CNetGame::SetMapIcon(uint8_t byteIndex, float fX, float fY, float fZ, uint8_t byteIcon, int iColor, int style)

@@ -103,12 +103,15 @@ public class AutoShop {
         autoshop_maxspeedvalue.setText(String.format("%.0f", maxspeed)+" км/ч");
         autoshop_modelname.setText(name);
     }
-    public void Show()
+    public void ToggleShow(boolean toggle)
     {
-        Utils.ShowLayout(autoshop_main_layout, false);
-    }
-    public void Hide()
-    {
-        Utils.HideLayout(autoshop_main_layout, false);
+        if(toggle)
+        {
+            Utils.ShowLayout(autoshop_main_layout, false);
+        }
+        else
+        {
+            Utils.HideLayout(autoshop_main_layout, false);
+        }
     }
 }

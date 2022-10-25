@@ -4,6 +4,7 @@
 #include "../gui/gui.h"
 #include "../util/CJavaWrapper.h"
 
+extern CGame *pGame;
 extern CGUI* pGUI;
 
 RwTexture* splashTexture = nullptr;
@@ -50,7 +51,7 @@ void LoadSplashTexture()
 {
 	Log("Loading splash texture..");
 	splashTexture = (RwTexture*)LoadTextureFromDB("txd", "hud_bg");
-	g_pJavaWrapper->isHudToggle = false;
+	pGame->isHudToggle = false;
 	//color_scheme = 1;
 }
 
@@ -171,7 +172,7 @@ void RenderBackgroundHud()
 	ImGui_ImplRenderWare_NewFrame();
 	ImGui::NewFrame();
 		
-	if (g_pJavaWrapper->isHudToggle)
+	if (pGame->isHudToggle)
 	{
 		if (splashTexture)
 		{

@@ -1215,7 +1215,8 @@ void ScrTogglePlayerControllable(RPCParameters *rpcParams)
 	uint8_t byteControllable;
 	bsData.Read(byteControllable);
 	//Log("controllable = %d", byteControllable);
-	pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->TogglePlayerControllable((int)byteControllable);
+
+	pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->TogglePlayerControllable((bool)byteControllable);
 }
 
 #define WEAPONTYPE_PISTOL_SKILL 69

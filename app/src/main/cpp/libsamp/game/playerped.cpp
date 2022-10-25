@@ -669,11 +669,10 @@ int CPlayerPed::GetVehicleSeatID()
 }
 
 // 0.3.7
-void CPlayerPed::TogglePlayerControllable(bool bToggle)
+void CPlayerPed::TogglePlayerControllable(bool bToggle, bool isTemp)
 {
-	MATRIX4X4 mat;
-
-	lToggle = bToggle;
+	Log("Contol = %d", bToggle);
+	if(!isTemp) lToggle = bToggle;
 
 	if(!GamePool_Ped_GetAt(m_dwGTAId)) return;
 
@@ -682,16 +681,12 @@ void CPlayerPed::TogglePlayerControllable(bool bToggle)
 		ScriptCommand(&toggle_player_controllable, m_bytePlayerNumber, 0);
 		ScriptCommand(&lock_actor, m_dwGTAId, 1);
 	}
-	else
+	else if(lToggle)
 	{
 		ScriptCommand(&toggle_player_controllable, m_bytePlayerNumber, 1);
 		ScriptCommand(&lock_actor, m_dwGTAId, 0);
-		if(!IsInVehicle()) 
-		{
-			GetMatrix(&mat);
-			TeleportTo(mat.pos.X, mat.pos.Y, mat.pos.Z);
-		}
 	}
+
 }
 
 // 0.3.7
@@ -931,37 +926,6 @@ MATRIX4X4* RwMatrixMultiplyByVector(VECTOR* out, MATRIX4X4* a2, VECTOR* in)
 void RwMatrixRotate(MATRIX4X4* pMat, VECTOR* axis, float angle)
 {
 	((int(*)(MATRIX4X4*, VECTOR*, float, int))(g_libGTASA + 0x001B9118 + 1))(pMat, axis, angle, 1);
-}
-
-void CPlayerPed::TogglePlayerControllableWithoutLock(bool bToggle)
-{
-	MATRIX4X4 mat;
-
-	if (!GamePool_Ped_GetAt(m_dwGTAId)) return;
-
-	lToggle = bToggle;
-
-	if (!bToggle)
-	{
-		ScriptCommand(&toggle_player_controllable, m_bytePlayerNumber, 0);
-		// Turn off invulnerability
-		*(uint8_t*)((uintptr_t)m_pPed + 66) &= 0xBF;
-		*(uint8_t*)((uintptr_t)m_pPed + 66) &= 0xFB;
-		*(uint8_t*)((uintptr_t)m_pPed + 66) &= 0xF7;
-		*(uint8_t*)((uintptr_t)m_pPed + 66) &= 0x7F;
-		*(uint8_t*)((uintptr_t)m_pPed + 66) &= 0xEF;
-		*(uint8_t*)((uintptr_t)m_pPed + 66) &= 0xDF;
-		*(uint8_t*)(*(uint32_t*)((uintptr_t)m_pPed + 1088) + 52) |= 0x10;
-	}
-	else
-	{
-		ScriptCommand(&toggle_player_controllable, m_bytePlayerNumber, 1);
-		if (!IsInVehicle())
-		{
-			GetMatrix(&mat);
-			TeleportTo(mat.pos.X, mat.pos.Y, mat.pos.Z);
-		}
-	}
 }
 
 void CPlayerPed::ProcessAttach()

@@ -202,7 +202,9 @@ bool CLocalPlayer::Process()
 			ToggleSpectating(false);
 			m_pPlayerPed->FlushAttach();
 			// reset tasks/anims
-			m_pPlayerPed->TogglePlayerControllable(true);
+			MATRIX4X4 mat;
+			m_pPlayerPed->GetMatrix(&mat);
+			m_pPlayerPed->TeleportTo(mat.pos.X, mat.pos.Y, mat.pos.Z);
 
 			if(m_pPlayerPed->IsInVehicle() && !m_pPlayerPed->IsAPassenger())
 			{
@@ -500,7 +502,7 @@ void CLocalPlayer::HandleClassSelection()
 	{
 		m_pPlayerPed->SetInitialState();
 		m_pPlayerPed->SetHealth(100.0f);
-		m_pPlayerPed->TogglePlayerControllable(0);
+		m_pPlayerPed->TogglePlayerControllable(false);
 	}
 	
 	RequestClass(m_iSelectedClass);
@@ -664,16 +666,17 @@ bool CLocalPlayer::Spawn()
 
 	if(pSettings && pSettings->GetReadOnly().iHud)
 	{
-		*(uint8_t*)(g_libGTASA+0x7165E8) = 0;
-		g_pJavaWrapper->ShowHud();
+		pGame->ToggleAllHud(true);
 	}
 	else
 	{
-		*(uint8_t*)(g_libGTASA+0x7165E8) = 1;
-		g_pJavaWrapper->HideHud(false);
+		pGame->ToggleAllHud(false);
 	}
    
     //g_pJavaWrapper->ShowSpeed();
+
+	//pGame->DisplayHUD(true);
+
 	CCamera *pGameCamera;
 	pGameCamera = pGame->GetCamera();
 	pGameCamera->Restore();

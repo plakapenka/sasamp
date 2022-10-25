@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Formatter;
 
 public class HudManager {
-    private int hideCount;
     private Activity activity;
     private ConstraintLayout hud_main;
     private ConstraintLayout hud_main_layout;
@@ -149,23 +148,16 @@ public class HudManager {
 
     }
 
-    public void ShowHud()
+    public void ToggleAll(boolean toggle)
     {
-        hideCount --;
-        if(hideCount <= 0)
+        if(!toggle)
         {
-            hideCount = 0;
-            Utils.ShowLayout(hud_main, false);
-            NvEventQueueActivity.getInstance().ToggleHud(true, true);
+            activity.runOnUiThread(() -> hud_main.setVisibility(View.GONE) );
         }
-    }
-
-    public void HideHud(boolean withChar)
-    {
-        hideCount ++;
-        hud_main.setVisibility(View.GONE);
-
-        NvEventQueueActivity.getInstance().ToggleHud(false, withChar);
+        else
+        {
+            activity.runOnUiThread(() -> hud_main.setVisibility(View.VISIBLE) );
+        }
     }
 
     public void ShowGreenZone() { Utils.ShowLayout(hud_greenzone, true); }

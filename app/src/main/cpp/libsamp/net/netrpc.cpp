@@ -579,10 +579,9 @@ void DialogBox(RPCParameters *rpcParams)
 		cp1251_to_utf8(info, szBuff);
 
 		if(wDialogID < 0) return;
-		
+
+		pGame->ToggleAllHud(false);
 		g_pJavaWrapper->MakeDialog(wDialogID, byteDialogStyle, title, info, button1, button2);
-
-
 }
 
 void GameModeRestart(RPCParameters *rpcParams)

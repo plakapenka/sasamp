@@ -17,6 +17,7 @@ extern CChatWindow* pChatWindow;
 extern CSettings* pSettings;
 extern CNetGame* pNetGame;
 extern CGame* pGame;
+extern CPlayerPed* m_pPlayerPed;
 
 JNIEnv* CJavaWrapper::GetEnv()
 {
@@ -143,7 +144,7 @@ void CJavaWrapper::ShowClientSettings()
 	EXCEPTION_CHECK(env);
 }
 
-void CJavaWrapper::MakeDialog(int dialogId, int dialogTypeId, char* caption, char* content, char* leftBtnText, char* rightBtnText)
+void CJavaWrapper::MakeDialog(int dialogId, int dialogTypeId, std::string caption, std::string info, std::string button1, std::string button2)
 {
     JNIEnv* env = GetEnv();
     if (!env)
@@ -151,35 +152,18 @@ void CJavaWrapper::MakeDialog(int dialogId, int dialogTypeId, char* caption, cha
 	Log("No env");
 	return;
     }
-    jclass strClass = env->FindClass("java/lang/String");
-    jmethodID ctorID = env->GetMethodID(strClass, "<init>", "([BLjava/lang/String;)V");
-    jstring encoding = env->NewStringUTF("UTF-8");
-    jbyteArray bytes = env->NewByteArray(strlen(caption));
-    env->SetByteArrayRegion(bytes, 0, strlen(caption), (jbyte*)caption);
-    jstring str1 = (jstring)env->NewObject(strClass, ctorID, bytes, encoding);
-    //
-    jclass strClass1 = env->FindClass("java/lang/String");
-    jmethodID ctorID1 = env->GetMethodID(strClass1, "<init>", "([BLjava/lang/String;)V");
-    jstring encoding1 = env->NewStringUTF("UTF-8");
-    jbyteArray bytes1 = env->NewByteArray(strlen(content));
-    env->SetByteArrayRegion(bytes1, 0, strlen(content), (jbyte*)content);
-    jstring str2 = (jstring)env->NewObject(strClass1, ctorID1, bytes1, encoding1);
-    //
-    jclass strClass2 = env->FindClass("java/lang/String");
-    jmethodID ctorID2 = env->GetMethodID(strClass2, "<init>", "([BLjava/lang/String;)V");
-    jstring encoding2 = env->NewStringUTF("UTF-8");
-    jbyteArray bytes2 = env->NewByteArray(strlen(leftBtnText));
-    env->SetByteArrayRegion(bytes2, 0, strlen(leftBtnText), (jbyte*)leftBtnText);
-    jstring str3 = (jstring)env->NewObject(strClass2, ctorID2, bytes2, encoding2);
-    //
-    jclass strClass3 = env->FindClass("java/lang/String");
-    jmethodID ctorID3 = env->GetMethodID(strClass3, "<init>", "([BLjava/lang/String;)V");
-    jstring encoding3 = env->NewStringUTF("UTF-8");
-    jbyteArray bytes3 = env->NewByteArray(strlen(rightBtnText));
-    env->SetByteArrayRegion(bytes3, 0, strlen(rightBtnText), (jbyte*)rightBtnText);
-    jstring str4 = (jstring)env->NewObject(strClass3, ctorID3, bytes3, encoding3);
+	jstring j_caption = env->NewStringUTF( caption.c_str() );
+	jstring j_info = env->NewStringUTF( info.c_str() );
+	jstring j_button1 = env->NewStringUTF( button1.c_str() );
+	jstring j_button2 = env->NewStringUTF( button2.c_str() );
 
-    env->CallVoidMethod(activity, s_MakeDialog, dialogId, dialogTypeId, str1, str2, str3, str4);
+    env->CallVoidMethod(activity, s_MakeDialog, dialogId, dialogTypeId, j_caption, j_info, j_button1, j_button2);
+
+	// не уверен что нужно, но внятного ответа в интернетах нет
+	env->DeleteLocalRef(j_caption);
+	env->DeleteLocalRef(j_info);
+	env->DeleteLocalRef(j_button1);
+	env->DeleteLocalRef(j_button2);
 
     EXCEPTION_CHECK(env);
 }
@@ -222,6 +206,8 @@ extern "C"
 
 		}
 		pEnv->ReleaseByteArrayElements(str, pMsg, JNI_ABORT);
+
+		pGame->ToggleAllHud(true);
 		//g_pJavaWrapper->isDialogActive = false;
 
 		//	Log("sendDialogResponse: inputtext1 - %s, inputText - %s", inputtext1, inputText);
@@ -289,9 +275,9 @@ extern "C"
 	}
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_togglePlayer(JNIEnv* pEnv, jobject thiz, jint toggle) {
 		if(toggle)
-			pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->TogglePlayerControllable(false);
+			pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->TogglePlayerControllable(false, true);
 		else
-			pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->TogglePlayerControllable(true);
+			pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->TogglePlayerControllable(true, true);
 	}
 	JNIEXPORT jint JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_getLastServer(JNIEnv* pEnv, jobject thiz)
 	{
@@ -359,12 +345,12 @@ extern "C"
 			if(!b)
 			{
 				*(uint8_t*)(g_libGTASA+0x7165E8) = 1;
-				g_pJavaWrapper->HideHud(true);
+				//g_pJavaWrapper->HideHud(true);
 			}
 			else
 			{
 				*(uint8_t*)(g_libGTASA+0x7165E8) = 0;
-				g_pJavaWrapper->ShowHud();
+				//g_pJavaWrapper->ShowHud();
 			}
 		}
 	}
@@ -1025,7 +1011,8 @@ void CJavaWrapper::ShowOilFactoryGame()
     env->CallVoidMethod(this->activity, this->s_showOilFactoryGame);
 }
 
-void CJavaWrapper::ShowHud()
+
+void CJavaWrapper::ToggleAllHud(bool toggle)
 {
     JNIEnv* env = GetEnv();
 
@@ -1034,19 +1021,7 @@ void CJavaWrapper::ShowHud()
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_showHud);
-}
-
-void CJavaWrapper::HideHud(bool withChar)
-{
-    JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-    env->CallVoidMethod(this->activity, this->s_hideHud, withChar);
+    env->CallVoidMethod(this->activity, this->s_toggleAllHud, toggle);
 }
 
 void CJavaWrapper::ShowBusInfo(int time)
@@ -1466,7 +1441,7 @@ void CJavaWrapper::ShowDeathInfo(std::string nick, int id)
 	env->CallVoidMethod(this->activity, this->j_showDeathInfo, jStringParam, id);
 }
 
-void CJavaWrapper::ShowAutoShop()
+void CJavaWrapper::ToggleAutoShop(bool toggle)
 {
 	JNIEnv* env = GetEnv();
 
@@ -1475,8 +1450,9 @@ void CJavaWrapper::ShowAutoShop()
 		Log("No env");
 		return;
 	}
+	pGame->ToggleAllHud(!toggle);
 
-	env->CallVoidMethod(this->activity, this->j_showAutoShop);
+	env->CallVoidMethod(this->activity, this->j_toggleAutoShop, toggle);
 }
 void CJavaWrapper::UpdateAutoShop(std::string name, int price, int count, float maxspeed, float acceleration)
 {
@@ -1487,22 +1463,11 @@ void CJavaWrapper::UpdateAutoShop(std::string name, int price, int count, float 
 		Log("No env");
 		return;
 	}
-	jstring jStringParam = env->NewStringUTF( name.c_str() );
+	jstring j_name = env->NewStringUTF( name.c_str() );
 
-	env->CallVoidMethod(this->activity, this->j_updateAutoShop, jStringParam, price, count, maxspeed, acceleration);
-}
+	env->CallVoidMethod(this->activity, this->j_updateAutoShop, j_name, price, count, maxspeed, acceleration);
 
-void CJavaWrapper::HideAutoShop()
-{
-	JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-
-	env->CallVoidMethod(this->activity, this->j_hideAutoShop);
+	env->DeleteLocalRef(j_name);
 }
 
 void CJavaWrapper::HideDeathInfo() 
@@ -1608,6 +1573,21 @@ void CJavaWrapper::HideChooseSpawn()
 	env->CallVoidMethod(this->activity, this->s_hideChooseSpawn);
 }
 
+void CJavaWrapper::ClearScreen()
+{
+	HideAuthorization();
+	HideChooseSpawn();
+	HideRegistration();
+	HideSpeed();
+	HideArmyGame();
+	this->ToggleAutoShop(false);
+	HideBusInfo();
+	HideGPS();
+	HideGreenZone();
+	HideYernMoney();
+	HideSamwill();
+}
+
 const uint32_t cRegisterSkin[2][10] = {
 	{ 9, 195, 231, 232, 1, 1, 1, 1, 1, 1 }, // female
 	{ 16, 79, 134, 135, 136, 200, 234, 235, 236, 239 } // male
@@ -1653,8 +1633,8 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 
 	s_updateHudInfo = env->GetMethodID(nvEventClass, "updateHudInfo", "(IIIIIIII)V");
 	s_updateLevelInfo = env->GetMethodID(nvEventClass, "updateLevelInfo", "(III)V");
-    s_showHud = env->GetMethodID(nvEventClass, "showHud", "()V");
-    s_hideHud = env->GetMethodID(nvEventClass, "hideHud", "(G)V");
+
+    s_toggleAllHud = env->GetMethodID(nvEventClass, "ToggleAllHud", "(Z)V");
 	s_showGreenZone = env->GetMethodID(nvEventClass, "showGreenZone", "()V");
     s_hideGreenZone = env->GetMethodID(nvEventClass, "hideGreenZone", "()V");
 	s_showGPS = env->GetMethodID(nvEventClass, "showGPS", "()V");
@@ -1705,8 +1685,8 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 	j_showDeathInfo = env->GetMethodID(nvEventClass, "showPreDeath", "(Ljava/lang/String;I)V");
 	//s_hideDeathInfo = env->GetMethodID(nvEventClass, "hideDeathInfo", "()V");
 
-	j_showAutoShop = env->GetMethodID(nvEventClass, "showAutoShop", "()V");
-	j_hideAutoShop = env->GetMethodID(nvEventClass, "hideAutoShop", "()V");
+	j_toggleAutoShop = env->GetMethodID(nvEventClass, "toggleAutoShop", "(Z)V");
+
 	j_updateAutoShop = env->GetMethodID(nvEventClass, "updateAutoShop", "(Ljava/lang/String;IIFF)V");
 
 	s_showChooseSpawn = env->GetMethodID(nvEventClass, "showChooseSpawn", "(IIIII)V");
@@ -1750,19 +1730,4 @@ Java_com_nvidia_devtech_NvEventQueueActivity_native_1SendAutoShopButton(JNIEnv *
 	bsSend.Write(RPC);
 	bsSend.Write(button);
 	pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
-}
-
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_nvidia_devtech_NvEventQueueActivity_ToggleHud(JNIEnv *env, jobject thiz,
-													   jboolean toggle, jboolean withChat) {
-	//ScriptCommand(&toggle_hud, toggle); ?? не рабочая хуета судя по наблюдениям
-	//ScriptCommand(&toggle_radar_blank, toggle);?? не рабочая хуета судя по наблюдениям
-	g_pJavaWrapper->isHudToggle = toggle;
-	*(uint8_t*)(g_libGTASA+0x8EF36B) = !toggle;
-
-	if(withChat)pGame->ToggleHUDElement(HUD_ELEMENT_CHAT, toggle);
-	pGame->ToggleHUDElement(HUD_ELEMENT_BUTTONS, toggle);
-	pGame->DisplayWidgets(toggle);
-    pGame->ToggleHUDElement(HUD_ELEMENT_FPS, toggle);
 }

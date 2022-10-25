@@ -229,7 +229,6 @@ public abstract class NvEventQueueActivity
     public native void onNotifyFirstClick(int actionId);
     public native void onNotifySecondClick(int actionId);
 
-    public native void ToggleHud(boolean toggle, boolean withChat);
     public native void native_SendAutoShopButton(int buttonID);
     public native void onRegisterChooseSkinClick(int choosesex);
     public native void onRegisterSkinBackClick();
@@ -1536,7 +1535,6 @@ public abstract class NvEventQueueActivity
     public void showDialog(int dialogId, int dialogTypeId, String caption, String content, String leftBtnText, String rightBtnText)
     {
         runOnUiThread(() -> {
-            mHudManager.HideHud(false);
             this.mDialog.show(dialogId, dialogTypeId, caption, content, leftBtnText, rightBtnText);
         });
     }
@@ -1584,9 +1582,7 @@ public abstract class NvEventQueueActivity
 
     public void updateLevelInfo(int level, int currentexp, int maxexp) { runOnUiThread(() -> { mHudManager.UpdateLevelInfo(level, currentexp, maxexp); }); }
 
-    public void showHud() { runOnUiThread(() -> { mHudManager.ShowHud(); }); }
-
-    public void hideHud(boolean withChat) { runOnUiThread(() -> { mHudManager.HideHud(withChat); }); }
+    public void ToggleAllHud(boolean toggle) { mHudManager.ToggleAll(toggle); }
 
     public void showGreenZone() { runOnUiThread(() -> { mHudManager.ShowGreenZone(); }); }
 
@@ -1607,25 +1603,17 @@ public abstract class NvEventQueueActivity
         runOnUiThread(() -> mAndroidUI.setVisibility(z2 ? View.GONE:View.VISIBLE));
     }
 
-    public void showAutoShop()
+    public void toggleAutoShop(boolean toggle)
     {
         runOnUiThread(() -> {
-            mHudManager.HideHud(false);
-            mAutoShop.Show();
+            mAutoShop.ToggleShow(toggle);
         });
     }
     public void updateAutoShop(String name, int price, int count, float maxspeed, float acceleration)
     {
         runOnUiThread(() -> { mAutoShop.Update(name, price, count, maxspeed, acceleration); });
     }
-    public void hideAutoShop()
-    {
 
-        runOnUiThread(() -> {
-            mAutoShop.Hide();
-            mHudManager.ShowHud();
-        });
-    }
     public void updateSpeedInfo(int speed, int fuel, int hp, int mileage, int engine, int light, int belt, int lock) { runOnUiThread(() -> { mSpeedometer.UpdateSpeedInfo(speed, fuel, hp, mileage, engine, light, belt, lock); }); }
 
     public void showSpeed() { runOnUiThread(() -> { mSpeedometer.ShowSpeed(); }); }

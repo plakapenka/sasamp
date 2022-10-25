@@ -50,6 +50,7 @@ public:
 
 	void ToggleHUDElement(int iID, bool bToggle);
 	bool IsToggledHUDElement(int iID);
+	void ToggleAllHud(bool toggle, bool withchat = false);
 	void HandleChangedHUDStatus();
 
 	static void SetEnabledPCMoney(bool bEnabled);
@@ -141,6 +142,8 @@ public:
 
 	void DrawGangZone(float fPos[], uint32_t dwColor);
 
+	bool isHudToggle;
+	int hudhideCount;
 private:
 	bool aToggleStatusHUD[HUD_MAX];
 	CCamera* 		m_pGameCamera;
