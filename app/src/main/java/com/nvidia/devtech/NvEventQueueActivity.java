@@ -1615,18 +1615,7 @@ public abstract class NvEventQueueActivity
             mAutoShop.ToggleShow(toggle);
         });
     }
-    public void tempToggleCasinoDice(boolean toggle)
-    {
-        runOnUiThread(() -> {
-            mCasinoDice.TempToggle(toggle);
-        });
-    }
-    public void showCasinoDice(boolean show, int tableID, int tableBet, int tableBank, int money, String player1name, int player1stat, String player2name, int player2stat, String player3name, int player3stat, String player4name, int player4stat, String player5name, int player5stat)
-    {
-        runOnUiThread(() -> {
-            mCasinoDice.Toggle(show, tableID, tableBet, tableBank, money, player1name, player1stat, player2name, player2stat, player3name, player3stat, player4name, player4stat, player5name, player5stat);
-        });
-    }
+
     public void updateAutoShop(String name, int price, int count, float maxspeed, float acceleration)
     {
         runOnUiThread(() -> { mAutoShop.Update(name, price, count, maxspeed, acceleration); });

@@ -10,7 +10,6 @@ extern "C" JavaVM* javaVM;
 #include "../game/game.h"
 #include "../str_obfuscator_no_template.hpp"
 #include "../scoreboard.h"
-#include "java_objects.h"
 
 extern CScoreBoard *pScoreBoard;
 extern CKeyBoard* pKeyBoard;
@@ -24,7 +23,6 @@ extern CPlayerPed* m_pPlayerPed;
 
 JNIEnv* CJavaWrapper::GetEnv()
 {
-    abcasd();
 	JNIEnv* env = nullptr;
 	int getEnvStat = javaVM->GetEnv((void**)& env, JNI_VERSION_1_4);
 
@@ -1688,8 +1686,6 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 	s_showRegistration = env->GetMethodID(nvEventClass, "showRegistration", "(Ljava/lang/String;I)V");
 	s_hideRegistration = env->GetMethodID(nvEventClass, "hideRegistration", "()V");
 
-	j_tempToggleCasinoDice = env->GetMethodID(nvEventClass, "tempToggleCasinoDice", "(Z)V");
-	j_showCasinoDice = env->GetMethodID(nvEventClass, "showCasinoDice", "(ZIIIILjava/lang/String;ILjava/lang/String;ILjava/lang/String;ILjava/lang/String;ILjava/lang/String;I)V");
 	j_showDeathInfo = env->GetMethodID(nvEventClass, "showPreDeath", "(Ljava/lang/String;I)V");
 	//s_hideDeathInfo = env->GetMethodID(nvEventClass, "hideDeathInfo", "()V");
 
@@ -1724,13 +1720,16 @@ CJavaWrapper::~CJavaWrapper()
 
 void CJavaWrapper::TempToggleCasinoDice(bool toggle) {
 	JNIEnv* env = GetEnv();
-
 	if (!env)
 	{
 		Log("No env");
 		return;
 	}
-	env->CallVoidMethod(this->activity, this->j_tempToggleCasinoDice, toggle);
+
+	jclass _class = env->GetObjectClass(jCasinoDice);
+	jmethodID TempToggle = env->GetMethodID(_class, "TempToggle", "(Z)V");
+
+	env->CallVoidMethod(jCasinoDice, TempToggle, toggle);
 
 }
 
@@ -1744,29 +1743,17 @@ void CJavaWrapper::ShowCasinoDice(bool show, int tableID, int tableBet, int tabl
 
 	pNetGame->m_CasinoDiceLayoutState = show;
 	JNIEnv* env = GetEnv();
-	//JNIEnv* env = jCasinoEnv;
-	jclass ggg = env->GetObjectClass(jCasinoDice);
-	jmethodID meth = env->GetMethodID(ggg, "HelloWorld", "()V");
-	env->CallVoidMethod(jCasinoDice, meth);
-//
-	jclass jCasinoDiceClass = env->GetObjectClass(jCasinoDice);
-//
-	jmethodID Toggle = env->GetMethodID(jCasinoDiceClass, "Toggle", "(ZIIIILjava/lang/String;ILjava/lang/String;ILjava/lang/String;ILjava/lang/String;ILjava/lang/String;I)V");
-//
+
+	jclass _class = env->GetObjectClass(jCasinoDice);
+	jmethodID Toggle = env->GetMethodID(_class, "Toggle", "(ZIIIILjava/lang/String;ILjava/lang/String;ILjava/lang/String;ILjava/lang/String;ILjava/lang/String;I)V");
+
 	jstring jPlayer1Name = env->NewStringUTF( player1name );
 	jstring jPlayer2Name = env->NewStringUTF( player2name );
 	jstring jPlayer3Name = env->NewStringUTF( player3name );
 	jstring jPlayer4Name = env->NewStringUTF( player4name );
 	jstring jPlayer5Name = env->NewStringUTF( player5name );
-//	//env->GetFi
-//
-//	if (!env)
-//	{
-//		Log("No env");
-//		return;
-//	}
-	env->CallVoidMethod(jCasinoDice, Toggle, show, tableID, tableBet, tableBank, money, jPlayer1Name, player1stat, jPlayer2Name, player2stat, jPlayer3Name, player3stat, jPlayer4Name, player4stat, jPlayer5Name, player5stat);
 
+	env->CallVoidMethod(jCasinoDice, Toggle, show, tableID, tableBet, tableBank, money, jPlayer1Name, player1stat, jPlayer2Name, player2stat, jPlayer3Name, player3stat, jPlayer4Name, player4stat, jPlayer5Name, player5stat);
 }
 
 CJavaWrapper* g_pJavaWrapper = nullptr;

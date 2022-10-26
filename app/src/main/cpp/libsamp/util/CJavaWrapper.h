@@ -4,6 +4,7 @@
 
 #include <string>
 
+extern
 #define EXCEPTION_CHECK(env) \
 	if ((env)->ExceptionCheck()) \ 
 	{ \
@@ -71,9 +72,6 @@ class CJavaWrapper
 	jmethodID j_showDeathInfo;
 	jmethodID s_hideDeathInfo;
 
-	jmethodID j_tempToggleCasinoDice;
-	jmethodID j_showCasinoDice;
-
 	jmethodID j_toggleAutoShop;
 	jmethodID j_updateAutoShop;
 
@@ -98,6 +96,7 @@ class CJavaWrapper
 	jmethodID s_updateYearnMoney;
 	jmethodID s_showUpdateTargetNotify;
 	jmethodID s_hideTargetNotify;
+
 
 public:
 	JNIEnv* GetEnv();
@@ -200,6 +199,7 @@ public:
 	void ClearScreen();
 
 	jobject jCasinoDice;
+
 };
 
 extern CJavaWrapper* g_pJavaWrapper;

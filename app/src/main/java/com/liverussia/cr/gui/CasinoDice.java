@@ -94,92 +94,69 @@ public class CasinoDice {
     {
         if(toggle)
         {
-            casino_dice_main_layout.setVisibility(View.VISIBLE);
+            activity.runOnUiThread(() -> casino_dice_main_layout.setVisibility(View.VISIBLE) );
         }
         else
         {
-            casino_dice_main_layout.setVisibility(View.GONE);
+            activity.runOnUiThread(() -> casino_dice_main_layout.setVisibility(View.GONE) );
         }
     }
     public void Toggle(boolean show, int tableID, int tableBet, int tableBank, int money, String player1name, int player1stat, String player2name, int player2stat, String player3name, int player3stat, String player4name, int player4stat, String player5name, int player5stat)
     {
-//        if(!show)
-//        {
-//            casino_dice_main_layout.setVisibility(View.GONE);
-//            return;
-//        }
-//        casino_dice_table_num.setText("Стол "+tableID);
-//        dice_text_bet.setText(num_format.format(tableBet)+" руб.");
-//        casino_dice_text_bank.setText(num_format.format(tableBank)+" руб.");
-//        dice_text_balance.setText(num_format.format(money)+" руб.");
-//
-//        dice_text_player_name1.setText(player1name);
-//        if(player1stat == 0)
-//        {
-//            dice_text_player_ready1.setText("--");
-//        }
-//        else if(player1stat == 1)
-//        {
-//            dice_text_player_ready1.setText("++");
-//        }
-//        else
-//        {
-//            dice_text_player_ready1.setText(String.format("%d",player1stat) );
-//        }
-//        dice_text_player_name2.setText(player2name);
-//        if(player2stat == 0)
-//        {
-//            dice_text_player_ready2.setText("--");
-//        }
-//        else if(player2stat == 1)
-//        {
-//            dice_text_player_ready2.setText("++");
-//        }
-//        else
-//        {
-//            dice_text_player_ready2.setText(String.format("%d",player2stat));
-//        }
-//        dice_text_player_name3.setText(player3name);
-//        if(player3stat == 0)
-//        {
-//            dice_text_player_ready3.setText("--");
-//        }
-//        else if(player3stat == 1)
-//        {
-//            dice_text_player_ready3.setText("++");
-//        }
-//        else
-//        {
-//            dice_text_player_ready3.setText(String.format("%d",player3stat));
-//        }
-//        dice_text_player_name4.setText(player4name);
-//        if(player4stat == 0)
-//        {
-//            dice_text_player_ready4.setText("--");
-//        }
-//        else if(player4stat == 1)
-//        {
-//            dice_text_player_ready4.setText("++");
-//        }
-//        else
-//        {
-//            dice_text_player_ready4.setText(String.format("%d",player4stat));
-//        }
-//        dice_text_player_name5.setText(player5name);
-//        if(player5stat == 0)
-//        {
-//            dice_text_player_ready5.setText("--");
-//        }
-//        else if(player5stat == 1)
-//        {
-//            dice_text_player_ready5.setText("++");
-//        }
-//        else
-//        {
-//            dice_text_player_ready5.setText(String.format("%d",player5stat));
-//        }
-//        casino_dice_main_layout.setVisibility(View.VISIBLE);
-        Log.d("sadf", "Hello from cpp2");
+        activity.runOnUiThread(() ->
+        {
+            if (!show) {
+                casino_dice_main_layout.setVisibility(View.GONE);
+                return;
+            }
+            casino_dice_table_num.setText("Стол " + tableID);
+            dice_text_bet.setText(num_format.format(tableBet) + " руб.");
+            casino_dice_text_bank.setText(num_format.format(tableBank) + " руб.");
+            dice_text_balance.setText(num_format.format(money) + " руб.");
+
+            dice_text_player_name1.setText(player1name);
+            if (player1stat == 0) {
+                dice_text_player_ready1.setText("--");
+            } else if (player1stat == 1) {
+                dice_text_player_ready1.setText("++");
+            } else {
+                dice_text_player_ready1.setText(String.format("%d", player1stat));
+            }
+            dice_text_player_name2.setText(player2name);
+            if (player2stat == 0) {
+                dice_text_player_ready2.setText("--");
+            } else if (player2stat == 1) {
+                dice_text_player_ready2.setText("++");
+            } else {
+                dice_text_player_ready2.setText(String.format("%d", player2stat));
+            }
+            dice_text_player_name3.setText(player3name);
+            if (player3stat == 0) {
+                dice_text_player_ready3.setText("--");
+            } else if (player3stat == 1) {
+                dice_text_player_ready3.setText("++");
+            } else {
+                dice_text_player_ready3.setText(String.format("%d", player3stat));
+            }
+            dice_text_player_name4.setText(player4name);
+            if (player4stat == 0) {
+                dice_text_player_ready4.setText("--");
+            } else if (player4stat == 1) {
+                dice_text_player_ready4.setText("++");
+            } else {
+                dice_text_player_ready4.setText(String.format("%d", player4stat));
+            }
+            dice_text_player_name5.setText(player5name);
+            if (player5stat == 0) {
+                dice_text_player_ready5.setText("--");
+            } else if (player5stat == 1) {
+                dice_text_player_ready5.setText("++");
+            } else {
+                dice_text_player_ready5.setText(String.format("%d", player5stat));
+            }
+            casino_dice_main_layout.setVisibility(View.VISIBLE);
+        });
+
     }
     public void HelloWorld()
     {
