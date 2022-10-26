@@ -1538,13 +1538,6 @@ public abstract class NvEventQueueActivity
         });
     }
 
-    public void showDialog(int dialogId, int dialogTypeId, String caption, String content, String leftBtnText, String rightBtnText)
-    {
-        runOnUiThread(() -> {
-            this.mDialog.show(dialogId, dialogTypeId, caption, content, leftBtnText, rightBtnText);
-        });
-    }
-
     public void hideDialogWithoutReset() { runOnUiThread(() -> { this.mDialog.hideWithoutReset(); }); }
 
     public void showDialogWithOldContent() { runOnUiThread(() -> { this.mDialog.showWithOldContent(); }); }
@@ -1587,8 +1580,6 @@ public abstract class NvEventQueueActivity
     public void updateHudInfo(int health, int armour, int hunger, int weaponid, int ammo, int ammoclip, int money, int wanted) { runOnUiThread(() -> { mHudManager.UpdateHudInfo(health, armour, hunger, weaponid, ammo, ammoclip, money, wanted); }); }
 
     public void updateLevelInfo(int level, int currentexp, int maxexp) { runOnUiThread(() -> { mHudManager.UpdateLevelInfo(level, currentexp, maxexp); }); }
-
-    public void ToggleAllHud(boolean toggle) { mHudManager.ToggleAll(toggle); }
 
     public void showGreenZone() { runOnUiThread(() -> { mHudManager.ShowGreenZone(); }); }
 

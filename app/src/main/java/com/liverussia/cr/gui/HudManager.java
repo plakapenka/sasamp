@@ -47,8 +47,10 @@ public class HudManager {
     private ProgressBar oil_oil_progress;
     private TextView oil_water_procent;
     private TextView oil_oil_procent;
+    public native void HudInit();
 
     public HudManager(Activity aactivity) {
+        HudInit();
         activity = aactivity;
         hud_main = aactivity.findViewById(R.id.hud_main);
         hud_main.setVisibility(View.GONE);

@@ -51,8 +51,10 @@ public class Dialog {
     private ArrayList<String> mRowsList;
     private Activity activity;
     boolean old_casino_layout_state;
+    public native void DialogInit();
 
     public Dialog(Activity aactivity) {
+        DialogInit();
         activity = aactivity;
         casino_dice_main_layout = activity.findViewById(R.id.casino_dice_main_layout);
         this.mMainLayout = activity.findViewById(R.id.sd_dialog_main);
@@ -92,57 +94,63 @@ public class Dialog {
     }
 
     public void show(int dialogId, int dialogTypeId, String caption, String content, String leftBtnText, String rightBtnText) {
-
-        if(casino_dice_main_layout.getVisibility() == View.VISIBLE)
-        {
-            old_casino_layout_state = true;
-            casino_dice_main_layout.setVisibility(View.GONE);
-        }
-
         clearDialogData();
-        this.mCurrentDialogId = dialogId;
-        this.mCurrentDialogTypeId = dialogTypeId;
-        this.mInputPasswordStyle = false;
-        if (dialogTypeId == 0) {
-            this.mInputLayout.setVisibility(View.GONE);
-            this.mListLayout.setVisibility(View.GONE);
-            this.mMsgBoxLayout.setVisibility(View.VISIBLE);
-        }
-        else if(dialogTypeId == 1 || dialogTypeId == 3)
+        if(content.length() < 3)
         {
-            this.mInputLayout.setVisibility(View.VISIBLE); // выполняется инпут
-            this.mMsgBoxLayout.setVisibility(View.VISIBLE);
-            this.mListLayout.setVisibility(View.GONE);
-            this.mInputPasswordStyle = true;
+            activity.runOnUiThread(() -> mMainLayout.setVisibility(View.GONE) );
+            return;
         }
-        else
-        {
-            this.mInputLayout.setVisibility(View.GONE);
-            this.mMsgBoxLayout.setVisibility(View.GONE); // LIST, TABLIST, TABLIST_HEADER
-            this.mListLayout.setVisibility(View.VISIBLE);
-            loadTabList(content);
-            ArrayList<String> fixFieldsForDialog = Utils.fixFieldsForDialog(this.mRowsList);
-            this.mRowsList = fixFieldsForDialog;
-            DialogAdapter adapter = new DialogAdapter(fixFieldsForDialog, this.mHeadersList);
-            adapter.setOnClickListener((i, str) -> { this.mCurrentListItem = i;
-            this.mCurrentInputText = str; });
-            adapter.setOnDoubleClickListener(() -> sendDialogResponse(1));
-            this.mCustomRecyclerView.setLayoutManager(new LinearLayoutManager((Context) NvEventQueueActivity.getInstance()));
-            this.mCustomRecyclerView.setAdapter(adapter);
-            if (dialogTypeId != 2) {
-                CustomRecyclerView customRecyclerView = this.mCustomRecyclerView;
-                adapter.getClass();
-                customRecyclerView.post(() -> adapter.updateSizes());
+        activity.runOnUiThread(() -> {
+            if (casino_dice_main_layout.getVisibility() == View.VISIBLE) {
+                old_casino_layout_state = true;
+                casino_dice_main_layout.setVisibility(View.GONE);
             }
-        }
-        this.mCaption.setText(Utils.transfromColors(caption));
-        this.mContent.setText(Utils.transfromColors(content));
-        ((TextView) this.mLeftBtn.getChildAt(0)).setText(Utils.transfromColors(leftBtnText));
-        ((TextView) this.mRightBtn.getChildAt(0)).setText(Utils.transfromColors(rightBtnText));
-        if (rightBtnText.equals("")) { this.mRightBtn.setVisibility(View.GONE); }
-        else { this.mRightBtn.setVisibility(View.VISIBLE); }
 
-        Utils.ShowLayout(this.mMainLayout, false);
+            this.mCurrentDialogId = dialogId;
+            this.mCurrentDialogTypeId = dialogTypeId;
+            this.mInputPasswordStyle = false;
+            if (dialogTypeId == 0) {
+                this.mInputLayout.setVisibility(View.GONE);
+                this.mListLayout.setVisibility(View.GONE);
+                this.mMsgBoxLayout.setVisibility(View.VISIBLE);
+            } else if (dialogTypeId == 1 || dialogTypeId == 3) {
+                this.mInputLayout.setVisibility(View.VISIBLE); // выполняется инпут
+                this.mMsgBoxLayout.setVisibility(View.VISIBLE);
+                this.mListLayout.setVisibility(View.GONE);
+                this.mInputPasswordStyle = true;
+            } else {
+                this.mInputLayout.setVisibility(View.GONE);
+                this.mMsgBoxLayout.setVisibility(View.GONE); // LIST, TABLIST, TABLIST_HEADER
+                this.mListLayout.setVisibility(View.VISIBLE);
+                loadTabList(content);
+                ArrayList<String> fixFieldsForDialog = Utils.fixFieldsForDialog(this.mRowsList);
+                this.mRowsList = fixFieldsForDialog;
+                DialogAdapter adapter = new DialogAdapter(fixFieldsForDialog, this.mHeadersList);
+                adapter.setOnClickListener((i, str) -> {
+                    this.mCurrentListItem = i;
+                    this.mCurrentInputText = str;
+                });
+                adapter.setOnDoubleClickListener(() -> sendDialogResponse(1));
+                this.mCustomRecyclerView.setLayoutManager(new LinearLayoutManager((Context) NvEventQueueActivity.getInstance()));
+                this.mCustomRecyclerView.setAdapter(adapter);
+                if (dialogTypeId != 2) {
+                    CustomRecyclerView customRecyclerView = this.mCustomRecyclerView;
+                    adapter.getClass();
+                    customRecyclerView.post(() -> adapter.updateSizes());
+                }
+            }
+            this.mCaption.setText(Utils.transfromColors(caption));
+            this.mContent.setText(Utils.transfromColors(content));
+            ((TextView) this.mLeftBtn.getChildAt(0)).setText(Utils.transfromColors(leftBtnText));
+            ((TextView) this.mRightBtn.getChildAt(0)).setText(Utils.transfromColors(rightBtnText));
+            if (rightBtnText.equals("")) {
+                this.mRightBtn.setVisibility(View.GONE);
+            } else {
+                this.mRightBtn.setVisibility(View.VISIBLE);
+            }
+
+            Utils.ShowLayout(this.mMainLayout, false);
+        });
 
     }
 

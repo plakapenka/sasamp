@@ -25,7 +25,6 @@ class CJavaWrapper
 
 	jmethodID s_ShowClientSettings;
 	jmethodID s_SetUseFullScreen;
-	jmethodID s_MakeDialog;
 
 	jmethodID s_showOilFactoryGame;
 	jmethodID s_showArmyGame;
@@ -42,7 +41,6 @@ class CJavaWrapper
 	jmethodID s_showTabWindow;
 	jmethodID s_setTabStat;
 
-    jmethodID s_toggleAllHud;
 	jmethodID s_showGreenZone;
     jmethodID s_hideGreenZone;
 	jmethodID s_showGPS;
@@ -159,7 +157,7 @@ public:
     void ShowUpdateTargetNotify(int type, char *text);
     void HideTargetNotify();
 
-	void MakeDialog(int dialogId, int dialogTypeId, std::string caption, std::string info, std::string button1, std::string button2); // Диалоги
+	void MakeDialog(int dialogId, int dialogTypeId, char caption[], char info[], char button1[], char button2[]); // Диалоги
 	void ShowNotification(int type, char* text, int duration, char* actionforBtn, char* textBtn, int actionId);
 	void HideNotification();
 	void ShowMenu();
@@ -199,6 +197,8 @@ public:
 	void ClearScreen();
 
 	jobject jCasinoDice;
+    jobject jDialog;
+	jobject jHudManager;
 
 };
 

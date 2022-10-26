@@ -146,7 +146,7 @@ void CJavaWrapper::ShowClientSettings()
 	EXCEPTION_CHECK(env);
 }
 
-void CJavaWrapper::MakeDialog(int dialogId, int dialogTypeId, std::string caption, std::string info, std::string button1, std::string button2)
+void CJavaWrapper::MakeDialog(int dialogId, int dialogTypeId, char caption[], char info[], char button1[], char button2[])
 {
     JNIEnv* env = GetEnv();
     if (!env)
@@ -154,12 +154,17 @@ void CJavaWrapper::MakeDialog(int dialogId, int dialogTypeId, std::string captio
 	Log("No env");
 	return;
     }
-	jstring j_caption = env->NewStringUTF( caption.c_str() );
-	jstring j_info = env->NewStringUTF( info.c_str() );
-	jstring j_button1 = env->NewStringUTF( button1.c_str() );
-	jstring j_button2 = env->NewStringUTF( button2.c_str() );
+	jstring j_caption = env->NewStringUTF( caption );
+	jstring j_info = env->NewStringUTF( info );
+	jstring j_button1 = env->NewStringUTF( button1 );
+	jstring j_button2 = env->NewStringUTF( button2 );
 
-    env->CallVoidMethod(activity, s_MakeDialog, dialogId, dialogTypeId, j_caption, j_info, j_button1, j_button2);
+
+	jclass clazz = env->GetObjectClass(jDialog);
+
+	jmethodID Show = env->GetMethodID(clazz, "show", "(IILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
+
+    env->CallVoidMethod(jDialog, Show, dialogId, dialogTypeId, j_caption, j_info, j_button1, j_button2);
 
 	// не уверен что нужно, но внятного ответа в интернетах нет
 	env->DeleteLocalRef(j_caption);
@@ -1023,7 +1028,10 @@ void CJavaWrapper::ToggleAllHud(bool toggle)
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_toggleAllHud, toggle);
+	jclass clazz = env->GetObjectClass(jHudManager);
+
+	jmethodID ToggleAll = env->GetMethodID(clazz, "ToggleAll", "(Z)V");
+    env->CallVoidMethod(jHudManager, ToggleAll, toggle);
 }
 
 void CJavaWrapper::ShowBusInfo(int time)
@@ -1633,12 +1641,10 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 
 	s_ShowClientSettings = env->GetMethodID(nvEventClass, "showClientSettings", "()V");
 	s_SetUseFullScreen = env->GetMethodID(nvEventClass, "setUseFullscreen", "(I)V");
-	s_MakeDialog = env->GetMethodID(nvEventClass, "showDialog", "(IILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
 
 	s_updateHudInfo = env->GetMethodID(nvEventClass, "updateHudInfo", "(IIIIIIII)V");
 	s_updateLevelInfo = env->GetMethodID(nvEventClass, "updateLevelInfo", "(III)V");
 
-    s_toggleAllHud = env->GetMethodID(nvEventClass, "ToggleAllHud", "(Z)V");
 	s_showGreenZone = env->GetMethodID(nvEventClass, "showGreenZone", "()V");
     s_hideGreenZone = env->GetMethodID(nvEventClass, "hideGreenZone", "()V");
 	s_showGPS = env->GetMethodID(nvEventClass, "showGPS", "()V");
@@ -1744,8 +1750,10 @@ void CJavaWrapper::ShowCasinoDice(bool show, int tableID, int tableBet, int tabl
 	pNetGame->m_CasinoDiceLayoutState = show;
 	JNIEnv* env = GetEnv();
 
-	jclass _class = env->GetObjectClass(jCasinoDice);
-	jmethodID Toggle = env->GetMethodID(_class, "Toggle", "(ZIIIILjava/lang/String;ILjava/lang/String;ILjava/lang/String;ILjava/lang/String;ILjava/lang/String;I)V");
+    jclass clazz = env->GetObjectClass(jCasinoDice);
+
+
+	jmethodID Toggle = env->GetMethodID(clazz, "Toggle", "(ZIIIILjava/lang/String;ILjava/lang/String;ILjava/lang/String;ILjava/lang/String;ILjava/lang/String;I)V");
 
 	jstring jPlayer1Name = env->NewStringUTF( player1name );
 	jstring jPlayer2Name = env->NewStringUTF( player2name );
@@ -1775,20 +1783,22 @@ Java_com_nvidia_devtech_NvEventQueueActivity_native_1SendAutoShopButton(JNIEnv *
 }
 
 extern "C"
+{
 JNIEXPORT void JNICALL
 Java_com_nvidia_devtech_NvEventQueueActivity_SendCasinoButt(JNIEnv *env, jobject thiz,
-															jint buttonID) {
-	uint8_t packet = ID_CUSTOM_RPC;
-	uint8_t RPC = RPC_SHOW_DICE_TABLE;
-	uint8_t button = buttonID;
+                                                            jint buttonID) {
+    uint8_t packet = ID_CUSTOM_RPC;
+    uint8_t RPC = RPC_SHOW_DICE_TABLE;
+    uint8_t button = buttonID;
 
 
-	RakNet::BitStream bsSend;
-	bsSend.Write(packet);
-	bsSend.Write(RPC);
-	bsSend.Write(button);
-	pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
+    RakNet::BitStream bsSend;
+    bsSend.Write(packet);
+    bsSend.Write(RPC);
+    bsSend.Write(button);
+    pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
 }
 
+}
 
 
