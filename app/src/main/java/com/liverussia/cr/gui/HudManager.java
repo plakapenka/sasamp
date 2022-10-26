@@ -48,6 +48,7 @@ public class HudManager {
     private TextView oil_water_procent;
     private TextView oil_oil_procent;
     public native void HudInit();
+    public native void cppToggleAllHud(boolean toggle);
 
     public HudManager(Activity aactivity) {
         HudInit();
@@ -110,7 +111,10 @@ public class HudManager {
 
         Utils.HideLayout(hud_gpsactive, false);
     }
-
+    public void ToggleAllHud(boolean toggle)
+    {
+        cppToggleAllHud(toggle);
+    }
     public void UpdateHudInfo(int health, int armour, int hunger, int weaponid, int ammo, int ammoclip, int money, int wanted)
     {
         progressHP.setProgress(health);

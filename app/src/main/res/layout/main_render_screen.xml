@@ -94,6 +94,7 @@
         <include layout="@layout/sd_dialog" />
         <include layout="@layout/pre_death" />
         <include layout="@layout/autoshop" />
+        <include layout="@layout/casino_lucky_wheel" />
 
     </FrameLayout>
 </FrameLayout>

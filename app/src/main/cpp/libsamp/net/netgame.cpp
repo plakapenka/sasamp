@@ -519,6 +519,17 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 	//pChatWindow->AddDebugMessage("p %d rpc %d", packetID, rpcID);
 	switch (rpcID)
 	{
+		case RPC_CASINO_LUCKY_WHEEL_MENU:
+		{
+			uint16_t count;
+			uint32_t time;
+
+			bs.Read(count);
+			bs.Read(time);
+
+			g_pJavaWrapper->ShowCasinoLuckyWheel(count, time);
+			break;
+		}
 		case RPC_SHOW_DICE_TABLE:
 		{
 			const int MAX_PLAYERS_CASINO_DICE = 5;

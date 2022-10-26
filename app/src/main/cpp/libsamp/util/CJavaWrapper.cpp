@@ -1764,6 +1764,16 @@ void CJavaWrapper::ShowCasinoDice(bool show, int tableID, int tableBet, int tabl
 	env->CallVoidMethod(jCasinoDice, Toggle, show, tableID, tableBet, tableBank, money, jPlayer1Name, player1stat, jPlayer2Name, player2stat, jPlayer3Name, player3stat, jPlayer4Name, player4stat, jPlayer5Name, player5stat);
 }
 
+void CJavaWrapper::ShowCasinoLuckyWheel(int count, int time) {
+
+	JNIEnv* env = GetEnv();
+
+	jclass clazz = env->GetObjectClass(jCasino_LuckyWheel);
+	jmethodID Show = env->GetMethodID(clazz, "Show", "(II)V");
+
+	env->CallVoidMethod(jCasinoDice, Show, count, time);
+}
+
 CJavaWrapper* g_pJavaWrapper = nullptr;
 
 extern "C"
@@ -1802,3 +1812,23 @@ Java_com_nvidia_devtech_NvEventQueueActivity_SendCasinoButt(JNIEnv *env, jobject
 }
 
 
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_Casino_1LuckyWheel_ClickButt(JNIEnv *env, jobject thiz, jint button_id) {
+	uint8_t packet = ID_CUSTOM_RPC;
+	uint8_t RPC = RPC_SHOW_DICE_TABLE;
+	uint8_t button = button_id;
+
+
+	RakNet::BitStream bsSend;
+	bsSend.Write(packet);
+	bsSend.Write(RPC);
+	bsSend.Write(button);
+	pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_HudManager_cppToggleAllHud(JNIEnv *env, jobject thiz, jboolean toggle) {
+	pGame->ToggleAllHud(toggle);
+}

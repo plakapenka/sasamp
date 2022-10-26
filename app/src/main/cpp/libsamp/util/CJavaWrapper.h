@@ -199,7 +199,9 @@ public:
 	jobject jCasinoDice;
     jobject jDialog;
 	jobject jHudManager;
+	jobject jCasino_LuckyWheel;
 
+    void ShowCasinoLuckyWheel(int count, int time);
 };
 
 extern CJavaWrapper* g_pJavaWrapper;

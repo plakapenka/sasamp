@@ -58,6 +58,7 @@ import com.liverussia.cr.R;
 import com.liverussia.cr.core.DialogClientSettings;
 import com.liverussia.cr.gui.AutoShop;
 import com.liverussia.cr.gui.CasinoDice;
+import com.liverussia.cr.gui.Casino_LuckyWheel;
 import com.liverussia.cr.gui.HudManager;
 import com.liverussia.cr.gui.PreDeath;
 import com.liverussia.cr.gui.SamwillManager;
@@ -163,6 +164,7 @@ public abstract class NvEventQueueActivity
 
     private Dialog mDialog = null;
     private HudManager mHudManager = null;
+    private Casino_LuckyWheel mCasinoLuckyWheel = null;
     private SamwillManager mSamwillManager = null;
     private Speedometer mSpeedometer = null;
     private AutoShop mAutoShop = null;
@@ -1053,6 +1055,7 @@ public abstract class NvEventQueueActivity
         mPreDeath = new PreDeath(this);
         mDialog = new Dialog(this);
         mHudManager = new HudManager(this);
+        mCasinoLuckyWheel = new Casino_LuckyWheel(this);
         mSamwillManager = new SamwillManager(this);
         mSpeedometer = new Speedometer(this);
         mAutoShop = new AutoShop(this);
