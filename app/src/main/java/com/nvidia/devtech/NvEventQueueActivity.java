@@ -57,6 +57,7 @@ import com.google.common.hash.Hashing;
 import com.liverussia.cr.R;
 import com.liverussia.cr.core.DialogClientSettings;
 import com.liverussia.cr.gui.AutoShop;
+import com.liverussia.cr.gui.CasinoDice;
 import com.liverussia.cr.gui.HudManager;
 import com.liverussia.cr.gui.PreDeath;
 import com.liverussia.cr.gui.SamwillManager;
@@ -165,6 +166,7 @@ public abstract class NvEventQueueActivity
     private SamwillManager mSamwillManager = null;
     private Speedometer mSpeedometer = null;
     private AutoShop mAutoShop = null;
+    private CasinoDice mCasinoDice = null;
     private Notification mNotification = null;
     private AuthorizationManager mAuthorizationManager = null;
     private RegistrationManager mRegistrationManager = null;
@@ -404,6 +406,8 @@ public abstract class NvEventQueueActivity
     public native void showTab();
 
     public native void togglePlayer(int toggle);
+
+    public native void SendCasinoButt(int buttonID);
 
     /**
      * Helper class used to pass raw data around.  
@@ -1052,6 +1056,8 @@ public abstract class NvEventQueueActivity
         mSamwillManager = new SamwillManager(this);
         mSpeedometer = new Speedometer(this);
         mAutoShop = new AutoShop(this);
+        mCasinoDice = new CasinoDice(this);
+
         mMenu = new Menu(this);
         mChooseServer = new ChooseServer(this);
 
@@ -1607,6 +1613,18 @@ public abstract class NvEventQueueActivity
     {
         runOnUiThread(() -> {
             mAutoShop.ToggleShow(toggle);
+        });
+    }
+    public void tempToggleCasinoDice(boolean toggle)
+    {
+        runOnUiThread(() -> {
+            mCasinoDice.TempToggle(toggle);
+        });
+    }
+    public void showCasinoDice(boolean show, int tableID, int tableBet, int tableBank, int money, String player1name, int player1stat, String player2name, int player2stat, String player3name, int player3stat, String player4name, int player4stat, String player5name, int player5stat)
+    {
+        runOnUiThread(() -> {
+            mCasinoDice.Toggle(show, tableID, tableBet, tableBank, money, player1name, player1stat, player2name, player2stat, player3name, player3stat, player4name, player4stat, player5name, player5stat);
         });
     }
     public void updateAutoShop(String name, int price, int count, float maxspeed, float acceleration)

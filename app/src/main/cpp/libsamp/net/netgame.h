@@ -67,9 +67,9 @@
 #define RPC_SHOW_FACTORY_GAME 28
 #define RPC_SHOW_MINING_GAME 29
 #define RPC_SHOW_TD_BUS 30
-#define RPC_SHOW_DICE_TABLE 31
 #define RPC_SHOW_LUCKYWHEEL 32
 #define RPC_SHOW_OILGAME 33
+#define RPC_SHOW_DICE_TABLE 31
 #define RPC_SHOW_CASINO_BUY_CHIP 34
 #define RPC_SHOW_AUTOSHOP 35
 #define RPC_UPDATE_AUTOSHOP 36
@@ -183,6 +183,7 @@ public:
 	char m_szHostOrIp[0x7F];
 	int m_iPort;
 
+	bool 		m_CasinoDiceLayoutState = false;
 	bool		m_GreenZoneState;
 	bool		m_bZoneNames;
 	bool		m_bUseCJWalk;

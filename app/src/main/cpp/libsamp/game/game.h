@@ -50,7 +50,7 @@ public:
 
 	void ToggleHUDElement(int iID, bool bToggle);
 	bool IsToggledHUDElement(int iID);
-	void ToggleAllHud(bool toggle, bool withchat = false);
+	void ToggleAllHud(bool toggle, bool withchat = false, bool anyway = false);
 	void HandleChangedHUDStatus();
 
 	static void SetEnabledPCMoney(bool bEnabled);

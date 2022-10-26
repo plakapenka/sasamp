@@ -10,6 +10,7 @@ extern "C" JavaVM* javaVM;
 #include "../game/game.h"
 #include "../str_obfuscator_no_template.hpp"
 #include "../scoreboard.h"
+#include "java_objects.h"
 
 extern CScoreBoard *pScoreBoard;
 extern CKeyBoard* pKeyBoard;
@@ -19,8 +20,11 @@ extern CNetGame* pNetGame;
 extern CGame* pGame;
 extern CPlayerPed* m_pPlayerPed;
 
+
+
 JNIEnv* CJavaWrapper::GetEnv()
 {
+    abcasd();
 	JNIEnv* env = nullptr;
 	int getEnvStat = javaVM->GetEnv((void**)& env, JNI_VERSION_1_4);
 
@@ -1445,7 +1449,7 @@ void CJavaWrapper::ToggleAutoShop(bool toggle)
 {
 	JNIEnv* env = GetEnv();
 
-	if (!env)
+    if (!env)
 	{
 		Log("No env");
 		return;
@@ -1586,6 +1590,7 @@ void CJavaWrapper::ClearScreen()
 	HideGreenZone();
 	HideYernMoney();
 	HideSamwill();
+	ShowCasinoDice(false, 0, 0, 0, 0, "--", 0, "--", 0, "--", 0, "--", 0, "--", 0);
 }
 
 const uint32_t cRegisterSkin[2][10] = {
@@ -1615,6 +1620,7 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 	this->activity = env->NewGlobalRef(activity);
 
 	jclass nvEventClass = env->GetObjectClass(activity);
+
 	if (!nvEventClass)
 	{
 		Log("nvEventClass null");
@@ -1682,6 +1688,8 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 	s_showRegistration = env->GetMethodID(nvEventClass, "showRegistration", "(Ljava/lang/String;I)V");
 	s_hideRegistration = env->GetMethodID(nvEventClass, "hideRegistration", "()V");
 
+	j_tempToggleCasinoDice = env->GetMethodID(nvEventClass, "tempToggleCasinoDice", "(Z)V");
+	j_showCasinoDice = env->GetMethodID(nvEventClass, "showCasinoDice", "(ZIIIILjava/lang/String;ILjava/lang/String;ILjava/lang/String;ILjava/lang/String;ILjava/lang/String;I)V");
 	j_showDeathInfo = env->GetMethodID(nvEventClass, "showPreDeath", "(Ljava/lang/String;I)V");
 	//s_hideDeathInfo = env->GetMethodID(nvEventClass, "hideDeathInfo", "()V");
 
@@ -1714,6 +1722,53 @@ CJavaWrapper::~CJavaWrapper()
 	}
 }
 
+void CJavaWrapper::TempToggleCasinoDice(bool toggle) {
+	JNIEnv* env = GetEnv();
+
+	if (!env)
+	{
+		Log("No env");
+		return;
+	}
+	env->CallVoidMethod(this->activity, this->j_tempToggleCasinoDice, toggle);
+
+}
+
+void CJavaWrapper::ShowCasinoDice(bool show, int tableID, int tableBet, int tableBank, int money,
+								  char player1name[], int player1stat,
+								  char player2name[], int player2stat,
+								  char player3name[], int player3stat,
+								  char player4name[], int player4stat,
+								  char player5name[], int player5stat) {
+
+
+	pNetGame->m_CasinoDiceLayoutState = show;
+	JNIEnv* env = GetEnv();
+	//JNIEnv* env = jCasinoEnv;
+	jclass ggg = env->GetObjectClass(jCasinoDice);
+	jmethodID meth = env->GetMethodID(ggg, "HelloWorld", "()V");
+	env->CallVoidMethod(jCasinoDice, meth);
+//
+	jclass jCasinoDiceClass = env->GetObjectClass(jCasinoDice);
+//
+	jmethodID Toggle = env->GetMethodID(jCasinoDiceClass, "Toggle", "(ZIIIILjava/lang/String;ILjava/lang/String;ILjava/lang/String;ILjava/lang/String;ILjava/lang/String;I)V");
+//
+	jstring jPlayer1Name = env->NewStringUTF( player1name );
+	jstring jPlayer2Name = env->NewStringUTF( player2name );
+	jstring jPlayer3Name = env->NewStringUTF( player3name );
+	jstring jPlayer4Name = env->NewStringUTF( player4name );
+	jstring jPlayer5Name = env->NewStringUTF( player5name );
+//	//env->GetFi
+//
+//	if (!env)
+//	{
+//		Log("No env");
+//		return;
+//	}
+	env->CallVoidMethod(jCasinoDice, Toggle, show, tableID, tableBet, tableBank, money, jPlayer1Name, player1stat, jPlayer2Name, player2stat, jPlayer3Name, player3stat, jPlayer4Name, player4stat, jPlayer5Name, player5stat);
+
+}
+
 CJavaWrapper* g_pJavaWrapper = nullptr;
 
 extern "C"
@@ -1731,3 +1786,22 @@ Java_com_nvidia_devtech_NvEventQueueActivity_native_1SendAutoShopButton(JNIEnv *
 	bsSend.Write(button);
 	pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
 }
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_nvidia_devtech_NvEventQueueActivity_SendCasinoButt(JNIEnv *env, jobject thiz,
+															jint buttonID) {
+	uint8_t packet = ID_CUSTOM_RPC;
+	uint8_t RPC = RPC_SHOW_DICE_TABLE;
+	uint8_t button = buttonID;
+
+
+	RakNet::BitStream bsSend;
+	bsSend.Write(packet);
+	bsSend.Write(RPC);
+	bsSend.Write(button);
+	pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
+}
+
+
+

@@ -71,6 +71,9 @@ class CJavaWrapper
 	jmethodID j_showDeathInfo;
 	jmethodID s_hideDeathInfo;
 
+	jmethodID j_tempToggleCasinoDice;
+	jmethodID j_showCasinoDice;
+
 	jmethodID j_toggleAutoShop;
 	jmethodID j_updateAutoShop;
 
@@ -170,6 +173,8 @@ public:
 
 	void ShowRegistration(char *nick, int id);
 	void HideRegistration();
+	void TempToggleCasinoDice(bool toggle);
+	void ShowCasinoDice(bool show, int tableID, int tableBet, int tableBank, int money, char player1name[], int player1stat, char player2name[], int player2stat, char player3name[], int player3stat, char player4name[], int player4stat, char player5name[], int player5stat);
 
 	void ShowChooseSpawn(int organization, int station, int exit, int garage, int house);
 	void HideChooseSpawn();
@@ -193,6 +198,8 @@ public:
 	void ToggleAutoShop(bool toggle);
 
 	void ClearScreen();
+
+	jobject jCasinoDice;
 };
 
 extern CJavaWrapper* g_pJavaWrapper;

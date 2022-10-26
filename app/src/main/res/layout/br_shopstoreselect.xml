@@ -7,17 +7,17 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="100dp"
+            android:layout_marginTop="120dp"
             android:background="@drawable/shopstore_buy_bg"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:id="@+id/imageView32"
@@ -46,8 +46,9 @@
             android:id="@+id/shopstore_left"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:layout_marginEnd="75dp"
-            app:layout_constraintBottom_toTopOf="@+id/constraintLayout6"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="32dp"
+            app:layout_constraintBottom_toTopOf="@+id/shopstore_buy"
             app:layout_constraintEnd_toStartOf="@+id/constraintLayout6"
             app:srcCompat="@drawable/shop_btn" />
 
@@ -55,9 +56,10 @@
             android:id="@+id/shopstore_right"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:layout_marginStart="75dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="32dp"
             android:rotation="180"
-            app:layout_constraintBottom_toTopOf="@+id/constraintLayout6"
+            app:layout_constraintBottom_toTopOf="@+id/shopstore_exit"
             app:layout_constraintStart_toEndOf="@+id/constraintLayout6"
             app:srcCompat="@drawable/shop_btn" />
 
@@ -65,20 +67,18 @@
             android:id="@+id/shopstore_buy"
             android:layout_width="150dp"
             android:layout_height="35dp"
+            android:layout_marginBottom="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/constraintLayout6"
             app:layout_constraintStart_toStartOf="@+id/shopstore_left"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout6"
             app:srcCompat="@drawable/shop_buy" />
 
         <ImageView
             android:id="@+id/shopstore_exit"
             android:layout_width="150dp"
             android:layout_height="35dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/shopstore_buy"
             app:layout_constraintEnd_toEndOf="@+id/shopstore_right"
-            app:layout_constraintStart_toStartOf="@+id/constraintLayout6"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout6"
+            app:layout_constraintStart_toEndOf="@+id/shopstore_buy"
             app:srcCompat="@drawable/shop_exit" />
 
         <ImageView
@@ -87,8 +87,10 @@
             android:layout_height="50dp"
             app:layout_constraintBottom_toBottomOf="@+id/shopstore_exit"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.731"
             app:layout_constraintStart_toStartOf="@+id/shopstore_exit"
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout6"
+            app:layout_constraintVertical_bias="0.91"
             app:srcCompat="@drawable/shop_camera" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

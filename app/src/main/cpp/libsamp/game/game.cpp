@@ -157,7 +157,7 @@ void CGame::InitInGame()
 }
 
 
-void CGame::ToggleAllHud(bool toggle, bool withchat)
+void CGame::ToggleAllHud(bool toggle, bool withchat, bool anyway)
 {
 	if(!toggle)
 	{
@@ -166,7 +166,7 @@ void CGame::ToggleAllHud(bool toggle, bool withchat)
 	else
 	{
 		hudhideCount--;
-		if(hudhideCount > 0)return;
+		if(hudhideCount > 0 && !anyway)return;
 		else hudhideCount = 0;
 	}
 	isHudToggle = toggle;

@@ -96,7 +96,6 @@ public class AutoShop {
     public void Update(String name, int price, int count, float maxspeed, float acceleration)
     {
 
-        Log.d("dsf", String.format("%s %d %d %f %f", name, price, count, maxspeed,  acceleration));
         autoshop_pricevalue.setText(price_format.format(price)+" руб.");
         autoshop_availablevalue.setText(String.format("%d", count));
         autoshop_accelerationvalue.setText(String.format("%.1f", acceleration)+" с.");

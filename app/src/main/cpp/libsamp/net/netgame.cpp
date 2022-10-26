@@ -519,6 +519,70 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 	//pChatWindow->AddDebugMessage("p %d rpc %d", packetID, rpcID);
 	switch (rpcID)
 	{
+		case RPC_SHOW_DICE_TABLE:
+		{
+			const int MAX_PLAYERS_CASINO_DICE = 5;
+
+			char playerName[MAX_PLAYERS_CASINO_DICE][25] = {"--", "--", "--", "--", "--"};
+			uint8_t toggle;
+			uint8_t tableID;
+			uint32_t bet;
+			uint32_t bank;
+			uint16_t playerID[MAX_PLAYERS_CASINO_DICE];
+			uint8_t playerStat[MAX_PLAYERS_CASINO_DICE];
+
+			bs.Read(toggle);
+
+			if(toggle == 0)
+			{
+				g_pJavaWrapper->ShowCasinoDice(false, 0, 0, 0, 0, "--", 0, "--", 0, "--", 0, "--", 0, "--", 0);
+
+				pGame->ToggleAllHud(true, false, true);
+				return;
+			}
+			bs.Read(tableID);
+			bs.Read(bet);
+			bs.Read(bank);
+
+			CPlayerPool *pPlayerPool = GetPlayerPool();
+			for(int i = 0; i < MAX_PLAYERS_CASINO_DICE; i++)
+			{
+				bs.Read(playerID[i]);
+				bs.Read(playerStat[i]);
+
+
+                if(playerID[i] == INVALID_PLAYER_ID)
+                {
+                    strcpy(playerName[i], "--");
+				//	continue;
+                }
+				else if(playerID[i] == pPlayerPool->GetLocalPlayerID())
+				{
+
+					strcpy(playerName[i], pPlayerPool->GetLocalPlayerName());
+				//	continue;
+				}
+				else
+				{
+					if (pPlayerPool)
+					{
+						if(pPlayerPool->GetSlotState(playerID[i]))
+						{
+							strcpy(playerName[i], pPlayerPool->GetPlayerName(playerID[i]));
+						}
+						else
+						{
+							strcpy(playerName[i], "--");
+						}
+					}
+				}
+				Log("%d %d = %s", i, playerID[i], playerName[i]);
+			}
+			int money = pGame->GetLocalMoney();
+			g_pJavaWrapper->ShowCasinoDice(toggle, tableID, bet, bank, money, playerName[0], playerStat[0], playerName[1], playerStat[1], playerName[2], playerStat[2], playerName[3], playerStat[3], playerName[4], playerStat[4]);
+			pGame->ToggleAllHud(false);
+			break;
+		}
 		case RPC_OPEN_SETTINGS:
 		{
 			g_pJavaWrapper->ShowClientSettings();

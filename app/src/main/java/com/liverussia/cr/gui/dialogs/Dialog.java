@@ -2,6 +2,7 @@ package com.liverussia.cr.gui.dialogs;
 
 import android.app.Activity;
 import android.content.Context;
+import android.opengl.Visibility;
 import android.text.Editable;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -46,9 +47,14 @@ public class Dialog {
     private final ConstraintLayout mMainLayout;
     private final ScrollView mMsgBoxLayout;
     private final ConstraintLayout mRightBtn;
+    private ConstraintLayout casino_dice_main_layout;
     private ArrayList<String> mRowsList;
+    private Activity activity;
+    boolean old_casino_layout_state;
 
-    public Dialog(Activity activity) {
+    public Dialog(Activity aactivity) {
+        activity = aactivity;
+        casino_dice_main_layout = activity.findViewById(R.id.casino_dice_main_layout);
         this.mMainLayout = activity.findViewById(R.id.sd_dialog_main);
         this.mCaption = (TextView) activity.findViewById(R.id.sd_dialog_caption);
         this.mContent = (TextView) activity.findViewById(R.id.sd_dialog_text);
@@ -86,6 +92,13 @@ public class Dialog {
     }
 
     public void show(int dialogId, int dialogTypeId, String caption, String content, String leftBtnText, String rightBtnText) {
+
+        if(casino_dice_main_layout.getVisibility() == View.VISIBLE)
+        {
+            old_casino_layout_state = true;
+            casino_dice_main_layout.setVisibility(View.GONE);
+        }
+
         clearDialogData();
         this.mCurrentDialogId = dialogId;
         this.mCurrentDialogTypeId = dialogTypeId;
@@ -128,7 +141,9 @@ public class Dialog {
         ((TextView) this.mRightBtn.getChildAt(0)).setText(Utils.transfromColors(rightBtnText));
         if (rightBtnText.equals("")) { this.mRightBtn.setVisibility(View.GONE); }
         else { this.mRightBtn.setVisibility(View.VISIBLE); }
+
         Utils.ShowLayout(this.mMainLayout, false);
+
     }
 
     public void hideWithoutReset() {
@@ -141,6 +156,11 @@ public class Dialog {
 
     public void sendDialogResponse(int btnId)
     {
+        if(old_casino_layout_state)
+        {
+            old_casino_layout_state = false;
+            casino_dice_main_layout.setVisibility(View.VISIBLE);
+        }
         if (this.mInputPasswordStyle) {
             this.mCurrentInputText = this.mInput.getText().toString();
         }
