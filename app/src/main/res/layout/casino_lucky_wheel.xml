@@ -11,6 +11,7 @@
         android:id="@+id/casino_luckywheel_bg"
         android:layout_width="320dp"
         android:layout_height="250dp"
+        android:layout_marginTop="32dp"
         android:background="@drawable/casino_lucky_wheel_bg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -107,7 +108,7 @@
         app:layout_constraintTop_toBottomOf="@+id/casino_luckywheel_count_caption" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/casino_luckywheel_speen_pay_butt"
+        android:id="@+id/casino_luckywheel_speen_free_butt"
         android:layout_width="285dp"
         android:layout_height="35dp"
         android:layout_marginTop="8dp"
@@ -117,13 +118,13 @@
         android:textFontWeight="500"
         android:textColor="@color/white"
         android:textSize="12sp"
-        app:backgroundTint="#165A7A"
+        app:backgroundTint="@color/blue_"
         app:layout_constraintEnd_toEndOf="@+id/casino_luckywheel_bg"
         app:layout_constraintStart_toStartOf="@+id/casino_luckywheel_bg"
         app:layout_constraintTop_toBottomOf="@+id/casino_luckywheel_line2" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/casino_luckywheel_speen_free_butt"
+        android:id="@+id/casino_luckywheel_speen_pay_butt"
         android:layout_width="285dp"
         android:layout_height="35dp"
         android:fontFamily="@font/sfprodisplaymedium"
@@ -133,16 +134,16 @@
         android:textFontWeight="500"
         android:textSize="12sp"
         app:backgroundTint="@color/yellow"
-        app:layout_constraintEnd_toEndOf="@+id/casino_luckywheel_speen_pay_butt"
-        app:layout_constraintStart_toStartOf="@+id/casino_luckywheel_speen_pay_butt"
-        app:layout_constraintTop_toBottomOf="@+id/casino_luckywheel_speen_pay_butt" />
+        app:layout_constraintEnd_toEndOf="@+id/casino_luckywheel_speen_free_butt"
+        app:layout_constraintStart_toStartOf="@+id/casino_luckywheel_speen_free_butt"
+        app:layout_constraintTop_toBottomOf="@+id/casino_luckywheel_speen_free_butt" />
 
     <View
         android:id="@+id/casino_luckywheel_exit_butt"
-        android:layout_width="17dp"
+        android:layout_width="19dp"
         android:clickable="true"
         android:foreground="?android:attr/selectableItemBackground"
-        android:layout_height="17dp"
+        android:layout_height="19dp"
         android:background="@drawable/cross"
         app:layout_constraintEnd_toEndOf="@+id/casino_luckywheel_line1"
         app:layout_constraintTop_toTopOf="@+id/casino_luckywheel_caption" />

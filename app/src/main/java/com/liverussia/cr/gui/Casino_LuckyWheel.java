@@ -1,6 +1,7 @@
 package com.liverussia.cr.gui;
 
 import android.app.Activity;
+import android.content.res.ColorStateList;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -19,15 +20,18 @@ public class Casino_LuckyWheel {
     Button casino_luckywheel_speen_pay_butt;
     Button casino_luckywheel_speen_free_butt;
     View casino_luckywheel_exit_butt;
-    ConstraintLayout hud_main;
+
+    private HudManager mHudManager = null;
 
     public native void ClickButt(int buttonID);
-    public native void Casino_LuckyWheel();
+    public native void initCasino_LuckyWheel();
 
-    public Casino_LuckyWheel(Activity aactivity)
+    public Casino_LuckyWheel(Activity aactivity, HudManager mHudManager)
     {
+        this.mHudManager = mHudManager;
+        initCasino_LuckyWheel();
         activity = aactivity;
-        hud_main = activity.findViewById(R.id.hud_main);
+
         casino_luckywheel_mainlayout = activity.findViewById(R.id.casino_luckywheel_mainlayout);
         casino_luckywheel_mainlayout.setVisibility(View.GONE);
 
@@ -51,12 +55,23 @@ public class Casino_LuckyWheel {
 
     }
     public void Show(int count, int time) {
-        String timeleft = new java.text.SimpleDateFormat("HH:mm").format(new Date(time * 1000));
+
+        ColorStateList color;
+
+        if(count <= 0 ) {
+            color = ColorStateList.valueOf(activity.getResources().getColor(R.color.gray));
+        }
+        else
+        {
+            color = ColorStateList.valueOf(activity.getResources().getColor(R.color.blue_));
+        }
+        mHudManager.ToggleAllHud(false);
         activity.runOnUiThread(() ->
         {
-            hud_main.setVisibility(View.GONE);
+            casino_luckywheel_speen_free_butt.setBackgroundTintList(color);
             casino_luckywheel_count.setText(String.format("%d", count));
             if(count <= 0) {
+                String timeleft = new java.text.SimpleDateFormat("HH:mm").format(new Date(time * 1000));
                 casino_luckywheel_speen_free_butt.setText("Доступно через " + timeleft);
             }
             else {
@@ -67,8 +82,8 @@ public class Casino_LuckyWheel {
     }
     public void Hide()
     {
+        mHudManager.ToggleAllHud(true);
         activity.runOnUiThread(() -> {
-            hud_main.setVisibility(View.VISIBLE);
             casino_luckywheel_mainlayout.setVisibility(View.GONE);
         });
     }
