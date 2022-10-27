@@ -9,6 +9,7 @@
 #include <dlfcn.h>
 #include "scrollbar.h"
 #include "voice/CVoiceChatClient.h"
+#include "java_systems/scoreboard.h"
 
 extern CGUI *pGUI;
 extern CKeyBoard *pKeyBoard;
@@ -146,11 +147,8 @@ uint32_t g_uiHeadMoveEnabled = 1;
 uint32_t g_uiBorderedText = 1;
 #include "CDebugInfo.h"
 #include "CLocalisation.h"
-#include "scoreboard.h"
 #include "game/CCustomPlateManager.h"
 #include <fcntl.h>
-
-extern CScoreBoard* pScoreBoard;
 bool ProcessVoiceCommands(const char* str)
 {
 	if (strcmp(str, "/q") == 0)
@@ -186,7 +184,7 @@ bool ProcessVoiceCommands(const char* str)
 
 	if (strstr(str, "/tab"))
 	{
-		pScoreBoard->Toggle();
+		ToggleTab();
 		return true;
 	}
 
@@ -207,11 +205,11 @@ bool ProcessVoiceCommands(const char* str)
 		g_bShowVoiceList ^= 1;
 		if (g_bShowVoiceList)
 		{
-			pChatWindow->AddDebugMessage("Голосовой чат включен");
+			pChatWindow->AddDebugMessage("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ");
 		}
 		else
 		{
-			pChatWindow->AddDebugMessage("Голосовой чат выключен");
+			pChatWindow->AddDebugMessage("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ");
 		}
 		return true;
 	}
@@ -242,16 +240,16 @@ bool ProcessVoiceCommands(const char* str)
 		int id = 0;
 		if (sscanf(str, "%d", &id) == -1)
 		{
-			pChatWindow->AddDebugMessage("Используйте: /vmute [playerid]");
+			pChatWindow->AddDebugMessage("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: /vmute [playerid]");
 			return true;
 		}
 		if (id < 0 || id > 1000)
 		{
-			pChatWindow->AddDebugMessage("Ошибка: ID должен быть от 0 до 1000");
+			pChatWindow->AddDebugMessage("пїЅпїЅпїЅпїЅпїЅпїЅ: ID пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ 0 пїЅпїЅ 1000");
 			return true;
 		}
 		pVoice->MutePlayer(id);
-		pChatWindow->AddDebugMessage("Голосовой чат был заглушен для игрока: %d", id);
+		pChatWindow->AddDebugMessage("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ: %d", id);
 		return true;
 	}
 
@@ -269,16 +267,16 @@ bool ProcessVoiceCommands(const char* str)
 		int id = 0;
 		if (sscanf(str, "%d", &id) == -1)
 		{
-			pChatWindow->AddDebugMessage("Используйте: /vunmute [playerid]");
+			pChatWindow->AddDebugMessage("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: /vunmute [playerid]");
 			return true;
 		}
 		if (id < 0 || id > 1000)
 		{
-			pChatWindow->AddDebugMessage("Ошибка: ID должен быть от 0 до 1000");
+			pChatWindow->AddDebugMessage("пїЅпїЅпїЅпїЅпїЅпїЅ: ID пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ 0 пїЅпїЅ 1000");
 			return true;
 		}
 		pVoice->UnMutePlayer(id);
-		pChatWindow->AddDebugMessage("Голосовой чат был включен для игрока: %d", id);
+		pChatWindow->AddDebugMessage("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ: %d", id);
 		return true;
 	}
 
@@ -296,10 +294,10 @@ bool ProcessVoiceCommands(const char* str)
 		int volume = 0;
 		if (sscanf(str, "%d", &volume) == -1)
 		{
-			pChatWindow->AddDebugMessage("Используйте: /voicevolume [value]");
+			pChatWindow->AddDebugMessage("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: /voicevolume [value]");
 			return true;
 		}
-		pChatWindow->AddDebugMessage("Громкость голосового чата установлена на %d", volume);
+		pChatWindow->AddDebugMessage("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ %d", volume);
 		pVoice->SetVolume(volume);
 		return true;
 	}
@@ -319,16 +317,16 @@ bool ProcessVoiceCommands(const char* str)
 		int volume = 0;
 		if (sscanf(str, "%d %d", &id, &volume) == -1)
 		{
-			pChatWindow->AddDebugMessage("Используйте: /vplayer [playerid] [volume]");
+			pChatWindow->AddDebugMessage("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: /vplayer [playerid] [volume]");
 			return true;
 		}
 		if (id < 0 || id > 1000)
 		{
-			pChatWindow->AddDebugMessage("Ошибка: ID должен быть от 0 до 1000");
+			pChatWindow->AddDebugMessage("пїЅпїЅпїЅпїЅпїЅпїЅ: ID пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ 0 пїЅпїЅ 1000");
 			return true;
 		}
 		pVoice->SetVolumePlayer(id, volume);
-		pChatWindow->AddDebugMessage("Громкость голосового чата установлена на %d для игрока %d", volume, id);
+		pChatWindow->AddDebugMessage("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ %d пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ %d", volume, id);
 		return true;
 	}
 
@@ -346,10 +344,10 @@ bool ProcessVoiceCommands(const char* str)
 		int actionId = 0;
 		if (sscanf(str, "%d", &actionId) == -1)
 		{
-			pChatWindow->AddDebugMessage("Используйте: /specialaction [actionId]");
+			pChatWindow->AddDebugMessage("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: /specialaction [actionId]");
 			return true;
 		}
-		pChatWindow->AddDebugMessage("Активировано специальное действие: %d", actionId);
+		pChatWindow->AddDebugMessage("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: %d", actionId);
 		pGame->FindPlayerPed()->SetPlayerSpecialAction(actionId);
 		return true;
 	}

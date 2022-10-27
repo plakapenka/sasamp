@@ -11,6 +11,7 @@ import retrofit2.http.GET;
 public interface Interface {
 
     @GET("https://vl4sov.com/liverussia.online/servers.json")
+    //@GET("https://api.open.mp/servers/46.174.49.47:7825")
     Call<List<Servers>> getServers();
 
     @GET("https://vl4sov.com/liverussia.online/history.json")

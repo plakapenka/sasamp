@@ -9,15 +9,13 @@ extern "C" JavaVM* javaVM;
 #include "..//net/netgame.h"
 #include "../game/game.h"
 #include "../str_obfuscator_no_template.hpp"
-#include "../scoreboard.h"
+#include "java_systems/scoreboard.h"
 
-extern CScoreBoard *pScoreBoard;
 extern CKeyBoard* pKeyBoard;
 extern CChatWindow* pChatWindow;
 extern CSettings* pSettings;
 extern CNetGame* pNetGame;
 extern CGame* pGame;
-extern CPlayerPed* m_pPlayerPed;
 
 
 
@@ -154,7 +152,8 @@ void CJavaWrapper::MakeDialog(int dialogId, int dialogTypeId, char caption[], ch
 	Log("No env");
 	return;
     }
-	jstring j_caption = env->NewStringUTF( caption );
+
+	jstring j_caption = env->NewStringUTF( caption);
 	jstring j_info = env->NewStringUTF( info );
 	jstring j_button1 = env->NewStringUTF( button1 );
 	jstring j_button2 = env->NewStringUTF( button2 );
@@ -236,6 +235,7 @@ extern "C"
 
 		pEnv->ReleaseByteArrayElements(str, pMsg, JNI_ABORT);
 	}
+
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_sendRPC(JNIEnv* pEnv, jobject thiz, jint type, jbyteArray str, jint action)
 	{
 		switch(type) {
@@ -254,7 +254,7 @@ extern "C"
 						pNetGame->SendChatCommand("/inv");
 						break;
 					case 5: {
-						pNetGame->SendChatCommand("/anim");
+						//pNetGame->SendChatCommand("/anim");
 						pNetGame->SendChatCommand("/anim");	
 						break;
 					}
@@ -265,8 +265,11 @@ extern "C"
 						pNetGame->SendChatCommand("/car");
 						break;
 					case 8:
-						pNetGame->SendChatCommand("/");		
-						break;		
+					{
+						ToggleTab();
+						break;
+					}
+
 				}
 			case 2:
 				switch(action) {
@@ -904,10 +907,6 @@ extern "C"
 		pChatWindow->AddDebugMessage("onAuctionButtonClick: %d",btnid);
 		pNetGame->SendCustomPacket(251, 52, btnid);
 	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onTabClose(JNIEnv *pEnv, jobject thiz) { 
-		pScoreBoard->Close();
-	}
 }
 
 void CJavaWrapper::ShowAuctionManager(int itemId, int type, int price)
@@ -1404,39 +1403,6 @@ void CJavaWrapper::HideNotification()
 	env->CallVoidMethod(this->activity, this->s_hideNotification);
 }
 
-void CJavaWrapper::ShowTabWindow()
-{
-//	JNIEnv* env = GetEnv();
-//
-//	if (!env)
-//	{
-//		Log("No env");
-//		return;
-//	}
-//	env->CallVoidMethod(this->activity, this->s_showTabWindow);
-}
-
-void CJavaWrapper::SetTabStat(int id, char* name, int score, int ping) {
-
-//	JNIEnv* env = GetEnv();
-//
-//	if (!env)
-//	{
-//		Log("No env");
-//		return;
-//	}
-//
-//	jclass strClass = env->FindClass("java/lang/String");
-//    jmethodID ctorID = env->GetMethodID(strClass, "<init>", "([BLjava/lang/String;)V");
-//    jstring encoding = env->NewStringUTF("UTF-8");
-//
-//    jbyteArray bytes = env->NewByteArray(strlen(name));
-//    env->SetByteArrayRegion(bytes, 0, strlen(name), (jbyte*)name);
-//    jstring jname = (jstring) env->NewObject(strClass, ctorID, bytes, encoding);
-//
-//	env->CallVoidMethod(this->activity, this->s_setTabStat, id, jname, score, ping);
-}
-
 void CJavaWrapper::ShowDeathInfo(std::string nick, int id)
 {
 	JNIEnv* env = GetEnv();
@@ -1709,8 +1675,7 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 
 	s_showServerLogo = env->GetMethodID(nvEventClass, "showServerLogo", "()V");
 	s_hideServerLogo = env->GetMethodID(nvEventClass, "hideServerLogo", "()V");
-	//s_showTabWindow = env->GetMethodID(nvEventClass, "showTabWindow", "()V");
-	//s_setTabStat = env->GetMethodID(nvEventClass, "setTabStat", "(ILjava/lang/String;II)V");
+
 
 	env->DeleteLocalRef(nvEventClass);
 }
@@ -1771,7 +1736,7 @@ void CJavaWrapper::ShowCasinoLuckyWheel(int count, int time) {
 	jclass clazz = env->GetObjectClass(jCasino_LuckyWheel);
 	jmethodID Show = env->GetMethodID(clazz, "Show", "(II)V");
 
-	env->CallVoidMethod(jCasinoDice, Show, count, time);
+	env->CallVoidMethod(jCasino_LuckyWheel, Show, count, time);
 }
 
 CJavaWrapper* g_pJavaWrapper = nullptr;
@@ -1817,7 +1782,7 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_Casino_1LuckyWheel_ClickButt(JNIEnv *env, jobject thiz, jint button_id) {
 	uint8_t packet = ID_CUSTOM_RPC;
-	uint8_t RPC = RPC_SHOW_DICE_TABLE;
+	uint8_t RPC = RPC_CASINO_LUCKY_WHEEL_MENU;
 	uint8_t button = button_id;
 
 

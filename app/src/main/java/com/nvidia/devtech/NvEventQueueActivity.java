@@ -75,6 +75,7 @@ import com.liverussia.cr.gui.GunShopManager;
 import com.liverussia.cr.gui.ChooseSpawn;
 import com.liverussia.cr.gui.Menu;
 import com.liverussia.cr.gui.ChooseServer;
+import com.liverussia.cr.gui.tab.Tab;
 import com.liverussia.cr.gui.util.Utils;
 
 import java.io.FileInputStream;
@@ -181,6 +182,7 @@ public abstract class NvEventQueueActivity
     private PreDeath mPreDeath = null;
     private Menu mMenu = null;
     private ChooseServer mChooseServer = null;
+    private Tab mTab = null;
 
     /* *
      * Helper function to select fixed window size.
@@ -1055,11 +1057,12 @@ public abstract class NvEventQueueActivity
         mPreDeath = new PreDeath(this);
         mDialog = new Dialog(this);
         mHudManager = new HudManager(this);
-        mCasinoLuckyWheel = new Casino_LuckyWheel(this);
+        mCasinoLuckyWheel = new Casino_LuckyWheel(this, mHudManager);
         mSamwillManager = new SamwillManager(this);
         mSpeedometer = new Speedometer(this);
         mAutoShop = new AutoShop(this);
         mCasinoDice = new CasinoDice(this);
+        mTab = new Tab(this);
 
         mMenu = new Menu(this);
         mChooseServer = new ChooseServer(this);

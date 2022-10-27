@@ -2,13 +2,11 @@
 #include "game.h"
 #include "../net/netgame.h"
 #include "../util/armhook.h"
-#include "../scoreboard.h"
 
 #include <jni.h>
 
 extern CGame *pGame;
 extern CNetGame *pNetGame;
-extern CScoreBoard *pScoreBoard;
 
 PAD_KEYS LocalPlayerKeys;
 PAD_KEYS RemotePlayerKeys[PLAYER_PED_SLOTS];
@@ -634,12 +632,6 @@ uint32_t TaskProcess(uintptr_t thiz, uintptr_t ped, int unk, int unk1)
 	uint32_t result =  ((uint32_t(*)(uintptr_t, uintptr_t, int, int))(g_libGTASA + 0x004C2F7C + 1))(thiz, ped, unk, unk1);
 	*(uint8_t*)(g_libGTASA + 0x008E864C) = old;
 	return result;
-}
-
-extern "C" {
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_showTab(JNIEnv *pEnv, jobject thiz) {
-		pScoreBoard->Toggle();
-	}
 }
 
 bool bWeaponClicked;

@@ -9,7 +9,8 @@ import static com.liverussia.cr.core.Config.GAME_PATH;
 
 
 public class Utils extends AppCompatActivity {
-    
+    public static AppCompatActivity currentContext;
+
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
     }

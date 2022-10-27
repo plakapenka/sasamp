@@ -95,6 +95,7 @@
         <include layout="@layout/pre_death" />
         <include layout="@layout/autoshop" />
         <include layout="@layout/casino_lucky_wheel" />
+        <include layout="@layout/hassle_tab"/>
 
     </FrameLayout>
 </FrameLayout>

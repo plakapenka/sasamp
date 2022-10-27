@@ -80,6 +80,7 @@ public class GTASA extends WarMedia {
         gtasaSelf = this;
         wantsMultitouch = true;
         wantsAccelerometer = true;
+        Utils.currentContext = this;
         super.onCreate(bundle);
     }
 

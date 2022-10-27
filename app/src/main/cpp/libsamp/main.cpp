@@ -15,7 +15,6 @@
 #include "keyboard.h"
 #include "CSettings.h"
 #include "CClientInfo.h"
-#include "scoreboard.h"
 
 #include "util/armhook.h"
 #include "CCheckFileHash.h"
@@ -42,7 +41,6 @@ CChatWindow *pChatWindow = nullptr;
 CPlayerTags *pPlayerTags = nullptr;
 CVoiceChatClient* pVoice = nullptr;
 CSnapShotHelper* pSnapShotHelper = nullptr;
-CScoreBoard* pScoreBoard = nullptr;
 
 CGUI *pGUI = nullptr;
 CKeyBoard *pKeyBoard = nullptr;
@@ -156,7 +154,6 @@ void InitInMenu()
 	pKeyBoard = new CKeyBoard();
 	pChatWindow = new CChatWindow();
 	pPlayerTags = new CPlayerTags();
-	pScoreBoard = new CScoreBoard();
 	pSnapShotHelper = new CSnapShotHelper();
 
 	ProcessCheckForKeyboard();

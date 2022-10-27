@@ -4,7 +4,8 @@
     android:id="@+id/hassle_tab_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/server_select_background">
+
+    android:background="@drawable/tab_background">
 
     <LinearLayout
         android:id="@+id/menu_list_cmd1"
@@ -57,6 +58,7 @@
                 android:layout_alignEnd="@+id/search_view"
                 android:layout_alignBottom="@+id/search_view"
                 android:layout_marginEnd="@dimen/_13sdp"
+                android:clickable="true"
                 android:visibility="invisible"
                 app:srcCompat="@drawable/menu_close" />
 
@@ -149,10 +151,9 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/_2sdp"
         android:layout_below="@+id/players_list_name_column"
-        android:layout_marginStart="@dimen/_15sdp"
-        android:layout_marginTop="@dimen/_5sdp"
-        android:layout_marginEnd="@dimen/_15sdp"
+        android:layout_marginTop="5dp"
         android:background="@drawable/button_red_rectangle"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/players_list_name_column" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -160,10 +161,12 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/_230sdp"
         android:layout_below="@+id/players_list_name_column"
+        android:layout_marginTop="3dp"
         android:fadeScrollbars="false"
         android:paddingStart="@dimen/_15sdp"
         android:paddingEnd="@dimen/_15sdp"
         android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:scrollbarStyle="insideInset"
         android:scrollbarThumbVertical="@drawable/players_list_scroll_thumb"
         android:scrollbarTrackVertical="@drawable/players_list_scroll_track"
         android:scrollbars="vertical"

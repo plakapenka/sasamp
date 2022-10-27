@@ -38,9 +38,6 @@ class CJavaWrapper
 	jmethodID s_showGunShopManager;
 	jmethodID s_hideGunShopManager;
 
-	jmethodID s_showTabWindow;
-	jmethodID s_setTabStat;
-
 	jmethodID s_showGreenZone;
     jmethodID s_hideGreenZone;
 	jmethodID s_showGPS;

@@ -28,6 +28,7 @@
     <color name="wallet_link_text_light">#ffF6D20F</color>
     <color name="black">#ff000000</color>
     <color name="white">#ffffffff</color>
+    <color name="blue_">#165A7A</color>
     <color name="transparent">#00000000</color>
     <color name="shadow_black">#4d000000</color>
     <color name="shadow_white">#2bffffff</color>

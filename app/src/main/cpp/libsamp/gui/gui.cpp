@@ -7,12 +7,10 @@
 #include "../playertags.h"
 #include "../keyboard.h"
 #include "../CSettings.h"
-#include "..//scoreboard.h"
 #include "../util/CJavaWrapper.h"
 #include "../util/util.h"
 #include "../game/vehicle.h"
 
-extern CScoreBoard* pScoreBoard;
 extern CChatWindow *pChatWindow;
 extern CPlayerTags *pPlayerTags;
 extern CSettings *pSettings;
@@ -280,7 +278,6 @@ void CGUI::Render()
 		}
 	}
 
-	if (pScoreBoard) pScoreBoard->Draw();
 	if (pKeyBoard) pKeyBoard->Render();
 
 	/*if (pNetGame && !pDialogWindow->m_bIsActive && pGame->IsToggledHUDElement(HUD_ELEMENT_BUTTONS))
@@ -421,8 +418,6 @@ void CGUI::Render()
 bool CGUI::OnTouchEvent(int type, bool multi, int x, int y)
 {
 	if(!pKeyBoard->OnTouchEvent(type, multi, x, y)) return false;
-
-	if (!pScoreBoard->OnTouchEvent(type, multi, x, y)) return false;
 
 	bool bFalse = true;
 	if (pNetGame)
