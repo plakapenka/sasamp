@@ -89,7 +89,7 @@ public class SplashActivity extends AppCompatActivity{
 
 			@Override
 			public void onFailure(Call<List<Servers>> call, Throwable t) {
-				Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(), "Ошибка соеденения", Toast.LENGTH_SHORT).show();
 			}
 		});
 
