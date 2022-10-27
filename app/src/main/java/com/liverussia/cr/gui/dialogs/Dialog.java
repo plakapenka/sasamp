@@ -5,6 +5,7 @@ import android.content.Context;
 import android.opengl.Visibility;
 import android.text.Editable;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.ScrollView;
@@ -94,13 +95,14 @@ public class Dialog {
     }
 
     public void show(int dialogId, int dialogTypeId, String caption, String content, String leftBtnText, String rightBtnText) {
-        clearDialogData();
-        if(content.length() < 3)
-        {
-            activity.runOnUiThread(() -> mMainLayout.setVisibility(View.GONE) );
-            return;
-        }
+
+//        if(content.length() < 3)
+//        {
+//            activity.runOnUiThread(() -> mMainLayout.setVisibility(View.GONE) );
+//            return;
+//        }
         activity.runOnUiThread(() -> {
+            clearDialogData();
             if (casino_dice_main_layout.getVisibility() == View.VISIBLE) {
                 old_casino_layout_state = true;
                 casino_dice_main_layout.setVisibility(View.GONE);
@@ -114,7 +116,7 @@ public class Dialog {
                 this.mListLayout.setVisibility(View.GONE);
                 this.mMsgBoxLayout.setVisibility(View.VISIBLE);
             } else if (dialogTypeId == 1 || dialogTypeId == 3) {
-                this.mInputLayout.setVisibility(View.VISIBLE); // выполняется инпут
+                this.mInputLayout.setVisibility(View.VISIBLE); // РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ РёРЅРїСѓС‚
                 this.mMsgBoxLayout.setVisibility(View.VISIBLE);
                 this.mListLayout.setVisibility(View.GONE);
                 this.mInputPasswordStyle = true;
@@ -189,7 +191,7 @@ public class Dialog {
 //
 //            String string = new String (buffer, w1251);
 
-           // String utf8String= new String(this.mCurrentInputText.getBytes("windows-1251"), "UTF-8");
+        // String utf8String= new String(this.mCurrentInputText.getBytes("windows-1251"), "UTF-8");
 
 
 
@@ -202,6 +204,7 @@ public class Dialog {
                 String[] headers = strings[i].split("\t");
                 for (int j = 0; j < headers.length; j++) {
                     this.mHeadersList.get(j).setText(Utils.transfromColors(headers[j]));
+                    this.mHeadersList.get(j).setWidth(headers[j].length()*25);
                     this.mHeadersList.get(j).setVisibility(View.VISIBLE);
                 }
             } else {

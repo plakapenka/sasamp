@@ -96,20 +96,20 @@ public class DialogAdapter extends RecyclerView.Adapter {
                 }
             }
         }
-        for (int i2 = 0; i2 < max.length; i2++) {
-            int headerWidth = this.mFieldHeaders.get(i2).getWidth();
-            Log.i("DIALOG", max[i2] + "\t" + ((Object) this.mFieldHeaders.get(i2).getText()) + MaskedEditText.SPACE + headerWidth);
-            if (max[i2] < headerWidth) {
-                max[i2] = headerWidth;
+        for (int i = 0; i < this.mFieldHeaders.size(); i++) {
+            int headerWidth = this.mFieldHeaders.get(i).getWidth();
+            Log.i("DIALOG", max[i] + "\t" + ((Object) this.mFieldHeaders.get(i).getText()) + MaskedEditText.SPACE + headerWidth);
+            if (max[i] < headerWidth) {
+                max[i] = headerWidth;
             }
         }
-        for (int i3 = 0; i3 < this.mFields.size(); i3++) {
-            for (int j2 = 0; j2 < this.mFields.get(i3).size(); j2++) {
-                this.mFields.get(i3).get(j2).setWidth(max[j2]);
+        for (int i = 0; i < this.mFields.size(); i++) {
+            for (int j = 0; j < this.mFields.get(i).size(); j++) {
+                this.mFields.get(i).get(j).setWidth(max[j]);
             }
         }
-        for (int i4 = 0; i4 < this.mFieldHeaders.size(); i4++) {
-            this.mFieldHeaders.get(i4).setWidth(max[i4]);
+        for (int i = 0; i < this.mFieldHeaders.size(); i++) {
+            this.mFieldHeaders.get(i).setWidth(max[i]);
         }
     }
 

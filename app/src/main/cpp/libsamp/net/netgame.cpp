@@ -521,7 +521,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 	{
 		case RPC_CASINO_LUCKY_WHEEL_MENU:
 		{
-			uint16_t count;
+			uint32_t count;
 			uint32_t time;
 
 			bs.Read(count);

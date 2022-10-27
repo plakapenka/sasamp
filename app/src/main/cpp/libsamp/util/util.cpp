@@ -206,3 +206,51 @@ void AND_OpenLink(const char* szLink)
 {
 	((void (*)(const char*))(g_libGTASA + 0x00242A64 + 1))(szLink);
 }
+
+std::string ConvertColorToHtml(std::string format) {
+	bool first_time_flag = 1;
+	for (int i = 0; i < format.length(); i++) {
+		if (format[i] == '{') {
+
+			first_time_flag ? format.insert(++i, "<font color='#") : format.insert(++i, "</font><font color='#");
+		}
+		if (format[i] == '}') {
+			format.insert(++i, "'>");
+			first_time_flag = 0;
+		}
+	}
+
+	format.erase(remove(format.begin(), format.end(), '{'), format.end());
+	format.erase(remove(format.begin(), format.end(), '}'), format.end());
+	format.append("</font>");
+
+	for(int i = 0; i <= format.size()-10; i++)
+	{
+		if(format[i] == '\n')
+		{
+			//  cout << gg;
+			//gg.replace(i, "<br>");
+			format[i] = '<';
+			format.insert(i+1, "br>");
+			i+=3;
+		}
+	}
+	return format;
+}
+
+std::string str_replace(std::string str)
+{
+	std::string than_replace = "\n";
+	std::string toReplace = "<br>";
+	std::string temp;
+	size_t pos1 = 0;
+	for (   size_t pos2 = 0;
+			(pos2 = str.find(toReplace, pos1)) != std::string::npos;
+			pos1 = pos2 + toReplace.size())
+	{   temp += str.substr(pos1, pos2-pos1);
+		temp += than_replace;
+	}
+	temp += str.substr(pos1, str.size()-pos1);
+	std::swap(temp, str);
+	return temp;
+}
