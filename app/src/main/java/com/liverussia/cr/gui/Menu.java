@@ -113,6 +113,7 @@ public class Menu {
         this.dataDialogMenuArrayList.add(new DataDialogMenu(5, R.drawable.br_menu_anim, "Анимации"));
         this.dataDialogMenuArrayList.add(new DataDialogMenu(6, R.drawable.br_menu_ruble, "Донат"));
         this.dataDialogMenuArrayList.add(new DataDialogMenu(7, R.drawable.br_menu_car, "Автомобили"));
+        this.dataDialogMenuArrayList.add(new DataDialogMenu(8, R.drawable.players_icon, "Игроки"));
     }
 
     private void setDialogMenu() {
