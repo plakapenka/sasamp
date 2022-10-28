@@ -2,6 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root"
+    android:background="@drawable/roulette_bg"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
@@ -46,7 +47,7 @@
                 android:layout_width="@dimen/_25sdp"
                 android:layout_height="@dimen/_25sdp"
                 android:layout_gravity="center"
-                android:layout_marginRight="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_5sdp"
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
                 android:src="@drawable/arrow_left"
@@ -56,103 +57,34 @@
                 android:layout_width="0.0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
-                android:background="@drawable/server_rectangle"
                 android:minHeight="@dimen/_50sdp"
-                android:orientation="vertical"
-                android:padding="@dimen/_10sdp">
+                android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/visby_cf_bold"
-                    android:gravity="center"
-                    android:text="А знаете ли вы, что?"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/_16sdp" />
 
-                <com.smarteist.autoimageslider.SliderView
+<!--                <androidx.viewpager2.widget.ViewPager2-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:id="@+id/viewPager"-->
+<!--                    android:clipChildren="false"-->
+<!--                    android:clipToPadding="false"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="@dimen/_100sdp" />-->
+<!--                <com.smarteist.autoimageslider.SliderView-->
+<!--                    android:id="@+id/loaderSliderView"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="@dimen/_100sdp"-->
+<!--                    app:sliderAnimationDuration="3000"-->
+<!--                    app:sliderAutoCycleDirection="right"-->
+<!--                    app:sliderIndicatorAnimationDuration="1000"-->
+<!--                    app:sliderScrollTimeInSec="1"-->
+<!--                    app:sliderIndicatorEnabled="false"-->
+<!--                    app:sliderIndicatorGravity="center_horizontal|bottom"-->
+<!--                    app:sliderIndicatorMarginBottom="@dimen/_23sdp"-->
+<!--                    app:sliderIndicatorOrientation="horizontal"/>-->
+
+                <androidx.viewpager2.widget.ViewPager2
                     android:id="@+id/loaderSliderView"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/_50sdp"
-                    app:sliderIndicatorEnabled="false"
-                    app:sliderIndicatorGravity="center_horizontal|bottom"
-                    app:sliderIndicatorMarginBottom="@dimen/_23sdp"
-                    app:sliderIndicatorOrientation="horizontal" >
-
-                    <TextView
-                        android:id="@+id/WarnText1"
-                        android:layout_width="fill_parent"
-                        android:layout_height="@dimen/_50sdp"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="5dp"
-                        android:clipChildren="false"
-                        android:clipToPadding="false"
-                        android:fontFamily="@font/roboto_medium"
-                        android:gravity="center"
-                        android:text="Главный Администратор выдаёт окончательный ответ в жалобах"
-                        android:textColor="#8A8A8A"
-                        android:textSize="@dimen/_13sdp" />
-
-                    <TextView
-                        android:id="@+id/WarnText2"
-                        android:layout_width="fill_parent"
-                        android:layout_height="@dimen/_50sdp"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="5dp"
-                        android:clipChildren="false"
-                        android:clipToPadding="false"
-                        android:fontFamily="@font/roboto_medium"
-                        android:gravity="center"
-                        android:text="В нашей группе есть бот для привязки и восстановления доступа к аккаунту"
-                        android:textColor="#8A8A8A"
-                        android:textSize="@dimen/_13sdp"
-                        android:visibility="gone" />
-
-                    <TextView
-                        android:id="@+id/WarnText3"
-                        android:layout_width="fill_parent"
-                        android:layout_height="@dimen/_50sdp"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="5dp"
-                        android:clipChildren="false"
-                        android:clipToPadding="false"
-                        android:fontFamily="@font/roboto_medium"
-                        android:gravity="center"
-                        android:text="Вид от 1-го лица включается обычным свайпом двумя пальцами"
-                        android:textColor="#8A8A8A"
-                        android:textSize="@dimen/_13sdp"
-                        android:visibility="gone" />
-
-                    <TextView
-                        android:id="@+id/WarnText4"
-                        android:layout_width="fill_parent"
-                        android:layout_height="@dimen/_50sdp"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="5dp"
-                        android:clipChildren="false"
-                        android:clipToPadding="false"
-                        android:fontFamily="@font/roboto_medium"
-                        android:gravity="center"
-                        android:text="“LIVE RUSSIA” - самый крупный мобильный CRMP проект в СНГ"
-                        android:textColor="#8A8A8A"
-                        android:textSize="@dimen/_13sdp"
-                        android:visibility="gone" />
-
-                    <TextView
-                        android:id="@+id/WarnText5"
-                        android:layout_width="fill_parent"
-                        android:layout_height="@dimen/_50sdp"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="5dp"
-                        android:clipChildren="false"
-                        android:clipToPadding="false"
-                        android:fontFamily="@font/roboto_medium"
-                        android:gravity="center"
-                        android:text="Администратор никогда не попросит Вашего пароля"
-                        android:textColor="#8A8A8A"
-                        android:textSize="@dimen/_13sdp"
-                        android:visibility="gone" />
-                </com.smarteist.autoimageslider.SliderView>
+                    android:layout_height="@dimen/_100sdp" />
 
             </LinearLayout>
 
@@ -161,7 +93,7 @@
                 android:layout_width="@dimen/_25sdp"
                 android:layout_height="@dimen/_25sdp"
                 android:layout_gravity="center"
-                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginLeft="@dimen/_5sdp"
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
                 android:src="@drawable/arrow_right" />

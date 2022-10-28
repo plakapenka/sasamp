@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:background="@drawable/server_rectangle"
+    android:gravity="center"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/visby_cf_bold"
+        android:gravity="center"
+        android:text="А знаете ли вы, что?"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_16sdp" />
+
+
+    <TextView
+        android:id="@+id/loader_slider_item_data_text"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/_50sdp"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:fontFamily="@font/roboto_medium"
+        android:gravity="center"
+        android:textColor="#8A8A8A"
+        android:textSize="@dimen/_13sdp" />
+</LinearLayout>

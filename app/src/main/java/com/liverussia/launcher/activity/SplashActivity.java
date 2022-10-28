@@ -12,7 +12,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.annotation.NonNull;
 
 import com.liverussia.cr.R;
 
@@ -22,16 +21,12 @@ import java.util.TimerTask;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.liverussia.cr.R;
-import com.liverussia.launcher.adapter.NewsAdapter;
+import com.liverussia.launcher.error.apiException.ErrorContainer;
 import com.liverussia.launcher.model.News;
 
-import com.liverussia.launcher.adapter.ServersAdapter;
 import com.liverussia.launcher.model.Servers;
-import com.liverussia.launcher.other.Interface;
+import com.liverussia.launcher.other.NetworkService;
 import com.liverussia.launcher.other.Lists;
-
-import com.google.firebase.database.*;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -40,15 +35,8 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SplashActivity extends AppCompatActivity{
-	
-	DatabaseReference databaseNews;
-	NewsAdapter newsAdapter;
-	
-	DatabaseReference databaseServers;
-	ServersAdapter serversAdapter;
-	
+
 	public static ArrayList<Servers> slist;
-    public static ArrayList<News> nlist;
 	
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -58,9 +46,7 @@ public class SplashActivity extends AppCompatActivity{
 		getWindow().getDecorView().setSystemUiVisibility(
 				View.SYSTEM_UI_FLAG_IMMERSIVE
 						| View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-						| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
 						| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-						| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
 						| View.SYSTEM_UI_FLAG_FULLSCREEN
 						| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
@@ -72,9 +58,9 @@ public class SplashActivity extends AppCompatActivity{
 				.addConverterFactory(GsonConverterFactory.create())
 				.build();
 
-		Interface sInterface = retrofit.create(Interface.class);
+		NetworkService sNetworkService = retrofit.create(NetworkService.class);
 
-		Call<List<Servers>> scall = sInterface.getServers();
+		Call<List<Servers>> scall = sNetworkService.getServers();
 
 		scall.enqueue(new Callback<List<Servers>>() {
 			@Override
@@ -89,11 +75,11 @@ public class SplashActivity extends AppCompatActivity{
 
 			@Override
 			public void onFailure(Call<List<Servers>> call, Throwable t) {
-				Toast.makeText(getApplicationContext(), "Ошибка соеденения", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(), ErrorContainer.SERVER_CONNECT_ERROR.getMessage(), Toast.LENGTH_SHORT).show();
 			}
 		});
 
-		Call<List<News>> ncall = sInterface.getNews();
+		Call<List<News>> ncall = sNetworkService.getNews();
 
 		ncall.enqueue(new Callback<List<News>>() {
 			@Override
@@ -108,15 +94,17 @@ public class SplashActivity extends AppCompatActivity{
 
 			@Override
 			public void onFailure(Call<List<News>> call, Throwable t) {
-				Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(), ErrorContainer.SERVER_CONNECT_ERROR.getMessage(), Toast.LENGTH_SHORT).show();
 			}
 		});
 		
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED
                     || checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED || checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED) {
-                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO}, 1000);
-            } else {
+				//requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO}, 1000);
+				startActivity(new Intent(this, PolicyActivity.class));
+				finish();
+			} else {
 				startTimer();
 			}
         } else startTimer();
@@ -130,26 +118,20 @@ public class SplashActivity extends AppCompatActivity{
         }
     }
 
-    private void startLauncher()
-    {
+    private void startLauncher() {
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }
 	
-	public static boolean isOnline(Context context)
-    {
+	public static boolean isOnline(Context context) {
         ConnectivityManager cm =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        if (netInfo != null && netInfo.isConnectedOrConnecting())
-        {
-            return true;
-        }
-        return false;
-    }
+
+		return netInfo != null && netInfo.isConnectedOrConnecting();
+	}
 	
-	private void startTimer()
-    {
+	private void startTimer() {
         Timer t = new Timer();
         t.schedule(new TimerTask(){
             @Override

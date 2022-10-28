@@ -4,14 +4,14 @@ android {
     compileSdkVersion 31
 
     compileOptions {
-        sourceCompatibility 1.8
-        targetCompatibility 1.8
+        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
     }
 
     defaultConfig {
-        minSdkVersion 17
+        minSdkVersion 24
         //noinspection ExpiredTargetSdkVersion
-        targetSdkVersion 28
+        targetSdkVersion 31
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         applicationId "com.liverussia.cr"
@@ -39,6 +39,10 @@ android {
         ndkBuild {
             path file('src/main/cpp/libsamp/Android.mk')
         }
+    }
+
+    packagingOptions {
+        exclude ("META-INF/*")
     }
 }
 
@@ -71,4 +75,17 @@ dependencies {
     api("com.google.guava:guava:31.1-jre")
     implementation("com.google.guava:guava:31.1-android")
     api("com.google.guava:guava:31.1-android")
+
+    implementation 'com.mindorks.android:prdownloader:0.6.0'
+
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+    implementation 'com.google.android.gms:play-services-safetynet:11.0.2' //
+    implementation 'androidx.viewpager2:viewpager2:1.0.0'
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.3.2'
+    implementation 'org.springframework.android:spring-android-rest-template:1.0.1.RELEASE'
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.2.1'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5' //
+
 }

@@ -58,7 +58,6 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/ourServersRV"
         android:layout_width="fill_parent"
-
         android:layout_height="fill_parent"
         android:layout_marginLeft="@dimen/_minus14sdp"
         android:layout_marginRight="@dimen/_minus14sdp"

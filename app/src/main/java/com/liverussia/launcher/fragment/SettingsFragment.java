@@ -3,165 +3,144 @@ package com.liverussia.launcher.fragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 
 import androidx.fragment.app.Fragment;
 
 import com.liverussia.cr.R;
-import com.liverussia.cr.core.Config;
+import com.liverussia.launcher.activity.dialogs.EnterNicknameDialogBuilder;
+import com.liverussia.launcher.enums.StorageElements;
+import com.liverussia.launcher.messages.InfoMessages;
 import com.liverussia.launcher.other.Utils;
-
-import org.ini4j.Wini;
+import com.liverussia.launcher.service.impl.ActivityServiceImpl;
+import com.liverussia.launcher.storage.Storage;
+import com.liverussia.launcher.service.ActivityService;
 
 import java.io.File;
-import java.io.IOException;
 
-public class SettingsFragment extends Fragment {
+import static com.liverussia.launcher.config.Config.SETTINGS_FILE_PATH;
 
-    Animation animation;
-    public EditText nickname;
-    String nickName;
+public class SettingsFragment extends Fragment implements View.OnClickListener{
+
+    private Animation animation;
+    private TextView nicknameField;
+    private ActivityService activityService;
 
     @Override
-    public View onCreateView(
-            LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        activityService = new ActivityServiceImpl();
+
         View inflate = inflater.inflate(R.layout.fragment_settings, container, false);
 
-        Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.button_click);
+        animation = AnimationUtils.loadAnimation(getContext(), R.anim.button_click);
 
-        nickname = (EditText) inflate.findViewById(R.id.editText);
+        this.getActivity().setTheme(R.style.AppBaseTheme);
 
-        InitLogic();
+        nicknameField = inflate.findViewById(R.id.nick_edit);
+        nicknameField.setOnClickListener(this);
 
-        ((TextView) inflate.findViewById(R.id.reinstallGame))
-                .setOnClickListener(
-                        new View.OnClickListener() {
-                            public void onClick(View v) {
-                                v.startAnimation(animation);
-								File gameDirectory = (new File(Environment.getExternalStorageDirectory() + "/Blast"));
-                                Utils.delete(gameDirectory);
-								startActivity(new Intent(getActivity(), com.liverussia.launcher.activity.LoaderActivity.class));
-                            }
-        });
-        ((TextView) inflate.findViewById(R.id.resetSettings))
-                .setOnClickListener(
-                        new View.OnClickListener() {
-                            public void onClick(View v) {
-                                v.startAnimation(animation);
-                            }
-        });
-        ((ImageView) inflate.findViewById(R.id.telegramButton))
-                .setOnClickListener(
-                        new View.OnClickListener() {
-                            public void onClick(View v) {
-                                v.startAnimation(animation);
-                                startActivity(new Intent("android.intent.action.VIEW", Uri.parse("https://telegram.org")));
-                            }
-        });
-        ((ImageView) inflate.findViewById(R.id.instagramButton))
-                .setOnClickListener(
-                        new View.OnClickListener() {
-                            public void onClick(View v) {
-                                v.startAnimation(animation);
-                                startActivity(new Intent("android.intent.action.VIEW", Uri.parse("https://youtube.com")));
-                            }
-        });
-        ((ImageView) inflate.findViewById(R.id.vkButton))
-                .setOnClickListener(
-                        new View.OnClickListener() {
-                            public void onClick(View v) {
-                                v.startAnimation(animation);
-                                startActivity(
-                                        new Intent("android.intent.action.VIEW", Uri.parse("https://vk.com")));
-                            }
-                        });
-        ((ImageView) inflate.findViewById(R.id.discordButton))
-                .setOnClickListener(
-                        new View.OnClickListener() {
-                            public void onClick(View v) {
-                                v.startAnimation(animation);
-                                startActivity(new Intent("android.intent.action.VIEW", Uri.parse("https://discord.com")));
-                            }
-        });
+        inflate.findViewById(R.id.youtubeButton).setOnClickListener(this);
+        inflate.findViewById(R.id.vkButton).setOnClickListener(this);
+        inflate.findViewById(R.id.discordButton).setOnClickListener(this);
+        inflate.findViewById(R.id.resetSettings).setOnClickListener(this);
+        inflate.findViewById(R.id.reinstallGame).setOnClickListener(this);
+        inflate.findViewById(R.id.telegramButton).setOnClickListener(this);
 
-        ((EditText) nickname)
-                .setOnEditorActionListener(
-                        new EditText.OnEditorActionListener() {
-                            @Override
-                            public boolean onEditorAction(
-                                    TextView v, int actionId, KeyEvent event) {
-                                if (actionId == EditorInfo.IME_ACTION_SEARCH
-                                        || actionId == EditorInfo.IME_ACTION_DONE
-                                        || event.getAction() == KeyEvent.ACTION_DOWN
-                                                && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-                                    try {
-                                        File f =
-                                                new File(
-                                                        Config.GAME_PATH + "SAMP/settings.ini");
-                                        if (!f.exists()) {
-                                            f.createNewFile();
-                                            f.mkdirs();
-                                        }
-                                        Wini w =
-                                                new Wini(
-                                                        new File(
-                                                                Config.GAME_PATH + "SAMP/settings.ini"));
-								 if(checkValidNick(inflate)){
-									 w.put("client", "name", nickname.getText().toString());
-                                        Toast.makeText(
-                                                getActivity(),
-                                                "Ваш новый никнейм успешно сохранен!",
-                                                Toast.LENGTH_SHORT).show();
-								 } else {
-									 checkValidNick(inflate);
-								 }
-                                        w.store();
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-										Toast.makeText(getActivity(), "Установите игру!", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                                return false;
-                            }
-        });
+        initUserData();
+
         return inflate;
     }
 
-    private void InitLogic() {
-        try {
-            Wini w = new Wini(new File(Config.GAME_PATH + "SAMP/settings.ini"));
-            nickname.setText(w.get("client", "name"));
-            w.store();
-        } catch (IOException e) {
-            e.printStackTrace();
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.youtubeButton:
+                view.startAnimation(animation);
+                performYouTubeButtonAction();
+                break;
+            case R.id.vkButton:
+                view.startAnimation(animation);
+                performVkButtonAction();
+                break;
+            case R.id.discordButton:
+                view.startAnimation(animation);
+                performDiscordButtonAction();
+                break;
+            case R.id.telegramButton:
+                view.startAnimation(animation);
+                performTelegramButtonAction();
+                break;
+            case R.id.resetSettings:
+                view.startAnimation(animation);
+                performResetSettingsButtonAction();
+                break;
+            case R.id.reinstallGame:
+                view.startAnimation(animation);
+                performReinstallGameButtonAction();
+                break;
+            case R.id.nick_edit:
+                performNickEditFieldOnClickAction();
+                break;
+            default:
+                break;
         }
     }
 
-	public boolean checkValidNick(View inflate){
-		EditText nick = (EditText) inflate.findViewById(R.id.editText);
-		if(nick.getText().toString().isEmpty()) {
-			Toast.makeText(getActivity(), "Введите ник", Toast.LENGTH_SHORT).show();
-			return false;
-		}
-		if(!(nick.getText().toString().contains("_"))){
-			Toast.makeText(getActivity(), "Ник должен содержать символ \"_\"", Toast.LENGTH_SHORT).show();
-			return false;
-		}
-		if(nick.getText().toString().length() < 4){
-			Toast.makeText(getActivity(), "Длина ника должна быть не менее 4 символов", Toast.LENGTH_SHORT).show();
-			return false;
-		}
-		return true;
-	}
+    private void performNickEditFieldOnClickAction() {
+        new EnterNicknameDialogBuilder(this);
+    }
+
+    private void performReinstallGameButtonAction() {
+        File gameDirectory = (new File(getActivity().getExternalFilesDir(null).toString()));
+        Utils.delete(gameDirectory);
+        startActivity(new Intent(getActivity(), com.liverussia.launcher.activity.LoaderActivity.class));
+    }
+
+    private void performResetSettingsButtonAction() {
+        if (!activityService.isGameInstalled()) {
+            activityService.showMessage(InfoMessages.INSTALL_GAME_FIRST.getText(), getActivity());
+            return;
+        }
+
+        File settingsFile = (new File(getActivity().getExternalFilesDir(null) + SETTINGS_FILE_PATH));
+
+        if (settingsFile.exists()) {
+            settingsFile.delete();
+            activityService.showMessage(InfoMessages.SUCCESSFULLY_SETTINGS_RESET.getText(), getActivity());
+        } else {
+            activityService.showMessage(InfoMessages.SETTINGS_ALREADY_DEFAULT.getText(), getActivity());
+        }
+
+    }
+
+    private void performDiscordButtonAction() {
+        startActivity(new Intent("android.intent.action.VIEW", Uri.parse("https://discord.com")));
+    }
+
+    private void performVkButtonAction() {
+        startActivity(new Intent("android.intent.action.VIEW", Uri.parse("https://vk.com")));
+    }
+
+    private void performYouTubeButtonAction() {
+        startActivity(new Intent("android.intent.action.VIEW", Uri.parse("https://youtube.com")));
+    }
+
+    private void performTelegramButtonAction() {
+        startActivity(new Intent("android.intent.action.VIEW", Uri.parse("https://telegram.org")));
+    }
+
+    private void initUserData() {
+        String nickname = Storage.getProperty(StorageElements.NICKNAME.getValue(), this.getActivity());
+        nicknameField.setText(nickname);
+    }
+
+    public void updateNicknameField(String nickname) {
+        this.nicknameField.setText(nickname);
+    }
 }

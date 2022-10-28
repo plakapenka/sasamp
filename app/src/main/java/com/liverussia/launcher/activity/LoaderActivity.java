@@ -1,71 +1,92 @@
 package com.liverussia.launcher.activity;
 
-import static com.liverussia.cr.core.Config.URL_FILES;
-
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.DownloadManager;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.database.ContentObserver;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
+import androidx.viewpager2.widget.ViewPager2;
 
+import com.liverussia.cr.BuildConfig;
 import com.liverussia.cr.R;
-import com.liverussia.cr.core.Utils;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.nio.charset.Charset;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import com.liverussia.cr.core.Utils;
+import com.liverussia.launcher.async.BackgroundTask;
+import com.liverussia.launcher.async.DownloadAsyncTask;
+import com.liverussia.launcher.domain.LoaderSliderItemData;
+import com.liverussia.launcher.dto.response.LoaderSliderInfoResponseDto;
+import com.liverussia.launcher.error.apiException.ErrorContainer;
+import com.liverussia.launcher.messages.ErrorMessages;
+import com.liverussia.launcher.messages.InfoMessages;
+import com.liverussia.launcher.other.NetworkService;
+import com.liverussia.launcher.service.ActivityService;
+import com.liverussia.launcher.service.impl.ActivityServiceImpl;
+import com.liverussia.launcher.ui.adapters.LoaderSliderAdapter;
+
+import lombok.Getter;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+import static com.liverussia.cr.core.Config.URL_CLIENT;
+import static com.liverussia.cr.core.Config.URL_FILES;
+import static com.liverussia.launcher.config.Config.LAUNCHER_SERVER_URI;
 
 public class LoaderActivity extends AppCompatActivity {
-    private static final int DATA_STATE_NONE = 0;
-    private static final int DATA_STATE_DOWNLOADING = 1;
-    private static final int DATA_STATE_DOWNLOAD_SUCESS = 2;
 
-    private DownloadManager mDownloadManager = null;
-    private long downloadid = 0;
-    private TextView loadingText;
+    private final static String APK_NAME = "launcher";
+
+    private final ActivityService activityService;
+
+    private DownloadAsyncTask downloadTask;
+
+    @Getter
+    private TextView loading;
+
+    @Getter
     private TextView loadingPercent;
     private ProgressBar progressBar;
+
+    @Getter
     private TextView fileName;
     private ImageView leftButton;
     private ImageView rightButton;
 
-    Uri resource = Uri.parse(URL_FILES);
+    private ViewPager2 sliderView;
+
+    {
+        activityService = new ActivityServiceImpl();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loader);
-        progressBar = findViewById(R.id.progressBar);
-        loadingPercent = findViewById(R.id.loadingPercent);
-        mDownloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-        loadingText = findViewById(R.id.loadingText);
-        fileName = findViewById(R.id.fileName);
-
-        registerReceiver(onComplete,
-                new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 
         getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_IMMERSIVE
@@ -74,27 +95,64 @@ public class LoaderActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
-        //initialize(savedInstanceState);
+        initialize();
+
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED
                     || checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
                 requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1000);
             } else {
-                InstallGame();
-                // InstallGame();
+                installGame(Utils.getType());
             }
         } else {
-            InstallGame();
+            installGame(Utils.getType());
         }
     }
 
-    BroadcastReceiver onComplete=new BroadcastReceiver() {
-        public void onReceive(Context ctxt, Intent intent) {
-            Utils.setType(DATA_STATE_DOWNLOAD_SUCESS);
-            InstallGame();
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 1000) {
+            installGame(Utils.getType());
         }
-    };
-    private void StartGame() {
+    }
+
+    public static void writeFile(String path, String str) {
+        File file = new File(path);
+
+        try {
+            if (!file.exists())
+                file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        FileWriter fileWriter = null;
+
+        try {
+            fileWriter = new FileWriter(new File(path), false);
+            fileWriter.write(str);
+            fileWriter.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (fileWriter != null)
+                    fileWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void writeLog(Exception e) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        String text = sw.toString();
+        writeFile(getExternalFilesDir(null).toString()+"/log.txt", text);
+    }
+
+    private void startGame() {
         Intent intent = new Intent(this, com.liverussia.cr.core.GTASA.class);
         intent.putExtras(getIntent());
         startActivity(intent);
@@ -103,218 +161,209 @@ public class LoaderActivity extends AppCompatActivity {
 
     @Override
     public void onStop() {
-        //  mediaPlayer.stop();
+        Optional.ofNullable(downloadTask)
+                .ifPresent(DownloadAsyncTask::cancel);
+
         super.onStop();
     }
 
+    @Override
+    public void onDestroy() {
+        Optional.ofNullable(downloadTask)
+                .ifPresent(DownloadAsyncTask::cancel);
 
-    private void InstallGame() {
-        int type = Utils.getType();
+        super.onDestroy();
+    }
+
+    private void installGame(int type) {
         switch (type) {
-            case DATA_STATE_NONE: {
+            case 0: {
+                File dir = new File(getExternalFilesDir(null).toString() + "/temp_downloads/");
 
-
-                DownloadManager.Request request = new DownloadManager.Request(resource);
-
-                request.setDestinationInExternalFilesDir(this, Environment.DIRECTORY_DOWNLOADS, "cache.zip");
-
-                request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE | DownloadManager.Request.NETWORK_WIFI);
-                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
-                request.setTitle("Live Russia");
-                request.setVisibleInDownloadsUi(true);
-
-                downloadid = mDownloadManager.enqueue(request);
-
-                progressBar.setVisibility(View.VISIBLE);
-                progressBar.setIndeterminate(false);
-                progressBar.setMax(100);
-
-                Uri myDownloads = Uri.parse("content://downloads/my_downloads");
-                getContentResolver().registerContentObserver(myDownloads, true, new DownloadObserver(new Handler(Looper.getMainLooper()), this, downloadid));
-                Utils.setType(DATA_STATE_DOWNLOADING);
-                break;
-            }
-            case DATA_STATE_DOWNLOAD_SUCESS: {
-
-                File zipFile = new File( this.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),"/cache.zip");
-                File unzipLocation =  new File (this.getExternalFilesDir(null), "");
-
-                Log.d("Unzip", "Zipfile: " + zipFile);
-                Log.d("Unzip", "location: " + unzipLocation);
-
-                Decompress d = new Decompress(zipFile, unzipLocation);
-               // d.unzip();
-
-                loadingText.setText("Распаковка файлов игры...");
-                loadingPercent.setText("0%");
-                progressBar.setProgress(0);
-            }
-        }
-    }
-
-    public void SetStatusText(String text)
-    {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                loadingText.setText(text);
-            }
-        });
-
-    }
-    public void SetFileNameText(String text)
-    {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                fileName.setText(text);
-            }
-        });
-
-    }
-    public void SetPercentText(String text)
-    {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                    loadingPercent.setText(text);
-            }
-        });
-
-    }
-    public void SetProgress(int progress)
-    {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                progressBar.setProgress(progress);
-            }
-        });
-    }
-    public void SetMaxProgress(int progress)
-    {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                progressBar.setMax(progress);
-            }
-        });
-
-    }
-
-    public class Decompress extends Thread {
-        private File _zipFile;
-        private File _location;
-
-        public Decompress(File zipFile, File location) {
-
-            _zipFile = zipFile;
-            _location = location;
-
-            //_dirChecker("");
-
-            start(); // Запускаем поток
-        }
-
-        @SuppressLint("SetTextI18n")
-        public void run() {
-            try {
-                int updateCounter = 0;
-                byte[] buffer = new byte[4096];
-                ZipFile zipFile = new ZipFile (_zipFile);
-
-                FileInputStream inputStream = new FileInputStream(_zipFile);
-
-                ZipInputStream zipStream = new ZipInputStream(inputStream, Charset.forName("windows-1251"));
-
-                long totalSize = 3113640;
-                File outFile = null;
-                ZipEntry zEntry = null;
-
-                long readedByte = 0;
-
-                float percent = 0;
-                while ((zEntry = zipStream.getNextEntry()) != null)
-                {
-                    outFile = new File (_location + File.separator + zEntry.getName ()); // определить путь к выходному файлу
-                    if (! outFile.getParentFile().exists ()) {
-                        outFile.getParentFile().mkdir(); // Создать папку
-                    }
-                    SetFileNameText(zEntry.getName());
-
-                    FileOutputStream fout = new FileOutputStream(outFile);
-                    BufferedOutputStream bufout = new BufferedOutputStream(fout);
-
-                    int read = 0;
-
-                    while ((read = zipStream.read(buffer)) != -1)
-                    {
-                        updateCounter ++;
-                        readedByte += read;
-                        bufout.write(buffer, 0, read);
-
-                        if(updateCounter == 150)
-                        {
-                            percent = ((((float)readedByte/1000) / (float)totalSize) * 100);
-                            updateCounter = 0;
-                            String _str = String.format("%.2f %%", percent);
-                            SetPercentText(_str);
-                            SetProgress((int)percent);
-                        }
-                    }
-                    zipStream.closeEntry();
-                    bufout.close();
-                    fout.close();
-                    SetProgress(100);
-                    SetPercentText("100 %");
+                if (!dir.exists()) {
+                    dir.mkdirs();
                 }
 
-                zipStream.close();
-                inputStream.close();
-                SetStatusText("Распаковка завершена");
-                _zipFile.delete();
-            } catch (Exception e) {
-                SetStatusText("Ошибка распаковки");
-                e.printStackTrace();
+                downloadTask = new DownloadAsyncTask(this, progressBar);
+                downloadTask.setOnAsyncSuccessListener(this::performAfterDownload);
+                downloadTask.setOnAsyncCriticalErrorListener(this::performAfterDownloadFailed);
+                downloadTask.execute(URL_FILES);
+                break;
+            }
+
+            case 1: {
+                File dir = new File(getExternalFilesDir(null).toString() + "/temp_downloads/");
+                if (!dir.exists()) dir.mkdirs();
+                DownloadAsyncTask downloadTask = new DownloadAsyncTask(this, progressBar);
+                downloadTask.execute(URL_CLIENT);
+                break;
             }
         }
     }
-    public class DownloadObserver extends ContentObserver {
-        private long downid;
-        private Handler handler;
-        private Context context;
 
-        public DownloadObserver(Handler handler, Context context, long downid) {
-            super(handler);
-            this.handler = handler;
-            this.downid = downid;
-            this.context = context;
+    private void performAfterDownloadFailed() {
+        startActivity(new Intent(this, com.liverussia.launcher.activity.MainActivity.class));
+    }
+
+    private void performAfterDownload() {
+        if (Utils.getType() == 0) {
+            activityService.showMessage(InfoMessages.GAME_FILES_DOWNLOAD_SUCCESS.getText(), this);
+            startGame();
         }
 
-
-        @Override
-        public void onChange(boolean selfChange) {
-            if(Utils.getType() == DATA_STATE_DOWNLOAD_SUCESS) return ;
-            DownloadManager.Query query = new DownloadManager.Query().setFilterById(downloadid);
-            DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
-            //这个就是数据库查询啦
-            Cursor cursor = downloadManager.query(query);
-            while (cursor.moveToNext()) {
-                float mDownload_so_far = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
-                float mDownload_all = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
-
-                float mProgress = ( (mDownload_so_far / mDownload_all)*100 );
-                if(mProgress < 0)
-                    mProgress = 0;
-
-                progressBar.setProgress((int) mProgress);
-                String _str = String.format("%.2f %%",mProgress);
-                loadingPercent.setText(_str);
-
-
-            }
-            cursor.close();
+        if (Utils.getType() == 1) {
+            showMessage(InfoMessages.APPROVE_INSTALL.getText());
+            installAPK(APK_NAME);
         }
     }
 
+    private void initialize() {
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.button_click);
+        loading = (TextView) findViewById(R.id.loadingText);
+        loadingPercent = (TextView) findViewById(R.id.loadingPercent);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        fileName = (TextView) findViewById(R.id.fileName);
+        leftButton = (ImageView) findViewById(R.id.leftButton);
+        rightButton = (ImageView) findViewById(R.id.rightButton);
+        sliderView = findViewById(R.id.loaderSliderView);
+
+
+        leftButton.setOnClickListener(v -> {
+            v.startAnimation(animation);
+            performLeftButton();
+        });
+
+        rightButton.setOnClickListener(v -> {
+            v.startAnimation(animation);
+            performRightButton();
+        });
+
+
+        loadResources();
+
+    }
+
+    private void loadResources() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(LAUNCHER_SERVER_URI)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        NetworkService networkService = retrofit.create(NetworkService.class);
+
+        Call<LoaderSliderInfoResponseDto> call = networkService.getLoaderSliderInfo();
+
+        call.enqueue(new Callback<LoaderSliderInfoResponseDto>() {
+            @Override
+            public void onResponse(Call<LoaderSliderInfoResponseDto> call, Response<LoaderSliderInfoResponseDto> response) {
+                if (response.isSuccessful()) {
+                    configureSlider(response.body());
+                } else {
+                    configureSliderWithoutData();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LoaderSliderInfoResponseDto> call, Throwable t) {
+                activityService.showMessage(ErrorContainer.SERVER_CONNECT_ERROR.getMessage(), LoaderActivity.this);
+                configureSliderWithoutData();
+            }
+        });
+    }
+
+    private void configureSliderWithoutData() {
+        List<LoaderSliderItemData> sliderDataArrayList = new ArrayList<>();
+
+        LoaderSliderItemData sliderItemData = new LoaderSliderItemData();
+        sliderItemData.setText(ErrorMessages.FAILED_LOAD_LOADER_SLIDER_DATA.getText());
+
+        sliderDataArrayList.add(sliderItemData);
+
+        initSlider(sliderDataArrayList);
+    }
+
+    private void configureSlider(LoaderSliderInfoResponseDto loaderSliderInfoResponseDto) {
+        List<LoaderSliderItemData> sliderDataArrayList = Optional.ofNullable(loaderSliderInfoResponseDto.getTexts())
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(LoaderSliderItemData::new)
+                .collect(Collectors.toList());
+
+        initSlider(sliderDataArrayList);
+    }
+
+    private void initSlider(List<LoaderSliderItemData> sliderDataArrayList) {
+
+        LoaderSliderAdapter adapter = new LoaderSliderAdapter(sliderDataArrayList);
+
+        sliderView.setAdapter(adapter);
+
+        sliderView.setOffscreenPageLimit(1);
+        sliderView.setClipToPadding(false);
+        sliderView.setClipChildren(false);
+
+        sliderView.setCurrentItem(1, false);
+
+        sliderView.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+
+            @Override
+            public void onPageSelected(int position)
+            {
+                super.onPageSelected(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state)
+            {
+                if (state == ViewPager2.SCROLL_STATE_IDLE) {
+                    if (sliderView.getCurrentItem() == sliderDataArrayList.size() + 2 - 1) {
+                        sliderView.setCurrentItem(1, false);
+                    } else if (sliderView.getCurrentItem() == 0) {
+                        sliderView.setCurrentItem(sliderDataArrayList.size() + 2 - 2, false);
+                    }
+                }
+
+                super.onPageScrollStateChanged(state);
+            }
+        });
+
+    }
+
+    private void performRightButton() {
+        sliderView.setCurrentItem(sliderView.getCurrentItem() + 1);
+    }
+
+    private void performLeftButton() {
+        sliderView.setCurrentItem(sliderView.getCurrentItem() - 1);
+    }
+
+    public void showMessage(String _s) {
+        Toast.makeText(getApplicationContext(), _s, Toast.LENGTH_LONG).show();
+    }
+
+    private void installAPK(final String apkname) {
+        try {
+            File file = new File(getExternalFilesDir(null).toString() + "/temp_downloads/", apkname + ".apk");
+            Intent intent;
+            if (file.exists()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    Uri apkUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", file);
+                    intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
+                    intent.setData(apkUri);
+                    intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                } else {
+                    Uri apkUri = Uri.fromFile(file);
+                    intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                }
+                startActivity(intent);
+                finish();
+            }
+            else showMessage("Ошибка установки: файл не найден");
+        } catch (Exception e) {
+            Log.e("InstallAPK", "Ошибка установки:" + e.getMessage());
+            writeLog(e);
+        }
+    }
 }

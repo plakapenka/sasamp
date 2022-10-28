@@ -36,24 +36,20 @@ import com.liverussia.launcher.model.Servers;
 
 import com.liverussia.launcher.activity.SplashActivity;
 
-import com.google.firebase.database.*;
-
 public class MonitoringFragment extends Fragment {
 	
 	RecyclerView recyclerNews;
-	DatabaseReference databaseNews;
 	NewsAdapter newsAdapter;
 	ArrayList<News> nlist;
 	
 	RecyclerView recyclerServers;
-	DatabaseReference databaseServers;
 	ServersAdapter serversAdapter;
 	ArrayList<Servers> slist;
 	
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View inflate = inflater.inflate(R.layout.fragment_monitoring, container, false);
-    //	Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.button_click);
+    	Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.button_click);
 		
 	    recyclerNews = inflate.findViewById(R.id.newsRV);
 		recyclerNews.setHasFixedSize(true);
