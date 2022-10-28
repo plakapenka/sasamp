@@ -2446,6 +2446,9 @@ void CSprite2d__Draw_hook(CSprite2d* a1, CRect* a2, CRGBA* a3)
 			a3->R = 7;
 		}
 		float* thiz = (float*) * (uintptr_t*)(g_libGTASA + 0x6580C8);
+		thiz[2] = (float)100;
+		thiz[1] = (float)100;
+		//thiz[0] = (float)100;
 		if (thiz)
 		{
 			if (CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_RADAR).X != -1)

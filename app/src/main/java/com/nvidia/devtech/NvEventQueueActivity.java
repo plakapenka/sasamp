@@ -1562,6 +1562,7 @@ public abstract class NvEventQueueActivity
 
     public native void sendDialogResponse(int i, int i2, int i3, byte[] str);
 
+
     public void updateLevelInfo(int level, int currentexp, int maxexp) { runOnUiThread(() -> { mHudManager.UpdateLevelInfo(level, currentexp, maxexp); }); }
 
     public void showGreenZone() { runOnUiThread(() -> { mHudManager.ShowGreenZone(); }); }

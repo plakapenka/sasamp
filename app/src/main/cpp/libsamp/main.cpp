@@ -219,7 +219,7 @@ void InitInGame()
 		int radarPosX = (int)pHud->GetScreenSize(true)/11.13;
 		int radarPosY = (int)pHud->GetScreenSize(false)/24.8;
 		CAdjustableHudPosition::SetElementPosition((HUD_RADAR), radarPosX, radarPosY); //97, 85
-		
+
 		if (!unique_library_handler(encLib.decrypt()))
 		{
 			ObfuscatedForceExit3();
