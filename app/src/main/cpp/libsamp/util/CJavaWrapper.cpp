@@ -1547,7 +1547,6 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
     s_hideGreenZone = env->GetMethodID(nvEventClass, "hideGreenZone", "()V");
 	s_showGPS = env->GetMethodID(nvEventClass, "showGPS", "()V");
     s_hideGPS = env->GetMethodID(nvEventClass, "hideGPS", "()V");
-	s_showServer = env->GetMethodID(nvEventClass, "showServer", "(I)V");
 
 	s_showOilFactoryGame = env->GetMethodID(nvEventClass, "showOilFactoryGame", "()V");
 	s_showArmyGame = env->GetMethodID(nvEventClass, "showArmyGame", "(I)V");

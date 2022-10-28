@@ -41,7 +41,6 @@ class CJavaWrapper
     jmethodID s_hideGreenZone;
 	jmethodID s_showGPS;
     jmethodID s_hideGPS;
-	jmethodID s_showServer;
 	jmethodID s_updateLevelInfo;
 
 	jmethodID s_showSamwill;

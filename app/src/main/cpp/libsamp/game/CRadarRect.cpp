@@ -61,6 +61,7 @@ float CRadarRect::CRadar__LimitRadarPoint_hook(float* pos)
 			pos[0] *= (-1.0f);
 			pos[1] *= (-1.0f);
 		}
+
 	}
 
 	return r;
