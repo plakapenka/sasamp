@@ -156,8 +156,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/players_list_name_column" />
 
-    <androidx.recyclerview.widget.RecyclerView
+    <com.factor.bouncy.BouncyRecyclerView
         android:id="@+id/players_list"
+        app:recyclerview_fling_animation_size=".1"
+        app:recyclerview_overscroll_animation_size=".1"
+        app:recyclerview_damping_ratio="DAMPING_RATIO_MEDIUM_BOUNCY"
+        app:recyclerview_stiffness="STIFFNESS_LOW"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_230sdp"
         android:layout_below="@+id/players_list_name_column"

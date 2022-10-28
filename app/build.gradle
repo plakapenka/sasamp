@@ -65,6 +65,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:20.0.4'
     implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
     implementation 'com.github.smarteist:autoimageslider:1.4.0'
+    implementation 'com.github.valkriaine:Bouncy:2.3'
     implementation platform('com.google.firebase:firebase-bom:29.2.1')
     implementation("com.google.guava:guava:31.1-jre")
     api("com.google.guava:guava:31.1-jre")

@@ -42,8 +42,8 @@
                 android:layout_marginBottom="@dimen/_8sdp"
                 android:fadeScrollbars="false"
                 android:scrollbarSize="@dimen/_6sdp"
-                android:overScrollMode=""
-                android:scrollbarStyle="outsideOverlay"
+
+                android:scrollbarStyle="outsideInset"
                 android:scrollbarThumbVertical="@drawable/quest_scrollbar_vertical_thumb"
                 android:scrollbarTrackVertical="@drawable/quest_scrollbar_vertical_track"
                 android:scrollbars="vertical"
@@ -214,14 +214,18 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/sd_dialog_tablist_row">
 
-                    <com.liverussia.cr.gui.util.CustomRecyclerView
+                    <com.factor.bouncy.BouncyRecyclerView
                         android:id="@+id/sd_dialog_list_recycler"
                         android:layout_width="fill_parent"
+                        app:recyclerview_fling_animation_size=".2"
+                        app:recyclerview_overscroll_animation_size=".2"
+                        app:recyclerview_damping_ratio="DAMPING_RATIO_MEDIUM_BOUNCY"
+                        app:recyclerview_stiffness="STIFFNESS_LOW"
                         android:layout_height="0dp"
                         android:layout_marginTop="@dimen/_4sdp"
                         android:layout_marginBottom="@dimen/_8sdp"
                         android:fadeScrollbars="false"
-                        android:minWidth="@dimen/_161sdp"
+                        android:minWidth="250dp"
                         android:paddingEnd="@dimen/_4sdp"
                         android:scrollbarSize="@dimen/_6sdp"
                         android:scrollbarStyle="insideInset"

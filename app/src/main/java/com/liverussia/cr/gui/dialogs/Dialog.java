@@ -2,26 +2,24 @@ package com.liverussia.cr.gui.dialogs;
 
 import android.app.Activity;
 import android.content.Context;
-import android.opengl.Visibility;
 import android.text.Editable;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.nvidia.devtech.CustomEditText;
 import com.nvidia.devtech.NvEventQueueActivity;
 import com.liverussia.cr.R;
-import com.liverussia.cr.gui.util.CustomRecyclerView;
 import com.liverussia.cr.gui.util.Utils;
 
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+
 
 public class Dialog {
     private static final int DIALOG_LEFT_BTN_ID = 1;
@@ -39,7 +37,7 @@ public class Dialog {
     private String mCurrentInputText = "";
     private int mCurrentListItem = -1;
     private boolean mInputPasswordStyle = false;
-    private final CustomRecyclerView mCustomRecyclerView;
+    private final RecyclerView mCustomRecyclerView;
     private final ArrayList<TextView> mHeadersList;
     private final CustomEditText mInput;
     private final ConstraintLayout mInputLayout;
@@ -69,7 +67,7 @@ public class Dialog {
         this.mListLayout = activity.findViewById(R.id.sd_dialog_list_layout);
         this.mMsgBoxLayout = (ScrollView) activity.findViewById(R.id.sd_dialog_text_layout);
         this.mInput = (CustomEditText) activity.findViewById(R.id.sd_dialog_input);
-        this.mCustomRecyclerView = (CustomRecyclerView) activity.findViewById(R.id.sd_dialog_list_recycler);
+        this.mCustomRecyclerView = activity.findViewById(R.id.sd_dialog_list_recycler);
         findViewById1.setOnClickListener(view -> sendDialogResponse(1));
         findViewById2.setOnClickListener(view -> sendDialogResponse(0));
         this.mRowsList = new ArrayList<>();
@@ -136,7 +134,7 @@ public class Dialog {
                 this.mCustomRecyclerView.setLayoutManager(new LinearLayoutManager((Context) NvEventQueueActivity.getInstance()));
                 this.mCustomRecyclerView.setAdapter(adapter);
                 if (dialogTypeId != 2) {
-                    CustomRecyclerView customRecyclerView = this.mCustomRecyclerView;
+                    RecyclerView customRecyclerView = this.mCustomRecyclerView;
                     adapter.getClass();
                     customRecyclerView.post(() -> adapter.updateSizes());
                 }
