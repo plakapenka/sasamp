@@ -5,6 +5,7 @@
 #include "../net/netgame.h"
 #include "../gui/gui.h"
 #include "../util/CJavaWrapper.h"
+#include "../java_systems/hud.h"
 #include "..///..//santrope-tea-gtasa/encryption/CTinyEncrypt.h"
 #include "..///..//santrope-tea-gtasa/encryption/encrypt.h"
 #include "..///..//santrope-tea-gtasa/CGameResourcesDecryptor.cpp"
@@ -17,6 +18,7 @@ extern CGame* pGame;
 extern CSettings* pSettings;
 extern CChatWindow* pChatWindow;
 extern CVoiceChatClient* pVoice;
+extern CHUD *pHud;
 
 extern "C"
 {
@@ -145,19 +147,7 @@ void ShowHud()
 			if(pGame->FindPlayerPed() || GamePool_FindPlayerPed()) 
 			{
 				CPlayerPool *pPlayerPool = pNetGame->GetPlayerPool();
-				if(pPlayerPool) 
-				{
-					g_pJavaWrapper->UpdateHudInfo(
-					pGame->FindPlayerPed()->GetHealth(), 
-					pGame->FindPlayerPed()->GetArmour(), 
-					pGUI->GetEat(), 
-					GamePool_FindPlayerPed()->WeaponSlots[GamePool_FindPlayerPed()->byteCurWeaponSlot].dwType, 
-					GamePool_FindPlayerPed()->WeaponSlots[GamePool_FindPlayerPed()->byteCurWeaponSlot].dwAmmo, 
-					GamePool_FindPlayerPed()->WeaponSlots[GamePool_FindPlayerPed()->byteCurWeaponSlot].dwAmmoInClip, 
-					pGame->GetLocalMoney(), 
-					pGame->GetWantedLevel()
-					);
-				}
+
 				if(pSettings && pSettings->GetReadOnly().iHud)
 				{
 					*(uint8_t*)(g_libGTASA+0x7165E8) = 0;
@@ -2340,31 +2330,31 @@ void CFont__PrintString_hook(float x, float y, uint16_t* text)
 	float fX = x;
 	float fY = y;
 
-	if (dwRetAddr == 0x0027E15C + 1) // money
-	{
-		if (CAdjustableHudColors::IsUsingHudColor(E_HUD_ELEMENT::HUD_MONEY))
-		{
-			CRGBA col = CAdjustableHudColors::GetHudColor(E_HUD_ELEMENT::HUD_MONEY);
-			uint32_t m1 = col.ToInt();
-			CFont::SetColor(&m1);
-		}
-
-		if (CAdjustableHudScale::GetElementScale(E_HUD_ELEMENT::HUD_MONEY).X != -1)
-		{
-			float value = (float)CAdjustableHudScale::GetElementScale(E_HUD_ELEMENT::HUD_MONEY).X / 100.0f;
-			CFont::SetScale(value, 0.0f);
-		}
-
-		if (CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_MONEY).X != -1)
-		{
-			fX = pGUI->ScaleX(CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_MONEY).X);
-		}
-		if (CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_MONEY).Y != -1)
-		{
-			fY = pGUI->ScaleY(CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_MONEY).Y);
-		}
-	}
-	else if (dwRetAddr == 0x0027D9E6 + 1) // wanted
+//	if (dwRetAddr == 0x0027E15C + 1) // money
+//	{
+//		if (CAdjustableHudColors::IsUsingHudColor(E_HUD_ELEMENT::HUD_MONEY))
+//		{
+//			CRGBA col = CAdjustableHudColors::GetHudColor(E_HUD_ELEMENT::HUD_MONEY);
+//			uint32_t m1 = col.ToInt();
+//			CFont::SetColor(&m1);
+//		}
+//
+//		if (CAdjustableHudScale::GetElementScale(E_HUD_ELEMENT::HUD_MONEY).X != -1)
+//		{
+//			float value = (float)CAdjustableHudScale::GetElementScale(E_HUD_ELEMENT::HUD_MONEY).X / 100.0f;
+//			CFont::SetScale(value, 0.0f);
+//		}
+//
+//		if (CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_MONEY).X != -1)
+//		{
+//			fX = pGUI->ScaleX(CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_MONEY).X);
+//		}
+//		if (CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_MONEY).Y != -1)
+//		{
+//			fY = pGUI->ScaleY(CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_MONEY).Y);
+//		}
+//	}
+	if (dwRetAddr == 0x0027D9E6 + 1) // wanted
 	{
 		if (CAdjustableHudColors::IsUsingHudColor(E_HUD_ELEMENT::HUD_WANTED))
 		{
@@ -2456,6 +2446,8 @@ void CSprite2d__Draw_hook(CSprite2d* a1, CRect* a2, CRGBA* a3)
 			a3->R = 7;
 		}
 		float* thiz = (float*) * (uintptr_t*)(g_libGTASA + 0x6580C8);
+
+		//thiz[0] = (float)100;
 		if (thiz)
 		{
 			if (CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_RADAR).X != -1)
@@ -2493,6 +2485,7 @@ void CSprite2d__Draw_hook(CSprite2d* a1, CRect* a2, CRGBA* a3)
 			{
 				thiz[6] = 45.0f;
 			}
+
 		}
 		
 	}
@@ -2848,7 +2841,7 @@ void InstallHooks()
 	SetUpHook(g_libGTASA + 0x005353B4, (uintptr_t)CFont__PrintString_hook, (uintptr_t*)& CFont__PrintString);
 	SetUpHook(g_libGTASA + 0x0055265C, (uintptr_t)CSprite2d__Draw_hook, (uintptr_t*)& CSprite2d__Draw);
 
-	SetUpHook(g_libGTASA + 0x0027D8A8, (uintptr_t)CWidgetPlayerInfo__DrawWanted_hook, (uintptr_t*)& CWidgetPlayerInfo__DrawWanted);
+	//SetUpHook(g_libGTASA + 0x0027D8A8, (uintptr_t)CWidgetPlayerInfo__DrawWanted_hook, (uintptr_t*)& CWidgetPlayerInfo__DrawWanted);
 
 	SetUpHook(g_libGTASA + 0x0027CE88, (uintptr_t)CWidgetPlayerInfo__DrawWeaponIcon_hook, (uintptr_t*)& CWidgetPlayerInfo__DrawWeaponIcon);
 	SetUpHook(g_libGTASA + 0x00389D74, (uintptr_t)CCam__Process_hook, (uintptr_t*)& CCam__Process);

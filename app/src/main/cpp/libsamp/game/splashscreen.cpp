@@ -3,9 +3,11 @@
 #include "game.h"
 #include "../gui/gui.h"
 #include "../util/CJavaWrapper.h"
+#include "java_systems/hud.h"
 
 extern CGame *pGame;
 extern CGUI* pGUI;
+extern CHUD *pHud;
 
 RwTexture* splashTexture = nullptr;
 
@@ -51,8 +53,6 @@ void LoadSplashTexture()
 {
 	Log("Loading splash texture..");
 	splashTexture = (RwTexture*)LoadTextureFromDB("txd", "hud_bg");
-	pGame->isHudToggle = false;
-	//color_scheme = 1;
 }
 
 void Draw(stRect* rect, uint32_t color, RwRaster* raster = nullptr, stfRect* uv = nullptr)
@@ -134,7 +134,7 @@ void RenderSplash()
 
 	int intMult = (int)percent;
 
-	if (intMult == 51) intMult = 100;
+	//if (intMult == 51) intMult = 100;
 
 	g_pJavaWrapper->UpdateSplash(intMult);
 
@@ -172,10 +172,10 @@ void RenderBackgroundHud()
 	ImGui_ImplRenderWare_NewFrame();
 	ImGui::NewFrame();
 		
-	if (pGame->isHudToggle)
+	if (pHud->isHudToggle)
 	{
 		if (splashTexture)
-		{
+		{//183 55.. 399..336
 			ImGui::GetBackgroundDrawList()->AddImage((ImTextureID)splashTexture->raster, ImVec2(pGUI->ScaleX(183), pGUI->ScaleY(74)), ImVec2(pGUI->ScaleX(399), pGUI->ScaleY(336)), ImVec2(0, 0), ImVec2(1, 1));
 		}
 		// ImGui::GetBackgroundDrawList()->AddCircleFilled(ImVec2(pGUI->ScaleX(291), pGUI->ScaleY(205)), pGUI->ScaleX(108), 0x75000000, 45);

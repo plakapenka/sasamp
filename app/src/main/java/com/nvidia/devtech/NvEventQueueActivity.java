@@ -407,8 +407,6 @@ public abstract class NvEventQueueActivity
 
     public native void onWeaponChanged();
 
-    public native void showTab();
-
     public native void togglePlayer(int toggle);
 
     public native void SendCasinoButt(int buttonID);
@@ -1505,25 +1503,6 @@ public abstract class NvEventQueueActivity
         //postCleanup();
     }
 
-    public void callLauncherActivity()
-    {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.liverussia.cr");
-                launchIntent.putExtra("minimize", true);
-                if(ResumeEventDone)
-                {
-                    pauseEvent();
-                }
-                System.out.println("Calling launcher activity");
-                startActivity(launchIntent);
-                System.out.println("Called launcher activity");
-            }
-        });
-
-    }
-
     public void showInputLayout()
     {
         runOnUiThread(new Runnable() {
@@ -1583,7 +1562,6 @@ public abstract class NvEventQueueActivity
 
     public native void sendDialogResponse(int i, int i2, int i3, byte[] str);
 
-    public void updateHudInfo(int health, int armour, int hunger, int weaponid, int ammo, int ammoclip, int money, int wanted) { runOnUiThread(() -> { mHudManager.UpdateHudInfo(health, armour, hunger, weaponid, ammo, ammoclip, money, wanted); }); }
 
     public void updateLevelInfo(int level, int currentexp, int maxexp) { runOnUiThread(() -> { mHudManager.UpdateLevelInfo(level, currentexp, maxexp); }); }
 
@@ -1594,10 +1572,6 @@ public abstract class NvEventQueueActivity
     public void showGPS() { runOnUiThread(() -> { mHudManager.ShowGPS(); }); }
 
     public void hideGPS() { runOnUiThread(() -> { mHudManager.HideGPS(); }); }
-
-    public void showServer(int serverid) { runOnUiThread(() -> { mHudManager.ShowServer(serverid); }); }
-
-    public void hideServer() { runOnUiThread(() -> { mHudManager.HideServer(); }); }
 
     public void setPauseState(boolean z2) {
         if (mAndroidUI == null) {

@@ -3,11 +3,13 @@
 #include "../gui/gui.h"
 #include "..//util/CJavaWrapper.h"
 #include "netgame.h"
+#include "java_systems/hud.h"
 #include <thread>
 #include <chrono>
 
 extern CWidgetManager* g_pWidgetManager;
 extern CNetGame *pNetGame;
+extern CHUD *pHud;
 
 #include "../chatwindow.h"
 
@@ -548,7 +550,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			{
 				g_pJavaWrapper->ShowCasinoDice(false, 0, 0, 0, 0, "--", 0, "--", 0, "--", 0, "--", 0, "--", 0);
 
-				pGame->ToggleAllHud(true, false, true);
+				pHud->ToggleAll(true, false, true);
 				return;
 			}
 			bs.Read(tableID);
@@ -589,9 +591,9 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 				}
 				Log("%d %d = %s", i, playerID[i], playerName[i]);
 			}
-			int money = pGame->GetLocalMoney();
+			int money = pHud->localMoney;
 			g_pJavaWrapper->ShowCasinoDice(toggle, tableID, bet, bank, money, playerName[0], playerStat[0], playerName[1], playerStat[1], playerName[2], playerStat[2], playerName[3], playerStat[3], playerName[4], playerStat[4]);
-			pGame->ToggleAllHud(false);
+			pHud->ToggleAll(false);
 			break;
 		}
 		case RPC_OPEN_SETTINGS:
@@ -905,7 +907,9 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			bs.Read(acceleration);
 
 			Log("%s %d %d %f %f", name, price, count, maxspeed, acceleration);
-			g_pJavaWrapper->UpdateAutoShop(name, price, count, maxspeed, acceleration);
+			char utf8[200];
+			cp1251_to_utf8(utf8, name);
+			g_pJavaWrapper->UpdateAutoShop(utf8, price, count, maxspeed, acceleration);
 			break;
 		}
 		case RPC_CUSTOM_HANDLING_DEFAULTS:
@@ -1433,7 +1437,7 @@ void CNetGame::ShutDownForGameRestart()
 	}
 
 	pGame->ToggleCJWalk(false);
-	pGame->ResetLocalMoney();
+	pHud->localMoney = 0;
 	pGame->EnableZoneNames(false);
 	m_bZoneNames = false;
 	GameResetRadarColors();

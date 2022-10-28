@@ -5,6 +5,7 @@
 #include "../CSettings.h"
 #include "../util/CJavaWrapper.h"
 #include "../voice/CVoiceChatClient.h"
+#include "java_systems/hud.h"
 
 extern CVoiceChatClient* pVoice;
 bool g_IsVoiceServer();
@@ -12,6 +13,7 @@ extern CGame *pGame;
 extern CNetGame *pNetGame;
 extern CChatWindow *pChatWindow;
 extern CSettings *pSettings;
+extern CHUD *pHud;
 
 int iNetModeNormalOnfootSendRate	= NETMODE_ONFOOT_SENDRATE;
 int iNetModeNormalInCarSendRate		= NETMODE_INCAR_SENDRATE;
@@ -580,7 +582,7 @@ void DialogBox(RPCParameters *rpcParams)
 
 		if(wDialogID < 0) return;
 
-		pGame->ToggleAllHud(false);
+		pHud->ToggleAll(false);
 		g_pJavaWrapper->MakeDialog(wDialogID, byteDialogStyle, title, info, button1, button2);
 }
 
