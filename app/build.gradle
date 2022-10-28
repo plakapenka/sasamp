@@ -9,9 +9,9 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 24
+        minSdkVersion 17
         //noinspection ExpiredTargetSdkVersion
-        targetSdkVersion 31
+        targetSdkVersion 28
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         applicationId "com.liverussia.cr"
