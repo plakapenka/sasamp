@@ -80,7 +80,7 @@ dependencies {
 
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
-    implementation 'com.google.android.gms:play-services-safetynet:11.0.2' //
+    implementation 'com.google.android.gms:play-services-safetynet:18.0.1' //
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.3.2'
