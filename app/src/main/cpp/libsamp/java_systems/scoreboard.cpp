@@ -6,6 +6,8 @@
 #include "vendor/imgui/imgui_internal.h"
 #include "util/CJavaWrapper.h"
 #include "CSettings.h"
+#include "hud.h"
+
 #ifndef min
 #define min(a,b) (((a) < (b)) ? (a) : (b))
 #endif
@@ -14,6 +16,7 @@ extern CNetGame* pNetGame;
 extern CGame* pGame;
 extern CGUI* pGUI;
 extern CSettings* pSettings;
+extern CHUD *pHud;
 
 jobject jTab;
 
@@ -27,7 +30,7 @@ void ToggleTab()
         TabUpdate();
 
         // Freeze player
-        pGame->ToggleAllHud(false);
+        pHud->ToggleAll(false);
 
         // Get player list
         pNetGame->UpdatePlayerScoresAndPings();
@@ -40,7 +43,7 @@ void ToggleTab()
     else
     {
         // Unfreeze player
-        pGame->ToggleAllHud(true, false, true);
+        pHud->ToggleAll(true, false, true);
     }
 
 }

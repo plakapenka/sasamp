@@ -18,7 +18,6 @@ class CJavaWrapper
 	jobject activity;
 
 	jmethodID s_GetClipboardText;
-	jmethodID s_CallLauncherActivity;
 
 	jmethodID s_ShowInputLayout;
 	jmethodID s_HideInputLayout;
@@ -43,8 +42,6 @@ class CJavaWrapper
 	jmethodID s_showGPS;
     jmethodID s_hideGPS;
 	jmethodID s_showServer;
-    jmethodID s_hideServer;
-	jmethodID s_updateHudInfo;
 	jmethodID s_updateLevelInfo;
 
 	jmethodID s_showSamwill;
@@ -65,12 +62,9 @@ class CJavaWrapper
 	jmethodID s_hideRegistration;
 
 	jmethodID j_showDeathInfo;
-	jmethodID s_hideDeathInfo;
 
 	jmethodID j_toggleAutoShop;
 	jmethodID j_updateAutoShop;
-
-	jmethodID s_showAuctionManager;
 
 	jmethodID s_showChooseSpawn;
 	jmethodID s_hideChooseSpawn;
@@ -97,7 +91,6 @@ public:
 	JNIEnv* GetEnv();
 
 	std::string GetClipboardString();
-	void CallLauncherActivity(int type);
 
 	void ShowInputLayout();
 	void HideInputLayout();
@@ -106,18 +99,14 @@ public:
 
 	void SetUseFullScreen(int b);
 
-	void UpdateHudInfo(int health, int armour, int hunger, int weaponid, int ammo, int ammoinclip, int money, int wanted);
 	void UpdateLevelInfo(int level, int currentexp, int maxexp);
-	void ShowHud();
+
     void ToggleAllHud(bool toggle);
-	void ShowHudDialog();
-    void HideHudDialog();
+
 	void ShowGreenZone();
     void HideGreenZone();
 	void ShowGPS();
     void HideGPS();
-	void ShowServer(int serverid);
-    void HideServer();
 	void HideServerLogo();
 	void ShowServerLogo();
 
@@ -187,7 +176,7 @@ public:
 	CJavaWrapper(JNIEnv* env, jobject activity);
 	~CJavaWrapper();
 
-	void UpdateAutoShop(std::string name, int price, int count, float maxspeed, float acceleration);
+	void UpdateAutoShop(const char name[], int price, int count, float maxspeed, float acceleration);
 
 	void ToggleAutoShop(bool toggle);
 
@@ -195,7 +184,6 @@ public:
 
 	jobject jCasinoDice;
     jobject jDialog;
-	jobject jHudManager;
 	jobject jCasino_LuckyWheel;
 
     void ShowCasinoLuckyWheel(int count, int time);

@@ -3,8 +3,9 @@
 #include "../util/armhook.h"
 #include "util/CJavaWrapper.h"
 #include "net/netgame.h"
+#include "java_systems/hud.h"
 
-bool isToggleHud = false;
+extern CHUD *pHud;
 void ApplyPatches();
 void ApplyInGamePatches();
 void InstallHooks();
@@ -156,30 +157,6 @@ void CGame::InitInGame()
 	GameResetRadarColors();
 }
 
-
-void CGame::ToggleAllHud(bool toggle, bool withchat, bool anyway)
-{
-	if(!toggle)
-	{
-		hudhideCount ++;
-	}
-	else
-	{
-		hudhideCount--;
-		if(hudhideCount > 0 && !anyway)return;
-		else hudhideCount = 0;
-	}
-	isHudToggle = toggle;
-	DisplayHUD(toggle);
-
-	if(withchat)ToggleHUDElement(HUD_ELEMENT_CHAT, toggle);
-	ToggleHUDElement(HUD_ELEMENT_BUTTONS, toggle);
-	//pGame->DisplayWidgets(toggle); ?? не работает тоже
-    pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->TogglePlayerControllable(toggle, true);
-	ToggleHUDElement(HUD_ELEMENT_FPS, toggle);
-
-	g_pJavaWrapper->ToggleAllHud(toggle);
-}
 
 void CGame::ToggleHUDElement(int iID, bool bToggle)
 {
@@ -557,25 +534,23 @@ void CGame::DisableMarker(uint32_t dwMarkerID)
 // 0.3.7
 int CGame::GetLocalMoney()
 {
-	return *(int*)(PLAYERS_REALLOC+0xB8);
+	return pHud->localMoney;
+	//return *(int*)(PLAYERS_REALLOC+0xB8);
 }
 
 // 0.3.7
 void CGame::AddToLocalMoney(int iAmmount)
 {
-	ScriptCommand(&add_to_player_money, 0, iAmmount);
+	pHud->localMoney += iAmmount;
+	pHud->UpdateHudInfo();
+	//pHud->localMoney +=
+//	ScriptCommand(&add_to_player_money, 0, iAmmount);
 }
 
 // 0.3.7
 void CGame::ResetLocalMoney()
 {
-	int iMoney = GetLocalMoney();
-	if(!iMoney) return;
-
-	if(iMoney < 0)
-		AddToLocalMoney(abs(iMoney));
-	else
-		AddToLocalMoney(-(iMoney));
+	pHud->localMoney = 0;
 }
 
 // 0.3.7

@@ -66,7 +66,7 @@ public class Menu {
                     } else {
                         try {
                             NvEventQueueActivity.getInstance().sendRPC(1, String.valueOf(index).getBytes("windows-1251"), index);
-                            Toast.makeText(activity, String.valueOf(index), Toast.LENGTH_SHORT).show();
+                          //  Toast.makeText(activity, String.valueOf(index), Toast.LENGTH_SHORT).show();
                             close();
                         } catch (UnsupportedEncodingException e) {
                             e.printStackTrace();

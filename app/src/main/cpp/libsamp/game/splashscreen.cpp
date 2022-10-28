@@ -3,9 +3,11 @@
 #include "game.h"
 #include "../gui/gui.h"
 #include "../util/CJavaWrapper.h"
+#include "java_systems/hud.h"
 
 extern CGame *pGame;
 extern CGUI* pGUI;
+extern CHUD *pHud;
 
 RwTexture* splashTexture = nullptr;
 
@@ -51,8 +53,6 @@ void LoadSplashTexture()
 {
 	Log("Loading splash texture..");
 	splashTexture = (RwTexture*)LoadTextureFromDB("txd", "hud_bg");
-	pGame->isHudToggle = false;
-	//color_scheme = 1;
 }
 
 void Draw(stRect* rect, uint32_t color, RwRaster* raster = nullptr, stfRect* uv = nullptr)
@@ -172,7 +172,7 @@ void RenderBackgroundHud()
 	ImGui_ImplRenderWare_NewFrame();
 	ImGui::NewFrame();
 		
-	if (pGame->isHudToggle)
+	if (pHud->isHudToggle)
 	{
 		if (splashTexture)
 		{

@@ -10,12 +10,14 @@ extern "C" JavaVM* javaVM;
 #include "../game/game.h"
 #include "../str_obfuscator_no_template.hpp"
 #include "java_systems/scoreboard.h"
+#include "java_systems/hud.h"
 
 extern CKeyBoard* pKeyBoard;
 extern CChatWindow* pChatWindow;
 extern CSettings* pSettings;
 extern CNetGame* pNetGame;
 extern CGame* pGame;
+extern CHUD *pHud;
 
 
 
@@ -82,21 +84,6 @@ std::string CJavaWrapper::GetClipboardString()
 	env->ReleaseByteArrayElements(retn, pText, JNI_ABORT);
 	
 	return str;
-}
-
-void CJavaWrapper::CallLauncherActivity(int type)
-{
-	JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-
-	env->CallVoidMethod(activity, s_CallLauncherActivity, type);
-
-	EXCEPTION_CHECK(env);
 }
 
 void CJavaWrapper::ShowInputLayout()
@@ -213,7 +200,7 @@ extern "C"
 		}
 		pEnv->ReleaseByteArrayElements(str, pMsg, JNI_ABORT);
 
-		pGame->ToggleAllHud(true);
+		pHud->ToggleAll(true);
 		//g_pJavaWrapper->isDialogActive = false;
 
 		//	Log("sendDialogResponse: inputtext1 - %s, inputText - %s", inputtext1, inputText);
@@ -1017,22 +1004,6 @@ void CJavaWrapper::ShowOilFactoryGame()
     env->CallVoidMethod(this->activity, this->s_showOilFactoryGame);
 }
 
-
-void CJavaWrapper::ToggleAllHud(bool toggle)
-{
-    JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-	jclass clazz = env->GetObjectClass(jHudManager);
-
-	jmethodID ToggleAll = env->GetMethodID(clazz, "ToggleAll", "(Z)V");
-    env->CallVoidMethod(jHudManager, ToggleAll, toggle);
-}
-
 void CJavaWrapper::ShowBusInfo(int time)
 {
     JNIEnv* env = GetEnv();
@@ -1170,43 +1141,6 @@ void CJavaWrapper::HideGPS()
 		return;
 	}
     env->CallVoidMethod(this->activity, this->s_hideGPS);
-}
-
-void CJavaWrapper::ShowServer(int serverid)
-{
-    JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-    env->CallVoidMethod(this->activity, this->s_showServer, serverid);
-}
-
-void CJavaWrapper::HideServer()
-{
-    JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-    env->CallVoidMethod(this->activity, this->s_hideServer);
-}
-
-void CJavaWrapper::UpdateHudInfo(int health, int armour, int hunger, int weaponid, int ammo, int ammoinclip, int money, int wanted)
-{
-	JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-
-	env->CallVoidMethod(this->activity, this->s_updateHudInfo, health, armour, hunger, weaponid, ammo, ammoinclip, money, wanted);
 }
 
 void CJavaWrapper::UpdateLevelInfo(int level, int currentexp, int maxexp)
@@ -1426,11 +1360,11 @@ void CJavaWrapper::ToggleAutoShop(bool toggle)
 		Log("No env");
 		return;
 	}
-	pGame->ToggleAllHud(!toggle);
+	pHud->ToggleAll(!toggle);
 
 	env->CallVoidMethod(this->activity, this->j_toggleAutoShop, toggle);
 }
-void CJavaWrapper::UpdateAutoShop(std::string name, int price, int count, float maxspeed, float acceleration)
+void CJavaWrapper::UpdateAutoShop(const char name[], int price, int count, float maxspeed, float acceleration)
 {
 	JNIEnv* env = GetEnv();
 
@@ -1439,7 +1373,7 @@ void CJavaWrapper::UpdateAutoShop(std::string name, int price, int count, float 
 		Log("No env");
 		return;
 	}
-	jstring j_name = env->NewStringUTF( name.c_str() );
+	jstring j_name = env->NewStringUTF( name );
 
 	env->CallVoidMethod(this->activity, this->j_updateAutoShop, j_name, price, count, maxspeed, acceleration);
 
@@ -1599,7 +1533,6 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 		return;
 	}
 
-	//s_CallLauncherActivity = env->GetMethodID(nvEventClass, "callLauncherActivity", "(I)V");
 	s_GetClipboardText = env->GetMethodID(nvEventClass, "getClipboardText", "()[B");
 
 	s_ShowInputLayout = env->GetMethodID(nvEventClass, "showInputLayout", "()V");
@@ -1608,7 +1541,6 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 	s_ShowClientSettings = env->GetMethodID(nvEventClass, "showClientSettings", "()V");
 	s_SetUseFullScreen = env->GetMethodID(nvEventClass, "setUseFullscreen", "(I)V");
 
-	s_updateHudInfo = env->GetMethodID(nvEventClass, "updateHudInfo", "(IIIIIIII)V");
 	s_updateLevelInfo = env->GetMethodID(nvEventClass, "updateLevelInfo", "(III)V");
 
 	s_showGreenZone = env->GetMethodID(nvEventClass, "showGreenZone", "()V");
@@ -1616,7 +1548,6 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 	s_showGPS = env->GetMethodID(nvEventClass, "showGPS", "()V");
     s_hideGPS = env->GetMethodID(nvEventClass, "hideGPS", "()V");
 	s_showServer = env->GetMethodID(nvEventClass, "showServer", "(I)V");
-    s_hideServer = env->GetMethodID(nvEventClass, "hideServer", "()V");
 
 	s_showOilFactoryGame = env->GetMethodID(nvEventClass, "showOilFactoryGame", "()V");
 	s_showArmyGame = env->GetMethodID(nvEventClass, "showArmyGame", "(I)V");
@@ -1792,8 +1723,4 @@ Java_com_liverussia_cr_gui_Casino_1LuckyWheel_ClickButt(JNIEnv *env, jobject thi
 	bsSend.Write(button);
 	pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
 }
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_HudManager_cppToggleAllHud(JNIEnv *env, jobject thiz, jboolean toggle) {
-	pGame->ToggleAllHud(toggle);
-}
+

@@ -10,12 +10,15 @@
 #include "..//chatwindow.h"
 #include "../CSettings.h"
 #include "../util/CJavaWrapper.h"
+#include "java_systems/hud.h"
+
 extern CKeyBoard* pKeyBoard;
 extern CChatWindow* pChatWindow;
 
 extern CGame *pGame;
 extern CNetGame *pNetGame;
 extern CSettings *pSettings;
+extern CHUD *pHud;
 
 bool bFirstSpawn = true;
 
@@ -100,11 +103,11 @@ void CLocalPlayer::ResetAllSyncAttributes()
 void CLocalPlayer::SendStatsUpdate()
 {
 	RakNet::BitStream bsStats;
-	int iMoney = pGame->GetLocalMoney();
+
 	uint32_t wAmmo = m_pPlayerPed->GetCurrentWeaponSlot()->dwAmmo;
 
 	bsStats.Write((BYTE)ID_STATS_UPDATE);
-	bsStats.Write(iMoney);
+	bsStats.Write(pHud->localMoney);
 	bsStats.Write(wAmmo);
 	pNetGame->GetRakClient()->Send(&bsStats, HIGH_PRIORITY, UNRELIABLE, 0);
 }
@@ -666,11 +669,11 @@ bool CLocalPlayer::Spawn()
 
 	if(pSettings && pSettings->GetReadOnly().iHud)
 	{
-		pGame->ToggleAllHud(true);
+		pHud->ToggleAll(true);
 	}
 	else
 	{
-		pGame->ToggleAllHud(false);
+		pHud->ToggleAll(false);
 	}
    
     //g_pJavaWrapper->ShowSpeed();

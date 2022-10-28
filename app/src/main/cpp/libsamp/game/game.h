@@ -48,12 +48,12 @@ public:
 
 	void RemoveModel(int iModel, bool bFromStreaming);
 
-	void ToggleHUDElement(int iID, bool bToggle);
-	bool IsToggledHUDElement(int iID);
-	void ToggleAllHud(bool toggle, bool withchat = false, bool anyway = false);
+
 	void HandleChangedHUDStatus();
+	bool IsToggledHUDElement(int iID);
 
 	static void SetEnabledPCMoney(bool bEnabled);
+	void ToggleHUDElement(int iID, bool bToggle);
 
 	CCamera* GetCamera() { return m_pGameCamera; }
 	// 0.3.7
@@ -142,8 +142,7 @@ public:
 
 	void DrawGangZone(float fPos[], uint32_t dwColor);
 
-	bool isHudToggle;
-	int hudhideCount;
+
 private:
 	bool aToggleStatusHUD[HUD_MAX];
 	CCamera* 		m_pGameCamera;

@@ -22,7 +22,6 @@ import java.util.Formatter;
 public class HudManager {
     private Activity activity;
     private ConstraintLayout hud_main;
-    private ConstraintLayout hud_main_layout;
     private ConstraintLayout target_notify;
     private ConstraintLayout yearn_money;
     private ConstraintLayout bus_layout;
@@ -39,7 +38,6 @@ public class HudManager {
     private ImageView hud_greenzone;
     private ImageView hud_gpsactive;
     private ImageView hud_serverlogo;
-    private ConstraintLayout hud_serverinfo;
     private ArrayList<ImageView> hud_wanted;
     private ProgressBar progressHP;
     private ProgressBar progressArmor;
@@ -55,9 +53,6 @@ public class HudManager {
         activity = aactivity;
         hud_main = aactivity.findViewById(R.id.hud_main);
         hud_main.setVisibility(View.GONE);
-
-        hud_main_layout = aactivity.findViewById(R.id.hud_layout);
-        hud_main_layout.setVisibility(View.VISIBLE);
 
         bus_layout = aactivity.findViewById(R.id.bus_layout);
         bus_layout.setVisibility(View.GONE);
@@ -76,10 +71,11 @@ public class HudManager {
         target_notify_text = aactivity.findViewById(R.id.target_notify_text);
 
         hud_greenzone = aactivity.findViewById(R.id.hud_greenzone);
+        hud_greenzone.setVisibility(View.GONE);
         hud_gpsactive = aactivity.findViewById(R.id.hud_gpsactive);
+        hud_gpsactive.setVisibility(View.GONE);
         hud_serverlogo = aactivity.findViewById(R.id.hud_logo);
         hud_serverlogo.setVisibility(View.GONE);
-        hud_serverinfo = aactivity.findViewById(R.id.hud_serverinfo);
 
         levelinfo = aactivity.findViewById(R.id.levelinfo);
 
@@ -115,43 +111,43 @@ public class HudManager {
     {
         cppToggleAllHud(toggle);
     }
+
     public void UpdateHudInfo(int health, int armour, int hunger, int weaponid, int ammo, int ammoclip, int money, int wanted)
     {
-        progressHP.setProgress(health);
-        progressArmor.setProgress(armour);
-
-        DecimalFormat formatter=new DecimalFormat();
-        DecimalFormatSymbols symbols= DecimalFormatSymbols.getInstance();
-        symbols.setGroupingSeparator('.');
-        formatter.setDecimalFormatSymbols(symbols);
-        String s=formatter.format(money).toString();
-        hud_money.setText(String.valueOf(s));
-
-        int id = activity.getResources().getIdentifier(new Formatter().format("weapon_%d", Integer.valueOf(weaponid)).toString(), "drawable", activity.getPackageName());
-        hud_weapon.setImageResource(id);
-
-        hud_weapon.setOnClickListener(v -> NvEventQueueActivity.getInstance().onWeaponChanged());
-        if(wanted > 6) wanted = 6;
-        for (int i2 = 0; i2 < wanted; i2++) {
-            hud_wanted.get(i2).setBackgroundResource(R.drawable.ic_y_star);
-        }
-
-        if (weaponid > 15 & weaponid < 44 & weaponid != 21)
+        activity.runOnUiThread(() ->
         {
-            Utils.ShowLayout(hud_ammo, false);
-            String ss = String.format("%d<font color='#B0B0B0'>/%d</font>", ammoclip, ammo - ammoclip);
-            hud_ammo.setText(Html.fromHtml(String.valueOf(ss)));
-        }
-        else
-        {
-            Utils.HideLayout(hud_ammo, false);
-        }
+            progressHP.setProgress(health);
+            progressArmor.setProgress(armour);
 
-        String stroilwaterproc = String.format("%d%%", oil_water_progress.getProgress()/10);
-        oil_water_procent.setText(String.valueOf(stroilwaterproc));
-        String stroiloilproc = String.format("%d%%", oil_oil_progress.getProgress()/10);
-        oil_oil_procent.setText(String.valueOf(stroiloilproc));
+            DecimalFormat formatter = new DecimalFormat();
+            DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance();
+            symbols.setGroupingSeparator('.');
+            formatter.setDecimalFormatSymbols(symbols);
+            String money_str = formatter.format(money);
+            hud_money.setText(money_str);
 
+            int id = activity.getResources().getIdentifier(new Formatter().format("weapon_%d", Integer.valueOf(weaponid)).toString(), "drawable", activity.getPackageName());
+            hud_weapon.setImageResource(id);
+
+            hud_weapon.setOnClickListener(v -> NvEventQueueActivity.getInstance().onWeaponChanged());
+
+            for (int i2 = 0; i2 < wanted; i2++) {
+                hud_wanted.get(i2).setBackgroundResource(R.drawable.ic_y_star);
+            }
+
+            if (weaponid > 15 & weaponid < 44 & weaponid != 21) {
+                Utils.ShowLayout(hud_ammo, false);
+                String ss = String.format("%d<font color='#B0B0B0'>/%d</font>", ammoclip, ammo - ammoclip);
+                hud_ammo.setText(Html.fromHtml(ss));
+            } else {
+                Utils.HideLayout(hud_ammo, false);
+            }
+
+            String stroilwaterproc = String.format("%d%%", oil_water_progress.getProgress() / 10);
+            oil_water_procent.setText(stroilwaterproc);
+            String stroiloilproc = String.format("%d%%", oil_oil_progress.getProgress() / 10);
+            oil_oil_procent.setText(stroiloilproc);
+        });
     }
 
     public void ToggleAll(boolean toggle)
@@ -180,7 +176,7 @@ public class HudManager {
         Utils.HideLayout(hud_gpsactive, true);
     }
 
-    public void ShowServer(int serverid) {
+    public void InitServerLogo(int serverid) {
         if (serverid == 0)
         {
             hud_serverlogo.setImageResource(R.drawable.moscow);
@@ -205,7 +201,6 @@ public class HudManager {
         {
             hud_serverlogo.setImageResource(R.drawable.testserver);
         }
-        Utils.ShowLayout(hud_serverinfo, true);
     }
     public void HideServerLogo()
     {
@@ -215,7 +210,7 @@ public class HudManager {
     {
         Utils.ShowLayout(hud_serverlogo, false);
     }
-    public void HideServer() { Utils.HideLayout(hud_serverinfo, true); }
+//    public void HideServer() { Utils.HideLayout(hud_serverinfo, true); }
 
     public void UpdateLevelInfo(int level, int currentexp, int maxexp) {
         String strlevelinfo = String.format("LVL %d [EXP %d/%d]", level, currentexp, maxexp);
@@ -230,7 +225,7 @@ public class HudManager {
         if (money != -1)
         {
             String str = String.format("%d", money);
-            yearn_moneytext.setText(String.valueOf(str) + " P");
+            yearn_moneytext.setText(str + " P");
         }
     }
 

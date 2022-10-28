@@ -15,6 +15,7 @@
 #include "keyboard.h"
 #include "CSettings.h"
 #include "CClientInfo.h"
+#include "java_systems/hud.h"
 
 #include "util/armhook.h"
 #include "CCheckFileHash.h"
@@ -32,6 +33,7 @@ const char* g_pszStorage = nullptr;
 
 #include "CServerManager.h"
 #include "CLocalisation.h"
+#include "java_systems/hud.h"
 
 const cryptor::string_encryptor encLib = cryptor::create("libsamp.so", 11);
 void CrashLog(const char* fmt, ...);
@@ -45,6 +47,7 @@ CSnapShotHelper* pSnapShotHelper = nullptr;
 CGUI *pGUI = nullptr;
 CKeyBoard *pKeyBoard = nullptr;
 CSettings *pSettings = nullptr;
+CHUD *pHud = nullptr;
 
 void InitHookStuff();
 void InstallSpecialHooks();
@@ -118,6 +121,7 @@ void InitSAMP(JNIEnv* pEnv, jobject thiz)
 	Log("Storage: %s", g_pszStorage);
 
 	pSettings = new CSettings();
+	pHud = new CHUD();
 
 	CWeaponsOutFit::SetEnabled(pSettings->GetReadOnly().iOutfitGuns);
 	CRadarRect::SetEnabled(pSettings->GetReadOnly().iRadarRect);
@@ -220,7 +224,7 @@ void InitInGame()
 		pGame->SetMaxStats();
 
 		g_pJavaWrapper->UpdateSplash(101);
-		g_pJavaWrapper->ShowServer(pSettings->GetReadOnly().szServer);
+		pHud->InitServerLogo(pSettings->GetReadOnly().szServer);
 		g_pJavaWrapper->ShowServerLogo();
 		bGameInited = true;
 

@@ -80,4 +80,5 @@
     <string name="autoshop_acceleration">Разгон от 0 до 100</string>
     <string name="autoshop_available">Доступно к покупке</string>
     <string name="autoshop_pricelabel">Стоимость транспортного средства:</string>
+    <string name="hud_no_load">hud load</string>
 </resources>

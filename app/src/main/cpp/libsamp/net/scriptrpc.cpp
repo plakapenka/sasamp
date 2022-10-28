@@ -671,6 +671,8 @@ void ScrHaveSomeMoney(RPCParameters *rpcParams)
 	int iAmmount;
 	RakNet::BitStream bsData((unsigned char*)Data,(iBitLength/8)+1,false);
 	bsData.Read(iAmmount);
+
+
 	pGame->AddToLocalMoney(iAmmount);
 }
 
