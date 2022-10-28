@@ -1,9 +1,12 @@
 package com.liverussia.cr.gui;
 
 import android.app.Activity;
+import android.graphics.Point;
 import android.text.Html;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -21,6 +24,7 @@ import java.util.Formatter;
 
 public class HudManager {
     private Activity activity;
+    private ImageView hud_middle_img;
     private ConstraintLayout hud_main;
     private ConstraintLayout target_notify;
     private ConstraintLayout yearn_money;
@@ -51,6 +55,9 @@ public class HudManager {
     public HudManager(Activity aactivity) {
         HudInit();
         activity = aactivity;
+
+        hud_middle_img = activity.findViewById(R.id.imageView6);
+
         hud_main = aactivity.findViewById(R.id.hud_main);
         hud_main.setVisibility(View.GONE);
 
@@ -107,6 +114,7 @@ public class HudManager {
 
         Utils.HideLayout(hud_gpsactive, false);
     }
+
     public void ToggleAllHud(boolean toggle)
     {
         cppToggleAllHud(toggle);
@@ -116,6 +124,7 @@ public class HudManager {
     {
         activity.runOnUiThread(() ->
         {
+            Log.d("sdf", "HUDX = " + hud_middle_img.getLeft() + "HUDY" + hud_middle_img.getTop());
             progressHP.setProgress(health);
             progressArmor.setProgress(armour);
 
@@ -262,6 +271,21 @@ public class HudManager {
     }
 
     public void HideBusInfo() { Utils.HideLayout(bus_layout, true); }
+
+    public int GetScreenSize(boolean isWidth)
+    {
+        Display display = activity.getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        if(isWidth)
+        {
+            return size.y;
+        }
+        else
+        {
+            return size.x;
+        }
+    }
 
 
 }

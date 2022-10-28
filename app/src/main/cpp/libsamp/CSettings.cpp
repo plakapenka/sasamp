@@ -5,6 +5,7 @@
 #include "game/CAdjustableHudColors.h"
 #include "game/CAdjustableHudPosition.h"
 #include "game/CAdjustableHudScale.h"
+#include "java_systems/hud.h"
 
 static void ClearBackslashN(char *pStr, size_t size)
 {
@@ -184,7 +185,8 @@ stSettings &CSettings::GetWrite()
 	Save();
 	return m_Settings;
 }
-
+extern CGame* pGame;
+extern CHUD *pHud;
 void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 {
 	char tempNick[40];
@@ -314,7 +316,8 @@ void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 		int valueY = ini_table_get_entry_as_int(config, "hud", buff, -1);
 
 		CAdjustableHudPosition::SetElementPosition((E_HUD_ELEMENT)i, valueX, valueY);
-		CAdjustableHudPosition::SetElementPosition((HUD_RADAR), 97, 85);
+		CAdjustableHudPosition::SetElementPosition((HUD_RADAR), 97, 85); //97, 85
+
 	}
 
 	for (int i = 0; i < E_HUD_ELEMENT::HUD_SIZE; i++)

@@ -16,6 +16,7 @@ public:
 
     void ToggleAll(bool toggle, bool withchat = false, bool anyway = false);
     void UpdateHudInfo();
+    int GetScreenSize(bool isWidth);
     CHUD();
     bool isHudToggle = false;
     int hudhideCount = 0;

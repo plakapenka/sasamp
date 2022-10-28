@@ -73,6 +73,21 @@ void CHUD::ToggleAll(bool toggle, bool withchat, bool anyway)
     env->CallVoidMethod(jHudManager, ToggleAll, toggle);
 }
 
+int CHUD::GetScreenSize(bool isWidth)
+{
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+
+    if (!env)
+    {
+        Log("No env");
+        return 0;
+    }
+    jclass clazz = env->GetObjectClass(jHudManager);
+    jmethodID jGetScreenSize = env->GetMethodID(clazz, "GetScreenSize", "(Z)I");
+    jint value = env->CallIntMethod(jHudManager, jGetScreenSize, isWidth);
+    return value;
+}
+
 void CHUD::UpdateHudInfo()
 {
     PED_TYPE* pPedPlayer = GamePool_FindPlayerPed();
