@@ -1416,6 +1416,7 @@ void CNetGame::ShutDownForGameRestart()
 	ResetLabelPool();
 	ResetTextDrawPool();
 	ResetActorPool();
+	g_pJavaWrapper->ClearScreen();
 
 	m_bDisableEnterExits = false;
 	m_fNameTagDrawDistance = 60.0f;

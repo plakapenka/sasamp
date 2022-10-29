@@ -1485,6 +1485,7 @@ void CJavaWrapper::HideChooseSpawn()
 
 void CJavaWrapper::ClearScreen()
 {
+	pHud->ToggleAll(false);
 	HideAuthorization();
 	HideChooseSpawn();
 	HideRegistration();
