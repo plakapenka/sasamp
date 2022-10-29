@@ -143,18 +143,18 @@ public:
 	void DrawGangZone(float fPos[], uint32_t dwColor);
 
 
+// race checkpoint
+bool			m_bRaceCheckpointsEnabled;
+// checkpoint
+bool			m_bCheckpointsEnabled;
 private:
 	bool aToggleStatusHUD[HUD_MAX];
 	CCamera* 		m_pGameCamera;
 	CPlayerPed*		m_pGamePlayer;
 
-	// checkpoint
-	bool			m_bCheckpointsEnabled;
 	uint32_t		m_dwCheckpointMarker;
 	VECTOR			m_vecCheckpointPos;
 	VECTOR			m_vecCheckpointExtent;
-	// race checkpoint
-	bool			m_bRaceCheckpointsEnabled;
 	uint32_t		m_dwRaceCheckpointHandle;
 	uint32_t		m_dwRaceCheckpointMarker;
 	float			m_fRaceCheckpointSize;

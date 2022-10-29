@@ -6,6 +6,7 @@ import android.text.Html;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -24,7 +25,7 @@ import java.util.Formatter;
 
 public class HudManager {
     private Activity activity;
-    private ImageView hud_middle_img;
+    private ImageView radar_dics;
     private ConstraintLayout hud_main;
     private ConstraintLayout target_notify;
     private ConstraintLayout yearn_money;
@@ -55,8 +56,6 @@ public class HudManager {
     public HudManager(Activity aactivity) {
         HudInit();
         activity = aactivity;
-
-        hud_middle_img = activity.findViewById(R.id.imageView6);
 
         hud_main = aactivity.findViewById(R.id.hud_main);
         hud_main.setVisibility(View.GONE);
@@ -124,7 +123,6 @@ public class HudManager {
     {
         activity.runOnUiThread(() ->
         {
-            Log.d("sdf", "HUDX = " + hud_middle_img.getLeft() + "HUDY" + hud_middle_img.getTop());
             progressHP.setProgress(health);
             progressArmor.setProgress(armour);
 
@@ -274,16 +272,17 @@ public class HudManager {
 
     public int GetScreenSize(boolean isWidth)
     {
-        Display display = activity.getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
+        int test1[] = new int[2];
+        //Log.d()
+        radar_dics.getLocationOnScreen(test1);
         if(isWidth)
         {
-            return size.y;
+
+            return test1[0];
         }
         else
         {
-            return size.x;
+            return test1[1];
         }
     }
 
