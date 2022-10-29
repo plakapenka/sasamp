@@ -368,7 +368,7 @@ void SetCheckpoint(RPCParameters *rpcParams)
 	Extent.Z = fSize;
 
 	pGame->SetCheckpointInformation(&pos, &Extent);
-	pGame->ToggleCheckpoints(true);
+	//pGame->ToggleCheckpoints(true);
 }
 
 void DisableCheckpoint(RPCParameters *rpcParams)
@@ -404,12 +404,15 @@ void SetRaceCheckpoint(RPCParameters *rpcParams)
 	bsData.Read(fX);
 
 	pGame->SetRaceCheckpointInformation(byteType, &pos, &next, fX);
-	pGame->ToggleRaceCheckpoints(true);
 }
 
 void DisableRaceCheckpoint(RPCParameters *rpcParams)
 {
-	pGame->ToggleRaceCheckpoints(false);
+	if(pGame->m_bRaceCheckpointsEnabled)
+	{
+		pGame->DisableRaceCheckpoint();
+		g_pJavaWrapper->HideGPS();
+	}
 }
 void WorldVehicleAdd(RPCParameters *rpcParams)
 {

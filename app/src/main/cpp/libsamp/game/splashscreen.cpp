@@ -128,9 +128,8 @@ void RenderSplash()
 		Draw(&rect, COLOR_WHITE, splashTexture->raster, &uv);
 	}*/
 
-	const float percent = *(float*)(g_libGTASA + 0x8F08C0);
+	const float percent = *(float*)(g_libGTASA + 0x8F08C0)*2;
 	if (percent <= 0.0f) return;
-	float mult = percent / 100.0f;
 
 	int intMult = (int)percent;
 
@@ -175,8 +174,13 @@ void RenderBackgroundHud()
 	if (pHud->isHudToggle)
 	{
 		if (splashTexture)
-		{//183 55.. 399..336
-			ImGui::GetBackgroundDrawList()->AddImage((ImTextureID)splashTexture->raster, ImVec2(pGUI->ScaleX(183), pGUI->ScaleY(74)), ImVec2(pGUI->ScaleX(399), pGUI->ScaleY(336)), ImVec2(0, 0), ImVec2(1, 1));
+		{//183 55.. 399..33
+			//183+200), pGUI->ScaleY(74+200)), ImVec2(pGUI->ScaleX(399+200), pGUI->ScaleY(336+200)
+////////////////////////////////////////////////////////////////////////////////////////////////////183, 74, 399, 336
+			ImGui::GetBackgroundDrawList()->AddImage((ImTextureID)splashTexture->raster,
+													 ImVec2(pGUI->ScaleX(183), pGUI->ScaleY(74)),
+													 ImVec2(pGUI->ScaleX(399), pGUI->ScaleY(336)),
+													 ImVec2(0, 0), ImVec2(1, 1));
 		}
 		// ImGui::GetBackgroundDrawList()->AddCircleFilled(ImVec2(pGUI->ScaleX(291), pGUI->ScaleY(205)), pGUI->ScaleX(108), 0x75000000, 45);
 	}

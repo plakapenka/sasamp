@@ -71,6 +71,10 @@ void CHUD::ToggleAll(bool toggle, bool withchat, bool anyway)
 
     jmethodID ToggleAll = env->GetMethodID(clazz, "ToggleAll", "(Z)V");
     env->CallVoidMethod(jHudManager, ToggleAll, toggle);
+
+  //  int radarPosX = (int)pHud->GetScreenSize(true)/11.13;
+   // int radarPosY = (int)pHud->GetScreenSize(false)/24.8;
+
 }
 
 int CHUD::GetScreenSize(bool isWidth)
