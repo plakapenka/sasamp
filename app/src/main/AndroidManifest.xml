@@ -58,7 +58,7 @@
         <activity
             android:name="com.liverussia.cr.core.GTASA"
             android:screenOrientation="landscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"></activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"/>
         <activity
             android:name="com.liverussia.launcher.activity.SplashActivity"
             android:exported="true"
@@ -73,11 +73,16 @@
             android:name="com.liverussia.launcher.activity.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name="com.liverussia.launcher.activity.LoaderActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="com.liverussia.launcher.activity.PolicyActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <meta-data
             android:name="android.max_aspect"
