@@ -24,6 +24,7 @@ import com.liverussia.launcher.dto.request.LoginRequestDto;
 import com.liverussia.launcher.enums.ServerInfo;
 import com.liverussia.launcher.messages.ErrorMessages;
 import com.liverussia.launcher.async.AuthenticateAsyncRestCall;
+import com.liverussia.launcher.model.Servers;
 import com.liverussia.launcher.service.ActivityService;
 import com.liverussia.launcher.utils.Validator;
 
@@ -38,7 +39,7 @@ public class AuthenticationDialog extends DialogFragment implements View.OnClick
 
     private ActivityService activityService;
 
-    private ServerInfo selectedServer;
+    private Servers selectedServer;
     private String captchaToken;
 
     private EditText passwordInput;
@@ -133,30 +134,10 @@ public class AuthenticationDialog extends DialogFragment implements View.OnClick
     }
 
     @Override
-    public void setSelectedServer(ServerInfo selectedServer) {
+    public void setSelectedServer(Servers selectedServer) {
         this.selectedServer = selectedServer;
-
         selectServerButton.setCompoundDrawables(null, null, null, null);
-
-        switch (selectedServer) {
-            case MOSCOW:
-                selectServerButton.setText("MOSCOW");
-                break;
-            case PETERSBURG:
-                selectServerButton.setText("PETERSBURG");
-                break;
-            case NOVOSIBIRSK:
-                selectServerButton.setText("NOVOSIBIRSK");
-                break;
-            case SAMARA:
-                selectServerButton.setText("SAMARA");
-                break;
-            case SOCHI:
-                selectServerButton.setText("SOCHI");
-                break;
-            default:
-                break;
-        }
+        selectServerButton.setText(selectedServer.getname().toUpperCase());
     }
 
     private void performIAmNotRobotCheckBoxAction() {
@@ -196,6 +177,7 @@ public class AuthenticationDialog extends DialogFragment implements View.OnClick
         LoginRequestDto requestDto = new LoginRequestDto();
         requestDto.setLogin(loginInput.getText().toString());
         requestDto.setPassword(passwordInput.getText().toString());
+        requestDto.setServerId(selectedServer.getServerID());
         requestDto.setCaptchaToken(captchaToken);
 
         AuthenticateAsyncRestCall asyncRestCall = new AuthenticateAsyncRestCall(fragment.getActivity());

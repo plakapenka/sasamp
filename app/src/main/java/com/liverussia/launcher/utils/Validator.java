@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.liverussia.launcher.enums.ServerInfo;
 import com.liverussia.launcher.messages.ErrorMessages;
+import com.liverussia.launcher.model.Servers;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -97,7 +98,7 @@ public class Validator {
         return true;
     }
 
-    public static boolean isValidSelectedServer(ServerInfo selectedServer, Activity activity) {
+    public static boolean isValidSelectedServer(Servers selectedServer, Activity activity) {
 
         if (selectedServer == null) {
             showMessage(ErrorMessages.SERVER_NOT_SELECTED.getText(), activity);

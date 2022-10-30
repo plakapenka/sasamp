@@ -24,6 +24,7 @@ import com.liverussia.launcher.dto.response.ServerImagesResponseDto;
 import com.liverussia.launcher.enums.BillingParameters;
 import com.liverussia.launcher.enums.ServerInfo;
 import com.liverussia.launcher.enums.StorageElements;
+import com.liverussia.launcher.model.Servers;
 import com.liverussia.launcher.storage.Storage;
 import com.liverussia.launcher.ui.adapters.DonateServicesItemListAdapter;
 import com.liverussia.launcher.utils.Validator;
@@ -41,7 +42,7 @@ public class DonateFragment extends Fragment implements View.OnClickListener, Ac
     private TextView selectServerButton;
     private GridView donateServicesPanel;
 
-    private ServerInfo selectedServer;
+    private Servers selectedServer;
 
     public DonateFragment(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
@@ -102,7 +103,7 @@ public class DonateFragment extends Fragment implements View.OnClickListener, Ac
         billingIntent.putExtra(BillingParameters.NICKNAME.getName(), nickname);
         billingIntent.putExtra(BillingParameters.EMAIL.getName(), email);
         billingIntent.putExtra(BillingParameters.DONATE_SUM.getName(), donateSum);
-        billingIntent.putExtra(BillingParameters.SERVER_SELECTED.getName(), selectedServer.getIndex());
+        billingIntent.putExtra(BillingParameters.SERVER_SELECTED.getName(), selectedServer.getServerID());
 
         startActivity(billingIntent);
     }
@@ -128,29 +129,10 @@ public class DonateFragment extends Fragment implements View.OnClickListener, Ac
     }
 
     @Override
-    public void setSelectedServer(ServerInfo selectedServer) {
-        this.selectedServer = selectedServer;
+    public void setSelectedServer(Servers server) {
+        this.selectedServer = server;
         selectServerButton.setCompoundDrawables(null, null, null, null);
-
-        switch (selectedServer) {
-            case MOSCOW:
-                selectServerButton.setText("MOSCOW");
-                break;
-            case PETERSBURG:
-                selectServerButton.setText("PETERSBURG");
-                break;
-            case NOVOSIBIRSK:
-                selectServerButton.setText("NOVOSIBIRSK");
-                break;
-            case SAMARA:
-                selectServerButton.setText("SAMARA");
-                break;
-            case SOCHI:
-                selectServerButton.setText("SOCHI");
-                break;
-            default:
-                break;
-        }
+        selectServerButton.setText(server.getname().toUpperCase());
     }
 
     private void addDonateServices() {

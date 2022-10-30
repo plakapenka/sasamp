@@ -29,6 +29,7 @@ import com.nvidia.devtech.NvEventQueueActivity;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ChooseServer {
     private ProgressBar load_game_progressBar;
@@ -36,7 +37,7 @@ public class ChooseServer {
     private FrameLayout serverLayout;
     private LinearLayout chooseServerLayout;
     private LinearLayout loadingLayout;
-    private ArrayList<Servers> mServers;
+    private List<Servers> mServers;
     private TextView percentText;
     int type, size;
     private TextView mProgress;

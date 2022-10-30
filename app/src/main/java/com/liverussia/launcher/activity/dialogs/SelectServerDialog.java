@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.liverussia.cr.R;
 import com.liverussia.launcher.activity.ActivitySupportedServerSelection;
+import com.liverussia.launcher.adapter.ServersAdapter;
+import com.liverussia.launcher.adapter.ServersDialogAdapter;
 import com.liverussia.launcher.enums.ServerInfo;
 import com.liverussia.launcher.model.Servers;
 import com.liverussia.launcher.other.Lists;
@@ -30,11 +32,9 @@ public class SelectServerDialog extends DialogFragment implements View.OnClickLi
     private ActivitySupportedServerSelection activity;
 
     private TextView btnGoBack;
-    private ConstraintLayout moscowItem;
-    private ConstraintLayout petersburgItem;
-    private ConstraintLayout novosibirskItem;
-    private ConstraintLayout samaraItem;
-    private ConstraintLayout sochiItem;
+
+    private RecyclerView recyclerServers;
+    private ServersDialogAdapter serversAdapter;
 
     public static SelectServerDialog display(FragmentManager fragmentManager, ActivitySupportedServerSelection activity) {
         SelectServerDialog dialog = new SelectServerDialog(activity);
@@ -61,16 +61,13 @@ public class SelectServerDialog extends DialogFragment implements View.OnClickLi
         btnGoBack = view.findViewById(R.id.btnGoBack);
         btnGoBack.setOnClickListener(this);
 
-        moscowItem = view.findViewById(R.id.moscow);
-        moscowItem.setOnClickListener(this);
-        petersburgItem = view.findViewById(R.id.peterburg);
-        petersburgItem.setOnClickListener(this);
-        novosibirskItem = view.findViewById(R.id.novosibirsk);
-        novosibirskItem.setOnClickListener(this);
-        samaraItem = view.findViewById(R.id.samara);
-        samaraItem.setOnClickListener(this);
-        sochiItem = view.findViewById(R.id.sochi);
-        sochiItem.setOnClickListener(this);
+        recyclerServers = view.findViewById(R.id.ourServersRV);
+        recyclerServers.setHasFixedSize(true);
+        LinearLayoutManager layoutManagerr = new LinearLayoutManager(getActivity());
+        recyclerServers.setLayoutManager(layoutManagerr);
+
+        serversAdapter = new ServersDialogAdapter(getContext(), Lists.SERVERS, this);
+        recyclerServers.setAdapter(serversAdapter);
 
         return view;
     }
@@ -83,31 +80,16 @@ public class SelectServerDialog extends DialogFragment implements View.OnClickLi
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.moscow:
-                activity.setSelectedServer(ServerInfo.MOSCOW);
-                dismiss();
-                break;
-            case R.id.peterburg:
-                activity.setSelectedServer(ServerInfo.PETERSBURG);
-                dismiss();
-                break;
-            case R.id.novosibirsk:
-                activity.setSelectedServer(ServerInfo.NOVOSIBIRSK);
-                dismiss();
-                break;
-            case R.id.samara:
-                activity.setSelectedServer(ServerInfo.SAMARA);
-                dismiss();
-                break;
-            case R.id.sochi:
-                activity.setSelectedServer(ServerInfo.SOCHI);
-                dismiss();
-                break;
             case R.id.btnGoBack:
                 dismiss();
                 break;
             default:
                 break;
         }
+    }
+
+    public void setSelectedServer(Servers server) {
+        activity.setSelectedServer(server);
+        dismiss();
     }
 }
