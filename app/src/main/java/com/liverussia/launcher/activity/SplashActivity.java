@@ -50,8 +50,8 @@ public class SplashActivity extends AppCompatActivity{
 						| View.SYSTEM_UI_FLAG_FULLSCREEN
 						| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
-		Lists.slist = new ArrayList<>();
-		Lists.nlist = new ArrayList<>();
+		Lists.SERVERS = new ArrayList<>();
+		Lists.NEWS = new ArrayList<>();
 
 		Retrofit retrofit = new Retrofit.Builder()
 				.baseUrl("http://vbd.fdv.dd/")
@@ -69,7 +69,7 @@ public class SplashActivity extends AppCompatActivity{
 				List<Servers> servers = response.body();
 
 				for (Servers server : servers) {
-					Lists.slist.add(new Servers(server.getColor(), server.getServerID(), server.getDopname(), server.getname(), server.getOnline(), server.getmaxOnline()));
+					Lists.SERVERS.add(new Servers(server.getColor(), server.getServerID(), server.getDopname(), server.getname(), server.getOnline(), server.getmaxOnline()));
 				}
 			}
 
@@ -88,7 +88,7 @@ public class SplashActivity extends AppCompatActivity{
 				List<News> news = response.body();
 
 				for (News storie : news) {
-					Lists.nlist.add(new News(storie.getImageUrl(), storie.getTitle(), storie.getUrl()));
+					Lists.NEWS.add(new News(storie.getImageUrl(), storie.getTitle(), storie.getUrl()));
 				}
 			}
 

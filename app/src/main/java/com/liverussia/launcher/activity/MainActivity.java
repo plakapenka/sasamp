@@ -24,12 +24,15 @@ import com.liverussia.launcher.fragment.MonitoringFragment;
 import com.liverussia.launcher.fragment.DonateFragment;
 import com.liverussia.launcher.fragment.RouletteFragment;
 import com.liverussia.launcher.fragment.SettingsFragment;
+import com.liverussia.launcher.model.Servers;
 import com.liverussia.launcher.other.NetworkService;
 
 import java.io.File;
 
 import java.util.*;
 
+import lombok.Getter;
+import lombok.Setter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -63,6 +66,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private ServerImagesResponseDto possiblePrizesInfoResponseDto;
     private ServerImagesResponseDto donateServicesResponseDto;
+
+    @Getter
+    @Setter
+    private List<Servers> servers;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
