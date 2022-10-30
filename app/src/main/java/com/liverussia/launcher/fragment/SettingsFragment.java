@@ -14,10 +14,12 @@ import androidx.fragment.app.Fragment;
 
 import com.liverussia.cr.R;
 import com.liverussia.launcher.activity.dialogs.EnterNicknameDialogBuilder;
+import com.liverussia.launcher.enums.NativeStorageElements;
 import com.liverussia.launcher.enums.StorageElements;
 import com.liverussia.launcher.messages.InfoMessages;
 import com.liverussia.launcher.other.Utils;
 import com.liverussia.launcher.service.impl.ActivityServiceImpl;
+import com.liverussia.launcher.storage.NativeStorage;
 import com.liverussia.launcher.storage.Storage;
 import com.liverussia.launcher.service.ActivityService;
 
@@ -136,7 +138,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener{
     }
 
     private void initUserData() {
-        String nickname = Storage.getProperty(StorageElements.NICKNAME.getValue(), this.getActivity());
+        String nickname = NativeStorage.getClientProperty(NativeStorageElements.NICKNAME, this.getActivity());
         nicknameField.setText(nickname);
     }
 

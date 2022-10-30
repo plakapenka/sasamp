@@ -11,8 +11,10 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.liverussia.cr.R;
+import com.liverussia.launcher.enums.NativeStorageElements;
 import com.liverussia.launcher.enums.StorageElements;
 import com.liverussia.launcher.fragment.SettingsFragment;
+import com.liverussia.launcher.storage.NativeStorage;
 import com.liverussia.launcher.storage.Storage;
 import com.liverussia.launcher.utils.Validator;
 
@@ -30,7 +32,6 @@ public class EnterNicknameDialogBuilder extends MaterialAlertDialogBuilder imple
         createDialog();
     }
 
-    //TODO белые углы и диалога
     private void createDialog() {
         View view = LayoutInflater.from(settingsFragment.getActivity()).inflate(R.layout.item_change_nik, null);
         setView(view);
@@ -43,7 +44,7 @@ public class EnterNicknameDialogBuilder extends MaterialAlertDialogBuilder imple
 
     private void initViewElements(View view) {
 
-        String nickname = Storage.getProperty(StorageElements.NICKNAME.getValue(), settingsFragment.getActivity());
+        String nickname = NativeStorage.getClientProperty(NativeStorageElements.NICKNAME, settingsFragment.getActivity());
 
         nicknameInput = view.findViewById(R.id.nick_input);
         nicknameInput.setText(nickname);
@@ -57,7 +58,7 @@ public class EnterNicknameDialogBuilder extends MaterialAlertDialogBuilder imple
 
     private void setOnDialogCloseListener() {
         dialog.setOnDismissListener(alertDialog -> {
-            String nickname = Storage.getProperty(StorageElements.NICKNAME.getValue(), settingsFragment.getActivity());
+            String nickname = NativeStorage.getClientProperty(NativeStorageElements.NICKNAME, settingsFragment.getActivity());
             settingsFragment.updateNicknameField(nickname);
         });
     }
@@ -82,7 +83,7 @@ public class EnterNicknameDialogBuilder extends MaterialAlertDialogBuilder imple
         String nickname = nicknameInput.getText().toString();
 
         if (Validator.isValidNickname(nickname, settingsFragment.getActivity())) {
-            Storage.addProperty(StorageElements.NICKNAME.getValue(), nickname, settingsFragment.getActivity());
+            NativeStorage.addClientProperty(NativeStorageElements.NICKNAME, nickname, settingsFragment.getActivity());
             dialog.dismiss();
         }
     }

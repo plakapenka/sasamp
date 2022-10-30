@@ -11,7 +11,10 @@ public class Config {
     public static final String URL_DONATE = "https://vl4sov.com/liverussia.online/Donate";
     public static final String GAME_DIR = "/storage/emulated/0/Android/data/";
     public static final String GAME_SETTINGS_DIRECTORY = "SAMP/settings.ini";
-    public static final String SETTINGS_FILE_PATH = "/gta_sa.set";
+
+
+
+
 
     public static final String DISCORD_URI = "https://discord.com/";
     public static final String VK_URI = "https://vk.com/";
@@ -28,6 +31,8 @@ public class Config {
     public static final String LAUNCHER_SERVER_GET_LOADER_SLIDER_INFO_SERVICES_URL = "/api/v1/android/setting/loader/slider/info";
     public static final String LAUNCHER_SERVER_SPIN_ROULETTE_URL = "/api/v1/android/user/roulette/spin";
 
+    public static final String NATIVE_SETTINGS_FILE_PATH = "/SAMP/settings.ini";
+    public static final String SETTINGS_FILE_PATH = "/gta_sa.set";
 
     public static final String CAPTCHA_SITE_KEY = "6Ldt5oAhAAAAAGyLnKV67wVPVxaqEqoF18XM6cav";
 }

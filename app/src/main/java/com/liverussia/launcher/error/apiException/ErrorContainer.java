@@ -31,6 +31,7 @@ public enum ErrorContainer {
     SERVER_CONNECT_ERROR(1000, "Отсуствует интернет соединение. Для решения: попробуйте переподключить роутер, либо сменить интернет, либо воспользоваться VPN", HttpStatus.NOT_FOUND),
     DOWNLOAD_FILES_ERROR(1001, "Произошла ошибка при скачивании файлов", HttpStatus.NOT_FOUND),
     DOWNLOAD_WAS_INTERRUPTED(1002, "Загрузка была прервана", HttpStatus.NOT_FOUND),
+    FILE_NOT_FOUND(1003, "Файл не найден", HttpStatus.NOT_FOUND),
 
     OTHER(999, "Неизвестная ошибка", HttpStatus.INTERNAL_SERVER_ERROR);
 

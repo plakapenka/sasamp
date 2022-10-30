@@ -24,6 +24,8 @@ public enum ErrorMessages {
     CAPTCHA_NOT_PASSED("Перед входом подтвердите что вы не робот"),
     CAPTCHA_COMPLETING_PROBLEMS("Не смогли проверить что вы не робот, попробуйте еще раз"),
 
+    FIRSTLY_LOAD_GAME("Сначала загрузите игру!"),
+
     FAILED_LOAD_LOADER_SLIDER_DATA("Не удалось загрузить данные");
 
 
