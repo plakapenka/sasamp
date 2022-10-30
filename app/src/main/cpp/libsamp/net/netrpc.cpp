@@ -1048,6 +1048,8 @@ void RemoveBuilding(RPCParameters* rpcParams)
 }
 #include "..//gui/gui.h"
 #include "../playertags.h"
+#include "java_systems/scoreboard.h"
+
 extern CPlayerTags* pPlayerTags;
 
 void SetPlayerChatBubble(RPCParameters* rpcParams)
@@ -1337,6 +1339,7 @@ void UpdateScoresPingsIPs(RPCParameters* rpcParams)
 		pPlayerPool->UpdateScore(bytePlayerId, iPlayerScore);
 		pPlayerPool->UpdatePing(bytePlayerId, dwPlayerPing);
 	}
+	TabUpdate();
 }
 
 void RegisterRPCs(RakClientInterface* pRakClient)

@@ -222,10 +222,12 @@ void CGUI::ShowSpeed()
             bHealth = pVehicle->GetHealth();
             bDoor = pVehicle->GetDoorState();
             bEngine = pVehicle->GetEngineState();
-            bLights = pVehicle->GetLightsState();
         }
     }
-	g_pJavaWrapper->UpdateSpeedInfo(i_speed, m_fuel, bHealth, bMeliage, bEngine, bLights, 0, bDoor);
+	g_pJavaWrapper->UpdateSpeedInfo(i_speed, m_fuel, bHealth, bMeliage, bEngine,
+									pVehicle->GetLightsState(),
+									0,
+									bDoor);
 }
 
 void CGUI::Render()
