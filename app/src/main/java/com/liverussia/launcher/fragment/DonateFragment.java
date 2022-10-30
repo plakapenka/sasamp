@@ -158,12 +158,12 @@ public class DonateFragment extends Fragment implements View.OnClickListener, Ac
         if (possiblePrizesInfoResponseDto == null) {
             return;
         }
-        DonateServicesItemListAdapter adapter = new DonateServicesItemListAdapter(this.getActivity(), possiblePrizesInfoResponseDto.getBase64Images());
+        DonateServicesItemListAdapter adapter = new DonateServicesItemListAdapter(this.getActivity(), possiblePrizesInfoResponseDto.getUrls());
         donateServicesPanel.setAdapter(adapter);
     }
 
     public void addDonateServices(ServerImagesResponseDto possiblePrizesInfoResponseDto) {
-        DonateServicesItemListAdapter adapter = new DonateServicesItemListAdapter(this.getActivity(), possiblePrizesInfoResponseDto.getBase64Images());
+        DonateServicesItemListAdapter adapter = new DonateServicesItemListAdapter(this.getActivity(), possiblePrizesInfoResponseDto.getUrls());
         donateServicesPanel.setAdapter(adapter);
     }
 }

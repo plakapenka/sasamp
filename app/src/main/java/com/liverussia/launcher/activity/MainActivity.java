@@ -36,6 +36,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static com.liverussia.launcher.config.Config.LIVE_RUSSIA_RESOURCE_SERVER_URI;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Animation animation;
@@ -124,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         NetworkService networkService = retrofit.create(NetworkService.class);
 
-        Call<ServerImagesResponseDto> call = networkService.getPossiblePrizes();
+        Call<ServerImagesResponseDto> call = networkService.getPossibleRoulettePrizes();
 
         call.enqueue(new Callback<ServerImagesResponseDto>() {
             @Override
@@ -142,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void getDonateServices() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.0.106:9400")
+                .baseUrl(LIVE_RUSSIA_RESOURCE_SERVER_URI)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

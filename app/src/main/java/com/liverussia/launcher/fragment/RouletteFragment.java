@@ -371,12 +371,12 @@ public class RouletteFragment extends Fragment implements View.OnClickListener, 
         if (possiblePrizesInfoResponseDto == null) {
             return;
         }
-        PossiblePrizesItemListAdapter adapter = new PossiblePrizesItemListAdapter(this.getActivity(), possiblePrizesInfoResponseDto.getBase64Images());
+        PossiblePrizesItemListAdapter adapter = new PossiblePrizesItemListAdapter(this.getActivity(), possiblePrizesInfoResponseDto.getUrls());
         possiblePrizesPanel.setAdapter(adapter);
     }
 
     public void addPossiblePrizes(ServerImagesResponseDto possiblePrizesInfoResponseDto) {
-        PossiblePrizesItemListAdapter adapter = new PossiblePrizesItemListAdapter(this.getActivity(), possiblePrizesInfoResponseDto.getBase64Images());
+        PossiblePrizesItemListAdapter adapter = new PossiblePrizesItemListAdapter(this.getActivity(), possiblePrizesInfoResponseDto.getUrls());
         possiblePrizesPanel.setAdapter(adapter);
     }
 

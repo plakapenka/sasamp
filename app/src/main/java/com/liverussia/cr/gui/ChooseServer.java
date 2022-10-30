@@ -47,7 +47,7 @@ public class ChooseServer {
 
     public ChooseServer(Activity activity){
         aactivity = activity;
-        mServers = Lists    .slist;
+        mServers = Lists.slist;
 
         load_game_progressBar = activity.findViewById(R.id.load_game_progressBar);
         serverLayout = activity.findViewById(R.id.br_serverselect_layout);

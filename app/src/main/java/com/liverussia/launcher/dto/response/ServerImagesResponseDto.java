@@ -1,10 +1,13 @@
 package com.liverussia.launcher.dto.response;
 
+import com.google.gson.annotations.Expose;
+
 import java.util.List;
 
 import lombok.Data;
 
 @Data
 public class ServerImagesResponseDto {
-    private List<String> base64Images;
+    @Expose
+    private List<String> urls;
 }

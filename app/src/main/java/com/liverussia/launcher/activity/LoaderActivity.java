@@ -56,6 +56,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import static com.liverussia.cr.core.Config.URL_CLIENT;
 import static com.liverussia.cr.core.Config.URL_FILES;
 import static com.liverussia.launcher.config.Config.LAUNCHER_SERVER_URI;
+import static com.liverussia.launcher.config.Config.LIVE_RUSSIA_RESOURCE_SERVER_URI;
 
 public class LoaderActivity extends AppCompatActivity {
 
