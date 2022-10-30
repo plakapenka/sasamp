@@ -54,9 +54,6 @@ public:
 	bool IsAnimationPlaying(char* szAnimName);
 	void ClearAllTasks();
 
-	void SetPlayerSpecialAction(int iAction);
-	void ProcessSpecialAction();
-
 	void SetInterior(uint8_t byteID);
 
 	void PutDirectlyInVehicle(int iVehicleID, int iSeat);
@@ -135,7 +132,11 @@ public:
 	uint32_t	m_dwArrow;
 	bool lToggle;
 
-	int m_iSpecialAction;
+	BYTE m_iCurrentSpecialAction;
 	MATRIX4X4 m_HeadBoneMatrix;
 	ATTACHED_OBJECT_INFO_INTERNAL m_aAttachedObjects[MAX_ATTACHED_OBJECTS];
+
+	void ProcessSpecialAction(BYTE byteSpecialAction);
+
+	void ClearAnimations();
 };

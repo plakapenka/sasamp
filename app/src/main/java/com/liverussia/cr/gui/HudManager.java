@@ -50,11 +50,18 @@ public class HudManager {
     private ProgressBar oil_oil_progress;
     private TextView oil_water_procent;
     private TextView oil_oil_procent;
+    DecimalFormat formatter;
+    DecimalFormatSymbols symbols;
     public native void HudInit();
     public native void cppToggleAllHud(boolean toggle);
 
     public HudManager(Activity aactivity) {
         HudInit();
+        formatter = new DecimalFormat();
+        symbols = DecimalFormatSymbols.getInstance();
+        symbols.setGroupingSeparator('.');
+        formatter.setDecimalFormatSymbols(symbols);
+
         activity = aactivity;
 
         hud_main = aactivity.findViewById(R.id.hud_main);
@@ -105,6 +112,7 @@ public class HudManager {
             NvEventQueueActivity.getInstance().showMenu();
             NvEventQueueActivity.getInstance().togglePlayer(1);
         });
+        hud_weapon.setOnClickListener(v -> NvEventQueueActivity.getInstance().onWeaponChanged());
 
         oil_water_progress = aactivity.findViewById(R.id.oil_water_progress);
         oil_oil_progress = aactivity.findViewById(R.id.oil_oil_progress);
@@ -126,17 +134,10 @@ public class HudManager {
             progressHP.setProgress(health);
             progressArmor.setProgress(armour);
 
-            DecimalFormat formatter = new DecimalFormat();
-            DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance();
-            symbols.setGroupingSeparator('.');
-            formatter.setDecimalFormatSymbols(symbols);
-            String money_str = formatter.format(money);
-            hud_money.setText(money_str);
+            hud_money.setText(formatter.format(money));
 
             int id = activity.getResources().getIdentifier(new Formatter().format("weapon_%d", Integer.valueOf(weaponid)).toString(), "drawable", activity.getPackageName());
             hud_weapon.setImageResource(id);
-
-            hud_weapon.setOnClickListener(v -> NvEventQueueActivity.getInstance().onWeaponChanged());
 
             for (int i2 = 0; i2 < wanted; i2++) {
                 hud_wanted.get(i2).setBackgroundResource(R.drawable.ic_y_star);
@@ -147,7 +148,7 @@ public class HudManager {
                 String ss = String.format("%d<font color='#B0B0B0'>/%d</font>", ammoclip, ammo - ammoclip);
                 hud_ammo.setText(Html.fromHtml(ss));
             } else {
-                Utils.HideLayout(hud_ammo, false);
+                hud_ammo.setVisibility(View.GONE);
             }
 
             String stroilwaterproc = String.format("%d%%", oil_water_progress.getProgress() / 10);

@@ -154,8 +154,6 @@ const SCRIPT_COMMAND has_car_sunk = { 0x02bf, "i" };	// CarID
 const SCRIPT_COMMAND is_car_wrecked = { 0x0119, "i" }; // CarID
 const SCRIPT_COMMAND get_ground_z = { 0x02ce, "fffv" };	// x, y, z, var_ground_z
 
-const SCRIPT_COMMAND create_checkpoint1 = { 0x0189, "fffv" };	// x, y, z, var_checkpoint
-const SCRIPT_COMMAND create_checkpoint2 = { 0x018a, "fffv" };	// x, y, z, var_checkpoint
 //const SCRIPT_COMMAND is_actor_near_point_3d		= {0x00FE,	"iffffffi"};
 const SCRIPT_COMMAND create_racing_checkpoint = { 0x06d5,	"ifffffffv" };	// type, x, y, z, nx, ny. nz, size, $id (n=next checkpoint)
 /* 0       = Street Checkpoint with arrow to the next checkpoint

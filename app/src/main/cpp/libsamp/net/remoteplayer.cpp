@@ -44,6 +44,12 @@ extern uint32_t g_uiHeadMoveEnabled;
 void CRemotePlayer::ProcessSpecialActions(BYTE byteSpecialAction)
 {
 	if (!m_pPlayerPed || !m_pPlayerPed->IsAdded()) return;
+    if(byteSpecialAction == SPECIAL_ACTION_NONE)
+    {
+		m_pPlayerPed->ClearAnimations();
+        return;
+    }
+	m_pPlayerPed->ProcessSpecialAction(byteSpecialAction);
 
 	if (GetState() != PLAYER_STATE_ONFOOT)
 	{
@@ -193,7 +199,7 @@ void CRemotePlayer::Process()
 		// ------ PROCESSED FOR ALL FRAMES ----- 
 		if(GetState() == PLAYER_STATE_ONFOOT && !m_pPlayerPed->IsInVehicle())
 		{
-			ProcessSpecialActions(m_ofSync.byteSpecialAction);
+			if(m_ofSync.byteSpecialAction != SPECIAL_ACTION_NONE) ProcessSpecialActions(m_ofSync.byteSpecialAction);
 			SlerpRotation();
 			
 			HandleAnimations();

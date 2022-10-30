@@ -330,28 +330,6 @@ bool ProcessVoiceCommands(const char* str)
 		return true;
 	}
 
-	if (strstr(str, "/specialaction"))
-	{
-		while (*str)
-		{
-			if (*str == ' ')
-			{
-				str++;
-				break;
-			}
-			str++;
-		}
-		int actionId = 0;
-		if (sscanf(str, "%d", &actionId) == -1)
-		{
-			pChatWindow->AddDebugMessage("�����������: /specialaction [actionId]");
-			return true;
-		}
-		pChatWindow->AddDebugMessage("������������ ����������� ��������: %d", actionId);
-		pGame->FindPlayerPed()->SetPlayerSpecialAction(actionId);
-		return true;
-	}
-
 	return false;
 }
 

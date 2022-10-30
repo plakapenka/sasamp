@@ -169,6 +169,8 @@ void RenderBackgroundHud();
 void (*Render2dStuff)();
 void Render2dStuff_hook()
 {
+	if (pHud->isHudToggle) pHud->UpdateHudInfo();
+
 	bGameStarted = true;
 	MAKE_PROFILE(test, test_time);
 	MainLoop();

@@ -145,7 +145,6 @@ public:
 	void SendNextClass();
 	void SendPrevClass();
 	void SendSpawn();
-	void ApplySpecialAction(uint8_t byteSpecialAction);
 	bool HandlePassengerEntryEx();
 	uint32_t GetPlayerColorAsARGB();
 	uint32_t GetPlayerColor();
@@ -154,7 +153,6 @@ public:
 	void RequestSpawn();
 	bool HandlePassengerEntry();
 	void UpdateSurfing();
-	uint32_t GetSpecialAction();
 	void SendEnterVehicleNotification(VEHICLEID VehicleID, bool bPassenger);
 	void SendExitVehicleNotification(VEHICLEID VehicleID);
 	void UpdateRemoteInterior(uint8_t byteInterior);

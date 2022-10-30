@@ -27,7 +27,6 @@ CPlayerPed::CPlayerPed()
 	{
 		m_aAttachedObjects[i].bState = false;
 	}
-	m_iSpecialAction = -1;
 }
 
 CPlayerPed::CPlayerPed(uint8_t bytePlayerNumber, int iSkin, float fX, float fY, float fZ, float fRotation)
@@ -60,7 +59,6 @@ CPlayerPed::CPlayerPed(uint8_t bytePlayerNumber, int iSkin, float fX, float fY, 
 
 	SetModelIndex(iSkin);
 	ForceTargetRotation(fRotation);
-	m_iSpecialAction = -1;
 	MATRIX4X4 mat;
 	GetMatrix(&mat);
 	mat.pos.X = fX;
@@ -732,72 +730,15 @@ void CPlayerPed::ClearAllTasks()
 #include "..//chatwindow.h"
 extern CChatWindow* pChatWindow;
 
-void CPlayerPed::SetPlayerSpecialAction(int iAction)
+void CPlayerPed::ClearAnimations()
 {
-	if (iAction == -1)
-	{
-		ClearAllTasks();
+	ApplyAnimation("crry_prtial", "CARRY", 4.0, 0, 0, 0, 0, 0);
+	ClearAllTasks();
+	MATRIX4X4 mat;
+	GetMatrix(&mat);
+	TeleportTo(mat.pos.X,mat.pos.Y,mat.pos.Z);
 
-//		MATRIX4X4 mat;
-//		GetMatrix(&mat);
-//		TeleportTo(mat.pos.X, mat.pos.Y, mat.pos.Z);
-
-		return;
-	}
-	if (iAction == 0)
-	{
-		ClearAllTasks();
-
-//		MATRIX4X4 mat;
-//		GetMatrix(&mat);
-//		TeleportTo(mat.pos.X, mat.pos.Y, mat.pos.Z);
-		//pChatWindow->AddDebugMessage("RESET ACTION");
-		m_iSpecialAction = -1;
-		return;
-	}
-
-	m_iSpecialAction = iAction;
-}
-void CPlayerPed::ProcessSpecialAction()
-{
-	if (m_iSpecialAction == 0 || m_iSpecialAction == -1)
-	{
-		return;
-	}
-	if (m_iSpecialAction == SPECIAL_ACTION_CARRY)
-	{
-		if (!IsAnimationPlaying("CRRY_PRTIAL")) { ApplyAnimation("CRRY_PRTIAL", "CARRY", 4.1, 0, 0, 0, 1, 1); }
-	}
-	else if (m_iSpecialAction == SPECIAL_ACTION_USEJETPACK)
-	{
-		if (IsInVehicle()) { SetPlayerSpecialAction(-1); return; }
-		if (!IsAnimationPlaying("JETPACK_IDLE")) { ApplyAnimation("JETPACK_IDLE", "PED", 4.1, 0, 0, 0, 1, 1); }
-	}
-	else if (m_iSpecialAction == SPECIAL_ACTION_USECELLPHONE)
-	{
-		if (IsInVehicle()) { SetPlayerSpecialAction(-1); return; }
-		if (!IsAnimationPlaying("PHONE_IN")) { ApplyAnimation("PHONE_IN", "PED", 4.1, 0, 0, 0, 1, 1); }
-	}
-	else if (m_iSpecialAction == SPECIAL_ACTION_STOPUSECELLPHONE)
-	{
-		if (IsInVehicle()) { SetPlayerSpecialAction(-1); return; }
-		if (!IsAnimationPlaying("PHONE_OUT")) { ApplyAnimation("PHONE_OUT", "PED", 4.1, 0, 0, 0, 1, 1); }
-	}
-	else if (m_iSpecialAction == SPECIAL_ACTION_SMOKE_CIGGY)
-	{
-		if (IsInVehicle()) { SetPlayerSpecialAction(-1); return; }
-		if (!IsAnimationPlaying("SMKCIG_PRTL")) { ApplyAnimation("SMKCIG_PRTL", "GANGS", 4.1, 0, 0, 0, 1, 1); }
-	}
-	else if (m_iSpecialAction == SPECIAL_ACTION_HANDSUP)
-	{
-		if (IsInVehicle()) { SetPlayerSpecialAction(-1); return; }
-		if (!IsAnimationPlaying("SHP_HANDSUP_SCR")) { ApplyAnimation("SHP_HANDSUP_SCR", "ROB_BANK", 4.1, 0, 0, 0, 1, 1); }
-	}
-//	else if (m_iSpecialAction == SPECIAL_ACTION_CUFFED)
-//	{
-//		if (IsInVehicle()) { SetPlayerSpecialAction(-1); return; }
-//		if (!IsAnimationPlaying("M_smk_drag")) { ApplyAnimation("M_smk_drag", "SMOKING", 4.1, 0, 0, 0, 1, 1); }
-//	}
+	Log("ClearAnimations");
 }
 
 void CPlayerPed::DestroyFollowPedTask()
@@ -1741,4 +1682,17 @@ float CPlayerPed::GetAimZ()
 		return 0.0f;
 	}
 	return *(float*)(*((uintptr_t*)m_pPed + 272) + 84);
+}
+
+void CPlayerPed::ProcessSpecialAction(BYTE byteSpecialAction) {
+	if(m_iCurrentSpecialAction != byteSpecialAction)
+	{
+		return;
+	}
+	if (byteSpecialAction == SPECIAL_ACTION_CARRY && !IsAnimationPlaying("CRRY_PRTIAL"))
+	{
+		//Log("SPECIAL_ACTION_CARRY");
+		ApplyAnimation("CRRY_PRTIAL", "CARRY", 4.1, 0, 0, 0, 1, 1);
+	}
+
 }

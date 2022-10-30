@@ -368,12 +368,12 @@ void SetCheckpoint(RPCParameters *rpcParams)
 	Extent.Z = fSize;
 
 	pGame->SetCheckpointInformation(&pos, &Extent);
-	//pGame->ToggleCheckpoints(true);
+	pGame->CreateCheckPoint();
 }
 
 void DisableCheckpoint(RPCParameters *rpcParams)
 {
-	pGame->ToggleCheckpoints(false);
+	pGame->DisableCheckpoint();
 }
 
 void SetRaceCheckpoint(RPCParameters *rpcParams)

@@ -227,17 +227,17 @@ bool CLocalPlayer::Process()
 
 		if ((dwThisTick - m_dwLastStatsUpdateTick) > STATS_UPDATE_TICKS) 
 		{
+
 			SendStatsUpdate();
 			m_dwLastStatsUpdateTick = dwThisTick;
+		}
+		if (m_pPlayerPed && m_pPlayerPed->m_iCurrentSpecialAction != SPECIAL_ACTION_NONE)
+		{
+			m_pPlayerPed->ProcessSpecialAction(m_pPlayerPed->m_iCurrentSpecialAction);
 		}
 
 		CheckWeapons();
 		CWeaponsOutFit::ProcessLocalPlayer(m_pPlayerPed);
-
-		if (m_pPlayerPed)
-		{
-			m_pPlayerPed->ProcessSpecialAction();
-		}
 
 		// handle interior changing
 		uint8_t byteInterior = pGame->GetActiveInterior();
@@ -604,17 +604,6 @@ bool CLocalPlayer::HandlePassengerEntry()
 
 
 void CLocalPlayer::UpdateSurfing() {}
-uint32_t CLocalPlayer::GetSpecialAction()
-{
-	CPlayerPed* pPed = GetPlayerPed();
-	if (!pPed) return 0;
-	if (pPed->IsCrouching())
-	{
-		return 1;
-	}
-	return 0;
-}
-
 
 void CLocalPlayer::SendEnterVehicleNotification(VEHICLEID VehicleID, bool bPassenger)
 {
@@ -734,14 +723,6 @@ void CLocalPlayer::SetPlayerColor(uint32_t dwColor)
 	SetRadarColor(pNetGame->GetPlayerPool()->GetLocalPlayerID(), dwColor);
 }
 
-void CLocalPlayer::ApplySpecialAction(uint8_t byteSpecialAction)
-{
-	if (m_pPlayerPed)
-	{
-		m_pPlayerPed->SetPlayerSpecialAction(byteSpecialAction);
-	}
-}
-
 int CLocalPlayer::GetOptimumOnFootSendRate()
 {
 	if(!m_pPlayerPed) return 1000;
@@ -815,7 +796,7 @@ void CLocalPlayer::SendOnFootFullSyncData()
 	ofSync.byteCurrentWeapon = (exKeys << 6) | ofSync.byteCurrentWeapon & 0x3F;
 	ofSync.byteCurrentWeapon ^= (ofSync.byteCurrentWeapon ^ GetPlayerPed()->GetCurrentWeapon()) & 0x3F;
 
-	ofSync.byteSpecialAction = (uint8_t)GetSpecialAction();
+	ofSync.byteSpecialAction = m_pPlayerPed->m_iCurrentSpecialAction;;
 	ofSync.vecMoveSpeed.X = vecMoveSpeed.X;
 	ofSync.vecMoveSpeed.Y = vecMoveSpeed.Y;
 	ofSync.vecMoveSpeed.Z = vecMoveSpeed.Z;

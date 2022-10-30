@@ -1600,7 +1600,7 @@ public abstract class NvEventQueueActivity
 
     public void showNotification(int type, String text, int duration, String actionforBtn, String textBtn, int actionId) { runOnUiThread(() -> mNotification.ShowNotification(type, text, duration, actionforBtn, textBtn, actionId)); }
 
-    public void hideNotification() { runOnUiThread(() -> mNotification.HideNotification()); }
+    public void hideNotification() { runOnUiThread(() -> mNotification.HideNotification(true)); }
 
     public void showAuthorization(String nick, int id) { runOnUiThread(() -> { mAuthorizationManager.Show(nick, id); }); }
 

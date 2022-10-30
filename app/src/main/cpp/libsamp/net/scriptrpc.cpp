@@ -11,7 +11,6 @@ extern CGUI *pGUI;
 
 void ScrDisplayGameText(RPCParameters *rpcParams)
 {
-	Log("RPC: ScrDisplayGameText");
 	unsigned char * Data = reinterpret_cast<unsigned char *>(rpcParams->input);
 	int iBitLength = rpcParams->numberOfBitsOfData;
 
@@ -221,7 +220,6 @@ void ScrClearPlayerAnimations(RPCParameters *rpcParams)
 
 	PLAYERID playerId;
 	bsData.Read(playerId);
-	MATRIX4X4 mat;
 
 	CPlayerPool *pPlayerPool=NULL;
 	CPlayerPed *pPlayerPed=NULL;
@@ -242,10 +240,37 @@ void ScrClearPlayerAnimations(RPCParameters *rpcParams)
 		
 		if(pPlayerPed) 
 		{
-			pPlayerPed->ClearAllTasks();
+			pPlayerPed->ClearAnimations();
 			//pPlayerPed->GetMatrix(&mat);
 			//pPlayerPed->TeleportTo(mat.pos.X, mat.pos.Y, mat.pos.Z);
 		}
+	}
+}
+
+
+void ScrSetPlayerSpecialAction(RPCParameters *rpcParams)
+{
+	Log("RPC: ScrSetPlayerSpecialAction");
+
+	unsigned char* Data = reinterpret_cast<unsigned char *>(rpcParams->input);
+	int iBitLength = rpcParams->numberOfBitsOfData;
+
+	RakNet::BitStream bsData((unsigned char*)Data,(iBitLength/8)+1,false);
+
+	BYTE byteSpecialAction;
+	bsData.Read(byteSpecialAction);
+
+	CPlayerPool *pPool=pNetGame->GetPlayerPool();
+
+	CPlayerPed *pPed = pPool->GetLocalPlayer()->GetPlayerPed();
+	if(pPool)
+	{
+		pPed->m_iCurrentSpecialAction = byteSpecialAction;
+		if(byteSpecialAction == SPECIAL_ACTION_NONE)
+		{
+			pPed->ClearAnimations();
+		}
+//
 	}
 }
 
@@ -461,22 +486,6 @@ void ScrSetCameraBehindPlayer(RPCParameters *rpcParams)
 	Log("RPC: ScrSetCameraBehindPlayer");
 
 	pGame->GetCamera()->SetBehindPlayer();	
-}
-
-void ScrSetPlayerSpecialAction(RPCParameters *rpcParams)
-{
-	Log("RPC: ScrSetPlayerSpecialAction");
-
-	unsigned char* Data = reinterpret_cast<unsigned char *>(rpcParams->input);
-	int iBitLength = rpcParams->numberOfBitsOfData;
-
-	RakNet::BitStream bsData((unsigned char*)Data,(iBitLength/8)+1,false);
-
-	uint8_t byteSpecialAction;
-	bsData.Read(byteSpecialAction);
-
-	CPlayerPool *pPlayerPool = pNetGame->GetPlayerPool();
-	if(pPlayerPool) pPlayerPool->GetLocalPlayer()->ApplySpecialAction(byteSpecialAction);
 }
 
 void ScrTogglePlayerSpectating(RPCParameters *rpcParams)

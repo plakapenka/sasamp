@@ -167,16 +167,21 @@ void CNetGame::Process()
 		bProcess = true;
 	}
 	// server checkpoints update
-	if (m_pPlayerPool)
-	{
-		if (m_pPlayerPool->GetLocalPlayer())
+	if(pGame->m_bCheckpointsEnabled) {
+		CPlayerPed *pPlayerDed = m_pPlayerPool->GetLocalPlayer()->GetPlayerPed();
+		if (pPlayerDed)
 		{
-			if (m_pPlayerPool->GetLocalPlayer()->m_bIsActive && m_pPlayerPool->GetLocalPlayer()->GetPlayerPed())
-			{
-				pGame->UpdateCheckpoints();
-			}
+			ScriptCommand(&is_actor_near_point_3d,pPlayerDed->m_dwGTAId,
+						  pGame->m_vecCheckpointPos.X,
+						  pGame->m_vecCheckpointPos.Y,
+						  pGame->m_vecCheckpointPos.Z,
+						  pGame->m_vecCheckpointExtent.X,
+						  pGame->m_vecCheckpointExtent.Y,
+						  pGame->m_vecCheckpointExtent.Z,
+						  1);
 		}
 	}
+
 	if(m_bHoldTime)
 		pGame->SetWorldTime(m_byteWorldTime, m_byteWorldMinute);
 

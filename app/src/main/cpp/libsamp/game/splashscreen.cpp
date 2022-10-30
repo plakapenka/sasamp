@@ -173,6 +173,7 @@ void RenderBackgroundHud()
 		
 	if (pHud->isHudToggle)
 	{
+
 		if (splashTexture)
 		{//183 55.. 399..33
 			//183+200), pGUI->ScaleY(74+200)), ImVec2(pGUI->ScaleX(399+200), pGUI->ScaleY(336+200)

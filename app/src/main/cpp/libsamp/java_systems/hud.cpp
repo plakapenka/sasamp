@@ -18,6 +18,7 @@ extern CHUD *pHud;
 extern CGUI* pGUI;
 
 jobject jHudManager;
+jmethodID jUpdateHudInfo;
 
 CHUD::CHUD()
 {
@@ -38,6 +39,7 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_HudManager_HudInit(JNIEnv *env, jobject thiz) {
     jHudManager = env->NewGlobalRef(thiz);
+    jUpdateHudInfo = env->GetMethodID(env->GetObjectClass(thiz), "UpdateHudInfo", "(IIIIIIII)V");
 }
 
 void CHUD::ToggleAll(bool toggle, bool withchat, bool anyway)
@@ -94,8 +96,8 @@ int CHUD::GetScreenSize(bool isWidth)
 
 void CHUD::UpdateHudInfo()
 {
-    PED_TYPE* pPedPlayer = GamePool_FindPlayerPed();
 
+    CPlayerPed* pPed = pGame->FindPlayerPed();
     JNIEnv* env = g_pJavaWrapper->GetEnv();
 
     if (!env)
@@ -103,17 +105,15 @@ void CHUD::UpdateHudInfo()
         Log("No env");
         return;
     }
-    jclass clazz = env->GetObjectClass(jHudManager);
-    jmethodID jUpdateHudInfo = env->GetMethodID(clazz, "UpdateHudInfo", "(IIIIIIII)V");
 
     env->CallVoidMethod(jHudManager, jUpdateHudInfo,
-                        (int)pGame->FindPlayerPed()->GetHealth(),
-                        (int)pGame->FindPlayerPed()->GetArmour(),
+                        (int)pPed->GetHealth(),
+                        (int)pPed->GetArmour(),
                         (int)pGUI->GetEat(),
-                        (int)pPedPlayer->WeaponSlots[pPedPlayer->byteCurWeaponSlot].dwType,
-                        (int)pPedPlayer->WeaponSlots[pPedPlayer->byteCurWeaponSlot].dwAmmo,
-                        (int)pPedPlayer->WeaponSlots[pPedPlayer->byteCurWeaponSlot].dwAmmoInClip,
-                        pGame->GetLocalMoney(),
+                        (int)pPed->m_pPed->WeaponSlots[pPed->m_pPed->byteCurWeaponSlot].dwType,
+                        (int)pPed->m_pPed->WeaponSlots[pPed->m_pPed->byteCurWeaponSlot].dwAmmo,
+                        (int)pPed->m_pPed->WeaponSlots[pPed->m_pPed->byteCurWeaponSlot].dwAmmoInClip,
+                        localMoney,
                         pGame->GetWantedLevel()
                         );
 }
