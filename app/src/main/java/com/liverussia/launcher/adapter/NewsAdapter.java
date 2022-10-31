@@ -1,12 +1,8 @@
 package com.liverussia.launcher.adapter;
 
 import android.content.Intent;
-import android.os.Bundle;
-import android.os.Environment;
-import android.os.Build;
 
 import android.os.Handler;
-import android.view.View.OnClickListener;
 import android.view.LayoutInflater;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Animation;
@@ -19,25 +15,22 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import android.content.Context;
 
 import com.liverussia.cr.R;
 import com.liverussia.launcher.activity.StoryActivity;
 import com.liverussia.launcher.model.News;
-import java.util.ArrayList;
+
+import java.util.List;
 
 import com.bumptech.glide.Glide;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder> {
 	Context context;
+	List<News> news;
 	
-	ArrayList<News> nlist;
-	
-	public NewsAdapter(Context context, ArrayList<News> nlist){
+	public NewsAdapter(Context context, List<News> news){
 		 this.context = context;
-		 this.nlist = nlist; 
+		 this.news = news;
 	}
 	
 	@NonNull
@@ -49,7 +42,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
   
     @Override
     public void onBindViewHolder(@NonNull NewsViewHolder holder, int position) {
-        News news = nlist.get(position);
+        News news = this.news.get(position);
 		holder.title.setText(news.getTitle());
 		Glide.with(context).load(news.getImageUrl()).into(holder.image);
 		holder.container.setOnClickListener(new View.OnClickListener() {
@@ -73,7 +66,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
 
     @Override
     public int getItemCount() {
-        return nlist.size();
+        return news.size();
     }
 
     public static class NewsViewHolder extends RecyclerView.ViewHolder {

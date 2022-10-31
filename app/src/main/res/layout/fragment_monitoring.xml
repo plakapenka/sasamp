@@ -1,11 +1,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:clipToPadding="false"
     android:orientation="vertical"
     android:paddingLeft="@dimen/_14sdp"
     android:paddingRight="@dimen/_14sdp"
-    android:paddingTop="@dimen/_18sdp" >
+    android:paddingTop="@dimen/_18sdp">
 
     <TextView
         android:layout_width="wrap_content"
@@ -58,7 +59,6 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/ourServersRV"
         android:layout_width="fill_parent"
-
         android:layout_height="fill_parent"
         android:layout_marginLeft="@dimen/_minus14sdp"
         android:layout_marginRight="@dimen/_minus14sdp"

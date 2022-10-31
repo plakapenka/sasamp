@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.liverussia.cr.R;
@@ -50,7 +49,7 @@ public class StoryActivity extends AppCompatActivity {
         this.sliderStoriesAdapter = sliderStoriesAdapter;
         this.sliderView.setSliderAdapter(sliderStoriesAdapter);
         this.sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
-        this.sliderStoriesAdapter.addItems(Lists.nlist);
+        this.sliderStoriesAdapter.addItems(Lists.NEWS);
         this.sliderView.setCurrentPageListener(i -> startTimer());
         int intExtra = getIntent().getIntExtra("position", 0);
         this.sliderView.getSliderPager().setCurrentItem(intExtra, false);

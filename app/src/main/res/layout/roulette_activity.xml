@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="@drawable/roulette_bg"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+                <TextView
+                    android:id="@+id/activity_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="15dp"
+                    android:text="Рулетка"
+                    android:fontFamily="@font/pt_root_ui_medium"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_20sdp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/authenticated_user_roulette_panel"
+                    android:layout_width="0dp"
+                    android:layout_height="90dp"
+                    android:layout_marginBottom="0dp"
+                    android:layout_marginTop="5dp"
+                    android:visibility="visible"
+                    app:layout_constraintTop_toBottomOf="@id/activity_name"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <TextView
+                        android:fontFamily="@font/pt_root_ui_medium"
+                        android:id="@+id/username_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:textColor="@color/white"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:fontFamily="@font/pt_root_ui_medium"
+                        android:id="@+id/server_name_text_view"
+                        android:layout_width="73dp"
+                        android:layout_height="12dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="5dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/username_text_view"/>
+
+                    <TextView
+                        android:fontFamily="@font/pt_root_ui_medium"
+                        android:id="@+id/balance_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:textColor="@color/white"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/server_name_text_view"/>
+
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <ImageButton
+                    android:id="@+id/logout_btn"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="80dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/roulette_exit_btn"
+                    app:layout_constraintEnd_toEndOf="@id/authenticated_user_roulette_panel"
+                    app:layout_constraintBottom_toBottomOf="@id/authenticated_user_roulette_panel" />
+
+                <FrameLayout
+                    android:id="@+id/roulette_panel"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
+                    android:layout_width="match_parent"
+                    android:layout_height="140dp"
+                    android:background="@drawable/roulette_items_bg"
+                    android:layout_marginLeft="@dimen/_minus14sdp"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    app:layout_constraintTop_toBottomOf="@id/authenticated_user_roulette_panel"
+                    android:layout_marginRight="@dimen/_minus14sdp">
+
+                    <androidx.viewpager2.widget.ViewPager2
+                        android:layout_gravity="center"
+                        android:id="@+id/viewPager"
+                        android:paddingTop="@dimen/_10sdp"
+                        android:paddingBottom="@dimen/_10sdp"
+                        android:clipChildren="false"
+                        android:clipToPadding="false"
+                        android:layout_width="@dimen/_120sdp"
+                        android:layout_height="@dimen/_100sdp" >
+
+
+                    </androidx.viewpager2.widget.ViewPager2>
+
+                    <ImageView
+                        android:layout_gravity="center|top"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/_25sdp"
+                        android:src="@drawable/roulette_item_under_cursor"
+                        android:adjustViewBounds="true" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/_25sdp"
+                        android:layout_gravity="bottom|center"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/roulette_item_bottom_cursor" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@id/spin_roulette_btn"
+                    android:layout_width="0dp"
+                    android:layout_height="37dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginStart="60dp"
+                    android:layout_marginEnd="60dp"
+                    android:layout_marginTop="40dp"
+                    android:background="@drawable/button_red_stroke_rectangle"
+                    android:drawingCacheQuality="auto"
+                    android:text="Купить 50 руб"
+                    android:fontFamily="@font/pt_root_ui_medium"
+                    android:gravity="center"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/roulette_panel"
+                    tools:visibility="visible" />
+
+                <TextView
+                    android:id="@id/possible_prizes_title"
+                    android:layout_width="0dp"
+                    android:layout_height="37dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginStart="60dp"
+                    android:layout_marginEnd="60dp"
+                    android:layout_marginTop="28dp"
+                    android:background="@drawable/possible_prizes_title_bg"
+                    android:drawingCacheQuality="auto"
+                    android:fontFamily="@font/din_pro_black"
+                    android:gravity="center"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="25sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.481"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/spin_roulette_btn"
+                    tools:visibility="visible" />
+
+
+                <com.liverussia.launcher.domain.ui.ExpandableHeightGridView
+                    android:id="@+id/possible_prizes_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:numColumns="4"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/possible_prizes_title"
+                    android:orientation="horizontal" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

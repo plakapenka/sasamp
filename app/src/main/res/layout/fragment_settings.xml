@@ -4,6 +4,7 @@
     android:clipChildren="false"
     android:clipToPadding="false"
     android:orientation="vertical"
+    android:background="@drawable/settings_bg"
     android:paddingLeft="@dimen/_14sdp"
     android:paddingRight="@dimen/_14sdp"
     android:paddingTop="@dimen/_18sdp" >
@@ -64,25 +65,24 @@
                     android:padding="12.0dip"
                     android:src="@drawable/user1" />
 
-                <EditText
-                    android:id="@+id/editText"
+                <TextView
+                    android:id="@+id/nick_edit"
                     android:layout_width="0.0dip"
                     android:layout_height="fill_parent"
                     android:layout_weight="1.0"
                     android:background="@color/transparent"
-                    android:digits="abcdefghijklmnopqrstuvwxyz_ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                    android:digits="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_"
                     android:fontFamily="@font/pt_root_ui_regular"
                     android:gravity="center_vertical"
-                    android:hint="Введите свой никнейм"
-                    android:inputType="textCapSentences"
-                    android:maxLength="20"
+                    android:hint="Введите игровой никнейм"
                     android:maxLines="1"
                     android:paddingRight="@dimen/_10sdp"
                     android:singleLine="true"
                     android:textColor="@color/white"
-                    android:textCursorDrawable="@drawable/text_cursor"
                     android:textColorHint="@color/menuTextDisable"
                     android:textSize="@dimen/_12sdp" />
+
+
             </LinearLayout>
 
             <LinearLayout
@@ -155,7 +155,7 @@
                     android:layout_height="wrap_content" />
 
                 <ImageView
-                    android:id="@+id/instagramButton"
+                    android:id="@+id/youtubeButton"
                     android:layout_width="@dimen/_30sdp"
                     android:layout_height="@dimen/_30sdp"
                     android:src="@drawable/instagram" />

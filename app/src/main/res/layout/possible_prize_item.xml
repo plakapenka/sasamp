@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <!--Image view for displaying our image-->
+    <ImageView
+        android:id="@+id/possible_prize_item_image"
+        android:layout_width="75.6dp"
+        android:layout_height="120dp"
+        android:layout_marginBottom="10dp"
+        />
+
+    <!--Text view for displaying our text -->
+
+</LinearLayout>
+
+
+    <!--Image view for displaying our image-->
+<!--<ImageView-->
+<!--android:id="@+id/possible_prize_item_image"-->
+<!--android:layout_width="80dp"-->
+<!--android:layout_height="100dp"-->
+<!--android:layout_marginBottom="25dp"-->
+<!--    />-->

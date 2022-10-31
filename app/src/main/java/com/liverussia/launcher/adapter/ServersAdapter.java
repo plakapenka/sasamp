@@ -1,15 +1,9 @@
 package com.liverussia.launcher.adapter;
 
-import android.os.Bundle;
-import android.os.Environment;
-import android.os.Build;
-
-import android.view.View.OnClickListener;
 import android.graphics.PorterDuff;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.animation.AnimationUtils;
-import android.view.animation.Animation;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +11,6 @@ import android.widget.*;
 
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import android.content.Context;
 
 import com.liverussia.cr.R;
 import com.liverussia.cr.core.Config;
@@ -27,21 +18,19 @@ import com.liverussia.launcher.model.Servers;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 
-import com.bumptech.glide.Glide;
 import com.dinuscxj.progressbar.CircleProgressBar;
 
 import org.ini4j.Wini;
 
 public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersViewHolder> {
-	Context context;
+	private Context context;
+	private List<Servers> servers;
 	
-	ArrayList<Servers> slist;
-	
-	public ServersAdapter(Context context, ArrayList<Servers> slist){
+	public ServersAdapter(Context context, List<Servers> servers){
 		 this.context = context;
-		 this.slist = slist; 
+		 this.servers = servers;
 	}
 	
 	@NonNull
@@ -53,7 +42,7 @@ public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersV
   
     @Override
     public void onBindViewHolder(@NonNull ServersViewHolder holder, int position) {
-        Servers servers = slist.get(position);
+        Servers servers = this.servers.get(position);
 		holder.bearPaw.setColorFilter(Color.parseColor("#" + servers.getColor()),PorterDuff.Mode.SRC_ATOP);
 		holder.people.setColorFilter(Color.parseColor("#" + servers.getColor()),PorterDuff.Mode.SRC_ATOP);
 		holder.backColor.getBackground().setColorFilter(Color.parseColor("#" + servers.getColor()),PorterDuff.Mode.SRC_ATOP);
@@ -85,7 +74,7 @@ public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersV
 
     @Override
     public int getItemCount() {
-        return slist.size();
+        return servers.size();
     }
 
     public static class ServersViewHolder extends RecyclerView.ViewHolder {

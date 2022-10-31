@@ -5,12 +5,12 @@
         <shape
             android:shape="rectangle">
             <corners
-                android:radius="8.0dip" />
+                android:radius="3dip" />
             <stroke
                 android:width="2.0dip"
                 android:color="@color/gray" />
             <solid
-                android:color="@color/black" />
+                android:color="@color/item_change_nik_color_bg" />
         </shape>
     </item>
 </selector>
