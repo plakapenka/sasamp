@@ -458,17 +458,15 @@ void CGame::SetWantedLevel(uint8_t byteLevel)
 {
 	WriteMemory(g_libGTASA+0x27D8D2, (uintptr_t)&byteLevel, 1);
 }
-
-bool CGame::IsAnimationLoaded(char *szAnimFile)
-{
-	return ScriptCommand(&is_animation_loaded, szAnimFile);
-}
-
 void CGame::RequestAnimation(char *szAnimFile)
 {
 	ScriptCommand(&request_animation, szAnimFile);
 }
 
+bool CGame::IsAnimationLoaded(const char szAnimFile[])
+{
+	return ScriptCommand(&is_animation_loaded, szAnimFile);
+}
 // 0.3.7
 void CGame::DisplayGameText(char* szStr, int iTime, int iType)
 {

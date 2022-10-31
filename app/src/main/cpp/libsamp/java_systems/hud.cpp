@@ -93,11 +93,15 @@ int CHUD::GetScreenSize(bool isWidth)
     jint value = env->CallIntMethod(jHudManager, jGetScreenSize, isWidth);
     return value;
 }
-
+int tickUpdate;
 void CHUD::UpdateHudInfo()
 {
+    tickUpdate++;
+    if(tickUpdate < 20) return;
 
+    tickUpdate = 0;
     CPlayerPed* pPed = pGame->FindPlayerPed();
+
     JNIEnv* env = g_pJavaWrapper->GetEnv();
 
     if (!env)

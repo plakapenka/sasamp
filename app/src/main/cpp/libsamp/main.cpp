@@ -152,6 +152,7 @@ void ProcessCheckForKeyboard();
 void InitInMenu()
 {
 	pGame = new CGame();
+
 	pGame->InitInMenu();
 
 	pGUI = new CGUI();
@@ -234,7 +235,6 @@ void InitInGame()
 
 	if (!bNetworkInited)
 	{
-		// Подключение к серверу
 		if (pChatWindow)
 			pChatWindow->AddDebugMessage("{bbbbbb}Клиент {ff0000}LIVE RUSSIA{bbbbbb} запущен");
 

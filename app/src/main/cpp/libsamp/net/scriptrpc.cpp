@@ -194,6 +194,11 @@ void ScrApplyPlayerAnimation(RPCParameters *rpcParams)
 	szAnimLib[byteAnimLibLen] = '\0';
 	szAnimName[byteAnimNameLen] = '\0';
 
+//	if(!pGame->IsAnimationLoaded(szAnimLib))
+//	{
+//		pGame->RequestAnimation(szAnimLib);
+//	}
+
 	pPlayerPool = pNetGame->GetPlayerPool();
 
 	if(pPlayerPool)

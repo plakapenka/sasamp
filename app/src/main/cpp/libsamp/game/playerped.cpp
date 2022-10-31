@@ -1296,10 +1296,9 @@ void CPlayerPed::SetFightingStyle(int iStyle)
 }
 
 // 0.3.7
+
 void CPlayerPed::ApplyAnimation( char *szAnimName, char *szAnimFile, float fT, int opt1, int opt2, int opt3, int opt4, int iUnk )
 {
-	int iWaitAnimLoad = 0;
-
 	if(!m_pPed) return;
 	if(!GamePool_Ped_GetAt(m_dwGTAId)) return;
 
@@ -1308,15 +1307,10 @@ void CPlayerPed::ApplyAnimation( char *szAnimName, char *szAnimFile, float fT, i
 	if(!pGame->IsAnimationLoaded(szAnimFile))
 	{
 		pGame->RequestAnimation(szAnimFile);
-		while(!pGame->IsAnimationLoaded(szAnimFile))
-		{
-			usleep(1000);
-			iWaitAnimLoad++;
-			if(iWaitAnimLoad > 15) return;
-		}
+		ScriptCommand(&apply_animation,m_dwGTAId,szAnimName,szAnimFile,fT,opt1,opt2,opt3,opt4,iUnk);
 	}
 
-	ScriptCommand(&apply_animation, m_dwGTAId, szAnimName, szAnimFile, fT, opt1, opt2, opt3, opt4, iUnk);
+    ScriptCommand(&apply_animation,m_dwGTAId,szAnimName,szAnimFile,fT,opt1,opt2,opt3,opt4,iUnk);
 }
 
 PLAYERID CPlayerPed::FindDeathResponsiblePlayer()

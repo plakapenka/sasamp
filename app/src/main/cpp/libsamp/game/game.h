@@ -123,7 +123,7 @@ public:
 	void SetWantedLevel(uint8_t byteLevel);
 	uint8_t GetWantedLevel();
 
-	bool IsAnimationLoaded(char* szAnimFile);
+	bool IsAnimationLoaded(const char szAnimFile[]);
 	void RequestAnimation(char* szAnimFile);
 	// 0.3.7
 	void DisplayGameText(char* szStr, int iTime, int iType);
@@ -151,6 +151,7 @@ bool			m_bCheckpointsEnabled;
 	uint32_t		m_dwCheckpointMarker;
 	VECTOR			m_vecCheckpointPos;
 	VECTOR			m_vecCheckpointExtent;
+
 private:
 	bool aToggleStatusHUD[HUD_MAX];
 	CCamera* 		m_pGameCamera;
@@ -164,4 +165,5 @@ private:
 	VECTOR			m_vecRaceCheckpointNext;
 
 	bool 			m_bClockEnabled;
+
 };

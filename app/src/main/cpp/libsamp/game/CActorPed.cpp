@@ -69,7 +69,7 @@ CActorPed::~CActorPed()
 bool IsValidGamePed(PED_TYPE* pPed) 
 {
 	
-	//IsPedPointerValid(CPed *) — 0x00435614
+	//IsPedPointerValid(CPed *) пїЅ 0x00435614
 	if (((bool (*)(PED_TYPE*))(g_libGTASA + 0x00435614 + 1))(pPed)) {
 		return true;
 	}
@@ -152,16 +152,6 @@ void CActorPed::ApplyAnimation(char* szAnimName, char* szAnimFile, float fDelta,
 
 	if (!strcasecmp(szAnimFile, "SEX")) return;
 
-	if (!pGame->IsAnimationLoaded(szAnimFile))
-	{
-		pGame->RequestAnimation(szAnimFile);
-		while (!pGame->IsAnimationLoaded(szAnimFile))
-		{
-			usleep(1000);
-			iWaitAnimLoad++;
-			if (iWaitAnimLoad > 15) return;
-		}
-	}
 
 	ScriptCommand(&apply_animation, m_dwGTAId, szAnimName, szAnimFile, fDelta, bLoop, bLockX, bLockY, bFreeze, uiTime);
 }
@@ -176,7 +166,7 @@ void CActorPed::PutDirectlyInVehicle(int iVehicleID, int iSeat)
 
 	if (pVehicle->fHealth == 0.0f) return;
 	if (pVehicle->entity.vtable == g_libGTASA + 0x5C7358) return;
-	// check seatid (допилить)
+	// check seatid (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
 
 	if (iSeat == 0)
 	{

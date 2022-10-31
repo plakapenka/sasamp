@@ -135,6 +135,7 @@ public class HudManager {
             progressArmor.setProgress(armour);
 
             hud_money.setText(formatter.format(money));
+            Log.d("Adf", formatter.format(money));
 
             int id = activity.getResources().getIdentifier(new Formatter().format("weapon_%d", Integer.valueOf(weaponid)).toString(), "drawable", activity.getPackageName());
             hud_weapon.setImageResource(id);

@@ -139,4 +139,5 @@ public:
 	void ProcessSpecialAction(BYTE byteSpecialAction);
 
 	void ClearAnimations();
+
 };
