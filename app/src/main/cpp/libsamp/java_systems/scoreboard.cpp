@@ -30,7 +30,7 @@ void ToggleTab()
       //  TabUpdate();
 
         // Freeze player
-        pHud->ToggleAll(false);
+        pHud->ToggleAll(false, true);
 
         // Get player list
         pNetGame->UpdatePlayerScoresAndPings();

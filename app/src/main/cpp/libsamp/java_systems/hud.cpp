@@ -57,7 +57,7 @@ void CHUD::ToggleAll(bool toggle, bool withchat, bool anyway)
     isHudToggle = toggle;
     pGame->DisplayHUD(toggle);
 
-    if(withchat)pGame->ToggleHUDElement(HUD_ELEMENT_CHAT, toggle);
+    if(withchat || toggle)pGame->ToggleHUDElement(HUD_ELEMENT_CHAT, toggle);
     pGame->ToggleHUDElement(HUD_ELEMENT_BUTTONS, toggle);
     //pGame->DisplayWidgets(toggle); ?? не работает тоже
     pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->TogglePlayerControllable(toggle, true);
