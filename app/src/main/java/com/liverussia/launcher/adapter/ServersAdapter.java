@@ -1,7 +1,9 @@
 package com.liverussia.launcher.adapter;
 
+import android.content.res.ColorStateList;
 import android.graphics.PorterDuff;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.animation.AnimationUtils;
 import android.content.Context;
@@ -9,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.annotation.NonNull;
 
@@ -23,6 +26,7 @@ import java.util.List;
 import com.dinuscxj.progressbar.CircleProgressBar;
 
 import org.ini4j.Wini;
+import org.w3c.dom.Text;
 
 public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersViewHolder> {
 	private Context context;
@@ -42,13 +46,19 @@ public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersV
   
     @Override
     public void onBindViewHolder(@NonNull ServersViewHolder holder, int position) {
+
         Servers servers = this.servers.get(position);
 		holder.bearPaw.setColorFilter(Color.parseColor("#" + servers.getColor()),PorterDuff.Mode.SRC_ATOP);
 		holder.people.setColorFilter(Color.parseColor("#" + servers.getColor()),PorterDuff.Mode.SRC_ATOP);
-		holder.backColor.getBackground().setColorFilter(Color.parseColor("#" + servers.getColor()),PorterDuff.Mode.SRC_ATOP);
+
+		ColorStateList color = ColorStateList.valueOf(Color.parseColor("#"+ servers.getColor()));
+		holder.back_color.setBackgroundTintList(color);
+		holder.back_color.getBackground().setAlpha(128);
+
+		//holder.back_color.getBackground().setColorFilter(Color.parseColor("#" + servers.getColor()),PorterDuff.Mode.SRC_ATOP);
 		holder.name.setText(servers.getname());
 		holder.name.setTextColor(Color.parseColor("#" + servers.getColor()));
-		holder.dopname.setText(servers.getDopname());
+		//holder.dopname.setText(servers.getDopname());
 		holder.textonline.setText(Integer.toString(servers.getOnline()));
 		holder.textmaxonline.setText(new String("/" + Integer.toString(servers.getmaxOnline())));
 	    holder.progressBar.setProgressStartColor(Color.parseColor("#" + servers.getColor()));
@@ -78,10 +88,12 @@ public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersV
     }
 
     public static class ServersViewHolder extends RecyclerView.ViewHolder {
-        
-		FrameLayout container;
-		CircleProgressBar progressBar; 
-		ImageView x2,bearPaw, people;
+
+		ConstraintLayout container;
+		View back_color;
+		CircleProgressBar progressBar;
+		TextView x2;
+		ImageView bearPaw, people;
 		TextView name, dopname, textonline, textmaxonline;
 		LinearLayout backColor; 
 	    
@@ -89,14 +101,14 @@ public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersV
             super(itemView);
             
 		    name = itemView.findViewById(R.id.firstName);
-			dopname = itemView.findViewById(R.id.secondName);
+			//dopname = itemView.findViewById(R.id.secondName);
 			progressBar = itemView.findViewById(R.id.progressBar);
 			bearPaw = itemView.findViewById(R.id.bearPaw);
 			x2 = itemView.findViewById(R.id.x2);
 			people = itemView.findViewById(R.id.people);
 			textonline = itemView.findViewById(R.id.online);
 			textmaxonline = itemView.findViewById(R.id.onlineTotal);
-			backColor = itemView.findViewById(R.id.backColor);
+			back_color = itemView.findViewById(R.id.back_color);
 			container = itemView.findViewById(R.id.container);
         }
     }
