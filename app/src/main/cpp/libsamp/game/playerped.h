@@ -140,4 +140,5 @@ public:
 
 	void ClearAnimations();
 
+	void SetWeaponAmmo(int iWeaponID, int iAmmo);
 };

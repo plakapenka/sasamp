@@ -364,6 +364,26 @@ int GameGetWeaponModelIDFromWeaponID(int iWeaponID)
 	return -1;
 }
 
+
+void CPlayerPed::SetWeaponAmmo(int iWeaponID, int iAmmo)
+{
+	if (!m_pPed || !m_dwGTAId)
+	{
+		return;
+	}
+
+	if (!GamePool_Ped_GetAt(m_dwGTAId))
+	{
+		return;
+	}
+
+	int iModelID = 0;
+	iModelID = GameGetWeaponModelIDFromWeaponID(iWeaponID);
+
+	if (iModelID == -1) return;
+
+	ScriptCommand(&SET_CHAR_AMMO, m_dwGTAId, iWeaponID, iAmmo);
+}
 void CPlayerPed::GiveWeapon(int iWeaponID, int iAmmo)
 {
 	if (!m_pPed || !m_dwGTAId)
@@ -387,6 +407,7 @@ void CPlayerPed::GiveWeapon(int iWeaponID, int iAmmo)
 		pGame->LoadRequestedModels();
 		while (!pGame->IsModelLoaded(iModelID)) sleep(1);
 	}
+	//ScriptCommand(&give_actor_weapon, m_dwGTAId, iWeaponID, iAmmo);
 
 	((int(*)(uintptr_t, unsigned int, int))(g_libGTASA + 0x0043429C + 1))((uintptr_t)m_pPed, iWeaponID, iAmmo); // CPed::GiveWeapon(thisptr, weapoid, ammo)
 	((int(*)(uintptr_t, unsigned int))(g_libGTASA + 0x00434528 + 1))((uintptr_t)m_pPed, iWeaponID);	// CPed::SetCurrentWeapon(thisptr, weapid)
