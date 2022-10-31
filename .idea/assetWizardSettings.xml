@@ -8,6 +8,17 @@
             <PersistentState>
               <option name="children">
                 <map>
+                  <entry key="confirmationStep">
+                    <value>
+                      <PersistentState>
+                        <option name="values">
+                          <map>
+                            <entry key="resourceDirectory" value="main" />
+                          </map>
+                        </option>
+                      </PersistentState>
+                    </value>
+                  </entry>
                   <entry key="imageAssetPanel">
                     <value>
                       <PersistentState>
@@ -50,8 +61,8 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="D:\m_loadingstart_1.png" />
-                                                <entry key="opacityPercent" value="60" />
+                                                <entry key="imagePath" value="D:\players_icon.png" />
+                                                <entry key="opacityPercent" value="80" />
                                                 <entry key="trimmed" value="true" />
                                               </map>
                                             </option>
@@ -85,9 +96,10 @@
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
-                                      <entry key="imageAsset" value="D:\m_loadingstart_1.png" />
-                                      <entry key="outputName" value="mylogo" />
-                                      <entry key="themeColor" value="ffffff" />
+                                      <entry key="imageAsset" value="D:\players_icon.png" />
+                                      <entry key="outputName" value="players_icon_monitor" />
+                                      <entry key="theme" value="HOLO_DARK" />
+                                      <entry key="themeColor" value="e80202" />
                                     </map>
                                   </option>
                                 </PersistentState>

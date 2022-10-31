@@ -46,21 +46,20 @@ public class MonitoringFragment extends Fragment {
 		this.news = Lists.NEWS;
 		newsAdapter = new NewsAdapter(getContext(), this.news);
 		recyclerNews.setAdapter(newsAdapter);
-		recyclerNews.setHasFixedSize(true);
 
 
 
 		
 		recyclerServers = inflate.findViewById(R.id.ourServersRV);
 
-		LinearLayoutManager layoutManagerr = new LinearLayoutManager(getActivity());
+
+		LinearLayoutManager layoutManagerr = new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false);
 		recyclerServers.setLayoutManager(layoutManagerr);
 		
 		this.servers = Lists.SERVERS;
 		serversAdapter = new ServersAdapter(getContext(), this.servers);
 		recyclerServers.setAdapter(serversAdapter);
 
-		recyclerServers.setHasFixedSize(true);
 		
         return inflate;
     }

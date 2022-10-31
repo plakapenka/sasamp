@@ -5,8 +5,7 @@
         <shape
             android:shape="rectangle">
             <corners
-                android:radius="@dimen/_10sdp"
-                />
+                android:radius="10dp" />
 
         </shape>
     </item>

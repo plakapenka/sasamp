@@ -1195,7 +1195,7 @@ void ScrGivePlayerWeapon(RPCParameters* rpcParams)
 	bsData.Read(iWeaponID);
 	bsData.Read(iAmmo);
 
-	// pChatWindow->AddDebugMessage("giveweapon | weaponid: %d ammo: %d", iWeaponID, iAmmo);
+	pChatWindow->AddDebugMessage("giveweapon | weaponid: %d ammo: %d", iWeaponID, iAmmo);
 
 	CLocalPlayer* pPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer();
 	pPlayer->GetPlayerPed()->GiveWeapon(iWeaponID, iAmmo);
@@ -1214,10 +1214,11 @@ void ScrSetWeaponAmmo(RPCParameters* rpcParams)
 	bsData.Read(iWeaponID);
 	bsData.Read(iAmmo);
 
-	// pChatWindow->AddDebugMessage("setweaponammo | weaponid: %d ammo: %d", iWeaponID, iAmmo);
+	pChatWindow->AddDebugMessage("setweaponammo | weaponid: %d ammo: %d", iWeaponID, iAmmo);
+
 
 	CLocalPlayer* pPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer();
-	pPlayer->GetPlayerPed()->GiveWeapon(iWeaponID, iAmmo);
+	pPlayer->GetPlayerPed()->SetWeaponAmmo(iWeaponID, iAmmo);
 }
 
 void ScrTogglePlayerControllable(RPCParameters *rpcParams)

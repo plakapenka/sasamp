@@ -65,6 +65,7 @@ public class Notification {
         br_not_secondbutton = aactivity.findViewById(R.id.br_not_secondbutton);
         br_not_progress = aactivity.findViewById(R.id.br_not_progress);
         Utils.HideLayout(constraintLayout, false);
+
         final GestureDetector gdt = new GestureDetector(new GestureListener());
         br_not_bg.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -276,6 +277,12 @@ public class Notification {
     private static final int SWIPE_THRESHOLD_VELOCITY = 200;
 
     private class GestureListener extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public boolean onSingleTapUp(MotionEvent e)
+        {
+            HideNotification (false);
+            return false;
+        }
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 

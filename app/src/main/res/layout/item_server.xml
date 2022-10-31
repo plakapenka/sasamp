@@ -6,16 +6,17 @@
     android:id="@+id/container"
     android:layout_margin="5dp"
 
-    android:layout_height="110dp">
+    android:layout_height="100dp">
 
 
     <View
         android:id="@+id/back_color"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:alpha="0.5"
         android:background="@drawable/server_rectangle"
-        android:backgroundTint="@color/black"
+        android:backgroundTint="@color/blue_"
+        android:alpha="0.5"
+
         app:layout_constraintBottom_toBottomOf="parent" />
 
 
@@ -25,6 +26,8 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:src="@drawable/logo_monitoring"
+            app:tintMode="src_atop"
+            android:tint="@color/yellow"
             app:layout_constraintBottom_toBottomOf="@+id/progressBar"
             app:layout_constraintStart_toStartOf="@+id/progressBar"
             app:layout_constraintEnd_toEndOf="@+id/progressBar"
@@ -68,7 +71,9 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/_16sdp"
             android:adjustViewBounds="true"
-            android:src="@drawable/people"
+            app:tintMode="src_atop"
+            android:src="@drawable/players_icon_monitor"
+
             app:layout_constraintStart_toStartOf="@+id/firstName"
             app:layout_constraintTop_toBottomOf="@+id/firstName" />
 
