@@ -12,6 +12,7 @@ public enum  InfoMessages {
     INSTALL_GAME_FIRST("Сначала установите игру"),
     SETTINGS_ALREADY_DEFAULT("Настройки по умолчанию уже установлены"),
     SUCCESSFULLY_SETTINGS_RESET("Вы успешно сбросили настройки!"),
+    DOWNLOAD_SUCCESS_INPUT_YOUR_NICKNAME("Игра успешно установлена, введите свой никнейм"),
     APPROVE_INSTALL("Подтвердите установку");
 
     private final String text;
