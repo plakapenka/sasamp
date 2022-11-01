@@ -362,73 +362,73 @@ bool CLocalPlayer::Process()
 	}
 
         //  нопки вход/выход/закрыть машину
-        Log("asdf");
-//        if (!m_pPlayerPed->IsInVehicle() ) {
-//            if(pVehiclePool)
-//            {
-//                Log("asdf22");
-//                VEHICLEID ClosetVehicleID = pVehiclePool->FindNearestToLocalPlayerPed();
-//
-//                if (ClosetVehicleID < MAX_VEHICLES && pVehiclePool->GetSlotState(ClosetVehicleID))
-//                {
-//                    Log("33333");
-//                    CVehicle *pVehicle = pVehiclePool->GetAt(ClosetVehicleID);
-//                    if (pVehicle && pVehicle->GetDistanceFromLocalPlayerPed() < 5.0f) {
-//                        if(!pVehicle->m_bIsLocked)
-//                        {
-//                            if (!pHud->isEnterPassengerButtOn) {
-//                                pHud->ToggleEnterPassengerButton(true);
-//                            }
-//                            if (!pHud->isEnterExitVehicleButtonOn) {
-//                                pHud->ToggleEnterExitVehicleButton(true);
-//                            }
-//                        }
-//                        if(!pHud->isLockVehicleButtonOn)
-//                        {
-//                            pHud->ToggleLockVehicleButton(true);
-//                        }
-//                    }
-//                    else
-//                    {
-//                        if (pHud->isEnterPassengerButtOn) {
-//                            pHud->ToggleEnterPassengerButton(false);
-//                        }
-//                        if (pHud->isEnterExitVehicleButtonOn) {
-//                            pHud->ToggleEnterExitVehicleButton(false);
-//                        }
-//                        if(pHud->isLockVehicleButtonOn)
-//                        {
-//                            pHud->ToggleLockVehicleButton(false);
-//                        }
-//                    }
-//                }
-//                else
-//                {
-//                    if (pHud->isEnterPassengerButtOn) {
-//                        pHud->ToggleEnterPassengerButton(false);
-//                    }
-//                    if (pHud->isEnterExitVehicleButtonOn) {
-//                        pHud->ToggleEnterExitVehicleButton(false);
-//                    }
-//                    if(pHud->isLockVehicleButtonOn)
-//                    {
-//                        pHud->ToggleLockVehicleButton(false);
-//                    }
-//                }
-//            }
-//
-//        }
-//		else
-//		{// в машине
-//			if (!pHud->isEnterExitVehicleButtonOn) {
-//				pHud->ToggleEnterExitVehicleButton(true);
-//			}
-//			if(!pHud->isLockVehicleButtonOn)
-//			{
-//				pHud->ToggleLockVehicleButton(true);
-//			}
-//		}
-//    }
+        if (!m_pPlayerPed->IsInVehicle() ) {
+			CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
+            if(pVehiclePool)
+            {
+                VEHICLEID ClosetVehicleID = pVehiclePool->FindNearestToLocalPlayerPed();
+
+                if (ClosetVehicleID < MAX_VEHICLES && pVehiclePool->GetSlotState(ClosetVehicleID))
+                {
+                    CVehicle *pVehicle = pVehiclePool->GetAt(ClosetVehicleID);
+                    if (pVehicle && pVehicle->GetDistanceFromLocalPlayerPed() < 5.0f) {
+                        if(!pVehicle->m_bIsLocked)
+                        {// тачка открыта
+                            if (!pHud->isEnterPassengerButtOn) {
+                                pHud->ToggleEnterPassengerButton(true);
+                            }
+                            if (!pHud->isEnterExitVehicleButtonOn) {
+                                pHud->ToggleEnterExitVehicleButton(true);
+                            }
+                        }
+                        if(!pHud->isLockVehicleButtonOn)
+                        {
+                            pHud->ToggleLockVehicleButton(true);
+                        }
+                    }
+                    else
+                    {
+                        if (pHud->isEnterPassengerButtOn) {
+                            pHud->ToggleEnterPassengerButton(false);
+                        }
+                        if (pHud->isEnterExitVehicleButtonOn) {
+                            pHud->ToggleEnterExitVehicleButton(false);
+                        }
+                        if(pHud->isLockVehicleButtonOn)
+                        {
+                            pHud->ToggleLockVehicleButton(false);
+                        }
+                    }
+                }
+                else
+                {
+                    if (pHud->isEnterPassengerButtOn) {
+                        pHud->ToggleEnterPassengerButton(false);
+                    }
+                    if (pHud->isEnterExitVehicleButtonOn) {
+                        pHud->ToggleEnterExitVehicleButton(false);
+                    }
+                    if(pHud->isLockVehicleButtonOn)
+                    {
+                        pHud->ToggleLockVehicleButton(false);
+                    }
+                }
+            }
+
+        }
+		else
+		{// в машине
+			if (!pHud->isEnterExitVehicleButtonOn) {
+				pHud->ToggleEnterExitVehicleButton(true);
+			}
+			if(!pHud->isLockVehicleButtonOn)
+			{
+				pHud->ToggleLockVehicleButton(true);
+			}
+			if (pHud->isEnterPassengerButtOn) {
+				pHud->ToggleEnterPassengerButton(false);
+			}
+		}
 	////////////////////////////
 
 
@@ -454,7 +454,6 @@ bool CLocalPlayer::Process()
         }
         return true;
     }
-	Log("Konec");
     return true;
 }
 extern float                    m_fWeaponDamages[43 + 1];

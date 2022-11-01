@@ -373,16 +373,6 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/yearn_money"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="145dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/bus_layout"
             android:visibility="gone"
             android:layout_width="wrap_content"
@@ -453,61 +443,6 @@
                 app:srcCompat="@drawable/bus_text" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <ImageView
-            android:id="@+id/enter_passenger"
-            android:layout_width="180px"
-            android:layout_height="180px"
-            android:layout_marginEnd="8dp"
-            android:clickable="true"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:src="@drawable/enter_passanger"
-            app:layout_constraintEnd_toStartOf="@+id/enterexit_driver"
-            app:layout_constraintTop_toTopOf="@+id/enterexit_driver" />
-
-        <ImageView
-            android:id="@+id/vehicle_lock_butt"
-            android:layout_width="180px"
-            android:layout_height="180px"
-            android:layout_marginEnd="8dp"
-            android:clickable="true"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:src="@drawable/vehicle_lock_butt"
-            app:layout_constraintEnd_toStartOf="@+id/enter_passenger"
-            app:layout_constraintTop_toTopOf="@+id/enter_passenger" />
-
-        <ImageView
-            android:id="@+id/enterexit_driver"
-            android:layout_width="180px"
-            android:layout_height="180px"
-            android:layout_marginTop="140dp"
-            android:layout_marginEnd="4dp"
-            android:clickable="true"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:src="@drawable/enter_car_butt"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/imageView25"
-            android:layout_width="75dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="152dp"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toStartOf="@+id/vehicle_lock_butt"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/work_money" />
-
-        <TextView
-            android:id="@+id/yearn_moneytext"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:fontFamily="@font/din_pro_bold"
-            android:text="0 Р"
-            android:textColor="#5DDD28"
-            app:layout_constraintBottom_toBottomOf="@+id/imageView25"
-            app:layout_constraintEnd_toEndOf="@+id/imageView25"
-            app:layout_constraintStart_toStartOf="@+id/imageView25" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -536,4 +471,62 @@
         app:layout_constraintStart_toStartOf="@+id/hud_greenzone"
         app:srcCompat="@drawable/gpsactive" />
 
+    <ImageView
+        android:id="@+id/enter_passenger"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="8dp"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:src="@drawable/enter_passanger"
+        app:layout_constraintEnd_toStartOf="@+id/enterexit_driver"
+        app:layout_constraintTop_toTopOf="@+id/enterexit_driver" />
+
+    <ImageView
+        android:id="@+id/vehicle_lock_butt"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="8dp"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:src="@drawable/vehicle_lock_butt"
+        app:layout_constraintBottom_toBottomOf="@+id/enterexit_driver"
+        app:layout_constraintEnd_toStartOf="@+id/enter_passenger"
+        app:layout_constraintTop_toTopOf="@+id/enterexit_driver" />
+
+    <ImageView
+        android:id="@+id/enterexit_driver"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="145dp"
+        android:layout_marginEnd="8dp"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:src="@drawable/enter_car_butt"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/yearn_money"
+        android:layout_width="120dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="150dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/work_money"
+        app:layout_constraintEnd_toStartOf="@+id/vehicle_lock_butt"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/yearn_moneytext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/din_pro_bold"
+            android:text="0 Р"
+            android:textColor="#5DDD28"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

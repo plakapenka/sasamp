@@ -102,7 +102,7 @@ void CHUD::ToggleEnterExitVehicleButton(bool toggle)
 
 void CHUD::ToggleLockVehicleButton(bool toggle)
 {
-    isEnterExitVehicleButtonOn = toggle;
+    isLockVehicleButtonOn = toggle;
 
     JNIEnv* env = g_pJavaWrapper->GetEnv();
     jclass clazz = env->GetObjectClass(jHudManager);
