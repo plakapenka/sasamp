@@ -50,10 +50,17 @@ public class HudManager {
     private ProgressBar oil_oil_progress;
     private TextView oil_water_procent;
     private TextView oil_oil_procent;
+    private ImageView enter_passenger;
+    private ImageView enterexit_driver;
+    private ImageView lock_vehicle;
+
     DecimalFormat formatter;
     DecimalFormatSymbols symbols;
     public native void HudInit();
     public native void cppToggleAllHud(boolean toggle);
+    public native void ClickEnterPassengerButton();
+    public native void ClickEnterExitVehicleButton();
+    public native void ClickLockVehicleButton();
 
     public HudManager(Activity aactivity) {
         HudInit();
@@ -63,7 +70,29 @@ public class HudManager {
         formatter.setDecimalFormatSymbols(symbols);
 
         activity = aactivity;
+        // кнопка закрыть/открыть тачку
+        lock_vehicle = activity.findViewById(R.id.vehicle_lock_butt);
+        lock_vehicle.setVisibility(View.GONE);
+        lock_vehicle.setOnClickListener(view -> {
+            ClickLockVehicleButton();
+        });
 
+        // кнопка сесть/вылезть водителем
+        enterexit_driver = activity.findViewById(R.id.enterexit_driver);
+        enterexit_driver.setVisibility(View.GONE);
+        enterexit_driver.setOnClickListener(view -> {
+            ClickEnterExitVehicleButton();
+        });
+
+        // кнопка сесть пассажиром
+        enter_passenger = activity.findViewById(R.id.enter_passenger);
+        enter_passenger.setVisibility(View.GONE);
+        enter_passenger.setOnClickListener(view ->
+        {
+            ClickEnterPassengerButton();
+        });
+
+        ///
         hud_main = aactivity.findViewById(R.id.hud_main);
         hud_main.setVisibility(View.GONE);
 
@@ -122,6 +151,40 @@ public class HudManager {
         Utils.HideLayout(hud_gpsactive, false);
     }
 
+    public void ToggleEnterPassengerButton(boolean toggle)
+    {
+        if(toggle)
+        {
+            activity.runOnUiThread(() -> Utils.ShowLayout(enter_passenger, true) );
+        }
+        else
+        {
+            activity.runOnUiThread(() -> Utils.HideLayout(enter_passenger, true) );
+        }
+    }
+    public void ToggleEnterExitVehicleButton(boolean toggle)
+    {
+        if(toggle)
+        {
+            activity.runOnUiThread(() -> Utils.ShowLayout(enterexit_driver, true) );
+        }
+        else
+        {
+            activity.runOnUiThread(() -> Utils.HideLayout(enterexit_driver, true) );
+        }
+    }
+    public void ToggleLockVehicleButton(boolean toggle)
+    {
+        if(toggle)
+        {
+            activity.runOnUiThread(() -> Utils.ShowLayout(lock_vehicle, true) );
+        }
+        else
+        {
+            activity.runOnUiThread(() -> Utils.HideLayout(lock_vehicle, true) );
+        }
+    }
+
     public void ToggleAllHud(boolean toggle)
     {
         cppToggleAllHud(toggle);
@@ -135,7 +198,7 @@ public class HudManager {
             progressArmor.setProgress(armour);
 
             hud_money.setText(formatter.format(money));
-            Log.d("Adf", formatter.format(money));
+           // Log.d("Adf", formatter.format(money));
 
             int id = activity.getResources().getIdentifier(new Formatter().format("weapon_%d", Integer.valueOf(weaponid)).toString(), "drawable", activity.getPackageName());
             hud_weapon.setImageResource(id);

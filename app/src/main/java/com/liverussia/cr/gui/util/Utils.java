@@ -21,15 +21,15 @@ public class Utils {
 
     public static void ShowLayout(View view, boolean isAnim) {
         if (view != null) {
-            view.setVisibility(View.VISIBLE);
             if (isAnim) {
+                view.setAlpha(0.0f);
                 fadeIn(view);
             } else {
                 view.setAlpha(1.0f);
-                view.invalidate();
+                // view.invalidate();
             }
+            view.setVisibility(View.VISIBLE);
         }
-
     }
 
     public static void HideLayout(View view, boolean isAnim) {
@@ -47,6 +47,7 @@ public class Utils {
         if (view != null) {
             view.animate().setDuration(150).setListener(new AnimatorListenerAdapter() {
                 public void onAnimationEnd(Animator animation) {
+
                     super.onAnimationEnd(animation);
                 }
             }).alpha(1.0f);

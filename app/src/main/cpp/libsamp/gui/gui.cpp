@@ -199,8 +199,12 @@ void CGUI::SetFuel(float fuel){
    m_fuel = static_cast<int>(fuel);
 }
 bool showSpeedometr = false;
+int speedUpdateTick;
 void CGUI::ShowSpeed()
 {
+	speedUpdateTick ++;
+	if(speedUpdateTick < 8)return;
+	speedUpdateTick=0;
 	int i_speed = 0;
 	bDoor =0;
 	bEngine = 0;
@@ -318,52 +322,7 @@ void CGUI::Render()
 		}
 
 		ImGui::SameLine();
-		CVehiclePool* pVehiclePool = pNetGame->GetVehiclePool();
-		if (pVehiclePool)
-		{
-			VEHICLEID ClosetVehicleID = pVehiclePool->FindNearestToLocalPlayerPed();
-			if (ClosetVehicleID < MAX_VEHICLES && pVehiclePool->GetSlotState(ClosetVehicleID))
-			{
-				CVehicle* pVehicle = pVehiclePool->GetAt(ClosetVehicleID);
-				if (pVehicle)
-				{
-					if (pVehicle->GetDistanceFromLocalPlayerPed() < 5.0f)
-					{
-						CPlayerPool* pPlayerPool = pNetGame->GetPlayerPool();
-						if (pPlayerPool)
-						{
-							CLocalPlayer* pLocalPlayer;
-							if (!pPlayerPool->GetLocalPlayer()->GetPlayerPed()->IsInVehicle() && !pPlayerPool->GetLocalPlayer()->GetPlayerPed()->IsAPassenger())
-							{
-								if (ImGui::Button("G", vecButSize))
-								{
-									if (pNetGame)
-									{
-										if (pPlayerPool)
-										{
-											pLocalPlayer = pPlayerPool->GetLocalPlayer();
-											if (pLocalPlayer)
-											{
-												pLocalPlayer->HandlePassengerEntryEx();
-											}
-										}
-									}
-								}
-							}
-							else
-								if (pPlayerPool->GetLocalPlayer()->GetPlayerPed()->IsInVehicle() && !pPlayerPool->GetLocalPlayer()->GetPlayerPed()->IsAPassenger())
-								{
-									if (ImGui::Button("L. Ctrl", vecButSize))
-									{
-										LocalPlayerKeys.bKeys[ePadKeys::KEY_ACTION] = true;
-									}
-								}
-							ImGui::SameLine();
-						}
-					}
-				}
-			}
-		}
+
 		if (m_bKeysStatus)
 		{
 			ImGui::SameLine();

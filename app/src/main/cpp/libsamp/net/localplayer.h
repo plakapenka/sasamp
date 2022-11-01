@@ -145,7 +145,7 @@ public:
 	void SendNextClass();
 	void SendPrevClass();
 	void SendSpawn();
-	bool HandlePassengerEntryEx();
+	bool GoEnterVehicle(bool passenger);
 	uint32_t GetPlayerColorAsARGB();
 	uint32_t GetPlayerColor();
 	void SetPlayerColor(uint32_t dwColor);

@@ -38,6 +38,7 @@ void CHUD::InitServerLogo(int serverID) {
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_HudManager_HudInit(JNIEnv *env, jobject thiz) {
+
     jHudManager = env->NewGlobalRef(thiz);
     jUpdateHudInfo = env->GetMethodID(env->GetObjectClass(thiz), "UpdateHudInfo", "(IIIIIIII)V");
 }
@@ -77,6 +78,37 @@ void CHUD::ToggleAll(bool toggle, bool withchat, bool anyway)
   //  int radarPosX = (int)pHud->GetScreenSize(true)/11.13;
    // int radarPosY = (int)pHud->GetScreenSize(false)/24.8;
 
+}
+//
+void CHUD::ToggleEnterPassengerButton(bool toggle)
+{
+    isEnterPassengerButtOn = toggle;
+
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+    jclass clazz = env->GetObjectClass(jHudManager);
+    jmethodID ToggleEnterPassengerButton = env->GetMethodID(clazz, "ToggleEnterPassengerButton", "(Z)V");
+    env->CallVoidMethod(jHudManager, ToggleEnterPassengerButton, toggle);
+}
+
+void CHUD::ToggleEnterExitVehicleButton(bool toggle)
+{
+    isEnterExitVehicleButtonOn = toggle;
+
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+    jclass clazz = env->GetObjectClass(jHudManager);
+    jmethodID ToggleEnterExitVehicleButton = env->GetMethodID(clazz, "ToggleEnterExitVehicleButton", "(Z)V");
+    env->CallVoidMethod(jHudManager, ToggleEnterExitVehicleButton, toggle);
+}
+
+void CHUD::ToggleLockVehicleButton(bool toggle)
+{
+    isEnterExitVehicleButtonOn = toggle;
+
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+    jclass clazz = env->GetObjectClass(jHudManager);
+
+    jmethodID ToggleLockVehicleButton = env->GetMethodID(clazz, "ToggleLockVehicleButton", "(Z)V");
+    env->CallVoidMethod(jHudManager, ToggleLockVehicleButton, toggle);
 }
 
 int CHUD::GetScreenSize(bool isWidth)
@@ -126,4 +158,29 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_HudManager_cppToggleAllHud(JNIEnv *env, jobject thiz, jboolean toggle) {
     pHud->ToggleAll(toggle);
+}
+//
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_HudManager_ClickEnterPassengerButton(JNIEnv *env, jobject thiz) {
+    pNetGame->GetPlayerPool()->GetLocalPlayer()->GoEnterVehicle(true);
+
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_HudManager_ClickEnterExitVehicleButton(JNIEnv *env, jobject thiz) {
+    CLocalPlayer *pPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer();
+    if(pPlayer->GetPlayerPed()->IsInVehicle())
+    {
+        pPlayer->GetPlayerPed()->ExitCurrentVehicle();
+    }
+    else
+    {
+        pPlayer->GoEnterVehicle(false);
+    }
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_HudManager_ClickLockVehicleButton(JNIEnv *env, jobject thiz) {
+    pNetGame->SendChatCommand("/lock");
 }

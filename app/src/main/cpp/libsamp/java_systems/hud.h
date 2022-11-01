@@ -16,11 +16,18 @@ public:
 
     void ToggleAll(bool toggle, bool withchat = false, bool anyway = false);
     void UpdateHudInfo();
+    void ToggleEnterPassengerButton(bool toggle);
+    void ToggleEnterExitVehicleButton(bool toggle);
+    void ToggleLockVehicleButton(bool toggle);
+
     int GetScreenSize(bool isWidth);
     CHUD();
     bool isHudToggle = false;
     int hudhideCount = 0;
     int localMoney = 0;
+    bool isEnterPassengerButtOn = false;
+    bool isEnterExitVehicleButtonOn = false;
+    bool isLockVehicleButtonOn = false;
 };
 
 

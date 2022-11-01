@@ -484,14 +484,14 @@ void CPlayerPed::ClearPlayerAimState()
 	*(uint8_t*)(g_libGTASA + 0x008E864C) = old;
 }
 
-uint8_t CPlayerPed::GetCurrentWeapon()
+BYTE CPlayerPed::GetCurrentWeapon()
 {
-	if (!m_pPed) return 0;
-	if (GamePool_Ped_GetAt(m_dwGTAId) == 0) return 0;
+	if(!m_pPed) return 0;
+	if(GamePool_Ped_GetAt(m_dwGTAId) == 0) return 0;
 
-	uint32_t dwRetVal;
-	ScriptCommand(&get_actor_armed_weapon, m_dwGTAId, &dwRetVal);
-	return (uint8_t)dwRetVal;
+	DWORD dwRetVal;
+	ScriptCommand(&get_actor_armed_weapon,m_dwGTAId,&dwRetVal);
+	return (BYTE)dwRetVal;
 }
 
 // 0.3.7
