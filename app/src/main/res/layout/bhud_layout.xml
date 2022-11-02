@@ -277,98 +277,8 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-
-
-            <LinearLayout
-                android:id="@+id/linearLayout4"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_marginStart="12dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:gravity="center"
-                android:orientation="vertical"
-                app:layout_constraintBottom_toTopOf="@+id/hud_logo"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-
-            </LinearLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/target_notify"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="55dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:id="@+id/imageView21"
-                android:layout_width="170dp"
-                android:layout_height="70dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/target_notify" />
-
-            <ImageView
-                android:id="@+id/imageView22"
-                android:layout_width="110dp"
-                android:layout_height="22dp"
-                android:layout_marginTop="7dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/target_notify_title" />
-
-            <ImageView
-                android:id="@+id/target_notify_exit"
-                android:layout_width="13dp"
-                android:layout_height="13dp"
-                android:layout_marginEnd="10dp"
-                app:layout_constraintBottom_toBottomOf="@+id/imageView22"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/imageView22"
-                app:srcCompat="@drawable/target_notify_exit" />
-
-            <ImageView
-                android:id="@+id/target_notify_status"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:layout_marginStart="35dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="20dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageView22"
-                app:srcCompat="@drawable/target_notify_none" />
-
-            <TextView
-                android:id="@+id/target_notify_text"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="7dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="8dp"
-                android:fontFamily="@font/din_pro_medium"
-                android:gravity="center"
-                android:shadowColor="#000000"
-                android:shadowDx="0"
-                android:shadowDy="0"
-                android:shadowRadius="10"
-                android:text="Текст текущей задачи для выполнения"
-                android:textColor="#FFFFFF"
-                android:textSize="8sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/target_notify_status"
-                app:layout_constraintTop_toBottomOf="@+id/target_notify_exit" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -444,25 +354,6 @@
 
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <ImageView
-        android:id="@+id/hud_greenzone"
-        android:layout_width="250px"
-        android:layout_height="100px"
-        android:layout_marginStart="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/hud_logo"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/greenzone" />
-
-    <ImageView
-        android:id="@+id/hud_gpsactive"
-        android:layout_width="250px"
-        android:layout_height="100px"
-        app:layout_constraintBottom_toTopOf="@+id/hud_greenzone"
-        app:layout_constraintStart_toStartOf="@+id/hud_greenzone"
-        app:srcCompat="@drawable/gpsactive" />
-
     <ImageView
         android:id="@+id/enter_passenger"
         android:layout_width="140px"
@@ -498,6 +389,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/yearn_money"
         android:layout_width="100dp"
@@ -522,6 +415,101 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/target_notify"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="55dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/imageView21"
+            android:layout_width="170dp"
+            android:layout_height="70dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/target_notify" />
+
+        <ImageView
+            android:id="@+id/imageView22"
+            android:layout_width="110dp"
+            android:layout_height="22dp"
+            android:layout_marginTop="7dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/target_notify_title" />
+
+        <ImageView
+            android:id="@+id/target_notify_exit"
+            android:layout_width="13dp"
+            android:layout_height="13dp"
+            android:layout_marginEnd="10dp"
+            app:layout_constraintBottom_toBottomOf="@+id/imageView22"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/imageView22"
+            app:srcCompat="@drawable/target_notify_exit" />
+
+        <ImageView
+            android:id="@+id/target_notify_status"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginStart="35dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView22"
+            app:srcCompat="@drawable/target_notify_none" />
+
+        <TextView
+            android:id="@+id/target_notify_text"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="7dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/din_pro_medium"
+            android:gravity="center"
+            android:shadowColor="#000000"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="10"
+            android:text="Текст текущей задачи для выполнения"
+            android:textColor="#FFFFFF"
+            android:textSize="8sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/target_notify_status"
+            app:layout_constraintTop_toBottomOf="@+id/target_notify_exit" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ImageView
+            android:id="@+id/hud_gpsactive"
+            android:layout_width="250px"
+            android:layout_height="100px"
+            android:layout_marginStart="3dp"
+            android:layout_marginBottom="72dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/gpsactive" />
+
+        <ImageView
+            android:id="@+id/hud_greenzone"
+            android:layout_width="250px"
+            android:layout_height="100px"
+            android:layout_marginStart="3dp"
+            android:layout_marginBottom="108dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/greenzone" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <ImageView
         android:id="@+id/hud_logo"
         android:layout_width="500px"
@@ -529,4 +517,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/moscow" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

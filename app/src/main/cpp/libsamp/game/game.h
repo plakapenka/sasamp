@@ -151,10 +151,10 @@ bool			m_bCheckpointsEnabled;
 	uint32_t		m_dwCheckpointMarker;
 	VECTOR			m_vecCheckpointPos;
 	VECTOR			m_vecCheckpointExtent;
-	bool isDialogActive;
-	bool isCasinoDiceActive;
-	bool isAutoShopActive;
-	bool isCasinoWheelActive;
+	bool isDialogActive = false;
+	bool isCasinoDiceActive = false;
+	bool isAutoShopActive = false;
+	bool isCasinoWheelActive = false;
 
 private:
 	bool aToggleStatusHUD[HUD_MAX];

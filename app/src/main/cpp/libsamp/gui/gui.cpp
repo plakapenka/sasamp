@@ -266,7 +266,7 @@ void CGUI::Render()
 
 	if (pChatWindow) pChatWindow->Render();
 
-	if(pGame->FindPlayerPed()->IsInVehicle() && !pGame->FindPlayerPed()->IsAPassenger() && !pKeyBoard->IsOpen())
+	if(pGame->FindPlayerPed()->IsInVehicle() && !pGame->FindPlayerPed()->IsAPassenger() && !pKeyBoard->IsOpen() && !pGame->isDialogActive)
 	{
 		if(!showSpeedometr)
 		{
