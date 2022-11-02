@@ -21,14 +21,12 @@ public class Casino_LuckyWheel {
     Button casino_luckywheel_speen_free_butt;
     View casino_luckywheel_exit_butt;
 
-    private HudManager mHudManager = null;
 
     public native void ClickButt(int buttonID);
     public native void initCasino_LuckyWheel();
 
-    public Casino_LuckyWheel(Activity aactivity, HudManager mHudManager)
+    public Casino_LuckyWheel(Activity aactivity)
     {
-        this.mHudManager = mHudManager;
         initCasino_LuckyWheel();
         activity = aactivity;
 
@@ -50,6 +48,7 @@ public class Casino_LuckyWheel {
             Hide();
         });
         casino_luckywheel_exit_butt.setOnClickListener(view -> {
+            ClickButt(228);
             Hide();
         });
 
@@ -65,7 +64,6 @@ public class Casino_LuckyWheel {
         {
             color = ColorStateList.valueOf(activity.getResources().getColor(R.color.blue_));
         }
-        mHudManager.ToggleAllHud(false);
         activity.runOnUiThread(() ->
         {
             casino_luckywheel_speen_free_butt.setBackgroundTintList(color);
@@ -82,7 +80,6 @@ public class Casino_LuckyWheel {
     }
     public void Hide()
     {
-        mHudManager.ToggleAllHud(true);
         activity.runOnUiThread(() -> {
             casino_luckywheel_mainlayout.setVisibility(View.GONE);
         });

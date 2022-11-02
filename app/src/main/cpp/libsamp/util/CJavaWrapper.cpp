@@ -133,6 +133,8 @@ void CJavaWrapper::ShowClientSettings()
 
 void CJavaWrapper::MakeDialog(int dialogId, int dialogTypeId, char caption[], char info[], char button1[], char button2[])
 {
+	pGame->isDialogActive = true;
+
     JNIEnv* env = GetEnv();
     if (!env)
     {
@@ -200,8 +202,7 @@ extern "C"
 		}
 		pEnv->ReleaseByteArrayElements(str, pMsg, JNI_ABORT);
 
-		pHud->ToggleAll(true);
-		//g_pJavaWrapper->isDialogActive = false;
+		pGame->isDialogActive = false;
 
 		//	Log("sendDialogResponse: inputtext1 - %s, inputText - %s", inputtext1, inputText);
 
@@ -1360,7 +1361,7 @@ void CJavaWrapper::ToggleAutoShop(bool toggle)
 		Log("No env");
 		return;
 	}
-	pHud->ToggleAll(!toggle);
+	pGame->isAutoShopActive = toggle;
 
 	env->CallVoidMethod(this->activity, this->j_toggleAutoShop, toggle);
 }
@@ -1487,7 +1488,6 @@ void CJavaWrapper::ClearScreen()
 {
 	Log("ClearScreen");
 	HideTargetNotify();
-	pHud->ToggleAll(false);
 	HideAuthorization();
 	HideChooseSpawn();
 	HideRegistration();
@@ -1645,7 +1645,6 @@ void CJavaWrapper::ShowCasinoDice(bool show, int tableID, int tableBet, int tabl
 								  char player5name[], int player5stat) {
 
 
-	pNetGame->m_CasinoDiceLayoutState = show;
 	JNIEnv* env = GetEnv();
 
     jclass clazz = env->GetObjectClass(jCasinoDice);
@@ -1664,6 +1663,7 @@ void CJavaWrapper::ShowCasinoDice(bool show, int tableID, int tableBet, int tabl
 
 void CJavaWrapper::ShowCasinoLuckyWheel(int count, int time) {
 
+	pGame->isCasinoWheelActive = true;
 	JNIEnv* env = GetEnv();
 
 	jclass clazz = env->GetObjectClass(jCasino_LuckyWheel);
@@ -1714,6 +1714,11 @@ Java_com_nvidia_devtech_NvEventQueueActivity_SendCasinoButt(JNIEnv *env, jobject
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_Casino_1LuckyWheel_ClickButt(JNIEnv *env, jobject thiz, jint button_id) {
+	if(button_id == 228)
+	{// Закрыл
+		pGame->isCasinoWheelActive = false;
+		return;
+	}
 	uint8_t packet = ID_CUSTOM_RPC;
 	uint8_t RPC = RPC_CASINO_LUCKY_WHEEL_MENU;
 	uint8_t button = button_id;

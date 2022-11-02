@@ -952,11 +952,25 @@ void CHud__DrawScriptText_hook(uintptr_t thiz, uint8_t unk)
 
 #include "..//keyboard.h"
 extern CKeyBoard* pKeyBoard;
+
+// ÐšÐ½Ð¾Ð¿ÐºÐ° Ð°Ñ‚Ð°ÐºÐ¸
+int(*CWidgetButtonAttackUpdate)(uintptr_t);
+int CWidgetButtonAttackUpdate_hook(uintptr_t thiz)
+{
+	if(pNetGame->m_GreenZoneState)
+	{
+		// Ð½Ðµ Ð¿Ð¾ÐºÐ°Ð·Ñ‹Ð²Ð°Ñ‚ÑŒ ÐºÐ½Ð¾Ð¿ÐºÑƒ Ð² Ð·Ð·
+		return 0;
+	}
+	return CWidgetButtonAttackUpdate(thiz);
+}
+
+
 int(*CWidgetButtonEnterCar_Draw)(uintptr_t);
 uint32_t g_uiLastTickVoice = 0;
 int CWidgetButtonEnterCar_Draw_hook(uintptr_t thiz)
 {
-	// ïåðåõâàò îòðèñîâêè êíîïêè 'ñåñòü â àâòî'
+	// Ð¿ÐµÑ€ÐµÑ…Ð²Ð°Ñ‚ Ð¾Ñ‚Ñ€Ð¸ÑÐ¾Ð²ÐºÐ¸ ÐºÐ½Ð¾Ð¿ÐºÐ¸ 'ÑÐµÑÑ‚ÑŒ Ð² Ð°Ð²Ñ‚Ð¾'
 	return 0;
 //	if (g_pWidgetManager)
 //	{
@@ -993,7 +1007,7 @@ int CWidgetButtonEnterCar_Draw_hook(uintptr_t thiz)
 //						g_uiLastTickVoice = GetTickCount();
 //						if (pVoice->IsDisconnected())
 //						{
-//							pChatWindow->AddDebugMessage("Îøèáêà ãîëîñîâîãî ÷àòà ¹1");
+//							pChatWindow->AddDebugMessage("ÐžÑˆÐ¸Ð±ÐºÐ° Ð³Ð¾Ð»Ð¾ÑÐ¾Ð²Ð¾Ð³Ð¾ Ñ‡Ð°Ñ‚Ð° â„–1");
 //							pVoice->DisableInput();
 //						}
 //					}
@@ -1009,7 +1023,7 @@ int CWidgetButtonEnterCar_Draw_hook(uintptr_t thiz)
 //				{
 //					if (pVoice->IsDisconnected())
 //					{
-//						pChatWindow->AddDebugMessage("Îøèáêà ãîëîñîâîãî ÷àòà ¹2");
+//						pChatWindow->AddDebugMessage("ÐžÑˆÐ¸Ð±ÐºÐ° Ð³Ð¾Ð»Ð¾ÑÐ¾Ð²Ð¾Ð³Ð¾ Ñ‡Ð°Ñ‚Ð° â„–2");
 //						pVoice->DisableInput();
 //					}
 //					pWidget->SetColor(255, 0x9C, 0xCF, 0x9C);
@@ -1593,11 +1607,6 @@ static bool ShouldBeProcessedButton(int result)
 {
 	CTouchInterface__m_bWidgets = (uintptr_t*)(g_libGTASA + 0x00657E48);
 
-	if (result == CTouchInterface__m_bWidgets[18])
-	{
-		return false;
-	}
-
 	if (result == CTouchInterface__m_bWidgets[26] || result == CTouchInterface__m_bWidgets[27])
 	{
 		if (pNetGame)
@@ -1633,14 +1642,17 @@ void CWidgetButton__Update_hook(int result, int a2, int a3, int a4)
 	{
 		return;
 	}
-	if (ShouldBeProcessedButton(result))
+	CTouchInterface__m_bWidgets = (uintptr_t*)(g_libGTASA + 0x00657E48);
+
+	if(CTouchInterface__m_bWidgets[0] == result)
 	{
-		return CWidgetButton__Update(result, a2, a3, a4);
+		if(pNetGame && pNetGame->m_GreenZoneState )
+		{
+			((void (*)(unsigned int, unsigned int)) (g_libGTASA + 0x00274178 + 1))(CTouchInterface__m_bWidgets[1], 0);
+			return;
+		}
 	}
-	else
-	{
-		return;
-	}
+	return CWidgetButton__Update(result, a2, a3, a4);
 }
 
 int (*CWidget__IsTouched)(uintptr_t a1);
@@ -2769,6 +2781,9 @@ void InstallHooks()
 	//widgets
 	SetUpHook(g_libGTASA + 0x00276510, (uintptr_t)CWidgetButtonEnterCar_Draw_hook, (uintptr_t*)& CWidgetButtonEnterCar_Draw);
 
+	//widgets
+	//SetUpHook(g_libGTASA + 0x0039DB30, (uintptr_t)CWidgetButtonAttackUpdate_hook, (uintptr_t*)& CWidgetButtonAttackUpdate);
+
 	// attached objects
 	SetUpHook(g_libGTASA + 0x003C1BF8, (uintptr_t)CWorld_ProcessPedsAfterPreRender_hook, (uintptr_t*)& CWorld_ProcessPedsAfterPreRender);
 
@@ -2789,6 +2804,7 @@ void InstallHooks()
 	// RLEDecompress fix
 	SetUpHook(g_libGTASA + 0x1BC314, (uintptr_t)RLEDecompress_hook, (uintptr_t*)&RLEDecompress);
 
+
 	// todo: 3 pools fix crash
 
 	// random crash fix
@@ -2796,6 +2812,7 @@ void InstallHooks()
 	// fix
 	SetUpHook(g_libGTASA + 0x001B9D74, (uintptr_t)_rwFreeListFreeReal_hook, (uintptr_t*)& _rwFreeListFreeReal);
 
+	//SetUpHook(g_libGTASA + 0x0027548C, (DWORD)CWidgetButtonAttack_hook, (DWORD*)&CWidgetButtonAttack);
 	SetUpHook(g_libGTASA + 0x00274AB4, (uintptr_t)CWidgetButton__Update_hook, (uintptr_t*)& CWidgetButton__Update);
 	SetUpHook(g_libGTASA + 0x00274218, (uintptr_t)CWidget__IsTouched_hook, (uintptr_t*)& CWidget__IsTouched);
 

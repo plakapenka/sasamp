@@ -42,21 +42,27 @@ Java_com_liverussia_cr_gui_HudManager_HudInit(JNIEnv *env, jobject thiz) {
     jHudManager = env->NewGlobalRef(thiz);
     jUpdateHudInfo = env->GetMethodID(env->GetObjectClass(thiz), "UpdateHudInfo", "(IIIIIIII)V");
 }
-
-void CHUD::ToggleAll(bool toggle, bool withchat, bool anyway)
+extern bool showSpeedometr;
+void CHUD::ToggleAll(bool toggle, bool withchat)
 {
+    if(toggle == isHudToggle)
+    {
+        return;
+    }
     if(!toggle)
     {
-        hudhideCount ++;
+        showSpeedometr = false;
+        g_pJavaWrapper->HideSpeed();
     }
     else
     {
-        hudhideCount--;
-        if(hudhideCount > 0 && !anyway)return;
-        else hudhideCount = 0;
+        showSpeedometr = true;
+        g_pJavaWrapper->ShowSpeed();
     }
     isHudToggle = toggle;
     pGame->DisplayHUD(toggle);
+
+
 
     if(withchat || toggle)pGame->ToggleHUDElement(HUD_ELEMENT_CHAT, toggle);
     pGame->ToggleHUDElement(HUD_ELEMENT_BUTTONS, toggle);
@@ -153,13 +159,6 @@ void CHUD::UpdateHudInfo()
                         pGame->GetWantedLevel()
                         );
 }
-
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_HudManager_cppToggleAllHud(JNIEnv *env, jobject thiz, jboolean toggle) {
-    pHud->ToggleAll(toggle);
-}
-//
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_HudManager_ClickEnterPassengerButton(JNIEnv *env, jobject thiz) {

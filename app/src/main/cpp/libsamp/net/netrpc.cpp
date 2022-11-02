@@ -585,7 +585,6 @@ void DialogBox(RPCParameters *rpcParams)
 
 		if(wDialogID < 0) return;
 
-		pHud->ToggleAll(false);
 		g_pJavaWrapper->MakeDialog(wDialogID, byteDialogStyle, title, info, button1, button2);
 }
 

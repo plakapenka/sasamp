@@ -21,7 +21,9 @@ import com.liverussia.cr.R;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Formatter;
+import java.util.Locale;
 
 public class HudManager {
     private Activity activity;
@@ -53,27 +55,32 @@ public class HudManager {
     private ImageView enter_passenger;
     private ImageView enterexit_driver;
     private ImageView lock_vehicle;
+    long buttonLockCD;
 
     DecimalFormat formatter;
-    DecimalFormatSymbols symbols;
+
     public native void HudInit();
-    public native void cppToggleAllHud(boolean toggle);
     public native void ClickEnterPassengerButton();
     public native void ClickEnterExitVehicleButton();
     public native void ClickLockVehicleButton();
 
     public HudManager(Activity aactivity) {
         HudInit();
-        formatter = new DecimalFormat();
-        symbols = DecimalFormatSymbols.getInstance();
-        symbols.setGroupingSeparator('.');
-        formatter.setDecimalFormatSymbols(symbols);
+        DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
+        otherSymbols.setGroupingSeparator('.');
+        formatter = new DecimalFormat("###,###.###", otherSymbols);
 
         activity = aactivity;
         // кнопка закрыть/открыть тачку
         lock_vehicle = activity.findViewById(R.id.vehicle_lock_butt);
         lock_vehicle.setVisibility(View.GONE);
         lock_vehicle.setOnClickListener(view -> {
+            long currTime = System.currentTimeMillis()/1000;
+            if(buttonLockCD > currTime)
+            {
+                return;
+            }
+            buttonLockCD = currTime+2;
             ClickLockVehicleButton();
         });
 
@@ -183,11 +190,6 @@ public class HudManager {
         {
             activity.runOnUiThread(() -> Utils.HideLayout(lock_vehicle, true) );
         }
-    }
-
-    public void ToggleAllHud(boolean toggle)
-    {
-        cppToggleAllHud(toggle);
     }
 
     public void UpdateHudInfo(int health, int armour, int hunger, int weaponid, int ammo, int ammoclip, int money, int wanted)

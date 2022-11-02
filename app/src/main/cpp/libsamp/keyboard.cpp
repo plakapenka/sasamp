@@ -304,7 +304,7 @@ void CKeyBoard::Open(keyboard_callback *handler, bool bHiden)
 	//g_pJavaWrapper->HideVoice();
 
 	if(pNetGame->m_GreenZoneState)g_pJavaWrapper->HideGreenZone();
-	if(pNetGame->m_CasinoDiceLayoutState)g_pJavaWrapper->TempToggleCasinoDice(false);
+	if(pGame->isCasinoDiceActive)g_pJavaWrapper->TempToggleCasinoDice(false);
 	g_pJavaWrapper->HideServerLogo();
 	//g_pJavaWrapper->HideSamwillMoney();
 	g_pJavaWrapper->HideSpeed();
@@ -339,7 +339,7 @@ void CKeyBoard::Close()
 	{
 		g_pJavaWrapper->ShowGPS();
 	}
-	if(pNetGame->m_CasinoDiceLayoutState)g_pJavaWrapper->TempToggleCasinoDice(true);
+	if(pGame->isCasinoDiceActive)g_pJavaWrapper->TempToggleCasinoDice(true);
 	if(pNetGame->m_GreenZoneState)g_pJavaWrapper->ShowGreenZone();
 	//g_pJavaWrapper->ShowVoice();
 
@@ -638,7 +638,7 @@ void CKeyBoard::Send()
 	m_bEnable = false;
 	g_pJavaWrapper->ShowServerLogo();
 	if(pNetGame->m_GreenZoneState)g_pJavaWrapper->ShowGreenZone();
-	if(pNetGame->m_CasinoDiceLayoutState)g_pJavaWrapper->TempToggleCasinoDice(true);
+	if(pGame->isCasinoDiceActive)g_pJavaWrapper->TempToggleCasinoDice(true);
 	if (pGame->m_bRaceCheckpointsEnabled)
 	{
 		g_pJavaWrapper->ShowGPS();

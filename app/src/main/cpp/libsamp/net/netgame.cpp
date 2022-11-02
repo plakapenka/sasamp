@@ -539,6 +539,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_SHOW_DICE_TABLE:
 		{
+
 			const int MAX_PLAYERS_CASINO_DICE = 5;
 
 			char playerName[MAX_PLAYERS_CASINO_DICE][25] = {"--", "--", "--", "--", "--"};
@@ -551,11 +552,10 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 
 			bs.Read(toggle);
 
+			pGame->isCasinoDiceActive = toggle;
 			if(toggle == 0)
 			{
 				g_pJavaWrapper->ShowCasinoDice(false, 0, 0, 0, 0, "--", 0, "--", 0, "--", 0, "--", 0, "--", 0);
-
-				pHud->ToggleAll(true, false, true);
 				return;
 			}
 			bs.Read(tableID);
@@ -598,7 +598,6 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			}
 			int money = pHud->localMoney;
 			g_pJavaWrapper->ShowCasinoDice(toggle, tableID, bet, bank, money, playerName[0], playerStat[0], playerName[1], playerStat[1], playerName[2], playerStat[2], playerName[3], playerStat[3], playerName[4], playerStat[4]);
-			pHud->ToggleAll(false);
 			break;
 		}
 		case RPC_OPEN_SETTINGS:

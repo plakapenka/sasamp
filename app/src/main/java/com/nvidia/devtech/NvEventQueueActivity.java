@@ -1055,7 +1055,7 @@ public abstract class NvEventQueueActivity
         mPreDeath = new PreDeath(this);
         mDialog = new Dialog(this);
         mHudManager = new HudManager(this);
-        mCasinoLuckyWheel = new Casino_LuckyWheel(this, mHudManager);
+        mCasinoLuckyWheel = new Casino_LuckyWheel(this);
         mSamwillManager = new SamwillManager(this);
         mSpeedometer = new Speedometer(this);
         mAutoShop = new AutoShop(this);

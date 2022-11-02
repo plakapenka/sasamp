@@ -58,6 +58,7 @@ const SCRIPT_COMMAND load_requested_models = { 0x038B, "" };		// -/-
 const SCRIPT_COMMAND create_car = { 0x00A5, "ifffv" };	// (CAR_*|BIKE_*|BOAT_*), x, y, z, var_car
 const SCRIPT_COMMAND load_special_actor = { 0x023C, "is" };		// SPECIAL_*, MODEL_*
 const SCRIPT_COMMAND create_actor = { 0x009A, "iifffv" };	// PEDTYPE_*, #MODEL, x, y, z, var_actor
+const SCRIPT_COMMAND GET_CAR_DOOR_LOCK_STATUS = { 0x09B3, "ii" };	//
 const SCRIPT_COMMAND destroy_actor_fading = { 0x034F, "i" };		// var_actor
 const SCRIPT_COMMAND destroy_actor = { 0x009b, "i" };		// var_actor
 const SCRIPT_COMMAND set_weather = { 0x01B6, "i" };		// WEATHER_*

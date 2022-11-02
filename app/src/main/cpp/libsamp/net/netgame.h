@@ -183,7 +183,6 @@ public:
 	char m_szHostOrIp[0x7F];
 	int m_iPort;
 
-	bool 		m_CasinoDiceLayoutState = false;
 	bool		m_GreenZoneState;
 	bool		m_bZoneNames;
 	bool		m_bUseCJWalk;

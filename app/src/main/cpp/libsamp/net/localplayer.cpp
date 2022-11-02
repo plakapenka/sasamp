@@ -192,6 +192,7 @@ uint32_t CLocalPlayer::GetCurrentAnimationIndexFlag()
 	return dwAnim;
 }
 extern bool g_uiHeadMoveEnabled;
+extern bool tabToggle;
 #include "..//game/CWeaponsOutFit.h"
 bool CLocalPlayer::Process()
 {
@@ -368,11 +369,12 @@ bool CLocalPlayer::Process()
             {
                 VEHICLEID ClosetVehicleID = pVehiclePool->FindNearestToLocalPlayerPed();
 
-                if (ClosetVehicleID < MAX_VEHICLES && pVehiclePool->GetSlotState(ClosetVehicleID))
+                if (ClosetVehicleID != INVALID_VEHICLE_ID)
                 {
                     CVehicle *pVehicle = pVehiclePool->GetAt(ClosetVehicleID);
                     if (pVehicle && pVehicle->GetDistanceFromLocalPlayerPed() < 5.0f) {
-                        if(!pVehicle->m_bIsLocked)
+                        //if(!pVehicle->m_bIsLocked)
+                        if(!pVehicle->m_bDoorsLocked)
                         {// тачка открыта
                             if (!pHud->isEnterPassengerButtOn) {
                                 pHud->ToggleEnterPassengerButton(true);
@@ -381,10 +383,20 @@ bool CLocalPlayer::Process()
                                 pHud->ToggleEnterExitVehicleButton(true);
                             }
                         }
+						else
+						{
+							if (pHud->isEnterPassengerButtOn) {
+								pHud->ToggleEnterPassengerButton(false);
+							}
+							if (pHud->isEnterExitVehicleButtonOn) {
+								pHud->ToggleEnterExitVehicleButton(false);
+							}
+						}
                         if(!pHud->isLockVehicleButtonOn)
                         {
                             pHud->ToggleLockVehicleButton(true);
                         }
+
                     }
                     else
                     {
@@ -416,13 +428,11 @@ bool CLocalPlayer::Process()
             }
 
         }
-		else
-		{// в машине
+		else {// в машине
 			if (!pHud->isEnterExitVehicleButtonOn) {
 				pHud->ToggleEnterExitVehicleButton(true);
 			}
-			if(!pHud->isLockVehicleButtonOn)
-			{
+			if (!pHud->isLockVehicleButtonOn) {
 				pHud->ToggleLockVehicleButton(true);
 			}
 			if (pHud->isEnterPassengerButtOn) {
@@ -430,7 +440,14 @@ bool CLocalPlayer::Process()
 			}
 		}
 	////////////////////////////
+	bool needDrawableHud = true;
+	if(pGame->isDialogActive || pGame->isCasinoDiceActive || tabToggle || pGame->isAutoShopActive
+	|| pGame->isCasinoWheelActive || !m_pPlayerPed)
+	{
+		needDrawableHud = false;
+	}
 
+	pHud->ToggleAll(needDrawableHud);
 
     if(m_bIsSpectating && !m_bIsActive)
     {
@@ -548,7 +565,7 @@ bool CLocalPlayer::GoEnterVehicle(bool passenger)
 	//int isHoldDown = (( int (*)(int, int, int))(g_libGTASA+0x270818+1))(0, 1, 1);
 
 	VEHICLEID ClosetVehicleID = pVehiclePool->FindNearestToLocalPlayerPed();
-	if (ClosetVehicleID < MAX_VEHICLES && pVehiclePool->GetSlotState(ClosetVehicleID))
+	if (ClosetVehicleID != INVALID_VEHICLE_ID)
 	{
 		CVehicle* pVehicle = pVehiclePool->GetAt(ClosetVehicleID);
 		if (pVehicle->GetDistanceFromLocalPlayerPed() < 4.0f)
@@ -639,34 +656,6 @@ uint32_t CLocalPlayer::GetPlayerColorAsARGB()
 	return (TranslateColorCodeToRGBA(pNetGame->GetPlayerPool()->GetLocalPlayerID()) >> 8) | 0xFF000000;
 }
 
-bool CLocalPlayer::HandlePassengerEntry()
-{
-	if(GetTickCount() - m_dwPassengerEnterExit < 1000 )
-		return true;
-
-	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
-	// CTouchInterface::IsHoldDown
-    int isHoldDown = (( int (*)(int, int, int))(g_libGTASA+0x270818+1))(0, 1, 1);
-
-	if (isHoldDown)
-	{
-		VEHICLEID ClosetVehicleID = pVehiclePool->FindNearestToLocalPlayerPed();
-		if(ClosetVehicleID < MAX_VEHICLES && pVehiclePool->GetSlotState(ClosetVehicleID))
-		{
-			CVehicle* pVehicle = pVehiclePool->GetAt(ClosetVehicleID);
-			if(pVehicle->GetDistanceFromLocalPlayerPed() < 4.0f)
-			{
-				m_pPlayerPed->EnterVehicle(pVehicle->m_dwGTAId, true);
-				SendEnterVehicleNotification(ClosetVehicleID, true);
-				m_dwPassengerEnterExit = GetTickCount();
-				return true;
-			}
-		}
-	}
-
-	return false;
-}
-
 
 
 void CLocalPlayer::UpdateSurfing() {}
@@ -721,15 +710,6 @@ void CLocalPlayer::SetSpawnInfo(PLAYER_SPAWN_INFO *pSpawn)
 bool CLocalPlayer::Spawn()
 {
 	if(!m_bHasSpawnInfo) return false;
-
-	if(pSettings && pSettings->GetReadOnly().iHud)
-	{
-		pHud->ToggleAll(true);
-	}
-	else
-	{
-		pHud->ToggleAll(false);
-	}
    
     //g_pJavaWrapper->ShowSpeed();
 

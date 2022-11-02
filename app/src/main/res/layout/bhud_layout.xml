@@ -10,7 +10,6 @@
         android:layout_height="match_parent"
         >
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/hud_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
@@ -27,9 +26,9 @@
 
             <ImageView
                 android:id="@+id/imageView17"
-                android:layout_width="180px"
-                android:layout_height="180px"
-                android:layout_marginTop="10dp"
+                android:layout_width="140px"
+                android:layout_height="140px"
+                android:layout_marginTop="16dp"
                 app:layout_constraintStart_toStartOf="@+id/hud_menu"
                 app:layout_constraintTop_toBottomOf="@+id/hud_menu"
                 app:srcCompat="@drawable/voice_btn" />
@@ -449,32 +448,25 @@
 
     <ImageView
         android:id="@+id/hud_greenzone"
-        android:layout_width="110dp"
-        android:layout_height="40dp"
+        android:layout_width="250px"
+        android:layout_height="100px"
         android:layout_marginStart="8dp"
         app:layout_constraintBottom_toTopOf="@+id/hud_logo"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/greenzone" />
-    <ImageView
-        android:id="@+id/hud_logo"
-        android:layout_width="175dp"
-        android:layout_height="65dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/moscow" />
 
     <ImageView
         android:id="@+id/hud_gpsactive"
-        android:layout_width="110dp"
-        android:layout_height="40dp"
+        android:layout_width="250px"
+        android:layout_height="100px"
         app:layout_constraintBottom_toTopOf="@+id/hud_greenzone"
         app:layout_constraintStart_toStartOf="@+id/hud_greenzone"
         app:srcCompat="@drawable/gpsactive" />
 
     <ImageView
         android:id="@+id/enter_passenger"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="140px"
+        android:layout_height="140px"
         android:layout_marginEnd="8dp"
         android:clickable="true"
         android:foreground="?android:attr/selectableItemBackground"
@@ -484,22 +476,22 @@
 
     <ImageView
         android:id="@+id/vehicle_lock_butt"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="160px"
+        android:layout_height="160px"
+        android:layout_marginTop="140dp"
         android:layout_marginEnd="8dp"
         android:clickable="true"
         android:foreground="?android:attr/selectableItemBackground"
         android:src="@drawable/vehicle_lock_butt"
-        app:layout_constraintBottom_toBottomOf="@+id/enterexit_driver"
         app:layout_constraintEnd_toStartOf="@+id/enter_passenger"
-        app:layout_constraintTop_toTopOf="@+id/enterexit_driver" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/enterexit_driver"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="145dp"
-        android:layout_marginEnd="8dp"
+        android:layout_width="140px"
+        android:layout_height="140px"
+        android:layout_marginTop="140dp"
+        android:layout_marginEnd="16dp"
         android:clickable="true"
         android:foreground="?android:attr/selectableItemBackground"
         android:src="@drawable/enter_car_butt"
@@ -508,8 +500,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/yearn_money"
-        android:layout_width="120dp"
-        android:layout_height="55dp"
+        android:layout_width="100dp"
+        android:layout_height="45dp"
         android:layout_marginTop="150dp"
         android:layout_marginEnd="8dp"
         android:background="@drawable/work_money"
@@ -529,4 +521,12 @@
             app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/hud_logo"
+        android:layout_width="500px"
+        android:layout_height="200px"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/moscow" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -29,19 +29,10 @@ void ToggleTab()
     {
       //  TabUpdate();
 
-        // Freeze player
-        pHud->ToggleAll(false, true);
-
         // Get player list
         pNetGame->UpdatePlayerScoresAndPings();
 
     }
-    else
-    {
-        // Unfreeze player
-        pHud->ToggleAll(true, false, true);
-    }
-
 }
 
 void TabUpdate() {
