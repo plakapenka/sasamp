@@ -628,6 +628,14 @@ extern "C" {
 	}
 }
 
+uint32_t (*IsVehicleRadioActive)(uintptr_t thiz);
+uint32_t IsVehicleRadioActive_hook(uintptr_t thiz)
+{
+
+	//Log("Radio");
+	return 0;
+}
+
 uint32_t (*CPad__CycleWeaponRightJustDown)(uintptr_t thiz);
 uint32_t CPad__CycleWeaponRightJustDown_hook(uintptr_t thiz)
 {
@@ -702,4 +710,6 @@ void HookCPad()
 	SetUpHook(g_libGTASA+0x39D4C8, (uintptr_t)CPad__GetHorn_hook, (uintptr_t*)&CPad__GetHorn);
 
 	SetUpHook(g_libGTASA+0x39DD30, (uintptr_t)CPad__CycleWeaponRightJustDown_hook, (uintptr_t*)&CPad__CycleWeaponRightJustDown);
+
+	SetUpHook(g_libGTASA+0x00351C40, (uintptr_t)IsVehicleRadioActive_hook, (uintptr_t*)&IsVehicleRadioActive);
 }
