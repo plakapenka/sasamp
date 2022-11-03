@@ -155,6 +155,7 @@ bool			m_bCheckpointsEnabled;
 	bool isCasinoDiceActive = false;
 	bool isAutoShopActive = false;
 	bool isCasinoWheelActive = false;
+	bool isRegistrationActive = false;
 
 private:
 	bool aToggleStatusHUD[HUD_MAX];

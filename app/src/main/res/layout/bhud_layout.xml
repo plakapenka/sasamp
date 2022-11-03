@@ -9,7 +9,9 @@
         android:id="@+id/hud_main"
         android:layout_height="match_parent"
         >
+
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
@@ -23,15 +25,6 @@
                 android:src="@drawable/hud_down"
                 app:layout_constraintStart_toStartOf="@+id/imageView6"
                 app:layout_constraintTop_toBottomOf="@+id/imageView6" />
-
-            <ImageView
-                android:id="@+id/imageView17"
-                android:layout_width="140px"
-                android:layout_height="140px"
-                android:layout_marginTop="16dp"
-                app:layout_constraintStart_toStartOf="@+id/hud_menu"
-                app:layout_constraintTop_toBottomOf="@+id/hud_menu"
-                app:srcCompat="@drawable/voice_btn" />
 
             <ImageView
                 android:id="@+id/imageView"
@@ -490,23 +483,32 @@
 
         <ImageView
             android:id="@+id/hud_gpsactive"
-            android:layout_width="250px"
+            android:layout_width="300px"
             android:layout_height="100px"
             android:layout_marginStart="3dp"
-            android:layout_marginBottom="72dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/hud_greenzone"
             app:srcCompat="@drawable/gpsactive" />
 
         <ImageView
             android:id="@+id/hud_greenzone"
-            android:layout_width="250px"
+            android:layout_width="300px"
             android:layout_height="100px"
             android:layout_marginStart="3dp"
-            android:layout_marginBottom="108dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="8dp"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView17"
             app:srcCompat="@drawable/greenzone" />
+
+        <ImageView
+            android:id="@+id/imageView17"
+            android:layout_width="140px"
+            android:layout_height="140px"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout7"
+            app:srcCompat="@drawable/voice_btn" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

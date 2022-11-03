@@ -1395,6 +1395,7 @@ void CJavaWrapper::HideDeathInfo()
 
 void CJavaWrapper::ShowRegistration(char *nick, int id) 
 {
+	pGame->isRegistrationActive = true;
 	JNIEnv* env = GetEnv();
 
 	if (!env)
@@ -1417,6 +1418,7 @@ void CJavaWrapper::ShowRegistration(char *nick, int id)
 
 void CJavaWrapper::HideRegistration() 
 {
+	pGame->isRegistrationActive = false;
 	JNIEnv* env = GetEnv();
 
 	if (!env)
