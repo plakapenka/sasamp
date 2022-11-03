@@ -29,8 +29,6 @@ import com.liverussia.launcher.storage.Storage;
 import com.liverussia.launcher.ui.adapters.DonateServicesItemListAdapter;
 import com.liverussia.launcher.utils.Validator;
 
-//TODO сделать загрузку картинок доната с сервака как в рулетке
-//TODO Скачивать все картинки в main activity
 public class DonateFragment extends Fragment implements View.OnClickListener, ActivitySupportedServerSelection {
 	
 	private Animation animation;

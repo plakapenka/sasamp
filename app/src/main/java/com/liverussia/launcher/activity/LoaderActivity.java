@@ -61,6 +61,7 @@ import static com.liverussia.launcher.config.Config.LIVE_RUSSIA_RESOURCE_SERVER_
 public class LoaderActivity extends AppCompatActivity {
 
     private final static String APK_NAME = "launcher";
+    private final static String IS_AFTER_LOADING_KEY = "isAfterLoading";
 
     private final ActivityService activityService;
 
@@ -156,6 +157,7 @@ public class LoaderActivity extends AppCompatActivity {
     private void startGame() {
         Intent intent = new Intent(this, com.liverussia.cr.core.GTASA.class);
         intent.putExtras(getIntent());
+        intent.putExtra(IS_AFTER_LOADING_KEY, true);
         startActivity(intent);
         finish();
     }

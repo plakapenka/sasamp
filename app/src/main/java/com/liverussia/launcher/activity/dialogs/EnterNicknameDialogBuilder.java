@@ -1,5 +1,7 @@
 package com.liverussia.launcher.activity.dialogs;
 
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -37,6 +39,7 @@ public class EnterNicknameDialogBuilder extends MaterialAlertDialogBuilder imple
         setView(view);
         initViewElements(view);
         dialog = show();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         setOnDialogCloseListener();
         animation = AnimationUtils.loadAnimation(getContext(), R.anim.button_click);

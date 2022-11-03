@@ -21,12 +21,18 @@ import com.liverussia.cr.R;
 import com.liverussia.cr.core.Config;
 import com.liverussia.launcher.async.GetPossiblePrizesAsyncRestCall;
 import com.liverussia.launcher.dto.response.ServerImagesResponseDto;
+import com.liverussia.launcher.enums.NativeStorageElements;
 import com.liverussia.launcher.fragment.MonitoringFragment;
 import com.liverussia.launcher.fragment.DonateFragment;
 import com.liverussia.launcher.fragment.RouletteFragment;
 import com.liverussia.launcher.fragment.SettingsFragment;
+import com.liverussia.launcher.messages.ErrorMessages;
+import com.liverussia.launcher.messages.InfoMessages;
 import com.liverussia.launcher.model.Servers;
 import com.liverussia.launcher.other.NetworkService;
+import com.liverussia.launcher.service.ActivityService;
+import com.liverussia.launcher.service.impl.ActivityServiceImpl;
+import com.liverussia.launcher.storage.NativeStorage;
 
 import java.io.File;
 
@@ -64,12 +70,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public ImageView settingsImage;
     public TextView settingsTV;
 
+    private final ActivityService activityService;
+
     private ServerImagesResponseDto possiblePrizesInfoResponseDto;
     private ServerImagesResponseDto donateServicesResponseDto;
+
+    private final static String IS_AFTER_LOADING_KEY = "isAfterLoading";
 
     @Getter
     @Setter
     private List<Servers> servers;
+
+    {
+        activityService = new ActivityServiceImpl();
+    }
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,9 +117,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		
 		monitoringFragment = new MonitoringFragment();
         settingsFragment = new SettingsFragment();
-	
-	    replaceFragment(monitoringFragment);
-		
+
+        if (savedInstanceState != null && savedInstanceState.getBoolean(IS_AFTER_LOADING_KEY)) {
+            activityService.showMessage(InfoMessages.DOWNLOAD_SUCCESS_INPUT_YOUR_NICKNAME.getText(), this);
+            replaceFragment(settingsFragment);
+        } else {
+            replaceFragment(monitoringFragment);
+        }
+
 		monitoringButton.setOnClickListener(this);
         settingsButton.setOnClickListener(this);
         rouletteButton.setOnClickListener(this);
@@ -239,11 +258,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void onClickPlay() {
-        if(IsGameInstalled()) {
+        if (!IsGameInstalled()) {
+            startActivity(new Intent(this, LoaderActivity.class));
+            return;
+        }
+
+        if (NativeStorage.getClientProperty(NativeStorageElements.NICKNAME, this) != null) {
             startActivity(new Intent(this, com.liverussia.cr.core.GTASA.class));
-		} else {
-		    startActivity(new Intent(this, LoaderActivity.class));
-		}
+            return;
+        }
+
+        activityService.showMessage(ErrorMessages.INPUT_NICKNAME_BEFORE_SERVER_CONNECT.getText(), this);
+        onClickSettings();
     }
 
     public void onClickSettings() {

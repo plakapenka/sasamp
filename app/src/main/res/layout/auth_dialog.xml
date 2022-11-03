@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout android:orientation="vertical"
-    android:paddingLeft="@dimen/_14sdp"
-    android:paddingTop="@dimen/_18sdp"
-    android:paddingRight="@dimen/_14sdp"
-    android:background="@drawable/auth_choose_serv_bg"
-    android:clipChildren="false"
-    android:clipToPadding="false"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <LinearLayout
+        android:paddingLeft="@dimen/_14sdp"
+        android:paddingTop="@dimen/_18sdp"
+        android:paddingRight="@dimen/_14sdp"
         android:orientation="vertical"
         android:clipChildren="false"
         android:clipToPadding="false"
