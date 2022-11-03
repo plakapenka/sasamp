@@ -24,13 +24,13 @@ public interface NetworkService {
     @GET("https://files.liverussia.online/historyforlauncher/history.json")
     Call<List<News>> getNews();
 
-    @GET("https://liverussia.online/loader_slider/texts.json")
+    @GET("https://files.liverussia.online/loader_slider/texts.json")
     Call<LoaderSliderInfoResponseDto> getLoaderSliderInfo();
 
-    @GET("https://liverussia.online/donate/services/urls.json")
+    @GET("https://files.liverussia.online/donate/services/urls.json")
     Call<ServerImagesResponseDto> getDonateServices();
 
-    @GET("https://liverussia.online/roulette/prizes/urls.json")
+    @GET("https://files.liverussia.online/roulette/prizes/urls.json")
     Call<ServerImagesResponseDto> getPossibleRoulettePrizes();
 
     @POST("/api/v1/auth/android/refresh")
