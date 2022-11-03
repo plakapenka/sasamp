@@ -39,27 +39,22 @@ public class MonitoringFragment extends Fragment {
     	Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.button_click);
 		
 	    recyclerNews = inflate.findViewById(R.id.newsRV);
-
+		recyclerNews.setHasFixedSize(true);
 		LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
 		recyclerNews.setLayoutManager(layoutManager);
 		
 		this.news = Lists.NEWS;
 		newsAdapter = new NewsAdapter(getContext(), this.news);
 		recyclerNews.setAdapter(newsAdapter);
-
-
-
 		
 		recyclerServers = inflate.findViewById(R.id.ourServersRV);
-
-
-		LinearLayoutManager layoutManagerr = new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false);
+		recyclerServers.setHasFixedSize(true);
+		LinearLayoutManager layoutManagerr = new LinearLayoutManager(getActivity());
 		recyclerServers.setLayoutManager(layoutManagerr);
 		
 		this.servers = Lists.SERVERS;
 		serversAdapter = new ServersAdapter(getContext(), this.servers);
 		recyclerServers.setAdapter(serversAdapter);
-
 		
         return inflate;
     }

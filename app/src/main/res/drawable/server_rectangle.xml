@@ -5,8 +5,11 @@
         <shape
             android:shape="rectangle">
             <corners
-                android:radius="10dp" />
-
+                android:radius="@dimen/_10sdp" />
+            <gradient android:startColor="#FF004768"
+                android:endColor="#50004768"
+                android:angle="0"
+                android:type="linear"/>
         </shape>
     </item>
 </selector>

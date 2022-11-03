@@ -1,31 +1,28 @@
 package com.liverussia.launcher.adapter;
 
-import android.content.Context;
-import android.content.res.ColorStateList;
+import android.graphics.PorterDuff;
 import android.graphics.Color;
 import android.view.LayoutInflater;
+import android.view.animation.AnimationUtils;
+import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 
-import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.annotation.NonNull;
 
-import com.dinuscxj.progressbar.CircleProgressBar;
 import com.liverussia.cr.R;
 import com.liverussia.cr.core.Config;
 import com.liverussia.launcher.model.Servers;
 
-import org.ini4j.Wini;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+
+import com.dinuscxj.progressbar.CircleProgressBar;
+
+import org.ini4j.Wini;
 
 public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersViewHolder> {
 	private Context context;
@@ -45,30 +42,17 @@ public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersV
 
     @Override
     public void onBindViewHolder(@NonNull ServersViewHolder holder, int position) {
-
         Servers servers = this.servers.get(position);
-		int color = Color.parseColor("#" + servers.getColor());
-		ColorStateList colorlist = ColorStateList.valueOf(color);
-
-		//holder.bearPaw.setColorFilter(color);
-		//holder.people.setColorFilter(color);
-
-		holder.people.setImageTintList(colorlist);
-		holder.bearPaw.setImageTintList(colorlist);
-
-		holder.back_color.setBackgroundTintList(colorlist);
-		holder.back_color.getBackground().setAlpha(100);
-
-		//holder.bearPaw.setBackgroundTintList(colorlist);
-
-		//holder.back_color.getBackground().setColorFilter(color,PorterDuff.Mode.DST);
+		holder.bearPaw.setColorFilter(Color.parseColor("#" + servers.getColor()),PorterDuff.Mode.SRC_ATOP);
+		holder.people.setColorFilter(Color.parseColor("#" + servers.getColor()),PorterDuff.Mode.SRC_ATOP);
+		holder.backColor.getBackground().setColorFilter(Color.parseColor("#" + servers.getColor()),PorterDuff.Mode.SRC_ATOP);
 		holder.name.setText(servers.getname());
-		holder.name.setTextColor(color);
-		//holder.dopname.setText(servers.getDopname());
+		holder.name.setTextColor(Color.parseColor("#" + servers.getColor()));
+		holder.dopname.setText(servers.getDopname());
 		holder.textonline.setText(Integer.toString(servers.getOnline()));
-		holder.textmaxonline.setText(String.format("/%d", servers.getmaxOnline()));
-	    holder.progressBar.setProgressStartColor(color);
-		holder.progressBar.setProgressEndColor(color);
+		holder.textmaxonline.setText(new String("/" + Integer.toString(servers.getmaxOnline())));
+	    holder.progressBar.setProgressStartColor(Color.parseColor("#" + servers.getColor()));
+		holder.progressBar.setProgressEndColor(Color.parseColor("#" + servers.getColor()));
 		holder.progressBar.setProgress(servers.getOnline());
 		holder.progressBar.setMax(servers.getmaxOnline());
 		holder.container.setOnClickListener(new View.OnClickListener() {
@@ -95,11 +79,9 @@ public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersV
 
     public static class ServersViewHolder extends RecyclerView.ViewHolder {
 
-		ConstraintLayout container;
-		View back_color;
+		FrameLayout container;
 		CircleProgressBar progressBar;
-		TextView x2;
-		ImageView bearPaw, people;
+		ImageView x2,bearPaw, people;
 		TextView name, dopname, textonline, textmaxonline;
 		LinearLayout backColor;
 
@@ -107,14 +89,14 @@ public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersV
             super(itemView);
 
 		    name = itemView.findViewById(R.id.firstName);
-			//dopname = itemView.findViewById(R.id.secondName);
+			dopname = itemView.findViewById(R.id.secondName);
 			progressBar = itemView.findViewById(R.id.progressBar);
 			bearPaw = itemView.findViewById(R.id.bearPaw);
 			x2 = itemView.findViewById(R.id.x2);
 			people = itemView.findViewById(R.id.people);
 			textonline = itemView.findViewById(R.id.online);
 			textmaxonline = itemView.findViewById(R.id.onlineTotal);
-			back_color = itemView.findViewById(R.id.back_color);
+			backColor = itemView.findViewById(R.id.backColor);
 			container = itemView.findViewById(R.id.container);
         }
     }

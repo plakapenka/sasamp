@@ -94,6 +94,7 @@ public class SplashActivity extends AppCompatActivity{
 
 			@Override
 			public void onFailure(Call<List<News>> call, Throwable t) {
+				System.out.println("sfjksjdf");
 			}
 		});
 		

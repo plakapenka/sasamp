@@ -13,7 +13,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.annotation.NonNull;
 
@@ -74,7 +73,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
         
 		TextView title;
 		ImageView image;
-        FrameLayout container;
+		FrameLayout container;
 
         public NewsViewHolder(View itemView) {
             super(itemView);

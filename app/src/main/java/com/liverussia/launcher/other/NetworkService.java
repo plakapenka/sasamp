@@ -18,10 +18,10 @@ import retrofit2.http.POST;
 
 public interface NetworkService {
 
-    @GET("https://liverussia.online/historyforlauncher/servers.json")
+    @GET("https://files.liverussia.online/historyforlauncher/servers.json")
     Call<List<Servers>> getServers();
 
-    @GET("https://liverussia.online/historyforlauncher/history.json")
+    @GET("https://files.liverussia.online/historyforlauncher/history.json")
     Call<List<News>> getNews();
 
     @GET("https://liverussia.online/loader_slider/texts.json")
