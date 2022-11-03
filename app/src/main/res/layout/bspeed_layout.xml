@@ -67,16 +67,16 @@
 
 		<TextView
 			android:id="@+id/textView2"
-			android:layout_width="@dimen/_36sdp"
+			android:layout_width="49dp"
 			android:layout_height="wrap_content"
-			android:layout_marginBottom="24dp"
+			android:layout_marginBottom="5dp"
 			android:fontFamily="@font/din_pro_medium"
 			android:gravity="center"
 			android:letterSpacing="0.45"
 			android:text="000002"
 			android:textColor="@color/white"
-			android:textSize="@dimen/_6sdp"
-			custom:layout_constraintBottom_toBottomOf="@+id/imageView5"
+			android:textSize="8dp"
+			custom:layout_constraintBottom_toTopOf="@+id/linearLayout"
 			custom:layout_constraintEnd_toEndOf="parent"
 			custom:layout_constraintStart_toStartOf="@+id/imageView5" />
 

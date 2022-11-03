@@ -69,7 +69,6 @@ public:
 	void StoreOnFootFullSyncData(ONFOOT_SYNC_DATA *pofSync, uint32_t time, uint8_t key);
 	void StoreInCarFullSyncData(INCAR_SYNC_DATA *picSync, uint32_t time);
 	void StorePassengerFullSyncData(PASSENGER_SYNC_DATA *psSync);
-	void ProcessSpecialActions(BYTE byteSpecialAction);
 	void UpdateOnFootPositionAndSpeed(VECTOR *vecPos, VECTOR *vecMoveSpeed);
 	void StoreTrailerFullSyncData(TRAILER_SYNC_DATA* trSync);
 	void UpdateOnFootTargetPosition();
@@ -135,4 +134,6 @@ private:
 
 	uint8_t				m_byteSpecialAction;
 	uint8_t				m_byteSeatID;
+
+	void ProcessSpecialActions(BYTE byteSpecialAction);
 };

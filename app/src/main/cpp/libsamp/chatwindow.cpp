@@ -301,7 +301,28 @@ bool ProcessVoiceCommands(const char* str)
 		pVoice->SetVolume(volume);
 		return true;
 	}
-
+	if (strstr(str, "/setbutt"))
+	{
+		while (*str)
+		{
+			if (*str == ' ')
+			{
+				str++;
+				break;
+			}
+			str++;
+		}
+		int volume = 0;
+		if (sscanf(str, "%d", &volume) == -1)
+		{
+			pChatWindow->AddDebugMessage("�����������: /voicevolume [value]");
+			return true;
+		}
+		uintptr_t* CTouchInterface__m_bWidgets = (uintptr_t*)(g_libGTASA + 0x00657E48);
+		((void(*)(unsigned int, unsigned int))(g_libGTASA+0x00274178+1))(CTouchInterface__m_bWidgets[volume], 0);
+		return true;
+		//Log("result %d %d %d", a2, a3, a4);
+	}
 	if (strstr(str, "/vplayer"))
 	{
 		while (*str)
@@ -327,28 +348,6 @@ bool ProcessVoiceCommands(const char* str)
 		}
 		pVoice->SetVolumePlayer(id, volume);
 		pChatWindow->AddDebugMessage("��������� ���������� ���� ����������� �� %d ��� ������ %d", volume, id);
-		return true;
-	}
-
-	if (strstr(str, "/specialaction"))
-	{
-		while (*str)
-		{
-			if (*str == ' ')
-			{
-				str++;
-				break;
-			}
-			str++;
-		}
-		int actionId = 0;
-		if (sscanf(str, "%d", &actionId) == -1)
-		{
-			pChatWindow->AddDebugMessage("�����������: /specialaction [actionId]");
-			return true;
-		}
-		pChatWindow->AddDebugMessage("������������ ����������� ��������: %d", actionId);
-		pGame->FindPlayerPed()->SetPlayerSpecialAction(actionId);
 		return true;
 	}
 

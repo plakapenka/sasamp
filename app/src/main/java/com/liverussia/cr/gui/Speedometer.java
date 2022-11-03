@@ -56,31 +56,22 @@ public class Speedometer {
         mSpeed.setText(String.valueOf(speed));
 
         mEngine.setImageResource(engine == 1 ? R.drawable.speedometr_engine_on : R.drawable.speedometr_engine_off);
-        mLight.setImageResource(light == 1 ? R.drawable.speedometr_light_on : R.drawable.speedometr_light_off);
+        mLight.setImageResource(light == 2 ? R.drawable.speedometr_light_on : R.drawable.speedometr_light_off);
         mBelt.setColorFilter(belt == 1 ? Color.parseColor("#FF0000") : Color.parseColor("#00FF00"), PorterDuff.Mode.SRC_IN);
         mLock.setColorFilter(lock == 1 ? Color.parseColor("#FF0000") : Color.parseColor("#00FF00"), PorterDuff.Mode.SRC_IN);
 
-        mEngine.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        mEngine.setOnClickListener(view ->  {
                 NvEventQueueActivity.getInstance().onSpeedEngineClick();
-            }
         });
 
-        spedometr_layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                blinker = !blinker;
-                NvEventQueueActivity.getInstance().onSpeedEngineClick();
-            }
-        });
+//        spedometr_layout.setOnClickListener(view ->  {
+//            blinker = !blinker;
+//                NvEventQueueActivity.getInstance().onSpeedEngineClick();
+//        });
 
 
-        mLight.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        mLight.setOnClickListener(view ->  {
                 NvEventQueueActivity.getInstance().onSpeedLightsClick();
-            }
         });
     }
 

@@ -90,8 +90,6 @@ public:
 	void DisplayHUD(bool bDisp);
 
 	// 0.3.7
-	void ToggleCheckpoints(bool bEnabled) { m_bCheckpointsEnabled = bEnabled; }
-	// 0.3.7
 	void ToggleRaceCheckpoints(bool bEnabled) { m_bRaceCheckpointsEnabled = bEnabled; }
 	// 0.3.7
 	void SetCheckpointInformation(VECTOR *pos, VECTOR *extent);
@@ -101,6 +99,8 @@ public:
 	void UpdateCheckpoints();
 	// 0.3.7
 	void MakeRaceCheckpoint();
+	//
+	void DisableCheckpoint();
 	// 0.3.7
 	void DisableRaceCheckpoint();
 	// 0.3.7
@@ -123,7 +123,7 @@ public:
 	void SetWantedLevel(uint8_t byteLevel);
 	uint8_t GetWantedLevel();
 
-	bool IsAnimationLoaded(char* szAnimFile);
+	bool IsAnimationLoaded(const char szAnimFile[]);
 	void RequestAnimation(char* szAnimFile);
 	// 0.3.7
 	void DisplayGameText(char* szStr, int iTime, int iType);
@@ -133,8 +133,6 @@ public:
 	// 0.3.7
 	void DisableInteriorEnterExits();
 
-	// 0.3.7
-	int GetLocalMoney();
 	// 0.3.7
 	void AddToLocalMoney(int iAmmount);
 	// 0.3.7
@@ -147,14 +145,23 @@ public:
 bool			m_bRaceCheckpointsEnabled;
 // checkpoint
 bool			m_bCheckpointsEnabled;
+
+	void CreateCheckPoint();
+
+	uint32_t		m_dwCheckpointMarker;
+	VECTOR			m_vecCheckpointPos;
+	VECTOR			m_vecCheckpointExtent;
+	bool isDialogActive = false;
+	bool isCasinoDiceActive = false;
+	bool isAutoShopActive = false;
+	bool isCasinoWheelActive = false;
+	bool isRegistrationActive = false;
+
 private:
 	bool aToggleStatusHUD[HUD_MAX];
 	CCamera* 		m_pGameCamera;
 	CPlayerPed*		m_pGamePlayer;
 
-	uint32_t		m_dwCheckpointMarker;
-	VECTOR			m_vecCheckpointPos;
-	VECTOR			m_vecCheckpointExtent;
 	uint32_t		m_dwRaceCheckpointHandle;
 	uint32_t		m_dwRaceCheckpointMarker;
 	float			m_fRaceCheckpointSize;

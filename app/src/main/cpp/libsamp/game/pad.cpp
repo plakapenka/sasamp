@@ -343,34 +343,11 @@ uint32_t CPad__GetHorn_hook(uintptr_t thiz)
 	else
 	{
 		// local player
-		//Log("horn: %d", horn);
 		LocalPlayerKeys.bKeys[ePadKeys::KEY_CROUCH] = CPad__GetHorn(thiz);
 		return LocalPlayerKeys.bKeys[ePadKeys::KEY_CROUCH];
 	}
 }
 
-uint32_t (*CPad__ExitVehicleJustDown)(uintptr_t thiz, int a2, uintptr_t vehicle, int a4, uintptr_t vec);
-uint32_t CPad__ExitVehicleJustDown_hook(uintptr_t thiz, int a2, uintptr_t vehicle, int a4, uintptr_t vec)
-{
-	CPlayerPool *pPlayerPool;
-	CLocalPlayer *pLocalPlayer;
-
-	if(pNetGame)
-	{
-		pPlayerPool = pNetGame->GetPlayerPool();
-		if(pPlayerPool)
-		{
-			pLocalPlayer = pPlayerPool->GetLocalPlayer();
-			if(pLocalPlayer)
-			{
-				if( pLocalPlayer->HandlePassengerEntry() )
-					return 0;
-			}
-		}
-	}
-
-	return CPad__ExitVehicleJustDown(thiz, a2, vehicle, a4, vec);
-}
 extern float * pfCameraExtZoom;
 void (*CPed__ProcessControl)(uintptr_t thiz);
 void CPed__ProcessControl_hook(uintptr_t thiz)
@@ -651,6 +628,14 @@ extern "C" {
 	}
 }
 
+uint32_t (*IsVehicleRadioActive)(uintptr_t thiz);
+uint32_t IsVehicleRadioActive_hook(uintptr_t thiz)
+{
+
+	//Log("Radio");
+	return 0;
+}
+
 uint32_t (*CPad__CycleWeaponRightJustDown)(uintptr_t thiz);
 uint32_t CPad__CycleWeaponRightJustDown_hook(uintptr_t thiz)
 {
@@ -723,6 +708,8 @@ void HookCPad()
 	SetUpHook(g_libGTASA+0x39D938, (uintptr_t)CPad__GetBrake_hook, (uintptr_t*)&CPad__GetBrake);
 	SetUpHook(g_libGTASA+0x39D754, (uintptr_t)CPad__GetHandBrake_hook, (uintptr_t*)&CPad__GetHandBrake);
 	SetUpHook(g_libGTASA+0x39D4C8, (uintptr_t)CPad__GetHorn_hook, (uintptr_t*)&CPad__GetHorn);
-	SetUpHook(g_libGTASA+0x39DA1C, (uintptr_t)CPad__ExitVehicleJustDown_hook, (uintptr_t*)&CPad__ExitVehicleJustDown);
+
 	SetUpHook(g_libGTASA+0x39DD30, (uintptr_t)CPad__CycleWeaponRightJustDown_hook, (uintptr_t*)&CPad__CycleWeaponRightJustDown);
+
+	SetUpHook(g_libGTASA+0x00351C40, (uintptr_t)IsVehicleRadioActive_hook, (uintptr_t*)&IsVehicleRadioActive);
 }

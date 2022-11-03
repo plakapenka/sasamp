@@ -27,30 +27,17 @@ void ToggleTab()
     tabToggle = !tabToggle;
     if (tabToggle)
     {
-        TabUpdate();
-
-        // Freeze player
-        pHud->ToggleAll(false);
+      //  TabUpdate();
 
         // Get player list
         pNetGame->UpdatePlayerScoresAndPings();
 
-        //Show Window
-        g_pJavaWrapper->ShowTabWindow();
-
-
     }
-    else
-    {
-        // Unfreeze player
-        pHud->ToggleAll(true, false, true);
-    }
-
 }
 
 void TabUpdate() {
     // Get player list
-    pNetGame->UpdatePlayerScoresAndPings();
+   // pNetGame->UpdatePlayerScoresAndPings();
 
     CPlayerPool* pPlayerPool = pNetGame->GetPlayerPool();
 
@@ -70,6 +57,9 @@ void TabUpdate() {
                                    pPlayerPool->GetRemotePlayerPing(x));
 
     }
+
+    //Show Window
+    g_pJavaWrapper->ShowTabWindow();
 }
 
 

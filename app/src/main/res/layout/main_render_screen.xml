@@ -91,12 +91,12 @@
         <include layout="@layout/br_fuelstation" />
         <include layout="@layout/br_shopstoreselect" />
         <include layout="@layout/br_gunshop" />
-        <include layout="@layout/br_notification" />
         <include layout="@layout/sd_dialog" />
         <include layout="@layout/pre_death" />
         <include layout="@layout/autoshop" />
         <include layout="@layout/casino_lucky_wheel" />
         <include layout="@layout/hassle_tab"/>
+        <include layout="@layout/br_notification" />
 
     </FrameLayout>
 </FrameLayout>

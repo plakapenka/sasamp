@@ -9,7 +9,7 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 17
+        minSdkVersion 22
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 28
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -44,6 +44,7 @@ android {
     packagingOptions {
         exclude ("META-INF/*")
     }
+    ndkVersion '25.1.8937393'
 }
 
 dependencies {

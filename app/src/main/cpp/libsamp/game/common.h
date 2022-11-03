@@ -1,5 +1,7 @@
 #pragma once
 #include <string>
+#include "bass.h"
+
 #define HUD_ELEMENT_CHAT    0
 #define HUD_ELEMENT_MAP     1
 #define HUD_ELEMENT_TAGS    2
@@ -339,13 +341,14 @@ typedef struct _PED_TYPE
 #pragma pack(1)
 struct AIM_SYNC_DATA
 {
-	uint8_t	byteCamMode;
-	float	vecAimf1[3];
-	float	vecAimPos[3];
-	float	fAimZ;
-	uint8_t	byteCamExtZoom : 6;	// 0-63 normalized
-	uint8_t	byteWeaponState : 2;		// see eWeaponState
-	uint8_t	bUnk;
+	BYTE byteCamMode;
+	BYTE byteCamExtZoom : 6;	// 0-63 normalized
+	BYTE byteWeaponState : 2;	// see eWeaponState
+	VECTOR vecAimf1;
+	VECTOR vecAimf2;
+	VECTOR vecAimPos;
+	float fAimZ;
+	//uint8_t	bUnk;
 };
 //-----------------------------------------------------------
 

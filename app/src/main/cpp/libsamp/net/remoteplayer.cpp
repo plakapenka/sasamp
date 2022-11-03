@@ -40,10 +40,16 @@ CRemotePlayer::~CRemotePlayer()
 {
 	Remove();
 }
-extern uint32_t g_uiHeadMoveEnabled;
+extern bool g_uiHeadMoveEnabled;
 void CRemotePlayer::ProcessSpecialActions(BYTE byteSpecialAction)
 {
 	if (!m_pPlayerPed || !m_pPlayerPed->IsAdded()) return;
+    if(byteSpecialAction == SPECIAL_ACTION_NONE)
+    {
+		m_pPlayerPed->ClearAnimations();
+        return;
+    }
+	m_pPlayerPed->ProcessSpecialAction(byteSpecialAction);
 
 	if (GetState() != PLAYER_STATE_ONFOOT)
 	{
@@ -193,7 +199,7 @@ void CRemotePlayer::Process()
 		// ------ PROCESSED FOR ALL FRAMES ----- 
 		if(GetState() == PLAYER_STATE_ONFOOT && !m_pPlayerPed->IsInVehicle())
 		{
-			ProcessSpecialActions(m_ofSync.byteSpecialAction);
+			if(m_ofSync.byteSpecialAction != SPECIAL_ACTION_NONE) ProcessSpecialActions(m_ofSync.byteSpecialAction);
 			SlerpRotation();
 			
 			HandleAnimations();
@@ -785,61 +791,43 @@ void CRemotePlayer::Say(unsigned char* szText)
 	}
 }
 
-void CRemotePlayer::UpdateAimFromSyncData(AIM_SYNC_DATA * paimSync)
+void CRemotePlayer::UpdateAimFromSyncData(AIM_SYNC_DATA *paimSync)
 {
 	if(!m_pPlayerPed) return;
 	m_pPlayerPed->SetCameraMode(paimSync->byteCamMode);
 
 	CAMERA_AIM Aim;
-	
-	Aim.f1x = paimSync->vecAimf1[0];
-	Aim.f1y = paimSync->vecAimf1[1];
-	Aim.f1z = paimSync->vecAimf1[2];
-	
-	Aim.f2x = paimSync->vecAimf1[0];
-	Aim.f2y = paimSync->vecAimf1[1];
-	Aim.f2z = paimSync->vecAimf1[2];
 
-	Aim.pos1x = paimSync->vecAimPos[0];
-	Aim.pos1y = paimSync->vecAimPos[1];
-	Aim.pos1z = paimSync->vecAimPos[2];
-
-	Aim.pos2x = paimSync->vecAimPos[0];
-	Aim.pos2y = paimSync->vecAimPos[1];
-	Aim.pos2z = paimSync->vecAimPos[2];
+	Aim.f1x = paimSync->vecAimf1.X;
+	Aim.f1y = paimSync->vecAimf1.Y;
+	Aim.f1z = paimSync->vecAimf1.Z;
+	Aim.f2x = paimSync->vecAimf2.X;
+	Aim.f2y = paimSync->vecAimf2.Y;
+	Aim.f2z = paimSync->vecAimf2.Z;
+	Aim.pos1x = paimSync->vecAimPos.X;
+	Aim.pos1y = paimSync->vecAimPos.Y;
+	Aim.pos1z = paimSync->vecAimPos.Z;
+	Aim.pos2x = paimSync->vecAimPos.X;
+	Aim.pos2y = paimSync->vecAimPos.Y;
+	Aim.pos2z = paimSync->vecAimPos.Z;
 
 	m_pPlayerPed->SetCurrentAim(&Aim);
 	m_pPlayerPed->SetAimZ(paimSync->fAimZ);
 
-#ifdef GAME_EDITION_CR
-	m_bKeyboardOpened = paimSync->bUnk;
-#else
-	m_bKeyboardOpened = false;
-#endif
-
 	float fExtZoom = (float)(paimSync->byteCamExtZoom)/63.0f;
-	m_pPlayerPed->SetCameraExtendedZoom(fExtZoom);
-	
+	m_pPlayerPed->SetCameraExtendedZoom(fExtZoom); // TODO: this whole thing
+
 	WEAPON_SLOT_TYPE* pwstWeapon = m_pPlayerPed->GetCurrentWeaponSlot();
-	
 	if (paimSync->byteWeaponState == WS_RELOADING)
-	{
 		pwstWeapon->dwState = 2;		// Reloading
-	}
 	else
-	{
-		if (paimSync->byteWeaponState != WS_MORE_BULLETS)
-		{
-			pwstWeapon->dwAmmoInClip = (uint32_t)paimSync->byteWeaponState;
-		}
-		else
-		{
-			if (pwstWeapon->dwAmmoInClip < 4)
-			{
-				pwstWeapon->dwAmmoInClip = 4;
-			}
-		}
-	}
+	if (paimSync->byteWeaponState != WS_MORE_BULLETS)
+		pwstWeapon->dwAmmoInClip = (DWORD)paimSync->byteWeaponState;
+	else
+	if (pwstWeapon->dwAmmoInClip < 2)
+		pwstWeapon->dwAmmoInClip = 2;
+
+
 }
 
 void CRemotePlayer::StoreOnFootFullSyncData(ONFOOT_SYNC_DATA *pofSync, uint32_t dwTime, uint8_t key)

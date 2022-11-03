@@ -27,7 +27,6 @@ CPlayerPed::CPlayerPed()
 	{
 		m_aAttachedObjects[i].bState = false;
 	}
-	m_iSpecialAction = -1;
 }
 
 CPlayerPed::CPlayerPed(uint8_t bytePlayerNumber, int iSkin, float fX, float fY, float fZ, float fRotation)
@@ -60,7 +59,6 @@ CPlayerPed::CPlayerPed(uint8_t bytePlayerNumber, int iSkin, float fX, float fY, 
 
 	SetModelIndex(iSkin);
 	ForceTargetRotation(fRotation);
-	m_iSpecialAction = -1;
 	MATRIX4X4 mat;
 	GetMatrix(&mat);
 	mat.pos.X = fX;
@@ -366,6 +364,26 @@ int GameGetWeaponModelIDFromWeaponID(int iWeaponID)
 	return -1;
 }
 
+
+void CPlayerPed::SetWeaponAmmo(int iWeaponID, int iAmmo)
+{
+	if (!m_pPed || !m_dwGTAId)
+	{
+		return;
+	}
+
+	if (!GamePool_Ped_GetAt(m_dwGTAId))
+	{
+		return;
+	}
+
+	int iModelID = 0;
+	iModelID = GameGetWeaponModelIDFromWeaponID(iWeaponID);
+
+	if (iModelID == -1) return;
+
+	ScriptCommand(&SET_CHAR_AMMO, m_dwGTAId, iWeaponID, iAmmo);
+}
 void CPlayerPed::GiveWeapon(int iWeaponID, int iAmmo)
 {
 	if (!m_pPed || !m_dwGTAId)
@@ -389,6 +407,7 @@ void CPlayerPed::GiveWeapon(int iWeaponID, int iAmmo)
 		pGame->LoadRequestedModels();
 		while (!pGame->IsModelLoaded(iModelID)) sleep(1);
 	}
+	//ScriptCommand(&give_actor_weapon, m_dwGTAId, iWeaponID, iAmmo);
 
 	((int(*)(uintptr_t, unsigned int, int))(g_libGTASA + 0x0043429C + 1))((uintptr_t)m_pPed, iWeaponID, iAmmo); // CPed::GiveWeapon(thisptr, weapoid, ammo)
 	((int(*)(uintptr_t, unsigned int))(g_libGTASA + 0x00434528 + 1))((uintptr_t)m_pPed, iWeaponID);	// CPed::SetCurrentWeapon(thisptr, weapid)
@@ -465,14 +484,14 @@ void CPlayerPed::ClearPlayerAimState()
 	*(uint8_t*)(g_libGTASA + 0x008E864C) = old;
 }
 
-uint8_t CPlayerPed::GetCurrentWeapon()
+BYTE CPlayerPed::GetCurrentWeapon()
 {
-	if (!m_pPed) return 0;
-	if (GamePool_Ped_GetAt(m_dwGTAId) == 0) return 0;
+	if(!m_pPed) return 0;
+	if(GamePool_Ped_GetAt(m_dwGTAId) == 0) return 0;
 
-	uint32_t dwRetVal;
-	ScriptCommand(&get_actor_armed_weapon, m_dwGTAId, &dwRetVal);
-	return (uint8_t)dwRetVal;
+	DWORD dwRetVal;
+	ScriptCommand(&get_actor_armed_weapon,m_dwGTAId,&dwRetVal);
+	return (BYTE)dwRetVal;
 }
 
 // 0.3.7
@@ -732,72 +751,15 @@ void CPlayerPed::ClearAllTasks()
 #include "..//chatwindow.h"
 extern CChatWindow* pChatWindow;
 
-void CPlayerPed::SetPlayerSpecialAction(int iAction)
+void CPlayerPed::ClearAnimations()
 {
-	if (iAction == -1)
-	{
-		ClearAllTasks();
+	ApplyAnimation("crry_prtial", "CARRY", 4.0, 0, 0, 0, 0, 0);
+	ClearAllTasks();
+	MATRIX4X4 mat;
+	GetMatrix(&mat);
+	TeleportTo(mat.pos.X,mat.pos.Y,mat.pos.Z);
 
-//		MATRIX4X4 mat;
-//		GetMatrix(&mat);
-//		TeleportTo(mat.pos.X, mat.pos.Y, mat.pos.Z);
-
-		return;
-	}
-	if (iAction == 0)
-	{
-		ClearAllTasks();
-
-//		MATRIX4X4 mat;
-//		GetMatrix(&mat);
-//		TeleportTo(mat.pos.X, mat.pos.Y, mat.pos.Z);
-		//pChatWindow->AddDebugMessage("RESET ACTION");
-		m_iSpecialAction = -1;
-		return;
-	}
-
-	m_iSpecialAction = iAction;
-}
-void CPlayerPed::ProcessSpecialAction()
-{
-	if (m_iSpecialAction == 0 || m_iSpecialAction == -1)
-	{
-		return;
-	}
-	if (m_iSpecialAction == SPECIAL_ACTION_CARRY)
-	{
-		if (!IsAnimationPlaying("CRRY_PRTIAL")) { ApplyAnimation("CRRY_PRTIAL", "CARRY", 4.1, 0, 0, 0, 1, 1); }
-	}
-	else if (m_iSpecialAction == SPECIAL_ACTION_USEJETPACK)
-	{
-		if (IsInVehicle()) { SetPlayerSpecialAction(-1); return; }
-		if (!IsAnimationPlaying("JETPACK_IDLE")) { ApplyAnimation("JETPACK_IDLE", "PED", 4.1, 0, 0, 0, 1, 1); }
-	}
-	else if (m_iSpecialAction == SPECIAL_ACTION_USECELLPHONE)
-	{
-		if (IsInVehicle()) { SetPlayerSpecialAction(-1); return; }
-		if (!IsAnimationPlaying("PHONE_IN")) { ApplyAnimation("PHONE_IN", "PED", 4.1, 0, 0, 0, 1, 1); }
-	}
-	else if (m_iSpecialAction == SPECIAL_ACTION_STOPUSECELLPHONE)
-	{
-		if (IsInVehicle()) { SetPlayerSpecialAction(-1); return; }
-		if (!IsAnimationPlaying("PHONE_OUT")) { ApplyAnimation("PHONE_OUT", "PED", 4.1, 0, 0, 0, 1, 1); }
-	}
-	else if (m_iSpecialAction == SPECIAL_ACTION_SMOKE_CIGGY)
-	{
-		if (IsInVehicle()) { SetPlayerSpecialAction(-1); return; }
-		if (!IsAnimationPlaying("SMKCIG_PRTL")) { ApplyAnimation("SMKCIG_PRTL", "GANGS", 4.1, 0, 0, 0, 1, 1); }
-	}
-	else if (m_iSpecialAction == SPECIAL_ACTION_HANDSUP)
-	{
-		if (IsInVehicle()) { SetPlayerSpecialAction(-1); return; }
-		if (!IsAnimationPlaying("SHP_HANDSUP_SCR")) { ApplyAnimation("SHP_HANDSUP_SCR", "ROB_BANK", 4.1, 0, 0, 0, 1, 1); }
-	}
-//	else if (m_iSpecialAction == SPECIAL_ACTION_CUFFED)
-//	{
-//		if (IsInVehicle()) { SetPlayerSpecialAction(-1); return; }
-//		if (!IsAnimationPlaying("M_smk_drag")) { ApplyAnimation("M_smk_drag", "SMOKING", 4.1, 0, 0, 0, 1, 1); }
-//	}
+	Log("ClearAnimations");
 }
 
 void CPlayerPed::DestroyFollowPedTask()
@@ -1355,10 +1317,9 @@ void CPlayerPed::SetFightingStyle(int iStyle)
 }
 
 // 0.3.7
+
 void CPlayerPed::ApplyAnimation( char *szAnimName, char *szAnimFile, float fT, int opt1, int opt2, int opt3, int opt4, int iUnk )
 {
-	int iWaitAnimLoad = 0;
-
 	if(!m_pPed) return;
 	if(!GamePool_Ped_GetAt(m_dwGTAId)) return;
 
@@ -1367,15 +1328,10 @@ void CPlayerPed::ApplyAnimation( char *szAnimName, char *szAnimFile, float fT, i
 	if(!pGame->IsAnimationLoaded(szAnimFile))
 	{
 		pGame->RequestAnimation(szAnimFile);
-		while(!pGame->IsAnimationLoaded(szAnimFile))
-		{
-			usleep(1000);
-			iWaitAnimLoad++;
-			if(iWaitAnimLoad > 15) return;
-		}
+		ScriptCommand(&apply_animation,m_dwGTAId,szAnimName,szAnimFile,fT,opt1,opt2,opt3,opt4,iUnk);
 	}
 
-	ScriptCommand(&apply_animation, m_dwGTAId, szAnimName, szAnimFile, fT, opt1, opt2, opt3, opt4, iUnk);
+    ScriptCommand(&apply_animation,m_dwGTAId,szAnimName,szAnimFile,fT,opt1,opt2,opt3,opt4,iUnk);
 }
 
 PLAYERID CPlayerPed::FindDeathResponsiblePlayer()
@@ -1741,4 +1697,17 @@ float CPlayerPed::GetAimZ()
 		return 0.0f;
 	}
 	return *(float*)(*((uintptr_t*)m_pPed + 272) + 84);
+}
+
+void CPlayerPed::ProcessSpecialAction(BYTE byteSpecialAction) {
+	if(m_iCurrentSpecialAction != byteSpecialAction)
+	{
+		return;
+	}
+	if (byteSpecialAction == SPECIAL_ACTION_CARRY && !IsAnimationPlaying("CRRY_PRTIAL"))
+	{
+		//Log("SPECIAL_ACTION_CARRY");
+		ApplyAnimation("CRRY_PRTIAL", "CARRY", 4.1, 0, 0, 0, 1, 1);
+	}
+
 }

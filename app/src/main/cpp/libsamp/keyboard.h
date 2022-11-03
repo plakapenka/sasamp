@@ -59,6 +59,10 @@ public:
 	void ProcessInputCommands();
 	void OnNewKeyboardInput(JNIEnv *pEnv, jobject thiz, jbyteArray str);
 
+	std::vector<kbKey> m_Rows[3][4]; // eng, rus, num
+
+	std::string m_sInput;
+
 private:
 	void Render();
 	bool OnTouchEvent(int type, bool multi, int x, int y);
@@ -100,9 +104,7 @@ private:
 	int m_iPushedKey;
 	int chatinputposx;
 
-	std::vector<kbKey> m_Rows[3][4]; // eng, rus, num
 
-	std::string m_sInput;
 	char m_utf8Input[MAX_INPUT_LEN * 3 + 0xF];
 	int m_iInputOffset;
 	CKeyBoardHistory *m_pkHistory;

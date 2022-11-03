@@ -18,6 +18,7 @@ extern CHUD *pHud;
 extern CGUI* pGUI;
 
 jobject jHudManager;
+jmethodID jUpdateHudInfo;
 
 CHUD::CHUD()
 {
@@ -37,25 +38,33 @@ void CHUD::InitServerLogo(int serverID) {
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_HudManager_HudInit(JNIEnv *env, jobject thiz) {
-    jHudManager = env->NewGlobalRef(thiz);
-}
 
-void CHUD::ToggleAll(bool toggle, bool withchat, bool anyway)
+    jHudManager = env->NewGlobalRef(thiz);
+    jUpdateHudInfo = env->GetMethodID(env->GetObjectClass(thiz), "UpdateHudInfo", "(IIIIIIII)V");
+}
+extern bool showSpeedometr;
+void CHUD::ToggleAll(bool toggle, bool withchat)
 {
+    if(toggle == isHudToggle)
+    {
+        return;
+    }
     if(!toggle)
     {
-        hudhideCount ++;
+        showSpeedometr = false;
+        g_pJavaWrapper->HideSpeed();
     }
     else
     {
-        hudhideCount--;
-        if(hudhideCount > 0 && !anyway)return;
-        else hudhideCount = 0;
+        showSpeedometr = true;
+        g_pJavaWrapper->ShowSpeed();
     }
     isHudToggle = toggle;
     pGame->DisplayHUD(toggle);
 
-    if(withchat)pGame->ToggleHUDElement(HUD_ELEMENT_CHAT, toggle);
+
+
+    if(withchat || toggle)pGame->ToggleHUDElement(HUD_ELEMENT_CHAT, toggle);
     pGame->ToggleHUDElement(HUD_ELEMENT_BUTTONS, toggle);
     //pGame->DisplayWidgets(toggle); ?? не работает тоже
     pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->TogglePlayerControllable(toggle, true);
@@ -76,6 +85,37 @@ void CHUD::ToggleAll(bool toggle, bool withchat, bool anyway)
    // int radarPosY = (int)pHud->GetScreenSize(false)/24.8;
 
 }
+//
+void CHUD::ToggleEnterPassengerButton(bool toggle)
+{
+    isEnterPassengerButtOn = toggle;
+
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+    jclass clazz = env->GetObjectClass(jHudManager);
+    jmethodID ToggleEnterPassengerButton = env->GetMethodID(clazz, "ToggleEnterPassengerButton", "(Z)V");
+    env->CallVoidMethod(jHudManager, ToggleEnterPassengerButton, toggle);
+}
+
+void CHUD::ToggleEnterExitVehicleButton(bool toggle)
+{
+    isEnterExitVehicleButtonOn = toggle;
+
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+    jclass clazz = env->GetObjectClass(jHudManager);
+    jmethodID ToggleEnterExitVehicleButton = env->GetMethodID(clazz, "ToggleEnterExitVehicleButton", "(Z)V");
+    env->CallVoidMethod(jHudManager, ToggleEnterExitVehicleButton, toggle);
+}
+
+void CHUD::ToggleLockVehicleButton(bool toggle)
+{
+    isLockVehicleButtonOn = toggle;
+
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+    jclass clazz = env->GetObjectClass(jHudManager);
+
+    jmethodID ToggleLockVehicleButton = env->GetMethodID(clazz, "ToggleLockVehicleButton", "(Z)V");
+    env->CallVoidMethod(jHudManager, ToggleLockVehicleButton, toggle);
+}
 
 int CHUD::GetScreenSize(bool isWidth)
 {
@@ -91,10 +131,14 @@ int CHUD::GetScreenSize(bool isWidth)
     jint value = env->CallIntMethod(jHudManager, jGetScreenSize, isWidth);
     return value;
 }
-
+int tickUpdate;
 void CHUD::UpdateHudInfo()
 {
-    PED_TYPE* pPedPlayer = GamePool_FindPlayerPed();
+    tickUpdate++;
+    if(tickUpdate < 20) return;
+
+    tickUpdate = 0;
+    CPlayerPed* pPed = pGame->FindPlayerPed();
 
     JNIEnv* env = g_pJavaWrapper->GetEnv();
 
@@ -103,23 +147,39 @@ void CHUD::UpdateHudInfo()
         Log("No env");
         return;
     }
-    jclass clazz = env->GetObjectClass(jHudManager);
-    jmethodID jUpdateHudInfo = env->GetMethodID(clazz, "UpdateHudInfo", "(IIIIIIII)V");
 
     env->CallVoidMethod(jHudManager, jUpdateHudInfo,
-                        (int)pGame->FindPlayerPed()->GetHealth(),
-                        (int)pGame->FindPlayerPed()->GetArmour(),
+                        (int)pPed->GetHealth(),
+                        (int)pPed->GetArmour(),
                         (int)pGUI->GetEat(),
-                        (int)pPedPlayer->WeaponSlots[pPedPlayer->byteCurWeaponSlot].dwType,
-                        (int)pPedPlayer->WeaponSlots[pPedPlayer->byteCurWeaponSlot].dwAmmo,
-                        (int)pPedPlayer->WeaponSlots[pPedPlayer->byteCurWeaponSlot].dwAmmoInClip,
-                        pGame->GetLocalMoney(),
+                        (int)pPed->m_pPed->WeaponSlots[pPed->m_pPed->byteCurWeaponSlot].dwType,
+                        (int)pPed->m_pPed->WeaponSlots[pPed->m_pPed->byteCurWeaponSlot].dwAmmo,
+                        (int)pPed->m_pPed->WeaponSlots[pPed->m_pPed->byteCurWeaponSlot].dwAmmoInClip,
+                        localMoney,
                         pGame->GetWantedLevel()
                         );
 }
-
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_HudManager_cppToggleAllHud(JNIEnv *env, jobject thiz, jboolean toggle) {
-    pHud->ToggleAll(toggle);
+Java_com_liverussia_cr_gui_HudManager_ClickEnterPassengerButton(JNIEnv *env, jobject thiz) {
+    pNetGame->GetPlayerPool()->GetLocalPlayer()->GoEnterVehicle(true);
+
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_HudManager_ClickEnterExitVehicleButton(JNIEnv *env, jobject thiz) {
+    CLocalPlayer *pPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer();
+    if(pPlayer->GetPlayerPed()->IsInVehicle())
+    {
+        pPlayer->GetPlayerPed()->ExitCurrentVehicle();
+    }
+    else
+    {
+        pPlayer->GoEnterVehicle(false);
+    }
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_HudManager_ClickLockVehicleButton(JNIEnv *env, jobject thiz) {
+    pNetGame->SendChatCommand("/lock");
 }

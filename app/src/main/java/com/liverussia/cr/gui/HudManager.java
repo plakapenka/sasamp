@@ -14,14 +14,16 @@ import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.liverussia.cr.gui.util.Utils;
 import com.nvidia.devtech.NvEventQueueActivity;
 import com.liverussia.cr.R;
-import com.liverussia.cr.gui.util.Utils;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Formatter;
+import java.util.Locale;
 
 public class HudManager {
     private Activity activity;
@@ -50,13 +52,54 @@ public class HudManager {
     private ProgressBar oil_oil_progress;
     private TextView oil_water_procent;
     private TextView oil_oil_procent;
+    private ImageView enter_passenger;
+    private ImageView enterexit_driver;
+    private ImageView lock_vehicle;
+    long buttonLockCD;
+
+    DecimalFormat formatter;
+
     public native void HudInit();
-    public native void cppToggleAllHud(boolean toggle);
+    public native void ClickEnterPassengerButton();
+    public native void ClickEnterExitVehicleButton();
+    public native void ClickLockVehicleButton();
 
     public HudManager(Activity aactivity) {
         HudInit();
-        activity = aactivity;
+        DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
+        otherSymbols.setGroupingSeparator('.');
+        formatter = new DecimalFormat("###,###.###", otherSymbols);
 
+        activity = aactivity;
+        // кнопка закрыть/открыть тачку
+        lock_vehicle = activity.findViewById(R.id.vehicle_lock_butt);
+        lock_vehicle.setVisibility(View.GONE);
+        lock_vehicle.setOnClickListener(view -> {
+            long currTime = System.currentTimeMillis()/1000;
+            if(buttonLockCD > currTime)
+            {
+                return;
+            }
+            buttonLockCD = currTime+2;
+            ClickLockVehicleButton();
+        });
+
+        // кнопка сесть/вылезть водителем
+        enterexit_driver = activity.findViewById(R.id.enterexit_driver);
+        enterexit_driver.setVisibility(View.GONE);
+        enterexit_driver.setOnClickListener(view -> {
+            ClickEnterExitVehicleButton();
+        });
+
+        // кнопка сесть пассажиром
+        enter_passenger = activity.findViewById(R.id.enter_passenger);
+        enter_passenger.setVisibility(View.GONE);
+        enter_passenger.setOnClickListener(view ->
+        {
+            ClickEnterPassengerButton();
+        });
+
+        ///
         hud_main = aactivity.findViewById(R.id.hud_main);
         hud_main.setVisibility(View.GONE);
 
@@ -105,6 +148,7 @@ public class HudManager {
             NvEventQueueActivity.getInstance().showMenu();
             NvEventQueueActivity.getInstance().togglePlayer(1);
         });
+        hud_weapon.setOnClickListener(v -> NvEventQueueActivity.getInstance().onWeaponChanged());
 
         oil_water_progress = aactivity.findViewById(R.id.oil_water_progress);
         oil_oil_progress = aactivity.findViewById(R.id.oil_oil_progress);
@@ -114,9 +158,38 @@ public class HudManager {
         Utils.HideLayout(hud_gpsactive, false);
     }
 
-    public void ToggleAllHud(boolean toggle)
+    public void ToggleEnterPassengerButton(boolean toggle)
     {
-        cppToggleAllHud(toggle);
+        if(toggle)
+        {
+            activity.runOnUiThread(() -> Utils.ShowLayout(enter_passenger, true) );
+        }
+        else
+        {
+            activity.runOnUiThread(() -> Utils.HideLayout(enter_passenger, true) );
+        }
+    }
+    public void ToggleEnterExitVehicleButton(boolean toggle)
+    {
+        if(toggle)
+        {
+            activity.runOnUiThread(() -> Utils.ShowLayout(enterexit_driver, true) );
+        }
+        else
+        {
+            activity.runOnUiThread(() -> Utils.HideLayout(enterexit_driver, true) );
+        }
+    }
+    public void ToggleLockVehicleButton(boolean toggle)
+    {
+        if(toggle)
+        {
+            activity.runOnUiThread(() -> Utils.ShowLayout(lock_vehicle, true) );
+        }
+        else
+        {
+            activity.runOnUiThread(() -> Utils.HideLayout(lock_vehicle, true) );
+        }
     }
 
     public void UpdateHudInfo(int health, int armour, int hunger, int weaponid, int ammo, int ammoclip, int money, int wanted)
@@ -126,17 +199,11 @@ public class HudManager {
             progressHP.setProgress(health);
             progressArmor.setProgress(armour);
 
-            DecimalFormat formatter = new DecimalFormat();
-            DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance();
-            symbols.setGroupingSeparator('.');
-            formatter.setDecimalFormatSymbols(symbols);
-            String money_str = formatter.format(money);
-            hud_money.setText(money_str);
+            hud_money.setText(formatter.format(money));
+           // Log.d("Adf", formatter.format(money));
 
             int id = activity.getResources().getIdentifier(new Formatter().format("weapon_%d", Integer.valueOf(weaponid)).toString(), "drawable", activity.getPackageName());
             hud_weapon.setImageResource(id);
-
-            hud_weapon.setOnClickListener(v -> NvEventQueueActivity.getInstance().onWeaponChanged());
 
             for (int i2 = 0; i2 < wanted; i2++) {
                 hud_wanted.get(i2).setBackgroundResource(R.drawable.ic_y_star);
@@ -147,7 +214,7 @@ public class HudManager {
                 String ss = String.format("%d<font color='#B0B0B0'>/%d</font>", ammoclip, ammo - ammoclip);
                 hud_ammo.setText(Html.fromHtml(ss));
             } else {
-                Utils.HideLayout(hud_ammo, false);
+                hud_ammo.setVisibility(View.GONE);
             }
 
             String stroilwaterproc = String.format("%d%%", oil_water_progress.getProgress() / 10);

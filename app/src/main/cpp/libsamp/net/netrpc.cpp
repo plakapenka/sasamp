@@ -368,12 +368,12 @@ void SetCheckpoint(RPCParameters *rpcParams)
 	Extent.Z = fSize;
 
 	pGame->SetCheckpointInformation(&pos, &Extent);
-	//pGame->ToggleCheckpoints(true);
+	pGame->CreateCheckPoint();
 }
 
 void DisableCheckpoint(RPCParameters *rpcParams)
 {
-	pGame->ToggleCheckpoints(false);
+	pGame->DisableCheckpoint();
 }
 
 void SetRaceCheckpoint(RPCParameters *rpcParams)
@@ -585,7 +585,6 @@ void DialogBox(RPCParameters *rpcParams)
 
 		if(wDialogID < 0) return;
 
-		pHud->ToggleAll(false);
 		g_pJavaWrapper->MakeDialog(wDialogID, byteDialogStyle, title, info, button1, button2);
 }
 
@@ -1048,6 +1047,8 @@ void RemoveBuilding(RPCParameters* rpcParams)
 }
 #include "..//gui/gui.h"
 #include "../playertags.h"
+#include "java_systems/scoreboard.h"
+
 extern CPlayerTags* pPlayerTags;
 
 void SetPlayerChatBubble(RPCParameters* rpcParams)
@@ -1337,6 +1338,7 @@ void UpdateScoresPingsIPs(RPCParameters* rpcParams)
 		pPlayerPool->UpdateScore(bytePlayerId, iPlayerScore);
 		pPlayerPool->UpdatePing(bytePlayerId, dwPlayerPing);
 	}
+	TabUpdate();
 }
 
 void RegisterRPCs(RakClientInterface* pRakClient)

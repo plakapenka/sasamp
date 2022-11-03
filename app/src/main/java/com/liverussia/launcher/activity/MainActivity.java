@@ -6,6 +6,7 @@ import android.os.Build;
 import android.widget.*;
 import android.graphics.PorterDuff;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import android.content.Intent;
 
@@ -50,19 +51,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Animation animation;
     
-	public LinearLayout donateButton;
+	public ConstraintLayout donateButton;
     public ImageView donateImage;
     public TextView donateTV;
-    public LinearLayout monitoringButton;
+    public ConstraintLayout monitoringButton;
     public MonitoringFragment monitoringFragment;
     public ImageView monitoringImage;
     public TextView monitoringTV;
-    public LinearLayout playButton;
-    public ImageView playImage;
-    public LinearLayout rouletteButton;
+    public ImageView playButton;
+    public ConstraintLayout rouletteButton;
     public ImageView rouletteImage;
     public TextView rouletteTV;
-    public LinearLayout settingsButton;
+    public ConstraintLayout settingsButton;
     public SettingsFragment settingsFragment;
     private RouletteFragment rouletteFragment;
     private DonateFragment donateFragment;
@@ -100,20 +100,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		
 		monitoringTV = (TextView) findViewById(R.id.monitoringTV);
         settingsTV = (TextView) findViewById(R.id.settingsTV);
-        rouletteTV = (TextView) findViewById(R.id.forumTV);
+        rouletteTV = findViewById(R.id.rouletteButText);
         donateTV = (TextView) findViewById(R.id.donateTV);
 		
         monitoringImage = (ImageView) findViewById(R.id.monitoringImage);
         settingsImage = (ImageView) findViewById(R.id.settingsImage);
         rouletteImage = (ImageView) findViewById(R.id.forumImage);
         donateImage = (ImageView) findViewById(R.id.donateImage);
-        playImage = (ImageView) findViewById(R.id.playImage);
 		
-        monitoringButton = (LinearLayout) findViewById(R.id.monitoringButton);
-        settingsButton = (LinearLayout) findViewById(R.id.settingsButton);
-        rouletteButton = (LinearLayout) findViewById(R.id.rouletteButton);
-        donateButton = (LinearLayout) findViewById(R.id.donateButton);
-        playButton = (LinearLayout) findViewById(R.id.playButton);
+        monitoringButton = findViewById(R.id.monitoringButton);
+        settingsButton =  findViewById(R.id.settingsButton);
+        rouletteButton =  findViewById(R.id.rouletteButton);
+        donateButton =  findViewById(R.id.donateButton);
+        playButton =  findViewById(R.id.playButton);
 		
 		monitoringFragment = new MonitoringFragment();
         settingsFragment = new SettingsFragment();
@@ -248,7 +247,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     private void onClickRoulette() {
-        setTextColor(rouletteButton, rouletteTV, rouletteImage);
+        setTextColor(rouletteTV, rouletteImage);
         rouletteFragment = new RouletteFragment(this);
         replaceFragment(rouletteFragment);
     }
@@ -269,26 +268,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void onClickSettings() {
-            setTextColor(settingsButton, settingsTV, settingsImage);
+            setTextColor(settingsTV, settingsImage);
             replaceFragment(this.settingsFragment);
     }
 
     public void onClickDonate() {
-            setTextColor(donateButton, donateTV, donateImage);
+            setTextColor(donateTV, donateImage);
             donateFragment = new DonateFragment(this);
             replaceFragment(donateFragment);
     }
     
 	public void onClickMonitoring() {
-            setTextColor(monitoringButton, monitoringTV, monitoringImage);
+            setTextColor(monitoringTV, monitoringImage);
             replaceFragment(monitoringFragment);
     }
 	
-    public void setTextColor(LinearLayout linearLayout, TextView textView, ImageView imageView) {
-        monitoringButton.setAlpha(0.45f);
-        settingsButton.setAlpha(0.45f);
-        rouletteButton.setAlpha(0.45f);
-        donateButton.setAlpha(0.45f);
+    public void setTextColor(TextView textView, ImageView imageView) {
+
         monitoringTV.setTextColor(getResources().getColor(R.color.menuTextDisable));
         settingsTV.setTextColor(getResources().getColor(R.color.menuTextDisable));
         rouletteTV.setTextColor(getResources().getColor(R.color.menuTextDisable));
@@ -297,7 +293,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         settingsImage.setColorFilter(getResources().getColor(R.color.menuTextDisable), PorterDuff.Mode.SRC_IN);
         rouletteImage.setColorFilter(getResources().getColor(R.color.menuTextDisable), PorterDuff.Mode.SRC_IN);
         donateImage.setColorFilter(getResources().getColor(R.color.menuTextDisable), PorterDuff.Mode.SRC_IN);
-        linearLayout.setAlpha(1.0f);
+       // linearLayout.setAlpha(1.0f);
         textView.setTextColor(getResources().getColor(R.color.menuTextEnable));
         imageView.setColorFilter(getResources().getColor(R.color.menuTextEnable), PorterDuff.Mode.SRC_IN);
     }

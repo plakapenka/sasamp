@@ -4,6 +4,9 @@ import android.animation.Animator;
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.os.CountDownTimer;
+import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
@@ -62,6 +65,15 @@ public class Notification {
         br_not_secondbutton = aactivity.findViewById(R.id.br_not_secondbutton);
         br_not_progress = aactivity.findViewById(R.id.br_not_progress);
         Utils.HideLayout(constraintLayout, false);
+
+        final GestureDetector gdt = new GestureDetector(new GestureListener());
+        br_not_bg.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(final View view, final MotionEvent event) {
+                gdt.onTouchEvent(event);
+                return true;
+            }
+        });
     }
 
     public void ShowNotification (int type, String text, int duration, String actionforBtn, String textBtn, int actionId) {
@@ -195,13 +207,13 @@ public class Notification {
         br_not_firstbutton.setOnClickListener(view -> {
             view.startAnimation(AnimationUtils.loadAnimation(aactivity, R.anim.button_click));
             NvEventQueueActivity.getInstance().onNotifyFirstClick(actionId);
-            HideNotification();
+            HideNotification(true);
         });
 
         br_not_secondbutton.setOnClickListener(view -> {
             view.startAnimation(AnimationUtils.loadAnimation(aactivity, R.anim.button_click));
             NvEventQueueActivity.getInstance().onNotifySecondClick(actionId);
-            HideNotification();
+            HideNotification(true);
         });
 
         if (duration != 0)
@@ -239,18 +251,49 @@ public class Notification {
             }
             @Override
             public void onFinish() {
-                HideNotification();
+                HideNotification(true);
             }
         }.start();
     }
-    public void HideNotification () {
+    public void HideNotification (boolean right) {
         if (constraintLayout.getVisibility() == View.VISIBLE) {
             if (countDownTimer != null) {
                 countDownTimer.cancel();
                 countDownTimer = null;
             }
-            constraintLayout.startAnimation(AnimationUtils.loadAnimation(aactivity, R.anim.popup_hide_notification));
+            if(right)
+            {
+                constraintLayout.startAnimation(AnimationUtils.loadAnimation(aactivity, R.anim.popup_hide_notif_to_right));
+            }
+            else
+            {
+                constraintLayout.startAnimation(AnimationUtils.loadAnimation(aactivity, R.anim.popup_hide_notification));
+            }
+
             constraintLayout.setVisibility(View.GONE);
+        }
+    }
+    private static final int SWIPE_MIN_DISTANCE = 120;
+    private static final int SWIPE_THRESHOLD_VELOCITY = 200;
+
+    private class GestureListener extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public boolean onSingleTapUp(MotionEvent e)
+        {
+            HideNotification (false);
+            return false;
+        }
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+
+            if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                HideNotification (false);
+            }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                HideNotification (true);
+            }
+
+
+            return false;
         }
     }
 }
