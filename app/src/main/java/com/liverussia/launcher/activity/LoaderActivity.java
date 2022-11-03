@@ -268,7 +268,6 @@ public class LoaderActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<LoaderSliderInfoResponseDto> call, Throwable t) {
-                activityService.showMessage(ErrorContainer.SERVER_CONNECT_ERROR.getMessage(), LoaderActivity.this);
                 configureSliderWithoutData();
             }
         });

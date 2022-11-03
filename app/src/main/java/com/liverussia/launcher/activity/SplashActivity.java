@@ -94,7 +94,6 @@ public class SplashActivity extends AppCompatActivity{
 
 			@Override
 			public void onFailure(Call<List<News>> call, Throwable t) {
-				Toast.makeText(getApplicationContext(), ErrorContainer.SERVER_CONNECT_ERROR.getMessage(), Toast.LENGTH_SHORT).show();
 			}
 		});
 		

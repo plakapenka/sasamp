@@ -18,7 +18,6 @@ import android.view.animation.Animation;
 
 import com.liverussia.cr.R;
 import com.liverussia.cr.core.Config;
-import com.liverussia.launcher.async.GetPossiblePrizesAsyncRestCall;
 import com.liverussia.launcher.dto.response.ServerImagesResponseDto;
 import com.liverussia.launcher.enums.NativeStorageElements;
 import com.liverussia.launcher.fragment.MonitoringFragment;
@@ -141,12 +140,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void getPossiblePrizes() {
-        GetPossiblePrizesAsyncRestCall getPossiblePrizesAsyncRestCall = new GetPossiblePrizesAsyncRestCall(this);
-        getPossiblePrizesAsyncRestCall.execute();
-
-
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.0.106:9400")
+                .baseUrl(LIVE_RUSSIA_RESOURCE_SERVER_URI)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
