@@ -18,19 +18,19 @@ import retrofit2.http.POST;
 
 public interface NetworkService {
 
-    @GET("https://www.liverussia.online/historyforlauncher/servers.json")
+    @GET("https://files.liverussia.online/historyforlauncher/servers.json")
     Call<List<Servers>> getServers();
 
-    @GET("https://www.liverussia.online/historyforlauncher/history.json")
+    @GET("https://files.liverussia.online/historyforlauncher/history.json")
     Call<List<News>> getNews();
 
-    @GET("https://www.liverussia.online/loader_slider/texts.json")
+    @GET("https://files.liverussia.online/loader_slider/texts.json")
     Call<LoaderSliderInfoResponseDto> getLoaderSliderInfo();
 
-    @GET("https://www.liverussia.online/donate/services/urls.json")
+    @GET("https://files.liverussia.online/donate/services/urls.json")
     Call<ServerImagesResponseDto> getDonateServices();
 
-    @GET("https://www.liverussia.online/roulette/prizes/urls.json")
+    @GET("https://files.liverussia.online/roulette/prizes/urls.json")
     Call<ServerImagesResponseDto> getPossibleRoulettePrizes();
 
     @POST("/api/v1/auth/android/refresh")
