@@ -44,6 +44,7 @@ android {
     packagingOptions {
         exclude ("META-INF/*")
     }
+    ndkVersion '25.1.8937393'
 }
 
 dependencies {
