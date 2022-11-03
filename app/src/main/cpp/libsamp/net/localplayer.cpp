@@ -442,7 +442,7 @@ bool CLocalPlayer::Process()
 	////////////////////////////
 	bool needDrawableHud = true;
 	if(pGame->isDialogActive || pGame->isCasinoDiceActive || tabToggle || pGame->isAutoShopActive
-	|| pGame->isCasinoWheelActive || !m_pPlayerPed || pGame->isRegistrationActive)
+	|| pGame->isCasinoWheelActive || !m_pPlayerPed || pGame->isRegistrationActive || pGame->isShopStoreActive)
 	{
 		needDrawableHud = false;
 	}

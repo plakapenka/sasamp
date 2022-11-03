@@ -116,6 +116,7 @@ void InitSAMP(JNIEnv* pEnv, jobject thiz)
 		return;
 	}
 
+
 	PrintBuildInfo();
 
 	Log("Storage: %s", g_pszStorage);

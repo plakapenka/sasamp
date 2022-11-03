@@ -45,6 +45,12 @@ android {
         exclude ("META-INF/*")
     }
     ndkVersion '25.1.8937393'
+    buildTypes {
+        debug {
+            jniDebuggable true
+            multiDexEnabled true
+        }
+    }
 }
 
 dependencies {

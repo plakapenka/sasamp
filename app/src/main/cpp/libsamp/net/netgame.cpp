@@ -829,38 +829,31 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_TOGGLE_ACCESSORIES_MENU:
 		{
-			uint8_t type;
+			uint8_t toggle;
 			uint32_t price;
-			bs.Read(type);
+			bs.Read(toggle);
+
+			if(!toggle)
+			{
+				g_pJavaWrapper->ToggleShopStoreManager(toggle);
+			}
 			bs.Read(price);
 
-			if (type == 1)
-			{
-				g_pJavaWrapper->ShowShopStoreManager(0, price);
-			}
-			else 
-			{
-				g_pJavaWrapper->HideShopStoreManager();
-			}
-
+			g_pJavaWrapper->ToggleShopStoreManager(toggle, 0, price);
 			break;
 		}
 		case RPC_TOGGLE_CLOTHING_MENU:
 		{
-			uint8_t type;
+			uint8_t toggle;
 			uint32_t price;
-			bs.Read(type);
+			bs.Read(toggle);
+			if(!toggle)
+			{
+				g_pJavaWrapper->ToggleShopStoreManager(toggle);
+			}
 			bs.Read(price);
 
-			if (type == 1)
-			{
-				g_pJavaWrapper->ShowShopStoreManager(1, price);
-			}
-			else 
-			{
-				g_pJavaWrapper->HideShopStoreManager();
-			}
-
+			g_pJavaWrapper->ToggleShopStoreManager(toggle, 1, price);
 			break;
 		}
 		case RPC_FUELSTATION_BUY:
@@ -1133,7 +1126,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			bs.Read(interior);
 			bs.Read(len);
 			bs.Read(&str[0], len);
-			str[len] = 0;
+			str[len] = '\0';
 			//pChatWindow->AddDebugMessage("%d %f %f %f %f %d %d %d %s", id, pos.X, pos.Y, pos.Z, fDistance, vw, interior, len, str);
 			GetStreamPool()->AddStream(id, &pos, vw, interior, fDistance, (const char*)&str[0]);
 			break;
@@ -1144,7 +1137,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			uint8_t len;
 			bs.Read(len);
 			bs.Read(&str[0], len);
-			str[len] = 0;
+			str[len] = '\0';
 			//pChatWindow->AddDebugMessage("%s", str);
 			//pChatWindow->AddDebugMessage("Playing audiostream %s", str);
 			GetStreamPool()->PlayIndividualStream(&str[0]);
@@ -1661,6 +1654,7 @@ void CNetGame::Packet_DisconnectionNotification(Packet* pkt)
 		pChatWindow->AddDebugMessageNonFormatted(CLocalisation::GetMessage(E_MSG::SERVER_CLOSED_CONNECTION));
 	m_pRakClient->Disconnect(2000);
 	if(pVoice) pVoice->FullDisconnect();
+	g_pJavaWrapper->ClearScreen();
 }
 
 void CNetGame::Packet_ConnectionLost(Packet* pkt)

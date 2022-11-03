@@ -945,8 +945,9 @@ void CJavaWrapper::HideGunShopManager()
     env->CallVoidMethod(this->activity, this->s_hideGunShopManager);
 }
 
-void CJavaWrapper::ShowShopStoreManager(int type, int price)
+void CJavaWrapper::ToggleShopStoreManager(bool toggle, int type, int price)
 {
+	pGame->isShopStoreActive = toggle;
     JNIEnv* env = GetEnv();
 
 	if (!env)
@@ -954,19 +955,7 @@ void CJavaWrapper::ShowShopStoreManager(int type, int price)
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_showShopStoreManager, type, price);
-}
-
-void CJavaWrapper::HideShopStoreManager()
-{
-    JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-    env->CallVoidMethod(this->activity, this->s_hideShopStoreManager);
+    env->CallVoidMethod(this->activity, this->s_ToggleShopStoreManager, toggle, type, price);
 }
 
 void CJavaWrapper::ShowArmyGame(int quantity)
@@ -1489,6 +1478,7 @@ void CJavaWrapper::HideChooseSpawn()
 void CJavaWrapper::ClearScreen()
 {
 	Log("ClearScreen");
+	ToggleShopStoreManager(false);
 	HideTargetNotify();
 	HideAuthorization();
 	HideChooseSpawn();
@@ -1561,8 +1551,7 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 
 	//s_showAuctionManager = env->GetMethodID(nvEventClass, "showAuctionManager", "(III)V");
 
-	s_showShopStoreManager = env->GetMethodID(nvEventClass, "showShopStoreManager", "(II)V");
-	s_hideShopStoreManager = env->GetMethodID(nvEventClass, "hideShopStoreManager", "()V");
+	s_ToggleShopStoreManager = env->GetMethodID(nvEventClass, "toggleShopStoreManager", "(ZII)V");
 
 	s_showGunShopManager = env->GetMethodID(nvEventClass, "showGunShopManager", "()V");
 	s_hideGunShopManager = env->GetMethodID(nvEventClass, "hideGunShopManager", "()V");

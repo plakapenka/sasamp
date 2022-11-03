@@ -63,7 +63,6 @@ void CHUD::ToggleAll(bool toggle, bool withchat)
     pGame->DisplayHUD(toggle);
 
 
-
     if(withchat || toggle)pGame->ToggleHUDElement(HUD_ELEMENT_CHAT, toggle);
     pGame->ToggleHUDElement(HUD_ELEMENT_BUTTONS, toggle);
     //pGame->DisplayWidgets(toggle); ?? не работает тоже

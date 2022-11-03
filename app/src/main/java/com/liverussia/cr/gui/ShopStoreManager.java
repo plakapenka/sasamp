@@ -1,10 +1,14 @@
 package com.liverussia.cr.gui;
 
 import android.app.Activity;
+import android.util.Log;
+import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.liverussia.cr.R;
 import com.liverussia.cr.gui.util.Utils;
@@ -12,7 +16,7 @@ import com.nvidia.devtech.NvEventQueueActivity;
 
 public class ShopStoreManager {
 
-    private FrameLayout br_shopstroreselect_layout;
+    private ConstraintLayout br_shopstroreselect_layout;
     private TextView shopstore_buyinfo;
     private ImageView shopstore_left;
     private ImageView shopstore_right;
@@ -54,18 +58,24 @@ public class ShopStoreManager {
             NvEventQueueActivity.getInstance().onShopStoreClick(4);
         });
 
-        Utils.HideLayout(br_shopstroreselect_layout, false);
+        br_shopstroreselect_layout.setVisibility(View.GONE);
     }
 
-    public void Show(int type, int price) {
+    public void Toggle(boolean toggle, int type, int price)
+    {
+        Log.d("sadfsdf", "toggle= " + toggle + " asf " +type+" adfsfd");
+        if(!toggle)
+        {
+            Log.d("sadfsdf","СХУЯ СКРЫТИЕ");
+            br_shopstroreselect_layout.setVisibility(View.GONE);
+            return;
+        }
         String strprice = String.format("ЦЕНА: %s", price);
-        shopstore_buyinfo.setText(String.valueOf(strprice));
-        if (type == 0) { Utils.ShowLayout(shopstore_camera, false); }
-        else { Utils.HideLayout(shopstore_camera, false); }
-        Utils.ShowLayout(br_shopstroreselect_layout, true);
+        shopstore_buyinfo.setText(strprice);
+        if (type == 0) { shopstore_camera.setVisibility(View.VISIBLE); }
+        else { shopstore_camera.setVisibility(View.GONE); }
+
+        br_shopstroreselect_layout.setVisibility(View.VISIBLE);
     }
 
-    public void Hide() {
-        Utils.HideLayout(br_shopstroreselect_layout, true);
-    }
 }

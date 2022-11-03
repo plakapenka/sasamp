@@ -1653,9 +1653,7 @@ public abstract class NvEventQueueActivity
 
     public void hideArmyGame() { runOnUiThread(() -> { mArmyGameManager.HideFull(); } ); }
 
-    public void showShopStoreManager(int type, int price) { runOnUiThread(() -> { mShopStoreManager.Show(type, price); } ); }
-
-    public void hideShopStoreManager() { runOnUiThread(() -> { mShopStoreManager.Hide(); } ); }
+    public void toggleShopStoreManager(boolean toggle, int type, int price) { runOnUiThread(() -> mShopStoreManager.Toggle(toggle, type, price) ); }
 
     public void showGunShopManager() { runOnUiThread(() -> { mGunShopManager.Show(); } ); }
 

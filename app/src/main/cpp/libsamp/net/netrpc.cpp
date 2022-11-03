@@ -99,6 +99,7 @@ void InitGame(RPCParameters *rpcParams)
 			}
 
 	if(pChatWindow) pChatWindow->AddDebugMessage("Присоединено к {B9C9BF}%.64s", pNetGame->m_szHostName);
+
 }
 
 void ServerJoin(RPCParameters *rpcParams)

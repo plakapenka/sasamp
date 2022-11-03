@@ -31,8 +31,7 @@ class CJavaWrapper
 
 	jmethodID s_showFuelStation;
 
-	jmethodID s_showShopStoreManager;
-	jmethodID s_hideShopStoreManager;
+	jmethodID s_ToggleShopStoreManager;
 
 	jmethodID s_showGunShopManager;
 	jmethodID s_hideGunShopManager;
@@ -120,8 +119,7 @@ public:
 
 	void ShowAuctionManager(int itemId, int type, int price);
 
-	void ShowShopStoreManager(int type, int price);
-	void HideShopStoreManager();
+	void ToggleShopStoreManager(bool toggle, int type = 0, int price = 0);
 
 	void ShowGunShopManager();
 	void HideGunShopManager();
