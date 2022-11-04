@@ -1,13 +1,20 @@
 package com.liverussia.launcher.activity.dialogs;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -19,8 +26,10 @@ import com.google.android.gms.safetynet.SafetyNet;
 import com.google.android.gms.safetynet.SafetyNetApi;
 import com.liverussia.cr.R;
 import com.liverussia.launcher.activity.ActivitySupportedServerSelection;
+import com.liverussia.launcher.activity.ForumActivity;
 import com.liverussia.launcher.config.Config;
 import com.liverussia.launcher.dto.request.LoginRequestDto;
+import com.liverussia.launcher.enums.BillingParameters;
 import com.liverussia.launcher.enums.ServerInfo;
 import com.liverussia.launcher.messages.ErrorMessages;
 import com.liverussia.launcher.async.AuthenticateAsyncRestCall;
@@ -29,6 +38,8 @@ import com.liverussia.launcher.service.ActivityService;
 import com.liverussia.launcher.utils.Validator;
 
 import org.jetbrains.annotations.NotNull;
+
+import lombok.Getter;
 
 public class AuthenticationDialog extends DialogFragment implements View.OnClickListener,
         ActivitySupportedServerSelection {
@@ -50,6 +61,7 @@ public class AuthenticationDialog extends DialogFragment implements View.OnClick
     private TextView loginButton;
     private CheckBox iAmNotRobotCheckBox;
 
+    @Getter
     private Fragment fragment;
 
     //TODO FragmentManager
@@ -110,7 +122,12 @@ public class AuthenticationDialog extends DialogFragment implements View.OnClick
                 performLoginButtonAction();
                 break;
             case R.id.i_am_not_robot_checkbox:
-                performIAmNotRobotCheckBoxAction();
+
+                try {
+                    performIAmNotRobotCheckBoxAction();
+                } catch (Exception exception) {
+                    activityService.showBigMessage(exception.getMessage(), fragment.getActivity());
+                }
                 break;
             case R.id.btnSelectServer:
                 v.startAnimation(animation);
@@ -145,10 +162,36 @@ public class AuthenticationDialog extends DialogFragment implements View.OnClick
         if (iAmNotRobotCheckBox.isChecked()) {
             iAmNotRobotCheckBox.setChecked(false);
 
-            SafetyNet.getClient(fragment.getActivity())
-                    .verifyWithRecaptcha(Config.CAPTCHA_SITE_KEY)
-                    .addOnSuccessListener(this::performCaptchaSuccessAction)
-                    .addOnFailureListener(this::performCaptchaFailureAction);
+
+            new ReCaptchaDialog(this);
+
+
+//            AlertDialog.Builder alert = new AlertDialog.Builder(fragment.getActivity());
+//
+//            WebView webView = new WebView(fragment.getActivity());
+//
+//            webView.getSettings().setJavaScriptEnabled(true);
+//            webView.getSettings().setDomStorageEnabled(true);
+//            webView.setScrollBarStyle(0);
+//            webView.getSettings().setUseWideViewPort(false);
+//            webView.getSettings().setLoadWithOverviewMode(true);
+//            webView.loadUrl(Config.URL_RE_CAPTCHA);
+//
+//            webView.setWebViewClient(new WebViewClient()
+//            {
+//                public boolean shouldOverrideUrlLoading(WebView view, String url)
+//                {
+//                    view.loadUrl(url);
+//
+//                    return true;
+//                }
+//            });
+//
+//            alert.setView(webView);
+//
+//            alert.show();
+
+
         } else {
             activityService.showMessage(ErrorMessages.CAPTCHA_NOT_PASSED.getText(), fragment.getActivity());
         }
