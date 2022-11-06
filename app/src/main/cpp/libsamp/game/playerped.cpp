@@ -106,6 +106,8 @@ void CPlayerPed::Destroy()
 	Log("Calling destructor..");
 	(( void (*)(PED_TYPE*))(*(void**)(m_pPed->entity.vtable+0x4)))(m_pPed);
 
+	ScriptCommand(&destroy_actor, m_dwGTAId);
+
 	m_pPed = nullptr;
 	m_pEntity = nullptr;
 }
@@ -598,7 +600,7 @@ void CPlayerPed::PutDirectlyInVehicle(int iVehicleID, int iSeat)
 	if(iSeat == 0)
 	{
 		if(pVehicle->pDriver && IN_VEHICLE(pVehicle->pDriver)) return;
-		ScriptCommand(&put_actor_in_car, m_dwGTAId, iVehicleID);
+		ScriptCommand(&TASK_WARP_CHAR_INTO_CAR_AS_DRIVER, m_dwGTAId, iVehicleID);
 	}
 	else
 	{
@@ -639,23 +641,24 @@ void CPlayerPed::ExitCurrentVehicle()
 	if(!m_pPed) return;
 	if(!GamePool_Ped_GetAt(m_dwGTAId)) return;
 
-	VEHICLE_TYPE* ThisVehicleType = 0;
+	//VEHICLE_TYPE* ThisVehicleType = 0;
 
 	if(IN_VEHICLE(m_pPed))
 	{
-		if(GamePool_Vehicle_GetIndex((VEHICLE_TYPE*)m_pPed->pVehicle))
-		{
-			int index = GamePool_Vehicle_GetIndex((VEHICLE_TYPE*)m_pPed->pVehicle);
-			ThisVehicleType = GamePool_Vehicle_GetAt(index);
-			if(ThisVehicleType)
-			{
-				if(	ThisVehicleType->entity.nModelIndex != TRAIN_PASSENGER &&
-					ThisVehicleType->entity.nModelIndex != TRAIN_PASSENGER_LOCO)
-				{
-					ScriptCommand(&make_actor_leave_car, m_dwGTAId, GetCurrentVehicleID());
-				}
-			}
-		}
+//		if(GamePool_Vehicle_GetIndex((VEHICLE_TYPE*)m_pPed->pVehicle))
+//		{
+//			int index = GamePool_Vehicle_GetIndex((VEHICLE_TYPE*)m_pPed->pVehicle);
+//			ThisVehicleType = GamePool_Vehicle_GetAt(index);
+//			if(ThisVehicleType)
+//			{
+//				if(	ThisVehicleType->entity.nModelIndex != TRAIN_PASSENGER &&
+//					ThisVehicleType->entity.nModelIndex != TRAIN_PASSENGER_LOCO)
+//				{
+					ScriptCommand(&TASK_LEAVE_ANY_CAR, m_dwGTAId);
+
+//				}
+//			}
+//		}
 	}
 }
 
@@ -690,7 +693,6 @@ int CPlayerPed::GetVehicleSeatID()
 // 0.3.7
 void CPlayerPed::TogglePlayerControllable(bool bToggle, bool isTemp)
 {
-	Log("Contol = %d", bToggle);
 	if(!isTemp) lToggle = bToggle;
 
 	if(!GamePool_Ped_GetAt(m_dwGTAId)) return;

@@ -171,7 +171,7 @@ void CActorPed::PutDirectlyInVehicle(int iVehicleID, int iSeat)
 	if (iSeat == 0)
 	{
 		if (pVehicle->pDriver && IN_VEHICLE(pVehicle->pDriver)) return;
-		ScriptCommand(&put_actor_in_car, m_dwGTAId, iVehicleID);
+		ScriptCommand(&TASK_WARP_CHAR_INTO_CAR_AS_DRIVER, m_dwGTAId, iVehicleID);
 	}
 	else
 	{

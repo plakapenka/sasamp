@@ -268,6 +268,7 @@ void CPlayerTags::DrawChatBubble(PLAYERID playerId, VECTOR* vec, float fDistance
 	TagPos.X = vec->X;
 	TagPos.Y = vec->Y;
 	TagPos.Z = vec->Z;
+	//TagPos.Z = vec->Z;
 	TagPos.Z += 0.45f + (fDistance * 0.0675f) + ((float)m_iOffset[playerId] * pGUI->ScaleY(0.35f));
 
 	VECTOR Out;
@@ -304,7 +305,6 @@ void CPlayerTags::DrawChatBubble(PLAYERID playerId, VECTOR* vec, float fDistance
 		{
 			m_fTrueX[playerId] = ImGui::CalcTextSize(m_pSzTextWithoutColors[playerId]).x;
 		}
-
 		//Log("m_fTrueX = %f", m_pTextLabels[x]->m_fTrueX);
 	}
 

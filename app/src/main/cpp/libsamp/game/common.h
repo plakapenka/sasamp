@@ -75,6 +75,23 @@ typedef struct _VECTOR
 	float X,Y,Z;
 } VECTOR, *PVECTOR;
 
+enum eLights
+{
+	// these have to correspond to their respective panels
+	LEFT_HEADLIGHT = 0,
+	RIGHT_HEADLIGHT,
+	LEFT_TAIL_LIGHT,
+	RIGHT_TAIL_LIGHT,
+	/*  LEFT_BRAKE_LIGHT,
+		RIGHT_BRAKE_LIGHT,
+		FRONT_LEFT_INDICATOR,
+		FRONT_RIGHT_INDICATOR,
+		REAR_LEFT_INDICATOR,
+		REAR_RIGHT_INDICATOR,*/
+
+	MAX_LIGHTS            // MUST BE 16 OR LESS
+};
+
 #pragma pack(1)
 struct VehicleAudioPropertiesStruct
 {

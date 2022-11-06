@@ -1429,8 +1429,9 @@ void CNetGame::ShutDownForGameRestart()
 	CPlayerPed *pPlayerPed = pGame->FindPlayerPed();
 	if(pPlayerPed)
 	{
+	//	pGame->RemovePlayer(pPlayerPed);
 		pPlayerPed->SetInterior(0);
-		//pPlayerPed->SetDead();
+//		//pPlayerPed->SetDead();
 		pPlayerPed->SetArmour(0.0f);
 	}
 
@@ -1655,6 +1656,8 @@ void CNetGame::Packet_DisconnectionNotification(Packet* pkt)
 	m_pRakClient->Disconnect(2000);
 	if(pVoice) pVoice->FullDisconnect();
 	g_pJavaWrapper->ClearScreen();
+
+	//pNetGame->ShutDownForGameRestart();
 }
 
 void CNetGame::Packet_ConnectionLost(Packet* pkt)
@@ -1853,6 +1856,7 @@ void CNetGame::Packet_VehicleSync(Packet* pkt)
 {
 	CRemotePlayer *pPlayer;
 	RakNet::BitStream bsSync((unsigned char *)pkt->data, pkt->length, false);
+	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
 	uint8_t bytePacketID = 0;
 	PLAYERID playerId;
 	INCAR_SYNC_DATA icSync;
@@ -1890,8 +1894,12 @@ void CNetGame::Packet_VehicleSync(Packet* pkt)
 	uint16_t wTempVehicleHealth;
 	bsSync.Read(wTempVehicleHealth);
 	//pGUI->SetHealth(wTempVehicleHealth);
+	CVehicle *pVehicle = pVehiclePool->GetAt(icSync.VehicleID);
 	icSync.fCarHealth = (float)wTempVehicleHealth;
-
+	if(pVehicle)
+	{
+		pVehicle->SetHealth(wTempVehicleHealth);
+	}
 	// health/armour
 	uint8_t byteHealthArmour;
 	uint8_t byteArmTemp=0, byteHlTemp=0;

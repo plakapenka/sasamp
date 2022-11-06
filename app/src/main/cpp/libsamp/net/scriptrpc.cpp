@@ -670,6 +670,8 @@ void ScrVehicleParamsEx(RPCParameters* rpcParams)
 			pNetGame->GetVehiclePool()->GetAt(VehicleId)->SetLightsState(lights);
 			//pGUI->SetLights(lights);
 
+	//		pNetGame->GetVehiclePool()->AssignSpecialParamsToVehicle(VehicleId, objective,doors);
+
 			pNetGame->GetVehiclePool()->GetAt(VehicleId)->SetBootAndBonnetState((int)boot, (int)bonnet);
 		}
 	}

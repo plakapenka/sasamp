@@ -1060,12 +1060,14 @@ void SetPlayerChatBubble(RPCParameters* rpcParams)
 
 	RakNet::BitStream bsData(Data, (iBitLength / 8) + 1, false);
 
-	PLAYERID playerId;
+	//PLAYERID playerId;
+	uint16_t playerId;
 	//if (playerId < 0 || playerId > MAX_PLAYERS) return;
 	uint32_t color;
 	float drawDistance;
 	uint32_t expireTime;
 	uint8_t texLength;
+
 	bsData.Read(playerId);
 	bsData.Read(color);
 	bsData.Read(drawDistance);
@@ -1074,7 +1076,7 @@ void SetPlayerChatBubble(RPCParameters* rpcParams)
 	if (texLength >= 255) return;
 	char pText[256];
 	bsData.Read(pText, texLength);
-	pText[texLength] = 0;
+	pText[texLength] = '\0';
 	if (pPlayerTags)
 	{
 		pPlayerTags->AddChatBubble(playerId, pText, color, drawDistance, expireTime);

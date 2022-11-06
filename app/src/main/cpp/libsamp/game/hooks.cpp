@@ -544,9 +544,9 @@ extern "C" bool NotifyEnterVehicle(VEHICLE_TYPE *_pVehicle)
     if(pVehicle->m_bDoorsLocked) return false;
     if(pVehicle->m_pVehicle->entity.nModelIndex == TRAIN_PASSENGER) return false;
  
-    if(pVehicle->m_pVehicle->pDriver &&
-        pVehicle->m_pVehicle->pDriver->dwPedType != 0)
-        return false;
+//    if(pVehicle->m_pVehicle->pDriver &&
+//        pVehicle->m_pVehicle->pDriver->dwPedType != 0)
+//        return false;
  
     CLocalPlayer *pLocalPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer();
  
@@ -565,6 +565,7 @@ extern "C" void call_taskEnterCarAsDriver(uintptr_t a, uint32_t b)
 }
 void __attribute__((naked)) CTaskComplexEnterCarAsDriver_hook(uint32_t thiz, uint32_t pVehicle)
 {
+
     __asm__ volatile("push {r0-r11, lr}\n\t"
                     "mov r2, lr\n\t"
                     "blx get_lib\n\t"
@@ -604,19 +605,22 @@ void ProcessPedDamage(PED_TYPE* pIssuer, PED_TYPE* pDamaged)
 	}
 }
 
+uint32_t ExitCarTick;
 void (*CTaskComplexLeaveCar)(uintptr_t** thiz, VEHICLE_TYPE *pVehicle, int iTargetDoor, int iDelayTime, bool bSensibleLeaveCar, bool bForceGetOut);
 void CTaskComplexLeaveCar_hook(uintptr_t** thiz, VEHICLE_TYPE *pVehicle, int iTargetDoor, int iDelayTime, bool bSensibleLeaveCar, bool bForceGetOut) 
 {
 	uintptr_t dwRetAddr = 0;
 	__asm__ volatile ("mov %0, lr" : "=r" (dwRetAddr));
 	dwRetAddr -= g_libGTASA;
- 
- 	if (dwRetAddr == 0x3AE905 || dwRetAddr == 0x3AE9CF) 
+
+ 	//if (dwRetAddr == 0x3AE905 || dwRetAddr == 0x3AE9CF)
+	 if(GetTickCount() - ExitCarTick > 1000)
  	{
- 		if (pNetGame) 
+ 		if (pNetGame)
  		{
- 			if (GamePool_FindPlayerPed()->pVehicle == (uint32_t)pVehicle) 
+ 			if (GamePool_FindPlayerPed()->pVehicle == (uint32_t)pVehicle)
  			{
+				ExitCarTick = GetTickCount();
  				CVehiclePool *pVehiclePool=pNetGame->GetVehiclePool();
  				VEHICLEID VehicleID=pVehiclePool->FindIDFromGtaPtr((VEHICLE_TYPE *)GamePool_FindPlayerPed()->pVehicle);
  				CLocalPlayer *pLocalPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer();

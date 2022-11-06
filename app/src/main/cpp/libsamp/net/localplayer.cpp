@@ -72,7 +72,7 @@ CLocalPlayer::CLocalPlayer()
 
 	FindDeathReasonPlayer = 0;
 
-	m_CurrentVehicle = 0;
+	m_CurrentVehicle = INVALID_VEHICLE_ID;
 	ResetAllSyncAttributes();
 
 	m_bIsSpectating = false;
@@ -196,6 +196,7 @@ extern bool tabToggle;
 #include "..//game/CWeaponsOutFit.h"
 bool CLocalPlayer::Process()
 {
+	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
 	uint32_t dwThisTick = GetTickCount();
 
 	if(m_bIsActive && m_pPlayerPed)
@@ -210,6 +211,7 @@ bool CLocalPlayer::Process()
 
 			if(m_pPlayerPed->IsInVehicle() && !m_pPlayerPed->IsAPassenger())
 			{
+
 				SendInCarFullSyncData();
 				m_LastVehicle = pNetGame->GetVehiclePool()->FindIDFromGtaPtr(m_pPlayerPed->GetGtaVehicle());
 			}
@@ -259,7 +261,6 @@ bool CLocalPlayer::Process()
 			// DRIVER
 		else if(m_pPlayerPed->IsInVehicle() && !m_pPlayerPed->IsAPassenger())
 		{
-			CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
 			CVehicle *pVehicle;
 			if(pVehiclePool)
 				m_CurrentVehicle = pVehiclePool->FindIDFromGtaPtr(m_pPlayerPed->GetGtaVehicle());
@@ -270,6 +271,7 @@ bool CLocalPlayer::Process()
 				m_dwLastSendTick = GetTickCount();
 				SendInCarFullSyncData();
 			}
+
 		}
 			// ONFOOT
 		else if(m_pPlayerPed->GetActionTrigger() == ACTION_NORMAL || m_pPlayerPed->GetActionTrigger() == ACTION_SCOPE)
@@ -363,8 +365,20 @@ bool CLocalPlayer::Process()
 	}
 
         //  нопки вход/выход/закрыть машину
-        if (!m_pPlayerPed->IsInVehicle() ) {
-			CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
+		if(!m_pPlayerPed->lToggle)
+		{
+			if (pHud->isEnterPassengerButtOn) {
+				pHud->ToggleEnterPassengerButton(false);
+			}
+			if (pHud->isEnterExitVehicleButtonOn) {
+				pHud->ToggleEnterExitVehicleButton(false);
+			}
+			if(pHud->isLockVehicleButtonOn)
+			{
+				pHud->ToggleLockVehicleButton(false);
+			}
+		}
+        else if (!m_pPlayerPed->IsInVehicle() ) {
             if(pVehiclePool)
             {
                 VEHICLEID ClosetVehicleID = pVehiclePool->FindNearestToLocalPlayerPed();
@@ -568,7 +582,7 @@ bool CLocalPlayer::GoEnterVehicle(bool passenger)
 	if (ClosetVehicleID != INVALID_VEHICLE_ID)
 	{
 		CVehicle* pVehicle = pVehiclePool->GetAt(ClosetVehicleID);
-		if (pVehicle->GetDistanceFromLocalPlayerPed() < 4.0f)
+		if (pVehicle != nullptr && pVehicle->GetDistanceFromLocalPlayerPed() < 4.0f)
 		{
 			m_pPlayerPed->EnterVehicle(pVehicle->m_dwGTAId, passenger);
 			SendEnterVehicleNotification(ClosetVehicleID, passenger);
@@ -688,7 +702,9 @@ void CLocalPlayer::SendExitVehicleNotification(VEHICLEID VehicleID)
 
 		bsSend.Write(VehicleID);
 		pNetGame->GetRakClient()->RPC(&RPC_ExitVehicle,&bsSend,HIGH_PRIORITY,RELIABLE_SEQUENCED,0,false, UNASSIGNED_NETWORK_ID, NULL);
-	}
+
+       // GamePool_FindPlayerPed()->pVehicle = INVALID_VEHICLE_ID;
+    }
 }
 
 void CLocalPlayer::UpdateRemoteInterior(uint8_t byteInterior)
