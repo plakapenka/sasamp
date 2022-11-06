@@ -5,17 +5,18 @@ import android.content.Context;
 import android.text.Editable;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.nvidia.devtech.CustomEditText;
-import com.nvidia.devtech.NvEventQueueActivity;
 import com.liverussia.cr.R;
 import com.liverussia.cr.gui.util.Utils;
+import com.nvidia.devtech.NvEventQueueActivity;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ public class Dialog {
     private boolean mInputPasswordStyle = false;
     private final RecyclerView mCustomRecyclerView;
     private final ArrayList<TextView> mHeadersList;
-    private final CustomEditText mInput;
+    private final EditText mInput;
     private final ConstraintLayout mInputLayout;
     private final ConstraintLayout mLeftBtn;
     private final ConstraintLayout mListLayout;
@@ -66,7 +67,7 @@ public class Dialog {
         this.mInputLayout = activity.findViewById(R.id.sd_dialog_input_layout);
         this.mListLayout = activity.findViewById(R.id.sd_dialog_list_layout);
         this.mMsgBoxLayout = (ScrollView) activity.findViewById(R.id.sd_dialog_text_layout);
-        this.mInput = (CustomEditText) activity.findViewById(R.id.sd_dialog_input);
+        this.mInput = activity.findViewById(R.id.sd_dialog_input);
         this.mCustomRecyclerView = activity.findViewById(R.id.sd_dialog_list_recycler);
         findViewById1.setOnClickListener(view -> sendDialogResponse(1));
         findViewById2.setOnClickListener(view -> sendDialogResponse(0));
@@ -123,9 +124,9 @@ public class Dialog {
                 this.mMsgBoxLayout.setVisibility(View.GONE); // LIST, TABLIST, TABLIST_HEADER
                 this.mListLayout.setVisibility(View.VISIBLE);
                 loadTabList(content);
-                ArrayList<String> fixFieldsForDialog = Utils.fixFieldsForDialog(this.mRowsList);
-                this.mRowsList = fixFieldsForDialog;
-                DialogAdapter adapter = new DialogAdapter(fixFieldsForDialog, this.mHeadersList);
+                //ArrayList<String> fixFieldsForDialog = Utils.fixFieldsForDialog(this.mRowsList);
+               // this.mRowsList = fixFieldsForDialog;
+                DialogAdapter adapter = new DialogAdapter(this.mRowsList, this.mHeadersList);
                 adapter.setOnClickListener((i, str) -> {
                     this.mCurrentListItem = i;
                     this.mCurrentInputText = str;
@@ -133,11 +134,20 @@ public class Dialog {
                 adapter.setOnDoubleClickListener(() -> sendDialogResponse(1));
                 this.mCustomRecyclerView.setLayoutManager(new LinearLayoutManager((Context) NvEventQueueActivity.getInstance()));
                 this.mCustomRecyclerView.setAdapter(adapter);
-                if (dialogTypeId != 2) {
-                    RecyclerView customRecyclerView = this.mCustomRecyclerView;
-                    adapter.getClass();
-                    customRecyclerView.post(() -> adapter.updateSizes());
-                }
+
+                mMainLayout.post(() ->{
+
+                    int width = mCaption.getWidth();
+                    if(mCustomRecyclerView.getMinimumWidth() < width)
+                    {
+                        mCustomRecyclerView.setMinimumWidth(width);
+                    }
+                    if (dialogTypeId != 2) {
+                        adapter.updateSizes();
+                    }
+                    mCustomRecyclerView.requestLayout();
+                } );
+
             }
             this.mCaption.setText(Utils.transfromColors(caption));
             this.mContent.setText(Utils.transfromColors(content));
@@ -212,6 +222,7 @@ public class Dialog {
     }
 
     private void clearDialogData() {
+        mCustomRecyclerView.setMinimumWidth(300);
         this.mInput.setText("");
         this.mCurrentDialogId = -1;
         this.mCurrentDialogTypeId = -1;
