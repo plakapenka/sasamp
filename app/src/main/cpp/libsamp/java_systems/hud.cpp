@@ -13,7 +13,6 @@
 
 extern CJavaWrapper *g_pJavaWrapper;
 extern CGame *pGame;
-extern CNetGame *pNetGame;
 extern CHUD *pHud;
 extern CGUI* pGUI;
 
@@ -49,16 +48,20 @@ void CHUD::ToggleAll(bool toggle, bool withchat)
     {
         return;
     }
-    if(!toggle)
+    if(pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->IsInVehicle())
     {
-        showSpeedometr = false;
-        g_pJavaWrapper->HideSpeed();
+        if(!toggle)
+        {
+            showSpeedometr = false;
+            g_pJavaWrapper->HideSpeed();
+        }
+        else
+        {
+            showSpeedometr = true;
+            g_pJavaWrapper->ShowSpeed();
+        }
     }
-    else
-    {
-        showSpeedometr = true;
-        g_pJavaWrapper->ShowSpeed();
-    }
+
     isHudToggle = toggle;
     pGame->DisplayHUD(toggle);
 

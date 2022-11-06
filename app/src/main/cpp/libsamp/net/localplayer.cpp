@@ -16,7 +16,6 @@ extern CKeyBoard* pKeyBoard;
 extern CChatWindow* pChatWindow;
 
 extern CGame *pGame;
-extern CNetGame *pNetGame;
 extern CSettings *pSettings;
 extern CHUD *pHud;
 
@@ -26,8 +25,8 @@ extern int iNetModeNormalOnfootSendRate;
 extern int iNetModeNormalInCarSendRate;
 extern bool bUsedPlayerSlots[];
 
-#define IS_TARGETING(x) (x & 128)
-#define IS_FIRING(x) (x & 4)
+#define IS_TARGETING(x) ((x) & 128)
+#define IS_FIRING(x) ((x) & 4)
 
 // SEND RATE TICKS
 #define NETMODE_IDLE_ONFOOT_SENDRATE	80
@@ -89,9 +88,7 @@ CLocalPlayer::CLocalPlayer()
 }
 
 CLocalPlayer::~CLocalPlayer()
-{
-	
-}
+= default;
 
 void CLocalPlayer::ResetAllSyncAttributes()
 {
@@ -160,8 +157,7 @@ void CLocalPlayer::CheckWeapons()
 }
 uint32_t CLocalPlayer::GetCurrentAnimationIndexFlag()
 {
-	uint32_t dwAnim = 0;
-
+	int dwAnim = 0;
 	float fBlendData = 4.0f;
 
 	int iAnimIdx = m_pPlayerPed->GetCurrentAnimationIndex(fBlendData);
@@ -264,7 +260,6 @@ bool CLocalPlayer::Process()
 			CVehicle *pVehicle;
 			if(pVehiclePool)
 				m_CurrentVehicle = pVehiclePool->FindIDFromGtaPtr(m_pPlayerPed->GetGtaVehicle());
-			pVehicle = pVehiclePool->GetAt(m_CurrentVehicle);
 
 			if((dwThisTick - m_dwLastSendTick) > (unsigned int)GetOptimumInCarSendRate())
 			{
@@ -365,8 +360,7 @@ bool CLocalPlayer::Process()
 	}
 
         //  нопки вход/выход/закрыть машину
-		if(!m_pPlayerPed->lToggle)
-		{
+		if(!m_pPlayerPed->lToggle){
 			if (pHud->isEnterPassengerButtOn) {
 				pHud->ToggleEnterPassengerButton(false);
 			}
@@ -377,8 +371,7 @@ bool CLocalPlayer::Process()
 			{
 				pHud->ToggleLockVehicleButton(false);
 			}
-		}
-        else if (!m_pPlayerPed->IsInVehicle() ) {
+		}else if (!m_pPlayerPed->IsInVehicle() ) {
             if(pVehiclePool)
             {
                 VEHICLEID ClosetVehicleID = pVehiclePool->FindNearestToLocalPlayerPed();
@@ -656,13 +649,14 @@ void CLocalPlayer::RequestClass(int iClass)
 {
 	RakNet::BitStream bsSpawnRequest;
 	bsSpawnRequest.Write(iClass);
-	pNetGame->GetRakClient()->RPC(&RPC_RequestClass, &bsSpawnRequest, HIGH_PRIORITY, RELIABLE, 0, false, UNASSIGNED_NETWORK_ID, 0);
+	pNetGame->GetRakClient()->RPC(&RPC_RequestClass, &bsSpawnRequest, HIGH_PRIORITY, RELIABLE, 0, false, UNASSIGNED_NETWORK_ID,
+                                  nullptr);
 }
 
 void CLocalPlayer::RequestSpawn()
 {
 	RakNet::BitStream bsSpawnRequest;
-	pNetGame->GetRakClient()->RPC(&RPC_RequestSpawn, &bsSpawnRequest, HIGH_PRIORITY, RELIABLE, 0, false, UNASSIGNED_NETWORK_ID, 0);
+	pNetGame->GetRakClient()->RPC(&RPC_RequestSpawn, &bsSpawnRequest, HIGH_PRIORITY, RELIABLE, 0, false, UNASSIGNED_NETWORK_ID, nullptr);
 }
 
 uint32_t CLocalPlayer::GetPlayerColorAsARGB()
@@ -808,7 +802,6 @@ uint8_t CLocalPlayer::DetermineNumberOfPlayersInLocalRange()
 	return iNumPlayersInRange;
 }
 #include "..//chatwindow.h"
-extern CChatWindow* pChatWindow;
 
 void CLocalPlayer::SendOnKeyFullSyncData()
 {
@@ -1157,7 +1150,7 @@ void CLocalPlayer::ProcessSpectating()
 	else if(m_byteSpectateType == SPECTATE_TYPE_PLAYER)
 	{
 		uint32_t dwGTAId = 0;
-		CPlayerPed *pPlayerPed = 0;
+		CPlayerPed *pPlayerPed = nullptr;
 
 		if(pPlayerPool->GetSlotState(m_SpectateID))
 		{

@@ -4,7 +4,6 @@
 #include "../chatwindow.h"
 
 extern CGame *pGame;
-extern CNetGame *pNetGame;
 extern CChatWindow *pChatWindow;
 
 CRemotePlayer::CRemotePlayer()
@@ -131,7 +130,7 @@ void CRemotePlayer::Process()
 			{
 				return;
 			}
-			if (!GamePool_Vehicle_GetAt(m_pCurrentVehicle->m_dwGTAId))
+			if (!GamePool_Vehicle_GetAt((int)m_pCurrentVehicle->m_dwGTAId))
 			{
 				return;
 			}
@@ -179,13 +178,13 @@ void CRemotePlayer::Process()
 					if (m_pCurrentVehicle->GetTrailer()) 
 					{
 						m_pCurrentVehicle->DetachTrailer();
-						m_pCurrentVehicle->SetTrailer(NULL);
+						m_pCurrentVehicle->SetTrailer(nullptr);
 					}
 				}
 			}
 			else
 			{
-				m_pCurrentVehicle->SetTrailer(NULL);
+				m_pCurrentVehicle->SetTrailer(nullptr);
 			}
 		}
 		else if(GetState() == PLAYER_STATE_PASSENGER && 
@@ -340,10 +339,10 @@ void CRemotePlayer::SlerpRotation()
 		quatResult.GetMatrix(&mat);
 		m_pPlayerPed->SetMatrix(mat);
 
-		float fZ = atan2(-mat.up.X, mat.up.Y) * 57.295776; /* rad to deg */
+		double fZ = atan2(-mat.up.X, mat.up.Y) * 57.295776; /* rad to deg */
 		if(fZ > 360.0f) fZ -= 360.0f;
 		if(fZ < 0.0f) fZ += 360.0f;
-		m_pPlayerPed->SetRotation(fZ);
+		m_pPlayerPed->SetRotation((float)fZ);
 	}
 }
 
