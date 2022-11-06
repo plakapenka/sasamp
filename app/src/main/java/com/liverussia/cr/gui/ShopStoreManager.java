@@ -63,10 +63,8 @@ public class ShopStoreManager {
 
     public void Toggle(boolean toggle, int type, int price)
     {
-        Log.d("sadfsdf", "toggle= " + toggle + " asf " +type+" adfsfd");
         if(!toggle)
         {
-            Log.d("sadfsdf","СХУЯ СКРЫТИЕ");
             br_shopstroreselect_layout.setVisibility(View.GONE);
             return;
         }
