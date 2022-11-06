@@ -5,6 +5,8 @@ import com.liverussia.launcher.dto.request.RefreshTokenRequestDto;
 import com.liverussia.launcher.dto.response.AuthenticationResponseDto;
 import com.liverussia.launcher.dto.response.LoaderSliderInfoResponseDto;
 import com.liverussia.launcher.dto.response.ServerImagesResponseDto;
+import com.liverussia.launcher.dto.response.SpinRouletteResponseDto;
+import com.liverussia.launcher.dto.response.UserInfoDto;
 import com.liverussia.launcher.model.News;
 import com.liverussia.launcher.model.Servers;
 
@@ -38,4 +40,10 @@ public interface NetworkService {
 
     @POST("/api/v1/auth/android/login")
     Call<AuthenticationResponseDto> loginUser(@Body LoginRequestDto loginRequestDto);
+
+    @GET("/api/v1/android/user/info")
+    Call<UserInfoDto> updateUserInfo(@Header("Authorization") String token);
+
+    @POST("/api/v1/android/user/roulette/spin")
+    Call<SpinRouletteResponseDto> spinRoulette(@Header("Authorization") String token);
 }

@@ -176,7 +176,7 @@ public class RouletteFragment extends Fragment implements View.OnClickListener, 
         if (authenticationService.isRefreshTokenHealth()) {
             UpdateTokensAsyncRestCall updateTokensAsyncRestCall = new UpdateTokensAsyncRestCall(getActivity());
             updateTokensAsyncRestCall.setOnAsyncSuccessListener(this::performSpinButtonAction);
-            updateTokensAsyncRestCall.refreshTokens();
+            updateTokensAsyncRestCall.refreshTokens(true);
             return;
         }
 
@@ -194,17 +194,20 @@ public class RouletteFragment extends Fragment implements View.OnClickListener, 
     }
 
 
-    //TODO проверить какой фрагмент менеджер брать
     public void openPrizeDialog(PrizeInfoResponseDto prizeInfo) {
         PrizeDialog.display(getFragmentManager(), prizeInfo);
     }
 
     private void spinRoulette() {
-
         isSpinRequestProcessing = true;
         SpinRouletteAsyncRestCall spinRouletteAsyncRestCall = new SpinRouletteAsyncRestCall(getActivity());
         spinRouletteAsyncRestCall.setOnAsyncSuccessListener(this::configureRouletteBeforeSpin);
-        spinRouletteAsyncRestCall.execute();
+        spinRouletteAsyncRestCall.setOnAsyncCriticalErrorListener(this::connectionRefusedAction);
+        spinRouletteAsyncRestCall.spinRoulette();
+    }
+
+    private void connectionRefusedAction() {
+        isSpinRequestProcessing = false;
     }
 
     private void configureRouletteBeforeSpin(SpinRouletteResponseDto spinRouletteResponseDto) {
@@ -326,7 +329,7 @@ public class RouletteFragment extends Fragment implements View.OnClickListener, 
             updateTokensAsyncRestCall.setOnAsyncNotCriticalErrorListener(this::fillAuthenticationPanelFields);
             updateTokensAsyncRestCall.setOnAsyncCriticalErrorListener(this::performLogoutButtonAction);
 
-            updateTokensAsyncRestCall.refreshTokens();
+            updateTokensAsyncRestCall.refreshTokens(false);
             return;
         }
 
@@ -335,7 +338,7 @@ public class RouletteFragment extends Fragment implements View.OnClickListener, 
         updateUserInfoAsyncRestCall.setOnAsyncNotCriticalErrorListener(this::fillAuthenticationPanelFields);
         updateUserInfoAsyncRestCall.setOnAsyncCriticalErrorListener(this::performLogoutButtonAction);
 
-        updateUserInfoAsyncRestCall.execute();
+        updateUserInfoAsyncRestCall.updateUserInfo();
     }
 
     private void fillAuthenticationPanelFields() {

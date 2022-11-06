@@ -45,7 +45,6 @@ public class AuthenticateAsyncRestCall {
     private final static Set<ErrorContainer> CRITICAL_ERRORS = new HashSet<>();
 
     public AuthenticateAsyncRestCall(Activity activity) {
-        super();
         this.activity = activity;
         this.authenticationService = new AuthenticationServiceImpl(activity);
     }
