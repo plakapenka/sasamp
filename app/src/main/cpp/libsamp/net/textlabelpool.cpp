@@ -78,6 +78,10 @@ void CText3DLabelsPool::DrawAttachedToPlayer(TEXT_LABELS* pLabel)
 	pos.Y += pLabel->offsetCoords.Y;
 	pos.Z += pLabel->offsetCoords.Z;
 
+   // CPlayerPed* pPed = pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed();
+    float fDist = pPlayerPed->GetDistanceFromCamera();
+    pos.Z += (fDist * 0.055);
+
 	DrawTextLabel(pLabel, &pos);
 }
 
