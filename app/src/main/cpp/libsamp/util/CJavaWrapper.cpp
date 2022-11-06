@@ -1705,9 +1705,9 @@ Java_com_nvidia_devtech_NvEventQueueActivity_SendCasinoButt(JNIEnv *env, jobject
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_Casino_1LuckyWheel_ClickButt(JNIEnv *env, jobject thiz, jint button_id) {
+	pGame->isCasinoWheelActive = false;
 	if(button_id == 228)
 	{// Закрыл
-		pGame->isCasinoWheelActive = false;
 		return;
 	}
 	uint8_t packet = ID_CUSTOM_RPC;
