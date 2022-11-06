@@ -185,7 +185,8 @@ void CGame::HandleChangedHUDStatus()
 
 uint8_t CGame::GetWantedLevel()
 {
-	return *(uint8_t*)(g_libGTASA + 0x27D8D2);
+	return wantedLvl;
+	//return *(uint8_t*)(g_libGTASA + 0x27D8D2);
 }
 
 void CGame::SetEnabledPCMoney(bool bEnabled)
@@ -456,7 +457,9 @@ void CGame::SetMaxStats()
 
 void CGame::SetWantedLevel(uint8_t byteLevel)
 {
-	WriteMemory(g_libGTASA+0x27D8D2, (uintptr_t)&byteLevel, 1);
+	wantedLvl = byteLevel;
+	pHud->UpdateWanted();
+//	WriteMemory(g_libGTASA+0x27D8D2, (uintptr_t)&byteLevel, 1);
 }
 void CGame::RequestAnimation(char *szAnimFile)
 {
@@ -501,6 +504,7 @@ void CGame::DisableMarker(uint32_t dwMarkerID)
 void CGame::AddToLocalMoney(int iAmmount)
 {
 	pHud->localMoney += iAmmount;
+	pHud->UpdateMoney();
 	//pHud->localMoney +=
 //	ScriptCommand(&add_to_player_money, 0, iAmmount);
 }
@@ -509,6 +513,7 @@ void CGame::AddToLocalMoney(int iAmmount)
 void CGame::ResetLocalMoney()
 {
 	pHud->localMoney = 0;
+	pHud->UpdateMoney();
 }
 
 // 0.3.7
