@@ -34,7 +34,5 @@ public class Config {
     public static final String NATIVE_SETTINGS_FILE_PATH = "/SAMP/settings.ini";
     public static final String SETTINGS_FILE_PATH = "/gta_sa.set";
 
-    public static final String CAPTCHA_SITE_KEY = "6Ldt5oAhAAAAAGyLnKV67wVPVxaqEqoF18XM6cav";
-
     public static final String URL_RE_CAPTCHA = "https://files.liverussia.online/reCaptcha.html";
 }

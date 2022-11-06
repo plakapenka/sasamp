@@ -1,20 +1,13 @@
 package com.liverussia.launcher.activity.dialogs;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -22,15 +15,9 @@ import android.widget.TextView;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.gms.safetynet.SafetyNet;
-import com.google.android.gms.safetynet.SafetyNetApi;
 import com.liverussia.cr.R;
 import com.liverussia.launcher.activity.ActivitySupportedServerSelection;
-import com.liverussia.launcher.activity.ForumActivity;
-import com.liverussia.launcher.config.Config;
 import com.liverussia.launcher.dto.request.LoginRequestDto;
-import com.liverussia.launcher.enums.BillingParameters;
-import com.liverussia.launcher.enums.ServerInfo;
 import com.liverussia.launcher.messages.ErrorMessages;
 import com.liverussia.launcher.async.AuthenticateAsyncRestCall;
 import com.liverussia.launcher.model.Servers;
@@ -161,42 +148,13 @@ public class AuthenticationDialog extends DialogFragment implements View.OnClick
     private void performIAmNotRobotCheckBoxAction() {
         if (iAmNotRobotCheckBox.isChecked()) {
             iAmNotRobotCheckBox.setChecked(false);
-
-
             new ReCaptchaDialog(this);
-
-
-//            AlertDialog.Builder alert = new AlertDialog.Builder(fragment.getActivity());
-//
-//            WebView webView = new WebView(fragment.getActivity());
-//
-//            webView.getSettings().setJavaScriptEnabled(true);
-//            webView.getSettings().setDomStorageEnabled(true);
-//            webView.setScrollBarStyle(0);
-//            webView.getSettings().setUseWideViewPort(false);
-//            webView.getSettings().setLoadWithOverviewMode(true);
-//            webView.loadUrl(Config.URL_RE_CAPTCHA);
-//
-//            webView.setWebViewClient(new WebViewClient()
-//            {
-//                public boolean shouldOverrideUrlLoading(WebView view, String url)
-//                {
-//                    view.loadUrl(url);
-//
-//                    return true;
-//                }
-//            });
-//
-//            alert.setView(webView);
-//
-//            alert.show();
-
-
         } else {
             activityService.showMessage(ErrorMessages.CAPTCHA_NOT_PASSED.getText(), fragment.getActivity());
         }
     }
 
+    //TODO
     private void performCaptchaFailureAction(Exception exception) {
         activityService.showMessage(ErrorMessages.CAPTCHA_COMPLETING_PROBLEMS.getText(), fragment.getActivity());
         iAmNotRobotCheckBox.setChecked(false);
@@ -204,8 +162,8 @@ public class AuthenticationDialog extends DialogFragment implements View.OnClick
         Log.d("Captcha failed reason: ", exception.getMessage());
     }
 
-    private void performCaptchaSuccessAction(SafetyNetApi.RecaptchaTokenResponse recaptchaTokenResponse) {
-        captchaToken = recaptchaTokenResponse.getTokenResult();
+    public void performCaptchaSuccessAction(String token) {
+        captchaToken = token;
         iAmNotRobotCheckBox.setChecked(true);
     }
 
