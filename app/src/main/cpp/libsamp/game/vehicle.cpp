@@ -47,7 +47,8 @@ CVehicle::CVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRota
 		ScriptCommand(&set_car_z_angle, dwRetID, fRotation);
 		ScriptCommand(&car_gas_tank_explosion, dwRetID, 0);
 		ScriptCommand(&set_car_hydraulics, dwRetID, 0);
-		ScriptCommand(&toggle_car_tires_vulnerable, dwRetID, 0);
+		ScriptCommand(&toggle_car_tires_vulnerable, dwRetID, 1);
+		ScriptCommand(&set_car_immunities, dwRetID, 0, 0, 0, 0, 0);
 		m_pVehicle = (VEHICLE_TYPE*)GamePool_Vehicle_GetAt(dwRetID);
 		m_pEntity = (ENTITY_TYPE*)m_pVehicle;
 		m_dwGTAId = dwRetID;
@@ -437,7 +438,7 @@ void CVehicle::ProcessMarkers()
 		return;
 	}
 
-	if (m_byteObjectiveVehicle && m_bSpecialMarkerEnabled)
+	if (!m_byteObjectiveVehicle && m_bSpecialMarkerEnabled)
 	{
 		if (m_dwMarkerID)
 		{
@@ -470,7 +471,6 @@ void CVehicle::ProcessMarkers()
 
 void CVehicle::SetWheelPopped(uint8_t bytePopped)
 {
-	
 
 	if (!m_pVehicle || !m_dwGTAId)
 	{
@@ -498,6 +498,38 @@ void CVehicle::SetWheelPopped(uint8_t bytePopped)
 
 			return;
 		}
+	}
+	if(bytePopped | 0b0001)
+	{
+		ScriptCommand(&BURST_CAR_TYRE, m_dwGTAId, 5);
+	}
+	else
+	{
+		ScriptCommand(&FIX_CAR_TYRE, m_dwGTAId, 5);
+	}
+	if(bytePopped | 0b0010)
+	{
+		ScriptCommand(&BURST_CAR_TYRE, m_dwGTAId, 1);
+	}
+	else
+	{
+		ScriptCommand(&FIX_CAR_TYRE, m_dwGTAId, 1);
+	}
+	if(bytePopped | 0b0100)
+	{
+		ScriptCommand(&BURST_CAR_TYRE, m_dwGTAId, 4);
+	}
+	else
+	{
+		ScriptCommand(&FIX_CAR_TYRE, m_dwGTAId, 4);
+	}
+	if(bytePopped | 0b1000)
+	{
+		ScriptCommand(&BURST_CAR_TYRE, m_dwGTAId, 0);
+	}
+	else
+	{
+		ScriptCommand(&FIX_CAR_TYRE, m_dwGTAId, 0);
 	}
 }
 
@@ -1419,16 +1451,23 @@ void CVehicle::UpdateDamageStatus(uint32_t dwPanelDamage, uint32_t dwDoorDamage,
 	{
 		return;
 	}
+//	SetLightStatus(eLights::LEFT_HEADLIGHT, byteLightDamage & 1);
+//	SetLightStatus(eLights::RIGHT_HEADLIGHT, (byteLightDamage >> 2) & 1);
+//	if ((byteLightDamage >> 6) & 1)
+//	{
+//		SetLightStatus(eLights::LEFT_TAIL_LIGHT, 1);
+//		SetLightStatus(eLights::RIGHT_TAIL_LIGHT, 1);
+//	}
 
 	// handle only fix, not damaging
-	if (m_pVehicle && GetVehicleSubtype() == VEHICLE_SUBTYPE_CAR)
-	{
-		if (!dwPanelDamage && !dwDoorDamage && !byteLightDamage)
-		{
-			((void(*)(VEHICLE_TYPE*))(g_libGTASA + 0x004D5CA4 + 1))(m_pVehicle); // CAutomobile::Fix
-			return;
-		}
-	}
+//	if (m_pVehicle && GetVehicleSubtype() == VEHICLE_SUBTYPE_CAR)
+//	{
+//		if (!dwPanelDamage && !dwDoorDamage && !byteLightDamage)
+//		{
+//			((void(*)(VEHICLE_TYPE*))(g_libGTASA + 0x004D5CA4 + 1))(m_pVehicle); // CAutomobile::Fix
+//			return;
+//		}
+//	}
 }
 
 unsigned int CVehicle::GetVehicleSubtype()

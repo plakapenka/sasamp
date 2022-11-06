@@ -141,10 +141,10 @@ public:
 	void DrawGangZone(float fPos[], uint32_t dwColor);
 
 
-// race checkpoint
-bool			m_bRaceCheckpointsEnabled;
-// checkpoint
-bool			m_bCheckpointsEnabled;
+	// race checkpoint
+	bool			m_bRaceCheckpointsEnabled;
+	// checkpoint
+	bool			m_bCheckpointsEnabled;
 
 	void CreateCheckPoint();
 
@@ -157,6 +157,7 @@ bool			m_bCheckpointsEnabled;
 	bool isCasinoWheelActive = false;
 	bool isRegistrationActive = false;
 	bool isShopStoreActive = false;
+	int wantedLvl = 0;
 
 private:
 	bool aToggleStatusHUD[HUD_MAX];
