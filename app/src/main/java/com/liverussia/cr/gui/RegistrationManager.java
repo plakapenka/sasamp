@@ -1,19 +1,22 @@
 package com.liverussia.cr.gui;
 
 import android.app.Activity;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.animation.AnimationUtils;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.google.android.material.button.MaterialButton;
 import com.liverussia.cr.R;
 import com.liverussia.cr.gui.util.Utils;
-import com.nvidia.devtech.CustomEditText;
 import com.nvidia.devtech.NvEventQueueActivity;
 
 public class RegistrationManager {
@@ -32,13 +35,13 @@ public class RegistrationManager {
     private ImageView choose_skin_notf_close;
     private ImageView choosesex_male;
     private ImageView choosesex_female;
-    private ImageView choosesex_btn;
-    private ImageView reg_play;
+    private MaterialButton choosesex_btn;
+    private MaterialButton reg_play;
     private ImageView reg_btn;
     private ImageView reg_skin;
-    private CustomEditText reg_password;
-    private CustomEditText reg_passwordtwo;
-    private CustomEditText reg_mail;
+    private EditText reg_password;
+    private EditText reg_passwordtwo;
+    private EditText reg_mail;
     private TextView reg_infotitle;
     private TextView reg_info;
     private TextView reg_nick;
@@ -121,7 +124,7 @@ public class RegistrationManager {
         });
 
         reg_play.setOnClickListener(view -> {
-            view.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.button_click));
+            //view.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.button_click));
             if (reg_password.getText().length() > 5 && (reg_password.getText().toString().equals(reg_passwordtwo.getText().toString())))
             {
                 Utils.ShowLayout(sex_layout, true);
@@ -156,11 +159,11 @@ public class RegistrationManager {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (reg_password.getText().length() > 5 && (reg_password.getText().toString().equals(reg_passwordtwo.getText().toString())))
                 {
-                    reg_play.setBackgroundResource(R.drawable.reg_btn);
+                    reg_play.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#fbc02d")));
                 }
                 else
                 {
-                    reg_play.setBackgroundResource(R.drawable.reg_btn_none);
+                    reg_play.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#004261")));
                 }
             }
         });
@@ -176,11 +179,11 @@ public class RegistrationManager {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (reg_password.getText().length() > 5 && (reg_password.getText().toString().equals(reg_passwordtwo.getText().toString())))
                 {
-                    reg_play.setBackgroundResource(R.drawable.reg_btn);
+                    reg_play.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#fbc02d")));
                 }
                 else
                 {
-                    reg_play.setBackgroundResource(R.drawable.reg_btn_none);
+                    reg_play.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#004261")));
                 }
             }
         });

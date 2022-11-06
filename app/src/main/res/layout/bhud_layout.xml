@@ -1,6 +1,6 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -100,7 +100,7 @@
                     android:id="@+id/hud_star_1"
                     android:layout_width="@dimen/_9sdp"
                     android:layout_height="@dimen/_9sdp"
-                    android:src="@drawable/ic_star"
+                    android:src="@drawable/ic_y_star"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -110,7 +110,7 @@
                     android:layout_height="@dimen/_9sdp"
                     android:layout_marginStart="13dp"
                     android:layout_marginTop="5dp"
-                    android:src="@drawable/ic_star"
+                    android:src="@drawable/ic_y_star"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/hud_star_1" />
 
@@ -120,7 +120,7 @@
                     android:layout_height="@dimen/_9sdp"
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="5dp"
-                    android:src="@drawable/ic_star"
+                    android:src="@drawable/ic_y_star"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/hud_star_2" />
 
@@ -130,7 +130,7 @@
                     android:layout_height="@dimen/_9sdp"
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="7dp"
-                    android:src="@drawable/ic_star"
+                    android:src="@drawable/ic_y_star"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/hud_star_3" />
 
@@ -140,7 +140,7 @@
                     android:layout_height="@dimen/_9sdp"
                     android:layout_marginStart="13dp"
                     android:layout_marginTop="5dp"
-                    android:src="@drawable/ic_star"
+                    android:src="@drawable/ic_y_star"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/hud_star_4" />
 
@@ -149,7 +149,7 @@
                     android:layout_width="@dimen/_9sdp"
                     android:layout_height="@dimen/_9sdp"
                     android:layout_marginTop="5dp"
-                    android:src="@drawable/ic_star"
+                    android:src="@drawable/ic_y_star"
                     app:layout_constraintTop_toBottomOf="@+id/hud_star_5" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -193,8 +193,8 @@
 
             <ImageView
                 android:id="@+id/hud_menu"
-                android:layout_width="250px"
-                android:layout_height="90px"
+                android:layout_width="95dp"
+                android:layout_height="34dp"
                 android:src="@drawable/hud_menu"
                 app:layout_constraintStart_toStartOf="@+id/imageView7"
                 app:layout_constraintTop_toBottomOf="@+id/imageView7" />
@@ -274,83 +274,10 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/bus_layout"
-            android:visibility="gone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="145dp"
-            android:layout_marginEnd="5dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:id="@+id/imageView25"
-                android:layout_width="170dp"
-                android:layout_height="65dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/bus_bg" />
-
-            <TextView
-                android:id="@+id/bus_text"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:fontFamily="@font/visby_round_cf_extra_bold"
-                android:gravity="center"
-                android:shadowColor="#000000"
-                android:shadowDx="1"
-                android:shadowDy="1"
-                android:shadowRadius="5"
-                android:text="10"
-                android:textColor="#46A5D4"
-                android:textSize="18sp"
-                app:layout_constraintBottom_toTopOf="@+id/imageView35"
-                app:layout_constraintEnd_toStartOf="@+id/imageView34"
-                app:layout_constraintStart_toEndOf="@+id/imageView33"
-                app:layout_constraintTop_toTopOf="@+id/imageView25" />
-
-            <ImageView
-                android:id="@+id/imageView33"
-                android:layout_width="25dp"
-                android:layout_height="60dp"
-                android:layout_marginBottom="5dp"
-                app:layout_constraintBottom_toBottomOf="@+id/imageView25"
-                app:layout_constraintStart_toStartOf="@+id/imageView25"
-                app:layout_constraintTop_toTopOf="@+id/imageView25"
-                app:srcCompat="@drawable/bus_mark" />
-
-            <ImageView
-                android:id="@+id/imageView34"
-                android:layout_width="90dp"
-                android:layout_height="60dp"
-                android:layout_marginEnd="5dp"
-                app:layout_constraintBottom_toBottomOf="@+id/imageView25"
-                app:layout_constraintEnd_toEndOf="@+id/imageView25"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/bus_image" />
-
-            <ImageView
-                android:id="@+id/imageView35"
-                android:layout_width="115dp"
-                android:layout_height="25dp"
-                android:layout_marginEnd="15dp"
-                android:layout_marginBottom="7dp"
-                app:layout_constraintBottom_toBottomOf="@+id/imageView25"
-                app:layout_constraintEnd_toEndOf="@+id/imageView34"
-                app:layout_constraintStart_toStartOf="@+id/imageView33"
-                app:srcCompat="@drawable/bus_text" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
     <ImageView
         android:id="@+id/enter_passenger"
-        android:layout_width="140px"
-        android:layout_height="140px"
+        android:layout_width="53dp"
+        android:layout_height="53dp"
         android:layout_marginEnd="8dp"
         android:clickable="true"
         android:foreground="?android:attr/selectableItemBackground"
@@ -360,8 +287,8 @@
 
     <ImageView
         android:id="@+id/vehicle_lock_butt"
-        android:layout_width="160px"
-        android:layout_height="160px"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_marginTop="140dp"
         android:layout_marginEnd="8dp"
         android:clickable="true"
@@ -372,8 +299,8 @@
 
     <ImageView
         android:id="@+id/enterexit_driver"
-        android:layout_width="140px"
-        android:layout_height="140px"
+        android:layout_width="53dp"
+        android:layout_height="53dp"
         android:layout_marginTop="140dp"
         android:layout_marginEnd="16dp"
         android:clickable="true"
@@ -483,17 +410,18 @@
 
         <ImageView
             android:id="@+id/hud_gpsactive"
-            android:layout_width="300px"
-            android:layout_height="100px"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
             android:layout_marginStart="3dp"
+            android:layout_marginTop="8dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/hud_greenzone"
             app:srcCompat="@drawable/gpsactive" />
 
         <ImageView
             android:id="@+id/hud_greenzone"
-            android:layout_width="300px"
-            android:layout_height="100px"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
             android:layout_marginStart="3dp"
             android:layout_marginTop="8dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -502,8 +430,8 @@
 
         <ImageView
             android:id="@+id/imageView17"
-            android:layout_width="140px"
-            android:layout_height="140px"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -512,10 +440,83 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bus_layout"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="145dp"
+        android:layout_marginEnd="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/imageView25"
+            android:layout_width="170dp"
+            android:layout_height="65dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/bus_bg" />
+
+        <TextView
+            android:id="@+id/bus_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/visby_round_cf_extra_bold"
+            android:gravity="center"
+            android:shadowColor="#000000"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="5"
+            android:text="10"
+            android:textColor="#46A5D4"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toTopOf="@+id/imageView35"
+            app:layout_constraintEnd_toStartOf="@+id/imageView34"
+            app:layout_constraintStart_toEndOf="@+id/imageView33"
+            app:layout_constraintTop_toTopOf="@+id/imageView25" />
+
+        <ImageView
+            android:id="@+id/imageView33"
+            android:layout_width="25dp"
+            android:layout_height="60dp"
+            android:layout_marginBottom="5dp"
+            app:layout_constraintBottom_toBottomOf="@+id/imageView25"
+            app:layout_constraintStart_toStartOf="@+id/imageView25"
+            app:layout_constraintTop_toTopOf="@+id/imageView25"
+            app:srcCompat="@drawable/bus_mark" />
+
+        <ImageView
+            android:id="@+id/imageView34"
+            android:layout_width="90dp"
+            android:layout_height="60dp"
+            android:layout_marginEnd="5dp"
+            app:layout_constraintBottom_toBottomOf="@+id/imageView25"
+            app:layout_constraintEnd_toEndOf="@+id/imageView25"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/bus_image" />
+
+        <ImageView
+            android:id="@+id/imageView35"
+            android:layout_width="115dp"
+            android:layout_height="25dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="7dp"
+            app:layout_constraintBottom_toBottomOf="@+id/imageView25"
+            app:layout_constraintEnd_toEndOf="@+id/imageView34"
+            app:layout_constraintStart_toStartOf="@+id/imageView33"
+            app:srcCompat="@drawable/bus_text" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <ImageView
         android:id="@+id/hud_logo"
-        android:layout_width="500px"
-        android:layout_height="200px"
+        android:layout_width="192dp"
+        android:layout_height="68dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/moscow" />

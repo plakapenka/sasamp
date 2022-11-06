@@ -144,6 +144,10 @@ public class HudManager {
         hud_wanted.add(activity.findViewById(R.id.hud_star_4));
         hud_wanted.add(activity.findViewById(R.id.hud_star_5));
         hud_wanted.add(activity.findViewById(R.id.hud_star_6));
+        for (int i = 0; i < hud_wanted.size(); i++) {
+            hud_wanted.get(i).setVisibility(View.GONE);
+        }
+
         hud_menu.setOnClickListener( view -> {
             NvEventQueueActivity.getInstance().showMenu();
             NvEventQueueActivity.getInstance().togglePlayer(1);
@@ -192,22 +196,15 @@ public class HudManager {
         }
     }
 
-    public void UpdateHudInfo(int health, int armour, int hunger, int weaponid, int ammo, int ammoclip, int money, int wanted)
+    public void UpdateHudInfo(int health, int armour, int hunger, int weaponid, int ammo, int ammoclip)
     {
         activity.runOnUiThread(() ->
         {
             progressHP.setProgress(health);
             progressArmor.setProgress(armour);
 
-            hud_money.setText(formatter.format(money));
-           // Log.d("Adf", formatter.format(money));
-
             int id = activity.getResources().getIdentifier(new Formatter().format("weapon_%d", Integer.valueOf(weaponid)).toString(), "drawable", activity.getPackageName());
             hud_weapon.setImageResource(id);
-
-            for (int i2 = 0; i2 < wanted; i2++) {
-                hud_wanted.get(i2).setBackgroundResource(R.drawable.ic_y_star);
-            }
 
             if (weaponid > 15 & weaponid < 44 & weaponid != 21) {
                 Utils.ShowLayout(hud_ammo, false);
@@ -223,7 +220,25 @@ public class HudManager {
             oil_oil_procent.setText(stroiloilproc);
         });
     }
-
+    public void UpdateMoney(int money)
+    {
+        activity.runOnUiThread(() -> {
+            hud_money.setText(formatter.format(money));
+            hud_main.invalidate();
+        });
+    }
+    public void UpdateWanted(int wantedLVL)
+    {
+        activity.runOnUiThread(() -> {
+            for (int i = 0; i < hud_wanted.size(); i++) {
+                if (i < wantedLVL) {
+                    hud_wanted.get(i).setVisibility(View.VISIBLE);
+                } else {
+                    hud_wanted.get(i).setVisibility(View.GONE);
+                }
+            }
+        });
+    }
     public void ToggleAll(boolean toggle)
     {
         if(!toggle)

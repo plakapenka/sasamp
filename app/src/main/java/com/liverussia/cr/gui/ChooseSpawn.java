@@ -1,18 +1,12 @@
 package com.liverussia.cr.gui;
 
 import android.app.Activity;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.TextView;
-
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.liverussia.cr.R;
 import com.liverussia.cr.gui.util.Utils;
-import com.nvidia.devtech.CustomEditText;
 import com.nvidia.devtech.NvEventQueueActivity;
 
 public class ChooseSpawn {

@@ -27,7 +27,7 @@
             android:paddingLeft="15dp"
             android:paddingRight="15dp">
 
-            <com.nvidia.devtech.CustomEditText
+            <EditText
                 android:id="@+id/main_et_input"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

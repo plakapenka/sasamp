@@ -1,6 +1,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
     android:id="@+id/br_registration_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -91,6 +92,7 @@
             android:layout_width="215dp"
             android:layout_height="215dp"
             android:background="@drawable/choosesex_male"
+            android:scaleType="fitCenter"
             app:layout_constraintBottom_toTopOf="@+id/choosesex_btn"
             app:layout_constraintEnd_toEndOf="@+id/choosesex_btn"
             app:layout_constraintStart_toStartOf="parent"
@@ -98,29 +100,32 @@
 
         <ImageView
             android:id="@+id/choosesex_female"
-            android:layout_width="215dp"
-            android:layout_height="215dp"
+            android:layout_width="210dp"
+            android:adjustViewBounds="false"
+            android:layout_height="205dp"
             android:background="@drawable/choosesex_female"
-            app:layout_constraintBottom_toTopOf="@+id/choosesex_btn"
+            app:layout_constraintBottom_toBottomOf="@+id/choosesex_male"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/choosesex_btn"
-            app:layout_constraintTop_toBottomOf="@+id/textView16" />
+            app:layout_constraintStart_toStartOf="@+id/choosesex_btn" />
 
-        <ImageView
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/choosesex_btn"
-            android:layout_width="275dp"
+            android:backgroundTint="@color/yellow"
+            android:text="продолжить"
+            android:textSize="16dp"
+            android:layout_width="200dp"
             android:layout_height="50dp"
             android:layout_marginBottom="25dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@drawable/choosesex" />
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/registration_layout"
         android:layout_width="match_parent"
+        android:visibility="visible"
         android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -210,7 +215,6 @@
                 android:fontFamily="@font/montserrat_bold"
                 android:text="Nick_Name"
                 android:textColor="#FFFFFF"
-                app:layout_constraintBottom_toTopOf="@+id/imageView16"
                 app:layout_constraintEnd_toEndOf="@+id/reg_skin"
                 app:layout_constraintStart_toStartOf="@+id/reg_skin"
                 app:layout_constraintTop_toBottomOf="@+id/textView9" />
@@ -323,7 +327,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <com.nvidia.devtech.CustomEditText
+                <EditText
                     android:id="@+id/reg_mail"
                     android:layout_width="0.0dip"
                     android:layout_height="wrap_content"
@@ -372,7 +376,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/constraintLayout4">
 
-                <com.nvidia.devtech.CustomEditText
+                <EditText
                     android:id="@+id/reg_password"
                     android:layout_width="0.0dip"
                     android:layout_height="wrap_content"
@@ -421,7 +425,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/constraintLayout5">
 
-                <com.nvidia.devtech.CustomEditText
+                <EditText
                     android:id="@+id/reg_passwordtwo"
                     android:layout_width="0.0dip"
                     android:layout_height="wrap_content"
@@ -487,14 +491,15 @@
                     app:layout_constraintTop_toTopOf="@+id/imageView13" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <ImageView
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/reg_play"
                 android:layout_width="0dp"
-                android:layout_height="30dp"
+                android:layout_height="45dp"
                 android:layout_marginStart="25dp"
                 android:layout_marginTop="20dp"
+                android:backgroundTint="#004261"
+                android:text="зарегистрироваться"
                 android:layout_marginEnd="25dp"
-                android:background="@drawable/reg_btn_none"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/constraintLayout6" />

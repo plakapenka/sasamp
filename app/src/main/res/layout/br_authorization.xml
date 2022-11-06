@@ -1,7 +1,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-
+    android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
     android:id="@+id/br_authorization_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -213,7 +213,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <com.nvidia.devtech.CustomEditText
+                <EditText
                     android:id="@+id/auth_password"
                     android:layout_width="0.0dip"
                     android:layout_height="wrap_content"
@@ -323,16 +323,23 @@
                 app:layout_constraintTop_toTopOf="@+id/textView8"
                 app:srcCompat="@drawable/toggle_off" />
 
-            <ImageView
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:id="@+id/auth_play"
                 android:layout_width="0dp"
-                android:layout_height="30dp"
+                android:layout_height="45dp"
                 android:layout_marginStart="25dp"
                 android:layout_marginEnd="25dp"
-                android:background="@drawable/auth_btn_play_none"
+                android:text="Играть"
+                android:fontFamily="@font/sfprodisplaymedium"
+                android:textSize="12sp"
+                android:textStyle="normal"
+                android:textColor="@color/white"
+                app:backgroundTint="#004261"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageView15" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

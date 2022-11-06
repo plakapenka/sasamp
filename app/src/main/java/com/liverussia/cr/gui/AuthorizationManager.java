@@ -1,31 +1,22 @@
 package com.liverussia.cr.gui;
 
 import android.app.Activity;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.animation.AnimationUtils;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.google.android.material.button.MaterialButton;
 import com.liverussia.cr.R;
-import com.liverussia.cr.core.Config;
 import com.liverussia.cr.gui.util.Utils;
-import com.nvidia.devtech.CustomEditText;
 import com.nvidia.devtech.NvEventQueueActivity;
-
-import org.ini4j.Wini;
-
-import java.io.File;
-import java.io.IOException;
 
 public class AuthorizationManager {
 
@@ -33,9 +24,9 @@ public class AuthorizationManager {
     private ConstraintLayout auth_right1;
     private ConstraintLayout auth_right2;
     private ConstraintLayout auth_back;
-    private ImageView auth_play;
+    private MaterialButton auth_play;
     private ImageView auth_btn;
-    private CustomEditText auth_password;
+    private EditText auth_password;
     private TextView auth_infotitle;
     private TextView auth_info;
     private TextView auth_nick;
@@ -85,11 +76,11 @@ public class AuthorizationManager {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (auth_password.getText().length() > 5)
                 {
-                    auth_play.setBackgroundResource(R.drawable.auth_btn_play);
+                    auth_play.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#fbc02d")));
                 }
                 else
                 {
-                    auth_play.setBackgroundResource(R.drawable.auth_btn_play_none);
+                    auth_play.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#004261")));
                 }
             }
         });
