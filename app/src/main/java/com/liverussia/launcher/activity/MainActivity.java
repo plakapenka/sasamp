@@ -6,7 +6,6 @@ import android.os.Build;
 import android.widget.*;
 import android.graphics.PorterDuff;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import android.content.Intent;
 
@@ -19,7 +18,6 @@ import android.view.animation.Animation;
 
 import com.liverussia.cr.R;
 import com.liverussia.cr.core.Config;
-import com.liverussia.launcher.async.GetPossiblePrizesAsyncRestCall;
 import com.liverussia.launcher.dto.response.ServerImagesResponseDto;
 import com.liverussia.launcher.enums.NativeStorageElements;
 import com.liverussia.launcher.fragment.MonitoringFragment;
@@ -52,18 +50,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Animation animation;
     
-	public ConstraintLayout donateButton;
+	public LinearLayout donateButton;
     public ImageView donateImage;
     public TextView donateTV;
-    public ConstraintLayout monitoringButton;
+    public LinearLayout monitoringButton;
     public MonitoringFragment monitoringFragment;
     public ImageView monitoringImage;
     public TextView monitoringTV;
-    public ImageView playButton;
-    public ConstraintLayout rouletteButton;
+    public LinearLayout playButton;
+    public ImageView playImage;
+    public LinearLayout rouletteButton;
     public ImageView rouletteImage;
     public TextView rouletteTV;
-    public ConstraintLayout settingsButton;
+    public LinearLayout settingsButton;
     public SettingsFragment settingsFragment;
     private RouletteFragment rouletteFragment;
     private DonateFragment donateFragment;
@@ -101,19 +100,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		
 		monitoringTV = (TextView) findViewById(R.id.monitoringTV);
         settingsTV = (TextView) findViewById(R.id.settingsTV);
-        rouletteTV = findViewById(R.id.rouletteButText);
+        rouletteTV = (TextView) findViewById(R.id.forumTV);
         donateTV = (TextView) findViewById(R.id.donateTV);
 		
         monitoringImage = (ImageView) findViewById(R.id.monitoringImage);
         settingsImage = (ImageView) findViewById(R.id.settingsImage);
         rouletteImage = (ImageView) findViewById(R.id.forumImage);
         donateImage = (ImageView) findViewById(R.id.donateImage);
-		
-        monitoringButton = findViewById(R.id.monitoringButton);
-        settingsButton =  findViewById(R.id.settingsButton);
-        rouletteButton =  findViewById(R.id.rouletteButton);
-        donateButton =  findViewById(R.id.donateButton);
-        playButton =  findViewById(R.id.playButton);
+        playImage = (ImageView) findViewById(R.id.playImage);
+
+        monitoringButton = (LinearLayout) findViewById(R.id.monitoringButton);
+        settingsButton = (LinearLayout) findViewById(R.id.settingsButton);
+        rouletteButton = (LinearLayout) findViewById(R.id.rouletteButton);
+        donateButton = (LinearLayout) findViewById(R.id.donateButton);
+        playButton = (LinearLayout) findViewById(R.id.playButton);
 		
 		monitoringFragment = new MonitoringFragment();
         settingsFragment = new SettingsFragment();
@@ -140,12 +140,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void getPossiblePrizes() {
-        GetPossiblePrizesAsyncRestCall getPossiblePrizesAsyncRestCall = new GetPossiblePrizesAsyncRestCall(this);
-        getPossiblePrizesAsyncRestCall.execute();
-
-
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.0.106:9400")
+                .baseUrl(LIVE_RUSSIA_RESOURCE_SERVER_URI)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -252,7 +248,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     private void onClickRoulette() {
-        setTextColor(rouletteTV, rouletteImage);
+        setTextColor(rouletteButton, rouletteTV, rouletteImage);
         rouletteFragment = new RouletteFragment(this);
         replaceFragment(rouletteFragment);
     }
@@ -273,23 +269,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void onClickSettings() {
-            setTextColor(settingsTV, settingsImage);
+            setTextColor(settingsButton, settingsTV, settingsImage);
             replaceFragment(this.settingsFragment);
     }
 
     public void onClickDonate() {
-            setTextColor(donateTV, donateImage);
+            setTextColor(donateButton, donateTV, donateImage);
             donateFragment = new DonateFragment(this);
             replaceFragment(donateFragment);
     }
     
 	public void onClickMonitoring() {
-            setTextColor(monitoringTV, monitoringImage);
+            setTextColor(monitoringButton, monitoringTV, monitoringImage);
             replaceFragment(monitoringFragment);
     }
 	
-    public void setTextColor(TextView textView, ImageView imageView) {
-
+    public void setTextColor(LinearLayout linearLayout, TextView textView, ImageView imageView) {
+        monitoringButton.setAlpha(0.45f);
+        settingsButton.setAlpha(0.45f);
+        rouletteButton.setAlpha(0.45f);
+        donateButton.setAlpha(0.45f);
         monitoringTV.setTextColor(getResources().getColor(R.color.menuTextDisable));
         settingsTV.setTextColor(getResources().getColor(R.color.menuTextDisable));
         rouletteTV.setTextColor(getResources().getColor(R.color.menuTextDisable));
@@ -298,7 +297,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         settingsImage.setColorFilter(getResources().getColor(R.color.menuTextDisable), PorterDuff.Mode.SRC_IN);
         rouletteImage.setColorFilter(getResources().getColor(R.color.menuTextDisable), PorterDuff.Mode.SRC_IN);
         donateImage.setColorFilter(getResources().getColor(R.color.menuTextDisable), PorterDuff.Mode.SRC_IN);
-       // linearLayout.setAlpha(1.0f);
+        linearLayout.setAlpha(1.0f);
         textView.setTextColor(getResources().getColor(R.color.menuTextEnable));
         imageView.setColorFilter(getResources().getColor(R.color.menuTextEnable), PorterDuff.Mode.SRC_IN);
     }

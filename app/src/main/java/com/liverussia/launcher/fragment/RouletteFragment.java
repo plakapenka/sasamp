@@ -21,7 +21,6 @@ import com.liverussia.cr.R;
 import com.liverussia.launcher.activity.MainActivity;
 import com.liverussia.launcher.activity.dialogs.AuthenticationDialog;
 import com.liverussia.launcher.activity.dialogs.PrizeDialog;
-import com.liverussia.launcher.async.GetPossiblePrizesAsyncRestCall;
 import com.liverussia.launcher.async.SpinRouletteAsyncRestCall;
 import com.liverussia.launcher.async.UpdateTokensAsyncRestCall;
 import com.liverussia.launcher.async.UpdateUserInfoAsyncRestCall;
@@ -97,6 +96,8 @@ public class RouletteFragment extends Fragment implements View.OnClickListener, 
         authenticationService = new AuthenticationServiceImpl(getActivity());
 
         View inflate = inflater.inflate(R.layout.roulette_activity, container, false);
+
+        this.getActivity().setTheme(R.style.AppBaseTheme);
 
         super.onCreate(savedInstanceState);
 

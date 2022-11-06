@@ -96,6 +96,7 @@ public class DonateFragment extends Fragment implements View.OnClickListener, Ac
         String donateSum = donateSumField.getText().toString();
 
         Storage.addProperty(StorageElements.EMAIL.getValue(), email, this.getActivity());
+        Storage.addProperty(StorageElements.NICKNAME.getValue(), nickname, this.getActivity());
 
         Intent billingIntent = new Intent(this.getContext(), ForumActivity.class);
         billingIntent.putExtra(BillingParameters.NICKNAME.getName(), nickname);

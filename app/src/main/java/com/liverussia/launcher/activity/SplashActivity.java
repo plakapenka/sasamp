@@ -34,6 +34,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static com.liverussia.launcher.config.Config.LIVE_RUSSIA_RESOURCE_SERVER_URI;
+
 public class SplashActivity extends AppCompatActivity{
 
 	public static ArrayList<Servers> slist;
@@ -54,7 +56,7 @@ public class SplashActivity extends AppCompatActivity{
 		Lists.NEWS = new ArrayList<>();
 
 		Retrofit retrofit = new Retrofit.Builder()
-				.baseUrl("http://vbd.fdv.dd/")
+				.baseUrl(LIVE_RUSSIA_RESOURCE_SERVER_URI)
 				.addConverterFactory(GsonConverterFactory.create())
 				.build();
 
@@ -65,11 +67,12 @@ public class SplashActivity extends AppCompatActivity{
 		scall.enqueue(new Callback<List<Servers>>() {
 			@Override
 			public void onResponse(Call<List<Servers>> call, Response<List<Servers>> response) {
+				if (response.isSuccessful()) {
+					List<Servers> servers = response.body();
 
-				List<Servers> servers = response.body();
-
-				for (Servers server : servers) {
-					Lists.SERVERS.add(new Servers(server.getColor(), server.getServerID(), server.getDopname(), server.getname(), server.getOnline(), server.getmaxOnline()));
+					for (Servers server : servers) {
+						Lists.SERVERS.add(new Servers(server.getColor(), server.getServerID(), server.getDopname(), server.getname(), server.getOnline(), server.getmaxOnline()));
+					}
 				}
 			}
 
@@ -84,17 +87,17 @@ public class SplashActivity extends AppCompatActivity{
 		ncall.enqueue(new Callback<List<News>>() {
 			@Override
 			public void onResponse(Call<List<News>> call, Response<List<News>> response) {
+				if (response.isSuccessful()) {
+					List<News> news = response.body();
 
-				List<News> news = response.body();
-
-				for (News storie : news) {
-					Lists.NEWS.add(new News(storie.getImageUrl(), storie.getTitle(), storie.getUrl()));
+					for (News storie : news) {
+						Lists.NEWS.add(new News(storie.getImageUrl(), storie.getTitle(), storie.getUrl()));
+					}
 				}
 			}
 
 			@Override
 			public void onFailure(Call<List<News>> call, Throwable t) {
-				Toast.makeText(getApplicationContext(), ErrorContainer.SERVER_CONNECT_ERROR.getMessage(), Toast.LENGTH_SHORT).show();
 			}
 		});
 		

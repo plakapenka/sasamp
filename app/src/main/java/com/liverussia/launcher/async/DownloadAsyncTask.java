@@ -89,7 +89,7 @@ public class DownloadAsyncTask extends BackgroundTask<String, Integer, AsyncTask
             return downloadLauncher(sUrl[0]);
         }
 
-        throw new ApiException(ErrorContainer.OTHER);
+        return new AsyncTaskResult<>(new ApiException(ErrorContainer.OTHER));
     }
 
     private AsyncTaskResult<AsyncTask.Status> downloadGameFiles() {

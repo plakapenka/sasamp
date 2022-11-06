@@ -15,13 +15,9 @@ import android.widget.TextView;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.gms.safetynet.SafetyNet;
-import com.google.android.gms.safetynet.SafetyNetApi;
 import com.liverussia.cr.R;
 import com.liverussia.launcher.activity.ActivitySupportedServerSelection;
-import com.liverussia.launcher.config.Config;
 import com.liverussia.launcher.dto.request.LoginRequestDto;
-import com.liverussia.launcher.enums.ServerInfo;
 import com.liverussia.launcher.messages.ErrorMessages;
 import com.liverussia.launcher.async.AuthenticateAsyncRestCall;
 import com.liverussia.launcher.model.Servers;
@@ -29,6 +25,8 @@ import com.liverussia.launcher.service.ActivityService;
 import com.liverussia.launcher.utils.Validator;
 
 import org.jetbrains.annotations.NotNull;
+
+import lombok.Getter;
 
 public class AuthenticationDialog extends DialogFragment implements View.OnClickListener,
         ActivitySupportedServerSelection {
@@ -50,6 +48,7 @@ public class AuthenticationDialog extends DialogFragment implements View.OnClick
     private TextView loginButton;
     private CheckBox iAmNotRobotCheckBox;
 
+    @Getter
     private Fragment fragment;
 
     //TODO FragmentManager
@@ -110,7 +109,12 @@ public class AuthenticationDialog extends DialogFragment implements View.OnClick
                 performLoginButtonAction();
                 break;
             case R.id.i_am_not_robot_checkbox:
-                performIAmNotRobotCheckBoxAction();
+
+                try {
+                    performIAmNotRobotCheckBoxAction();
+                } catch (Exception exception) {
+                    activityService.showBigMessage(exception.getMessage(), fragment.getActivity());
+                }
                 break;
             case R.id.btnSelectServer:
                 v.startAnimation(animation);
@@ -144,16 +148,13 @@ public class AuthenticationDialog extends DialogFragment implements View.OnClick
     private void performIAmNotRobotCheckBoxAction() {
         if (iAmNotRobotCheckBox.isChecked()) {
             iAmNotRobotCheckBox.setChecked(false);
-
-            SafetyNet.getClient(fragment.getActivity())
-                    .verifyWithRecaptcha(Config.CAPTCHA_SITE_KEY)
-                    .addOnSuccessListener(this::performCaptchaSuccessAction)
-                    .addOnFailureListener(this::performCaptchaFailureAction);
+            new ReCaptchaDialog(this);
         } else {
             activityService.showMessage(ErrorMessages.CAPTCHA_NOT_PASSED.getText(), fragment.getActivity());
         }
     }
 
+    //TODO
     private void performCaptchaFailureAction(Exception exception) {
         activityService.showMessage(ErrorMessages.CAPTCHA_COMPLETING_PROBLEMS.getText(), fragment.getActivity());
         iAmNotRobotCheckBox.setChecked(false);
@@ -161,8 +162,8 @@ public class AuthenticationDialog extends DialogFragment implements View.OnClick
         Log.d("Captcha failed reason: ", exception.getMessage());
     }
 
-    private void performCaptchaSuccessAction(SafetyNetApi.RecaptchaTokenResponse recaptchaTokenResponse) {
-        captchaToken = recaptchaTokenResponse.getTokenResult();
+    public void performCaptchaSuccessAction(String token) {
+        captchaToken = token;
         iAmNotRobotCheckBox.setChecked(true);
     }
 
