@@ -40,7 +40,7 @@ JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_HudManager_HudInit(JNIEnv *env, jobject thiz) {
 
     jHudManager = env->NewGlobalRef(thiz);
-    jUpdateHudInfo = env->GetMethodID(env->GetObjectClass(thiz), "UpdateHudInfo", "(IIIIIIII)V");
+    jUpdateHudInfo = env->GetMethodID(env->GetObjectClass(thiz), "UpdateHudInfo", "(IIIIII)V");
 }
 extern bool showSpeedometr;
 void CHUD::ToggleAll(bool toggle, bool withchat)
@@ -153,11 +153,39 @@ void CHUD::UpdateHudInfo()
                         (int)pGUI->GetEat(),
                         (int)pPed->m_pPed->WeaponSlots[pPed->m_pPed->byteCurWeaponSlot].dwType,
                         (int)pPed->m_pPed->WeaponSlots[pPed->m_pPed->byteCurWeaponSlot].dwAmmo,
-                        (int)pPed->m_pPed->WeaponSlots[pPed->m_pPed->byteCurWeaponSlot].dwAmmoInClip,
-                        localMoney,
-                        pGame->GetWantedLevel()
+                        (int)pPed->m_pPed->WeaponSlots[pPed->m_pPed->byteCurWeaponSlot].dwAmmoInClip
                         );
 }
+void CHUD::UpdateWanted()
+{
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+
+    if (!env)
+    {
+        Log("No env");
+        return;
+    }
+    jclass clazz = env->GetObjectClass(jHudManager);
+    jmethodID UpdateWanted = env->GetMethodID(clazz, "UpdateWanted", "(I)V");
+
+    env->CallVoidMethod(jHudManager, UpdateWanted, pGame->GetWantedLevel());
+}
+
+void CHUD::UpdateMoney()
+{
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+
+    if (!env)
+    {
+        Log("No env");
+        return;
+    }
+    jclass clazz = env->GetObjectClass(jHudManager);
+    jmethodID UpdateMoney = env->GetMethodID(clazz, "UpdateMoney", "(I)V");
+
+    env->CallVoidMethod(jHudManager, UpdateMoney, localMoney);
+}
+
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_HudManager_ClickEnterPassengerButton(JNIEnv *env, jobject thiz) {

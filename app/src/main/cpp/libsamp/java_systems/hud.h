@@ -27,6 +27,10 @@ public:
     bool isEnterPassengerButtOn = false;
     bool isEnterExitVehicleButtonOn = false;
     bool isLockVehicleButtonOn = false;
+
+    void UpdateWanted();
+
+    void UpdateMoney();
 };
 
 
