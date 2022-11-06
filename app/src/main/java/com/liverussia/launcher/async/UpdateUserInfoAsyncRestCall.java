@@ -6,32 +6,49 @@ import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.liverussia.launcher.dto.request.LoginRequestDto;
+import com.liverussia.launcher.dto.response.AuthenticationResponseDto;
 import com.liverussia.launcher.dto.response.UserInfoDto;
+import com.liverussia.launcher.enums.StorageElements;
+import com.liverussia.launcher.error.ErrorUtils;
 import com.liverussia.launcher.error.apiException.ApiException;
 import com.liverussia.launcher.error.apiException.ErrorContainer;
 import com.liverussia.launcher.async.domain.AsyncTaskResult;
 import com.liverussia.launcher.async.listener.OnAsyncCriticalErrorListener;
 import com.liverussia.launcher.async.listener.OnAsyncNotCriticalErrorListener;
 import com.liverussia.launcher.async.listener.OnAsyncSuccessListener;
+import com.liverussia.launcher.other.NetworkService;
 import com.liverussia.launcher.service.ActivityService;
+import com.liverussia.launcher.service.AuthenticationService;
 import com.liverussia.launcher.service.UserService;
 import com.liverussia.launcher.service.impl.ActivityServiceImpl;
 import com.liverussia.launcher.service.impl.UserServiceImpl;
+import com.liverussia.launcher.storage.Storage;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.client.ResourceAccessException;
 
+import java.net.ConnectException;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-public class UpdateUserInfoAsyncRestCall extends AsyncTask<Void, Void, AsyncTaskResult<UserInfoDto>> {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+import static com.liverussia.launcher.config.Config.LAUNCHER_SERVER_URI;
+
+public class UpdateUserInfoAsyncRestCall {
 
     private final static Set<ErrorContainer> CRITICAL_ERRORS = new HashSet<>();
 
     private final Activity mainActivity;
     private final UserService userService;
     private final ActivityService activityService;
+    private final Retrofit retrofit;
 
     private OnAsyncSuccessListener onAsyncSuccessListener;
     private OnAsyncCriticalErrorListener onAsyncCriticalErrorListener;
@@ -44,38 +61,51 @@ public class UpdateUserInfoAsyncRestCall extends AsyncTask<Void, Void, AsyncTask
 
     {
         activityService = new ActivityServiceImpl();
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl(LAUNCHER_SERVER_URI)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
     }
 
     static {
         CRITICAL_ERRORS.add(ErrorContainer.AUTHENTICATION_ERROR);
     }
 
-    @Override
-    protected AsyncTaskResult<UserInfoDto> doInBackground(Void... voids) {
-        try {
-            UserInfoDto authenticationResponseDto = userService.updateUserInfo();
-            return new AsyncTaskResult<>(authenticationResponseDto);
-        } catch (ApiException exception) {
-            return new AsyncTaskResult<>(exception);
-        } catch (ResourceAccessException exception) {
-            return new AsyncTaskResult<>(new ApiException(ErrorContainer.SERVER_CONNECT_ERROR));
-        } catch (Exception exception) {
-            return new AsyncTaskResult<>(new ApiException(ErrorContainer.OTHER));
-        }
-    }
 
-    @Override
-    protected void onPostExecute(AsyncTaskResult<UserInfoDto> asyncTaskResult) {
-        if (asyncTaskResult.getException() != null ) {
-            ApiException apiException = asyncTaskResult.getException();
-            showErrorMessage(asyncTaskResult.getException());
-            validateError(apiException.getError());
-        } else if (isCancelled()) {
-            //TODO разобратсья что это и убрать или исправить
-            Log.d("AsyncRestCall", "canceled");
-        } else if (onAsyncSuccessListener != null){
-            onAsyncSuccessListener.onSuccess();
-        }
+    public void updateUserInfo() {
+        NetworkService networkService = retrofit.create(NetworkService.class);
+
+        String token = Storage.getProperty(StorageElements.ACCESS_TOKEN.getValue(), mainActivity);
+        Call<UserInfoDto> call = networkService.updateUserInfo(token);
+
+
+        call.enqueue(new Callback<UserInfoDto>() {
+            @Override
+            public void onResponse(Call<UserInfoDto> call, Response<UserInfoDto> response) {
+                if (response.isSuccessful()) {
+                    userService.updateUserInfoInStorage(response.body());
+                    onAsyncSuccessListener.onSuccess();
+                } else {
+                    ErrorContainer error = ErrorUtils.parseError(response, retrofit);
+                    validateError(error);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserInfoDto> call, Throwable throwable) {
+                ErrorContainer error;
+
+                if (throwable instanceof ResourceAccessException || throwable instanceof ConnectException) {
+                    error = ErrorContainer.SERVER_CONNECT_ERROR;
+                } else {
+                    error = ErrorContainer.OTHER;
+                }
+
+                validateError(error);
+            }
+        });
+
     }
 
     private void validateError(ErrorContainer error) {
@@ -89,9 +119,8 @@ public class UpdateUserInfoAsyncRestCall extends AsyncTask<Void, Void, AsyncTask
         }
     }
 
-    private void showErrorMessage(ApiException exception) {
-        String errorMessage = Optional.ofNullable(exception)
-                .map(ApiException::getError)
+    private void showErrorMessage(ErrorContainer error) {
+        String errorMessage = Optional.ofNullable(error)
                 .map(ErrorContainer::getMessage)
                 .orElse(StringUtils.EMPTY);
 

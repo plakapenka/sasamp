@@ -69,7 +69,7 @@ public class UpdateTokensAsyncRestCall {
         CRITICAL_ERRORS.add(ErrorContainer.AUTHENTICATION_ERROR);
     }
 
-    public void refreshTokens() {
+    public void refreshTokens(boolean withErrorMessage) {
         RefreshTokenRequestDto refreshTokenRequestDto = authenticationService.getRefreshTokenRequestDto();
 
         NetworkService networkService = retrofit.create(NetworkService.class);
@@ -83,7 +83,9 @@ public class UpdateTokensAsyncRestCall {
                     onAsyncSuccessListener.onSuccess();
                 } else {
                     ErrorContainer error = ErrorUtils.parseError(response, retrofit);
-                    showErrorMessage(error);
+                    if (withErrorMessage) {
+                        showErrorMessage(error);
+                    }
                     validateError(error);
                 }
             }
@@ -98,7 +100,9 @@ public class UpdateTokensAsyncRestCall {
                     error = ErrorContainer.OTHER;
                 }
 
-                showErrorMessage(error);
+                if (withErrorMessage) {
+                    showErrorMessage(error);
+                }
                 validateError(error);
             }
         });

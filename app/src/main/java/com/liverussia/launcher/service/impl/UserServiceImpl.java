@@ -22,14 +22,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserInfoDto updateUserInfo() {
-        UserInfoDto userInfoDto = v3RestService.sendUpdateUserInfoRequest();
-        updateUserInfoInStorage(userInfoDto);
-
-        return userInfoDto;
-    }
-
-    private void updateUserInfoInStorage(UserInfoDto userInfoDto) {
+    public void updateUserInfoInStorage(UserInfoDto userInfoDto) {
         Storage.addProperty(StorageElements.AUTHENTICATED_NICKNAME.getValue(), userInfoDto.getUsername(), activity);
         Storage.addProperty(StorageElements.USER_BALANCE.getValue(), userInfoDto.getBalance(), activity);
         Storage.addProperty(StorageElements.AUTHENTICATED_SERVER.getValue(), userInfoDto.getServerName(), activity);
