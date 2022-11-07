@@ -151,6 +151,11 @@ void CActorPed::ApplyAnimation(char* szAnimName, char* szAnimFile, float fDelta,
 	if (!GamePool_Ped_GetAt(m_dwGTAId)) return;
 
 	if (!strcasecmp(szAnimFile, "SEX")) return;
+	if(!pGame->IsAnimationLoaded(szAnimFile))
+	{
+		pGame->RequestAnimation(szAnimFile);
+		ScriptCommand(&apply_animation, m_dwGTAId, szAnimName, szAnimFile, fDelta, bLoop, bLockX, bLockY, bFreeze, uiTime);
+	}
 
 
 	ScriptCommand(&apply_animation, m_dwGTAId, szAnimName, szAnimFile, fDelta, bLoop, bLockX, bLockY, bFreeze, uiTime);
