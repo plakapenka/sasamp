@@ -957,111 +957,6 @@ void CHud__DrawScriptText_hook(uintptr_t thiz, uint8_t unk)
 #include "..//keyboard.h"
 extern CKeyBoard* pKeyBoard;
 
-// Кнопка атаки
-int(*CWidgetButtonAttackUpdate)(uintptr_t);
-int CWidgetButtonAttackUpdate_hook(uintptr_t thiz)
-{
-	if(pNetGame->m_GreenZoneState)
-	{
-		// не показывать кнопку в зз
-		return 0;
-	}
-	return CWidgetButtonAttackUpdate(thiz);
-}
-
-
-int(*CWidgetButtonEnterCar_Draw)(uintptr_t);
-uint32_t g_uiLastTickVoice = 0;
-int CWidgetButtonEnterCar_Draw_hook(uintptr_t thiz)
-{
-	// перехват отрисовки кнопки 'сесть в авто'
-	return 0;
-//	if (g_pWidgetManager)
-//	{
-//		CWidget* pWidget = g_pWidgetManager->GetWidget(WIDGET_CHATHISTORY_UP);
-//		if (pWidget)
-//		{
-//			pWidget->SetDrawState(false);
-//		}
-//		pWidget = g_pWidgetManager->GetWidget(WIDGET_CHATHISTORY_DOWN);
-//		if (pWidget)
-//		{
-//			pWidget->SetDrawState(false);
-//		}
-//
-//		/*
-//		pWidget = g_pWidgetManager->GetWidget(WIDGET_CAMERA_CYCLE);
-//		if (pWidget)
-//		{
-//			pWidget->SetDrawState(true);
-//		}
-//
-//		pWidget = g_pWidgetManager->GetWidget(WIDGET_MICROPHONE);
-//		if (pWidget)
-//		{
-//			if (pVoice)
-//			{
-//				pWidget->SetDrawState(true);
-//				static uint32_t lastTick = GetTickCount();
-//				if (pWidget->GetState() == 2 && GetTickCount() - lastTick >= 250)
-//				{
-//					pVoice->TurnRecording();
-//					if (pVoice->IsRecording())
-//					{
-//						g_uiLastTickVoice = GetTickCount();
-//						if (pVoice->IsDisconnected())
-//						{
-//							pChatWindow->AddDebugMessage("Ошибка голосового чата №1");
-//							pVoice->DisableInput();
-//						}
-//					}
-//					lastTick = GetTickCount();
-//				}
-//
-//				if (pVoice->IsRecording() && GetTickCount() - g_uiLastTickVoice >= 30000)
-//				{
-//					pVoice->DisableInput();
-//				}
-//
-//				if (pVoice->IsRecording())
-//				{
-//					if (pVoice->IsDisconnected())
-//					{
-//						pChatWindow->AddDebugMessage("Ошибка голосового чата №2");
-//						pVoice->DisableInput();
-//					}
-//					pWidget->SetColor(255, 0x9C, 0xCF, 0x9C);
-//				}
-//				else
-//				{
-//					pWidget->ResetColor();
-//				}
-//				//if ((pWidget->GetState() == 2 || pWidget->GetState() == 0) && GetTickCount() - lastTick >= 250)
-//				//{
-//				//	pVoice->DisableInput();
-//				//	lastTick = GetTickCount();
-//				//}
-//			}
-//		}
-//		*/
-//
-//		if (!pGame->IsToggledHUDElement(HUD_ELEMENT_BUTTONS))
-//		{
-//			for (int i = 0; i < MAX_WIDGETS; i++)
-//			{
-//				CWidget* pWidget = g_pWidgetManager->GetWidget(i);
-//				if (pWidget)
-//				{
-//					pWidget->SetDrawState(false);
-//				}
-//			}
-//		}
-//
-//		g_pWidgetManager->Draw();
-//	}
-//	return CWidgetButtonEnterCar_Draw(thiz);
-}
-
 uint64_t(*CWorld_ProcessPedsAfterPreRender)();
 uint64_t CWorld_ProcessPedsAfterPreRender_hook()
 {
@@ -1648,13 +1543,11 @@ void CWidgetButton__Update_hook(int result, int a2, int a3, int a4)
 	}
 	CTouchInterface__m_bWidgets = (uintptr_t*)(g_libGTASA + 0x00657E48);
 
-	if(CTouchInterface__m_bWidgets[0] == result)
+	((void (*)(unsigned int, unsigned int)) (g_libGTASA + 0x00274178 + 1))(CTouchInterface__m_bWidgets[0], 0); // Кнопка сесть в тачку
+
+	if(pNetGame && pNetGame->m_GreenZoneState )
 	{
-		if(pNetGame && pNetGame->m_GreenZoneState )
-		{
-			((void (*)(unsigned int, unsigned int)) (g_libGTASA + 0x00274178 + 1))(CTouchInterface__m_bWidgets[1], 0);
-			return;
-		}
+		((void (*)(unsigned int, unsigned int)) (g_libGTASA + 0x00274178 + 1))(CTouchInterface__m_bWidgets[1], 0); // кулак
 	}
 	return CWidgetButton__Update(result, a2, a3, a4);
 }
@@ -2781,9 +2674,6 @@ void InstallHooks()
 
 	// TextDraw render
 	SetUpHook(g_libGTASA + 0x003D5894, (uintptr_t)CHud__DrawScriptText_hook, (uintptr_t*)& CHud__DrawScriptText);
-
-	//widgets
-	SetUpHook(g_libGTASA + 0x00276510, (uintptr_t)CWidgetButtonEnterCar_Draw_hook, (uintptr_t*)& CWidgetButtonEnterCar_Draw);
 
 	//widgets
 	//SetUpHook(g_libGTASA + 0x0039DB30, (uintptr_t)CWidgetButtonAttackUpdate_hook, (uintptr_t*)& CWidgetButtonAttackUpdate);
