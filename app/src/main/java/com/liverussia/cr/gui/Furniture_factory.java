@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -18,6 +19,8 @@ import com.liverussia.cr.gui.util.Utils;
 
 import java.util.ArrayList;
 import java.util.Random;
+
+import okhttp3.internal.Util;
 
 public class Furniture_factory {
     Activity activity;
@@ -43,9 +46,7 @@ public class Furniture_factory {
 
         furniture_factory_button_continue = activity.findViewById(R.id.furniture_factory_button_continue);
         furniture_factory_button_continue.setOnClickListener(view -> {
-            activity.runOnUiThread(() ->
-                    Utils.HideLayout(furniture_factory_main_layout, true)
-            );
+            activity.runOnUiThread(() -> Utils.HideLayout(furniture_factory_main_layout, true));
             SendSucces(0);
         });
 
@@ -59,46 +60,53 @@ public class Furniture_factory {
         furniture_readypart.add(activity.findViewById(R.id.furniture_readypart3));
         furniture_readypart.add(activity.findViewById(R.id.furniture_readypart4));
 
+        for(int i = 0; i < furniture_part.size(); i++){
+            furniture_part.get(i).setOnTouchListener(touchListener);
+        }
+
+
         //Bitmap bitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.furniture_door);
 
     }
     void ShowFactory(int furnitureType)
     {
-        totalscores = 0;
-        Bitmap bitmap;
-        switch (furnitureType)
-        {
-            case 0: {
-                bitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.furniture_chair);
+        Log.d("sdf", "furnitureType ="+furnitureType);
+        activity.runOnUiThread(() -> {
+            totalscores = 0;
+            Bitmap bitmap;
+            switch (furnitureType) {
+                case 0: {
+                    bitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.furniture_chair);
+                    break;
+                }
+                case 1: {
+                    bitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.furniture_closet);
+                    break;
+                }
+                default: {
+                    bitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.furniture_door);
+                    break;
+                }
             }
-            case 1: {
-                bitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.furniture_door);
+
+            Bitmap[] ggg = breakBitmap(bitmap);
+
+            for (int i = 0; i < furniture_part.size(); i++) {
+                FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) furniture_part.get(i).getLayoutParams();
+
+                furniture_part.get(i).setImageBitmap(ggg[i]);
+
+                layoutParams.leftMargin = new Random().nextInt(1000);
+                layoutParams.topMargin = new Random().nextInt(500);
+                furniture_part.get(i).setLayoutParams(layoutParams);
+                furniture_part.get(i).setVisibility(View.VISIBLE);
+
+                furniture_readypart.get(i).setImageBitmap(ggg[i]);
+                furniture_readypart.get(i).setColorFilter(Color.parseColor("#cfd8dc"), PorterDuff.Mode.SRC_ATOP);
+
             }
-            default:{
-                bitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.furniture_closet);
-            }
-        }
-
-        Bitmap[] ggg = breakBitmap(bitmap);
-        for(int i = 0; i < furniture_part.size(); i++)
-        {
-            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) furniture_part.get(i).getLayoutParams();
-
-            furniture_part.get(i).setImageBitmap(ggg[i]);
-            furniture_part.get(i).setOnTouchListener(touchListener);
-            layoutParams.leftMargin = new Random().nextInt(1000);
-            layoutParams.topMargin = new Random().nextInt(500);
-            furniture_part.get(i).setLayoutParams(layoutParams);
-            furniture_part.get(i).setVisibility(View.VISIBLE);
-
-            furniture_readypart.get(i).setImageBitmap(ggg[i]);
-            furniture_readypart.get(i).setColorFilter(Color.parseColor("#cfd8dc"), PorterDuff.Mode.SRC_ATOP);
-
-        }
-
-        activity.runOnUiThread(() ->
-                Utils.ShowLayout(furniture_factory_main_layout, true)
-        );
+            Utils.ShowLayout(furniture_factory_main_layout, true);
+        });
     }
     //    int pxToDp(int dp) {
 //        Resources r = activity.getResources();
@@ -130,12 +138,12 @@ public class Furniture_factory {
                     if(Math.abs( getLocationView(furniture_readypart.get(needIdx)).x - layoutParams.leftMargin ) < 10)
                     {
                         furniture_readypart.get(needIdx).clearColorFilter();
-                        view.setVisibility(View.GONE);
+                        activity.runOnUiThread(() -> view.setVisibility(View.GONE));
+                        totalscores += 25;
                     }
-                    totalscores += 25;
                     if(totalscores >= 100)
                     {
-                        Utils.HideLayout(furniture_factory_main_layout, true);
+                        activity.runOnUiThread(() -> Utils.HideLayout(furniture_factory_main_layout, true));
                         SendSucces(1);
                     }
 

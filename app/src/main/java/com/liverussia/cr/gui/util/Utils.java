@@ -26,9 +26,9 @@ public class Utils {
                 fadeIn(view);
             } else {
                 view.setAlpha(1.0f);
-                // view.invalidate();
             }
             view.setVisibility(View.VISIBLE);
+            view.invalidate();
         }
     }
 
@@ -40,6 +40,7 @@ public class Utils {
             }
             view.setAlpha(0.0f);
             view.setVisibility(View.GONE);
+            view.invalidate();
         }
     }
 
