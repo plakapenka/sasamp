@@ -1,4 +1,6 @@
 #pragma once
+#ifndef DEFINES_H_
+#define DEFINES_H_
 
 #include <iostream>
 #include <string>
@@ -7,6 +9,7 @@
 #include "game/common.h"
 #include "game/game.h"
 #include "net/netgame.h"
+#include "raknet/BitStream.h"
 
 #include <jni.h>
 
@@ -41,3 +44,4 @@ public:
 	static bool IsAPKAndGameEditionSame(JNIEnv* pEnv, jobject thiz, jint gameEdition);
 };
 
+#endif  // DEFINES_H_

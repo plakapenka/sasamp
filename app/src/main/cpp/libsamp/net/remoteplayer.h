@@ -1,4 +1,5 @@
 #pragma once
+
 #include "../vendor/raknet/rijndael.h"
 
 #define PLAYER_STATE_NONE						0

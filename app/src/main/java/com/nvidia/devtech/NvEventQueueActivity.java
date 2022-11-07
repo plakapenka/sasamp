@@ -59,6 +59,7 @@ import com.liverussia.cr.core.DialogClientSettings;
 import com.liverussia.cr.gui.AutoShop;
 import com.liverussia.cr.gui.CasinoDice;
 import com.liverussia.cr.gui.Casino_LuckyWheel;
+import com.liverussia.cr.gui.Furniture_factory;
 import com.liverussia.cr.gui.HudManager;
 import com.liverussia.cr.gui.PreDeath;
 import com.liverussia.cr.gui.SamwillManager;
@@ -1041,6 +1042,7 @@ public abstract class NvEventQueueActivity
 
         mRootFrame.setOnTouchListener(this);
 
+        new Furniture_factory(this);
         mInputManager = new InputManager(this);
         mHeightProvider = new HeightProvider(this).init(mRootFrame).setHeightListener(this);
         mNotification = new Notification(this);

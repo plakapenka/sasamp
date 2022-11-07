@@ -537,6 +537,11 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			g_pJavaWrapper->ShowCasinoLuckyWheel(count, time);
 			break;
 		}
+		case RPC_SHOW_FACTORY_GAME:
+		{
+			Packet_FurnitureFactory(p);
+			break;
+		}
 		case RPC_SHOW_DICE_TABLE:
 		{
 

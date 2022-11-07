@@ -208,6 +208,9 @@ public:
 	bool 		m_bInstagib;
 	int 		m_iLagCompensation;
 	int 		m_iVehicleFriendlyFire;
+    void Packet_FurnitureFactory(Packet* p);
+
 };
 
 extern CNetGame *pNetGame;
+

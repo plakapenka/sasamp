@@ -97,6 +97,7 @@
         <include layout="@layout/casino_lucky_wheel" />
         <include layout="@layout/hassle_tab"/>
         <include layout="@layout/br_notification" />
+        <include layout="@layout/furniture_factory" />
 
     </FrameLayout>
 </FrameLayout>
