@@ -7,13 +7,15 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.liverussia.cr.R;
 import com.liverussia.cr.gui.util.Utils;
 import com.nvidia.devtech.NvEventQueueActivity;
 
 public class OilFactoryManager {
 
-    private FrameLayout br_oilfactory_layout;
+    private ConstraintLayout br_oilfactory_layout;
     private ProgressBar oil_water_progress;
     private ProgressBar oil_oil_progress;
     private ImageView oil_water_btn;
