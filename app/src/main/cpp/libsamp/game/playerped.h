@@ -133,6 +133,7 @@ public:
 	bool lToggle;
 
 	BYTE m_iCurrentSpecialAction;
+	int drunk_level = 0;
 	MATRIX4X4 m_HeadBoneMatrix;
 	ATTACHED_OBJECT_INFO_INTERNAL m_aAttachedObjects[MAX_ATTACHED_OBJECTS];
 

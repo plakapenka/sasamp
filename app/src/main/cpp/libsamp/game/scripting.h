@@ -356,7 +356,7 @@ const SCRIPT_COMMAND make_particle_visible = { 0x64c, "i" };
 
 const SCRIPT_COMMAND create_property_pickup = { 0x518, "i" };
 
-const SCRIPT_COMMAND set_player_drunk_visuals = { 0x052c, "ii" }; // player, severity (0-255)
+const SCRIPT_COMMAND SET_PLAYER_DRUNKENNESS = { 0x052C, "ii" }; // player, severity (0-255)
 const SCRIPT_COMMAND handling_responsiveness = { 0x03fd, "ii" }; // player, severity (0-255)
 const SCRIPT_COMMAND load_shop_menu = { 0x075E, "s" };
 

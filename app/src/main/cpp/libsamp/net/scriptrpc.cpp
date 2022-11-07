@@ -1700,6 +1700,23 @@ void ScrMoveObject(RPCParameters* rpcParams)
 	}
 }
 
+void ScrSetPlayerDrunkLevel(RPCParameters* rpcParams)
+{
+	unsigned char* Data = reinterpret_cast<unsigned char*>(rpcParams->input);
+	int iBitLength = rpcParams->numberOfBitsOfData;
+
+	RakNet::BitStream bsData(Data, (iBitLength / 8) + 1, false);
+
+	uint32_t dDrunkLevel;
+
+	bsData.Read(dDrunkLevel);
+	Log("ScrSetPlayerDrunkLevel %d", dDrunkLevel);
+
+	CPlayerPed *pPlayer = pGame->FindPlayerPed();
+	pPlayer->drunk_level = dDrunkLevel;
+
+	ScriptCommand(&SET_PLAYER_DRUNKENNESS, pPlayer->m_bytePlayerNumber, dDrunkLevel);
+}
 void ScrSetObjectRotation(RPCParameters* rpcParams)
 {
 	unsigned char* Data = reinterpret_cast<unsigned char*>(rpcParams->input);
@@ -1809,6 +1826,8 @@ void RegisterScriptRPCs(RakClientInterface* pRakClient)
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ClickTextDraw, ScrSelectTextDraw);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrMoveObject, ScrMoveObject);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrSetObjectRotation, ScrSetObjectRotation);
+
+	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrSetPlayerDrunkLevel, ScrSetPlayerDrunkLevel);
 }
 
 void UnRegisterScriptRPCs(RakClientInterface* pRakClient)
