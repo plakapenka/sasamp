@@ -101,11 +101,12 @@ void CLocalPlayer::SendStatsUpdate()
 {
 	RakNet::BitStream bsStats;
 
-	uint32_t wAmmo = m_pPlayerPed->GetCurrentWeaponSlot()->dwAmmo;
+//	uint32_t wAmmo = m_pPlayerPed->GetCurrentWeaponSlot()->dwAmmo;
 
 	bsStats.Write((BYTE)ID_STATS_UPDATE);
 	bsStats.Write(pHud->localMoney);
-	bsStats.Write(wAmmo);
+	//bsStats.Write(wAmmo);
+	bsStats.Write(m_pPlayerPed->drunk_level);
 	pNetGame->GetRakClient()->Send(&bsStats, HIGH_PRIORITY, UNRELIABLE, 0);
 }
 
@@ -360,7 +361,7 @@ bool CLocalPlayer::Process()
 	}
 
         //  нопки вход/выход/закрыть машину
-		if(!m_pPlayerPed->lToggle){
+		if(!m_pPlayerPed->lToggle || m_pPlayerPed->m_iCurrentSpecialAction == SPECIAL_ACTION_CARRY){
 			if (pHud->isEnterPassengerButtOn) {
 				pHud->ToggleEnterPassengerButton(false);
 			}
