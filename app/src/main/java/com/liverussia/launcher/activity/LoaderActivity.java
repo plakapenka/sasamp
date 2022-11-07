@@ -34,11 +34,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.liverussia.cr.core.Utils;
-import com.liverussia.launcher.async.BackgroundTask;
 import com.liverussia.launcher.async.DownloadAsyncTask;
 import com.liverussia.launcher.domain.LoaderSliderItemData;
 import com.liverussia.launcher.dto.response.LoaderSliderInfoResponseDto;
-import com.liverussia.launcher.error.apiException.ErrorContainer;
 import com.liverussia.launcher.messages.ErrorMessages;
 import com.liverussia.launcher.messages.InfoMessages;
 import com.liverussia.launcher.other.NetworkService;
@@ -56,7 +54,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import static com.liverussia.cr.core.Config.URL_CLIENT;
 import static com.liverussia.cr.core.Config.URL_FILES;
 import static com.liverussia.launcher.config.Config.LAUNCHER_SERVER_URI;
-import static com.liverussia.launcher.config.Config.LIVE_RUSSIA_RESOURCE_SERVER_URI;
 
 public class LoaderActivity extends AppCompatActivity {
 
@@ -154,8 +151,8 @@ public class LoaderActivity extends AppCompatActivity {
         writeFile(getExternalFilesDir(null).toString()+"/log.txt", text);
     }
 
-    private void startGame() {
-        Intent intent = new Intent(this, com.liverussia.cr.core.GTASA.class);
+    private void redirectToSettings() {
+        Intent intent = new Intent(this, com.liverussia.launcher.activity.MainActivity.class);
         intent.putExtras(getIntent());
         intent.putExtra(IS_AFTER_LOADING_KEY, true);
         startActivity(intent);
@@ -165,7 +162,7 @@ public class LoaderActivity extends AppCompatActivity {
     @Override
     public void onStop() {
         Optional.ofNullable(downloadTask)
-                .ifPresent(DownloadAsyncTask::cancel);
+                .ifPresent(DownloadAsyncTask::cancelDownload);
 
         super.onStop();
     }
@@ -173,7 +170,7 @@ public class LoaderActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         Optional.ofNullable(downloadTask)
-                .ifPresent(DownloadAsyncTask::cancel);
+                .ifPresent(DownloadAsyncTask::cancelDownload);
 
         super.onDestroy();
     }
@@ -211,7 +208,7 @@ public class LoaderActivity extends AppCompatActivity {
     private void performAfterDownload() {
         if (Utils.getType() == 0) {
             activityService.showMessage(InfoMessages.GAME_FILES_DOWNLOAD_SUCCESS.getText(), this);
-            startGame();
+            redirectToSettings();
         }
 
         if (Utils.getType() == 1) {

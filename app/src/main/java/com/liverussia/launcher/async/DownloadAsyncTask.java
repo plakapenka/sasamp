@@ -46,7 +46,7 @@ import static com.liverussia.launcher.config.Config.FILE_INFO_URL;
 import static com.liverussia.launcher.config.Config.GAME_PATH;
 import static com.liverussia.launcher.config.Config.PATH_DOWNLOADS;
 
-public class DownloadAsyncTask extends BackgroundTask<String, Integer, AsyncTaskResult<AsyncTask.Status>> {
+public class DownloadAsyncTask extends AsyncTask<String, Integer, AsyncTaskResult<AsyncTask.Status>> {
 
     private final LoaderActivity loaderActivity;
     private final ProgressBar progressBar;
@@ -72,10 +72,6 @@ public class DownloadAsyncTask extends BackgroundTask<String, Integer, AsyncTask
     {
         activityService = new ActivityServiceImpl();
         this.isCancel = false;
-    }
-
-    public void cancel(){
-        isCancel = true;
     }
 
     @Override
@@ -147,7 +143,7 @@ public class DownloadAsyncTask extends BackgroundTask<String, Integer, AsyncTask
             byte[] data = new byte[4096];
             int count;
             while ((count = input.read(data)) != -1) {
-                if (isCancelled()) {
+                if (isCancelledDownload()) {
                     input.close();
                     throw new ApiException(ErrorContainer.DOWNLOAD_WAS_INTERRUPTED);
                 }
@@ -179,8 +175,12 @@ public class DownloadAsyncTask extends BackgroundTask<String, Integer, AsyncTask
         }
     }
 
-    private boolean isCancelled() {
+    public boolean isCancelledDownload() {
         return isCancel;
+    }
+
+    public void cancelDownload() {
+        this.isCancel = true;
     }
 
     private GameFileInfoDto getGameFilesInfo() {
@@ -226,7 +226,7 @@ public class DownloadAsyncTask extends BackgroundTask<String, Integer, AsyncTask
             int count;
 
             while ((count = input.read(data)) != -1) {
-                if (isCancelled()) {
+                if (isCancelledDownload()) {
                     input.close();
                     throw new ApiException(ErrorContainer.DOWNLOAD_WAS_INTERRUPTED);
                 }
@@ -300,9 +300,8 @@ public class DownloadAsyncTask extends BackgroundTask<String, Integer, AsyncTask
             ApiException apiException = result.getException();
             showErrorMessage(apiException);
             onAsyncErrorDo();
-//        } else if (isCancelled()) {
-//            //TODO разобратсья что это и убрать или исправить
-//            Log.d("AsyncRestCall", "canceled");
+        } else if (isCancelled()) {
+            showErrorMessage(new ApiException(ErrorContainer.DOWNLOAD_WAS_INTERRUPTED));
         } else if (onAsyncSuccessListener != null) {
             onAsyncSuccessListener.onSuccess();
         }

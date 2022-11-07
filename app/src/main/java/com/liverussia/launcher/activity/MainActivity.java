@@ -18,6 +18,7 @@ import android.view.animation.Animation;
 
 import com.liverussia.cr.R;
 import com.liverussia.cr.core.Config;
+import com.liverussia.launcher.async.DownloadAsyncTask;
 import com.liverussia.launcher.dto.response.ServerImagesResponseDto;
 import com.liverussia.launcher.enums.NativeStorageElements;
 import com.liverussia.launcher.fragment.MonitoringFragment;
@@ -342,12 +343,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }, 200L);
     }
-	
+
+    @Override
 	public void onDestroy() {
         super.onDestroy();
     }
 
+    @Override
     public void onRestart() {
         super.onRestart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
     }
 }

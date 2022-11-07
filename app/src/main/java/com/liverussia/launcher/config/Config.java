@@ -1,27 +1,29 @@
 package com.liverussia.launcher.config;
 
 public class Config {
-    public static final String APP_PATH = "/storage/emulated/0/Android/data/com.liverussia.cr/files/";
+
     public static final String GAME_PATH = "/storage/emulated/0/Android/data/com.liverussia.cr/files/";
     public static String PATH_DOWNLOADS = "/storage/emulated/0/Android/data/com.liverussia.cr/files/temp_downloads/";
     public static final String URL_FILES = "https://vl4sov.com/Download/game.zip";
     public static final String URL_FILES_UPDATE = "https://vl4sov.com/Download/upd.zip";
     public static final String URL_CLIENT = "https://vl4sov.com/Download/launcher.apk";
-    public static final String FILE_INFO_URL = "https://files.liverussia.online/downloads/files/files.json";
+
     public static final String URL_DONATE = "https://vl4sov.com/liverussia.online/Donate";
     public static final String GAME_DIR = "/storage/emulated/0/Android/data/";
+
+
+
+
+
     public static final String GAME_SETTINGS_DIRECTORY = "SAMP/settings.ini";
-
-
-
-
+    public static final String FILE_INFO_URL = "https://files.liverussia.online/downloads/files/files.json";
 
     public static final String DISCORD_URI = "https://discord.com/";
     public static final String VK_URI = "https://vk.com/";
-    public static final String YOU_TUBE_URI = "https://youtube.com/";
+    public static final String YOU_TUBE_URI = "https://www.youtube.com/";
 
     public static final String LAUNCHER_SERVER_URI = "http://192.168.0.106:9400";
-    public static final String LIVE_RUSSIA_RESOURCE_SERVER_URI = "https://files.liverussia.online";
+    public static final String LIVE_RUSSIA_RESOURCE_SERVER_URI = "https://liverussia.online";
 
     public static final String LAUNCHER_SERVER_LOGIN_URL = "/api/v1/auth/android/login";
     public static final String LAUNCHER_SERVER_REFRESH_TOKEN_URL = "/api/v1/auth/android/refresh";
