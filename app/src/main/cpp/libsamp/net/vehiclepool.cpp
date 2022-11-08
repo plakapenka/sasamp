@@ -37,6 +37,19 @@ void CVehiclePool::Process()
 
 			if(m_bIsActive[x])
 			{
+				if(pVehicle->IsOccupied())
+				{
+					if(pVehicle->m_bIsInvulnerable)
+					{
+						pVehicle->SetInvulnerable(false);
+					}
+
+				}
+				else if(!pVehicle->m_bIsInvulnerable)
+				{
+					pVehicle->SetInvulnerable(true);
+				}
+
 				pVehicle->ProcessMarkers();
 
 
