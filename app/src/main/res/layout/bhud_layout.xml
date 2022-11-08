@@ -1,6 +1,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -287,8 +288,8 @@
 
     <ImageView
         android:id="@+id/vehicle_lock_butt"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="53dp"
+        android:layout_height="53dp"
         android:layout_marginTop="140dp"
         android:layout_marginEnd="8dp"
         android:clickable="true"
@@ -297,7 +298,19 @@
         app:layout_constraintEnd_toStartOf="@+id/enter_passenger"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
+        <ImageView
+            android:id="@+id/button_horn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="8dp"
+            android:src="@drawable/horn"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            app:layout_constraintBottom_toTopOf="@+id/enterexit_driver"
+            app:layout_constraintEnd_toEndOf="@+id/enterexit_driver"
+            app:layout_constraintStart_toStartOf="@+id/enterexit_driver" />
+
+        <ImageView
         android:id="@+id/enterexit_driver"
         android:layout_width="53dp"
         android:layout_height="53dp"
@@ -305,7 +318,7 @@
         android:layout_marginEnd="16dp"
         android:clickable="true"
         android:foreground="?android:attr/selectableItemBackground"
-        android:src="@drawable/enter_car_butt"
+        android:src="@drawable/enter_car_butt_type_car"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -340,6 +353,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="55dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 

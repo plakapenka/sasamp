@@ -119,6 +119,17 @@ void CHUD::ToggleLockVehicleButton(bool toggle)
     env->CallVoidMethod(jHudManager, ToggleLockVehicleButton, toggle);
 }
 
+void CHUD::ToggleHornButton(bool toggle)
+{
+    isHornButtonOn = toggle;
+
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+    jclass clazz = env->GetObjectClass(jHudManager);
+
+    jmethodID ToggleHornButton = env->GetMethodID(clazz, "ToggleHornButton", "(Z)V");
+    env->CallVoidMethod(jHudManager, ToggleHornButton, toggle);
+}
+
 int CHUD::GetScreenSize(bool isWidth)
 {
     JNIEnv* env = g_pJavaWrapper->GetEnv();
@@ -212,4 +223,10 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_HudManager_ClickLockVehicleButton(JNIEnv *env, jobject thiz) {
     pNetGame->SendChatCommand("/lock");
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_HudManager_PressedHorn(JNIEnv *env, jobject thiz, jboolean pressed) {
+    pGame->isHornActive = pressed;
 }

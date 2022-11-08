@@ -373,6 +373,9 @@ bool CLocalPlayer::Process()
 				pHud->ToggleLockVehicleButton(false);
 			}
 		}else if (!m_pPlayerPed->IsInVehicle() ) {
+			if(pHud->isHornButtonOn){
+				pHud->ToggleHornButton(false);
+			}
             if(pVehiclePool)
             {
                 VEHICLEID ClosetVehicleID = pVehiclePool->FindNearestToLocalPlayerPed();
@@ -442,6 +445,9 @@ bool CLocalPlayer::Process()
 			}
 			if (!pHud->isLockVehicleButtonOn) {
 				pHud->ToggleLockVehicleButton(true);
+			}
+			if(!pHud->isHornButtonOn){
+				pHud->ToggleHornButton(true);
 			}
 			if (pHud->isEnterPassengerButtOn) {
 				pHud->ToggleEnterPassengerButton(false);

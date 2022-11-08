@@ -5,9 +5,11 @@ import android.graphics.Point;
 import android.text.Html;
 import android.util.Log;
 import android.view.Display;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -55,6 +57,7 @@ public class HudManager {
     private ImageView enter_passenger;
     private ImageView enterexit_driver;
     private ImageView lock_vehicle;
+    private ImageView button_horn;
     long buttonLockCD;
 
     DecimalFormat formatter;
@@ -63,6 +66,7 @@ public class HudManager {
     public native void ClickEnterPassengerButton();
     public native void ClickEnterExitVehicleButton();
     public native void ClickLockVehicleButton();
+    public native void PressedHorn(boolean pressed);
 
     public HudManager(Activity aactivity) {
         HudInit();
@@ -71,6 +75,26 @@ public class HudManager {
         formatter = new DecimalFormat("###,###.###", otherSymbols);
 
         activity = aactivity;
+        // кнопка сигнала
+        button_horn = activity.findViewById(R.id.button_horn);
+        button_horn.setVisibility(View.GONE);
+
+        button_horn.setOnTouchListener(new View.OnTouchListener(){
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN: // нажатие
+                    case MotionEvent.ACTION_MOVE:
+                        PressedHorn(true);
+                        break;
+                    case MotionEvent.ACTION_UP: // отпускание
+                    case MotionEvent.ACTION_CANCEL:
+                        PressedHorn(false);
+                        break;
+                }
+                return true;
+            }
+        });
         // кнопка закрыть/открыть тачку
         lock_vehicle = activity.findViewById(R.id.vehicle_lock_butt);
         lock_vehicle.setVisibility(View.GONE);
@@ -171,6 +195,17 @@ public class HudManager {
         else
         {
             activity.runOnUiThread(() -> Utils.HideLayout(enter_passenger, true) );
+        }
+    }
+    public void ToggleHornButton(boolean toggle)
+    {
+        if(toggle)
+        {
+            activity.runOnUiThread(() -> Utils.ShowLayout(button_horn, true) );
+        }
+        else
+        {
+            activity.runOnUiThread(() -> Utils.HideLayout(button_horn, true) );
         }
     }
     public void ToggleEnterExitVehicleButton(boolean toggle)

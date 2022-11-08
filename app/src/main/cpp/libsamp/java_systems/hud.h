@@ -27,10 +27,13 @@ public:
     bool isEnterPassengerButtOn = false;
     bool isEnterExitVehicleButtonOn = false;
     bool isLockVehicleButtonOn = false;
+    bool isHornButtonOn = false;
 
     void UpdateWanted();
 
     void UpdateMoney();
+
+    void ToggleHornButton(bool toggle);
 };
 
 

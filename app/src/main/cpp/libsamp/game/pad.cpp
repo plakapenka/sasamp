@@ -343,7 +343,7 @@ uint32_t CPad__GetHorn_hook(uintptr_t thiz)
 	else
 	{
 		// local player
-		LocalPlayerKeys.bKeys[ePadKeys::KEY_CROUCH] = CPad__GetHorn(thiz);
+		LocalPlayerKeys.bKeys[ePadKeys::KEY_CROUCH] = pGame->isHornActive;
 		return LocalPlayerKeys.bKeys[ePadKeys::KEY_CROUCH];
 	}
 }
