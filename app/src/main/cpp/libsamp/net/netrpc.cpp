@@ -585,6 +585,7 @@ void DialogBox(RPCParameters *rpcParams)
 		cp1251_to_utf8(info, szBuff);
 
 		if(wDialogID < 0) return;
+		if(strlen(info) < 3) return;
 
 		g_pJavaWrapper->MakeDialog(wDialogID, byteDialogStyle, title, info, button1, button2);
 }
