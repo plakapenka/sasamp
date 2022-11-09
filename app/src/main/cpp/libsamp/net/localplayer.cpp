@@ -196,21 +196,24 @@ bool CLocalPlayer::Process()
 	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
 	uint32_t dwThisTick = GetTickCount();
 
-	if(m_bIsActive && m_pPlayerPed)
-	{
+	if(m_bIsActive && m_pPlayerPed) {
+		if(m_pPlayerPed->drunk_level){
+			m_pPlayerPed->drunk_level --;
+			ScriptCommand(&SET_PLAYER_DRUNKENNESS, m_pPlayerPed->m_bytePlayerNumber, m_pPlayerPed->drunk_level/100);
+		}
 		// handle dead
-		if(!m_bIsWasted && m_pPlayerPed->GetActionTrigger() == ACTION_DEATH || m_pPlayerPed->IsDead())
-		{
+		if (!m_bIsWasted && m_pPlayerPed->GetActionTrigger() == ACTION_DEATH ||
+			m_pPlayerPed->IsDead()) {
 			ToggleSpectating(false);
 			m_pPlayerPed->FlushAttach();
 			// reset tasks/anims
 			m_pPlayerPed->TogglePlayerControllable(true);
 
-			if(m_pPlayerPed->IsInVehicle() && !m_pPlayerPed->IsAPassenger())
-			{
+			if (m_pPlayerPed->IsInVehicle() && !m_pPlayerPed->IsAPassenger()) {
 
 				SendInCarFullSyncData();
-				m_LastVehicle = pNetGame->GetVehiclePool()->FindIDFromGtaPtr(m_pPlayerPed->GetGtaVehicle());
+				m_LastVehicle = pNetGame->GetVehiclePool()->FindIDFromGtaPtr(
+						m_pPlayerPed->GetGtaVehicle());
 			}
 
 			m_pPlayerPed->SetHealth(0.0f);
@@ -223,8 +226,9 @@ bool CLocalPlayer::Process()
 			return true;
 		}
 
-		if ((dwThisTick - m_dwLastStatsUpdateTick) > STATS_UPDATE_TICKS)
-		{
+		if ((dwThisTick - m_dwLastStatsUpdateTick) > STATS_UPDATE_TICKS) {
+
+
 			SendStatsUpdate();
 			m_dwLastStatsUpdateTick = dwThisTick;
 		}
@@ -232,73 +236,70 @@ bool CLocalPlayer::Process()
 		CheckWeapons();
 		CWeaponsOutFit::ProcessLocalPlayer(m_pPlayerPed);
 
-		if (m_pPlayerPed)
-		{
-			m_pPlayerPed->ProcessSpecialAction(m_pPlayerPed->m_iCurrentSpecialAction);
-		}
+		m_pPlayerPed->ProcessSpecialAction(m_pPlayerPed->m_iCurrentSpecialAction);
+
 
 		// handle interior changing
 		uint8_t byteInterior = pGame->GetActiveInterior();
-		if(byteInterior != m_byteCurInterior)
+		if (byteInterior != m_byteCurInterior)
 			UpdateRemoteInterior(byteInterior);
 
 		// The new regime for adjusting sendrates is based on the number
 		// of players that will be effected by this update. The more players
 		// there are within a small radius, the more we must scale back
 		// the number of sends.
-		int iNumberOfPlayersInLocalRange=0;
+		int iNumberOfPlayersInLocalRange = 0;
 		iNumberOfPlayersInLocalRange = DetermineNumberOfPlayersInLocalRange();
-		if(!iNumberOfPlayersInLocalRange) iNumberOfPlayersInLocalRange = 10;
+		if (!iNumberOfPlayersInLocalRange) iNumberOfPlayersInLocalRange = 10;
 
 		// SPECTATING
-		if(m_bIsSpectating)
-		{
+		if (m_bIsSpectating) {
 			ProcessSpectating();
 		}
 			// DRIVER
-		else if(m_pPlayerPed->IsInVehicle() && !m_pPlayerPed->IsAPassenger())
-		{
+		else if (m_pPlayerPed->IsInVehicle() && !m_pPlayerPed->IsAPassenger()) {
 			CVehicle *pVehicle;
-			if(pVehiclePool)
+			if (pVehiclePool)
 				m_CurrentVehicle = pVehiclePool->FindIDFromGtaPtr(m_pPlayerPed->GetGtaVehicle());
 
-			if((dwThisTick - m_dwLastSendTick) > (unsigned int)GetOptimumInCarSendRate())
-			{
+			if ((dwThisTick - m_dwLastSendTick) > (unsigned int) GetOptimumInCarSendRate()) {
 				m_dwLastSendTick = GetTickCount();
 				SendInCarFullSyncData();
 			}
 
 		}
 			// ONFOOT
-		else if(m_pPlayerPed->GetActionTrigger() == ACTION_NORMAL || m_pPlayerPed->GetActionTrigger() == ACTION_SCOPE)
-		{
+		else if (m_pPlayerPed->GetActionTrigger() == ACTION_NORMAL ||
+				 m_pPlayerPed->GetActionTrigger() == ACTION_SCOPE) {
 			UpdateSurfing();
 
 			if ((dwThisTick - m_dwLastHeadUpdate) > 1000 && g_uiHeadMoveEnabled) {
 				VECTOR LookAt;
-				CAMERA_AIM* Aim = GameGetInternalAim();
+				CAMERA_AIM *Aim = GameGetInternalAim();
 				LookAt.X = Aim->pos1x + (Aim->f1x * 20.0f);
 				LookAt.Y = Aim->pos1y + (Aim->f1y * 20.0f);
 				LookAt.Z = Aim->pos1z + (Aim->f1z * 20.0f);
-				pGame->FindPlayerPed()->ApplyCommandTask("FollowPedSA", 0, 2000, -1, &LookAt, 0, 0.1f, 500, 3, 0);
+				pGame->FindPlayerPed()->ApplyCommandTask("FollowPedSA", 0, 2000, -1, &LookAt, 0,
+														 0.1f, 500, 3, 0);
 				m_dwLastHeadUpdate = dwThisTick;
 			}
 
-			if(m_CurrentVehicle != INVALID_VEHICLE_ID)
-			{
+			if (m_CurrentVehicle != INVALID_VEHICLE_ID) {
 				m_LastVehicle = m_CurrentVehicle;
 				m_CurrentVehicle = INVALID_VEHICLE_ID;
 			}
 
-			if((dwThisTick - m_dwLastSendTick) > (unsigned int)GetOptimumOnFootSendRate())
-			{
+			if ((dwThisTick - m_dwLastSendTick) > (unsigned int) GetOptimumOnFootSendRate()) {
 				m_dwLastSendTick = GetTickCount();
 				// Log("[DEBUG] Send Packet SyncData RPC");
 				SendOnFootFullSyncData();
 			}
 
-			if((dwThisTick - m_dwLastSendTick) > (unsigned int)GetOptimumOnFootSendRate() || LocalPlayerKeys.bKeys[ePadKeys::KEY_WALK] || LocalPlayerKeys.bKeys[ePadKeys::KEY_YES] || LocalPlayerKeys.bKeys[ePadKeys::KEY_NO] || LocalPlayerKeys.bKeys[ePadKeys::KEY_CTRL_BACK])
-			{
+			if ((dwThisTick - m_dwLastSendTick) > (unsigned int) GetOptimumOnFootSendRate() ||
+				LocalPlayerKeys.bKeys[ePadKeys::KEY_WALK] ||
+				LocalPlayerKeys.bKeys[ePadKeys::KEY_YES] ||
+				LocalPlayerKeys.bKeys[ePadKeys::KEY_NO] ||
+				LocalPlayerKeys.bKeys[ePadKeys::KEY_CTRL_BACK]) {
 
 				m_dwLastSendTick = GetTickCount();
 				// Log("[DEBUG] Send Packet Key RPC");
@@ -310,92 +311,78 @@ bool CLocalPlayer::Process()
 			uint16_t wKeys = m_pPlayerPed->GetKeys(&lrAnalog, &udAnalog);
 
 			// Not targeting or firing. We need a very slow rate to sync the head.
-			if (!IS_TARGETING(wKeys) && !IS_FIRING(wKeys))
-			{
-				if ((dwThisTick - m_dwLastAimSendTick) > NETMODE_HEADSYNC_SENDRATE)
-				{
+			if (!IS_TARGETING(wKeys) && !IS_FIRING(wKeys)) {
+				if ((dwThisTick - m_dwLastAimSendTick) > NETMODE_HEADSYNC_SENDRATE) {
 					m_dwLastAimSendTick = dwThisTick;
 					SendAimSyncData();
 				}
 			}
 
 				// Targeting only. Just synced for show really, so use a slower rate
-			else if (IS_TARGETING(wKeys) && !IS_FIRING(wKeys))
-			{
-				if ((dwThisTick - m_dwLastAimSendTick) > (uint32_t)NETMODE_AIM_SENDRATE + (iNumberOfPlayersInLocalRange))
-				{
+			else if (IS_TARGETING(wKeys) && !IS_FIRING(wKeys)) {
+				if ((dwThisTick - m_dwLastAimSendTick) >
+					(uint32_t) NETMODE_AIM_SENDRATE + (iNumberOfPlayersInLocalRange)) {
 					m_dwLastAimSendTick = dwThisTick;
 					SendAimSyncData();
 				}
 			}
 
 				// Targeting and Firing. Needs a very accurate send rate.
-			else if (IS_TARGETING(wKeys) && IS_FIRING(wKeys))
-			{
-				if ((dwThisTick - m_dwLastAimSendTick) > (uint32_t)NETMODE_FIRING_SENDRATE + (iNumberOfPlayersInLocalRange))
-				{
+			else if (IS_TARGETING(wKeys) && IS_FIRING(wKeys)) {
+				if ((dwThisTick - m_dwLastAimSendTick) >
+					(uint32_t) NETMODE_FIRING_SENDRATE + (iNumberOfPlayersInLocalRange)) {
 					m_dwLastAimSendTick = dwThisTick;
 					SendAimSyncData();
 				}
 			}
 
 				// Firing without targeting. Needs a normal onfoot sendrate.
-			else if (!IS_TARGETING(wKeys) && IS_FIRING(wKeys))
-			{
-				if ((dwThisTick - m_dwLastAimSendTick) > (uint32_t)GetOptimumOnFootSendRate())
-				{
+			else if (!IS_TARGETING(wKeys) && IS_FIRING(wKeys)) {
+				if ((dwThisTick - m_dwLastAimSendTick) > (uint32_t) GetOptimumOnFootSendRate()) {
 					m_dwLastAimSendTick = dwThisTick;
 					SendAimSyncData();
 				}
 			}
 		}
 			// PASSENGER
-		else if(m_pPlayerPed->IsInVehicle() && m_pPlayerPed->IsAPassenger())
-		{
-			if((dwThisTick - m_dwLastSendTick) > (unsigned int)GetOptimumInCarSendRate())
-			{
+		else if (m_pPlayerPed->IsInVehicle() && m_pPlayerPed->IsAPassenger()) {
+			if ((dwThisTick - m_dwLastSendTick) > (unsigned int) GetOptimumInCarSendRate()) {
 				m_dwLastSendTick = GetTickCount();
 				SendPassengerFullSyncData();
 			}
 		}
-	}
 
-        //  нопки вход/выход/закрыть машину
-		if(!m_pPlayerPed->lToggle || m_pPlayerPed->m_iCurrentSpecialAction == SPECIAL_ACTION_CARRY){
+		//  нопки вход/выход/закрыть машину
+		if (!m_pPlayerPed->lToggle ||
+			m_pPlayerPed->m_iCurrentSpecialAction == SPECIAL_ACTION_CARRY) {
 			if (pHud->isEnterPassengerButtOn) {
 				pHud->ToggleEnterPassengerButton(false);
 			}
 			if (pHud->isEnterExitVehicleButtonOn) {
 				pHud->ToggleEnterExitVehicleButton(false);
 			}
-			if(pHud->isLockVehicleButtonOn)
-			{
+			if (pHud->isLockVehicleButtonOn) {
 				pHud->ToggleLockVehicleButton(false);
 			}
-		}else if (!m_pPlayerPed->IsInVehicle() ) {
-			if(pHud->isHornButtonOn){
+		} else if (!m_pPlayerPed->IsInVehicle()) {
+			if (pHud->isHornButtonOn) {
 				pHud->ToggleHornButton(false);
 			}
-            if(pVehiclePool)
-            {
-                VEHICLEID ClosetVehicleID = pVehiclePool->FindNearestToLocalPlayerPed();
+			if (pVehiclePool) {
+				VEHICLEID ClosetVehicleID = pVehiclePool->FindNearestToLocalPlayerPed();
 
-                if (ClosetVehicleID != INVALID_VEHICLE_ID)
-                {
-                    CVehicle *pVehicle = pVehiclePool->GetAt(ClosetVehicleID);
-                    if (pVehicle && pVehicle->GetDistanceFromLocalPlayerPed() < 5.0f) {
-                        //if(!pVehicle->m_bIsLocked)
-                        if(!pVehicle->m_bDoorsLocked)
-                        {// тачка открыта
-                            if (!pHud->isEnterPassengerButtOn) {
-                                pHud->ToggleEnterPassengerButton(true);
-                            }
-                            if (!pHud->isEnterExitVehicleButtonOn) {
-                                pHud->ToggleEnterExitVehicleButton(true);
-                            }
-                        }
-						else
-						{
+				if (ClosetVehicleID != INVALID_VEHICLE_ID) {
+					CVehicle *pVehicle = pVehiclePool->GetAt(ClosetVehicleID);
+					if (pVehicle && pVehicle->GetDistanceFromLocalPlayerPed() < 4.0f) {
+						//if(!pVehicle->m_bIsLocked)
+						if (!pVehicle->m_bDoorsLocked) {// тачка открыта
+							if (!pHud->isEnterPassengerButtOn) {
+								pHud->ToggleEnterPassengerButton(true);
+							}
+							if (!pHud->isEnterExitVehicleButtonOn) {
+								pHud->ToggleEnterExitVehicleButton(true);
+							}
+						} else {
 							if (pHud->isEnterPassengerButtOn) {
 								pHud->ToggleEnterPassengerButton(false);
 							}
@@ -403,56 +390,49 @@ bool CLocalPlayer::Process()
 								pHud->ToggleEnterExitVehicleButton(false);
 							}
 						}
-                        if(!pHud->isLockVehicleButtonOn)
-                        {
-                            pHud->ToggleLockVehicleButton(true);
-                        }
+						if (!pHud->isLockVehicleButtonOn) {
+							pHud->ToggleLockVehicleButton(true);
+						}
 
-                    }
-                    else
-                    {
-                        if (pHud->isEnterPassengerButtOn) {
-                            pHud->ToggleEnterPassengerButton(false);
-                        }
-                        if (pHud->isEnterExitVehicleButtonOn) {
-                            pHud->ToggleEnterExitVehicleButton(false);
-                        }
-                        if(pHud->isLockVehicleButtonOn)
-                        {
-                            pHud->ToggleLockVehicleButton(false);
-                        }
-                    }
-                }
-                else
-                {
-                    if (pHud->isEnterPassengerButtOn) {
-                        pHud->ToggleEnterPassengerButton(false);
-                    }
-                    if (pHud->isEnterExitVehicleButtonOn) {
-                        pHud->ToggleEnterExitVehicleButton(false);
-                    }
-                    if(pHud->isLockVehicleButtonOn)
-                    {
-                        pHud->ToggleLockVehicleButton(false);
-                    }
-                }
-            }
+					} else {
+						if (pHud->isEnterPassengerButtOn) {
+							pHud->ToggleEnterPassengerButton(false);
+						}
+						if (pHud->isEnterExitVehicleButtonOn) {
+							pHud->ToggleEnterExitVehicleButton(false);
+						}
+						if (pHud->isLockVehicleButtonOn) {
+							pHud->ToggleLockVehicleButton(false);
+						}
+					}
+				} else {
+					if (pHud->isEnterPassengerButtOn) {
+						pHud->ToggleEnterPassengerButton(false);
+					}
+					if (pHud->isEnterExitVehicleButtonOn) {
+						pHud->ToggleEnterExitVehicleButton(false);
+					}
+					if (pHud->isLockVehicleButtonOn) {
+						pHud->ToggleLockVehicleButton(false);
+					}
+				}
+			}
 
-        }
-		else {// в машине
+		} else {// в машине
 			if (!pHud->isEnterExitVehicleButtonOn) {
 				pHud->ToggleEnterExitVehicleButton(true);
 			}
 			if (!pHud->isLockVehicleButtonOn) {
 				pHud->ToggleLockVehicleButton(true);
 			}
-			if(!pHud->isHornButtonOn){
+			if (!pHud->isHornButtonOn) {
 				pHud->ToggleHornButton(true);
 			}
 			if (pHud->isEnterPassengerButtOn) {
 				pHud->ToggleEnterPassengerButton(false);
 			}
 		}
+	}
 	////////////////////////////
 	bool needDrawableHud = true;
 	if(pGame->isDialogActive || pGame->isCasinoDiceActive || tabToggle || pGame->isAutoShopActive
@@ -569,14 +549,13 @@ void CLocalPlayer::SendWastedNotification()
 //	}
 }
 
-bool CLocalPlayer::GoEnterVehicle(bool passenger)
+void CLocalPlayer::GoEnterVehicle(bool passenger)
 {
 	if (GetTickCount() - m_dwPassengerEnterExit < 1000)
-		return true;
+		return;
 
 	CVehiclePool* pVehiclePool = pNetGame->GetVehiclePool();
 	// CTouchInterface::IsHoldDown
-	//int isHoldDown = (( int (*)(int, int, int))(g_libGTASA+0x270818+1))(0, 1, 1);
 
 	VEHICLEID ClosetVehicleID = pVehiclePool->FindNearestToLocalPlayerPed();
 	if (ClosetVehicleID != INVALID_VEHICLE_ID)
@@ -587,11 +566,8 @@ bool CLocalPlayer::GoEnterVehicle(bool passenger)
 			m_pPlayerPed->EnterVehicle(pVehicle->m_dwGTAId, passenger);
 			SendEnterVehicleNotification(ClosetVehicleID, passenger);
 			m_dwPassengerEnterExit = GetTickCount();
-			return true;
 		}
 	}
-
-	return false;
 }
 
 void CLocalPlayer::HandleClassSelection()
