@@ -212,7 +212,7 @@ public class Dialog {
                 String[] headers = strings[i].split("\t");
                 for (int j = 0; j < headers.length; j++) {
                     this.mHeadersList.get(j).setText(Utils.transfromColors(headers[j]));
-                    this.mHeadersList.get(j).setWidth(headers[j].length()*25);
+                   // this.mHeadersList.get(j).setWidth(headers[j].length()*25);
                     this.mHeadersList.get(j).setVisibility(View.VISIBLE);
                 }
             } else {
