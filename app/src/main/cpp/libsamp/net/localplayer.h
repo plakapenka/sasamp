@@ -145,7 +145,7 @@ public:
 	void SendNextClass();
 	void SendPrevClass();
 	void SendSpawn();
-	bool GoEnterVehicle(bool passenger);
+	void GoEnterVehicle(bool passenger);
 	uint32_t GetPlayerColorAsARGB();
 	uint32_t GetPlayerColor();
 	void SetPlayerColor(uint32_t dwColor);
@@ -180,6 +180,7 @@ public:
 	void SendStatsUpdate();
 	void CheckWeapons();
 
+	CPlayerPed			*m_pPlayerPed;
 public:
 	bool				m_bWaitingForSpawnRequestReply;
 
@@ -199,7 +200,6 @@ public:
 private:
 	uint32_t			GetCurrentAnimationIndexFlag();
 
-	CPlayerPed			*m_pPlayerPed;
 	bool				m_bIsWasted;
 	uint8_t				m_byteCurInterior;
 	bool				m_bInRCMode;

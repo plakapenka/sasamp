@@ -614,7 +614,7 @@ public abstract class NvEventQueueActivity
      */
     public native void nvAcquireTimeExtension();
     public native long nvGetSystemTime();
-   
+
     @Override
     public void onCreate(Bundle savedInstanceState)
     {

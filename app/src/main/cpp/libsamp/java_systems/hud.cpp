@@ -203,19 +203,20 @@ void CHUD::UpdateMoney()
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_HudManager_ClickEnterPassengerButton(JNIEnv *env, jobject thiz) {
-    pNetGame->GetPlayerPool()->GetLocalPlayer()->GoEnterVehicle(true);
+    CLocalPlayer *pPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer();
+    if(pPlayer != nullptr) {
+        pPlayer->GoEnterVehicle(true);
+    }
 
 }
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_HudManager_ClickEnterExitVehicleButton(JNIEnv *env, jobject thiz) {
     CLocalPlayer *pPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer();
-    if(pPlayer->GetPlayerPed()->IsInVehicle())
-    {
+    if(pPlayer != nullptr && pPlayer->GetPlayerPed()->IsInVehicle()) {
         pPlayer->GetPlayerPed()->ExitCurrentVehicle();
     }
-    else
-    {
+    else {
         pPlayer->GoEnterVehicle(false);
     }
 }

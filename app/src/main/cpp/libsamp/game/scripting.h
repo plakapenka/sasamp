@@ -242,7 +242,7 @@ const SCRIPT_COMMAND toggle_hud = { 0x0826, "b" }; // Адрес верный. �
 const SCRIPT_COMMAND text_clear_all = { 0x00be, "" };
 const SCRIPT_COMMAND link_actor_to_interior = { 0x0860, "ii" };
 const SCRIPT_COMMAND repair_car = { 0x0A30, "i" };
-const SCRIPT_COMMAND toggle_player_trapped_incar = { 0x07cc, "ii" };
+const SCRIPT_COMMAND SET_PLAYER_ENTER_CAR_BUTTON = { 0x07CC, "ii" };
 const SCRIPT_COMMAND set_car_hydraulics = { 0x07FF,	"ii" }; //iCar, i (0=off/1=on)
 
 const SCRIPT_COMMAND toggle_player_weapons_changable = { 0x0992, "ii" }; // iPlayer,yes/no

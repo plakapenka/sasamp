@@ -628,11 +628,11 @@ void CPlayerPed::EnterVehicle(int iVehicleID, bool bPassenger)
 		}
 		else
 		{
-			ScriptCommand(&send_actor_to_car_passenger,m_dwGTAId,iVehicleID, 3000, -1);
+			ScriptCommand(&send_actor_to_car_passenger,m_dwGTAId,iVehicleID, 10000, -1);
 		}
 	}
 	else
-		ScriptCommand(&send_actor_to_car_driverseat, m_dwGTAId, iVehicleID, 3000);
+		ScriptCommand(&send_actor_to_car_driverseat, m_dwGTAId, iVehicleID, 10000);
 }
 
 // 0.3.7
@@ -645,20 +645,7 @@ void CPlayerPed::ExitCurrentVehicle()
 
 	if(IN_VEHICLE(m_pPed))
 	{
-//		if(GamePool_Vehicle_GetIndex((VEHICLE_TYPE*)m_pPed->pVehicle))
-//		{
-//			int index = GamePool_Vehicle_GetIndex((VEHICLE_TYPE*)m_pPed->pVehicle);
-//			ThisVehicleType = GamePool_Vehicle_GetAt(index);
-//			if(ThisVehicleType)
-//			{
-//				if(	ThisVehicleType->entity.nModelIndex != TRAIN_PASSENGER &&
-//					ThisVehicleType->entity.nModelIndex != TRAIN_PASSENGER_LOCO)
-//				{
-					ScriptCommand(&TASK_LEAVE_ANY_CAR, m_dwGTAId);
-
-//				}
-//			}
-//		}
+		ScriptCommand(&TASK_LEAVE_ANY_CAR, m_dwGTAId);
 	}
 }
 

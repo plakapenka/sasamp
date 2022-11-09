@@ -132,7 +132,7 @@ public:
 	uint32_t	m_dwArrow;
 	bool lToggle;
 
-	BYTE m_iCurrentSpecialAction;
+	BYTE m_iCurrentSpecialAction = 0;
 	int drunk_level = 0;
 	MATRIX4X4 m_HeadBoneMatrix;
 	ATTACHED_OBJECT_INFO_INTERNAL m_aAttachedObjects[MAX_ATTACHED_OBJECTS];
