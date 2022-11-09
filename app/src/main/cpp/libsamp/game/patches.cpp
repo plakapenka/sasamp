@@ -321,6 +321,27 @@ void ApplyPatches()
 	NOP(g_libGTASA + 0x00519198, 2);
 	NOP(g_libGTASA + 0x005191D0, 4);
 	NOP(g_libGTASA + 0x005191DC, 2);
+
+
+	//map
+	NOP(g_libGTASA+0x0026B504, 2); // убирает текст легенды карты
+	NOP(g_libGTASA+0x0026B514, 2); // убирает значки легенды
+	NOP(g_libGTASA+0x0026B49C, 2); // fix crash GetNextSpace
+
+
+	//??
+	NOP(g_libGTASA+0x002E5522, 2); // пока спорно
+	NOP(g_libGTASA+0x002E5530, 2); // пока спорно
+    NOP(g_libGTASA+0x002E5538, 2); // пока спорно
+	NOP(g_libGTASA+0x002E553C, 2); // пока спорно
+	NOP(g_libGTASA+0x002E5544, 2); // пока спорно
+	NOP(g_libGTASA+0x002E5550, 2); // пока спорно
+	NOP(g_libGTASA+0x002E5556 , 2); // пока спорно
+//	NOP(g_libGTASA+0x002E5522, 2); // пока спорно
+//	NOP(g_libGTASA+0x002E5526, 2); // пока спорно
+//	NOP(g_libGTASA+0x002E552A, 2); // пока спорно
+
+
 }
 void ApplyInGamePatches()
 {
