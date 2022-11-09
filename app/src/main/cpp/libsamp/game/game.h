@@ -159,6 +159,7 @@ public:
 	bool isShopStoreActive = false;
 	int wantedLvl = 0;
 	bool isHornActive = false;
+	bool isBanJump = false;
 
 private:
 	bool aToggleStatusHUD[HUD_MAX];

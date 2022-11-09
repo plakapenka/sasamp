@@ -90,6 +90,10 @@ uint32_t CPad__JumpJustDown_hook(uintptr_t thiz)
 	}
 	else
 	{
+		if(pGame->isBanJump)
+		{
+			return 0;
+		}
 		LocalPlayerKeys.bKeys[ePadKeys::KEY_JUMP] = CPad__JumpJustDown(thiz);
 		return LocalPlayerKeys.bKeys[ePadKeys::KEY_JUMP];
 	}
@@ -105,6 +109,11 @@ uint32_t CPad__GetJump_hook(uintptr_t thiz)
 	}
 	else
 	{
+        if(pGame->isBanJump)
+        {
+            return 0;
+        }
+
 		LocalPlayerKeys.bKeys[ePadKeys::KEY_JUMP] = CPad__JumpJustDown(thiz);
 		return LocalPlayerKeys.bKeys[ePadKeys::KEY_JUMP];
 	}
@@ -133,7 +142,8 @@ uint32_t CPad__GetAbortClimb_hook(uintptr_t thiz)
 	}
 	else
 	{
-		LocalPlayerKeys.bKeys[ePadKeys::KEY_SECONDARY_ATTACK] = CPad__GetAutoClimb(thiz);
+		//LocalPlayerKeys.bKeys[ePadKeys::KEY_SECONDARY_ATTACK] = CPad__GetAutoClimb(thiz);
+		LocalPlayerKeys.bKeys[ePadKeys::KEY_SECONDARY_ATTACK] = CPad__GetAbortClimb(thiz);
 		return LocalPlayerKeys.bKeys[ePadKeys::KEY_SECONDARY_ATTACK];
 	}
 }
@@ -335,6 +345,7 @@ uint32_t CPad__GetHandBrake_hook(uintptr_t thiz)
 uint32_t (*CPad__GetHorn)(uintptr_t thiz);
 uint32_t CPad__GetHorn_hook(uintptr_t thiz)
 {
+   // NOP(g_libGTASA + 0x0026FAB6, 2);
 	if(byteCurDriver != 0)
 	{
 		// remote player
@@ -346,6 +357,8 @@ uint32_t CPad__GetHorn_hook(uintptr_t thiz)
 		LocalPlayerKeys.bKeys[ePadKeys::KEY_CROUCH] = pGame->isHornActive;
 		return LocalPlayerKeys.bKeys[ePadKeys::KEY_CROUCH];
 	}
+	//return (*CPad__GetHorn)(thiz);
+
 }
 
 extern float * pfCameraExtZoom;
@@ -504,6 +517,8 @@ uint32_t CPad__GetWeapon_hook(uintptr_t thiz, uintptr_t ped, bool unk)
 	}
 }
 #include "../chatwindow.h"
+#include "gui/gui.h"
+
 extern CChatWindow* pChatWindow;
 
 uintptr_t g_playerPed;
@@ -627,12 +642,27 @@ extern "C" {
 		}
 	}
 }
+extern CGUI *pGUI;
+
+uint32_t (*DrawLegend)(uintptr_t thiz, int a1, int a2, int a3);
+uint32_t DrawLegend_hook(uintptr_t thiz, int a1, int a2, int a3)
+{
+	return 0;
+}
 
 uint32_t (*IsVehicleRadioActive)(uintptr_t thiz);
 uint32_t IsVehicleRadioActive_hook(uintptr_t thiz)
 {
 
 	//Log("Radio");
+	return 0;
+}
+
+uint32_t (*DrawHelpIcon)(uintptr_t thiz, const char *a1, float a2, float a3, float a4, int a5);
+uint32_t DrawHelpIcon_hook(uintptr_t thiz, const char *a1, float a2, float a3, float a4, int a5)
+{
+
+	Log("Radio");
 	return 0;
 }
 
@@ -712,4 +742,5 @@ void HookCPad()
 	SetUpHook(g_libGTASA+0x39DD30, (uintptr_t)CPad__CycleWeaponRightJustDown_hook, (uintptr_t*)&CPad__CycleWeaponRightJustDown);
 
 	SetUpHook(g_libGTASA+0x00351C40, (uintptr_t)IsVehicleRadioActive_hook, (uintptr_t*)&IsVehicleRadioActive);
+
 }

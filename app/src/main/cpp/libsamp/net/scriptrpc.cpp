@@ -273,7 +273,12 @@ void ScrSetPlayerSpecialAction(RPCParameters *rpcParams)
 		pPed->m_iCurrentSpecialAction = byteSpecialAction;
 		if(byteSpecialAction == SPECIAL_ACTION_NONE)
 		{
+			pGame->isBanJump = false;
 			pPed->ClearAnimations();
+		}
+		if(byteSpecialAction == SPECIAL_ACTION_CARRY)
+		{
+			pGame->isBanJump = true;
 		}
 //
 	}
@@ -1713,9 +1718,10 @@ void ScrSetPlayerDrunkLevel(RPCParameters* rpcParams)
 	Log("ScrSetPlayerDrunkLevel %d", dDrunkLevel);
 
 	CPlayerPed *pPlayer = pGame->FindPlayerPed();
+	if(dDrunkLevel > 10000){
+		dDrunkLevel = 10000;
+	}
 	pPlayer->drunk_level = dDrunkLevel;
-
-	ScriptCommand(&SET_PLAYER_DRUNKENNESS, pPlayer->m_bytePlayerNumber, dDrunkLevel);
 }
 void ScrSetObjectRotation(RPCParameters* rpcParams)
 {
