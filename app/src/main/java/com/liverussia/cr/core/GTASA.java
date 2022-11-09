@@ -21,9 +21,11 @@ public class GTASA extends WarMedia {
             System.loadLibrary("ImmEmulatorJ");
         } catch (ExceptionInInitializerError | UnsatisfiedLinkError e) {
         }
-
+        System.loadLibrary("SCAnd");
         System.loadLibrary("GTASA");
         System.loadLibrary("samp");
+        System.loadLibrary("OpenAL32");
+
     }
 
     public static void staticEnterSocialClub()

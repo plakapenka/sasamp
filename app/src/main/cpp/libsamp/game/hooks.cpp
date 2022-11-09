@@ -269,29 +269,13 @@ void MenuItem_add_hook(int r0, uintptr_t r1)
 	static bool bMenuInited = false;
 	char* name = *(char**)(r1+4);
 
-	if(!strcmp(name, "FEP_STG") && !bMenuInited)
-	{
-		Log("Creating \"MultiPlayer\" button.. (struct: 0x%X)", r1);
-		// Nicaaai eiiieo "New Game"
-		MenuItem_add(r0, r1);
-
-		// eiiiea "MultiPlayer"
-		*(char**)(r1+4) = "SAMP_MP";
-		*(uintptr_t*)r1 = LoadTextureFromDB("samp", "menu_mainmp");
-		*(uintptr_t*)(r1+8) = (uintptr_t)MainMenu_OnStartSAMP;
-
-		bMenuInited = true;
-		goto ret;
-	}
-
-	// Eaii?e?oai nicaaiea "Start Game" e "Stats" ec iai? iaocu
+	// убирает кнопки "Start Game" и "Stats" в меню
 	if(g_bPlaySAMP && (
 		!strcmp(name, "FEP_STG") ||
 		!strcmp(name, "FEH_STA") ||
 		!strcmp(name, "FEH_BRI") ))
 		return;
 
-ret:
 	return MenuItem_add(r0, r1);
 }
 
@@ -527,61 +511,36 @@ __attribute__((naked)) void PickupPickUp_hook()
 					"cmp r1, #6\n\t"
 					"pop {pc}\n\t");
 }
-
-extern "C" bool NotifyEnterVehicle(VEHICLE_TYPE *_pVehicle)
-{
-    //Log("NotifyEnterVehicle");
- 
-    if(!pNetGame) return false;
- 
-    CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
-    CVehicle *pVehicle;
-    VEHICLEID VehicleID = pVehiclePool->FindIDFromGtaPtr(_pVehicle);
- 
-    if(VehicleID == INVALID_VEHICLE_ID) return false;
-    if(!pVehiclePool->GetSlotState(VehicleID)) return false;
-    pVehicle = pVehiclePool->GetAt(VehicleID);
-    if(pVehicle->m_bDoorsLocked) return false;
-    if(pVehicle->m_pVehicle->entity.nModelIndex == TRAIN_PASSENGER) return false;
- 
-//    if(pVehicle->m_pVehicle->pDriver &&
-//        pVehicle->m_pVehicle->pDriver->dwPedType != 0)
-//        return false;
- 
-    CLocalPlayer *pLocalPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer();
- 
-    //if(pLocalPlayer->GetPlayerPed() && pLocalPlayer->GetPlayerPed()->GetCurrentWeapon() == WEAPON_PARACHUTE)
-    //  pLocalPlayer->GetPlayerPed()->SetArmedWeapon(0);
- 
-    pLocalPlayer->SendEnterVehicleNotification(VehicleID, false);
- 
-    return true;
-}
-
-void (*CTaskComplexEnterCarAsDriver)(uint32_t thiz, uint32_t pVehicle);
-extern "C" void call_taskEnterCarAsDriver(uintptr_t a, uint32_t b)
-{
-	CTaskComplexEnterCarAsDriver(a, b);
-}
-void __attribute__((naked)) CTaskComplexEnterCarAsDriver_hook(uint32_t thiz, uint32_t pVehicle)
-{
-
-    __asm__ volatile("push {r0-r11, lr}\n\t"
-                    "mov r2, lr\n\t"
-                    "blx get_lib\n\t"
-                    "add r0, #0x3A0000\n\t"
-                    "add r0, #0xEE00\n\t"
-                    "add r0, #0xF7\n\t"
-                    "cmp r2, r0\n\t"
-                    "bne 1f\n\t" // !=
-                    "mov r0, r1\n\t"
-                    "blx NotifyEnterVehicle\n\t" // call NotifyEnterVehicle
-                    "1:\n\t"  // call orig
-                    "pop {r0-r11, lr}\n\t"
-    				"push {r0-r11, lr}\n\t"
-    				"blx call_taskEnterCarAsDriver\n\t"
-    				"pop {r0-r11, pc}");
-}
+//
+//extern "C" bool NotifyEnterVehicle(VEHICLE_TYPE *_pVehicle)
+//{
+//    Log("NotifyEnterVehicle");
+//
+//    if(!pNetGame) return false;
+//
+//    CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
+//    CVehicle *pVehicle;
+//    VEHICLEID VehicleID = pVehiclePool->FindIDFromGtaPtr(_pVehicle);
+//
+//    if(VehicleID == INVALID_VEHICLE_ID) return false;
+//    if(!pVehiclePool->GetSlotState(VehicleID)) return false;
+//    pVehicle = pVehiclePool->GetAt(VehicleID);
+//    if(pVehicle->m_bDoorsLocked) return false;
+//    if(pVehicle->m_pVehicle->entity.nModelIndex == TRAIN_PASSENGER) return false;
+//
+////    if(pVehicle->m_pVehicle->pDriver &&
+////        pVehicle->m_pVehicle->pDriver->dwPedType != 0)
+////        return false;
+//
+//    CLocalPlayer *pLocalPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer();
+//
+//    //if(pLocalPlayer->GetPlayerPed() && pLocalPlayer->GetPlayerPed()->GetCurrentWeapon() == WEAPON_PARACHUTE)
+//    //  pLocalPlayer->GetPlayerPed()->SetArmedWeapon(0);
+//
+//    pLocalPlayer->SendEnterVehicleNotification(VehicleID, false);
+//
+//    return true;
+//}
 
 void ProcessPedDamage(PED_TYPE* pIssuer, PED_TYPE* pDamaged)
 {
@@ -772,10 +731,10 @@ void InstallSpecialHooks()
 	SetUpHook(g_libGTASA + 0x241D94, (uintptr_t) NvUtilInit_hook, (uintptr_t *) &NvUtilInit);
 
 	SetUpHook(g_libGTASA+0x269974, (uintptr_t)MenuItem_add_hook, (uintptr_t*)&MenuItem_add);
-	SetUpHook(g_libGTASA+0x4D3864, (uintptr_t)CText_Get_hook, (uintptr_t*)&CText_Get);
+	//SetUpHook(g_libGTASA+0x4D3864, (uintptr_t)CText_Get_hook, (uintptr_t*)&CText_Get);
 	SetUpHook(g_libGTASA+0x40C530, (uintptr_t)InitialiseRenderWare_hook, (uintptr_t*)&InitialiseRenderWare);
 	SetUpHook(g_libGTASA + 0x0025E660, (uintptr_t)MainMenuScreen__Update_hook, (uintptr_t*)& MainMenuScreen__Update);
-	SetUpHook(g_libGTASA + 0x0023BB84, (uintptr_t)OS_FileOpen_hook, (uintptr_t*)& OS_FileOpen);
+	//SetUpHook(g_libGTASA + 0x0023BB84, (uintptr_t)OS_FileOpen_hook, (uintptr_t*)& OS_FileOpen);
 
 	SetUpHook(g_libGTASA + 0x004FBBB0, (uintptr_t)cHandlingDataMgr__FindExactWord_hook, (uintptr_t*)& cHandlingDataMgr__FindExactWord);
 	SetUpHook(g_libGTASA + 0x004FBCF4, (uintptr_t)cHandlingDataMgr__ConvertDataToGameUnits_hook, (uintptr_t*)& cHandlingDataMgr__ConvertDataToGameUnits);
@@ -1542,11 +1501,17 @@ void CWidgetButton__Update_hook(int result, int a2, int a3, int a4)
 		return;
 	}
 	CTouchInterface__m_bWidgets = (uintptr_t*)(g_libGTASA + 0x00657E48);
+	if(result == CTouchInterface__m_bWidgets[6])
+	{
+		return;
+	}
 
 	((void (*)(unsigned int, unsigned int)) (g_libGTASA + 0x00274178 + 1))(CTouchInterface__m_bWidgets[0], 0); // Кнопка сесть в тачку
 
 	if(pNetGame && pNetGame->m_GreenZoneState )
 	{
+
+
 		((void (*)(unsigned int, unsigned int)) (g_libGTASA + 0x00274178 + 1))(CTouchInterface__m_bWidgets[1], 0); // кулак
 	}
 	return CWidgetButton__Update(result, a2, a3, a4);
@@ -2656,7 +2621,7 @@ void InstallHooks()
 	SetUpHook(g_libGTASA+0x3DAF84, (uintptr_t)CRadar__SetCoordBlip_hook, (uintptr_t *)&CRadar__SetCoordBlip);
 	SetUpHook(g_libGTASA+0x3DE9A8, (uintptr_t)CRadar__DrawRadarGangOverlay_hook, (uintptr_t*)&CRadar__DrawRadarGangOverlay);
 
-	SetUpHook(g_libGTASA+0x482E60, (uintptr_t)CTaskComplexEnterCarAsDriver_hook, (uintptr_t*)&CTaskComplexEnterCarAsDriver);
+	//SetUpHook(g_libGTASA+0x482E60, (uintptr_t)CTaskComplexEnterCarAsDriver_hook, (uintptr_t*)&CTaskComplexEnterCarAsDriver);
 	SetUpHook(g_libGTASA+0x4833CC, (uintptr_t)CTaskComplexLeaveCar_hook, (uintptr_t*)&CTaskComplexLeaveCar);
 	//SetUpHook(g_libGTASA + 0x0044A4CC, (uintptr_t)PointGunInDirection_hook, (uintptr_t*)&PointGunInDirection);
 	CodeInject(g_libGTASA+0x2D99F4, (uintptr_t)PickupPickUp_hook, 1);
