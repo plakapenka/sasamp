@@ -1,6 +1,7 @@
 #include "../main.h"
 #include "../util/armhook.h"
 #include "common.h"
+
 char* PLAYERS_REALLOC = nullptr;
 #include "../CSettings.h"
 #include "..//CDebugInfo.h"
@@ -155,6 +156,20 @@ void ApplyPatches_level0()
 	//WriteMemory(g_libGTASA + 0x001A7ED2, (uintptr_t)"\x00\x20", 2); // MOVS				R0, #0
 
 	WriteUnVerified0();
+
+    // test pathes
+    //FixVertexWeight
+    WriteMemory(g_libGTASA + 0x1C8064, (uintptr_t)"\x01", 1);
+    WriteMemory(g_libGTASA + 0x1C8082, (uintptr_t)"\x01", 1);
+
+    //FixSkyMultitude
+    UnFuck(g_libGTASA + 0x59FB8C, 2*sizeof(float));
+    *(float*)(g_libGTASA + 0x59FB8C) = -10.0f;
+    *(float*)(g_libGTASA + 0x59FB90) =  10.0f;
+
+
+    WriteMemory(g_libGTASA + 0x591272, (uintptr_t)"\x02", 1);
+    WriteMemory(g_libGTASA + 0x59128E, (uintptr_t)"\x02", 1);
 }
 
 uint32_t* CStreaming__msFiles;
@@ -328,18 +343,23 @@ void ApplyPatches()
 	NOP(g_libGTASA+0x0026B514, 2); // убирает значки легенды
 	NOP(g_libGTASA+0x0026B49C, 2); // fix crash GetNextSpace
 
+    NOP(g_libGTASA+0x00276512, 32); //CWidgetButtonEnterCar::Draw
+
 
 	//??
-	NOP(g_libGTASA+0x002E5522, 2); // пока спорно
-	NOP(g_libGTASA+0x002E5530, 2); // пока спорно
-    NOP(g_libGTASA+0x002E5538, 2); // пока спорно
-	NOP(g_libGTASA+0x002E553C, 2); // пока спорно
-	NOP(g_libGTASA+0x002E5544, 2); // пока спорно
-	NOP(g_libGTASA+0x002E5550, 2); // пока спорно
-	NOP(g_libGTASA+0x002E5556 , 2); // пока спорно
-//	NOP(g_libGTASA+0x002E5522, 2); // пока спорно
-//	NOP(g_libGTASA+0x002E5526, 2); // пока спорно
-//	NOP(g_libGTASA+0x002E552A, 2); // пока спорно
+	//NOP(g_libGTASA+0x002E5526, 2); // пока спорно
+
+	//
+    // disablehorn
+    //GetExitVehicle
+
+   // NOP(g_libGTASA+0x00276B9E, 23); //CWidgetButtonEnterCar::Draw
+
+//crash 2e2000
+
+
+	//NOP(g_libGTASA+0x002E5468, 9); // пока спорно
+
 
 
 }
