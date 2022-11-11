@@ -215,6 +215,11 @@ Java_com_liverussia_cr_gui_HudManager_ClickEnterExitVehicleButton(JNIEnv *env, j
     CLocalPlayer *pPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer();
     if(pPlayer != nullptr && pPlayer->GetPlayerPed()->IsInVehicle()) {
         pPlayer->GetPlayerPed()->ExitCurrentVehicle();
+
+        CVehiclePool *pVehiclePool=pNetGame->GetVehiclePool();
+        VEHICLEID VehicleID=pVehiclePool->FindIDFromGtaPtr((VEHICLE_TYPE *)GamePool_FindPlayerPed()->pVehicle);
+
+        pPlayer->SendExitVehicleNotification(VehicleID);
     }
     else {
         pPlayer->GoEnterVehicle(false);

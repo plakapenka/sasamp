@@ -97,6 +97,9 @@ void CRemotePlayer::Process()
 
 	if(IsActive())
 	{
+		if(GetTickCount() > m_dwWaitForEntryExitAnims) {
+			HandleVehicleEntryExit();
+		}
 		bProcessedfsaf++;
 		// ---- ONFOOT NETWORK PROCESSING ----
 		if(GetState() == PLAYER_STATE_ONFOOT && 
@@ -522,17 +525,27 @@ void CRemotePlayer::Remove()
 
 void CRemotePlayer::HandleVehicleEntryExit()
 {
-
 	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
+	MATRIX4X4 mat;
 
 	if(!m_pPlayerPed) return;
 
-	if(!m_pPlayerPed->IsInVehicle())
+	if(GetState() == PLAYER_STATE_ONFOOT) {
+		if(m_pPlayerPed->IsInVehicle()) {
+			m_pPlayerPed->GetMatrix(&mat);
+			m_pPlayerPed->RemoveFromVehicleAndPutAt(mat.pos.X,mat.pos.Y,mat.pos.Z);
+		}
+		return;
+	}
+
+	if( GetState() == PLAYER_STATE_DRIVER || GetState() == PLAYER_STATE_PASSENGER )
 	{
-		if(pVehiclePool->GetAt(m_VehicleID))
-		{
-			int iCarID = pVehiclePool->FindGtaIDFromID(m_VehicleID);
-			m_pPlayerPed->PutDirectlyInVehicle(iCarID, m_byteSeatID);
+		if(!m_pPlayerPed->IsInVehicle()) {
+			CVehicle *pVehicle = pVehiclePool->GetAt(m_VehicleID);
+			if(pVehicle) {
+				int iCarID = pVehiclePool->FindGtaIDFromID(m_VehicleID);
+				m_pPlayerPed->PutDirectlyInVehicle(iCarID,m_byteSeatID);
+			}
 		}
 	}
 }
@@ -541,26 +554,34 @@ void CRemotePlayer::EnterVehicle(VEHICLEID VehicleID, bool bPassenger)
 {
 	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
 
-	if( m_pPlayerPed &&
-		pVehiclePool->GetAt(VehicleID) &&
-		!m_pPlayerPed->IsInVehicle())
-	{
-		int iGtaVehicleID = pVehiclePool->FindGtaIDFromID(VehicleID);
-		if(iGtaVehicleID && iGtaVehicleID != INVALID_VEHICLE_ID)
-		{
-			m_pPlayerPed->SetKeys(0, 0, 0);
-			m_pPlayerPed->EnterVehicle(iGtaVehicleID, bPassenger);
+	if(m_pPlayerPed && !m_pPlayerPed->IsInVehicle()) {
+
+		if(bPassenger) {
+			SetState(PLAYER_STATE_ENTER_VEHICLE_PASSENGER);
+		} else {
+			SetState(PLAYER_STATE_ENTER_VEHICLE_DRIVER);
+		}
+
+		m_pPlayerPed->SetKeys(0,0,0);
+		if(m_pPlayerPed->GetDistanceFromLocalPlayerPed() < 120.0f) {
+			int iGtaVehicleID = pVehiclePool->FindGtaIDFromID(VehicleID);
+			if(iGtaVehicleID && iGtaVehicleID != INVALID_VEHICLE_ID) {
+				m_pPlayerPed->EnterVehicle(iGtaVehicleID,bPassenger);
+			}
 		}
 	}
+	m_dwWaitForEntryExitAnims = GetTickCount() + 1500;
 }
 
 void CRemotePlayer::ExitVehicle()
 {
 	if(m_pPlayerPed && m_pPlayerPed->IsInVehicle())
 	{
+		SetState(PLAYER_STATE_EXIT_VEHICLE);
 		m_pPlayerPed->SetKeys(0, 0, 0);
 		m_pPlayerPed->ExitCurrentVehicle();
 	}
+	m_dwWaitForEntryExitAnims = GetTickCount() + 1500;
 }
 
 void CRemotePlayer::UpdateOnFootPositionAndSpeed(VECTOR *vecPos, VECTOR *vecMove)
@@ -831,6 +852,8 @@ void CRemotePlayer::UpdateAimFromSyncData(AIM_SYNC_DATA *paimSync)
 
 void CRemotePlayer::StoreOnFootFullSyncData(ONFOOT_SYNC_DATA *pofSync, uint32_t dwTime, uint8_t key)
 {
+	if(GetTickCount() < m_dwWaitForEntryExitAnims) return;
+
 	if( !dwTime || (dwTime - m_dwUnkTime) >= 0 )
 	{
 		m_dwUnkTime = dwTime;
@@ -841,17 +864,6 @@ void CRemotePlayer::StoreOnFootFullSyncData(ONFOOT_SYNC_DATA *pofSync, uint32_t 
 		m_fReportedArmour = (float)pofSync->byteArmour;
 		m_byteSpecialAction = pofSync->byteSpecialAction;
 		m_byteUpdateFromNetwork = UPDATE_TYPE_ONFOOT;
-		
-		
-		if(m_pPlayerPed)
-		{
-			if(m_pPlayerPed->IsInVehicle())
-			{
-				if( m_byteSpecialAction != SPECIAL_ACTION_ENTER_VEHICLE && 
-				m_byteSpecialAction != SPECIAL_ACTION_EXIT_VEHICLE /*&& !sub_100A6F00()*/)
-					RemoveFromVehicle();
-			}
-		}
 
 		SetState(PLAYER_STATE_ONFOOT);
 	}
@@ -859,6 +871,7 @@ void CRemotePlayer::StoreOnFootFullSyncData(ONFOOT_SYNC_DATA *pofSync, uint32_t 
 
 void CRemotePlayer::StoreInCarFullSyncData(INCAR_SYNC_DATA *picSync, uint32_t dwTime)
 {
+	if(GetTickCount() < m_dwWaitForEntryExitAnims) return;
 	if(!dwTime || (dwTime - m_dwUnkTime >= 0))
 	{
 		m_dwUnkTime = dwTime;
@@ -877,15 +890,14 @@ void CRemotePlayer::StoreInCarFullSyncData(INCAR_SYNC_DATA *picSync, uint32_t dw
 
 		m_byteSpecialAction = 0;
 
-		if(m_pPlayerPed && !m_pPlayerPed->IsInVehicle())
-			HandleVehicleEntryExit();
-
 		SetState(PLAYER_STATE_DRIVER);
 	}
 }
 
 void CRemotePlayer::StorePassengerFullSyncData(PASSENGER_SYNC_DATA *ppsSync)
 {
+	if(GetTickCount() < m_dwWaitForEntryExitAnims) return;
+
 	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
 
 	memcpy(&m_psSync, ppsSync, sizeof(PASSENGER_SYNC_DATA));
@@ -896,9 +908,6 @@ void CRemotePlayer::StorePassengerFullSyncData(PASSENGER_SYNC_DATA *ppsSync)
 	m_fReportedArmour = (float)ppsSync->bytePlayerArmour;
 	m_byteUpdateFromNetwork = UPDATE_TYPE_PASSENGER;
 	m_dwLastRecvTick = GetTickCount();
-
-	if(m_pPlayerPed && !m_pPlayerPed->IsInVehicle())
-		HandleVehicleEntryExit();
 
 	SetState(PLAYER_STATE_PASSENGER);
 }
@@ -1002,5 +1011,22 @@ void CRemotePlayer::HideGlobalMarker()
 
 void CRemotePlayer::StateChange(uint8_t byteNewState, uint8_t byteOldState)
 {
+	if(byteNewState == PLAYER_STATE_DRIVER && byteOldState == PLAYER_STATE_ONFOOT)
+	{
+		// ≈сли их нова€ машина принадлежит местному игроку
+		// нам придетс€ выгнать локального игрока
+		CPlayerPed *pLocalPlayerPed = pGame->FindPlayerPed();
+		VEHICLEID LocalVehicle=0xFFFF;
+		MATRIX4X4 mat;
 
+		if(pLocalPlayerPed && pLocalPlayerPed->IsInVehicle() && !pLocalPlayerPed->IsAPassenger())
+		{
+			LocalVehicle = pNetGame->GetVehiclePool()->FindIDFromGtaPtr(pLocalPlayerPed->GetGtaVehicle());
+			if(LocalVehicle == m_VehicleID) {
+				pLocalPlayerPed->GetMatrix(&mat);
+				pLocalPlayerPed->RemoveFromVehicleAndPutAt(mat.pos.X,mat.pos.Y,mat.pos.Z + 1.0f);
+				pGame->DisplayGameText("~r~Car Jacked~w~!",1000,5);
+			}
+		}
+	}
 }

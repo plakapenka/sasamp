@@ -48,9 +48,10 @@ CPlayerPed::CPlayerPed(uint8_t bytePlayerNumber, int iSkin, float fX, float fY, 
 	m_pEntity = (ENTITY_TYPE*)GamePool_Ped_GetAt(m_dwGTAId);
 
 	m_bytePlayerNumber = bytePlayerNumber;
+
 	SetPlayerPedPtrRecord(m_bytePlayerNumber, (uintptr_t)m_pPed);
 	ScriptCommand(&set_actor_weapon_droppable, m_dwGTAId, 1);
-	ScriptCommand(&set_actor_immunities, m_dwGTAId, 0, 0, 1, 0, 0);
+	ScriptCommand(&set_actor_immunities, m_dwGTAId, 0, 0, 0, 0, 0);
 	ScriptCommand(&set_actor_can_be_decapitated, m_dwGTAId, 0);
 	ScriptCommand(&set_char_never_targeted, m_dwGTAId, 1);
 
@@ -628,11 +629,13 @@ void CPlayerPed::EnterVehicle(int iVehicleID, bool bPassenger)
 		}
 		else
 		{
-			ScriptCommand(&send_actor_to_car_passenger,m_dwGTAId,iVehicleID, 10000, -1);
+			ScriptCommand(&send_actor_to_car_passenger,m_dwGTAId,iVehicleID, 3000, -1);
 		}
 	}
-	else
-		ScriptCommand(&send_actor_to_car_driverseat, m_dwGTAId, iVehicleID, 10000);
+	else{
+		ScriptCommand(&TASK_ENTER_CAR_AS_DRIVER, m_dwGTAId, iVehicleID, -1);
+	}
+
 }
 
 // 0.3.7

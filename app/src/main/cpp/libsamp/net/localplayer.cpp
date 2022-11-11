@@ -654,13 +654,9 @@ void CLocalPlayer::UpdateSurfing() {}
 void CLocalPlayer::SendEnterVehicleNotification(VEHICLEID VehicleID, bool bPassenger)
 {
 	RakNet::BitStream bsSend;
-	uint8_t bytePassenger = 0;
-
-	if(bPassenger)
-		bytePassenger = 1;
 
 	bsSend.Write(VehicleID);
-	bsSend.Write(bytePassenger);
+	bsSend.Write((uint8_t)bPassenger);
 
 	pNetGame->GetRakClient()->RPC(&RPC_EnterVehicle, &bsSend, HIGH_PRIORITY, RELIABLE_SEQUENCED, 0,false, UNASSIGNED_NETWORK_ID, nullptr);
 }
@@ -679,8 +675,6 @@ void CLocalPlayer::SendExitVehicleNotification(VEHICLEID VehicleID)
 
 		bsSend.Write(VehicleID);
 		pNetGame->GetRakClient()->RPC(&RPC_ExitVehicle,&bsSend,HIGH_PRIORITY,RELIABLE_SEQUENCED,0,false, UNASSIGNED_NETWORK_ID, NULL);
-
-       // GamePool_FindPlayerPed()->pVehicle = INVALID_VEHICLE_ID;
     }
 }
 

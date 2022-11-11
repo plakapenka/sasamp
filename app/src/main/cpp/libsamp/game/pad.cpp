@@ -367,6 +367,7 @@ void CPed__ProcessControl_hook(uintptr_t thiz)
 {
 	dwCurPlayerActor = thiz;
 	byteCurPlayer = FindPlayerNumFromPedPtr(dwCurPlayerActor);
+	
 	if (dwCurPlayerActor && (byteCurPlayer != 0))
 	{
 		// REMOTE PLAYER

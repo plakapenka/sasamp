@@ -94,6 +94,7 @@ public:
 	bool				m_bKeyboardOpened;
 	float 				m_fReportedHealth;
 	float 				m_fReportedArmour;
+	uint32_t 			m_dwWaitForEntryExitAnims = 0;
 
 private:
 	CPlayerPed			*m_pPlayerPed;
