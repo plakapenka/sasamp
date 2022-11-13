@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:layout_width="@dimen/_135sdp"
+            android:layout_width="@dimen/_115sdp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/_10sdp"
@@ -30,7 +30,7 @@
             android:layout_width="@dimen/_50sdp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_marginTop="@dimen/_15sdp"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:src="@drawable/information" />
@@ -39,7 +39,7 @@
             android:id="@+id/linearLayout8"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_5sdp"
             android:orientation="horizontal">
 
             <ImageView
@@ -106,7 +106,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/textView15"
+        android:layout_marginTop="@dimen/_20sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout10">
@@ -160,6 +160,35 @@
             android:textColor="@color/white"
             android:textSize="@dimen/_12sdp" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/repeatLoad"
+        android:textSize="@dimen/_12sdp"
+        android:visibility="gone"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:background="@drawable/button_red_rectangle"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginBottom="@dimen/_20sdp"
+        android:text="Повторить"
+        app:layout_constraintBottom_toTopOf="@+id/textView15"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:fontFamily="@font/pt_root_ui_medium" />
+
+<!--    <TextView-->
+<!--        android:id="@+id/textView159"-->
+<!--        android:layout_width="fill_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:fontFamily="@font/roboto_medium"-->
+<!--        android:gravity="center"-->
+<!--        android:text="@string/downloadinfobottom"-->
+<!--        android:textColor="#FFFFFF"-->
+<!--        android:textSize="15sp"-->
+<!--        app:layout_constraintBottom_toTopOf="@+id/textView15"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent" />-->
 
     <TextView
         android:id="@+id/textView15"

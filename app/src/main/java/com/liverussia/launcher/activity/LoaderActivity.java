@@ -34,7 +34,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.liverussia.cr.core.Utils;
-import com.liverussia.launcher.async.DownloadAsyncTask;
+import com.liverussia.launcher.async.DownloadAsyncTask1;
+import com.liverussia.launcher.async.DownloadTask;
 import com.liverussia.launcher.domain.LoaderSliderItemData;
 import com.liverussia.launcher.dto.response.LoaderSliderInfoResponseDto;
 import com.liverussia.launcher.messages.ErrorMessages;
@@ -52,7 +53,6 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.liverussia.cr.core.Config.URL_CLIENT;
-import static com.liverussia.cr.core.Config.URL_FILES;
 import static com.liverussia.launcher.config.Config.LAUNCHER_SERVER_URI;
 
 public class LoaderActivity extends AppCompatActivity {
@@ -62,7 +62,7 @@ public class LoaderActivity extends AppCompatActivity {
 
     private final ActivityService activityService;
 
-    private DownloadAsyncTask downloadTask;
+    private DownloadTask downloadTask;
 
     @Getter
     private TextView loading;
@@ -75,6 +75,8 @@ public class LoaderActivity extends AppCompatActivity {
     private TextView fileName;
     private ImageView leftButton;
     private ImageView rightButton;
+
+    private TextView repeatLoadButton;
 
     private ViewPager2 sliderView;
 
@@ -159,21 +161,21 @@ public class LoaderActivity extends AppCompatActivity {
         finish();
     }
 
-    @Override
-    public void onStop() {
-        Optional.ofNullable(downloadTask)
-                .ifPresent(DownloadAsyncTask::cancelDownload);
-
-        super.onStop();
-    }
-
-    @Override
-    public void onDestroy() {
-        Optional.ofNullable(downloadTask)
-                .ifPresent(DownloadAsyncTask::cancelDownload);
-
-        super.onDestroy();
-    }
+//    @Override
+//    public void onStop() {
+//        Optional.ofNullable(downloadTask)
+//                .ifPresent(DownloadAsyncTask1::cancelDownload);
+//
+//        super.onStop();
+//    }
+//
+//    @Override
+//    public void onDestroy() {
+//        Optional.ofNullable(downloadTask)
+//                .ifPresent(DownloadAsyncTask1::cancelDownload);
+//
+//        super.onDestroy();
+//    }
 
     private void installGame(int type) {
         switch (type) {
@@ -184,17 +186,17 @@ public class LoaderActivity extends AppCompatActivity {
                     dir.mkdirs();
                 }
 
-                downloadTask = new DownloadAsyncTask(this, progressBar);
+                downloadTask = new DownloadTask(this, progressBar);
                 downloadTask.setOnAsyncSuccessListener(this::performAfterDownload);
                 downloadTask.setOnAsyncCriticalErrorListener(this::performAfterDownloadFailed);
-                downloadTask.execute(URL_FILES);
+                downloadTask.download();
                 break;
             }
 
             case 1: {
                 File dir = new File(getExternalFilesDir(null).toString() + "/temp_downloads/");
                 if (!dir.exists()) dir.mkdirs();
-                DownloadAsyncTask downloadTask = new DownloadAsyncTask(this, progressBar);
+                DownloadAsyncTask1 downloadTask = new DownloadAsyncTask1(this, progressBar);
                 downloadTask.execute(URL_CLIENT);
                 break;
             }
@@ -207,7 +209,6 @@ public class LoaderActivity extends AppCompatActivity {
 
     private void performAfterDownload() {
         if (Utils.getType() == 0) {
-            activityService.showMessage(InfoMessages.GAME_FILES_DOWNLOAD_SUCCESS.getText(), this);
             redirectToSettings();
         }
 
@@ -226,7 +227,13 @@ public class LoaderActivity extends AppCompatActivity {
         leftButton = (ImageView) findViewById(R.id.leftButton);
         rightButton = (ImageView) findViewById(R.id.rightButton);
         sliderView = findViewById(R.id.loaderSliderView);
+        repeatLoadButton = findViewById(R.id.repeatLoad);
 
+
+        repeatLoadButton.setOnClickListener(v -> {
+            v.startAnimation(animation);
+            performRepeatLoadButtonAction();
+        });
 
         leftButton.setOnClickListener(v -> {
             v.startAnimation(animation);
@@ -241,6 +248,10 @@ public class LoaderActivity extends AppCompatActivity {
 
         loadResources();
 
+    }
+
+    private void performRepeatLoadButtonAction() {
+        downloadTask.repeatLoad();
     }
 
     private void loadResources() {
