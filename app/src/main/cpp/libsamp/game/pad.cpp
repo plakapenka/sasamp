@@ -59,6 +59,12 @@ uint16_t CPad__GetPedWalkUpDown_hook(uintptr_t thiz)
 	}
 }
 
+uint32_t (*CPad__SprintJustDown)(uintptr_t thiz, uint32_t unk);
+uint32_t CPad__SprintJustDown_hook(uintptr_t thiz, uint32_t unk)
+{
+	return 0;
+}
+
 uint32_t (*CPad__GetSprint)(uintptr_t thiz, uint32_t unk);
 uint32_t CPad__GetSprint_hook(uintptr_t thiz, uint32_t unk)
 {
@@ -177,18 +183,19 @@ uint32_t CPad__SwimJumpJustDown_hook(uintptr_t thiz)
 	}
 }
 
-uint32_t (*CPad__DuckJustDown)(uintptr_t thiz, int unk);
-uint32_t CPad__DuckJustDown_hook(uintptr_t thiz, int unk)
+uint32_t (*CPad__DuckJustDown)(uintptr_t thiz, uintptr_t ped);
+uint32_t CPad__DuckJustDown_hook(uintptr_t thiz, uintptr_t ped)
 {
-	if(dwCurPlayerActor && (byteCurPlayer != 0))
-	{
+   // int curNum = FindPlayerNumFromPedPtr(ped);
+    if(byteCurPlayer != 0 )
+    {
         return RemotePlayerKeys[byteCurPlayer].bKeys[ePadKeys::KEY_CROUCH];
-	}
-	else
-	{
-        LocalPlayerKeys.bKeys[ePadKeys::KEY_CROUCH] = CPad__DuckJustDown(thiz, unk);
-		return LocalPlayerKeys.bKeys[ePadKeys::KEY_CROUCH];
-	}
+    }
+    else
+    {
+        LocalPlayerKeys.bKeys[ePadKeys::KEY_CROUCH] = CPad__DuckJustDown(thiz, ped);
+        return LocalPlayerKeys.bKeys[ePadKeys::KEY_CROUCH];
+    }
 }
 
 uint32_t (*CPad__MeleeAttackJustDown)(uintptr_t thiz);
@@ -360,6 +367,12 @@ uint32_t CPad__GetHorn_hook(uintptr_t thiz)
 	}
 	//return (*CPad__GetHorn)(thiz);
 
+}
+
+uint32_t (*CVehicle__UsesSiren)(uintptr_t thiz);
+uint32_t CVehicle__UsesSiren_hook(uintptr_t thiz)
+{
+	return 0;
 }
 
 extern float * pfCameraExtZoom;
@@ -703,7 +716,7 @@ void HookCPad()
 	InstallMethodHook(g_libGTASA+0x5CD204, (uintptr_t)AllVehicles__ProcessControl_hook); // CQuadBike::ProcessControl
 	InstallMethodHook(g_libGTASA+0x5CD454, (uintptr_t)AllVehicles__ProcessControl_hook); // CTrain::ProcessControl
 	InstallMethodHook(g_libGTASA + 0x005C8610, (uintptr_t)TaskUseGun);
-	//InstallMethodHook(g_libGTASA + 0x005CC1D4, (uintptr_t)TaskProcess);
+	InstallMethodHook(g_libGTASA + 0x005CC1D4, (uintptr_t)TaskProcess);
 
 	// lr/ud (onfoot)
 	SetUpHook(g_libGTASA+0x39D08C, (uintptr_t)CPad__GetPedWalkLeftRight_hook, (uintptr_t*)&CPad__GetPedWalkLeftRight);
@@ -712,6 +725,9 @@ void HookCPad()
 	//SetUpHook(g_libGTASA + 0x)
 
 	// sprint/jump stuff
+	SetUpHook(g_libGTASA+0x0039EB50, (uintptr_t)CPad__SprintJustDown_hook, (uintptr_t*)&CPad__SprintJustDown);// ускоренныйбег
+
+
 	SetUpHook(g_libGTASA+0x39EAA4, (uintptr_t)CPad__GetSprint_hook, (uintptr_t*)&CPad__GetSprint);
 	SetUpHook(g_libGTASA+0x39E9B8, (uintptr_t)CPad__JumpJustDown_hook, (uintptr_t*)&CPad__JumpJustDown);
 	SetUpHook(g_libGTASA+0x39E96C, (uintptr_t)CPad__GetJump_hook, (uintptr_t*)&CPad__GetJump);
@@ -730,7 +746,7 @@ void HookCPad()
 	SetUpHook(g_libGTASA + 0x004C1748, (uintptr_t)ProcessPlayerWeapon_hook, (uintptr_t*)& ProcessPlayerWeapon);
 
 	SetUpHook(g_libGTASA+0x39E7B0, (uintptr_t)CPad__DuckJustDown_hook, (uintptr_t*)&CPad__DuckJustDown);
-	//SetUpHook(g_libGTASA+0x39DB50, (uintptr_t)CPad__GetBlock_hook, (uintptr_t*)&CPad__GetBlock);
+
 
 	// steering lr/ud (incar)
 	SetUpHook(g_libGTASA+0x39C9E4, (uintptr_t)CPad__GetSteeringLeftRight_hook, (uintptr_t*)&CPad__GetSteeringLeftRight);
@@ -740,6 +756,7 @@ void HookCPad()
 	SetUpHook(g_libGTASA+0x39D938, (uintptr_t)CPad__GetBrake_hook, (uintptr_t*)&CPad__GetBrake);
 	SetUpHook(g_libGTASA+0x39D754, (uintptr_t)CPad__GetHandBrake_hook, (uintptr_t*)&CPad__GetHandBrake);
 	SetUpHook(g_libGTASA+0x39D4C8, (uintptr_t)CPad__GetHorn_hook, (uintptr_t*)&CPad__GetHorn);
+	SetUpHook(g_libGTASA+0x00510B08, (uintptr_t)CVehicle__UsesSiren_hook, (uintptr_t*)&CVehicle__UsesSiren);
 
 	SetUpHook(g_libGTASA+0x39DD30, (uintptr_t)CPad__CycleWeaponRightJustDown_hook, (uintptr_t*)&CPad__CycleWeaponRightJustDown);
 
