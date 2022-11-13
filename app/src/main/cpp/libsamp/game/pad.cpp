@@ -182,11 +182,12 @@ uint32_t CPad__DuckJustDown_hook(uintptr_t thiz, int unk)
 {
 	if(dwCurPlayerActor && (byteCurPlayer != 0))
 	{
-		return 0;
+        return RemotePlayerKeys[byteCurPlayer].bKeys[ePadKeys::KEY_CROUCH];
 	}
 	else
 	{
-		return CPad__DuckJustDown(thiz, unk);
+        LocalPlayerKeys.bKeys[ePadKeys::KEY_CROUCH] = CPad__DuckJustDown(thiz, unk);
+		return LocalPlayerKeys.bKeys[ePadKeys::KEY_CROUCH];
 	}
 }
 
@@ -729,7 +730,7 @@ void HookCPad()
 	SetUpHook(g_libGTASA + 0x004C1748, (uintptr_t)ProcessPlayerWeapon_hook, (uintptr_t*)& ProcessPlayerWeapon);
 
 	SetUpHook(g_libGTASA+0x39E7B0, (uintptr_t)CPad__DuckJustDown_hook, (uintptr_t*)&CPad__DuckJustDown);
-	SetUpHook(g_libGTASA+0x39DB50, (uintptr_t)CPad__GetBlock_hook, (uintptr_t*)&CPad__GetBlock);
+	//SetUpHook(g_libGTASA+0x39DB50, (uintptr_t)CPad__GetBlock_hook, (uintptr_t*)&CPad__GetBlock);
 
 	// steering lr/ud (incar)
 	SetUpHook(g_libGTASA+0x39C9E4, (uintptr_t)CPad__GetSteeringLeftRight_hook, (uintptr_t*)&CPad__GetSteeringLeftRight);
@@ -742,6 +743,6 @@ void HookCPad()
 
 	SetUpHook(g_libGTASA+0x39DD30, (uintptr_t)CPad__CycleWeaponRightJustDown_hook, (uintptr_t*)&CPad__CycleWeaponRightJustDown);
 
-	SetUpHook(g_libGTASA+0x00351C40, (uintptr_t)IsVehicleRadioActive_hook, (uintptr_t*)&IsVehicleRadioActive);
+	//SetUpHook(g_libGTASA+0x00351C40, (uintptr_t)IsVehicleRadioActive_hook, (uintptr_t*)&IsVehicleRadioActive);
 
 }

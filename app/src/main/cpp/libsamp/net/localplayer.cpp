@@ -568,6 +568,7 @@ void CLocalPlayer::GoEnterVehicle(bool passenger)
 			m_dwPassengerEnterExit = GetTickCount();
 		}
 	}
+
 }
 
 void CLocalPlayer::HandleClassSelection()

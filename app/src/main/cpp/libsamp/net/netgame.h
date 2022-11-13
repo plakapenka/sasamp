@@ -84,6 +84,7 @@
 #define RPC_SHOW_ARMY_GAME 45
 #define RPC_CHECK_CLIENT 46
 #define RPC_SHOW_CONTEINER_AUC 52
+#define RPC_TURN_SIGNAL	47
 #define RPC_PRE_DEATH 48
 
 // Packet 252

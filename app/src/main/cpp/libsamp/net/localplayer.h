@@ -196,6 +196,7 @@ public:
 	VEHICLEID 			m_LastVehicle;
 	bool				m_bIsActive;
 	bool lToggle;
+	bool IsGoEnterVehicleClick = false;
 
 private:
 	uint32_t			GetCurrentAnimationIndexFlag();

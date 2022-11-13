@@ -1474,34 +1474,16 @@ void CWidgetButton__Update_hook(int result, int a2, int a3, int a4)
 		return;
 	}
 	CTouchInterface__m_bWidgets = (uintptr_t*)(g_libGTASA + 0x00657E48);
-	if(result == CTouchInterface__m_bWidgets[6])
-	{
-		return;
-	}
 
-	((void (*)(unsigned int, unsigned int)) (g_libGTASA + 0x00274178 + 1))(CTouchInterface__m_bWidgets[0], 0); // Кнопка сесть в тачку
+	//((void (*)(unsigned int, unsigned int)) (g_libGTASA + 0x00274178 + 1))(CTouchInterface__m_bWidgets[0], 0); // Кнопка сесть в тачку
 
 	if(pNetGame && pNetGame->m_GreenZoneState )
 	{
-
-
 		((void (*)(unsigned int, unsigned int)) (g_libGTASA + 0x00274178 + 1))(CTouchInterface__m_bWidgets[1], 0); // кулак
 	}
 	return CWidgetButton__Update(result, a2, a3, a4);
 }
 
-int (*CWidget__IsTouched)(uintptr_t a1);
-int CWidget__IsTouched_hook(uintptr_t a1)
-{
-	if (ShouldBeProcessedButton(a1))
-	{
-		return CWidget__IsTouched(a1);
-	}
-	else
-	{
-		return 0;
-	}
-}
 void readVehiclesAudioSettings();
 void (*CVehicleModelInfo__SetupCommonData)();
 void CVehicleModelInfo__SetupCommonData_hook()
@@ -1518,7 +1500,6 @@ void CAEVehicleAudioEntity__GetVehicleAudioSettings_hook(uintptr_t dest, int16_t
 {
 	memcpy((void*)dest, &VehicleAudioProperties[(ID - 400)], sizeof(VehicleAudioPropertiesStruct));
 }
-// https://beeg.com/1256386731?t=85
 
 void (*CDarkel__RegisterCarBlownUpByPlayer)(void* pVehicle, int arg2);
 void CDarkel__RegisterCarBlownUpByPlayer_hook(void* pVehicle, int arg2)
@@ -2644,7 +2625,7 @@ void InstallHooks()
 
 	//SetUpHook(g_libGTASA + 0x0027548C, (DWORD)CWidgetButtonAttack_hook, (DWORD*)&CWidgetButtonAttack);
 	SetUpHook(g_libGTASA + 0x00274AB4, (uintptr_t)CWidgetButton__Update_hook, (uintptr_t*)& CWidgetButton__Update);
-	SetUpHook(g_libGTASA + 0x00274218, (uintptr_t)CWidget__IsTouched_hook, (uintptr_t*)& CWidget__IsTouched);
+	//SetUpHook(g_libGTASA + 0x0027455C, (uintptr_t)CWidget__IsTouched_hook, (uintptr_t*)& CWidget__IsTouched);
 
 	SetUpHook(g_libGTASA + 0x004052B8, (uintptr_t)CVehicleModelInfo__SetupCommonData_hook, (uintptr_t*)& CVehicleModelInfo__SetupCommonData);
 

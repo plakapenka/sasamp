@@ -664,6 +664,17 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 	// terminate all stuff when exiting
 	// nop shit pause
 
+	//спорно
+	if (!*(uintptr_t *)(g_libGTASA + 0x61B298))
+	{
+		uintptr_t test = ((uintptr_t(*)(const char *))(g_libGTASA + 0x00179A20))("glAlphaFuncQCOM");
+		if (!test)
+		{
+			NOP(g_libGTASA + 0x001A6164, 4);
+			SetUpHook(g_libGTASA + 0x001A6164, (uintptr_t)RQ_Command_rqSetAlphaTest_hook, (uintptr_t*)&RQ_Command_rqSetAlphaTest);
+		}
+	}
+
 	ApplyPatches_level0();
 
 	struct sigaction act;

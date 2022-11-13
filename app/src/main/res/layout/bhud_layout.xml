@@ -89,7 +89,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/linearLayout3"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="100dp"
                 android:layout_marginStart="39dp"
                 android:layout_marginTop="9dp"
                 android:orientation="vertical"
@@ -153,6 +153,7 @@
                     android:src="@drawable/ic_y_star"
                     app:layout_constraintTop_toBottomOf="@+id/hud_star_5" />
             </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             <ImageView
                 android:id="@+id/imageView4"
@@ -275,28 +276,28 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <ImageView
-        android:id="@+id/enter_passenger"
-        android:layout_width="53dp"
-        android:layout_height="53dp"
-        android:layout_marginEnd="8dp"
-        android:clickable="true"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:src="@drawable/enter_passanger"
-        app:layout_constraintEnd_toStartOf="@+id/enterexit_driver"
-        app:layout_constraintTop_toTopOf="@+id/enterexit_driver" />
+        <ImageView
+            android:id="@+id/enter_passenger"
+            android:layout_width="53dp"
+            android:layout_height="53dp"
+            android:layout_marginEnd="8dp"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:src="@drawable/enter_passanger"
+            app:layout_constraintEnd_toStartOf="@+id/enterexit_driver"
+            app:layout_constraintTop_toTopOf="@+id/enterexit_driver" />
 
-    <ImageView
-        android:id="@+id/vehicle_lock_butt"
-        android:layout_width="53dp"
-        android:layout_height="53dp"
-        android:layout_marginTop="140dp"
-        android:layout_marginEnd="8dp"
-        android:clickable="true"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:src="@drawable/vehicle_lock_butt"
-        app:layout_constraintEnd_toStartOf="@+id/enter_passenger"
-        app:layout_constraintTop_toTopOf="parent" />
+        <ImageView
+            android:id="@+id/vehicle_lock_butt"
+            android:layout_width="53dp"
+            android:layout_height="53dp"
+            android:layout_marginTop="140dp"
+            android:layout_marginEnd="8dp"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:src="@drawable/vehicle_lock_butt"
+            app:layout_constraintEnd_toStartOf="@+id/enter_passenger"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/button_horn"
@@ -311,116 +312,116 @@
             app:layout_constraintStart_toStartOf="@+id/enterexit_driver" />
 
         <ImageView
-        android:id="@+id/enterexit_driver"
-        android:layout_width="53dp"
-        android:layout_height="53dp"
-        android:layout_marginTop="140dp"
-        android:layout_marginEnd="16dp"
-        android:clickable="true"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:src="@drawable/enter_car_butt_type_car"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            android:id="@+id/enterexit_driver"
+            android:layout_width="53dp"
+            android:layout_height="53dp"
+            android:layout_marginTop="140dp"
+            android:layout_marginEnd="16dp"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:src="@drawable/enter_car_butt_type_car"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/yearn_money"
-        android:layout_width="100dp"
-        android:layout_height="45dp"
-        android:layout_marginTop="150dp"
-        android:layout_marginEnd="8dp"
-        android:background="@drawable/work_money"
-        app:layout_constraintEnd_toStartOf="@+id/vehicle_lock_butt"
-        app:layout_constraintTop_toTopOf="parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/yearn_money"
+            android:layout_width="100dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="150dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/work_money"
+            app:layout_constraintEnd_toStartOf="@+id/vehicle_lock_butt"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/yearn_moneytext"
+            <TextView
+                android:id="@+id/yearn_moneytext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="@font/din_pro_bold"
+                android:text="0 Р"
+                android:textColor="#5DDD28"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/target_notify"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:fontFamily="@font/din_pro_bold"
-            android:text="0 Р"
-            android:textColor="#5DDD28"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="55dp"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <ImageView
+                android:id="@+id/imageView21"
+                android:layout_width="170dp"
+                android:layout_height="70dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/target_notify" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/target_notify"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="55dp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+            <ImageView
+                android:id="@+id/imageView22"
+                android:layout_width="110dp"
+                android:layout_height="22dp"
+                android:layout_marginTop="7dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/target_notify_title" />
 
-        <ImageView
-            android:id="@+id/imageView21"
-            android:layout_width="170dp"
-            android:layout_height="70dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/target_notify" />
+            <ImageView
+                android:id="@+id/target_notify_exit"
+                android:layout_width="13dp"
+                android:layout_height="13dp"
+                android:layout_marginEnd="10dp"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView22"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/imageView22"
+                app:srcCompat="@drawable/target_notify_exit" />
 
-        <ImageView
-            android:id="@+id/imageView22"
-            android:layout_width="110dp"
-            android:layout_height="22dp"
-            android:layout_marginTop="7dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/target_notify_title" />
+            <ImageView
+                android:id="@+id/target_notify_status"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_marginStart="35dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="20dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageView22"
+                app:srcCompat="@drawable/target_notify_none" />
 
-        <ImageView
-            android:id="@+id/target_notify_exit"
-            android:layout_width="13dp"
-            android:layout_height="13dp"
-            android:layout_marginEnd="10dp"
-            app:layout_constraintBottom_toBottomOf="@+id/imageView22"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/imageView22"
-            app:srcCompat="@drawable/target_notify_exit" />
-
-        <ImageView
-            android:id="@+id/target_notify_status"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:layout_marginStart="35dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="20dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView22"
-            app:srcCompat="@drawable/target_notify_none" />
-
-        <TextView
-            android:id="@+id/target_notify_text"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="7dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="8dp"
-            android:fontFamily="@font/din_pro_medium"
-            android:gravity="center"
-            android:shadowColor="#000000"
-            android:shadowDx="0"
-            android:shadowDy="0"
-            android:shadowRadius="10"
-            android:text="Текст текущей задачи для выполнения"
-            android:textColor="#FFFFFF"
-            android:textSize="8sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/target_notify_status"
-            app:layout_constraintTop_toBottomOf="@+id/target_notify_exit" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/target_notify_text"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="7dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="@font/din_pro_medium"
+                android:gravity="center"
+                android:shadowColor="#000000"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="10"
+                android:text="Текст текущей задачи для выполнения"
+                android:textColor="#FFFFFF"
+                android:textSize="8sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/target_notify_status"
+                app:layout_constraintTop_toBottomOf="@+id/target_notify_exit" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ImageView
             android:id="@+id/hud_gpsactive"
@@ -530,9 +531,8 @@
         android:layout_width="192dp"
         android:layout_height="68dp"
         android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
+        android:src="@drawable/moscow"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/moscow" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

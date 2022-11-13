@@ -104,6 +104,8 @@ void ApplyPatches_level0()
 	WriteMemory(g_libGTASA + 0x1859FC, (uintptr_t)"\x01\x22", 2);
 	//sizeof(CCollisionLink) = 12 (0xC)
 	// we need 200 col links(MALO LI!!!)
+	WriteMemory(g_libGTASA + 0x0029554A, (uintptr_t)"\x4f\xf4\x61\x60", 4); // allocate memory to 300 * sizeof(CCollisionLink)
+	WriteMemory(g_libGTASA + 0x00295556, (uintptr_t)"\x4f\xf4\x5b\x62", 4); // BUT MAKE INITIALIZED ONLY 292 DUE TO SHIT ARM ASM!! (292 * sizeof(CCollisionLink)
 
 	// col links limits end
 
@@ -156,23 +158,7 @@ void ApplyPatches_level0()
 	//WriteMemory(g_libGTASA + 0x001A7ED2, (uintptr_t)"\x00\x20", 2); // MOVS				R0, #0
 
 	WriteUnVerified0();
-
-    // test pathes
-    //FixVertexWeight
-    WriteMemory(g_libGTASA + 0x1C8064, (uintptr_t)"\x01", 1);
-    WriteMemory(g_libGTASA + 0x1C8082, (uintptr_t)"\x01", 1);
-
-    //FixSkyMultitude
-    UnFuck(g_libGTASA + 0x59FB8C, 2*sizeof(float));
-    *(float*)(g_libGTASA + 0x59FB8C) = -10.0f;
-    *(float*)(g_libGTASA + 0x59FB90) =  10.0f;
-
-
-    WriteMemory(g_libGTASA + 0x591272, (uintptr_t)"\x02", 1);
-    WriteMemory(g_libGTASA + 0x59128E, (uintptr_t)"\x02", 1);
 }
-
-uint32_t* CStreaming__msFiles;
 
 void ApplyPatches()
 {
@@ -227,9 +213,10 @@ void ApplyPatches()
 
 	WriteMemory(g_libGTASA + 0x00458D68, (uintptr_t)"\x00\x46\x00\x46", 4); // cFire::extinguish nopped
 
-	//WriteMemory(g_libGTASA + 0x00541BF8, (uintptr_t)"\xD3", 1);
-	//WriteMemory(g_libGTASA + 0x00541CA4, (uintptr_t)"\xD3", 1);
-	//WriteMemory(g_libGTASA + 0x00541CF6, (uintptr_t)"\x59\xF8\x04\x0C", 4);
+//	// спорно тени
+//	WriteMemory(g_libGTASA + 0x00541BF8, (uintptr_t)"\xD3", 1);
+//	WriteMemory(g_libGTASA + 0x00541CA4, (uintptr_t)"\xD3", 1);
+//	WriteMemory(g_libGTASA + 0x00541CF6, (uintptr_t)"\x59\xF8\x04\x0C", 4);
 	//00541CF6
 
 	// nop calling CRealTimeShadowManager::ReturnRealTimeShadow from ~CPhysical
@@ -345,23 +332,6 @@ void ApplyPatches()
 
     NOP(g_libGTASA+0x00276512, 32); //CWidgetButtonEnterCar::Draw
 
-
-	//??
-	//NOP(g_libGTASA+0x002E5526, 2); // пока спорно
-
-	//
-    // disablehorn
-    //GetExitVehicle
-
-   // NOP(g_libGTASA+0x00276B9E, 23); //CWidgetButtonEnterCar::Draw
-
-//crash 2e2000
-
-
-	//NOP(g_libGTASA+0x002E5468, 9); // пока спорно
-
-
-
 }
 void ApplyInGamePatches()
 {
@@ -446,6 +416,22 @@ void ApplyInGamePatches()
 	NOP(g_libGTASA + 0x003987DC, 2);
 
 	NOP(g_libGTASA + 0x003688EC, 2); // nop ServiceAmbientGunFire
+
+
+	// Disable in-game radio
+	NOP(g_libGTASA + 0x3688DA, 2);
+	NOP(g_libGTASA + 0x368DF0, 2);
+	NOP(g_libGTASA + 0x369072, 2);
+	NOP(g_libGTASA + 0x369168, 2);
+
+	// Stop it trying to load tracks2.dat
+	NOP(g_libGTASA + 0x508F36, 2);
+
+	// Stop it trying to load tracks4.dat
+	NOP(g_libGTASA + 0x508F54, 2);
+
+    // Prevent cheats processing
+    NOP(g_libGTASA + 0x3987BA, 2);
 
 	//todo CPlayerPed::ProcessAnimGroups in the end
 }
