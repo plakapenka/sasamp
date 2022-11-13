@@ -164,7 +164,7 @@
     <TextView
         android:id="@+id/repeatLoad"
         android:textSize="@dimen/_12sdp"
-        android:visibility="gone"
+        android:visibility="invisible"
         android:textColor="@color/white"
         android:gravity="center"
         android:background="@drawable/button_red_rectangle"
@@ -176,6 +176,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:fontFamily="@font/pt_root_ui_medium" />
+
+<!--    <TextView-->
+<!--        android:id="@+id/loadingText"-->
+<!--        android:layout_width="0.0dip"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginBottom="@dimen/_10sdp"-->
+<!--        android:layout_weight="1.0"-->
+<!--        android:fontFamily="@font/roboto_medium"-->
+<!--        android:text="Загрузка файлов игры..."-->
+<!--        android:textColor="@color/white"-->
+<!--        android:textSize="@dimen/_12sdp" />-->
 
 <!--    <TextView-->
 <!--        android:id="@+id/textView159"-->

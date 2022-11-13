@@ -66,6 +66,8 @@ public class LoaderActivity extends AppCompatActivity {
 
     @Getter
     private TextView loading;
+    @Getter
+    private TextView repeatLoadButton;
 
     @Getter
     private TextView loadingPercent;
@@ -75,8 +77,6 @@ public class LoaderActivity extends AppCompatActivity {
     private TextView fileName;
     private ImageView leftButton;
     private ImageView rightButton;
-
-    private TextView repeatLoadButton;
 
     private ViewPager2 sliderView;
 
@@ -227,7 +227,7 @@ public class LoaderActivity extends AppCompatActivity {
         leftButton = (ImageView) findViewById(R.id.leftButton);
         rightButton = (ImageView) findViewById(R.id.rightButton);
         sliderView = findViewById(R.id.loaderSliderView);
-        repeatLoadButton = findViewById(R.id.repeatLoad);
+        repeatLoadButton = (TextView) findViewById(R.id.repeatLoad);
 
 
         repeatLoadButton.setOnClickListener(v -> {

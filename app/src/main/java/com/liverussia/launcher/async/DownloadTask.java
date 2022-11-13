@@ -40,6 +40,7 @@ import java.net.URI;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -116,9 +117,13 @@ public class DownloadTask implements Listener<TaskStatus> {
 
             downloadAndSaveFiles(gameFilesInfo.getFiles());
         } catch (ApiException e) {
-            onAsyncFinished(new AsyncTaskResult<>(e));
+            uiThreadPoster.post(() -> {
+                onAsyncFinished(new AsyncTaskResult<>(e));
+            });
         } catch (Exception e) {
-            onAsyncFinished(new AsyncTaskResult<>(new ApiException(ErrorContainer.DOWNLOAD_FILES_ERROR)));
+            uiThreadPoster.post(() -> {
+                onAsyncFinished(new AsyncTaskResult<>(new ApiException(ErrorContainer.DOWNLOAD_FILES_ERROR)));
+            });
         }
     }
 
@@ -143,11 +148,33 @@ public class DownloadTask implements Listener<TaskStatus> {
 
     }
 
+    @WorkerThread
+    private void downloadAndSaveFilesAfterFailed(List<FileInfo> gameFilesInfo) {
+        try {
+            Optional.ofNullable(gameFilesInfo)
+                    .orElse(Collections.emptyList())
+                    .forEach(this::downloadAndSaveFile);
+
+            uiThreadPoster.post(() -> {
+                onAsyncFinished(new AsyncTaskResult<>(TaskStatus.SUCCESS));
+            });
+        } catch (ApiException e) {
+            uiThreadPoster.post(() -> {
+                onAsyncFinished(new AsyncTaskResult<>(e));
+            });
+        } catch (Exception e) {
+            uiThreadPoster.post(() -> {
+                onAsyncFinished(new AsyncTaskResult<>(new ApiException(ErrorContainer.DOWNLOAD_FILES_ERROR)));
+            });
+        }
+    }
+
     private void downloadAndSaveFile(FileInfo fileInfo) {
         InputStream input = null;
         OutputStream output = null;
         HttpURLConnection connection = null;
         long fileLoadedSize = 0;
+        File file = null;
 
         try {
             URL url = new URL(fileInfo.getLink());
@@ -161,7 +188,7 @@ public class DownloadTask implements Listener<TaskStatus> {
             long fileLength = connection.getContentLengthLong();
             input = connection.getInputStream();
 
-            File file = new File(GAME_PATH + fileInfo.getPath().replace("files/", ""));
+            file = new File(GAME_PATH + fileInfo.getPath().replace("files/", ""));
 
             if (file.exists()) {
                 file.delete();
@@ -180,11 +207,11 @@ public class DownloadTask implements Listener<TaskStatus> {
 //                    throw new ApiException(ErrorContainer.DOWNLOAD_WAS_INTERRUPTED);
 //                }
 
-                //todo убрать
-                if (total > 52428800) {
-                    throw new UnknownHostException();
-                }
-                //todo
+//                //todo убрать 26428800
+//                if (total > 26428800) {
+//                    throw new UnknownHostException();
+//                }
+//                //todo
 
                 total += count;
                 fileLoadedSize += count;
@@ -204,11 +231,18 @@ public class DownloadTask implements Listener<TaskStatus> {
         } catch (ApiException e) {
             throw new ApiException(e);
         } catch (UnknownHostException | ConnectException | SSLException e) {
-            boolean isRemovedLoadedFile = files.remove(fileInfo);
+            boolean isDeleted = false;
 
-            if (isRemovedLoadedFile) {
+            if (file != null) {
+                if (file.exists()) {
+                    isDeleted = file.delete();
+                }
+            }
+
+            if (isDeleted) {
                 total -= fileLoadedSize;
             }
+
             throw new ApiException(ErrorContainer.INTERNET_WAS_DISABLE);
         } catch (Exception e) {
             throw new ApiException(ErrorContainer.DOWNLOAD_FILES_ERROR);
@@ -250,7 +284,7 @@ public class DownloadTask implements Listener<TaskStatus> {
     public void onAsyncFinished(AsyncTaskResult<TaskStatus> result) {
 
         if (isInternetDisableException(result.getException())) {
-
+            loaderActivity.getRepeatLoadButton().setVisibility(View.VISIBLE);
             return;
         }
 
@@ -329,6 +363,7 @@ public class DownloadTask implements Listener<TaskStatus> {
     }
 
     public void repeatLoad() {
-
+        loaderActivity.getRepeatLoadButton().setVisibility(View.INVISIBLE);
+        backgroundThreadPoster.post(() -> downloadAndSaveFilesAfterFailed(new ArrayList<>(files)));
     }
 }
