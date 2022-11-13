@@ -236,3 +236,20 @@ JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_HudManager_PressedHorn(JNIEnv *env, jobject thiz, jboolean pressed) {
     pGame->isHornActive = pressed;
 }
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_Speedometer_ClickSpedometr(JNIEnv *env, jobject thiz, jint turn_id,
+                                                      jboolean toggle) {
+    uint8_t packet = ID_CUSTOM_RPC;
+    uint8_t RPC = RPC_TURN_SIGNAL;
+    uint8_t button = turn_id;
+    uint8_t toggle_ = toggle;
+
+
+    RakNet::BitStream bsSend;
+    bsSend.Write(packet);
+    bsSend.Write(RPC);
+    bsSend.Write(button);
+    bsSend.Write(toggle_);
+    pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
+}

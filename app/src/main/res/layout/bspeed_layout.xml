@@ -8,6 +8,7 @@
 		android:layout_marginBottom="@dimen/_8sdp"
 		custom:layout_constraintBottom_toBottomOf="parent"
 		custom:layout_constraintEnd_toEndOf="parent"
+		android:clickable="true"
 		custom:layout_constraintStart_toStartOf="parent">
 
 		<ImageView
@@ -126,15 +127,19 @@
 		custom:layout_constraintTop_toTopOf="@+id/spedometr_layout" />
 
 	<ImageView
+		android:id="@+id/turn_right"
 		android:layout_width="@dimen/_60sdp"
 		android:layout_height="@dimen/_30sdp"
 		android:rotation="180"
+		android:clickable="true"
 		android:src="@drawable/speedometr_turn_off"
 		custom:layout_constraintBottom_toBottomOf="@+id/imageView12"
 		custom:layout_constraintStart_toEndOf="@+id/imageView12"
 		custom:layout_constraintTop_toTopOf="@+id/imageView12" />
 
 	<ImageView
+		android:id="@+id/turn_left"
+		android:clickable="true"
 		android:layout_width="@dimen/_60sdp"
 		android:layout_height="@dimen/_30sdp"
 		android:src="@drawable/speedometr_turn_off"
