@@ -169,9 +169,9 @@ void ScrApplyPlayerAnimation(RPCParameters *rpcParams)
 	uint8_t byteAnimNameLen;
 	char szAnimLib[256];
 	char szAnimName[256];
-	float fS;
-	bool opt1, opt2, opt3, opt4;
-	int opt5;
+	float fDelta;
+	bool loop, lockx, locky, freeze;
+	uint32_t dTime;
 	CPlayerPool *pPlayerPool = nullptr;
 	CPlayerPed *pPlayerPed = nullptr;
 
@@ -184,12 +184,12 @@ void ScrApplyPlayerAnimation(RPCParameters *rpcParams)
 	bsData.Read(szAnimLib, byteAnimLibLen);
 	bsData.Read(byteAnimNameLen);
 	bsData.Read(szAnimName, byteAnimNameLen);
-	bsData.Read(fS);
-	bsData.Read(opt1);
-	bsData.Read(opt2);
-	bsData.Read(opt3);
-	bsData.Read(opt4);
-	bsData.Read(opt5);
+	bsData.Read(fDelta);
+	bsData.Read(loop);
+	bsData.Read(lockx);
+	bsData.Read(locky);
+	bsData.Read(freeze);
+	bsData.Read(dTime);
 
 	szAnimLib[byteAnimLibLen] = '\0';
 	szAnimName[byteAnimNameLen] = '\0';
@@ -211,7 +211,7 @@ void ScrApplyPlayerAnimation(RPCParameters *rpcParams)
 		Log("%s, %s", szAnimLib, szAnimName);
 
 		if(pPlayerPed)
-			pPlayerPed->ApplyAnimation(szAnimName, szAnimLib, fS, (int)opt1, (int)opt2, (int)opt3, (int)opt4, (int)opt5);
+			pPlayerPed->ApplyAnimation(szAnimName, szAnimLib, fDelta, (int)loop, (int)lockx, (int)locky, (int)freeze, (int)dTime);
 	}
 }
 
