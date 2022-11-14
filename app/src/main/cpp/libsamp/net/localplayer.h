@@ -64,7 +64,28 @@ typedef struct _ONFOOT_SYNC_DATA
 	VECTOR vecMoveSpeed;			// +38
 	VECTOR vecSurfOffsets;			// +50
 	uint16_t wSurfInfo;				// +62
-	uint32_t dwAnimation;			// 64
+	union {
+		struct {
+			uint16_t id;
+			uint8_t  frameDelta;
+			union {
+				struct {
+					bool    loop : 1;
+					bool    lockX : 1;
+					bool    lockY : 1;
+					bool    freeze : 1;
+					uint8_t time : 2;
+					uint8_t _unused : 1;
+					bool    regular : 1;
+				};
+				uint8_t value;
+			} flags;
+		} animation;
+		struct {
+			uint16_t  dwAnimation;
+			uint16_t  dwAnimationFlags;
+		};
+	};
 } ONFOOT_SYNC_DATA;					// size = 68
 
 #pragma pack(1)
@@ -94,6 +115,7 @@ typedef struct _INCAR_SYNC_DATA
 	uint8_t byteLandingGearState;	// +56
 	VEHICLEID TrailerID;			// +57
 	float fTrainSpeed;				// +59
+
 } INCAR_SYNC_DATA;					// size = 63
 
 typedef struct _PASSENGER_SYNC_DATA
@@ -199,7 +221,7 @@ public:
 	bool IsGoEnterVehicleClick = false;
 
 private:
-	uint32_t			GetCurrentAnimationIndexFlag();
+	uint16_t			GetCurrentAnimationIndexFlag();
 
 	bool				m_bIsWasted;
 	uint8_t				m_byteCurInterior;
