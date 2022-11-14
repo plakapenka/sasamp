@@ -909,7 +909,7 @@ void CJavaWrapper::ShowAuctionManager(int itemId, int type, int price)
     //env->CallVoidMethod(this->activity, this->s_showAuctionManager, itemId, type, price);
 }
 
-void CJavaWrapper::ShowFuelStation(int type, int price1, int price2, int price3, int price4, int price5)
+void CJavaWrapper::ShowFuelStation(int type, int price1, int price2, int price3, int price4, int price5, int maxCount)
 {
     JNIEnv* env = GetEnv();
 
@@ -918,7 +918,7 @@ void CJavaWrapper::ShowFuelStation(int type, int price1, int price2, int price3,
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_showFuelStation, type, price1, price2, price3, price4, price5);
+    env->CallVoidMethod(this->activity, this->s_showFuelStation, type, price1, price2, price3, price4, price5, maxCount);
 }
 
 void CJavaWrapper::ShowGunShopManager()
@@ -1547,7 +1547,7 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 	s_showArmyGame = env->GetMethodID(nvEventClass, "showArmyGame", "(I)V");
 	s_hideArmyGame = env->GetMethodID(nvEventClass, "hideArmyGame", "()V");
 
-	s_showFuelStation = env->GetMethodID(nvEventClass, "showFuelStation", "(IIIIII)V");
+	s_showFuelStation = env->GetMethodID(nvEventClass, "showFuelStation", "(IIIIIII)V");
 
 	//s_showAuctionManager = env->GetMethodID(nvEventClass, "showAuctionManager", "(III)V");
 

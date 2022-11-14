@@ -115,7 +115,7 @@ public:
 	void ShowArmyGame(int quantity);
 	void HideArmyGame();
 
-	void ShowFuelStation(int type, int price1, int price2, int price3, int price4, int price5);
+	void ShowFuelStation(int type, int price1, int price2, int price3, int price4, int price5, int maxCount);
 
 	void ShowAuctionManager(int itemId, int type, int price);
 

@@ -1665,7 +1665,7 @@ public abstract class NvEventQueueActivity
 
     public void hideBusInfo() { runOnUiThread(() -> { mHudManager.HideBusInfo(); } ); }
 
-    public void showFuelStation(int type, int price1, int price2, int price3, int price4, int price5) { runOnUiThread(() -> { mFuelStationManager.Show(type, price1, price2, price3, price4, price5); } ); }
+    public void showFuelStation(int type, int price1, int price2, int price3, int price4, int price5, int maxCount) { runOnUiThread(() -> { mFuelStationManager.Show(type, price1, price2, price3, price4, price5, maxCount); } ); }
 
 
 }
