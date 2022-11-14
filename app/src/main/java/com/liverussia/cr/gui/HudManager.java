@@ -309,19 +309,19 @@ public class HudManager {
         {
             hud_serverlogo.setImageResource(R.drawable.peterburg);
         }
+//        else if (serverid == 2)
+//        {
+//            hud_serverlogo.setImageResource(R.drawable.novosibirsk);
+//        }
+//        else if (serverid == 2)
+//        {
+//            hud_serverlogo.setImageResource(R.drawable.samara);
+//        }
         else if (serverid == 2)
-        {
-            hud_serverlogo.setImageResource(R.drawable.novosibirsk);
-        }
-        else if (serverid == 3)
-        {
-            hud_serverlogo.setImageResource(R.drawable.samara);
-        }
-        else if (serverid == 4)
         {
             hud_serverlogo.setImageResource(R.drawable.sochi);
         }
-        else if (serverid == 5)
+        else if (serverid == 3)
         {
             hud_serverlogo.setImageResource(R.drawable.testserver);
         }
