@@ -1310,20 +1310,21 @@ void CPlayerPed::SetFightingStyle(int iStyle)
 
 // 0.3.7
 
-void CPlayerPed::ApplyAnimation( char *szAnimName, char *szAnimFile, float fT, int opt1, int opt2, int opt3, int opt4, int iUnk )
+void CPlayerPed::ApplyAnimation(char* szAnimName, char* szAnimFile, float fDelta, int bLoop, int bLockX, int bLockY, int bFreeze, int uiTime)
 {
-	if(!m_pPed) return;
-	if(!GamePool_Ped_GetAt(m_dwGTAId)) return;
 
-	if(!strcasecmp(szAnimFile,"SEX")) return;
+    if (!m_pPed) return;
+    if (!GamePool_Ped_GetAt(m_dwGTAId)) return;
 
-	if(!pGame->IsAnimationLoaded(szAnimFile))
-	{
-		pGame->RequestAnimation(szAnimFile);
-		ScriptCommand(&apply_animation,m_dwGTAId,szAnimName,szAnimFile,fT,opt1,opt2,opt3,opt4,iUnk);
-	}
+    if (!strcasecmp(szAnimFile, "SEX")) return;
+    if(!pGame->IsAnimationLoaded(szAnimFile))
+    {
+        pGame->RequestAnimation(szAnimFile);
+        ScriptCommand(&apply_animation, m_dwGTAId, szAnimName, szAnimFile, fDelta, bLoop, bLockX, bLockY, bFreeze, uiTime);
+    }
 
-    ScriptCommand(&apply_animation,m_dwGTAId,szAnimName,szAnimFile,fT,opt1,opt2,opt3,opt4,iUnk);
+
+    ScriptCommand(&apply_animation, m_dwGTAId, szAnimName, szAnimFile, fDelta, bLoop, bLockX, bLockY, bFreeze, uiTime);
 }
 
 PLAYERID CPlayerPed::FindDeathResponsiblePlayer()
