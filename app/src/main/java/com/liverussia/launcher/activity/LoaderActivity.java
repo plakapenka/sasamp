@@ -154,7 +154,7 @@ public class LoaderActivity extends AppCompatActivity {
     }
 
     private void redirectToSettings() {
-        Intent intent = new Intent(this, com.liverussia.launcher.activity.MainActivity.class);
+        Intent intent = new Intent(this, com.liverussia.launcher.activity.SplashActivity.class);
         intent.putExtras(getIntent());
         intent.putExtra(IS_AFTER_LOADING_KEY, true);
         startActivity(intent);
@@ -204,7 +204,7 @@ public class LoaderActivity extends AppCompatActivity {
     }
 
     private void performAfterDownloadFailed() {
-        startActivity(new Intent(this, com.liverussia.launcher.activity.MainActivity.class));
+        startActivity(new Intent(this, com.liverussia.launcher.activity.SplashActivity.class));
     }
 
     private void performAfterDownload() {

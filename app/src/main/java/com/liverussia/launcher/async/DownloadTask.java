@@ -91,6 +91,7 @@ public class DownloadTask implements Listener<TaskStatus> {
         progressBar.setVisibility(View.VISIBLE);
         progressBar.setIndeterminate(false);
         progressBar.setMax(100);
+        loaderActivity.getLoading().setText("Загрузка файлов игры...");
 
         if (Utils.getType() == 0) {
             backgroundThreadPoster.post(() -> downloadGameFiles());
@@ -233,10 +234,8 @@ public class DownloadTask implements Listener<TaskStatus> {
         } catch (UnknownHostException | ConnectException | SSLException e) {
             boolean isDeleted = false;
 
-            if (file != null) {
-                if (file.exists()) {
-                    isDeleted = file.delete();
-                }
+            if (file != null && file.exists()) {
+                isDeleted = file.delete();
             }
 
             if (isDeleted) {
@@ -245,7 +244,8 @@ public class DownloadTask implements Listener<TaskStatus> {
 
             throw new ApiException(ErrorContainer.INTERNET_WAS_DISABLE);
         } catch (Exception e) {
-            throw new ApiException(ErrorContainer.DOWNLOAD_FILES_ERROR);
+            //TODO исправить
+            throw new ApiException(ErrorContainer.DOWNLOAD_FILES_ERROR, e.toString());
         } finally {
             try {
                 if (output != null)
@@ -285,6 +285,7 @@ public class DownloadTask implements Listener<TaskStatus> {
 
         if (isInternetDisableException(result.getException())) {
             loaderActivity.getRepeatLoadButton().setVisibility(View.VISIBLE);
+            loaderActivity.getLoading().setText("Ошибка соединения...");
             return;
         }
 
@@ -295,7 +296,10 @@ public class DownloadTask implements Listener<TaskStatus> {
 
         if (result.getException() != null) {
             ApiException apiException = result.getException();
-            showErrorMessage(apiException);
+
+            //TODO вернуть как было
+            activityService.showBigMessage(apiException.getMessage(), loaderActivity);
+//            showErrorMessage(apiException);
             onAsyncErrorDo();
 //        } else if (isCancelled()) {
 //            showErrorMessage(new ApiException(ErrorContainer.DOWNLOAD_WAS_INTERRUPTED));
