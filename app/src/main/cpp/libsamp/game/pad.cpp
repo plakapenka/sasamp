@@ -187,13 +187,13 @@ uint32_t (*CPad__DuckJustDown)(uintptr_t thiz, uintptr_t ped);
 uint32_t CPad__DuckJustDown_hook(uintptr_t thiz, uintptr_t ped)
 {
    // int curNum = FindPlayerNumFromPedPtr(ped);
-    if(byteCurPlayer != 0 )
+	if(dwCurPlayerActor && (byteCurPlayer != 0))
     {
         return RemotePlayerKeys[byteCurPlayer].bKeys[ePadKeys::KEY_CROUCH];
     }
     else
     {
-        LocalPlayerKeys.bKeys[ePadKeys::KEY_CROUCH] = CPad__DuckJustDown(thiz, ped);
+		LocalPlayerKeys.bKeys[ePadKeys::KEY_CROUCH] = CPad__DuckJustDown(thiz, ped);
         return LocalPlayerKeys.bKeys[ePadKeys::KEY_CROUCH];
     }
 }
@@ -361,6 +361,12 @@ uint32_t CPad__GetHorn_hook(uintptr_t thiz)
 	}
 	else
 	{
+		CPlayerPed* pPlayerPed = pGame->FindPlayerPed();
+		if (pPlayerPed)
+		{
+			if (!pPlayerPed->IsInVehicle())
+				return 0;
+		}
 		// local player
 		LocalPlayerKeys.bKeys[ePadKeys::KEY_CROUCH] = pGame->isHornActive;
 		return LocalPlayerKeys.bKeys[ePadKeys::KEY_CROUCH];
@@ -716,7 +722,7 @@ void HookCPad()
 	InstallMethodHook(g_libGTASA+0x5CD204, (uintptr_t)AllVehicles__ProcessControl_hook); // CQuadBike::ProcessControl
 	InstallMethodHook(g_libGTASA+0x5CD454, (uintptr_t)AllVehicles__ProcessControl_hook); // CTrain::ProcessControl
 	InstallMethodHook(g_libGTASA + 0x005C8610, (uintptr_t)TaskUseGun);
-	InstallMethodHook(g_libGTASA + 0x005CC1D4, (uintptr_t)TaskProcess);
+	//InstallMethodHook(g_libGTASA + 0x005CC1D4, (uintptr_t)TaskProcess);
 
 	// lr/ud (onfoot)
 	SetUpHook(g_libGTASA+0x39D08C, (uintptr_t)CPad__GetPedWalkLeftRight_hook, (uintptr_t*)&CPad__GetPedWalkLeftRight);
@@ -745,7 +751,8 @@ void HookCPad()
 	SetUpHook(g_libGTASA + 0x0039E418, (uintptr_t)GetTarget_hook, (uintptr_t*)& GetTarget);
 	SetUpHook(g_libGTASA + 0x004C1748, (uintptr_t)ProcessPlayerWeapon_hook, (uintptr_t*)& ProcessPlayerWeapon);
 
-	SetUpHook(g_libGTASA+0x39E7B0, (uintptr_t)CPad__DuckJustDown_hook, (uintptr_t*)&CPad__DuckJustDown);
+	//SetUpHook(g_libGTASA+0x39E7B0, (uintptr_t)CPad__DuckJustDown_hook, (uintptr_t*)&CPad__DuckJustDown);
+	SetUpHook(g_libGTASA+0x0039E74C, (uintptr_t)CPad__DuckJustDown_hook, (uintptr_t*)&CPad__DuckJustDown);
 
 
 	// steering lr/ud (incar)
