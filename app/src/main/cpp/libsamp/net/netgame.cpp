@@ -869,14 +869,17 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			uint32_t price3;
 			uint32_t price4;
 			uint32_t price5;
+			uint32_t maxCount;
+
 			bs.Read(type);
 			bs.Read(price1);
 			bs.Read(price2);
 			bs.Read(price3);
 			bs.Read(price4);
 			bs.Read(price5);
+			bs.Read(maxCount);
 
-			g_pJavaWrapper->ShowFuelStation(type, price1, price2, price3, price4, price5);
+			g_pJavaWrapper->ShowFuelStation(type, price1, price2, price3, price4, price5, maxCount);
 
 			break;
 		}

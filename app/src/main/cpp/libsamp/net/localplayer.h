@@ -82,10 +82,11 @@ typedef struct _ONFOOT_SYNC_DATA
 			} flags;
 		} animation;
 		struct {
-			uint16_t  dwAnimation;
-			uint16_t  dwAnimationFlags;
+			uint32_t  dwAnimation;
+			//uint16_t  dwAnimationFlags;
 		};
 	};
+
 } ONFOOT_SYNC_DATA;					// size = 68
 
 #pragma pack(1)
@@ -219,9 +220,12 @@ public:
 	bool				m_bIsActive;
 	bool lToggle;
 	bool IsGoEnterVehicleClick = false;
+	bool animFlagLoop = false;
+	uint8_t animFlagTime = 0;
+	bool animFlagFreeze = false;
 
 private:
-	uint16_t			GetCurrentAnimationIndexFlag();
+	uint32_t			GetCurrentAnimationIndexFlag();
 
 	bool				m_bIsWasted;
 	uint8_t				m_byteCurInterior;

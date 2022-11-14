@@ -158,7 +158,8 @@ void CLocalPlayer::CheckWeapons()
 }
 uint32_t CLocalPlayer::GetCurrentAnimationIndexFlag()
 {
-	int dwAnim = 0;
+	uint32_t dwAnim = 0;
+
 	float fBlendData = 4.0f;
 
 	int iAnimIdx = m_pPlayerPed->GetCurrentAnimationIndex(fBlendData);
@@ -841,6 +842,12 @@ void CLocalPlayer::SendOnFootFullSyncData()
 	ofSync.wSurfInfo = 0;
 
 	ofSync.dwAnimation = GetCurrentAnimationIndexFlag();
+	ofSync.animation.flags.time = animFlagTime;
+	ofSync.animation.flags.loop = animFlagLoop;
+	ofSync.animation.flags.freeze = animFlagFreeze;
+	animFlagTime = 0;
+	animFlagLoop = false;
+	animFlagFreeze = false;
 
 	if( (GetTickCount() - m_dwLastUpdateOnFootData) > 500 || memcmp(&m_OnFootData, &ofSync, sizeof(ONFOOT_SYNC_DATA)))
 	{

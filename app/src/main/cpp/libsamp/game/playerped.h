@@ -102,7 +102,7 @@ public:
 	// 0.3.7
 	void SetRotation(float fRotation);
 	// 0.3.7
-	void ApplyAnimation( char *szAnimName, char *szAnimFile, float fT, int opt1, int opt2, int opt3, int opt4, int iUnk );
+	void ApplyAnimation( char *szAnimName, char *szAnimFile, float fT, bool opt1, bool opt2, bool opt3, bool opt4, int iUnk );
 	// 0.3.7
 	void GetBonePosition(int iBoneID, VECTOR* vecOut);
 	// roflan
@@ -122,7 +122,7 @@ public:
 
 	bool IsPlayingAnim(int idx);
 	int GetCurrentAnimationIndex(float& blendData);
-	void PlayAnimByIdx(int idx, float BlendData);
+	void PlayAnimByIdx(int idx, float BlendData, bool loop = false, bool freeze = false, uint8_t time = 0);
 
 	void SetMoveAnim(int iAnimGroup);
 
