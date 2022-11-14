@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum  InfoMessages {
     CONNECTION_TO_LAST_SERVER("Подключение к последнему выбранному серверу!"),
     CONNECTION_TO_SELECT_SERVER("Подключение к серверу: %s!"),
-    GAME_FILES_DOWNLOAD_SUCCESS("Файлы загружены. Запуск игры..."),
+    SERVER_SELECTED("Сервер выбран! Для начала игры нажмите жёлтую кнопку"),
     INSTALL_GAME_FIRST("Сначала установите игру"),
     SETTINGS_ALREADY_DEFAULT("Настройки по умолчанию уже установлены"),
     SUCCESSFULLY_SETTINGS_RESET("Вы успешно сбросили настройки!"),

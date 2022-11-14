@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.liverussia.launcher.error.apiException.ErrorContainer;
+import com.liverussia.launcher.messages.InfoMessages;
 import com.liverussia.launcher.model.News;
 
 import com.liverussia.launcher.model.Servers;
@@ -36,7 +37,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.liverussia.launcher.config.Config.LIVE_RUSSIA_RESOURCE_SERVER_URI;
 
-public class SplashActivity extends AppCompatActivity{
+public class SplashActivity extends AppCompatActivity {
+
+	private final static String IS_AFTER_LOADING_KEY = "isAfterLoading";
 
 	public static ArrayList<Servers> slist;
 	
@@ -122,7 +125,14 @@ public class SplashActivity extends AppCompatActivity{
     }
 
     private void startLauncher() {
-        startActivity(new Intent(this, MainActivity.class));
+		Intent intent = new Intent(this, MainActivity.class);
+
+		if (getIntent().getExtras() != null && getIntent().getExtras().getBoolean(IS_AFTER_LOADING_KEY)){
+			intent.putExtras(getIntent());
+			intent.putExtra(IS_AFTER_LOADING_KEY, true);
+		}
+
+		startActivity(intent);
         finish();
     }
 	

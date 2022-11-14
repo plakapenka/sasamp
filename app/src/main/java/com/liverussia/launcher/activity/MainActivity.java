@@ -18,7 +18,6 @@ import android.view.animation.Animation;
 
 import com.liverussia.cr.R;
 import com.liverussia.cr.core.Config;
-import com.liverussia.launcher.async.DownloadAsyncTask;
 import com.liverussia.launcher.dto.response.ServerImagesResponseDto;
 import com.liverussia.launcher.enums.NativeStorageElements;
 import com.liverussia.launcher.fragment.MonitoringFragment;
@@ -32,6 +31,8 @@ import com.liverussia.launcher.other.NetworkService;
 import com.liverussia.launcher.service.ActivityService;
 import com.liverussia.launcher.service.impl.ActivityServiceImpl;
 import com.liverussia.launcher.storage.NativeStorage;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 
@@ -122,6 +123,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (savedInstanceState != null && savedInstanceState.getBoolean(IS_AFTER_LOADING_KEY)) {
             activityService.showMessage(InfoMessages.DOWNLOAD_SUCCESS_INPUT_YOUR_NICKNAME.getText(), this);
             replaceFragment(settingsFragment);
+        } else if (savedInstanceState == null && getIntent().getExtras() != null && getIntent().getExtras().getBoolean(IS_AFTER_LOADING_KEY)){
+            activityService.showMessage(InfoMessages.DOWNLOAD_SUCCESS_INPUT_YOUR_NICKNAME.getText(), this);
+            onClickSettings();
         } else {
             replaceFragment(monitoringFragment);
         }
@@ -260,7 +264,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return;
         }
 
-        if (NativeStorage.getClientProperty(NativeStorageElements.NICKNAME, this) != null) {
+        String nickname = NativeStorage.getClientProperty(NativeStorageElements.NICKNAME, this);
+
+        if (StringUtils.isNotBlank(nickname)) {
             startActivity(new Intent(this, com.liverussia.cr.core.GTASA.class));
             return;
         }

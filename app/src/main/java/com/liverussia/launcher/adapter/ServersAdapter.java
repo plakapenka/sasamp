@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 
 import com.liverussia.cr.R;
 import com.liverussia.cr.core.Config;
+import com.liverussia.launcher.messages.InfoMessages;
 import com.liverussia.launcher.model.Servers;
 
 import java.io.File;
@@ -58,7 +59,7 @@ public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersV
 		holder.container.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 view.startAnimation(AnimationUtils.loadAnimation(context, R.anim.button_click));
-                Toast.makeText(context, "Для начала игры нажмите жёлтую кнопку", 0).show();
+                Toast.makeText(context, InfoMessages.SERVER_SELECTED.getText(), 0).show();
 				try {
 					File f = new File(Config.GAME_PATH + "SAMP/settings.ini");
 					if (!f.exists()) { f.createNewFile(); f.mkdirs(); }
