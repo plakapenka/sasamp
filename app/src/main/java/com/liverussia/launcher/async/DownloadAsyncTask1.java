@@ -1,5 +1,6 @@
 package com.liverussia.launcher.async;
 
+import android.app.DownloadManager;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.PowerManager;
@@ -31,22 +32,26 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.text.DecimalFormat;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
+
+import javax.net.ssl.SSLException;
+
 
 import static com.liverussia.launcher.config.Config.FILE_INFO_URL;
 import static com.liverussia.launcher.config.Config.GAME_PATH;
 import static com.liverussia.launcher.config.Config.PATH_DOWNLOADS;
 
-public class DownloadAsyncTask extends AsyncTask<String, Integer, AsyncTaskResult<AsyncTask.Status>> {
+//TODO убрать нахрен async task, а обновлять прогресс либо в том же потоке, либо в runOnUiThread
+public class DownloadAsyncTask1 extends AsyncTask<String, Integer, AsyncTaskResult<AsyncTask.Status>> {
 
     private final LoaderActivity loaderActivity;
     private final ProgressBar progressBar;
@@ -63,7 +68,7 @@ public class DownloadAsyncTask extends AsyncTask<String, Integer, AsyncTaskResul
     private boolean isCancel;
 
 
-    public DownloadAsyncTask(LoaderActivity loaderActivity, ProgressBar progressBar) {
+    public DownloadAsyncTask1(LoaderActivity loaderActivity, ProgressBar progressBar) {
         super();
         this.loaderActivity = loaderActivity;
         this.progressBar = progressBar;
@@ -159,6 +164,8 @@ public class DownloadAsyncTask extends AsyncTask<String, Integer, AsyncTaskResul
             }
         } catch (ApiException e) {
             throw new ApiException(e);
+        } catch (UnknownHostException | ConnectException | SSLException e) {
+            throw new ApiException(ErrorContainer.INTERNET_WAS_DISABLE);
         } catch (Exception e) {
             throw new ApiException(ErrorContainer.DOWNLOAD_FILES_ERROR);
         } finally {
@@ -291,12 +298,18 @@ public class DownloadAsyncTask extends AsyncTask<String, Integer, AsyncTaskResul
 
     @Override
     protected void onPostExecute(AsyncTaskResult<AsyncTask.Status> result) {
+
+//        if (isInternetDisableException(result.getException())) {
+//
+//            return;
+//        }
+
         mWakeLock.release();
         loaderActivity.getLoading().setVisibility(View.INVISIBLE);
         loaderActivity.getLoadingPercent().setVisibility(View.INVISIBLE);
         progressBar.setVisibility(View.INVISIBLE);
 
-        if (result.getException() != null ) {
+        if (result.getException() != null) {
             ApiException apiException = result.getException();
             showErrorMessage(apiException);
             onAsyncErrorDo();
@@ -305,6 +318,13 @@ public class DownloadAsyncTask extends AsyncTask<String, Integer, AsyncTaskResul
         } else if (onAsyncSuccessListener != null) {
             onAsyncSuccessListener.onSuccess();
         }
+    }
+
+    private boolean isInternetDisableException(ApiException exception) {
+        return Optional.ofNullable(exception)
+                .map(ApiException::getError)
+                .filter(ErrorContainer.INTERNET_WAS_DISABLE::equals)
+                .isPresent();
     }
 
     private void showErrorMessage(ApiException exception) {

@@ -32,6 +32,7 @@ public enum ErrorContainer {
     DOWNLOAD_FILES_ERROR(1001, "Произошла ошибка при скачивании файлов", HttpStatus.NOT_FOUND),
     DOWNLOAD_WAS_INTERRUPTED(1002, "Загрузка была прервана", HttpStatus.NOT_FOUND),
     FILE_NOT_FOUND(1003, "Файл не найден", HttpStatus.NOT_FOUND),
+    INTERNET_WAS_DISABLE(1004, "Возникли проблемы с подключением, попробуйте еще раз", HttpStatus.FORBIDDEN),
 
     OTHER(999, "Неизвестная ошибка", HttpStatus.INTERNAL_SERVER_ERROR);
 

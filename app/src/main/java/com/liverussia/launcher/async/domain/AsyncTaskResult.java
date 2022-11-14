@@ -5,11 +5,11 @@ import com.liverussia.launcher.error.apiException.ApiException;
 import lombok.Data;
 
 @Data
-public class AsyncTaskResult<T> {
-    private T result;
+public class AsyncTaskResult<Result> {
+    private Result result;
     private ApiException exception;
 
-    public AsyncTaskResult(T result) {
+    public AsyncTaskResult(Result result) {
         super();
         this.result = result;
     }
