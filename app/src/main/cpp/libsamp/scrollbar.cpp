@@ -16,27 +16,27 @@ bool CScrollbar::OnTouchEvent(int type, bool multi, int x, int y)
 	}
 	switch (type)
 	{
-	case TOUCH_PUSH:
-		if (!( (fX >= m_fX) && 
-			(fX <= m_fX + m_fWidthBox) && 
-			(fY >= m_fY) && 
-			(fY <= m_fY + m_fHeightBox) ) )
-		{
-			bMove = false;
-			return true;
-		}
+	case TOUCH_PUSH: {
+//		if (!( (fX >= m_fX) &&
+//			(fX <= m_fX + m_fWidthBox) &&
+//			(fY >= m_fY) &&
+//			(fY <= m_fY + m_fHeightBox) ) )
+//		{
+//			bMove = true;
+//			return true;
+//		}
+
 		fClickY = fY;
 		bMove = true;
 
-		return false;
-
+	}
 	case TOUCH_MOVE:
 	{
-		if (!bMove) return true;
+		if (!bMove) return false;
 		m_fY -= fClickY - y;
-
+//
 		fClickY = y;
-
+//
 		if (m_fY + m_fHeightBox > m_fDownY)
 		{
 			m_fY = m_fDownY - m_fHeightBox;
@@ -46,6 +46,7 @@ bool CScrollbar::OnTouchEvent(int type, bool multi, int x, int y)
 			m_fY = m_fUpY;
 		}
 
+
 		float fRelativeY = m_fY - m_fUpY;
 		float m_fDistance = m_fDownY - m_fUpY - m_fHeightBox;
 		if (m_fDistance == 0.0f)
@@ -54,16 +55,16 @@ bool CScrollbar::OnTouchEvent(int type, bool multi, int x, int y)
 		}
 		float m_fValue = fRelativeY / m_fDistance;
 		m_iValue = (int)((m_fValue * (100.0f / (float)m_iMaxValue)) * 100.0f);
-		return false;
+		return true;
 	}
 		
 
 	case TOUCH_POP:
 		
 		bMove = false;
-		break;
+		return false;
 	}
-	return true;
+	//return true;
 }
 
 bool CScrollbar::IsClickedOnBar(int x, int y)
