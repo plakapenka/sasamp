@@ -194,10 +194,11 @@ void ScrApplyPlayerAnimation(RPCParameters *rpcParams)
 	szAnimLib[byteAnimLibLen] = '\0';
 	szAnimName[byteAnimNameLen] = '\0';
 
-//	if(!pGame->IsAnimationLoaded(szAnimLib))
-//	{
-//		pGame->RequestAnimation(szAnimLib);
-//	}
+	if(!pGame->IsAnimationLoaded(szAnimLib))
+	{
+		pGame->RequestAnimation(szAnimLib);
+        usleep(100000);
+	}
 
 	pPlayerPool = pNetGame->GetPlayerPool();
 
