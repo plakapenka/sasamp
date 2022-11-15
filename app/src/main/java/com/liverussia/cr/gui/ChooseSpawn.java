@@ -5,6 +5,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.google.android.material.button.MaterialButton;
 import com.liverussia.cr.R;
 import com.liverussia.cr.gui.util.Utils;
 import com.nvidia.devtech.NvEventQueueActivity;
@@ -17,7 +18,7 @@ public class ChooseSpawn {
     private ImageView spawn_exit;
     private ImageView spawn_garage;
     private ImageView spawn_house;
-    private ImageView spawn_btn;
+    private MaterialButton spawn_btn;
 
     int choosespawnid, organization, station, exit, garage, house;
 
@@ -95,7 +96,7 @@ public class ChooseSpawn {
         });
 
         spawn_btn.setOnClickListener(view -> {
-            view.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.button_click));
+            //view.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.button_click));
             if (choosespawnid > 0)
             {
                 NvEventQueueActivity.getInstance().onChooseSpawnClick(choosespawnid);
