@@ -402,16 +402,6 @@ extern "C"
 		}
 	}
 
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_setNativePcMoney(JNIEnv* pEnv, jobject thiz, jboolean b)
-	{
-		if (pSettings)
-		{
-			pSettings->GetWrite().iPCMoney = b;
-		}
-
-		CGame::SetEnabledPCMoney(b);
-	}
-
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_setNativeRadarrect(JNIEnv* pEnv, jobject thiz, jboolean b)
 	{
 		if (pSettings)
@@ -1722,3 +1712,27 @@ Java_com_liverussia_cr_gui_Casino_1LuckyWheel_ClickButt(JNIEnv *env, jobject thi
 	pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
 }
 
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_ChatLineChanged(JNIEnv *env,
+																			   jobject thiz,
+																			   jint newcount) {
+	if (pSettings)
+	{
+		pSettings->GetWrite().iChatMaxMessages = newcount;
+		pChatWindow->m_bPendingReInit = true;
+	}
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_ChatFontSizeChanged(JNIEnv *env,
+																				   jobject thiz,
+																				   jint size) {
+	if (pSettings)
+	{
+		pSettings->GetWrite().fFontSize = size;
+		pChatWindow->m_bPendingReInit = true;
+	}
+}

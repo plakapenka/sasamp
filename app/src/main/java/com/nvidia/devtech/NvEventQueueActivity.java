@@ -205,7 +205,6 @@ public abstract class NvEventQueueActivity
     public native void setNativeOutfitGunsSettings(boolean b);
     public native void setNativeHpArmourText(boolean b);
     public native void setNativeRadarrect(boolean b);
-    public native void setNativePcMoney(boolean b);
     public native void setNativeSkyBox(boolean b);
     public native void setNativeHud(boolean b);
 

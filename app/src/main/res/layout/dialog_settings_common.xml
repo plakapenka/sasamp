@@ -1,4 +1,5 @@
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/settings_root_layout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -132,18 +133,6 @@
                         android:textSize="12sp" />
 
                     <androidx.appcompat.widget.SwitchCompat
-                        android:id="@+id/switch_pc_money"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
-                        android:fontFamily="@font/roboto_regular"
-                        android:text="PC вид денег"
-                        android:textColor="@android:color/white"
-                        android:textSize="12sp" />
-
-                    <androidx.appcompat.widget.SwitchCompat
                         android:id="@+id/switch_hud"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -175,18 +164,48 @@
                     android:paddingTop="5dp"
                     android:paddingRight="10dp"
                     android:paddingBottom="5dp"
-                    android:text="Интенсивность снега"
+                    android:text="Кол-о строк в чате"
                     android:textColor="@android:color/white"
                     android:textSize="12sp" />
 
                 <SeekBar
-                    android:id="@+id/hud_element_pos_x_14"
+                    android:id="@+id/chat_line_count"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:max="3"
-                    android:progress="1" />
+                    android:max="15"
+                    android:progress="7" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
+
+<!--            <androidx.appcompat.widget.LinearLayoutCompat-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:layout_marginTop="5dp"-->
+<!--                android:layout_marginBottom="5dp"-->
+<!--                android:layout_weight="0.5"-->
+<!--                android:gravity="center"-->
+<!--                android:orientation="horizontal"-->
+<!--                android:weightSum="4.0">-->
+
+<!--                <androidx.appcompat.widget.AppCompatTextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:paddingLeft="10dp"-->
+<!--                    android:paddingTop="5dp"-->
+<!--                    android:paddingRight="10dp"-->
+<!--                    android:paddingBottom="5dp"-->
+<!--                    android:text="Размер шрифта"-->
+<!--                    android:textColor="@android:color/white"-->
+<!--                    android:textSize="12sp" />-->
+
+<!--                <SeekBar-->
+<!--                    android:id="@+id/chat_font_size"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:max="40"-->
+<!--                    android:progress="30" />-->
+
+<!--            </androidx.appcompat.widget.LinearLayoutCompat>-->
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
