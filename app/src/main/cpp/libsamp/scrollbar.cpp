@@ -12,7 +12,7 @@ bool CScrollbar::OnTouchEvent(int type, bool multi, int x, int y)
 	static bool bMove = false;
 	if (!m_bDrawState)
 	{
-		return true;
+		return false;
 	}
 	switch (type)
 	{
@@ -28,7 +28,7 @@ bool CScrollbar::OnTouchEvent(int type, bool multi, int x, int y)
 
 		fClickY = fY;
 		bMove = true;
-
+        break;
 	}
 	case TOUCH_MOVE:
 	{
@@ -49,7 +49,7 @@ bool CScrollbar::OnTouchEvent(int type, bool multi, int x, int y)
 
 		float fRelativeY = m_fY - m_fUpY;
 		float m_fDistance = m_fDownY - m_fUpY - m_fHeightBox;
-		if (m_fDistance == 0.0f)
+		if (m_fDistance < 0.1f)
 		{
 			return false;
 		}
@@ -59,11 +59,13 @@ bool CScrollbar::OnTouchEvent(int type, bool multi, int x, int y)
 	}
 		
 
-	case TOUCH_POP:
-		
+	case TOUCH_POP: {
 		bMove = false;
-		return false;
+        break;
+    }
+		//return false;
 	}
+	return false;
 	//return true;
 }
 

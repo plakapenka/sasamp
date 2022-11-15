@@ -373,7 +373,7 @@ bool CKeyBoard::OnTouchEvent(int type, bool multi, int x, int y)
 		if (x >= m_fChatPosX && x <= m_fChatPosX + m_fChatSizeX &&
 			y >= m_fChatPosY && y <= m_fChatPosY + m_fChatSizeY) {
 			if(pScrollbar->OnTouchEvent(type, multi, x, y)){
-				return false;
+				return true;
 			}
 		}
 	}
