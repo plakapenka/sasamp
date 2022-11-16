@@ -259,7 +259,7 @@ public class HudManager {
     {
         activity.runOnUiThread(() -> {
             hud_money.setText(formatter.format(money));
-            hud_main.invalidate();
+            hud_money.invalidate();
         });
     }
     public void UpdateWanted(int wantedLVL)

@@ -172,12 +172,14 @@
                 android:layout_marginStart="25dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="25dp"
+                android:tint="@color/gray"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView5"
                 app:srcCompat="@drawable/auth_vk" />
 
             <ImageView
+                android:tint="@color/gray"
                 android:id="@+id/imageView11"
                 android:layout_width="0dp"
                 android:layout_height="35dp"
@@ -221,7 +223,7 @@
                     android:fontFamily="@font/roboto_bold"
                     android:hint="Введите пароль"
                     android:imeOptions="flagNoFullscreen|actionSend"
-                    android:inputType="textShortMessage"
+                    android:inputType="textPassword"
                     android:lines="1"
                     android:maxLines="1"
                     android:paddingStart="@dimen/_30sdp"
@@ -280,12 +282,12 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
-                android:id="@+id/textView6"
+                android:id="@+id/recovery_password"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:fontFamily="@font/roboto_medium"
-                android:text="Восстановить пароль"
+                android:text="@string/recovery_pass"
                 android:textColor="#5186A0"
                 android:textSize="10sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -297,12 +299,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="25dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="16dp"
                 android:fontFamily="@font/montserrat_bold"
                 android:text="Автовход"
                 android:textColor="#FFFFFF"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView6" />
+                app:layout_constraintTop_toBottomOf="@+id/recovery_password" />
 
             <ImageView
                 android:layout_width="20dp"
@@ -313,13 +315,14 @@
                 app:layout_constraintTop_toTopOf="@+id/textView8"
                 app:srcCompat="@drawable/auth_circle" />
 
-            <ImageView
-                android:id="@+id/imageView15"
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switcher_autologin"
                 android:layout_width="70dp"
                 android:layout_height="60dp"
-                android:layout_marginEnd="10dp"
+
                 app:layout_constraintBottom_toBottomOf="@+id/textView8"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/constraintLayout4"
                 app:layout_constraintTop_toTopOf="@+id/textView8"
                 app:srcCompat="@drawable/toggle_off" />
 
@@ -338,7 +341,7 @@
                 app:backgroundTint="#004261"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageView15" />
+                app:layout_constraintTop_toBottomOf="@+id/switcher_autologin" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

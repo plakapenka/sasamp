@@ -5,7 +5,10 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.View;
 import android.view.animation.AnimationUtils;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -14,6 +17,7 @@ import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.liverussia.cr.R;
 import com.liverussia.cr.gui.util.Utils;
 import com.nvidia.devtech.NvEventQueueActivity;
@@ -30,8 +34,13 @@ public class AuthorizationManager {
     private TextView auth_infotitle;
     private TextView auth_info;
     private TextView auth_nick;
+    private SwitchMaterial switcher_autologin;
+    private TextView recovery_password;
+
+    public native void ToggleAutoLogin(boolean toggle);
 
     public AuthorizationManager(Activity activity){
+        recovery_password = activity.findViewById(R.id.recovery_password);
         br_authorization_layout = activity.findViewById(R.id.br_authorization_layout);
         auth_right1 = activity.findViewById(R.id.auth_right1);
         auth_right2 = activity.findViewById(R.id.auth_right2);
@@ -42,9 +51,20 @@ public class AuthorizationManager {
         auth_infotitle = activity.findViewById(R.id.auth_infotitle);
         auth_info = activity.findViewById(R.id.auth_info);
         auth_nick = activity.findViewById(R.id.auth_nick);
+        switcher_autologin = activity.findViewById(R.id.switcher_autologin);
+
+        switcher_autologin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                ToggleAutoLogin(b);
+            }
+        });
+        recovery_password.setOnClickListener(view -> {
+            //
+        });
 
         auth_play.setOnClickListener(view -> {
-            view.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.button_click));
+           // view.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.button_click));
             if (auth_password.getText().length() > 5)
             {
                 NvEventQueueActivity.getInstance().onLoginClick(auth_password.getText().toString());
@@ -61,8 +81,7 @@ public class AuthorizationManager {
         auth_btn.setOnClickListener(view -> {
             Utils.HideLayout(auth_right1, false);
             Utils.ShowLayout(auth_right2, false);
-            auth_infotitle.setText("Для начала игры заполните все поля");
-            auth_info.setText("• Пароль должен состоять от 6 до 16 символов\n\n• Пароль чувствителен к регистру");
+            auth_infotitle.setText("Введите пароль, чтобы войти в игру.");
         });
 
         auth_password.addTextChangedListener(new TextWatcher() {
@@ -88,7 +107,14 @@ public class AuthorizationManager {
         Utils.HideLayout(br_authorization_layout, false);
     }
 
-    public void Show(String nick, int id) {
+    public void Show(String nick, int id, boolean ip_match, boolean toggle_autologin, boolean email_acvive) {
+        if(email_acvive) {
+            recovery_password.setVisibility(View.VISIBLE);
+        }
+        else{
+            recovery_password.setVisibility(View.GONE);
+        }
+        switcher_autologin.setChecked(toggle_autologin);
         String strnickid = String.format("%s [%d]", nick, id);
         auth_nick.setText(strnickid);
         Utils.ShowLayout(br_authorization_layout, false);

@@ -4,12 +4,14 @@
 #include "..//util/CJavaWrapper.h"
 #include "netgame.h"
 #include "java_systems/hud.h"
+#include "CSettings.h"
 #include <thread>
 #include <chrono>
 
 extern CWidgetManager* g_pWidgetManager;
 extern CNetGame *pNetGame;
 extern CHUD *pHud;
+extern CSettings* pSettings;
 
 #include "../chatwindow.h"
 
@@ -435,14 +437,28 @@ void CNetGame::Packet_AuthRPC(Packet *p)
 	{
 		case RPC_TOGGLE_LOGIN:
 		{
-			uint32_t toggle;
+			uint32_t toggle, ip_match, timepassed, email_acvive;
 			bs.Read(toggle);
+			bs.Read(ip_match);
+			bs.Read(timepassed);
+			bs.Read(email_acvive);
+
 			if (toggle == 1)
 			{
 				CPlayerPool *pPlayerPool = GetPlayerPool();
 				if (pPlayerPool)
 				{
-					g_pJavaWrapper->ShowAuthorization(pPlayerPool->GetLocalPlayerName(), pPlayerPool->GetLocalPlayerID());
+					g_pJavaWrapper->ShowAuthorization(pPlayerPool->GetLocalPlayerName(),
+													  pPlayerPool->GetLocalPlayerID(),
+													  (bool)ip_match,
+													  (bool)pSettings->GetReadOnly().szAutoLogin,
+													  (bool)email_acvive
+													  );
+
+					if(pSettings->GetReadOnly().szAutoLogin && ip_match && !timepassed)
+					{
+						SendLoginPacket(pSettings->GetReadOnly().player_password);
+					}
 				}
 			}
 			else if (toggle == 0)
@@ -1533,7 +1549,7 @@ void CNetGame::SendCustomCasinoChipPacket(uint8_t packet, uint8_t RPC, uint8_t t
 	GetRakClient()->Send(&bsSend, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0);
 }
 
-void CNetGame::SendLoginPacket(char *password)
+void CNetGame::SendLoginPacket(const char password[])
 {
 	uint8_t packet = PACKET_AUTH;
 	uint8_t RPC = RPC_TOGGLE_LOGIN;
@@ -1544,6 +1560,9 @@ void CNetGame::SendLoginPacket(char *password)
 	bsSend.Write(bytePasswordLen);
 	bsSend.Write(password, bytePasswordLen);
 	GetRakClient()->Send(&bsSend, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0);
+
+	strcpy(pSettings->GetWrite().player_password, password);
+	pSettings->Save();
 }
 
 void CNetGame::SendRegisterPacket(char *password, char *mail, uint8_t sex, uint8_t skin)

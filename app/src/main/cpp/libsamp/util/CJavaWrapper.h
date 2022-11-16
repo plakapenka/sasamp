@@ -145,7 +145,7 @@ public:
 	void HideNotification();
 	void ShowMenu();
 
-	void ShowAuthorization(char *nick, int id);
+	void ShowAuthorization(char *nick, int id, bool ip_match, bool toggleAutoLogin, bool email_acvive);
 	void HideAuthorization();
 
 	void ShowDeathInfo(std::string nick, int id);

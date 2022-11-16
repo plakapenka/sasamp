@@ -1603,7 +1603,11 @@ public abstract class NvEventQueueActivity
 
     public void hideNotification() { runOnUiThread(() -> mNotification.HideNotification(true)); }
 
-    public void showAuthorization(String nick, int id) { runOnUiThread(() -> { mAuthorizationManager.Show(nick, id); }); }
+    public void showAuthorization(String nick, int id, boolean ip_match, boolean toggle_autologin, boolean email_acvive) {
+        runOnUiThread(() -> {
+            mAuthorizationManager.Show(nick, id, ip_match, toggle_autologin, email_acvive);
+        });
+    }
 
     public void hideAuthorization() { runOnUiThread(() -> { mAuthorizationManager.Hide(); }); }
 

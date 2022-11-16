@@ -189,7 +189,8 @@ uint32_t CPad__DuckJustDown_hook(uintptr_t thiz, uintptr_t ped)
    // int curNum = FindPlayerNumFromPedPtr(ped);
 	if(dwCurPlayerActor && (byteCurPlayer != 0))
     {
-        return RemotePlayerKeys[byteCurPlayer].bKeys[ePadKeys::KEY_CROUCH];
+		return 0;
+        //return RemotePlayerKeys[byteCurPlayer].bKeys[ePadKeys::KEY_CROUCH];
     }
     else
     {

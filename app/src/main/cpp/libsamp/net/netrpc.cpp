@@ -616,7 +616,7 @@ void ConnectionRejected(RPCParameters *rpcParams)
 	else if(byteRejectReason == REJECT_REASON_BAD_NICKNAME)
 	{
 		pChatWindow->AddInfoMessage("СОЕДИНЕНИЕ ОТКЛОНЕНО. НЕПРАВИЛЬНЫЙ НИК!");
-		pChatWindow->AddInfoMessage("Пожалуйста, выберите другой ник из 3-16 символов");
+		pChatWindow->AddInfoMessage("Пожалуйста, выберите другой ник из 5-20 символов");
 		pChatWindow->AddInfoMessage("содержащий только A-Z a-z 0-9 [] или _");
 		pChatWindow->AddInfoMessage("Используйте /quit для выхода или нажмите ESC и выберите Выйти из игры");
 	}
