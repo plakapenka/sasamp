@@ -154,7 +154,7 @@ public class FuelStationManager {
         Utils.HideLayout(br_fuelstation_layout, false);
     }
 
-    public void Show(int type, int price1, int price2, int price3, int price4, int price5) {
+    public void Show(int type, int price1, int price2, int price3, int price4, int price5, int maxCount) {
         fuelprice1 = price1;
         fuelprice2 = price2;
         fuelprice3 = price3;
@@ -179,6 +179,7 @@ public class FuelStationManager {
 
         fuelstation_buyinfo.setText("0 р");
         fuelstation_literinfo.setText("0 л");
+        fuelstation_bar.setMax(maxCount);
         fuelstation_bar.setProgress(0);
 
         fuelstation_active = type;

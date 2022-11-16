@@ -6,7 +6,8 @@ struct stSettings
 {
 	// client
 	char szNickName[MAX_PLAYER_NAME+1];
-	char szPassword[MAX_SETTINGS_STRING+1];
+	char player_password[66];
+	char szPassword[66];
 	int szAutoLogin;
 	int szServer;
 	int szDebug;

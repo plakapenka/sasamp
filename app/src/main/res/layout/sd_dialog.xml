@@ -133,8 +133,7 @@
                     android:id="@+id/sd_dialog_tablist_row"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingStart="@dimen/_9sdp"
-                    android:paddingEnd="@dimen/_17sdp"
+                    android:paddingStart="6dp"
                     android:paddingBottom="@dimen/_3sdp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">

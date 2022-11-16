@@ -745,7 +745,7 @@ extern CChatWindow* pChatWindow;
 
 void CPlayerPed::ClearAnimations()
 {
-	ApplyAnimation("crry_prtial", "CARRY", 4.0, 0, 0, 0, 0, 0);
+	//ApplyAnimation("crry_prtial", "CARRY", 4.0, 0, 0, 0, 0, 0);
 	ClearAllTasks();
 	MATRIX4X4 mat;
 	GetMatrix(&mat);
@@ -1108,7 +1108,7 @@ int CPlayerPed::GetCurrentAnimationIndex(float& blendData)
 	return 0;
 }
 
-void CPlayerPed::PlayAnimByIdx(int idx, float BlendData)
+void CPlayerPed::PlayAnimByIdx(int idx, float BlendData, bool loop, bool freeze, uint8_t time)
 {
 	
 	if (!idx)
@@ -1154,7 +1154,7 @@ void CPlayerPed::PlayAnimByIdx(int idx, float BlendData)
 
 	strcpy(&pszAnim[0], szAnim.c_str());
 	strcpy(&pszBlock[0], szBlock.c_str());
-	ApplyAnimation(&pszAnim[0], &pszBlock[0], BlendData, 0, 1, 1, 0, 0);
+	ApplyAnimation(&pszAnim[0], &pszBlock[0], BlendData, loop, 1, 1, freeze, time);
 }
 
 bool IsBlendAssocGroupLoaded(int iGroup)
@@ -1310,7 +1310,7 @@ void CPlayerPed::SetFightingStyle(int iStyle)
 
 // 0.3.7
 
-void CPlayerPed::ApplyAnimation(char* szAnimName, char* szAnimFile, float fDelta, int bLoop, int bLockX, int bLockY, int bFreeze, int uiTime)
+void CPlayerPed::ApplyAnimation(char* szAnimName, char* szAnimFile, float fDelta, bool bLoop, bool bLockX, bool bLockY, bool bFreeze, int uiTime)
 {
 
     if (!m_pPed) return;
@@ -1320,9 +1320,8 @@ void CPlayerPed::ApplyAnimation(char* szAnimName, char* szAnimFile, float fDelta
     if(!pGame->IsAnimationLoaded(szAnimFile))
     {
         pGame->RequestAnimation(szAnimFile);
-        ScriptCommand(&apply_animation, m_dwGTAId, szAnimName, szAnimFile, fDelta, bLoop, bLockX, bLockY, bFreeze, uiTime);
+     //   ScriptCommand(&apply_animation, m_dwGTAId, szAnimName, szAnimFile, fDelta, bLoop, bLockX, bLockY, bFreeze, uiTime);
     }
-
 
     ScriptCommand(&apply_animation, m_dwGTAId, szAnimName, szAnimFile, fDelta, bLoop, bLockX, bLockY, bFreeze, uiTime);
 }

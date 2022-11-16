@@ -205,7 +205,6 @@ public abstract class NvEventQueueActivity
     public native void setNativeOutfitGunsSettings(boolean b);
     public native void setNativeHpArmourText(boolean b);
     public native void setNativeRadarrect(boolean b);
-    public native void setNativePcMoney(boolean b);
     public native void setNativeSkyBox(boolean b);
     public native void setNativeHud(boolean b);
 
@@ -1604,7 +1603,11 @@ public abstract class NvEventQueueActivity
 
     public void hideNotification() { runOnUiThread(() -> mNotification.HideNotification(true)); }
 
-    public void showAuthorization(String nick, int id) { runOnUiThread(() -> { mAuthorizationManager.Show(nick, id); }); }
+    public void showAuthorization(String nick, int id, boolean ip_match, boolean toggle_autologin, boolean email_acvive) {
+        runOnUiThread(() -> {
+            mAuthorizationManager.Show(nick, id, ip_match, toggle_autologin, email_acvive);
+        });
+    }
 
     public void hideAuthorization() { runOnUiThread(() -> { mAuthorizationManager.Hide(); }); }
 
@@ -1665,7 +1668,7 @@ public abstract class NvEventQueueActivity
 
     public void hideBusInfo() { runOnUiThread(() -> { mHudManager.HideBusInfo(); } ); }
 
-    public void showFuelStation(int type, int price1, int price2, int price3, int price4, int price5) { runOnUiThread(() -> { mFuelStationManager.Show(type, price1, price2, price3, price4, price5); } ); }
+    public void showFuelStation(int type, int price1, int price2, int price3, int price4, int price5, int maxCount) { runOnUiThread(() -> { mFuelStationManager.Show(type, price1, price2, price3, price4, price5, maxCount); } ); }
 
 
 }

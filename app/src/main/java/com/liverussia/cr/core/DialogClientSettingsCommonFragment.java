@@ -25,9 +25,12 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
     private SwitchCompat mSwitchOutfit;
     private SwitchCompat mSwitchHpArmour;
     private SwitchCompat mSwitchRadarrect;
-    private SwitchCompat mSwitchPCMoney;
     private SwitchCompat mSwitchSkyBox;
     private SwitchCompat mSwitchHud;
+    private SeekBar chat_line_count;
+    private SeekBar chat_font_size;
+
+    public native void ChatFontSizeChanged(int size);
 
     private NvEventQueueActivity mContext = null;
 
@@ -39,6 +42,7 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
     private HashMap<ViewGroup, Drawable> mOldDrawables;
 
     private ViewGroup mParentView = null;
+    public native void ChatLineChanged(int newcount);
 
     public static DialogClientSettingsCommonFragment createInstance(String txt)
     {
@@ -80,9 +84,38 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
         mSwitchHpArmour = mRootView.findViewById(R.id.switch_info_bar);
         mSwitchOutfit = mRootView.findViewById(R.id.switch_outfit_weapons);
         mSwitchRadarrect = mRootView.findViewById(R.id.switch_radar_rect);
-        mSwitchPCMoney = mRootView.findViewById(R.id.switch_pc_money);
         mSwitchSkyBox = mRootView.findViewById(R.id.switch_skybox);
         mSwitchHud = mRootView.findViewById(R.id.switch_hud);
+        chat_line_count = mRootView.findViewById(R.id.chat_line_count);
+//        chat_font_size = mRootView.findViewById(R.id.chat_font_size);
+
+//        chat_font_size.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+//            @Override
+//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//                ChatFontSizeChanged(progress);
+//            }
+//            @Override public void onStartTrackingTouch(SeekBar seekBar) {
+//
+//            }
+//
+//            @Override public void onStopTrackingTouch(SeekBar seekBar) {
+//
+//            }
+//        });
+
+        chat_line_count.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                ChatLineChanged(progress);
+            }
+            @Override public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
         getValues();
         setSeekBarListeners();
@@ -123,13 +156,6 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 mContext.setNativeRadarrect(b);
-            }
-        });
-
-        mSwitchPCMoney.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                mContext.setNativePcMoney(b);
             }
         });
 
@@ -234,7 +260,6 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
         mSwitchFPSCounter.setChecked(mContext.getNativeFpsCounterSettings());
         mSwitchHpArmour.setChecked(mContext.getNativeHpArmourText());
         mSwitchOutfit.setChecked(mContext.getNativeOutfitGunsSettings());
-        mSwitchPCMoney.setChecked(mContext.getNativePcMoney());
         mSwitchRadarrect.setChecked(mContext.getNativeRadarrect());
         mSwitchSkyBox.setChecked(mContext.getNativeSkyBox());
         mSwitchHud.setChecked(mContext.getNativeHud());

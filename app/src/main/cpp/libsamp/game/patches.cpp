@@ -222,6 +222,13 @@ void ApplyPatches()
 	// nop calling CRealTimeShadowManager::ReturnRealTimeShadow from ~CPhysical
 	NOP(g_libGTASA + 0x3A019C, 2);
 
+	NOP(g_libGTASA + 0x0054D720, 2); //CMotionBlurStreaks::Update
+	NOP(g_libGTASA + 0x00398A4C, 2); // CEntryExitManager::Update
+	NOP(g_libGTASA + 0x00398A50, 2); // CStuntJumpManager::Update
+	NOP(g_libGTASA + 0x0039893E, 2); // CGangWars::Update(void)
+	NOP(g_libGTASA + 0x0039B394, 2); // CCamera::RenderMotionBlur(void)
+
+
 	// Fix shadows crash (thx R*)
 	UnFuck(g_libGTASA + 0x0039B2C4);
 	NOP(g_libGTASA + 0x0039B2C4, 2);

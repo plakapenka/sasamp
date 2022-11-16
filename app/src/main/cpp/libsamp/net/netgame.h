@@ -136,7 +136,7 @@ public:
 	void SendCustomPacket(uint8_t packet, uint8_t RPC, uint8_t Quantity);
 	void SendCustomCasinoChipPacket(uint8_t packet, uint8_t RPC, uint8_t type, uint8_t button, uint32_t money);
 	void SendCustomPacketFuelData(uint8_t packet, uint8_t RPC, uint8_t fueltype, uint32_t fuel);
-	void SendLoginPacket(char *password);
+	void SendLoginPacket(const char password[]);
 	void SendCheckClientPacket(const char password[]);
 	void SendSpeedTurnPacket(uint8_t turnId, uint8_t state);
 	void SendRegisterPacket(char *password, char *mail, uint8_t sex, uint8_t skin);

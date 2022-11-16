@@ -976,7 +976,10 @@ void CRemotePlayer::HandleAnimations()
 	{
 		m_usPlayingAnimIdx = 0;
 		// we have to reset anim
-		m_pPlayerPed->PlayAnimByIdx(0, 4.0f);
+		m_pPlayerPed->PlayAnimByIdx(0, 4.0f,
+									m_ofSync.animation.flags.loop,
+									m_ofSync.animation.flags.freeze
+									);
 		m_bWasSettedFlag = false;
 	}
 }

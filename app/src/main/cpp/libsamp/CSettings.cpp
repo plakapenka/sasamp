@@ -52,6 +52,7 @@ void CSettings::Save(int iIgnoreCategory)
 
 	ini_table_create_entry(config, "client", "name", m_Settings.szNickName);
 	ini_table_create_entry(config, "client", "password", m_Settings.szPassword);
+	ini_table_create_entry(config, "client", "player_password", m_Settings.player_password);
 	
 	ini_table_create_entry_as_int(config, "client", "autologin", m_Settings.szAutoLogin);
 	
@@ -211,10 +212,13 @@ void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 
 	snprintf(m_Settings.szNickName, sizeof(m_Settings.szNickName), "__android_%d%d", rand() % 1000, rand() % 1000);
 	memset(m_Settings.szPassword, 0, sizeof(m_Settings.szPassword));
+			memset(m_Settings.player_password, 0, sizeof(m_Settings.player_password));
 	snprintf(m_Settings.szFont, sizeof(m_Settings.szFont), "visby-round-cf-extra-bold.ttf");
 
 	const char *szName = ini_table_get_entry(config, "client", "name");
-	const char *szPassword = ini_table_get_entry(config, "client", "password");
+	const char *szPassword = ini_table_get_entry(config, "client", "password");\
+	const char *pPassword = ini_table_get_entry(config, "client", "player_password");
+
 	m_Settings.szAutoLogin = ini_table_get_entry_as_int(config, "client", "autologin", 0);
 	m_Settings.szServer = ini_table_get_entry_as_int(config, "client", "server", 0);
 	m_Settings.szDebug = ini_table_get_entry_as_int(config, "client", "debug", 0);
@@ -224,6 +228,10 @@ void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 
 	const char *szFontName = ini_table_get_entry(config, "gui", "Font");
 
+	if(pPassword)
+	{
+		strcpy(m_Settings.player_password, pPassword);
+	}
 	if (szName)
 	{
 		strcpy(m_Settings.szNickName, szName);
@@ -240,6 +248,7 @@ void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 	ClearBackslashN(m_Settings.szNickName, sizeof(m_Settings.szNickName));
 	ClearBackslashN(m_Settings.szPassword, sizeof(m_Settings.szPassword));
 	ClearBackslashN(m_Settings.szFont, sizeof(m_Settings.szFont));
+	ClearBackslashN(m_Settings.player_password, sizeof(m_Settings.player_password));
 
 	if (szNickName)
 	{
@@ -334,4 +343,14 @@ void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 	}
 
 	ini_table_destroy(config);
+}
+
+extern CSettings* pSettings;
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_AuthorizationManager_ToggleAutoLogin(JNIEnv *env, jobject thiz,
+																jboolean toggle) {
+	pSettings->GetWrite().szAutoLogin = toggle;
+	pSettings->Save();
 }

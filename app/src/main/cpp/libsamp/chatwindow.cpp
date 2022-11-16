@@ -468,13 +468,6 @@ void CChatWindow::Render()
 		}
 		pScrollbar->Draw();
 	}
-	if (false)
-	{
-		ImGui::GetOverlayDrawList()->AddRect(
-			ImVec2(m_fChatPosX, m_fChatPosY),
-			ImVec2(m_fChatPosX + m_fChatSizeX, m_fChatPosY + m_fChatSizeY),
-			IM_COL32_BLACK);
-	}
 
 	//ImVec2 pos = ImVec2(m_fChatPosX, m_fChatPosY + m_fChatSizeY);
 	if (!pScrollbar)

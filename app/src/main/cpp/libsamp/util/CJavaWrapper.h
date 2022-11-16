@@ -115,7 +115,7 @@ public:
 	void ShowArmyGame(int quantity);
 	void HideArmyGame();
 
-	void ShowFuelStation(int type, int price1, int price2, int price3, int price4, int price5);
+	void ShowFuelStation(int type, int price1, int price2, int price3, int price4, int price5, int maxCount);
 
 	void ShowAuctionManager(int itemId, int type, int price);
 
@@ -145,7 +145,7 @@ public:
 	void HideNotification();
 	void ShowMenu();
 
-	void ShowAuthorization(char *nick, int id);
+	void ShowAuthorization(char *nick, int id, bool ip_match, bool toggleAutoLogin, bool email_acvive);
 	void HideAuthorization();
 
 	void ShowDeathInfo(std::string nick, int id);

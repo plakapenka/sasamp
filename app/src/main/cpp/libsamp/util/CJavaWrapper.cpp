@@ -402,16 +402,6 @@ extern "C"
 		}
 	}
 
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_setNativePcMoney(JNIEnv* pEnv, jobject thiz, jboolean b)
-	{
-		if (pSettings)
-		{
-			pSettings->GetWrite().iPCMoney = b;
-		}
-
-		CGame::SetEnabledPCMoney(b);
-	}
-
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_setNativeRadarrect(JNIEnv* pEnv, jobject thiz, jboolean b)
 	{
 		if (pSettings)
@@ -824,7 +814,7 @@ extern "C"
 		const char *inputPassword = pEnv->GetStringUTFChars(password, nullptr);
 
 		if(pNetGame) {
-			pNetGame->SendLoginPacket((char*)inputPassword);
+			pNetGame->SendLoginPacket(inputPassword);
 		}
 
 		Log("onAuthPlayClick: inputPassword - %s", inputPassword);
@@ -909,7 +899,7 @@ void CJavaWrapper::ShowAuctionManager(int itemId, int type, int price)
     //env->CallVoidMethod(this->activity, this->s_showAuctionManager, itemId, type, price);
 }
 
-void CJavaWrapper::ShowFuelStation(int type, int price1, int price2, int price3, int price4, int price5)
+void CJavaWrapper::ShowFuelStation(int type, int price1, int price2, int price3, int price4, int price5, int maxCount)
 {
     JNIEnv* env = GetEnv();
 
@@ -918,7 +908,7 @@ void CJavaWrapper::ShowFuelStation(int type, int price1, int price2, int price3,
 		Log("No env");
 		return;
 	}
-    env->CallVoidMethod(this->activity, this->s_showFuelStation, type, price1, price2, price3, price4, price5);
+    env->CallVoidMethod(this->activity, this->s_showFuelStation, type, price1, price2, price3, price4, price5, maxCount);
 }
 
 void CJavaWrapper::ShowGunShopManager()
@@ -1418,7 +1408,7 @@ void CJavaWrapper::HideRegistration()
 	env->CallVoidMethod(this->activity, this->s_hideRegistration);
 }
 
-void CJavaWrapper::ShowAuthorization(char *nick, int id) 
+void CJavaWrapper::ShowAuthorization(char *nick, int id, bool ip_match, bool toggleAutoLogin, bool email_acvive)
 {
 	JNIEnv* env = GetEnv();
 
@@ -1427,16 +1417,9 @@ void CJavaWrapper::ShowAuthorization(char *nick, int id)
 		Log("No env");
 		return;
 	}
+	jstring jnick = env->NewStringUTF( nick );
 
-	jclass strClass = env->FindClass("java/lang/String");
-    jmethodID ctorID = env->GetMethodID(strClass, "<init>", "([BLjava/lang/String;)V");
-    jstring encoding = env->NewStringUTF("UTF-8");
-
-	jbyteArray bytes = env->NewByteArray(strlen(nick));
-    env->SetByteArrayRegion(bytes, 0, strlen(nick), (jbyte*)nick);
-    jstring jnick = (jstring) env->NewObject(strClass, ctorID, bytes, encoding);
-
-	env->CallVoidMethod(this->activity, this->s_showAuthorization, jnick, id);
+	env->CallVoidMethod(this->activity, this->s_showAuthorization, jnick, id, ip_match, toggleAutoLogin, email_acvive);
 }
 
 void CJavaWrapper::HideAuthorization() 
@@ -1547,7 +1530,7 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 	s_showArmyGame = env->GetMethodID(nvEventClass, "showArmyGame", "(I)V");
 	s_hideArmyGame = env->GetMethodID(nvEventClass, "hideArmyGame", "()V");
 
-	s_showFuelStation = env->GetMethodID(nvEventClass, "showFuelStation", "(IIIIII)V");
+	s_showFuelStation = env->GetMethodID(nvEventClass, "showFuelStation", "(IIIIIII)V");
 
 	//s_showAuctionManager = env->GetMethodID(nvEventClass, "showAuctionManager", "(III)V");
 
@@ -1576,7 +1559,7 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 	s_hideNotification = env->GetMethodID(nvEventClass, "hideNotification", "()V");
 	s_showMenu = env->GetMethodID(nvEventClass, "showMenu", "()V");
 
-	s_showAuthorization = env->GetMethodID(nvEventClass, "showAuthorization", "(Ljava/lang/String;I)V");
+	s_showAuthorization = env->GetMethodID(nvEventClass, "showAuthorization", "(Ljava/lang/String;IZZZ)V");
 	s_hideAuthorization = env->GetMethodID(nvEventClass, "hideAuthorization", "()V");
 
 	s_showRegistration = env->GetMethodID(nvEventClass, "showRegistration", "(Ljava/lang/String;I)V");
@@ -1722,3 +1705,27 @@ Java_com_liverussia_cr_gui_Casino_1LuckyWheel_ClickButt(JNIEnv *env, jobject thi
 	pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
 }
 
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_ChatLineChanged(JNIEnv *env,
+																			   jobject thiz,
+																			   jint newcount) {
+	if (pSettings)
+	{
+		pSettings->GetWrite().iChatMaxMessages = newcount;
+		pChatWindow->m_bPendingReInit = true;
+	}
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_ChatFontSizeChanged(JNIEnv *env,
+																				   jobject thiz,
+																				   jint size) {
+	if (pSettings)
+	{
+		pSettings->GetWrite().fFontSize = size;
+		pChatWindow->m_bPendingReInit = true;
+	}
+}
