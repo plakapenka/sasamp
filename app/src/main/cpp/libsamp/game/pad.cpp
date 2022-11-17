@@ -183,20 +183,17 @@ uint32_t CPad__SwimJumpJustDown_hook(uintptr_t thiz)
 	}
 }
 
-uint32_t (*CPad__DuckJustDown)(uintptr_t thiz, uintptr_t ped);
-uint32_t CPad__DuckJustDown_hook(uintptr_t thiz, uintptr_t ped)
+uint32_t (*CPad__DuckJustDown)(uintptr_t thiz, int unk);
+uint32_t CPad__DuckJustDown_hook(uintptr_t thiz, int unk)
 {
-   // int curNum = FindPlayerNumFromPedPtr(ped);
 	if(dwCurPlayerActor && (byteCurPlayer != 0))
-    {
+	{
 		return 0;
-        //return RemotePlayerKeys[byteCurPlayer].bKeys[ePadKeys::KEY_CROUCH];
-    }
-    else
-    {
-		LocalPlayerKeys.bKeys[ePadKeys::KEY_CROUCH] = CPad__DuckJustDown(thiz, ped);
-        return LocalPlayerKeys.bKeys[ePadKeys::KEY_CROUCH];
-    }
+	}
+	else
+	{
+		return CPad__DuckJustDown(thiz, unk);
+	}
 }
 
 uint32_t (*CPad__MeleeAttackJustDown)(uintptr_t thiz);
@@ -753,7 +750,7 @@ void HookCPad()
 	SetUpHook(g_libGTASA + 0x004C1748, (uintptr_t)ProcessPlayerWeapon_hook, (uintptr_t*)& ProcessPlayerWeapon);
 
 	//SetUpHook(g_libGTASA+0x39E7B0, (uintptr_t)CPad__DuckJustDown_hook, (uintptr_t*)&CPad__DuckJustDown);
-	SetUpHook(g_libGTASA+0x0039E74C, (uintptr_t)CPad__DuckJustDown_hook, (uintptr_t*)&CPad__DuckJustDown);
+	SetUpHook(g_libGTASA+0x39E7B0, (uintptr_t)CPad__DuckJustDown_hook, (uintptr_t*)&CPad__DuckJustDown);
 
 
 	// steering lr/ud (incar)
