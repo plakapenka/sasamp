@@ -43,36 +43,24 @@ extern bool g_uiHeadMoveEnabled;
 void CRemotePlayer::ProcessSpecialActions(BYTE byteSpecialAction)
 {
 	if (!m_pPlayerPed || !m_pPlayerPed->IsAdded()) return;
-    if(byteSpecialAction == SPECIAL_ACTION_NONE)
-    {
-		m_pPlayerPed->ClearAnimations();
-        return;
+
+    // приседание
+    if (m_pPlayerPed->IsCrouching() && byteSpecialAction != SPECIAL_ACTION_DUCK) {
+        m_pPlayerPed->ResetCrouch();
     }
+    if (byteSpecialAction == SPECIAL_ACTION_DUCK && !m_pPlayerPed->IsCrouching()) {
+        m_pPlayerPed->ApplyCrouch();
+    }
+    ///
+
 	m_pPlayerPed->ProcessSpecialAction(byteSpecialAction);
 
-	if (GetState() != PLAYER_STATE_ONFOOT)
-	{
-		byteSpecialAction = SPECIAL_ACTION_NONE;
-		m_ofSync.byteSpecialAction = SPECIAL_ACTION_NONE;
-	}
-
 	// headsync:always
-	if (GetState() == PLAYER_STATE_ONFOOT && m_pPlayerPed->IsAdded())
+	if (GetState() == PLAYER_STATE_ONFOOT)
 	{
-		if (byteSpecialAction == 0)
-		{
-			if (m_pPlayerPed->IsCrouching())
-			{
-				m_pPlayerPed->ResetCrouch();
-			}
-		}
-		if (byteSpecialAction == 1)
-		{
-			if (!m_pPlayerPed->IsCrouching())
-			{
-				m_pPlayerPed->ApplyCrouch();
-			}
-		}
+
+
+		//headmove?
 		if ((GetTickCount() - m_dwLastHeadUpdate) > 500 && g_uiHeadMoveEnabled)
 		{
 			VECTOR LookAt;
@@ -201,7 +189,7 @@ void CRemotePlayer::Process()
 		// ------ PROCESSED FOR ALL FRAMES ----- 
 		if(GetState() == PLAYER_STATE_ONFOOT && !m_pPlayerPed->IsInVehicle())
 		{
-			if(m_ofSync.byteSpecialAction != SPECIAL_ACTION_NONE) ProcessSpecialActions(m_ofSync.byteSpecialAction);
+			ProcessSpecialActions(m_ofSync.byteSpecialAction);
 			SlerpRotation();
 			
 			HandleAnimations();

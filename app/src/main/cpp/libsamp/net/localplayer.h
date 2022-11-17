@@ -219,10 +219,6 @@ public:
 	VEHICLEID 			m_LastVehicle;
 	bool				m_bIsActive;
 	bool lToggle;
-	bool IsGoEnterVehicleClick = false;
-	bool animFlagLoop = false;
-	uint8_t animFlagTime = 0;
-	bool animFlagFreeze = false;
 
 private:
 	uint32_t			GetCurrentAnimationIndexFlag();

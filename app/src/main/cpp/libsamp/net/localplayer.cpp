@@ -831,7 +831,15 @@ void CLocalPlayer::SendOnFootFullSyncData()
 	//ofSync.byteCurrentWeapon = (exKeys << 6) | ofSync.byteCurrentWeapon & 0x3F;
 	//ofSync.byteCurrentWeapon ^= (ofSync.byteCurrentWeapon ^ GetPlayerPed()->GetCurrentWeapon()) & 0x3F;
 
-	ofSync.byteSpecialAction = m_pPlayerPed->m_iCurrentSpecialAction;;
+	if (m_pPlayerPed->IsCrouching())
+	{
+		ofSync.byteSpecialAction = SPECIAL_ACTION_DUCK;
+	}
+	else
+	{
+		ofSync.byteSpecialAction = m_pPlayerPed->m_iCurrentSpecialAction;
+	}
+
 	ofSync.vecMoveSpeed.X = vecMoveSpeed.X;
 	ofSync.vecMoveSpeed.Y = vecMoveSpeed.Y;
 	ofSync.vecMoveSpeed.Z = vecMoveSpeed.Z;
@@ -842,12 +850,16 @@ void CLocalPlayer::SendOnFootFullSyncData()
 	ofSync.wSurfInfo = 0;
 
 	ofSync.dwAnimation = GetCurrentAnimationIndexFlag();
-	ofSync.animation.flags.time = animFlagTime;
-	ofSync.animation.flags.loop = animFlagLoop;
-	ofSync.animation.flags.freeze = animFlagFreeze;
-	animFlagTime = 0;
-	animFlagLoop = false;
-	animFlagFreeze = false;
+	ofSync.animation.flags.lockY = m_pPlayerPed->animFlagLockY;
+	ofSync.animation.flags.lockX = m_pPlayerPed->animFlagLockX;
+	ofSync.animation.flags.time = m_pPlayerPed->animFlagTime;
+	ofSync.animation.flags.loop = m_pPlayerPed->animFlagLoop;
+	ofSync.animation.flags.freeze = m_pPlayerPed->animFlagFreeze;
+	m_pPlayerPed->animFlagTime = 0;
+	m_pPlayerPed->animFlagLoop = false;
+	m_pPlayerPed->animFlagFreeze = false;
+	ofSync.animation.flags.lockY = false;
+	ofSync.animation.flags.lockX = false;
 
 	if( (GetTickCount() - m_dwLastUpdateOnFootData) > 500 || memcmp(&m_OnFootData, &ofSync, sizeof(ONFOOT_SYNC_DATA)))
 	{

@@ -174,6 +174,10 @@ void CPlayerPed::ResetCrouch()
 		return;
 	}
 	m_pPed->dwStateFlags &= 0xFBFFFFFF;
+	if (m_pPed->pPedIntelligence)
+	{
+		((int (*)(CPedIntelligence*))(g_libGTASA + 0x0044E164 + 1))(m_pPed->pPedIntelligence);
+	}
 }
 
 bool CPlayerPed::IsCrouching()
@@ -745,7 +749,7 @@ extern CChatWindow* pChatWindow;
 
 void CPlayerPed::ClearAnimations()
 {
-	//ApplyAnimation("crry_prtial", "CARRY", 4.0, 0, 0, 0, 0, 0);
+	ApplyAnimation("crry_prtial", "CARRY", 4.0, 0, 0, 0, 0, 0);
 	ClearAllTasks();
 	MATRIX4X4 mat;
 	GetMatrix(&mat);
@@ -1323,6 +1327,10 @@ void CPlayerPed::ApplyAnimation(char* szAnimName, char* szAnimFile, float fDelta
      //   ScriptCommand(&apply_animation, m_dwGTAId, szAnimName, szAnimFile, fDelta, bLoop, bLockX, bLockY, bFreeze, uiTime);
     }
 
+	animFlagTime = (uint8_t)uiTime;
+	animFlagFreeze = bFreeze;
+	animFlagLoop = bLoop;
+
     ScriptCommand(&apply_animation, m_dwGTAId, szAnimName, szAnimFile, fDelta, bLoop, bLockX, bLockY, bFreeze, uiTime);
 }
 
@@ -1692,14 +1700,13 @@ float CPlayerPed::GetAimZ()
 }
 
 void CPlayerPed::ProcessSpecialAction(BYTE byteSpecialAction) {
-	if(m_iCurrentSpecialAction != byteSpecialAction)
-	{
-		return;
-	}
+
 	if (byteSpecialAction == SPECIAL_ACTION_CARRY && !IsAnimationPlaying("CRRY_PRTIAL"))
 	{
-		//Log("SPECIAL_ACTION_CARRY");
 		ApplyAnimation("CRRY_PRTIAL", "CARRY", 4.1, 0, 0, 0, 1, 1);
 	}
-
+	if(IsAnimationPlaying("CRRY_PRTIAL") && byteSpecialAction != SPECIAL_ACTION_CARRY)
+	{
+		ClearAnimations();
+	}
 }

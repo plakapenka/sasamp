@@ -142,4 +142,10 @@ public:
 	void ClearAnimations();
 
 	void SetWeaponAmmo(int iWeaponID, int iAmmo);
+
+    uint8_t animFlagTime;
+	bool animFlagLoop;
+	bool animFlagFreeze;
+	bool animFlagLockY;
+	bool animFlagLockX;
 };
