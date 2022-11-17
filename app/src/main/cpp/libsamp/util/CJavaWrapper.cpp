@@ -1729,3 +1729,18 @@ Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_ChatFontSizeChang
 		pChatWindow->m_bPendingReInit = true;
 	}
 }
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_PreDeath_OnClickPreDeathButton(JNIEnv *env, jobject thiz,
+                                                          jint button_id) {
+	uint8_t packet = ID_CUSTOM_RPC;
+	uint8_t RPC = RPC_PRE_DEATH;
+	uint8_t button = button_id;
+
+
+	RakNet::BitStream bsSend;
+	bsSend.Write(packet);
+	bsSend.Write(RPC);
+	bsSend.Write(button);
+	pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
+}
