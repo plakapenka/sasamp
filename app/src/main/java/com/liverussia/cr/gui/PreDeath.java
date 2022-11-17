@@ -29,6 +29,7 @@ public class PreDeath {
     private TextView pre_death_killer_text;
     private int timeRemaining = 0;
     private Activity main_activity;
+    public native void OnClickPreDeathButton(int buttonID);
 
     public PreDeath(Activity activity)
     {
@@ -37,6 +38,13 @@ public class PreDeath {
         pre_death_killer_text = activity.findViewById(R.id.pre_death_killer_text);
         waitHelpButton = activity.findViewById(R.id.preDeath_wait_help_butt);
         toHospitalButton = activity.findViewById(R.id.preDeath_to_hospital_button);
+
+        waitHelpButton.setOnClickListener(view -> {
+            OnClickPreDeathButton(0);
+        });
+        toHospitalButton.setOnClickListener(view -> {
+            OnClickPreDeathButton(1);
+        });
 
         Utils.HideLayout(pre_death_layout, false);
     }

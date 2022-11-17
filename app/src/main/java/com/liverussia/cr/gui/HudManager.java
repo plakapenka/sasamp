@@ -58,6 +58,10 @@ public class HudManager {
     private ImageView enterexit_driver;
     private ImageView lock_vehicle;
     private ImageView button_horn;
+    private ConstraintLayout opg_war_layout;
+    private TextView opg_attacker_score;
+    private TextView opg_defender_score;
+    private TextView opg_time_text;
     long buttonLockCD;
 
     DecimalFormat formatter;
@@ -75,6 +79,14 @@ public class HudManager {
         formatter = new DecimalFormat("###,###.###", otherSymbols);
 
         activity = aactivity;
+
+        // OPG WAR
+        opg_war_layout = activity.findViewById(R.id.opg_war_layout);
+        opg_attacker_score = activity.findViewById(R.id.opg_attacker_score);
+        opg_time_text = activity.findViewById(R.id.opg_time_text);
+
+        opg_war_layout.setVisibility(View.GONE);
+
         // кнопка сигнала
         button_horn = activity.findViewById(R.id.button_horn);
         button_horn.setVisibility(View.GONE);
@@ -196,6 +208,21 @@ public class HudManager {
         {
             activity.runOnUiThread(() -> Utils.HideLayout(enter_passenger, true) );
         }
+    }
+    public void UpdateOpgWarLayout(int defscore, int attackscore, int time)
+    {
+        activity.runOnUiThread(() -> {
+            if(time == 0)
+            {
+                opg_war_layout.setVisibility(View.GONE);
+                return;
+            }
+            opg_war_layout.setVisibility(View.VISIBLE);
+            opg_attacker_score.setText(String.format("Нападающая ОПГ: %d", attackscore));
+            opg_defender_score.setText(String.format("Защищающаяся ОПГ: %d", defscore));
+            opg_time_text.setText(String.format("%d секунд", time));
+        } );
+
     }
     public void ToggleHornButton(boolean toggle)
     {

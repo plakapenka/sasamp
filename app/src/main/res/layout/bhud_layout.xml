@@ -438,12 +438,13 @@
             android:layout_width="100dp"
             android:layout_height="30dp"
             android:layout_marginStart="3dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="60dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView17"
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout7"
             app:srcCompat="@drawable/greenzone" />
 
         <ImageView
+            android:visibility="gone"
             android:id="@+id/imageView17"
             android:layout_width="50dp"
             android:layout_height="50dp"
@@ -453,6 +454,59 @@
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout7"
             app:srcCompat="@drawable/voice_btn" />
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/opg_war_layout"
+            android:layout_width="200dp"
+            android:layout_height="80dp"
+            android:layout_marginBottom="90dp"
+            android:background="@drawable/casino_lucky_wheel_bg"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:id="@+id/opg_attacker_score"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="Нападающая ОПГ: 0"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/opg_defender_score"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Защищающаяся ОПГ: 0"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/opg_attacker_score"
+                app:layout_constraintTop_toBottomOf="@+id/opg_attacker_score" />
+
+            <View
+                android:id="@+id/opg_time_bg"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:background="@drawable/yellow_gradient_rounded"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/opg_time_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="600 секунд"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/opg_time_bg"
+                app:layout_constraintStart_toStartOf="@+id/opg_time_bg"
+                app:layout_constraintTop_toTopOf="@+id/opg_time_bg" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
