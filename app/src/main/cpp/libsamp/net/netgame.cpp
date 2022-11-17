@@ -455,7 +455,7 @@ void CNetGame::Packet_AuthRPC(Packet *p)
 													  (bool)email_acvive
 													  );
 
-					if(pSettings->GetReadOnly().szAutoLogin && ip_match && !timepassed)
+					if(pSettings->GetReadOnly().szAutoLogin && ip_match && timepassed)
 					{
 						SendLoginPacket(pSettings->GetReadOnly().player_password);
 					}
