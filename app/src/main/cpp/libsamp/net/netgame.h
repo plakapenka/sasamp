@@ -83,9 +83,10 @@
 #define RPC_GUNSTORETOGGLESEND 44
 #define RPC_SHOW_ARMY_GAME 45
 #define RPC_CHECK_CLIENT 46
-#define RPC_SHOW_CONTEINER_AUC 52
+#define RPC_SHOW_CONTEINER_AUC 47
 #define RPC_TURN_SIGNAL	47
 #define RPC_PRE_DEATH 48
+#define RPC_MAFIA_WAR 52
 
 // Packet 252
 #define RPC_TOGGLE_LOGIN (1)
@@ -211,6 +212,7 @@ public:
 	int 		m_iVehicleFriendlyFire;
     void Packet_FurnitureFactory(Packet* p);
 
+	void Packet_MAFIA_WAR(Packet *p);
 };
 
 extern CNetGame *pNetGame;
