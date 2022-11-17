@@ -208,6 +208,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
+                android:autofillHints="username"
                 android:id="@+id/reg_nick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -328,6 +329,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <EditText
+                    android:autofillHints="emailAddress"
                     android:id="@+id/reg_mail"
                     android:layout_width="0.0dip"
                     android:layout_height="wrap_content"
@@ -377,6 +379,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/constraintLayout4">
 
                 <EditText
+                    android:autofillHints="password"
                     android:id="@+id/reg_password"
                     android:layout_width="0.0dip"
                     android:layout_height="wrap_content"
@@ -426,6 +429,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/constraintLayout5">
 
                 <EditText
+                    android:autofillHints="password"
                     android:id="@+id/reg_passwordtwo"
                     android:layout_width="0.0dip"
                     android:layout_height="wrap_content"
