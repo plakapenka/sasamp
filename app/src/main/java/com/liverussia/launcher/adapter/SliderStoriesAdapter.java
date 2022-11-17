@@ -14,8 +14,6 @@ import android.widget.TextView;
 import com.liverussia.cr.R;
 import com.liverussia.launcher.model.News;
 
-import com.liverussia.cr.R;
-import com.liverussia.launcher.other.Utils;
 import com.bumptech.glide.Glide;
 import com.smarteist.autoimageslider.SliderViewAdapter;
 import java.util.ArrayList;

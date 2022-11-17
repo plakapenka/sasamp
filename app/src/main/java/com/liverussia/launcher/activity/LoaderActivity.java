@@ -33,13 +33,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.liverussia.cr.core.Utils;
-import com.liverussia.launcher.async.DownloadAsyncTask1;
+import com.liverussia.cr.core.DownloadUtils;
 import com.liverussia.launcher.async.DownloadTask;
 import com.liverussia.launcher.domain.LoaderSliderItemData;
 import com.liverussia.launcher.dto.response.LoaderSliderInfoResponseDto;
+import com.liverussia.launcher.enums.DownloadType;
 import com.liverussia.launcher.messages.ErrorMessages;
-import com.liverussia.launcher.messages.InfoMessages;
 import com.liverussia.launcher.other.NetworkService;
 import com.liverussia.launcher.service.ActivityService;
 import com.liverussia.launcher.service.impl.ActivityServiceImpl;
@@ -52,7 +51,6 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.liverussia.cr.core.Config.URL_CLIENT;
 import static com.liverussia.launcher.config.Config.LAUNCHER_SERVER_URI;
 
 public class LoaderActivity extends AppCompatActivity {
@@ -103,10 +101,10 @@ public class LoaderActivity extends AppCompatActivity {
                     || checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
                 requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1000);
             } else {
-                installGame(Utils.getType());
+                installGame(DownloadUtils.getType());
             }
         } else {
-            installGame(Utils.getType());
+            installGame(DownloadUtils.getType());
         }
     }
 
@@ -114,7 +112,7 @@ public class LoaderActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 1000) {
-            installGame(Utils.getType());
+            installGame(DownloadUtils.getType());
         }
     }
 
@@ -177,9 +175,9 @@ public class LoaderActivity extends AppCompatActivity {
 //        super.onDestroy();
 //    }
 
-    private void installGame(int type) {
+    private void installGame(DownloadType type) {
         switch (type) {
-            case 0: {
+            case LOAD_ALL_CACHE: {
                 File dir = new File(getExternalFilesDir(null).toString() + "/temp_downloads/");
 
                 if (!dir.exists()) {
@@ -193,13 +191,13 @@ public class LoaderActivity extends AppCompatActivity {
                 break;
             }
 
-            case 1: {
-                File dir = new File(getExternalFilesDir(null).toString() + "/temp_downloads/");
-                if (!dir.exists()) dir.mkdirs();
-                DownloadAsyncTask1 downloadTask = new DownloadAsyncTask1(this, progressBar);
-                downloadTask.execute(URL_CLIENT);
-                break;
-            }
+//            case 1: {
+//                File dir = new File(getExternalFilesDir(null).toString() + "/temp_downloads/");
+//                if (!dir.exists()) dir.mkdirs();
+//                DownloadAsyncTask1 downloadTask = new DownloadAsyncTask1(this, progressBar);
+//                downloadTask.execute(URL_CLIENT);
+//                break;
+//            }
         }
     }
 
@@ -208,14 +206,14 @@ public class LoaderActivity extends AppCompatActivity {
     }
 
     private void performAfterDownload() {
-        if (Utils.getType() == 0) {
+        if (DownloadType.LOAD_ALL_CACHE.equals(DownloadUtils.getType())) {
             redirectToSettings();
         }
 
-        if (Utils.getType() == 1) {
-            showMessage(InfoMessages.APPROVE_INSTALL.getText());
-            installAPK(APK_NAME);
-        }
+//        if (Utils.getType() == 1) {
+//            showMessage(InfoMessages.APPROVE_INSTALL.getText());
+//            installAPK(APK_NAME);
+//        }
     }
 
     private void initialize() {

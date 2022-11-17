@@ -8,13 +8,14 @@ import android.widget.ProgressBar;
 import androidx.annotation.UiThread;
 import androidx.annotation.WorkerThread;
 
-import com.liverussia.cr.core.Utils;
+import com.liverussia.cr.core.DownloadUtils;
 import com.liverussia.launcher.activity.LoaderActivity;
 import com.liverussia.launcher.async.domain.AsyncTaskResult;
 import com.liverussia.launcher.async.listener.OnAsyncCriticalErrorListener;
 import com.liverussia.launcher.async.listener.OnAsyncSuccessListener;
 import com.liverussia.launcher.dto.response.FileInfo;
 import com.liverussia.launcher.dto.response.GameFileInfoDto;
+import com.liverussia.launcher.enums.DownloadType;
 import com.liverussia.launcher.error.apiException.ApiException;
 import com.liverussia.launcher.error.apiException.ErrorContainer;
 import com.liverussia.launcher.service.ActivityService;
@@ -34,8 +35,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.ConnectException;
 import java.net.HttpURLConnection;
+import java.net.SocketException;
 import java.net.URI;
 import java.net.URL;
 import java.net.UnknownHostException;
@@ -93,7 +94,7 @@ public class DownloadTask implements Listener<TaskStatus> {
         progressBar.setMax(100);
         loaderActivity.getLoading().setText("Загрузка файлов игры...");
 
-        if (Utils.getType() == 0) {
+        if (DownloadType.LOAD_ALL_CACHE.equals(DownloadUtils.getType())) {
             backgroundThreadPoster.post(() -> downloadGameFiles());
             return;
         }
@@ -103,6 +104,14 @@ public class DownloadTask implements Listener<TaskStatus> {
 //        }
 
 //        return new AsyncTaskResult<>(new ApiException(ErrorContainer.OTHER));
+    }
+
+    public void reloadCache() {
+//TODO размер тут еще знать над
+    }
+
+    private void reloadGameFiles() {
+
     }
 
     @WorkerThread
@@ -231,7 +240,7 @@ public class DownloadTask implements Listener<TaskStatus> {
             files.remove(fileInfo);
         } catch (ApiException e) {
             throw new ApiException(e);
-        } catch (UnknownHostException | ConnectException | SSLException e) {
+        } catch (UnknownHostException | SocketException | SSLException e) {
             boolean isDeleted = false;
 
             if (file != null && file.exists()) {
@@ -260,22 +269,19 @@ public class DownloadTask implements Listener<TaskStatus> {
         }
     }
 
-    protected void onProgressUpdate(Integer... progress) { //TODO попробовать исправить на Long
-
-    }
-
     @UiThread
     private void publishProgress(int progress) {
-        if (Utils.getType() == 0) {
+        if (DownloadType.LOAD_ALL_CACHE.equals(DownloadUtils.getType())) {
             loaderActivity.getLoading().setText("Загрузка файлов игры...");
             loaderActivity.getLoadingPercent().setText(progress + "%");
             loaderActivity.getFileName().setText(formatFileSize(fileLengthMin.longValue())+" из "+formatFileSize(fileLengthFull));
         }
 
-        if (Utils.getType() == 1) {
-            loaderActivity.getLoading().setText("Загрузка лаунчера...");
-            loaderActivity.getLoadingPercent().setText(progress + "%");
-        }
+//        if (Utils.getType() == 1) {
+//            loaderActivity.getLoading().setText("Загрузка лаунчера...");
+//            loaderActivity.getLoadingPercent().setText(progress + "%");
+//        }
+
         progressBar.setProgress(progress);
     }
 

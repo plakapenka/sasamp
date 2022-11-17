@@ -18,7 +18,9 @@ import android.view.animation.Animation;
 
 import com.liverussia.cr.R;
 import com.liverussia.cr.core.Config;
+import com.liverussia.cr.core.DownloadUtils;
 import com.liverussia.launcher.dto.response.ServerImagesResponseDto;
+import com.liverussia.launcher.enums.DownloadType;
 import com.liverussia.launcher.enums.NativeStorageElements;
 import com.liverussia.launcher.fragment.MonitoringFragment;
 import com.liverussia.launcher.fragment.DonateFragment;
@@ -260,6 +262,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void onClickPlay() {
         if (!IsGameInstalled()) {
+            DownloadUtils.setType(DownloadType.LOAD_ALL_CACHE);
             startActivity(new Intent(this, LoaderActivity.class));
             return;
         }
