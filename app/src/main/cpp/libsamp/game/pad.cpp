@@ -663,28 +663,6 @@ extern "C" {
 }
 extern CGUI *pGUI;
 
-uint32_t (*DrawLegend)(uintptr_t thiz, int a1, int a2, int a3);
-uint32_t DrawLegend_hook(uintptr_t thiz, int a1, int a2, int a3)
-{
-	return 0;
-}
-
-uint32_t (*IsVehicleRadioActive)(uintptr_t thiz);
-uint32_t IsVehicleRadioActive_hook(uintptr_t thiz)
-{
-
-	//Log("Radio");
-	return 0;
-}
-
-uint32_t (*DrawHelpIcon)(uintptr_t thiz, const char *a1, float a2, float a3, float a4, int a5);
-uint32_t DrawHelpIcon_hook(uintptr_t thiz, const char *a1, float a2, float a3, float a4, int a5)
-{
-
-	Log("Radio");
-	return 0;
-}
-
 uint32_t (*CPad__CycleWeaponRightJustDown)(uintptr_t thiz);
 uint32_t CPad__CycleWeaponRightJustDown_hook(uintptr_t thiz)
 {
