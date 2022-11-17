@@ -253,3 +253,24 @@ Java_com_liverussia_cr_gui_Speedometer_ClickSpedometr(JNIEnv *env, jobject thiz,
     bsSend.Write(toggle_);
     pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
 }
+
+void CNetGame::Packet_MAFIA_WAR(Packet* p)
+{
+    RakNet::BitStream bs((unsigned char*)p->data, p->length, false);
+    uint8_t packetID;
+    uint32_t rpcID;
+    uint16_t time, attack_score, attack_def;
+
+    bs.Read(packetID);
+    bs.Read(rpcID);
+    bs.Read(time);
+    bs.Read(attack_score);
+    bs.Read(attack_def);
+
+   JNIEnv* env = g_pJavaWrapper->GetEnv();
+
+   jclass clazz = env->GetObjectClass(jHudManager);
+   jmethodID UpdateOpgWarLayout = env->GetMethodID(clazz, "UpdateOpgWarLayout", "(III)V");
+
+   env->CallVoidMethod(jHudManager, UpdateOpgWarLayout, time, attack_score, attack_def);
+}
