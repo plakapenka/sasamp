@@ -542,6 +542,11 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 	//pChatWindow->AddDebugMessage("p %d rpc %d", packetID, rpcID);
 	switch (rpcID)
 	{
+		case RPC_MAFIA_WAR:
+		{
+			Packet_MAFIA_WAR(p);
+			break;
+		}
 		case RPC_CASINO_LUCKY_WHEEL_MENU:
 		{
 			uint32_t count;
@@ -734,8 +739,8 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 						strcpy(killername, "None");
 					}
 
-					Log("RPC_PRE_DEATH: %s (%d)", killername, killerId);
-					pChatWindow->AddDebugMessage("RPC_PRE_DEATH: %s (%d)", killername, killerId);
+					//Log("RPC_PRE_DEATH: %s (%d)", killername, killerId);
+					//pChatWindow->AddDebugMessage("RPC_PRE_DEATH: %s (%d)", killername, killerId);
 
 					g_pJavaWrapper->ShowDeathInfo(killername, killerId);
 				}
