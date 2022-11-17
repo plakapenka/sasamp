@@ -205,9 +205,6 @@ void ScrApplyPlayerAnimation(RPCParameters *rpcParams)
 	if(pPlayerPool)
 	{
 		if(pPlayerPool->GetLocalPlayerID() == playerId) {
-			pPlayerPool->GetLocalPlayer()->animFlagLoop = loop;
-			pPlayerPool->GetLocalPlayer()->animFlagFreeze = freeze;
-			pPlayerPool->GetLocalPlayer()->animFlagTime = (uint8_t)dTime;
 			pPlayerPed = pPlayerPool->GetLocalPlayer()->GetPlayerPed();
 		}
 		else if(pPlayerPool->GetSlotState(playerId))
@@ -1207,7 +1204,7 @@ void ScrGivePlayerWeapon(RPCParameters* rpcParams)
 	bsData.Read(iWeaponID);
 	bsData.Read(iAmmo);
 
-	pChatWindow->AddDebugMessage("giveweapon | weaponid: %d ammo: %d", iWeaponID, iAmmo);
+	//pChatWindow->AddDebugMessage("giveweapon | weaponid: %d ammo: %d", iWeaponID, iAmmo);
 
 	CLocalPlayer* pPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer();
 	pPlayer->GetPlayerPed()->GiveWeapon(iWeaponID, iAmmo);
@@ -1226,7 +1223,7 @@ void ScrSetWeaponAmmo(RPCParameters* rpcParams)
 	bsData.Read(iWeaponID);
 	bsData.Read(iAmmo);
 
-	pChatWindow->AddDebugMessage("setweaponammo | weaponid: %d ammo: %d", iWeaponID, iAmmo);
+	//pChatWindow->AddDebugMessage("setweaponammo | weaponid: %d ammo: %d", iWeaponID, iAmmo);
 
 
 	CLocalPlayer* pPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer();

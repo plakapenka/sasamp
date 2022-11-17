@@ -9,6 +9,10 @@ public class Servers {
 	@Expose
 	private String color;
 
+	@SerializedName("colorl")
+	@Expose
+	private String colorl;
+
 	@SerializedName("serverID")
 	@Expose
 	private String serverID;
@@ -29,8 +33,9 @@ public class Servers {
 	@Expose
 	private int maxonline;
 
-	public Servers(String color, String serverID, String dopname, String name, int online, int maxonline) {
+	public Servers(String color, String serverID, String dopname, String name, int online, int maxonline, String colorl) {
 		this.color = color;
+		this.colorl = colorl;
 		this.serverID = serverID;
 		this.dopname = dopname;
 		this.name = name;
@@ -48,6 +53,10 @@ public class Servers {
 
     public String getColor() {
 		return color;
+	}
+
+	public String getColorl() {
+		return colorl;
 	}
 
 	public String getServerID() { return serverID; }
