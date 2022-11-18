@@ -21,7 +21,7 @@
             <shape>
                 <gradient android:startColor="#FFFAFF00"
                     android:endColor="#FFF54327"/>
-                <corners android:radius="25.0dip"/>
+                <corners android:radius="20.0dip"/>
             </shape>
         </scale>
     </item>

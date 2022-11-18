@@ -148,6 +148,7 @@ uint32_t g_uiBorderedText = 1;
 #include "CDebugInfo.h"
 #include "CLocalisation.h"
 #include "game/CCustomPlateManager.h"
+#include "java_systems/inventrory.h"
 #include <fcntl.h>
 bool ProcessVoiceCommands(const char* str)
 {
@@ -447,6 +448,8 @@ bool CChatWindow::OnTouchEvent(int type, bool multi, int x, int y)
 	return true;
 }
 
+extern CINVENTORY *pInventory;
+
 void CChatWindow::Render()
 {
 	if (m_bPendingReInit)
@@ -454,7 +457,6 @@ void CChatWindow::Render()
 		ReInit();
 		m_bPendingReInit = false;
 	}
-
 	if (!pGame->IsToggledHUDElement(HUD_ELEMENT_CHAT)) return;
 	if (pScrollbar)
 	{

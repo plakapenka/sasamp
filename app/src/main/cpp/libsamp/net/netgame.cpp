@@ -542,6 +542,10 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 	//pChatWindow->AddDebugMessage("p %d rpc %d", packetID, rpcID);
 	switch (rpcID)
 	{
+		case RPC_INVENTAR_SHOWHIDE: {
+			Packet_InventoryToggle(p);
+			break;
+		}
 		case RPC_MAFIA_WAR:
 		{
 			Packet_MAFIA_WAR(p);

@@ -1329,6 +1329,8 @@ void CJavaWrapper::ShowDeathInfo(std::string nick, int id)
 	jstring jStringParam = env->NewStringUTF( nick.c_str() );
 
 	env->CallVoidMethod(this->activity, this->j_showDeathInfo, jStringParam, id);
+
+	pGame->isPreDeathActive = true;
 }
 
 void CJavaWrapper::ToggleAutoShop(bool toggle)
@@ -1733,6 +1735,8 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_PreDeath_OnClickPreDeathButton(JNIEnv *env, jobject thiz,
                                                           jint button_id) {
+	pGame->isPreDeathActive = false;
+
 	uint8_t packet = ID_CUSTOM_RPC;
 	uint8_t RPC = RPC_PRE_DEATH;
 	uint8_t button = button_id;

@@ -11,10 +11,11 @@
 #include "../CSettings.h"
 #include "../util/CJavaWrapper.h"
 #include "java_systems/hud.h"
+#include "java_systems/inventrory.h"
 
 extern CKeyBoard* pKeyBoard;
 extern CChatWindow* pChatWindow;
-
+extern CINVENTORY *pInventory;
 extern CGame *pGame;
 extern CSettings *pSettings;
 extern CHUD *pHud;
@@ -456,7 +457,8 @@ bool CLocalPlayer::Process()
 	////////////////////////////
 	bool needDrawableHud = true;
 	if(pGame->isDialogActive || pGame->isCasinoDiceActive || tabToggle || pGame->isAutoShopActive
-	|| pGame->isCasinoWheelActive || !m_pPlayerPed || pGame->isRegistrationActive || pGame->isShopStoreActive)
+	|| pGame->isCasinoWheelActive || !m_pPlayerPed || pGame->isRegistrationActive || pGame->isShopStoreActive ||
+    pGame->isPreDeathActive || pInventory->isToggle)
 	{
 		needDrawableHud = false;
 	}

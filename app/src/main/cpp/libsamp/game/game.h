@@ -161,6 +161,7 @@ public:
 	bool isHornActive = false;
 	bool isBanJump = false;
 
+	bool isPreDeathActive = false;
 private:
 	bool aToggleStatusHUD[HUD_MAX];
 	CCamera* 		m_pGameCamera;

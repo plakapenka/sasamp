@@ -36,10 +36,16 @@ public class AuthorizationManager {
     private TextView auth_nick;
     private SwitchMaterial switcher_autologin;
     private TextView recovery_password;
+    private ConstraintLayout autologin_main_help;
+    private MaterialButton autologin_help_close;
+    private ImageView autologin_open_help;
 
     public native void ToggleAutoLogin(boolean toggle);
 
     public AuthorizationManager(Activity activity){
+        autologin_open_help = activity.findViewById(R.id.autologin_open_help);
+        autologin_help_close = activity.findViewById(R.id.autologin_help_close);
+        autologin_main_help = activity.findViewById(R.id.autologin_main_help);
         recovery_password = activity.findViewById(R.id.recovery_password);
         br_authorization_layout = activity.findViewById(R.id.br_authorization_layout);
         auth_right1 = activity.findViewById(R.id.auth_right1);
@@ -53,6 +59,12 @@ public class AuthorizationManager {
         auth_nick = activity.findViewById(R.id.auth_nick);
         switcher_autologin = activity.findViewById(R.id.switcher_autologin);
 
+        autologin_open_help.setOnClickListener(view -> {
+            autologin_main_help.setVisibility(View.VISIBLE);
+        });
+        autologin_help_close.setOnClickListener(view -> {
+            autologin_main_help.setVisibility(View.GONE);
+        });
         switcher_autologin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {

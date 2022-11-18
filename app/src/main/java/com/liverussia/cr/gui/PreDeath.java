@@ -40,9 +40,11 @@ public class PreDeath {
         toHospitalButton = activity.findViewById(R.id.preDeath_to_hospital_button);
 
         waitHelpButton.setOnClickListener(view -> {
+            Utils.HideLayout(pre_death_layout, false);
             OnClickPreDeathButton(0);
         });
         toHospitalButton.setOnClickListener(view -> {
+            Utils.HideLayout(pre_death_layout, false);
             OnClickPreDeathButton(1);
         });
 

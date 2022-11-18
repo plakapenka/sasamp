@@ -34,6 +34,7 @@ const char* g_pszStorage = nullptr;
 #include "CServerManager.h"
 #include "CLocalisation.h"
 #include "java_systems/hud.h"
+#include "java_systems/inventrory.h"
 
 const cryptor::string_encryptor encLib = cryptor::create("libsamp.so", 11);
 void CrashLog(const char* fmt, ...);
@@ -48,6 +49,7 @@ CGUI *pGUI = nullptr;
 CKeyBoard *pKeyBoard = nullptr;
 CSettings *pSettings = nullptr;
 CHUD *pHud = nullptr;
+CINVENTORY *pInventory = nullptr;
 
 void InitHookStuff();
 void InstallSpecialHooks();
@@ -123,6 +125,7 @@ void InitSAMP(JNIEnv* pEnv, jobject thiz)
 
 	pSettings = new CSettings();
 	pHud = new CHUD();
+	pInventory = new CINVENTORY();
 
 	CWeaponsOutFit::SetEnabled(pSettings->GetReadOnly().iOutfitGuns);
 	CRadarRect::SetEnabled(pSettings->GetReadOnly().iRadarRect);
