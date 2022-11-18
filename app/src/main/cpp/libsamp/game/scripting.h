@@ -233,6 +233,8 @@ const SCRIPT_COMMAND set_actor_animation_set = { 0x0245, "is" };
 const SCRIPT_COMMAND request_animation = { 0x04ED, "s" };
 const SCRIPT_COMMAND is_animation_loaded = { 0x04EE, "s" };
 const SCRIPT_COMMAND release_animation = { 0x04EF, "s" };
+//0812
+const SCRIPT_COMMAND TASK_CHAR_ARREST_CHAR = { 0x0850, "ii" };
 const SCRIPT_COMMAND apply_animation = { 0x0812, "issfiiiii" }; // actor,animation,library,floatunk,bool,bool,bool,bool,int
 const SCRIPT_COMMAND is_actor_performing_anim = { 0x0611, "is" };
 const SCRIPT_COMMAND set_actor_weapon_droppable = { 0x087e, "ii" };
@@ -307,7 +309,7 @@ const SCRIPT_COMMAND task_aim_gun_at_coord = { 0x0667, "ifffi" };
 const SCRIPT_COMMAND set_char_never_targeted = { 0x0568, "ii" };
 const SCRIPT_COMMAND task_stay_in_same_place = { 0x0638, "ii" };
 const SCRIPT_COMMAND toggle_actor_cellphone = { 0x0729, "ii" };
-const SCRIPT_COMMAND clear_char_tasks = { 0x0687, "i" };
+const SCRIPT_COMMAND clear_char_tasks = { 0x0792, "i" };
 const SCRIPT_COMMAND actor_task_sit = { 0x06b0, "ii" };
 const SCRIPT_COMMAND actor_task_handsup = { 0x5c4, "ii" };
 const SCRIPT_COMMAND actor_task_use_atm = { 0x5c7, "ii" };
@@ -364,3 +366,4 @@ const SCRIPT_COMMAND force_car_lights = { 0x067F, "ii" };
 
 const SCRIPT_COMMAND BURST_CAR_TYRE = { 0x04FE, "ii" };
 const SCRIPT_COMMAND FIX_CAR_TYRE = { 0x0699, "ii" };
+const SCRIPT_COMMAND TASK_LOOK_AT_COORD = { 0x06A9, "ifffi" };

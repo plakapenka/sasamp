@@ -274,16 +274,17 @@ bool CLocalPlayer::Process()
 				 m_pPlayerPed->GetActionTrigger() == ACTION_SCOPE) {
 			UpdateSurfing();
 
-			if ((dwThisTick - m_dwLastHeadUpdate) > 1000 && g_uiHeadMoveEnabled) {
-				VECTOR LookAt;
-				CAMERA_AIM *Aim = GameGetInternalAim();
-				LookAt.X = Aim->pos1x + (Aim->f1x * 20.0f);
-				LookAt.Y = Aim->pos1y + (Aim->f1y * 20.0f);
-				LookAt.Z = Aim->pos1z + (Aim->f1z * 20.0f);
-				pGame->FindPlayerPed()->ApplyCommandTask("FollowPedSA", 0, 2000, -1, &LookAt, 0,
-														 0.1f, 500, 3, 0);
-				m_dwLastHeadUpdate = dwThisTick;
-			}
+//			if ((dwThisTick - m_dwLastHeadUpdate) > 1000 && g_uiHeadMoveEnabled) {
+//				VECTOR LookAt;
+//				CAMERA_AIM *Aim = GameGetInternalAim();
+//				LookAt.X = Aim->pos1x + (Aim->f1x * 20.0f);
+//				LookAt.Y = Aim->pos1y + (Aim->f1y * 20.0f);
+//				LookAt.Z = Aim->pos1z + (Aim->f1z * 20.0f);
+//
+//				ScriptCommand(&TASK_LOOK_AT_COORD, m_pPlayerPed->m_dwGTAId, LookAt.X, LookAt.Y, LookAt.Z, 3000);
+//			//	pGame->FindPlayerPed()->ApplyCommandTask("FollowPedSA", 0, 2000, -1, &LookAt, 0,0.1f, 500, 3, 0);
+//				m_dwLastHeadUpdate = dwThisTick;
+//			}
 
 			if (m_CurrentVehicle != INVALID_VEHICLE_ID) {
 				m_LastVehicle = m_CurrentVehicle;
@@ -420,17 +421,35 @@ bool CLocalPlayer::Process()
 			}
 
 		} else {// в машине
-			if (!pHud->isEnterExitVehicleButtonOn) {
-				pHud->ToggleEnterExitVehicleButton(true);
+			if(m_pPlayerPed->IsAPassenger())
+			{// на пассажирке
+				if (!pHud->isEnterExitVehicleButtonOn) {
+					pHud->ToggleEnterExitVehicleButton(true);
+				}
+				if (pHud->isLockVehicleButtonOn) {
+					pHud->ToggleLockVehicleButton(false);
+				}
+				if (pHud->isHornButtonOn) {
+					pHud->ToggleHornButton(false);
+				}
+				if (pHud->isEnterPassengerButtOn) {
+					pHud->ToggleEnterPassengerButton(false);
+				}
 			}
-			if (!pHud->isLockVehicleButtonOn) {
-				pHud->ToggleLockVehicleButton(true);
-			}
-			if (!pHud->isHornButtonOn) {
-				pHud->ToggleHornButton(true);
-			}
-			if (pHud->isEnterPassengerButtOn) {
-				pHud->ToggleEnterPassengerButton(false);
+			else {
+				if (!pHud->isEnterExitVehicleButtonOn) {
+					pHud->ToggleEnterExitVehicleButton(true);
+				}
+
+				if (!pHud->isLockVehicleButtonOn) {
+					pHud->ToggleLockVehicleButton(true);
+				}
+				if (!pHud->isHornButtonOn) {
+					pHud->ToggleHornButton(true);
+				}
+				if (pHud->isEnterPassengerButtOn) {
+					pHud->ToggleEnterPassengerButton(false);
+				}
 			}
 		}
 	}

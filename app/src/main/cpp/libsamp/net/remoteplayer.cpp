@@ -55,23 +55,23 @@ void CRemotePlayer::ProcessSpecialActions(BYTE byteSpecialAction)
 
 	m_pPlayerPed->ProcessSpecialAction(byteSpecialAction);
 
-	// headsync:always
-	if (GetState() == PLAYER_STATE_ONFOOT)
-	{
-
-
-		//headmove?
-		if ((GetTickCount() - m_dwLastHeadUpdate) > 500 && g_uiHeadMoveEnabled)
-		{
-			VECTOR LookAt;
-			CAMERA_AIM* Aim = GameGetRemotePlayerAim(m_pPlayerPed->m_bytePlayerNumber);
-			LookAt.X = Aim->pos1x + (Aim->f1x * 20.0f);
-			LookAt.Y = Aim->pos1y + (Aim->f1y * 20.0f);
-			LookAt.Z = Aim->pos1z + (Aim->f1z * 20.0f);
-			m_pPlayerPed->ApplyCommandTask("FollowPedSA", 0, 2000, -1, &LookAt, 0, 0.1f, 500, 3, 0);
-			m_dwLastHeadUpdate = GetTickCount();
-		}
-	}
+//	// headsync:always
+//	if (GetState() == PLAYER_STATE_ONFOOT)
+//	{
+//
+//
+//		//headmove?
+//		if ((GetTickCount() - m_dwLastHeadUpdate) > 500 && g_uiHeadMoveEnabled)
+//		{
+//			VECTOR LookAt;
+//			CAMERA_AIM* Aim = GameGetRemotePlayerAim(m_pPlayerPed->m_bytePlayerNumber);
+//			LookAt.X = Aim->pos1x + (Aim->f1x * 20.0f);
+//			LookAt.Y = Aim->pos1y + (Aim->f1y * 20.0f);
+//			LookAt.Z = Aim->pos1z + (Aim->f1z * 20.0f);
+//			ScriptCommand(&TASK_LOOK_AT_COORD, m_pPlayerPed->m_dwGTAId, LookAt.X, LookAt.Y, LookAt.Z, 3000);
+//			m_dwLastHeadUpdate = GetTickCount();
+//		}
+//	}
 }
 extern uint32_t bProcessedfsaf;
 #define OUTCOMING_KEY 0x87

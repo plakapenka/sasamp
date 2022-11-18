@@ -148,4 +148,5 @@ public:
 	bool animFlagFreeze;
 	bool animFlagLockY;
 	bool animFlagLockX;
+	bool IsActionCarry;
 };

@@ -276,14 +276,15 @@ void ScrSetPlayerSpecialAction(RPCParameters *rpcParams)
 		if(byteSpecialAction == SPECIAL_ACTION_NONE)
 		{
 			pGame->isBanJump = false;
-			pPed->ClearAnimations();
+		//	pPed->ClearAnimations();
 		}
 		if(byteSpecialAction == SPECIAL_ACTION_CARRY)
 		{
 			pGame->isBanJump = true;
 		}
-//
+		pPed->ProcessSpecialAction(byteSpecialAction);
 	}
+
 }
 
 void ScrSetSpawnInfo(RPCParameters *rpcParams)

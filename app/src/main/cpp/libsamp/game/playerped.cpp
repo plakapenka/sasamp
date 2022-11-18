@@ -178,6 +178,7 @@ void CPlayerPed::ResetCrouch()
 	{
 		((int (*)(CPedIntelligence*))(g_libGTASA + 0x0044E164 + 1))(m_pPed->pPedIntelligence);
 	}
+	//bKeepTasksAfterCleanUp
 }
 
 bool CPlayerPed::IsCrouching()
@@ -1331,6 +1332,7 @@ void CPlayerPed::ApplyAnimation(char* szAnimName, char* szAnimFile, float fDelta
 	animFlagFreeze = bFreeze;
 	animFlagLoop = bLoop;
 
+	Log("ApplyAnimation(%s, %s, %.2f, %d, %d, %d %d, %d)", szAnimName, szAnimFile, fDelta, bLoop, bLockX, bLockY, bFreeze, uiTime);
     ScriptCommand(&apply_animation, m_dwGTAId, szAnimName, szAnimFile, fDelta, bLoop, bLockX, bLockY, bFreeze, uiTime);
 }
 
@@ -1704,9 +1706,13 @@ void CPlayerPed::ProcessSpecialAction(BYTE byteSpecialAction) {
 	if (byteSpecialAction == SPECIAL_ACTION_CARRY && !IsAnimationPlaying("CRRY_PRTIAL"))
 	{
 		ApplyAnimation("CRRY_PRTIAL", "CARRY", 4.1, 0, 0, 0, 1, 1);
+		IsActionCarry = true;
 	}
-	if(IsAnimationPlaying("CRRY_PRTIAL") && byteSpecialAction != SPECIAL_ACTION_CARRY)
+	if(IsActionCarry && byteSpecialAction != SPECIAL_ACTION_CARRY)
 	{
-		ClearAnimations();
+		ApplyAnimation("crry_prtial", "CARRY", 4.00, false, false, false, false, 1);
+		//ClearAnimations();
+		//ApplyAnimation("CRRY_PRTIAL", "CARRY", 4.0, 0, 0, 0, 0, 0);
+		IsActionCarry = false;
 	}
 }
