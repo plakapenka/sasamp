@@ -83,6 +83,7 @@ public class HudManager {
         // OPG WAR
         opg_war_layout = activity.findViewById(R.id.opg_war_layout);
         opg_attacker_score = activity.findViewById(R.id.opg_attacker_score);
+        opg_defender_score = activity.findViewById(R.id.opg_defender_score);
         opg_time_text = activity.findViewById(R.id.opg_time_text);
 
         opg_war_layout.setVisibility(View.GONE);
@@ -209,7 +210,7 @@ public class HudManager {
             activity.runOnUiThread(() -> Utils.HideLayout(enter_passenger, true) );
         }
     }
-    public void UpdateOpgWarLayout(int defscore, int attackscore, int time)
+    public void UpdateOpgWarLayout(int time, int attackscore, int defscore)
     {
         activity.runOnUiThread(() -> {
             if(time == 0)

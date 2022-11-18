@@ -716,6 +716,19 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 
 			break;
 		}
+		case 444:
+		{
+			uint16_t targetID;
+			bs.Read(targetID);
+
+			CPlayerPool *pPlayerPool = GetPlayerPool();
+			pPlayerPool = pNetGame->GetPlayerPool();
+
+			CPlayerPed *localPed = pPlayerPool->GetLocalPlayer()->GetPlayerPed();
+			CPlayerPed *toPed = pPlayerPool->GetAt(targetID)->GetPlayerPed();
+			ScriptCommand(&TASK_CHAR_ARREST_CHAR, localPed->m_dwGTAId, toPed->m_dwGTAId);
+			break;
+		}
 		case RPC_PRE_DEATH:
 		{
 			uint16_t toggle;

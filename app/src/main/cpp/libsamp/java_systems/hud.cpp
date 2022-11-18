@@ -10,6 +10,7 @@
 #include "../game/game.h"
 #include "net/netgame.h"
 #include "gui/gui.h"
+#include "keyboard.h"
 
 extern CJavaWrapper *g_pJavaWrapper;
 extern CGame *pGame;
@@ -259,18 +260,35 @@ void CNetGame::Packet_MAFIA_WAR(Packet* p)
     RakNet::BitStream bs((unsigned char*)p->data, p->length, false);
     uint8_t packetID;
     uint32_t rpcID;
-    uint16_t time, attack_score, attack_def;
+    uint16_t time, attack_score, def_score;
 
     bs.Read(packetID);
     bs.Read(rpcID);
     bs.Read(time);
     bs.Read(attack_score);
-    bs.Read(attack_def);
+    bs.Read(def_score);
 
-   JNIEnv* env = g_pJavaWrapper->GetEnv();
+    pHud->UpdateOpgWarLayout(time, attack_score, def_score);
+}
+extern CKeyBoard *pKeyBoard;
 
-   jclass clazz = env->GetObjectClass(jHudManager);
-   jmethodID UpdateOpgWarLayout = env->GetMethodID(clazz, "UpdateOpgWarLayout", "(III)V");
+void CHUD::UpdateOpgWarLayout(int time, int attack_score, int def_score)
+{
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
 
-   env->CallVoidMethod(jHudManager, UpdateOpgWarLayout, time, attack_score, attack_def);
+    jclass clazz = env->GetObjectClass(jHudManager);
+    jmethodID UpdateOpgWarLayout = env->GetMethodID(clazz, "UpdateOpgWarLayout", "(III)V");
+
+    if(pKeyBoard->IsOpen())
+    {
+        env->CallVoidMethod(jHudManager, UpdateOpgWarLayout, 0, 0, 0);
+        return;
+    }
+
+    env->CallVoidMethod(jHudManager, UpdateOpgWarLayout, time, attack_score, def_score);
+
+    if(!time){
+        isMafia_war_layout_active = false;
+    }
+    else isMafia_war_layout_active = true;
 }

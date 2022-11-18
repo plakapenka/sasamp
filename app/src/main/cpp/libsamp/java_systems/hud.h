@@ -34,6 +34,10 @@ public:
     void UpdateMoney();
 
     void ToggleHornButton(bool toggle);
+
+    void UpdateOpgWarLayout(int time, int attack_score, int def_score);
+
+    bool isMafia_war_layout_active = false;
 };
 
 
