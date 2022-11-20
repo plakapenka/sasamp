@@ -40,6 +40,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.liverussia.launcher.config.Config.FILE_INFO_URL;
+import static com.liverussia.launcher.config.Config.NATIVE_SETTINGS_FILE_PATH;
+import static com.liverussia.launcher.config.Config.SETTINGS_FILE_PATH;
 
 public class CacheChecker implements Listener<FileInfo[]> {
 
@@ -96,6 +98,8 @@ public class CacheChecker implements Listener<FileInfo[]> {
         FileInfo[] filesToReload = Optional.ofNullable(gameFileInfo.getFiles())
                 .orElse(Collections.emptyList())
                 .stream()
+                .filter(fileInfo -> !fileInfo.getPath().contains(NATIVE_SETTINGS_FILE_PATH))
+                .filter(fileInfo -> !fileInfo.getPath().contains(SETTINGS_FILE_PATH))
                 .filter(this::isInvalidFile)
                 .peek(this::removeFile)
                 .toArray(FileInfo[]::new);

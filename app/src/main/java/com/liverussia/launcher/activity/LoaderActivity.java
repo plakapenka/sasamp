@@ -214,7 +214,7 @@ public class LoaderActivity extends AppCompatActivity {
     }
 
     private void performAfterDownload() {
-        if (DownloadType.LOAD_ALL_CACHE.equals(DownloadUtils.getType())) {
+        if (DownloadType.LOAD_ALL_CACHE.equals(DownloadUtils.getType()) || DownloadType.RELOAD_OR_ADD_PART_OF_CACHE.equals(DownloadUtils.getType())) {
             redirectToSettings();
         }
 
