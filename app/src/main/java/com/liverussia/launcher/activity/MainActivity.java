@@ -261,7 +261,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void onClickPlay() {
-        if (!IsGameInstalled()) {
+        if (!isGameInstalled()) {
             DownloadUtils.setType(DownloadType.LOAD_ALL_CACHE);
             startActivity(new Intent(this, LoaderActivity.class));
             return;
@@ -334,8 +334,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return false;
     }
 	
-	private boolean IsGameInstalled()
-    {
+	private boolean isGameInstalled() {
         String CheckFile = Config.GAME_PATH + "texdb/gta3.img";
         File file = new File(CheckFile);
         return file.exists();
