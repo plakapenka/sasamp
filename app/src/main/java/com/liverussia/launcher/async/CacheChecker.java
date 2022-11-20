@@ -1,11 +1,15 @@
 package com.liverussia.launcher.async;
 
+import android.app.ProgressDialog;
+
+import androidx.annotation.UiThread;
 import androidx.annotation.WorkerThread;
 
 import com.liverussia.launcher.activity.MainActivity;
 import com.liverussia.launcher.async.domain.AsyncTaskResult;
 import com.liverussia.launcher.async.listener.OnAsyncCriticalErrorListener;
 import com.liverussia.launcher.async.listener.OnAsyncSuccessListener;
+import com.liverussia.launcher.async.listener.OnAsyncSuccessListenerWithResponse;
 import com.liverussia.launcher.dto.response.FileInfo;
 import com.liverussia.launcher.dto.response.GameFileInfoDto;
 import com.liverussia.launcher.error.apiException.ApiException;
@@ -15,6 +19,7 @@ import com.liverussia.launcher.service.impl.ActivityServiceImpl;
 import com.techyourchance.threadposter.BackgroundThreadPoster;
 import com.techyourchance.threadposter.UiThreadPoster;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -28,13 +33,13 @@ import java.io.InputStream;
 import java.net.URI;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.liverussia.launcher.config.Config.FILE_INFO_URL;
-import static com.liverussia.launcher.config.Config.GAME_PATH;
 
 public class CacheChecker implements Listener<FileInfo[]> {
 
@@ -44,7 +49,8 @@ public class CacheChecker implements Listener<FileInfo[]> {
     private final UiThreadPoster uiThreadPoster;
     private final BackgroundThreadPoster backgroundThreadPoster;
 
-    private OnAsyncSuccessListener onAsyncSuccessListener;
+    private ProgressDialog progressDialog;
+    private OnAsyncSuccessListenerWithResponse<FileInfo[]> onAsyncSuccessListener;
     private OnAsyncCriticalErrorListener onAsyncCriticalErrorListener;
 
     public CacheChecker(MainActivity mainActivity) {
@@ -58,7 +64,16 @@ public class CacheChecker implements Listener<FileInfo[]> {
     }
 
     public void checkCache() {
+        uiThreadPoster.post(() -> startProgressBar());
+
         backgroundThreadPoster.post(() -> checkFilesHash());
+    }
+
+    @UiThread
+    private void startProgressBar() {
+        progressDialog = ProgressDialog.show(mainActivity,
+                "Идет проверка файлов",
+                "Не выключайте устройство и не выходите из игры");
     }
 
     @WorkerThread
@@ -66,7 +81,6 @@ public class CacheChecker implements Listener<FileInfo[]> {
         try {
             GameFileInfoDto gameFilesInfo = getGameFilesInfo();
             checkFiles(gameFilesInfo);
-
         } catch (ApiException e) {
             uiThreadPoster.post(() -> {
                 onAsyncFinished(new AsyncTaskResult<>(e));
@@ -79,19 +93,21 @@ public class CacheChecker implements Listener<FileInfo[]> {
     }
 
     private void checkFiles(GameFileInfoDto gameFileInfo) {
-        List<FileInfo> filesToReload = Optional.ofNullable(gameFileInfo.getFiles())
+        FileInfo[] filesToReload = Optional.ofNullable(gameFileInfo.getFiles())
                 .orElse(Collections.emptyList())
                 .stream()
                 .filter(this::isInvalidFile)
                 .peek(this::removeFile)
-                .collect(Collectors.toList());
+                .toArray(FileInfo[]::new);
 
-        onAsyncFinished(new AsyncTaskResult<>(filesToReload.toArray(new FileInfo[0])));
+        uiThreadPoster.post(() -> {
+            onAsyncFinished(new AsyncTaskResult<>(filesToReload));
+        });
     }
 
     private void removeFile(FileInfo fileInfo) {
         String filePath = fileInfo.getPath().replace("files/", "");
-        File file = new File(GAME_PATH.concat(filePath));
+        File file = new File(mainActivity.getExternalFilesDir(null).toString().concat(filePath));
 
         if (file.exists()) {
             file.delete();
@@ -100,13 +116,13 @@ public class CacheChecker implements Listener<FileInfo[]> {
 
     private boolean isInvalidFile(FileInfo fileInfo) {
         String filePath = fileInfo.getPath().replace("files/", "");
-        File file = new File(GAME_PATH.concat(filePath));
+        File file = new File(mainActivity.getExternalFilesDir(null).toString().concat(filePath));
 
         return !file.exists() || !isValidHash(filePath, fileInfo);
     }
 
     private boolean isValidHash(String filePath, FileInfo fileInfo) {
-        String hash = calculateHash(GAME_PATH.concat(filePath));
+        String hash = calculateHash(mainActivity.getExternalFilesDir(null).toString().concat(filePath));
 
         return hash.equals(fileInfo.getHash());
     }
@@ -155,7 +171,7 @@ public class CacheChecker implements Listener<FileInfo[]> {
         }
     }
 
-    public void setOnAsyncSuccessListener(OnAsyncSuccessListener onClickListener) {
+    public void setOnAsyncSuccessListener(OnAsyncSuccessListenerWithResponse<FileInfo[]> onClickListener) {
         this.onAsyncSuccessListener = onClickListener;
     }
 
@@ -163,20 +179,27 @@ public class CacheChecker implements Listener<FileInfo[]> {
         this.onAsyncCriticalErrorListener = onAsyncCriticalErrorListener;
     }
 
+    @UiThread
     @Override
     public void onAsyncFinished(AsyncTaskResult<FileInfo[]> result) {
+        progressDialog.dismiss();
+
         if (result.getException() != null) {
             ApiException apiException = result.getException();
-
-            //TODO вернуть как было
-            activityService.showBigMessage(apiException.getMessage(), mainActivity);
-//            showErrorMessage(apiException);
+            showErrorMessage(apiException);
             onAsyncErrorDo();
-//        } else if (isCancelled()) {
-//            showErrorMessage(new ApiException(ErrorContainer.DOWNLOAD_WAS_INTERRUPTED));
         } else if (onAsyncSuccessListener != null) {
-            onAsyncSuccessListener.onSuccess();
+            onAsyncSuccessListener.onSuccess(result.getResult());
         }
+    }
+
+    private void showErrorMessage(ApiException exception) {
+        String errorMessage = Optional.ofNullable(exception)
+                .map(ApiException::getError)
+                .map(ErrorContainer::getMessage)
+                .orElse(StringUtils.EMPTY);
+
+        activityService.showMessage(errorMessage, mainActivity);
     }
 
     private void onAsyncErrorDo() {

@@ -178,16 +178,24 @@ public class LoaderActivity extends AppCompatActivity {
     private void installGame(DownloadType type) {
         switch (type) {
             case LOAD_ALL_CACHE: {
-                File dir = new File(getExternalFilesDir(null).toString() + "/temp_downloads/");
-
-                if (!dir.exists()) {
-                    dir.mkdirs();
-                }
+//                File dir = new File(getExternalFilesDir(null).toString() + "/temp_downloads/");
+//
+//                if (!dir.exists()) {
+//                    dir.mkdirs();
+//                }
 
                 downloadTask = new DownloadTask(this, progressBar);
                 downloadTask.setOnAsyncSuccessListener(this::performAfterDownload);
                 downloadTask.setOnAsyncCriticalErrorListener(this::performAfterDownloadFailed);
                 downloadTask.download();
+                break;
+            }
+
+            case RELOAD_OR_ADD_PART_OF_CACHE: {
+                downloadTask = new DownloadTask(this, progressBar);
+                downloadTask.setOnAsyncSuccessListener(this::performAfterDownload);
+                downloadTask.setOnAsyncCriticalErrorListener(this::performAfterDownloadFailed);
+                downloadTask.reloadCache();
                 break;
             }
 

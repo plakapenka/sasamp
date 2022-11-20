@@ -19,6 +19,9 @@ import android.view.animation.Animation;
 import com.liverussia.cr.R;
 import com.liverussia.cr.core.Config;
 import com.liverussia.cr.core.DownloadUtils;
+import com.liverussia.cr.core.GTASA;
+import com.liverussia.launcher.async.CacheChecker;
+import com.liverussia.launcher.dto.response.FileInfo;
 import com.liverussia.launcher.dto.response.ServerImagesResponseDto;
 import com.liverussia.launcher.enums.DownloadType;
 import com.liverussia.launcher.enums.NativeStorageElements;
@@ -35,9 +38,11 @@ import com.liverussia.launcher.service.impl.ActivityServiceImpl;
 import com.liverussia.launcher.storage.NativeStorage;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.CollectionUtils;
 
 import java.io.File;
 
+import java.nio.file.Files;
 import java.util.*;
 
 import lombok.Getter;
@@ -261,16 +266,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void onClickPlay() {
-        if (!isGameInstalled()) {
+
+        File gameDirectory = new File(this.getExternalFilesDir(null).toString());
+
+        if (gameDirectory.exists() && gameDirectory.isDirectory()) {
+            CacheChecker cacheChecker = new CacheChecker(this);
+            cacheChecker.setOnAsyncSuccessListener(this::doAfterCacheChecked);
+            cacheChecker.checkCache();
+        } else {
             DownloadUtils.setType(DownloadType.LOAD_ALL_CACHE);
             startActivity(new Intent(this, LoaderActivity.class));
-            return;
         }
+    }
 
+    private void doAfterCacheChecked(FileInfo[] fileToReloadArray) {
+
+        List<FileInfo> filesToReloadList = Arrays.asList(fileToReloadArray);
+
+        if (CollectionUtils.isEmpty(filesToReloadList)) {
+            startGame();
+        } else {
+            reloadCache(filesToReloadList);
+        }
+    }
+
+    private void reloadCache(List<FileInfo> filesToReloadList) {
+        DownloadUtils.FILES_TO_RELOAD = filesToReloadList;
+        DownloadUtils.setType(DownloadType.RELOAD_OR_ADD_PART_OF_CACHE);
+        startActivity(new Intent(this, LoaderActivity.class));
+    }
+
+    private void startGame() {
         String nickname = NativeStorage.getClientProperty(NativeStorageElements.NICKNAME, this);
 
         if (StringUtils.isNotBlank(nickname)) {
-            startActivity(new Intent(this, com.liverussia.cr.core.GTASA.class));
+            startActivity(new Intent(this, GTASA.class));
             return;
         }
 

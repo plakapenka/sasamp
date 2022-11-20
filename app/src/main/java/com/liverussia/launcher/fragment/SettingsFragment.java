@@ -107,7 +107,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener{
     }
 
     private void performResetSettingsButtonAction() {
-        if (!activityService.isGameInstalled()) {
+        if (!activityService.isGameInstalled(getActivity())) {
             activityService.showMessage(InfoMessages.INSTALL_GAME_FIRST.getText(), getActivity());
             return;
         }

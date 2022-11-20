@@ -45,8 +45,8 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public boolean isGameInstalled() {
-        String GetGamePath = Config.GAME_PATH + "texdb/gta3.img";
+    public boolean isGameInstalled(Activity activity) {
+        String GetGamePath = activity.getExternalFilesDir(null).toString() + "texdb/gta3.img";
         File file = new File(GetGamePath);
         return file.exists();
     }

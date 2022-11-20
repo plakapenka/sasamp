@@ -52,7 +52,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import javax.net.ssl.SSLException;
 
 import static com.liverussia.launcher.config.Config.FILE_INFO_URL;
-import static com.liverussia.launcher.config.Config.GAME_PATH;
 
 public class DownloadTask implements Listener<TaskStatus> {
 
@@ -85,19 +84,8 @@ public class DownloadTask implements Listener<TaskStatus> {
     }
 
     public void download() {
-
-        PowerManager pm = (PowerManager) loaderActivity.getSystemService(Context.POWER_SERVICE);
-        mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, getClass().getName());
-        mWakeLock.acquire();
-        progressBar.setVisibility(View.VISIBLE);
-        progressBar.setIndeterminate(false);
-        progressBar.setMax(100);
-        loaderActivity.getLoading().setText("Загрузка файлов игры...");
-
-        if (DownloadType.LOAD_ALL_CACHE.equals(DownloadUtils.getType())) {
-            backgroundThreadPoster.post(() -> downloadGameFiles());
-            return;
-        }
+        configureProgressBar();
+        backgroundThreadPoster.post(() -> downloadGameFiles());
 
 //        if (Utils.getType() == 1) {
 //            return downloadLauncher(sUrl[0]);
@@ -107,11 +95,39 @@ public class DownloadTask implements Listener<TaskStatus> {
     }
 
     public void reloadCache() {
-//TODO размер тут еще знать над
+        configureProgressBar();
+        backgroundThreadPoster.post(() -> reloadGameFiles(DownloadUtils.FILES_TO_RELOAD));
+
     }
 
-    private void reloadGameFiles() {
+    @WorkerThread
+    private void reloadGameFiles(List<FileInfo> filesInfo) {
+        try {
+//            fileLengthFull = calculateSize(filesInfo); TODO добавить вес файла в json
+            fileLengthFull = 26428800;
+            fileLengthMin = new AtomicLong(0);
+            total = 0;
 
+            files = new HashSet<>(filesInfo);
+
+            downloadAndSaveFiles(filesInfo);
+        } catch (ApiException e) {
+            uiThreadPoster.post(() -> {
+                onAsyncFinished(new AsyncTaskResult<>(e));
+            });
+        } catch (Exception e) {
+            uiThreadPoster.post(() -> {
+                onAsyncFinished(new AsyncTaskResult<>(new ApiException(ErrorContainer.DOWNLOAD_FILES_ERROR)));
+            });
+        }
+    }
+
+    private long calculateSize(List<FileInfo> filesInfo) {
+        return Optional.ofNullable(filesInfo)
+                .orElse(Collections.emptyList())
+                .stream()
+                .mapToLong(FileInfo::getSize)
+                .sum();
     }
 
     @WorkerThread
@@ -198,7 +214,7 @@ public class DownloadTask implements Listener<TaskStatus> {
             long fileLength = connection.getContentLengthLong();
             input = connection.getInputStream();
 
-            file = new File(GAME_PATH + fileInfo.getPath().replace("files/", ""));
+            file = new File(loaderActivity.getExternalFilesDir(null).toString() + fileInfo.getPath().replace("files/", ""));
 
             if (file.exists()) {
                 file.delete();
@@ -206,7 +222,7 @@ public class DownloadTask implements Listener<TaskStatus> {
 
             file.getParentFile().mkdirs();
 
-            output = new FileOutputStream(GAME_PATH + fileInfo.getPath().replace("files/", ""));
+            output = new FileOutputStream(loaderActivity.getExternalFilesDir(null).toString() + fileInfo.getPath().replace("files/", ""));
 
             byte[] data = new byte[4096];
             int count;
@@ -271,7 +287,7 @@ public class DownloadTask implements Listener<TaskStatus> {
 
     @UiThread
     private void publishProgress(int progress) {
-        if (DownloadType.LOAD_ALL_CACHE.equals(DownloadUtils.getType())) {
+        if (DownloadType.LOAD_ALL_CACHE.equals(DownloadUtils.getType()) || DownloadType.RELOAD_OR_ADD_PART_OF_CACHE.equals(DownloadUtils.getType())) {
             loaderActivity.getLoading().setText("Загрузка файлов игры...");
             loaderActivity.getLoadingPercent().setText(progress + "%");
             loaderActivity.getFileName().setText(formatFileSize(fileLengthMin.longValue())+" из "+formatFileSize(fileLengthFull));
@@ -303,7 +319,7 @@ public class DownloadTask implements Listener<TaskStatus> {
         if (result.getException() != null) {
             ApiException apiException = result.getException();
 
-            //TODO вернуть как было
+            //TODO вернуть как было см чекер или коммиты
             activityService.showBigMessage(apiException.getMessage(), loaderActivity);
 //            showErrorMessage(apiException);
             onAsyncErrorDo();
@@ -370,6 +386,16 @@ public class DownloadTask implements Listener<TaskStatus> {
         }
 
         return hrSize;
+    }
+
+    private void configureProgressBar() {
+        PowerManager pm = (PowerManager) loaderActivity.getSystemService(Context.POWER_SERVICE);
+        mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, getClass().getName());
+        mWakeLock.acquire();
+        progressBar.setVisibility(View.VISIBLE);
+        progressBar.setIndeterminate(false);
+        progressBar.setMax(100);
+        loaderActivity.getLoading().setText("Загрузка файлов игры...");
     }
 
     public void repeatLoad() {

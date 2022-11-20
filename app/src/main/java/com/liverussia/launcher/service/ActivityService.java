@@ -19,7 +19,7 @@ public interface ActivityService {
 
     void performDiscordButtonAction(AppCompatActivity activity);
 
-    boolean isGameInstalled();
+    boolean isGameInstalled(Activity activity);
 
     void showBigMessage(String message, Activity activity);
 }
