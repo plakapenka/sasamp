@@ -86,8 +86,11 @@
 #define RPC_SHOW_CONTEINER_AUC 47
 #define RPC_TURN_SIGNAL	47
 #define RPC_PRE_DEATH 48
-#define RPC_INVENTAR_SHOWHIDE 50
+#define RPC_ITEM_MATRIX				49
+#define RPC_INVENTAR_SHOWHIDE 		50
 #define RPC_MAFIA_WAR 52
+#define RPC_MATRIX_CLICK 53
+#define RPC_INVENTAR_BUTTONS 54
 
 // Packet 252
 #define RPC_TOGGLE_LOGIN (1)
@@ -216,6 +219,8 @@ public:
 	void Packet_MAFIA_WAR(Packet *p);
 
 	void Packet_InventoryToggle(Packet *p);
+
+    void Packet_InventoryUpdateItem(Packet *p);
 };
 
 extern CNetGame *pNetGame;

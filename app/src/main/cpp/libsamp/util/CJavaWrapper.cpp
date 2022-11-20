@@ -1748,3 +1748,34 @@ Java_com_liverussia_cr_gui_PreDeath_OnClickPreDeathButton(JNIEnv *env, jobject t
 	bsSend.Write(button);
 	pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
 }
+
+jobject jMine1;
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_MineGame1_Init(JNIEnv *env, jobject thiz) {
+	jMine1 = env->NewGlobalRef(thiz);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_MineGame1_ExitMineGame(JNIEnv *env, jclass clazz, jint exittype) {
+	uint8_t packet = ID_CUSTOM_RPC;
+	uint8_t RPC = RPC_SHOW_MINING_GAME;
+	uint8_t button = exittype;
+
+
+	RakNet::BitStream bsSend;
+	bsSend.Write(packet);
+	bsSend.Write(RPC);
+	bsSend.Write(button);
+	pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
+}
+
+void CJavaWrapper::ShowMiningGame() {
+
+	JNIEnv* env = GetEnv();
+
+	jclass clazz = env->GetObjectClass(jMine1);
+	jmethodID Show = env->GetMethodID(clazz, "Show", "()V");
+
+	env->CallVoidMethod(jMine1, Show);
+}

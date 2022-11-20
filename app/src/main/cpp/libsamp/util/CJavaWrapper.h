@@ -184,6 +184,8 @@ public:
 	jobject jCasino_LuckyWheel;
 
     void ShowCasinoLuckyWheel(int count, int time);
+
+    void ShowMiningGame();
 };
 
 extern CJavaWrapper* g_pJavaWrapper;

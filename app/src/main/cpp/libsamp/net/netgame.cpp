@@ -219,12 +219,12 @@ void CNetGame::Process()
 		if(pPlayer && pCamera)
 		{
 			if(pPlayer->IsInVehicle())
-				pPlayer->RemoveFromVehicleAndPutAt(1093.4f, -2036.5f, 82.7106f);
+				pPlayer->RemoveFromVehicleAndPutAt(314.0f, 160.0f, 39.0f);
 			else
-				pPlayer->TeleportTo(1093.4f, -2036.5f, 82.7106f);
+				pPlayer->TeleportTo(314.0f, 160.0f, 39.0f);
 
-			pCamera->SetPosition(1093.0f, -2036.0f, 90.0f, 0.0f, 0.0f, 0.0f);
-			pCamera->LookAtPoint(384.0f, -1557.0f, 20.0f, 2);
+			pCamera->SetPosition(-314.0f, 160.0f, 39.0f, 0.0f, 0.0f, 0.0f);
+			pCamera->LookAtPoint(-310.0f, 157.0f, 39.0f, 2);
 			pGame->SetWorldWeather(m_byteWeather);
 			pGame->DisplayWidgets(false);
 		}
@@ -542,6 +542,10 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 	//pChatWindow->AddDebugMessage("p %d rpc %d", packetID, rpcID);
 	switch (rpcID)
 	{
+		case RPC_ITEM_MATRIX: {
+			Packet_InventoryUpdateItem(p);
+			break;
+		}
 		case RPC_INVENTAR_SHOWHIDE: {
 			Packet_InventoryToggle(p);
 			break;
@@ -731,6 +735,17 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			CPlayerPed *localPed = pPlayerPool->GetLocalPlayer()->GetPlayerPed();
 			CPlayerPed *toPed = pPlayerPool->GetAt(targetID)->GetPlayerPed();
 			ScriptCommand(&TASK_CHAR_ARREST_CHAR, localPed->m_dwGTAId, toPed->m_dwGTAId);
+			break;
+		}
+		case RPC_SHOW_MINING_GAME:
+		{
+			uint8_t toggle;
+			uint32_t type;
+
+			if(type == 0)
+			{
+				g_pJavaWrapper->ShowMiningGame();
+			}
 			break;
 		}
 		case RPC_PRE_DEATH:

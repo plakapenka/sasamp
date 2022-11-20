@@ -99,6 +99,7 @@
         <include layout="@layout/br_notification" />
         <include layout="@layout/furniture_factory" />
         <include layout="@layout/inventory" />
+        <include layout="@layout/mine_1" />
 
     </FrameLayout>
 </FrameLayout>
