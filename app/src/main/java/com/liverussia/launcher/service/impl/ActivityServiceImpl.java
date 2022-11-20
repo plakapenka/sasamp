@@ -12,6 +12,8 @@ import com.liverussia.launcher.service.ActivityService;
 
 import java.io.File;
 
+import static com.liverussia.launcher.config.Config.SETTINGS_FILE_PATH;
+
 public class ActivityServiceImpl implements ActivityService {
 
     @Override
@@ -45,9 +47,11 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public boolean isGameInstalled(Activity activity) {
-        String GetGamePath = activity.getExternalFilesDir(null).toString() + "texdb/gta3.img";
-        File file = new File(GetGamePath);
+    public boolean isGameFileInstall(Activity activity, String filePath) {
+        String fileFullPath = activity.getExternalFilesDir(null).toString()
+                .concat(filePath);
+
+        File file = new File(fileFullPath);
         return file.exists();
     }
 }

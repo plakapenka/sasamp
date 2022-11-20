@@ -214,7 +214,10 @@ public class DownloadTask implements Listener<TaskStatus> {
             long fileLength = connection.getContentLengthLong();
             input = connection.getInputStream();
 
-            file = new File(loaderActivity.getExternalFilesDir(null).toString() + fileInfo.getPath().replace("files/", ""));
+            file = new File(loaderActivity.getExternalFilesDir(null).toString()
+                    .concat("/")
+                    .concat(fileInfo.getPath().replace("files/", ""))
+            );
 
             if (file.exists()) {
                 file.delete();
@@ -222,7 +225,11 @@ public class DownloadTask implements Listener<TaskStatus> {
 
             file.getParentFile().mkdirs();
 
-            output = new FileOutputStream(loaderActivity.getExternalFilesDir(null).toString() + fileInfo.getPath().replace("files/", ""));
+            output = new FileOutputStream(loaderActivity
+                    .getExternalFilesDir(null).toString()
+                    .concat("/")
+                    .concat(fileInfo.getPath().replace("files/", ""))
+            );
 
             byte[] data = new byte[4096];
             int count;

@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ServerImagesResponseDto donateServicesResponseDto;
 
     private final static String IS_AFTER_LOADING_KEY = "isAfterLoading";
+    private final static int GAME_DIRECTORY_EMPTY_SIZE = 0;
 
     @Getter
     @Setter
@@ -266,10 +267,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void onClickPlay() {
-
         File gameDirectory = new File(this.getExternalFilesDir(null).toString());
 
-        if (gameDirectory.exists() && gameDirectory.isDirectory()) {
+        if (gameDirectory.list() != null && gameDirectory.list().length > GAME_DIRECTORY_EMPTY_SIZE) {
             CacheChecker cacheChecker = new CacheChecker(this);
             cacheChecker.setOnAsyncSuccessListener(this::doAfterCacheChecked);
             cacheChecker.checkCache();

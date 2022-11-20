@@ -107,7 +107,10 @@ public class CacheChecker implements Listener<FileInfo[]> {
 
     private void removeFile(FileInfo fileInfo) {
         String filePath = fileInfo.getPath().replace("files/", "");
-        File file = new File(mainActivity.getExternalFilesDir(null).toString().concat(filePath));
+        File file = new File(mainActivity.getExternalFilesDir(null).toString()
+                .concat("/")
+                .concat(filePath)
+        );
 
         if (file.exists()) {
             file.delete();
@@ -116,13 +119,19 @@ public class CacheChecker implements Listener<FileInfo[]> {
 
     private boolean isInvalidFile(FileInfo fileInfo) {
         String filePath = fileInfo.getPath().replace("files/", "");
-        File file = new File(mainActivity.getExternalFilesDir(null).toString().concat(filePath));
+        File file = new File(mainActivity.getExternalFilesDir(null).toString()
+                .concat("/")
+                .concat(filePath)
+        );
 
         return !file.exists() || !isValidHash(filePath, fileInfo);
     }
 
     private boolean isValidHash(String filePath, FileInfo fileInfo) {
-        String hash = calculateHash(mainActivity.getExternalFilesDir(null).toString().concat(filePath));
+        String hash = calculateHash(mainActivity.getExternalFilesDir(null).toString()
+                .concat("/")
+                .concat(filePath)
+        );
 
         return hash.equals(fileInfo.getHash());
     }

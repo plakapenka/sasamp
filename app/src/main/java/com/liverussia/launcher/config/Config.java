@@ -7,15 +7,8 @@ public class Config {
     public static final String URL_FILES = "https://vl4sov.com/Download/game.zip";
     public static final String URL_FILES_UPDATE = "https://vl4sov.com/Download/upd.zip";
     public static final String URL_CLIENT = "https://vl4sov.com/Download/launcher.apk";
-
     public static final String URL_DONATE = "https://vl4sov.com/liverussia.online/Donate";
-    public static final String GAME_DIR = "/storage/emulated/0/Android/data/";
 
-
-
-
-
-    public static final String GAME_SETTINGS_DIRECTORY = "SAMP/settings.ini";
     public static final String FILE_INFO_URL = "https://files.liverussia.online/downloads/files/files.json";
 
     public static final String DISCORD_URI = "https://discord.com/";

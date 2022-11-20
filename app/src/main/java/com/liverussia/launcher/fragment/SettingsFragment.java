@@ -107,7 +107,9 @@ public class SettingsFragment extends Fragment implements View.OnClickListener{
     }
 
     private void performResetSettingsButtonAction() {
-        if (!activityService.isGameInstalled(getActivity())) {
+
+        //TODO править проверку (проверять на файл, который содержит настройки)
+        if (!activityService.isGameFileInstall(getActivity(), SETTINGS_FILE_PATH)) {
             activityService.showMessage(InfoMessages.INSTALL_GAME_FIRST.getText(), getActivity());
             return;
         }
