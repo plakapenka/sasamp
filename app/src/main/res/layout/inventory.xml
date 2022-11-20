@@ -47,56 +47,197 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/imageView53" />
 
-            <ImageView
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/inv_active_1"
                 android:layout_width="@dimen/_45sdp"
                 android:layout_height="@dimen/_26sdp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/inv_bg_shape"
-                android:scaleType="centerInside"
-                android:src="@drawable/inv_key"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageView53" />
+                app:layout_constraintTop_toBottomOf="@+id/imageView53" >
 
-            <ImageView
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/inv_key"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/inv_bg_count"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" >
+
+                <TextView
+                    android:textAlignment="center"
+                    android:paddingRight="@dimen/_3sdp"
+                    android:paddingLeft="@dimen/_3sdp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/tajawal_regular"
+                    android:text="3"
+                    android:textSize="@dimen/_5sdp"
+                    android:textColor="@color/white"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/inv_active_2"
                 android:layout_width="@dimen/_45sdp"
                 android:layout_height="@dimen/_26sdp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/inv_bg_shape"
                 android:scaleType="centerInside"
-                android:src="@drawable/inv_key"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/inv_active_1" />
+                app:layout_constraintTop_toBottomOf="@+id/inv_active_1" >
 
-            <ImageView
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/inv_bg_count"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" >
+
+                    <TextView
+                        android:textAlignment="center"
+                        android:paddingRight="@dimen/_3sdp"
+                        android:paddingLeft="@dimen/_3sdp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/tajawal_regular"
+                        android:text="3"
+                        android:textSize="@dimen/_5sdp"
+                        android:textColor="@color/white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/inv_active_3"
                 android:layout_width="@dimen/_45sdp"
                 android:layout_height="@dimen/_26sdp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/inv_bg_shape"
                 android:scaleType="centerInside"
-                android:src="@drawable/inv_key"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/inv_active_2" />
+                app:layout_constraintTop_toBottomOf="@+id/inv_active_2" >
 
-            <ImageView
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/inv_key"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/inv_bg_count"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" >
+
+                    <TextView
+                        android:textAlignment="center"
+                        android:paddingRight="@dimen/_3sdp"
+                        android:paddingLeft="@dimen/_3sdp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/tajawal_regular"
+                        android:text="3"
+                        android:textSize="@dimen/_5sdp"
+                        android:textColor="@color/white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/inv_active_4"
                 android:layout_width="@dimen/_45sdp"
                 android:layout_height="@dimen/_26sdp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/inv_bg_shape"
                 android:scaleType="centerInside"
-                android:src="@drawable/inv_key"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/inv_active_3" />
+                app:layout_constraintTop_toBottomOf="@+id/inv_active_3" >
+
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/inv_key"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/inv_bg_count"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" >
+
+                    <TextView
+                        android:textAlignment="center"
+                        android:paddingRight="@dimen/_3sdp"
+                        android:paddingLeft="@dimen/_3sdp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/tajawal_regular"
+                        android:text="3"
+                        android:textSize="@dimen/_5sdp"
+                        android:textColor="@color/white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <View
-                android:id="@+id/imageView55"
+                android:id="@+id/inv_close_butt"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_29sdp"
                 android:background="@drawable/inv_bg_bot"
@@ -116,10 +257,10 @@
                 android:text="ВЫЙТИ"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_10sdp"
-                app:layout_constraintBottom_toBottomOf="@+id/imageView55"
+                app:layout_constraintBottom_toBottomOf="@+id/inv_close_butt"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/imageView55"
-                app:layout_constraintTop_toTopOf="@+id/imageView55" />
+                app:layout_constraintStart_toStartOf="@+id/inv_close_butt"
+                app:layout_constraintTop_toTopOf="@+id/inv_close_butt" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -157,53 +298,193 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/inv_p_top_bg" />
 
-            <ImageView
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/inv_player_1"
                 android:layout_width="@dimen/_45sdp"
                 android:layout_height="@dimen/_26sdp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/inv_bg_shape"
                 android:scaleType="centerInside"
-                android:src="@drawable/inv_key"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/inv_p_top_bg" />
+                app:layout_constraintTop_toBottomOf="@+id/inv_p_top_bg" >
 
-            <ImageView
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/inv_key"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/inv_bg_count"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" >
+
+                    <TextView
+                        android:textAlignment="center"
+                        android:paddingRight="@dimen/_3sdp"
+                        android:paddingLeft="@dimen/_3sdp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/tajawal_regular"
+                        android:text="3"
+                        android:textSize="@dimen/_5sdp"
+                        android:textColor="@color/white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/inv_player_2"
                 android:layout_width="@dimen/_45sdp"
                 android:layout_height="@dimen/_26sdp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/inv_bg_shape"
                 android:scaleType="centerInside"
-                android:src="@drawable/inv_key"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/inv_player_1" />
+                app:layout_constraintTop_toBottomOf="@+id/inv_player_1" >
 
-            <ImageView
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/inv_key"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/inv_bg_count"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" >
+
+                    <TextView
+                        android:textAlignment="center"
+                        android:paddingRight="@dimen/_3sdp"
+                        android:paddingLeft="@dimen/_3sdp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/tajawal_regular"
+                        android:text="3"
+                        android:textSize="@dimen/_5sdp"
+                        android:textColor="@color/white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/inv_player_3"
                 android:layout_width="@dimen/_45sdp"
                 android:layout_height="@dimen/_26sdp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/inv_bg_shape"
                 android:scaleType="centerInside"
-                android:src="@drawable/inv_key"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/inv_player_2" />
+                app:layout_constraintTop_toBottomOf="@+id/inv_player_2" >
 
-            <ImageView
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/inv_key"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/inv_bg_count"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" >
+
+                    <TextView
+                        android:textAlignment="center"
+                        android:paddingRight="@dimen/_3sdp"
+                        android:paddingLeft="@dimen/_3sdp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/tajawal_regular"
+                        android:text="3"
+                        android:textSize="@dimen/_5sdp"
+                        android:textColor="@color/white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/inv_player_4"
                 android:layout_width="@dimen/_45sdp"
                 android:layout_height="@dimen/_26sdp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/inv_bg_shape"
                 android:scaleType="centerInside"
-                android:src="@drawable/inv_key"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/inv_player_3" />
+                app:layout_constraintTop_toBottomOf="@+id/inv_player_3" >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/inv_key"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/inv_bg_count"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" >
+
+                    <TextView
+                        android:textAlignment="center"
+                        android:paddingRight="@dimen/_3sdp"
+                        android:paddingLeft="@dimen/_3sdp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/tajawal_regular"
+                        android:text="3"
+                        android:textSize="@dimen/_5sdp"
+                        android:textColor="@color/white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <ImageView
                 android:id="@+id/inv_p_bottom_bg"
@@ -226,6 +507,7 @@
                 app:layout_constraintTop_toTopOf="@+id/inv_p_bottom_bg" />
 
             <TextView
+                android:id="@+id/inv_satiety_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/_3sdp"
@@ -396,7 +678,7 @@
                 app:layout_constraintStart_toStartOf="@+id/inv_del_butt"
                 app:layout_constraintTop_toTopOf="@+id/inv_del_butt" />
 
-            <ImageView
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/inv_main_1"
                 android:layout_width="@dimen/_45sdp"
                 android:layout_height="@dimen/_26sdp"
@@ -404,174 +686,734 @@
                 android:layout_marginTop="8dp"
                 android:background="@drawable/inv_bg_shape"
                 android:scaleType="centerInside"
-                android:src="@drawable/inv_key"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/inv_main_top_bg" />
+                app:layout_constraintTop_toBottomOf="@+id/inv_main_top_bg" >
 
-            <ImageView
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/inv_key"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/inv_bg_count"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" >
+
+                    <TextView
+                        android:textAlignment="center"
+                        android:paddingRight="@dimen/_3sdp"
+                        android:paddingLeft="@dimen/_3sdp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/tajawal_regular"
+                        android:text="3"
+                        android:textSize="@dimen/_5sdp"
+                        android:textColor="@color/white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/inv_main_2"
                 android:layout_width="@dimen/_45sdp"
                 android:layout_height="@dimen/_26sdp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/inv_bg_shape"
                 android:scaleType="centerInside"
-                android:src="@drawable/inv_key"
                 app:layout_constraintStart_toStartOf="@+id/inv_main_1"
-                app:layout_constraintTop_toBottomOf="@+id/inv_main_1" />
+                app:layout_constraintTop_toBottomOf="@+id/inv_main_1" >
 
-            <ImageView
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/inv_key"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/inv_bg_count"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" >
+
+                    <TextView
+                        android:textAlignment="center"
+                        android:paddingRight="@dimen/_3sdp"
+                        android:paddingLeft="@dimen/_3sdp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/tajawal_regular"
+                        android:text="3"
+                        android:textSize="@dimen/_5sdp"
+                        android:textColor="@color/white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/inv_main_3"
                 android:layout_width="@dimen/_45sdp"
                 android:layout_height="@dimen/_26sdp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/inv_bg_shape"
                 android:scaleType="centerInside"
-                android:src="@drawable/inv_key"
                 app:layout_constraintStart_toStartOf="@+id/inv_main_2"
-                app:layout_constraintTop_toBottomOf="@+id/inv_main_2" />
+                app:layout_constraintTop_toBottomOf="@+id/inv_main_2" >
 
-            <ImageView
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/inv_key"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/inv_bg_count"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" >
+
+                    <TextView
+                        android:textAlignment="center"
+                        android:paddingRight="@dimen/_3sdp"
+                        android:paddingLeft="@dimen/_3sdp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/tajawal_regular"
+                        android:text="3"
+                        android:textSize="@dimen/_5sdp"
+                        android:textColor="@color/white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/inv_main_4"
                 android:layout_width="@dimen/_45sdp"
                 android:layout_height="@dimen/_26sdp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/inv_bg_shape"
                 android:scaleType="centerInside"
-                android:src="@drawable/inv_key"
                 app:layout_constraintStart_toStartOf="@+id/inv_main_3"
-                app:layout_constraintTop_toBottomOf="@+id/inv_main_3" />
+                app:layout_constraintTop_toBottomOf="@+id/inv_main_3" >
 
-            <ImageView
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/inv_key"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/inv_bg_count"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" >
+
+                    <TextView
+                        android:textAlignment="center"
+                        android:paddingRight="@dimen/_3sdp"
+                        android:paddingLeft="@dimen/_3sdp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/tajawal_regular"
+                        android:text="3"
+                        android:textSize="@dimen/_5sdp"
+                        android:textColor="@color/white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/inv_main_5"
                 android:layout_width="@dimen/_45sdp"
                 android:layout_height="@dimen/_26sdp"
                 android:layout_marginStart="@dimen/_3sdp"
                 android:background="@drawable/inv_bg_shape"
                 android:scaleType="centerInside"
-                android:src="@drawable/inv_key"
                 app:layout_constraintStart_toEndOf="@+id/inv_main_1"
-                app:layout_constraintTop_toTopOf="@+id/inv_main_1" />
+                app:layout_constraintTop_toTopOf="@+id/inv_main_1" >
 
-            <ImageView
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/inv_key"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/inv_bg_count"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" >
+
+                    <TextView
+                        android:textAlignment="center"
+                        android:paddingRight="@dimen/_3sdp"
+                        android:paddingLeft="@dimen/_3sdp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/tajawal_regular"
+                        android:text="3"
+                        android:textSize="@dimen/_5sdp"
+                        android:textColor="@color/white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/inv_main_6"
                 android:layout_width="@dimen/_45sdp"
                 android:layout_height="@dimen/_26sdp"
                 android:layout_marginStart="@dimen/_3sdp"
                 android:background="@drawable/inv_bg_shape"
                 android:scaleType="centerInside"
-                android:src="@drawable/inv_key"
                 app:layout_constraintStart_toEndOf="@+id/inv_main_2"
-                app:layout_constraintTop_toTopOf="@+id/inv_main_2" />
+                app:layout_constraintTop_toTopOf="@+id/inv_main_2" >
 
-            <ImageView
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/inv_key"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/inv_bg_count"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" >
+
+                    <TextView
+                        android:textAlignment="center"
+                        android:paddingRight="@dimen/_3sdp"
+                        android:paddingLeft="@dimen/_3sdp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/tajawal_regular"
+                        android:text="3"
+                        android:textSize="@dimen/_5sdp"
+                        android:textColor="@color/white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/inv_main_7"
                 android:layout_width="@dimen/_45sdp"
                 android:layout_height="@dimen/_26sdp"
                 android:layout_marginStart="@dimen/_3sdp"
                 android:background="@drawable/inv_bg_shape"
                 android:scaleType="centerInside"
-                android:src="@drawable/inv_key"
                 app:layout_constraintStart_toEndOf="@+id/inv_main_3"
-                app:layout_constraintTop_toTopOf="@+id/inv_main_3" />
+                app:layout_constraintTop_toTopOf="@+id/inv_main_3">
 
-            <ImageView
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/inv_key"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/inv_bg_count"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" >
+
+                    <TextView
+                        android:textAlignment="center"
+                        android:paddingRight="@dimen/_3sdp"
+                        android:paddingLeft="@dimen/_3sdp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/tajawal_regular"
+                        android:text="3"
+                        android:textSize="@dimen/_5sdp"
+                        android:textColor="@color/white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/inv_main_8"
                 android:layout_width="@dimen/_45sdp"
                 android:layout_height="@dimen/_26sdp"
                 android:layout_marginStart="@dimen/_3sdp"
                 android:background="@drawable/inv_bg_shape"
                 android:scaleType="centerInside"
-                android:src="@drawable/inv_key"
                 app:layout_constraintStart_toEndOf="@+id/inv_main_4"
-                app:layout_constraintTop_toTopOf="@+id/inv_main_4" />
+                app:layout_constraintTop_toTopOf="@+id/inv_main_4" >
 
-            <ImageView
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/inv_key"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/inv_bg_count"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" >
+
+                    <TextView
+                        android:textAlignment="center"
+                        android:paddingRight="@dimen/_3sdp"
+                        android:paddingLeft="@dimen/_3sdp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/tajawal_regular"
+                        android:text="3"
+                        android:textSize="@dimen/_5sdp"
+                        android:textColor="@color/white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/inv_main_9"
                 android:layout_width="@dimen/_45sdp"
                 android:layout_height="@dimen/_26sdp"
                 android:layout_marginStart="@dimen/_3sdp"
                 android:background="@drawable/inv_bg_shape"
                 android:scaleType="centerInside"
-                android:src="@drawable/inv_key"
                 app:layout_constraintStart_toEndOf="@+id/inv_main_5"
-                app:layout_constraintTop_toTopOf="@+id/inv_main_5" />
+                app:layout_constraintTop_toTopOf="@+id/inv_main_5" >
 
-            <ImageView
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/inv_key"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/inv_bg_count"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" >
+
+                    <TextView
+                        android:textAlignment="center"
+                        android:paddingRight="@dimen/_3sdp"
+                        android:paddingLeft="@dimen/_3sdp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/tajawal_regular"
+                        android:text="3"
+                        android:textSize="@dimen/_5sdp"
+                        android:textColor="@color/white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/inv_main_10"
                 android:layout_width="@dimen/_45sdp"
                 android:layout_height="@dimen/_26sdp"
                 android:layout_marginStart="@dimen/_3sdp"
                 android:background="@drawable/inv_bg_shape"
                 android:scaleType="centerInside"
-                android:src="@drawable/inv_key"
                 app:layout_constraintStart_toEndOf="@+id/inv_main_6"
-                app:layout_constraintTop_toTopOf="@+id/inv_main_6" />
+                app:layout_constraintTop_toTopOf="@+id/inv_main_6" >
 
-            <ImageView
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/inv_key"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/inv_bg_count"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" >
+
+                    <TextView
+                        android:textAlignment="center"
+                        android:paddingRight="@dimen/_3sdp"
+                        android:paddingLeft="@dimen/_3sdp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/tajawal_regular"
+                        android:text="3"
+                        android:textSize="@dimen/_5sdp"
+                        android:textColor="@color/white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/inv_main_11"
                 android:layout_width="@dimen/_45sdp"
                 android:layout_height="@dimen/_26sdp"
                 android:layout_marginStart="@dimen/_3sdp"
                 android:background="@drawable/inv_bg_shape"
                 android:scaleType="centerInside"
-                android:src="@drawable/inv_key"
                 app:layout_constraintStart_toEndOf="@+id/inv_main_7"
-                app:layout_constraintTop_toTopOf="@+id/inv_main_7" />
+                app:layout_constraintTop_toTopOf="@+id/inv_main_7" >
 
-            <ImageView
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/inv_key"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/inv_bg_count"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" >
+
+                    <TextView
+                        android:textAlignment="center"
+                        android:paddingRight="@dimen/_3sdp"
+                        android:paddingLeft="@dimen/_3sdp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/tajawal_regular"
+                        android:text="3"
+                        android:textSize="@dimen/_5sdp"
+                        android:textColor="@color/white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/inv_main_12"
                 android:layout_width="@dimen/_45sdp"
                 android:layout_height="@dimen/_26sdp"
                 android:layout_marginStart="@dimen/_3sdp"
                 android:background="@drawable/inv_bg_shape"
                 android:scaleType="centerInside"
-                android:src="@drawable/inv_key"
                 app:layout_constraintStart_toEndOf="@+id/inv_main_8"
-                app:layout_constraintTop_toTopOf="@+id/inv_main_8" />
+                app:layout_constraintTop_toTopOf="@+id/inv_main_8" >
 
-            <ImageView
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/inv_key"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/inv_bg_count"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" >
+
+                    <TextView
+                        android:textAlignment="center"
+                        android:paddingRight="@dimen/_3sdp"
+                        android:paddingLeft="@dimen/_3sdp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/tajawal_regular"
+                        android:text="3"
+                        android:textSize="@dimen/_5sdp"
+                        android:textColor="@color/white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/inv_main_13"
                 android:layout_width="@dimen/_45sdp"
                 android:layout_height="@dimen/_26sdp"
                 android:layout_marginStart="@dimen/_3sdp"
                 android:background="@drawable/inv_bg_shape"
                 android:scaleType="centerInside"
-                android:src="@drawable/inv_key"
                 app:layout_constraintStart_toEndOf="@+id/inv_main_9"
-                app:layout_constraintTop_toTopOf="@+id/inv_main_1" />
+                app:layout_constraintTop_toTopOf="@+id/inv_main_1" >
 
-            <ImageView
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/inv_key"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/inv_bg_count"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" >
+
+                    <TextView
+                        android:textAlignment="center"
+                        android:paddingRight="@dimen/_3sdp"
+                        android:paddingLeft="@dimen/_3sdp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/tajawal_regular"
+                        android:text="3"
+                        android:textSize="@dimen/_5sdp"
+                        android:textColor="@color/white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/inv_main_14"
                 android:layout_width="@dimen/_45sdp"
                 android:layout_height="@dimen/_26sdp"
                 android:layout_marginStart="@dimen/_3sdp"
                 android:background="@drawable/inv_bg_shape"
                 android:scaleType="centerInside"
-                android:src="@drawable/inv_key"
                 app:layout_constraintStart_toEndOf="@+id/inv_main_10"
-                app:layout_constraintTop_toTopOf="@+id/inv_main_10" />
+                app:layout_constraintTop_toTopOf="@+id/inv_main_10" >
 
-            <ImageView
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/inv_key"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/inv_bg_count"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" >
+
+                    <TextView
+                        android:textAlignment="center"
+                        android:paddingRight="@dimen/_3sdp"
+                        android:paddingLeft="@dimen/_3sdp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/tajawal_regular"
+                        android:text="3"
+                        android:textSize="@dimen/_5sdp"
+                        android:textColor="@color/white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/inv_main_15"
                 android:layout_width="@dimen/_45sdp"
                 android:layout_height="@dimen/_26sdp"
                 android:layout_marginStart="@dimen/_3sdp"
                 android:background="@drawable/inv_bg_shape"
                 android:scaleType="centerInside"
-                android:src="@drawable/inv_key"
                 app:layout_constraintStart_toEndOf="@+id/inv_main_11"
-                app:layout_constraintTop_toTopOf="@+id/inv_main_11" />
+                app:layout_constraintTop_toTopOf="@+id/inv_main_11" >
 
-            <ImageView
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/inv_key"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/inv_bg_count"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" >
+
+                    <TextView
+                        android:textAlignment="center"
+                        android:paddingRight="@dimen/_3sdp"
+                        android:paddingLeft="@dimen/_3sdp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/tajawal_regular"
+                        android:text="3"
+                        android:textSize="@dimen/_5sdp"
+                        android:textColor="@color/white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/inv_main_16"
                 android:layout_width="@dimen/_45sdp"
                 android:layout_height="@dimen/_26sdp"
                 android:layout_marginStart="@dimen/_3sdp"
                 android:background="@drawable/inv_bg_shape"
                 android:scaleType="centerInside"
-                android:src="@drawable/inv_key"
                 app:layout_constraintStart_toEndOf="@+id/inv_main_12"
-                app:layout_constraintTop_toTopOf="@+id/inv_main_12" />
+                app:layout_constraintTop_toTopOf="@+id/inv_main_12" >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/inv_key"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/inv_bg_count"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" >
+
+                    <TextView
+                        android:textAlignment="center"
+                        android:paddingRight="@dimen/_3sdp"
+                        android:paddingLeft="@dimen/_3sdp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/tajawal_regular"
+                        android:text="3"
+                        android:textSize="@dimen/_5sdp"
+                        android:textColor="@color/white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <View
                 android:id="@+id/inv_menu_butt"

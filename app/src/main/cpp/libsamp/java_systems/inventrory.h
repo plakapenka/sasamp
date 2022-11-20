@@ -8,9 +8,11 @@
 class CINVENTORY {
 
 public:
-    void ToggleShow(bool toggle);
+    void ToggleShow(bool toggle, float satiety);
 
     bool isToggle = false;
+
+    void InventoryUpdateItem(int matrixindex, int pos, const char sprite[], const char caption[], bool active);
 };
 
 #endif //LIVERUSSIA_INVENTRORY_H

@@ -1,5 +1,6 @@
 package com.liverussia.launcher.activity;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Build;
 
@@ -18,6 +19,7 @@ import android.view.animation.Animation;
 
 import com.liverussia.cr.R;
 import com.liverussia.cr.core.Config;
+import com.liverussia.cr.gui.MineGame1;
 import com.liverussia.launcher.dto.response.ServerImagesResponseDto;
 import com.liverussia.launcher.enums.NativeStorageElements;
 import com.liverussia.launcher.fragment.MonitoringFragment;
@@ -85,26 +87,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     {
         activityService = new ActivityServiceImpl();
     }
-	
+    public MineGame1 gg;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
+
+//        setContentView(R.layout.mine_1);
+//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+//        gg = new MineGame1(this);
 
         getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_IMMERSIVE
+                       // | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
 		animation = AnimationUtils.loadAnimation(this, R.anim.button_click);
-		
+
 		monitoringTV = (TextView) findViewById(R.id.monitoringTV);
         settingsTV = (TextView) findViewById(R.id.settingsTV);
         rouletteTV = (TextView) findViewById(R.id.forumTV);
         donateTV = (TextView) findViewById(R.id.donateTV);
-		
+
         monitoringImage = (ImageView) findViewById(R.id.monitoringImage);
         settingsImage = (ImageView) findViewById(R.id.settingsImage);
         rouletteImage = (ImageView) findViewById(R.id.forumImage);
@@ -116,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         rouletteButton = (LinearLayout) findViewById(R.id.rouletteButton);
         donateButton = (LinearLayout) findViewById(R.id.donateButton);
         playButton = (LinearLayout) findViewById(R.id.playButton);
-		
+
 		monitoringFragment = new MonitoringFragment();
         settingsFragment = new SettingsFragment();
 
