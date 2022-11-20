@@ -742,9 +742,18 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			uint8_t toggle;
 			uint32_t type;
 
+			bs.Read(toggle);
+			bs.Read(type);
+
 			if(type == 0)
 			{
-				g_pJavaWrapper->ShowMiningGame();
+				g_pJavaWrapper->ShowMiningGame1();
+				return;
+			}
+			if(type == 1)
+			{
+				g_pJavaWrapper->ShowMiningGame2();
+				return;
 			}
 			break;
 		}

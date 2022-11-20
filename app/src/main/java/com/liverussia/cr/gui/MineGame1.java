@@ -2,6 +2,7 @@ package com.liverussia.cr.gui;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,8 +21,8 @@ import java.util.TimerTask;
 
 public class MineGame1 {
 
-    ArrayList<ImageView> diamond_items = new ArrayList<>();
-    ArrayList<Integer> dimonds = new ArrayList<Integer>();
+    private ArrayList<ImageView> diamond_items = new ArrayList<>();
+    private ArrayList<Integer> dimonds = new ArrayList<Integer>();
     private Activity activity;
     private ConstraintLayout mine_1_example;
     private ProgressView mine_1_progress;
@@ -41,9 +42,11 @@ public class MineGame1 {
         mine_1_exit_butt = activity.findViewById(R.id.mine_1_exit_butt);
         mine_1_exit_butt.setOnClickListener(view -> {
             ExitMineGame(0);
+            activity.runOnUiThread( () -> Utils.HideLayout(mine_1_main_layout, true) );
         });
 
         mine_1_main_layout = activity.findViewById(R.id.mine_1_main_layout);
+        mine_1_main_layout.setVisibility(View.GONE);
         Utils.HideLayout(mine_1_main_layout, true);
 
         mine_1_example = activity.findViewById(R.id.mine_1_example);
@@ -92,6 +95,8 @@ public class MineGame1 {
                 }
                 if(this.score >= 100) {
                     ExitMineGame(1);
+                    activity.runOnUiThread( () -> Utils.HideLayout(mine_1_main_layout, true) );
+                    return;
                 }
                 else {
                     TimerTask task = new TimerTask() {
@@ -105,7 +110,7 @@ public class MineGame1 {
                     };
                     Timer timer = new Timer("Timer");
 
-                    timer.schedule(task, 2000L);
+                    timer.schedule(task, 1500L);
                 }
 
                 ReShuffle();
@@ -116,9 +121,12 @@ public class MineGame1 {
     }
     public void Show()
     {
-        this.score = 0;
-        ReShuffle();
-        Utils.ShowLayout(mine_1_main_layout, true);
+        activity.runOnUiThread(() -> {
+            this.score = 0;
+            ReShuffle();
+            Utils.ShowLayout(mine_1_main_layout, true);
+        });
+
     }
 
     public void ReShuffle()
@@ -134,5 +142,10 @@ public class MineGame1 {
         ImageView example = (ImageView)mine_1_example.getChildAt(0);
         example.setImageResource(dimonds.get(tmp));
         example.setTag(tmp);
+
+        //чтобы нужный элемент полюбому был среди рандомных
+        int rnd_item = random.nextInt(diamond_items.size());
+        diamond_items.get(rnd_item).setImageResource(dimonds.get(tmp));
+        diamond_items.get(rnd_item).setTag(tmp);
     }
 }

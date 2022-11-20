@@ -63,6 +63,7 @@ import com.liverussia.cr.gui.Furniture_factory;
 import com.liverussia.cr.gui.HudManager;
 import com.liverussia.cr.gui.Inventory;
 import com.liverussia.cr.gui.MineGame1;
+import com.liverussia.cr.gui.MineGame2;
 import com.liverussia.cr.gui.PreDeath;
 import com.liverussia.cr.gui.SamwillManager;
 import com.liverussia.cr.gui.dialogs.Dialog;
@@ -185,6 +186,7 @@ public abstract class NvEventQueueActivity
     private ChooseSpawn mChooseSpawn = null;
     private PreDeath mPreDeath = null;
     private MineGame1 mine_1 = null;
+    private MineGame2 mine_2 = null;
     private Menu mMenu = null;
     private ChooseServer mChooseServer = null;
     private Tab mTab = null;
@@ -1061,6 +1063,7 @@ public abstract class NvEventQueueActivity
         mDialog = new Dialog(this);
         inventory = new Inventory(this);
         mine_1 = new MineGame1(this);
+        mine_2 = new MineGame2(this);
         mHudManager = new HudManager(this);
         mCasinoLuckyWheel = new Casino_LuckyWheel(this);
         mSamwillManager = new SamwillManager(this);

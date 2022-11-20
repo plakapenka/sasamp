@@ -750,7 +750,7 @@ extern CChatWindow* pChatWindow;
 
 void CPlayerPed::ClearAnimations()
 {
-	ApplyAnimation("crry_prtial", "CARRY", 4.0, 0, 0, 0, 0, 0);
+	ApplyAnimation("crry_prtial", "CARRY", 4.0, 0, 0, 0, 0, 1);
 	ClearAllTasks();
 	MATRIX4X4 mat;
 	GetMatrix(&mat);
