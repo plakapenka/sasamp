@@ -142,7 +142,7 @@
         android:id="@+id/casino_luckywheel_exit_butt"
         android:layout_width="19dp"
         android:clickable="true"
-        android:foreground="?android:attr/selectableItemBackground"
+        android:foreground="?android:attr/selectableItemBackgroundBorderless"
         android:layout_height="19dp"
         android:background="@drawable/cross"
         app:layout_constraintEnd_toEndOf="@+id/casino_luckywheel_line1"

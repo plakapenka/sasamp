@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/mine_2_main_layout"
+    android:id="@+id/mine_3_main_layout"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/mine_bg_2">
+    android:background="@drawable/mine_bg_3">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/mine_1_mainbg"
@@ -21,6 +21,7 @@
         app:layout_constraintTop_toTopOf="parent" >
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
@@ -28,7 +29,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout12">
 
-            
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View
@@ -36,9 +37,11 @@
             android:layout_width="@dimen/_21sdp"
             android:layout_height="@dimen/_21sdp"
             android:layout_marginEnd="16dp"
+            android:clickable="true"
             android:background="@drawable/cross"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/constraintLayout12" />
+            app:layout_constraintTop_toTopOf="@+id/constraintLayout12"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout12"
@@ -55,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:fontFamily="@font/din_pro_bold"
-                android:text="Кликайте только на изображенный в центре экрана тип руды"
+                android:text="Соотнесите тип руды с подписанным ящиком "
                 android:textColor="@color/white"
                 android:textSize="@dimen/_11sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -85,41 +88,155 @@
             app:layout_constraintStart_toStartOf="parent">
 
             <TextView
-                android:id="@+id/mine_2_score"
+                android:id="@+id/mine_3_score"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_150sdp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="50dp"
                 android:fontFamily="@font/din_pro_bold"
                 android:text="00000"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_16sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <com.skydoves.progressview.ProgressView
-                android:id="@+id/mine_2_progress"
+                android:id="@+id/mine_3_progress"
                 android:layout_width="@dimen/_60sdp"
                 android:layout_height="@dimen/_10sdp"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="16dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.347"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:progressView_autoAnimate="true"
-                app:progressView_progressFromPrevious="true"
                 app:progressView_animation="accelerateDecelerate"
-                app:progressView_colorBackground="@color/white"
-                app:progressView_colorProgress="#76ff03"
-                app:progressView_max="100"
+                app:progressView_autoAnimate="true"
                 app:progressView_borderColor="#f44336"
                 app:progressView_borderWidth="2dp"
+                app:progressView_colorBackground="@color/white"
+                app:progressView_colorProgress="#76ff03"
+                app:progressView_max="300"
                 app:progressView_padding="1dp"
+                app:progressView_progressFromPrevious="true"
                 app:progressView_radius="5dp" />
+
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/mine_3_box_1"
+                android:layout_width="@dimen/_90sdp"
+                android:layout_height="@dimen/_90sdp"
+                android:background="@drawable/mine_3_box"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/_40sdp"
+                android:textColor="#fdd835"
+                android:shadowRadius="10"
+                android:shadowColor="#fdd835"
+                android:textStyle="bold"
+                android:text="Золото"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/mine_3_box_1"
+                app:layout_constraintStart_toStartOf="@+id/mine_3_box_1"
+                app:layout_constraintTop_toTopOf="@+id/mine_3_box_1" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/mine_3_box_2"
+                android:layout_width="@dimen/_90sdp"
+                android:layout_height="@dimen/_90sdp"
+                android:layout_marginStart="50dp"
+                android:background="@drawable/mine_3_box"
+                app:layout_constraintStart_toEndOf="@+id/mine_3_box_1"
+                app:layout_constraintTop_toTopOf="@+id/mine_3_box_1">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_40sdp"
+                    android:shadowColor="#fdd835"
+                    android:shadowRadius="10"
+                    android:text="Золото"
+                    android:textColor="#fdd835"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/mine_3_box_3"
+                android:layout_width="@dimen/_90sdp"
+                android:layout_height="@dimen/_90sdp"
+                android:layout_marginStart="50dp"
+                android:background="@drawable/mine_3_box"
+                app:layout_constraintStart_toEndOf="@+id/mine_3_box_2"
+                app:layout_constraintTop_toTopOf="@+id/mine_3_box_2">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_40sdp"
+                    android:shadowColor="#fdd835"
+                    android:shadowRadius="10"
+                    android:text="Золото"
+                    android:textColor="#fdd835"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+            android:id="@+id/mine_3_item_2"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:src="@drawable/mine_diamond_4"
+            android:layout_marginStart="@dimen/_315sdp"
+            android:layout_marginTop="@dimen/_235sdp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+        />
+
+        <ImageView
+            android:id="@+id/mine_3_item_3"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="@dimen/_390sdp"
+            android:layout_marginTop="@dimen/_235sdp"
+            android:src="@drawable/mine_diamond_6"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+    <ImageView
+        android:id="@+id/mine_3_item_1"
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginStart="@dimen/_250sdp"
+        android:layout_marginTop="@dimen/_235sdp"
+        android:src="@drawable/mine_diamond_1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

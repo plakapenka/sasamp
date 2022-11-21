@@ -21,6 +21,7 @@ import com.liverussia.cr.R;
 import com.liverussia.cr.core.Config;
 import com.liverussia.cr.gui.MineGame1;
 import com.liverussia.cr.gui.MineGame2;
+import com.liverussia.cr.gui.MineGame3;
 import com.liverussia.launcher.dto.response.ServerImagesResponseDto;
 import com.liverussia.launcher.enums.NativeStorageElements;
 import com.liverussia.launcher.fragment.MonitoringFragment;
@@ -88,66 +89,66 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     {
         activityService = new ActivityServiceImpl();
     }
-    public MineGame2 gg;
+    public MineGame3 gg;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
 
-//        setContentView(R.layout.mine_2);
-//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-//        gg = new MineGame2(this);
-//
-//        gg.Show();
+        setContentView(R.layout.mine_3);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        gg = new MineGame3(this);
+
+        gg.Show();
 
         getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_IMMERSIVE
-                  //      | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
-		animation = AnimationUtils.loadAnimation(this, R.anim.button_click);
-
-		monitoringTV = (TextView) findViewById(R.id.monitoringTV);
-        settingsTV = (TextView) findViewById(R.id.settingsTV);
-        rouletteTV = (TextView) findViewById(R.id.forumTV);
-        donateTV = (TextView) findViewById(R.id.donateTV);
-
-        monitoringImage = (ImageView) findViewById(R.id.monitoringImage);
-        settingsImage = (ImageView) findViewById(R.id.settingsImage);
-        rouletteImage = (ImageView) findViewById(R.id.forumImage);
-        donateImage = (ImageView) findViewById(R.id.donateImage);
-        playImage = (ImageView) findViewById(R.id.playImage);
-
-        monitoringButton = (LinearLayout) findViewById(R.id.monitoringButton);
-        settingsButton = (LinearLayout) findViewById(R.id.settingsButton);
-        rouletteButton = (LinearLayout) findViewById(R.id.rouletteButton);
-        donateButton = (LinearLayout) findViewById(R.id.donateButton);
-        playButton = (LinearLayout) findViewById(R.id.playButton);
-
-		monitoringFragment = new MonitoringFragment();
-        settingsFragment = new SettingsFragment();
-
-        if (savedInstanceState != null && savedInstanceState.getBoolean(IS_AFTER_LOADING_KEY)) {
-            activityService.showMessage(InfoMessages.DOWNLOAD_SUCCESS_INPUT_YOUR_NICKNAME.getText(), this);
-            replaceFragment(settingsFragment);
-        } else if (savedInstanceState == null && getIntent().getExtras() != null && getIntent().getExtras().getBoolean(IS_AFTER_LOADING_KEY)){
-            activityService.showMessage(InfoMessages.DOWNLOAD_SUCCESS_INPUT_YOUR_NICKNAME.getText(), this);
-            onClickSettings();
-        } else {
-            replaceFragment(monitoringFragment);
-        }
-
-		monitoringButton.setOnClickListener(this);
-        settingsButton.setOnClickListener(this);
-        rouletteButton.setOnClickListener(this);
-        donateButton.setOnClickListener(this);
-        playButton.setOnClickListener(this);
-
-        loadResources();
+//		animation = AnimationUtils.loadAnimation(this, R.anim.button_click);
+//
+//		monitoringTV = (TextView) findViewById(R.id.monitoringTV);
+//        settingsTV = (TextView) findViewById(R.id.settingsTV);
+//        rouletteTV = (TextView) findViewById(R.id.forumTV);
+//        donateTV = (TextView) findViewById(R.id.donateTV);
+//
+//        monitoringImage = (ImageView) findViewById(R.id.monitoringImage);
+//        settingsImage = (ImageView) findViewById(R.id.settingsImage);
+//        rouletteImage = (ImageView) findViewById(R.id.forumImage);
+//        donateImage = (ImageView) findViewById(R.id.donateImage);
+//        playImage = (ImageView) findViewById(R.id.playImage);
+//
+//        monitoringButton = (LinearLayout) findViewById(R.id.monitoringButton);
+//        settingsButton = (LinearLayout) findViewById(R.id.settingsButton);
+//        rouletteButton = (LinearLayout) findViewById(R.id.rouletteButton);
+//        donateButton = (LinearLayout) findViewById(R.id.donateButton);
+//        playButton = (LinearLayout) findViewById(R.id.playButton);
+//
+//		monitoringFragment = new MonitoringFragment();
+//        settingsFragment = new SettingsFragment();
+//
+//        if (savedInstanceState != null && savedInstanceState.getBoolean(IS_AFTER_LOADING_KEY)) {
+//            activityService.showMessage(InfoMessages.DOWNLOAD_SUCCESS_INPUT_YOUR_NICKNAME.getText(), this);
+//            replaceFragment(settingsFragment);
+//        } else if (savedInstanceState == null && getIntent().getExtras() != null && getIntent().getExtras().getBoolean(IS_AFTER_LOADING_KEY)){
+//            activityService.showMessage(InfoMessages.DOWNLOAD_SUCCESS_INPUT_YOUR_NICKNAME.getText(), this);
+//            onClickSettings();
+//        } else {
+//            replaceFragment(monitoringFragment);
+//        }
+//
+//		monitoringButton.setOnClickListener(this);
+//        settingsButton.setOnClickListener(this);
+//        rouletteButton.setOnClickListener(this);
+//        donateButton.setOnClickListener(this);
+//        playButton.setOnClickListener(this);
+//
+//        loadResources();
     }
 
     private void loadResources() {

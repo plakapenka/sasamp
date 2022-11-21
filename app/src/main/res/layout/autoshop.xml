@@ -360,7 +360,7 @@
             android:layout_width="40dp"
             android:layout_height="36dp"
             android:background="@drawable/blue_rounded"
-            android:foreground="?android:attr/selectableItemBackground"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:outlineAmbientShadowColor="#FAFD01"
             android:padding="0px"
 
@@ -380,7 +380,7 @@
             android:layout_width="40dp"
             android:layout_height="36dp"
             android:background="@drawable/blue_rounded"
-            android:foreground="?android:attr/selectableItemBackground"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:outlineAmbientShadowColor="#FAFD01"
             android:padding="0px"
 
@@ -401,7 +401,7 @@
             android:layout_height="60dp"
             android:layout_marginBottom="36dp"
             android:background="@drawable/autoshop_left_butt"
-            android:foreground="?android:attr/selectableItemBackground"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
 
 
             android:scaleX="1"
@@ -417,7 +417,7 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:background="@drawable/autoshop_preview"
-            android:foreground="?android:attr/selectableItemBackground"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
             app:backgroundTint="@null"
             app:backgroundTintMode="@null"
             app:layout_constraintBottom_toBottomOf="@+id/autoshop_rightbutt"
@@ -432,7 +432,7 @@
 
 
             android:background="@drawable/autoshop_left_butt"
-            android:foreground="?android:attr/selectableItemBackground"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:scaleX="-1"
             android:textColor="#FAFD01"
             app:backgroundTint="@null"

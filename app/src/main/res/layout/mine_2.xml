@@ -64,9 +64,11 @@
                 android:id="@+id/mine_2_item_1"
                 android:layout_width="@dimen/_30sdp"
                 android:layout_height="@dimen/_30sdp"
+                android:layout_marginStart="@dimen/_2sdp"
+                android:layout_marginTop="@dimen/_2sdp"
+
                 android:background="@drawable/mine_1_bg_diamond"
                 android:scaleType="centerInside"
-
                 android:src="@drawable/mine_diamond_2"
                 app:layout_constraintStart_toStartOf="@+id/mine_2_conv_del"
                 app:layout_constraintTop_toTopOf="@+id/mine_2_conv_del" />
@@ -75,7 +77,7 @@
                 android:id="@+id/mine_2_item_2"
                 android:layout_width="@dimen/_30sdp"
                 android:layout_height="@dimen/_30sdp"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="@dimen/_6sdp"
                 android:background="@drawable/mine_1_bg_diamond"
 
                 android:scaleType="centerInside"
@@ -87,7 +89,7 @@
                 android:id="@+id/mine_2_item_3"
                 android:layout_width="@dimen/_30sdp"
                 android:layout_height="@dimen/_30sdp"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="@dimen/_6sdp"
                 android:background="@drawable/mine_1_bg_diamond"
 
                 android:scaleType="centerInside"
@@ -99,7 +101,7 @@
                 android:id="@+id/mine_2_item_4"
                 android:layout_width="@dimen/_30sdp"
                 android:layout_height="@dimen/_30sdp"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="@dimen/_6sdp"
                 android:background="@drawable/mine_1_bg_diamond"
 
                 android:scaleType="centerInside"
@@ -111,7 +113,7 @@
                 android:id="@+id/mine_2_item_5"
                 android:layout_width="@dimen/_30sdp"
                 android:layout_height="@dimen/_30sdp"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="@dimen/_6sdp"
                 android:background="@drawable/mine_1_bg_diamond"
 
                 android:scaleType="centerInside"
@@ -123,7 +125,7 @@
                 android:id="@+id/mine_2_item_6"
                 android:layout_width="@dimen/_30sdp"
                 android:layout_height="@dimen/_30sdp"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="@dimen/_6sdp"
                 android:background="@drawable/mine_1_bg_diamond"
 
                 android:scaleType="centerInside"
@@ -135,7 +137,7 @@
                 android:id="@+id/mine_2_item_7"
                 android:layout_width="@dimen/_30sdp"
                 android:layout_height="@dimen/_30sdp"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="@dimen/_6sdp"
                 android:background="@drawable/mine_1_bg_diamond"
 
                 android:scaleType="centerInside"
@@ -150,6 +152,7 @@
             android:layout_height="@dimen/_21sdp"
             android:layout_marginEnd="16dp"
             android:background="@drawable/cross"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/constraintLayout12" />
 

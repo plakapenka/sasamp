@@ -127,7 +127,7 @@
 
                     <ImageView
                         android:id="@+id/playImage"
-                        android:foreground="?android:attr/selectableItemBackground"
+                        android:foreground="?android:attr/selectableItemBackgroundBorderless"
                         android:layout_width="@dimen/_80sdp"
                         android:layout_height="@dimen/_80sdp"
                         android:src="@drawable/play_btn" />

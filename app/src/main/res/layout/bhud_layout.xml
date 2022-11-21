@@ -282,7 +282,7 @@
             android:layout_height="53dp"
             android:layout_marginEnd="8dp"
             android:clickable="true"
-            android:foreground="?android:attr/selectableItemBackground"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:src="@drawable/enter_passanger"
             app:layout_constraintEnd_toStartOf="@+id/enterexit_driver"
             app:layout_constraintTop_toTopOf="@+id/enterexit_driver" />
@@ -294,7 +294,7 @@
             android:layout_marginTop="140dp"
             android:layout_marginEnd="8dp"
             android:clickable="true"
-            android:foreground="?android:attr/selectableItemBackground"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:src="@drawable/vehicle_lock_butt"
             app:layout_constraintEnd_toStartOf="@+id/enter_passenger"
             app:layout_constraintTop_toTopOf="parent" />
@@ -306,7 +306,7 @@
             android:layout_marginBottom="8dp"
             android:src="@drawable/horn"
             android:clickable="true"
-            android:foreground="?android:attr/selectableItemBackground"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
             app:layout_constraintBottom_toTopOf="@+id/enterexit_driver"
             app:layout_constraintEnd_toEndOf="@+id/enterexit_driver"
             app:layout_constraintStart_toStartOf="@+id/enterexit_driver" />
@@ -318,7 +318,7 @@
             android:layout_marginTop="140dp"
             android:layout_marginEnd="16dp"
             android:clickable="true"
-            android:foreground="?android:attr/selectableItemBackground"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:src="@drawable/enter_car_butt_type_car"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

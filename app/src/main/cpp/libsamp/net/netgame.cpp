@@ -443,20 +443,17 @@ void CNetGame::Packet_AuthRPC(Packet *p)
 			bs.Read(timepassed);
 			bs.Read(email_acvive);
 
-			if (toggle == 1)
-			{
+			if (toggle == 1) {
 				CPlayerPool *pPlayerPool = GetPlayerPool();
-				if (pPlayerPool)
-				{
+				if (pPlayerPool) {
 					g_pJavaWrapper->ShowAuthorization(pPlayerPool->GetLocalPlayerName(),
 													  pPlayerPool->GetLocalPlayerID(),
-													  (bool)ip_match,
-													  (bool)pSettings->GetReadOnly().szAutoLogin,
-													  (bool)email_acvive
-													  );
+													  (bool) ip_match,
+													  (bool) pSettings->GetReadOnly().szAutoLogin,
+													  (bool) email_acvive
+					);
 
-					if(pSettings->GetReadOnly().szAutoLogin && ip_match && timepassed)
-					{
+					if (pSettings->GetReadOnly().szAutoLogin && ip_match && timepassed) {
 						SendLoginPacket(pSettings->GetReadOnly().player_password);
 					}
 				}

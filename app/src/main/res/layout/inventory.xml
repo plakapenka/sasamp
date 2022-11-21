@@ -243,7 +243,7 @@
                 android:background="@drawable/inv_bg_bot"
                 android:backgroundTint="@color/yellow"
                 android:clickable="true"
-                android:foreground="?android:attr/selectableItemBackground"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -605,7 +605,7 @@
                 android:background="@drawable/inv_button"
                 android:clickable="true"
 
-                android:foreground="?android:attr/selectableItemBackground"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 app:layout_constraintBottom_toBottomOf="@+id/inv_main_top_bg"
                 app:layout_constraintStart_toEndOf="@+id/inv_use_butt"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -631,7 +631,7 @@
                 android:background="@drawable/inv_button"
 
                 android:clickable="true"
-                android:foreground="?android:attr/selectableItemBackground"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="6dp"
                 app:layout_constraintBottom_toBottomOf="@+id/inv_main_top_bg"
                 app:layout_constraintStart_toEndOf="@+id/inv_inf_butt"
@@ -659,7 +659,7 @@
                 android:background="@drawable/inv_button"
 
                 android:clickable="true"
-                android:foreground="?android:attr/selectableItemBackground"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="6dp"
                 app:layout_constraintBottom_toBottomOf="@+id/inv_main_top_bg"
                 app:layout_constraintStart_toEndOf="@+id/inv_sell_butt"
@@ -1424,7 +1424,7 @@
                 android:background="@drawable/inv_button"
                 android:clickable="true"
 
-                android:foreground="?android:attr/selectableItemBackground"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/inv_main_bottom_bg" />
 
@@ -1476,7 +1476,7 @@
                 android:background="@drawable/inv_button"
 
                 android:clickable="true"
-                android:foreground="?android:attr/selectableItemBackground"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="6dp"
                 app:layout_constraintStart_toEndOf="@+id/inv_menu_butt"
                 app:layout_constraintTop_toTopOf="@+id/inv_main_bottom_bg" />
@@ -1504,7 +1504,7 @@
 
                 android:background="@drawable/inv_button"
                 android:clickable="true"
-                android:foreground="?android:attr/selectableItemBackground"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="6dp"
                 app:layout_constraintStart_toEndOf="@+id/inv_help_butt"
                 app:layout_constraintTop_toTopOf="@+id/inv_main_bottom_bg" />
@@ -1532,7 +1532,7 @@
 
                 android:background="@drawable/inv_button"
                 android:clickable="true"
-                android:foreground="?android:attr/selectableItemBackground"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="6dp"
                 app:layout_constraintStart_toEndOf="@+id/inv_shop_butt"
                 app:layout_constraintTop_toTopOf="@+id/inv_main_bottom_bg" />
