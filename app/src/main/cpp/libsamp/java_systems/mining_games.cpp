@@ -12,6 +12,8 @@ extern CJavaWrapper *g_pJavaWrapper;
 
 jobject jMine1;
 jobject jMine2;
+jobject jMine3;
+
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_MineGame1_Init(JNIEnv *env, jobject thiz) {
@@ -36,6 +38,15 @@ void CJavaWrapper::ShowMiningGame2() {
     env->CallVoidMethod(jMine2, Show);
 }
 
+void CJavaWrapper::ShowMiningGame3() {
+    JNIEnv* env = GetEnv();
+
+    jclass clazz = env->GetObjectClass(jMine3);
+    jmethodID Show = env->GetMethodID(clazz, "Show", "()V");
+
+    env->CallVoidMethod(jMine3, Show);
+}
+
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_MineGame2_Init(JNIEnv *env, jobject thiz) {
@@ -56,4 +67,9 @@ Java_com_liverussia_cr_gui_MineGame1_ExitMineGame(JNIEnv *env, jclass clazz, jin
     bsSend.Write(RPC);
     bsSend.Write(button);
     pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_MineGame3_Init(JNIEnv *env, jobject thiz) {
+    jMine3 = env->NewGlobalRef(thiz);
 }

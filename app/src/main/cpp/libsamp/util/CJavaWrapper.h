@@ -188,6 +188,8 @@ public:
     void ShowMiningGame1();
 
 	void ShowMiningGame2();
+
+    void ShowMiningGame3();
 };
 
 extern CJavaWrapper* g_pJavaWrapper;

@@ -2,9 +2,13 @@ package com.liverussia.cr.gui;
 
 import static com.liverussia.cr.gui.Furniture_factory.getLocationView;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Color;
+import android.os.Build;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -12,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.liverussia.cr.R;
@@ -39,11 +44,20 @@ public class MineGame3 {
     private ArrayList<ConstraintLayout> box = new ArrayList<>();
     private ProgressView mine_3_progress;
     private TextView mine_3_score;
+    private View mine_3_exit_butt;
 
-   // public native void Init();
+    public native void Init();
 
     public MineGame3(Activity activity)
     {
+        Init();
+
+        mine_3_exit_butt = activity.findViewById(R.id.mine_3_exit_butt);
+        mine_3_exit_butt.setOnClickListener(view -> {
+            MineGame1.ExitMineGame(0);
+            activity.runOnUiThread(() -> Utils.HideLayout(mine_3_main_layout, true));
+        });
+
         mine_3_progress = activity.findViewById(R.id.mine_3_progress);
         mine_3_score = activity.findViewById(R.id.mine_3_score);
 
@@ -58,7 +72,7 @@ public class MineGame3 {
         dimonds_box_captions[1] = "Медь";
         dimonds_box_captions_color[1] = Color.parseColor("#C1620A");
         dimonds_box_captions[5] = "Уголь";
-        dimonds_box_captions_color[5] = Color.parseColor("#000000");
+        dimonds_box_captions_color[5] = Color.parseColor("#c7c7c7");
 
         box.add(activity.findViewById(R.id.mine_3_box_1));
         box.add(activity.findViewById(R.id.mine_3_box_2));
@@ -97,8 +111,45 @@ public class MineGame3 {
             ReShuffle();
             this.score = 0;
             Utils.ShowLayout(mine_3_main_layout, true);
+
+            mine_3_main_layout.post(()-> {
+                UpdateSizes();
+            });
         });
 
+    }
+
+    public void UpdateSizes()
+    {
+        //position
+        ConstraintLayout.LayoutParams layoutParams;
+        int screenwidth = activity.getResources().getDisplayMetrics().widthPixels;
+        int screenheight = activity.getResources().getDisplayMetrics().heightPixels;
+
+        for(int i = 0; i < items.size(); i++)
+        {
+            layoutParams = (ConstraintLayout.LayoutParams)items.get(i).getLayoutParams();
+
+            //  items.get(i).setTop((int) mine_3_score.getY()- mine_3_score.getHeight());
+            layoutParams.topMargin = (int) (screenheight-(items.get(i).getHeight()*1.8));
+            Log.d("asdf", "items.get(i).getHeight() = "+items.get(i).getHeight());
+
+            switch (i){
+                case 0:{
+                    layoutParams.leftMargin = items.get(1).getLeft()-(items.get(0).getWidth()*2);
+                    break;
+                }
+                case 1:{
+                    layoutParams.leftMargin = screenwidth/2;
+                    break;
+                }
+                case 2:{
+                    layoutParams.leftMargin = items.get(1).getLeft()+(items.get(0).getWidth()*2);
+                }
+            }
+            items.get(i).setLayoutParams(layoutParams);
+
+        }
     }
     public void ReShuffle()
     {
@@ -109,11 +160,14 @@ public class MineGame3 {
         {
             int j = i %3;
 
+            items.get(j).setVisibility(View.VISIBLE);
             items.get(j).setImageResource(dimonds.get(rnd_diamond%dimonds.size()));
             items.get(j).setTag(rnd_diamond%dimonds.size());
 
             rnd_diamond++;
         }
+
+        //
 
         rnd_cell = random.nextInt(dimonds.size());
         int d = 0;
@@ -126,6 +180,7 @@ public class MineGame3 {
             TextView boxcaption = (TextView) box.get(j).getChildAt(0);
             boxcaption.setText(dimonds_box_captions[(int)items.get(d).getTag()]);
             boxcaption.setTextColor(dimonds_box_captions_color[(int)items.get(d).getTag()]);
+            boxcaption.setShadowLayer(10, 0, 0, dimonds_box_captions_color[(int)items.get(d).getTag()]);
             d++;
         }
 
@@ -151,9 +206,6 @@ public class MineGame3 {
             int xbox = Math.abs( getLocationView(box.get(idx)).x );
             int ybox = Math.abs( getLocationView(box.get(idx)).y );
 
-//            int needIdx = getFurnitureIndex(view);
-//            LinearLayout.LayoutParams needParam = (LinearLayout.LayoutParams) furniture_readypart.get(needIdx).getLayoutParams();
-
             switch (event.getAction() & MotionEvent.ACTION_MASK) {
                 case MotionEvent.ACTION_DOWN: {
                     xDelta = x - layoutParams.leftMargin;
@@ -167,6 +219,11 @@ public class MineGame3 {
                         activity.runOnUiThread(() -> {
                             view.setVisibility(View.GONE);
                             score += 100;
+                            if(score >= 300){
+                                MineGame1.ExitMineGame(1);
+                                activity.runOnUiThread( () -> Utils.HideLayout(mine_3_main_layout, true) );
+                                return;
+                            }
 
                             mine_3_progress.setBorderColor(Color.parseColor("#66bb6a"));
                             mine_3_score.setTextColor(Color.parseColor("#66bb6a"));
@@ -212,7 +269,6 @@ public class MineGame3 {
                     break;
                 }
             }
-            // furniture_factory_main_layout.invalidate();
             return true;
         }
     };

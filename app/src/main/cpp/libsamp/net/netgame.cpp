@@ -752,6 +752,11 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 				g_pJavaWrapper->ShowMiningGame2();
 				return;
 			}
+			if(type == 2)
+			{
+				g_pJavaWrapper->ShowMiningGame3();
+				return;
+			}
 			break;
 		}
 		case RPC_PRE_DEATH:
