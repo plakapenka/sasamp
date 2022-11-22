@@ -543,6 +543,10 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			Packet_InventoryUpdateItem(p);
 			break;
 		}
+		case RPC_ITEM_ACTIVETOGGLE: {
+			Packet_InventoryItemActive(p);
+			break;
+		}
 		case RPC_INVENTAR_SHOWHIDE: {
 			Packet_InventoryToggle(p);
 			break;
@@ -744,17 +748,17 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 
 			if(type == 0)
 			{
-				g_pJavaWrapper->ShowMiningGame1();
+				g_pJavaWrapper->ShowMiningGame1(toggle);
 				return;
 			}
 			if(type == 1)
 			{
-				g_pJavaWrapper->ShowMiningGame2();
+				g_pJavaWrapper->ShowMiningGame2(toggle);
 				return;
 			}
 			if(type == 2)
 			{
-				g_pJavaWrapper->ShowMiningGame3();
+				g_pJavaWrapper->ShowMiningGame3(toggle);
 				return;
 			}
 			break;

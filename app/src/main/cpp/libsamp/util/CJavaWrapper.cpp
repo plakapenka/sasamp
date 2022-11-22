@@ -1463,6 +1463,9 @@ void CJavaWrapper::HideChooseSpawn()
 void CJavaWrapper::ClearScreen()
 {
 	Log("ClearScreen");
+	ShowMiningGame1(false);
+	ShowMiningGame2(false);
+	ShowMiningGame3(false);
 	ToggleShopStoreManager(false);
 	HideTargetNotify();
 	HideAuthorization();

@@ -105,18 +105,22 @@ public class MineGame3 {
 
     }
 
-    public void Show()
+    public void Toggle(boolean toggle)
     {
-        activity.runOnUiThread(() -> {
-            ReShuffle();
-            this.score = 0;
-            Utils.ShowLayout(mine_3_main_layout, true);
+        if(!toggle){
+            Utils.HideLayout(mine_3_main_layout, true);
+        }else {
+            activity.runOnUiThread(() -> {
+                ReShuffle();
+                this.score = 0;
+                mine_3_progress.setProgress(0);
+                Utils.ShowLayout(mine_3_main_layout, true);
 
-            mine_3_main_layout.post(()-> {
-                UpdateSizes();
+                mine_3_main_layout.post(()-> {
+                    UpdateSizes();
+                });
             });
-        });
-
+        }
     }
 
     public void UpdateSizes()
@@ -132,7 +136,6 @@ public class MineGame3 {
 
             //  items.get(i).setTop((int) mine_3_score.getY()- mine_3_score.getHeight());
             layoutParams.topMargin = (int) (screenheight-(items.get(i).getHeight()*1.8));
-            Log.d("asdf", "items.get(i).getHeight() = "+items.get(i).getHeight());
 
             switch (i){
                 case 0:{

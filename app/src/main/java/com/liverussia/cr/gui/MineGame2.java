@@ -107,13 +107,19 @@ public class MineGame2 {
         }
     }
 
-    public void Show()
+    public void Toggle(boolean toggle)
     {
-        activity.runOnUiThread(() -> {
-            ReShuffle();
-            this.score = 0;
-            Utils.ShowLayout(mine_2_main_layout, true);
-        });
+        if(!toggle){
+            Utils.HideLayout(mine_2_main_layout, true);
+        }else {
+            activity.runOnUiThread(() -> {
+                ReShuffle();
+                mine_2_progress.setProgress(0);
+                this.score = 0;
+                Utils.ShowLayout(mine_2_main_layout, true);
+            });
+        }
+
 //        Thread myThready = new Thread(new Runnable()
 //        {
 //            public void run() //Этот метод будет выполняться в побочном потоке

@@ -20,31 +20,31 @@ Java_com_liverussia_cr_gui_MineGame1_Init(JNIEnv *env, jobject thiz) {
     jMine1 = env->NewGlobalRef(thiz);
 }
 
-void CJavaWrapper::ShowMiningGame1() {
+void CJavaWrapper::ShowMiningGame1(bool toggle) {
     JNIEnv* env = GetEnv();
 
     jclass clazz = env->GetObjectClass(jMine1);
-    jmethodID Show = env->GetMethodID(clazz, "Show", "()V");
+    jmethodID Show = env->GetMethodID(clazz, "Toggle", "(Z)V");
 
-    env->CallVoidMethod(jMine1, Show);
+    env->CallVoidMethod(jMine1, Show, toggle);
 }
 
-void CJavaWrapper::ShowMiningGame2() {
+void CJavaWrapper::ShowMiningGame2(bool toggle) {
     JNIEnv* env = GetEnv();
 
     jclass clazz = env->GetObjectClass(jMine2);
-    jmethodID Show = env->GetMethodID(clazz, "Show", "()V");
+    jmethodID Show = env->GetMethodID(clazz, "Toggle", "(Z)V");
 
-    env->CallVoidMethod(jMine2, Show);
+    env->CallVoidMethod(jMine2, Show, toggle);
 }
 
-void CJavaWrapper::ShowMiningGame3() {
+void CJavaWrapper::ShowMiningGame3(bool toggle) {
     JNIEnv* env = GetEnv();
 
     jclass clazz = env->GetObjectClass(jMine3);
-    jmethodID Show = env->GetMethodID(clazz, "Show", "()V");
+    jmethodID Show = env->GetMethodID(clazz, "Toggle", "(Z)V");
 
-    env->CallVoidMethod(jMine3, Show);
+    env->CallVoidMethod(jMine3, Show, toggle);
 }
 
 extern "C"

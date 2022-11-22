@@ -185,11 +185,11 @@ public:
 
     void ShowCasinoLuckyWheel(int count, int time);
 
-    void ShowMiningGame1();
+    void ShowMiningGame1(bool toggle);
 
-	void ShowMiningGame2();
+	void ShowMiningGame2(bool toggle);
 
-    void ShowMiningGame3();
+    void ShowMiningGame3(bool toggle);
 };
 
 extern CJavaWrapper* g_pJavaWrapper;
