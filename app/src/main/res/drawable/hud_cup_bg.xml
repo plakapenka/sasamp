@@ -6,7 +6,7 @@
     <item>
         <shape>
             <corners
-                android:radius="12.0dip" />
+                android:radius="@dimen/_3sdp" />
             <gradient
                 android:startColor="#FFFAFF00"
                 android:centerColor="#FFFCE605"

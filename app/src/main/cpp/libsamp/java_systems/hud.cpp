@@ -292,3 +292,22 @@ void CHUD::UpdateOpgWarLayout(int time, int attack_score, int def_score)
     }
     else isMafia_war_layout_active = true;
 }
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_HudManager_SetRadarBgPos(JNIEnv *env, jobject thiz, jfloat x1, jfloat y1,
+                                                    jfloat x2, jfloat y2) {
+    pHud->radarbgx1 = x1;
+    pHud->radarbgy1 = y1;
+
+    pHud->radarbgx2 = x2;
+    pHud->radarbgy2 = y2;
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_HudManager_SetRadarPos(JNIEnv *env, jobject thiz, jfloat x1, jfloat y1) {
+
+    pHud->radarx1 = x1;
+    pHud->radary1 = y1;
+
+}

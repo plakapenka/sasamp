@@ -38,6 +38,15 @@ public:
     void UpdateOpgWarLayout(int time, int attack_score, int def_score);
 
     bool isMafia_war_layout_active = false;
+
+    float radarbgx1;
+    float radarbgy1;
+    float radarbgx2;
+    float radarbgy2;
+    float radarx1;
+    float radary1;
+    float radarScalex;
+    float radarScaley;
 };
 
 

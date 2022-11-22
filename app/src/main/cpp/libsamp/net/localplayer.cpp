@@ -458,7 +458,7 @@ bool CLocalPlayer::Process()
 	bool needDrawableHud = true;
 	if(pGame->isDialogActive || pGame->isCasinoDiceActive || tabToggle || pGame->isAutoShopActive
 	|| pGame->isCasinoWheelActive || !m_pPlayerPed || pGame->isRegistrationActive || pGame->isShopStoreActive ||
-    pGame->isPreDeathActive || pInventory->isToggle)
+    pGame->isPreDeathActive || pInventory->isToggle || bFirstSpawn)
 	{
 		needDrawableHud = false;
 	}
@@ -720,7 +720,8 @@ void CLocalPlayer::SetSpawnInfo(PLAYER_SPAWN_INFO *pSpawn)
 bool CLocalPlayer::Spawn()
 {
 	if(!m_bHasSpawnInfo) return false;
-   
+	m_pPlayerPed->SetInterior(0);
+
     //g_pJavaWrapper->ShowSpeed();
 
 	//pGame->DisplayHUD(true);
@@ -730,7 +731,7 @@ bool CLocalPlayer::Spawn()
 	pGameCamera->Restore();
 	pGameCamera->SetBehindPlayer();
 	pGame->DisplayWidgets(true);
-	pGame->DisplayHUD(true);
+	//pGame->DisplayHUD(true);
 	m_pPlayerPed->TogglePlayerControllable(true);
 	
 	if(!bFirstSpawn)

@@ -2282,42 +2282,12 @@ void CSprite2d__Draw_hook(CSprite2d* a1, CRect* a2, CRGBA* a3)
 		//thiz[0] = (float)100;
 		if (thiz)
 		{
-			if (CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_RADAR).X != -1)
-			{
-				thiz[3] = (float)CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_RADAR).X;
-			}
-			else
-			{
-				thiz[3] = 50.0f;
-			}
 
-			if (CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_RADAR).Y != -1)
-			{
-				thiz[4] = (float)CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_RADAR).Y;
-			}
-			else
-			{
-				thiz[4] = 70.0f;
-			}
+			thiz[3] = pHud->radarx1;
+			thiz[4] = pHud->radary1;
 
-			if (CAdjustableHudScale::GetElementScale(E_HUD_ELEMENT::HUD_RADAR).X != -1)
-			{
-				thiz[5] = 45.0f * ((float)CAdjustableHudScale::GetElementScale(E_HUD_ELEMENT::HUD_RADAR).X / 100.0f);
-			}
-			else
-			{
-				thiz[5] = 45.0f;
-			}
-
-			if (CAdjustableHudScale::GetElementScale(E_HUD_ELEMENT::HUD_RADAR).X != -1)
-			{
-				thiz[6] = 45.0f * ((float)CAdjustableHudScale::GetElementScale(E_HUD_ELEMENT::HUD_RADAR).X / 100.0f);
-			}
-			else
-			{
-				thiz[6] = 45.0f;
-			}
-
+			thiz[5] = 38.0f;
+			thiz[6] = 38.0f;
 		}
 		
 	}

@@ -1,5 +1,6 @@
 package com.liverussia.cr.gui;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Point;
 import android.text.Html;
@@ -62,7 +63,9 @@ public class HudManager {
     private TextView opg_attacker_score;
     private TextView opg_defender_score;
     private TextView opg_time_text;
+    private ImageView hud_bg;
     long buttonLockCD;
+    private boolean isHudSetPos = false;
 
     DecimalFormat formatter;
 
@@ -71,7 +74,12 @@ public class HudManager {
     public native void ClickEnterExitVehicleButton();
     public native void ClickLockVehicleButton();
     public native void PressedHorn(boolean pressed);
+    public native void SetRadarBgPos(float x1, float y1, float x2, float y2);
+    public native void SetRadarPos(float x1, float y1);
 
+
+
+    @SuppressLint("ClickableViewAccessibility")
     public HudManager(Activity aactivity) {
         HudInit();
         DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
@@ -80,6 +88,7 @@ public class HudManager {
 
         activity = aactivity;
 
+        hud_bg = activity.findViewById(R.id.hud_bg);
         // OPG WAR
         opg_war_layout = activity.findViewById(R.id.opg_war_layout);
         opg_attacker_score = activity.findViewById(R.id.opg_attacker_score);
@@ -138,7 +147,6 @@ public class HudManager {
 
         ///
         hud_main = aactivity.findViewById(R.id.hud_main);
-        hud_main.setVisibility(View.GONE);
 
         bus_layout = aactivity.findViewById(R.id.bus_layout);
         bus_layout.setVisibility(View.GONE);
@@ -195,6 +203,40 @@ public class HudManager {
         oil_oil_progress = aactivity.findViewById(R.id.oil_oil_progress);
         oil_water_procent = aactivity.findViewById(R.id.oil_water_procent);
         oil_oil_procent = aactivity.findViewById(R.id.oil_oil_procent);
+
+        hud_bg.post(() -> {
+            if(isHudSetPos)return;
+
+            SetRadarBgPos(hud_bg.getX(), hud_bg.getY(), hud_bg.getX()+hud_bg.getWidth(), hud_bg.getY()+hud_bg.getHeight());
+
+
+            //
+           // int screenwidth = activity.getResources().getDisplayMetrics().widthPixels;
+            int screenwidth = hud_main.getWidth();
+            int screenheight = hud_main.getHeight();
+
+
+            float real_prcX= ( ( hud_bg.getX() + (hud_bg.getWidth()/2)) /screenwidth)*100;
+            float real_prcY = ( ( hud_bg.getY() + (hud_bg.getHeight()/2.2f) ) /screenheight)*100;
+
+            float gtaX =  (640*(real_prcX/100f));
+            float gtaY =  (480*(real_prcY/100f));
+
+//            float real_prcscaleX = ( ( hud_bg.getX()+hud_bg.getWidth() ) /screenwidth)*100;
+//            float real_prcscaleY = ( ( hud_bg.getY()+hud_bg.getHeight() ) /screenheight)*100;
+//
+//            float gtaX =  (640*(real_prcX/100f));
+//            float gtaY =  (480*(real_prcY/100f));
+
+            SetRadarPos(gtaX, gtaY);
+
+            activity.runOnUiThread(() -> {
+                hud_main.setVisibility(View.GONE);
+                hud_bg.setVisibility(View.GONE);
+            });
+
+            isHudSetPos = true;
+        });
 
         Utils.HideLayout(hud_gpsactive, false);
     }
