@@ -537,6 +537,7 @@ int CPlayerPed::SetInitialState()
 {
 	Log("CPlayerPed::SetInitialState()1");
 	int a1 = (( int (*)(PED_TYPE*, bool))(g_libGTASA+0x458D1C+1))(m_pPed, 0);
+	pGame->RequestModel(18646); // ? типо фикс цветных чекпоинтов
 	Log("CPlayerPed::SetInitialState()2");
 	return a1;
 }
@@ -623,6 +624,8 @@ void CPlayerPed::EnterVehicle(int iVehicleID, bool bPassenger)
 	if(!m_pPed) return;
 	VEHICLE_TYPE* ThisVehicleType;
 	if((ThisVehicleType = GamePool_Vehicle_GetAt(iVehicleID)) == 0) return;
+	if (ThisVehicleType->fHealth == 0.0f) return;
+	if (ThisVehicleType->entity.vtable == g_libGTASA + 0x5C7358) return;
 	if(!GamePool_Ped_GetAt(m_dwGTAId)) return;
 
 	if(bPassenger)

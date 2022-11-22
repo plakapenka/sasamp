@@ -1015,13 +1015,28 @@ void ScrCreateObject(RPCParameters* rpcParams)
 			bsData.Read(libLength);
 			char* str = new char[libLength + 1];
 			bsData.Read(str, libLength);
+			str[libLength] = 0;
 
 			bsData.Read(texLength);
 			char* tex = new char[texLength + 1];
 			bsData.Read(tex, texLength);
-
 			tex[texLength] = 0;
-			str[libLength] = 0;
+
+			uint32_t col;
+			bsData.Read(col);
+
+			union color
+			{
+				uint32_t dwColor;
+				uint8_t cols[4];
+			};
+
+			color rightColor;
+			rightColor.dwColor = col;
+			uint8_t temp = rightColor.cols[0];
+			rightColor.cols[0] = rightColor.cols[2];
+			rightColor.cols[2] = temp;
+			col = rightColor.dwColor;
 
 			if (modelId < 0 || modelId > 20000)
 			{
@@ -1036,7 +1051,8 @@ void ScrCreateObject(RPCParameters* rpcParams)
 			pObject->m_bMaterials = true;
 			pObject->m_pMaterials[slot].wModelID = modelId;
 			pObject->m_pMaterials[slot].pTex = (RwTexture*)GetTextureFromTXDStore(str, tex);
-			pObject->m_pMaterials[slot].m_bCreated = 1;
+			pObject->m_pMaterials[slot].m_bCreated = true;
+			pObject->m_pMaterials[slot].dwColor = col;
 			if (!strncmp(tex, "materialtext1", sizeof("materialtext1")))
 			{
 				tex = "MaterialText1";
@@ -1050,15 +1066,20 @@ void ScrCreateObject(RPCParameters* rpcParams)
 				tex = "Carpet19-128x128";
 			}
 
-			if (!pObject->m_pMaterials[slot].pTex && strncmp(tex, "none", sizeof("none")))
+			if (!pObject->m_pMaterials[slot].pTex && strncmp(tex, "none", sizeof("none"))
+				&& strncmp(tex, "wall8", sizeof("wall8")))
 			{
 				pObject->m_pMaterials[slot].pTex = (RwTexture*)LoadTextureFromDB("samp", tex);
 			}
-			bsData.Read(pObject->m_pMaterials[i].dwColor);
 			if (!GetModelReferenceCount(modelId) && pGame->IsModelLoaded(modelId))
 			{
 				ScriptCommand(&release_model, modelId);
 			}
+			//bsData.Read(pObject->m_pMaterials[i].dwColor);
+//			if (!GetModelReferenceCount(modelId) && pGame->IsModelLoaded(modelId))
+//			{
+//				ScriptCommand(&release_model, modelId);
+//			}
 			//pGame->ReleaseModel(pMaterials[i].wModelID);
 		}
 	}
