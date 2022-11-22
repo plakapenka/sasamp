@@ -1,6 +1,7 @@
 package com.liverussia.cr.gui;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -98,6 +99,7 @@ public class Inventory {
     private View inv_shop_butt;
     private View inv_task_butt;
 
+    private TextView inv_health_text;
     private TextView inv_satiety_text;
 
     public Inventory(Activity activity)
@@ -107,6 +109,7 @@ public class Inventory {
         InventoryInit();
 
         inv_satiety_text = activity.findViewById(R.id.inv_satiety_text);
+        inv_health_text = activity.findViewById(R.id.inv_health_text);
 
         //кнопка задания
         inv_task_butt = activity.findViewById(R.id.inv_task_butt);
@@ -200,19 +203,19 @@ public class Inventory {
         for(int i = 0; i < items.size(); i++) {
             for (int j = 0; j < items.get(i).size(); j++) {
                 items.get(i).get(j).setOnClickListener(view -> {
-                    if(isSelectedItem != null)// снятие выделения
-                    {
-                        SendSelectItem(GetItemMat(isSelectedItem), GetItemPos(isSelectedItem)); // отправка пакета
+                   // if(isSelectedItem != null)// снятие выделения
+                   // {
+                        SendSelectItem(GetItemMat(view), GetItemPos(view)); // отправка пакета
 
-                        isSelectedItem.setBackgroundResource(R.drawable.inv_bg_shape);
-                        isSelectedItem = null;
-                    }
-                    else {// выделение
-                        isSelectedItem = view;
-                        view.setBackgroundResource(R.drawable.inv_bg_shape_active);
+                       // isSelectedItem.setBackgroundResource(R.drawable.inv_bg_shape);
+                       // isSelectedItem = null;
+                   // }
+                   // else {// выделение
+                       // isSelectedItem = view;
+                       // view.setBackgroundResource(R.drawable.inv_bg_shape_active);
 
-                        SendSelectItem(GetItemMat(isSelectedItem), GetItemPos(isSelectedItem)); // отправка пакета
-                    }
+                     //   SendSelectItem(GetItemMat(isSelectedItem), GetItemPos(isSelectedItem)); // отправка пакета
+                   // }
 
                 });
             }
@@ -223,8 +226,6 @@ public class Inventory {
         activity.runOnUiThread(() -> {
             if(matrixindex < 1)return;
 
-            if(sprite.length() < 2)return;
-
             ConstraintLayout item = items.get(matrixindex-1).get(pos);
             ConstraintLayout bgitem = (ConstraintLayout) item.getChildAt(1);
 
@@ -233,6 +234,7 @@ public class Inventory {
                 item.getChildAt(0).setBackgroundResource(id);
             }
             else {
+                Log.d("dsf", "Clear item inv");
                 item.getChildAt(0).setBackgroundResource(0);
             }
 
@@ -245,16 +247,41 @@ public class Inventory {
             else {
                 bgitem.setVisibility(View.GONE);
             }
+            if(active) {
+                item.setBackgroundResource(R.drawable.inv_bg_shape_active);
+            }
+            else {
+                item.setBackgroundResource(R.drawable.inv_bg_shape);
+            }
+
 
             inv_main_layout.invalidate();
         });
     }
 
-    public void ToggleShow(boolean toggle, float satiety)
+    public void InventoryItemActive(int matrixindex, int pos, boolean active){
+        activity.runOnUiThread(() -> {
+            if(matrixindex < 1)return;
+
+            ConstraintLayout item = items.get(matrixindex-1).get(pos);
+
+            if(active) {
+                item.setBackgroundResource(R.drawable.inv_bg_shape_active);
+            }
+            else {
+                item.setBackgroundResource(R.drawable.inv_bg_shape);
+            }
+
+            inv_main_layout.invalidate();
+        });
+    }
+    public void ToggleShow(boolean toggle, float satiety, float health)
     {
         if(toggle){
             activity.runOnUiThread(() -> {
                 inv_satiety_text.setText(String.format("%.0f", satiety));
+                inv_health_text.setText(String.format("%.0f", health));
+
                 inv_main_layout.setVisibility(View.VISIBLE);
             });
         }else{
