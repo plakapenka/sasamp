@@ -1,6 +1,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -211,6 +212,27 @@
                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 app:layout_constraintStart_toStartOf="@+id/imageView7"
                 app:layout_constraintTop_toBottomOf="@+id/imageView7" />
+
+            <ImageView
+                android:id="@+id/hud_gpsactive"
+                android:layout_width="100dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/hud_menu"
+                app:layout_constraintVertical_bias="0.563"
+                app:srcCompat="@drawable/gpsactive" />
+
+            <ImageView
+                android:id="@+id/hud_greenzone"
+                android:layout_width="100dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginBottom="4dp"
+                android:src="@drawable/greenzone"
+                app:layout_constraintBottom_toTopOf="@+id/hud_gpsactive"
+                app:layout_constraintStart_toStartOf="parent" />
 
             <View
                 android:id="@+id/view2"
@@ -439,26 +461,6 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ImageView
-            android:id="@+id/hud_gpsactive"
-            android:layout_width="100dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="3dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/hud_greenzone"
-            app:srcCompat="@drawable/gpsactive" />
-
-        <ImageView
-            android:id="@+id/hud_greenzone"
-            android:layout_width="100dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="3dp"
-            android:layout_marginTop="60dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout7"
-            app:srcCompat="@drawable/greenzone" />
-
-        <ImageView
             android:visibility="gone"
             android:id="@+id/imageView17"
             android:layout_width="50dp"
@@ -470,6 +472,7 @@
             app:srcCompat="@drawable/voice_btn" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:visibility="gone"
             android:id="@+id/opg_war_layout"
             android:layout_marginLeft="@dimen/_5sdp"
             android:layout_width="@dimen/_170sdp"
