@@ -40,7 +40,8 @@ public class SamwillManager {
     int samwill4;
     int samwill5;
     int samwillpacket;
-    Integer[] samwillarray = new Integer[25001];
+
+    private long tick;
 
     public SamwillManager(Activity activity){
         br_samwill_layout = activity.findViewById(R.id.br_samwill_layout);
@@ -53,42 +54,70 @@ public class SamwillManager {
         samwill_procent = activity.findViewById(R.id.samwill_procent);
         samwill_progress = activity.findViewById(R.id.samwill_progress);
 
-        for(int i = 0; i < 25001; i++) {
-            samwillarray[i] = i;
-        }
-        Arrays.sort(samwillarray, Collections.reverseOrder());
-
         samwill_btn.setOnClickListener(view -> {
             view.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.button_click));
-            if (samwill_progress.getProgress() > 2500 && samwill_progress.getProgress() < 4050)
+            if (samwill_progress.getProgress() > 2500 && samwill_progress.getProgress() < 4050 && samwill1!=0)
             {
                 samwillpacket++;
                 samwill1 = 1;
                 samwill_1.setImageResource(R.drawable.samwill_green);
+                return;
             }
-            if (samwill_progress.getProgress() > 7100 && samwill_progress.getProgress() < 8650)
+            else if (samwill_progress.getProgress() < 4050){
+                tick = 4050;
+                samwill1 = 0;
+                samwill_1.setImageResource(R.drawable.samwill_red);
+                return;
+            }
+            if (samwill_progress.getProgress() > 7100 && samwill_progress.getProgress() < 8650 && samwill2!=0)
             {
                 samwillpacket++;
                 samwill2 = 1;
                 samwill_2.setImageResource(R.drawable.samwill_green);
+                return;
             }
-            if (samwill_progress.getProgress() > 11720 && samwill_progress.getProgress() < 13250)
+            else if (samwill_progress.getProgress() < 8650 ){
+                tick = 8650;
+                samwill2 = 0;
+                samwill_2.setImageResource(R.drawable.samwill_red);
+                return;
+            }
+            if (samwill_progress.getProgress() > 11720 && samwill_progress.getProgress() < 13250 && samwill3!=0)
             {
                 samwillpacket++;
                 samwill3 = 1;
                 samwill_3.setImageResource(R.drawable.samwill_green);
+                return;
+            }else if (samwill_progress.getProgress() < 13250) {
+                tick = 13250;
+                samwill3 = 0;
+                samwill_3.setImageResource(R.drawable.samwill_red);
+                return;
             }
-            if (samwill_progress.getProgress() > 16330 && samwill_progress.getProgress() < 17870)
+            if (samwill_progress.getProgress() > 16330 && samwill_progress.getProgress() < 17870 && samwill4!=0)
             {
                 samwillpacket++;
                 samwill4 = 1;
                 samwill_4.setImageResource(R.drawable.samwill_green);
+                return;
+            }else if (samwill_progress.getProgress() < 17870) {
+                tick = 17870;
+                samwill4 = 0;
+                samwill_4.setImageResource(R.drawable.samwill_red);
+                return;
             }
-            if (samwill_progress.getProgress() > 20920 && samwill_progress.getProgress() < 22480)
+            else if (samwill_progress.getProgress() > 20920 && samwill_progress.getProgress() < 22480 && samwill5!=0)
             {
                 samwillpacket++;
                 samwill5 = 1;
                 samwill_5.setImageResource(R.drawable.samwill_green);
+                return;
+            }else if (samwill_progress.getProgress() < 22480) {
+                tick = 22480;
+                samwill5 = 0;
+                samwill_5.setImageResource(R.drawable.samwill_red);
+                return;
+
             }
         });
 
@@ -98,11 +127,11 @@ public class SamwillManager {
 
     public void Show() {
         samwillpacket = 0;
-        samwill1 = 0;
-        samwill2 = 0;
-        samwill3 = 0;
-        samwill4 = 0;
-        samwill5 = 0;
+        samwill1 = -1;
+        samwill2 = -1;
+        samwill3 = -1;
+        samwill4 = -1;
+        samwill5 = -1;
         samwill_1.setImageResource(R.drawable.samwill_gray);
         samwill_2.setImageResource(R.drawable.samwill_gray);
         samwill_3.setImageResource(R.drawable.samwill_gray);
@@ -122,11 +151,13 @@ public class SamwillManager {
         if (countDownTimer != null) {
             countDownTimer.cancel();
             countDownTimer = null;
+            tick = 0;
         }
         countDownTimer = new CountDownTimer(samwill_progress.getProgress(), 1) {
             @Override
             public void onTick(long j) {
-                samwill_progress.setProgress(samwillarray[(int)j]);
+                tick+=15;
+                samwill_progress.setProgress((int)tick);
                 int progresstext = samwill_progress.getProgress() / 25 / 10;
                 String str = String.format("%d", progresstext);
                 samwill_procent.setText(String.valueOf(str) + "%");
