@@ -13,6 +13,8 @@ public:
     bool isToggle = false;
 
     void InventoryUpdateItem(int matrixindex, int pos, const char sprite[], const char caption[], bool active);
+
+    void UpdateItem(int matrixindex, int pos, bool active);
 };
 
 #endif //LIVERUSSIA_INVENTRORY_H

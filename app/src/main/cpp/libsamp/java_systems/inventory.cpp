@@ -17,11 +17,15 @@ void CINVENTORY::ToggleShow(bool toggle, float satiety)
     JNIEnv* env = g_pJavaWrapper->GetEnv();
 
     jclass clazz = env->GetObjectClass(jInventory);
-    jmethodID ToggleShow = env->GetMethodID(clazz, "ToggleShow", "(ZF)V");
+    jmethodID ToggleShow = env->GetMethodID(clazz, "ToggleShow", "(ZFF)V");
 
-    env->CallVoidMethod(jInventory, ToggleShow, toggle, satiety);
-
-    isToggle = toggle;
+    CLocalPlayer* pPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer();
+    if (pPlayer) {
+        if (pPlayer->GetPlayerPed()) {
+            env->CallVoidMethod(jInventory, ToggleShow, toggle, satiety, pPlayer->GetPlayerPed()->GetHealth());
+            isToggle = toggle;
+        }
+    }
 }
 
 void CINVENTORY::InventoryUpdateItem(int matrixindex, int pos, const char sprite[], const char caption[], bool active) {
@@ -38,10 +42,39 @@ void CINVENTORY::InventoryUpdateItem(int matrixindex, int pos, const char sprite
     env->CallVoidMethod(jInventory, InventoryUpdateItem, matrixindex, pos, jsprite, jcaption, active);
 }
 
+void CINVENTORY::UpdateItem(int matrixindex, int pos, bool active) {
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+
+    jclass clazz = env->GetObjectClass(jInventory);
+    jmethodID InventoryItemActive = env->GetMethodID(clazz, "InventoryItemActive", "(IIZ)V");
+
+
+    env->CallVoidMethod(jInventory, InventoryItemActive, matrixindex, pos, active);
+}
+
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_Inventory_InventoryInit(JNIEnv *env, jobject thiz) {
     jInventory = env->NewGlobalRef(thiz);
+}
+
+void CNetGame::Packet_InventoryItemActive(Packet* p)
+{
+    RakNet::BitStream bs((unsigned char*)p->data, p->length, false);
+    uint8_t packetID;
+    uint32_t rpcID;
+    uint8_t matrixindex;
+    uint8_t pos;
+    bool active;
+
+    bs.Read(packetID);
+    bs.Read(rpcID);
+    bs.Read(matrixindex);
+    bs.Read(pos);
+    bs.Read(active);
+
+    pInventory->UpdateItem(matrixindex, pos, active);
+
 }
 
 void CNetGame::Packet_InventoryToggle(Packet* p)
