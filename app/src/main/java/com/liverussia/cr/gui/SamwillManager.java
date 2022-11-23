@@ -156,7 +156,7 @@ public class SamwillManager {
         countDownTimer = new CountDownTimer(samwill_progress.getProgress(), 1) {
             @Override
             public void onTick(long j) {
-                tick+=15;
+                tick+=25;
                 samwill_progress.setProgress((int)tick);
                 int progresstext = samwill_progress.getProgress() / 25 / 10;
                 String str = String.format("%d", progresstext);
