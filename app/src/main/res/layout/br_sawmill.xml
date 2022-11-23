@@ -10,46 +10,73 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-        <ImageView
-            android:id="@+id/imageView18"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout12"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:layout_marginTop="15dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/samwill_info" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/textView26"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:fontFamily="@font/din_pro_bold"
+                android:text="Нажмите на кнопку бензопилы один раз в тот момент, когда заполняющая\nшкала будет проходить через серые сечки внутри заполняющего бара."
+                android:textColor="@color/white"
+                android:textSize="@dimen/_11sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/imageView15"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/imageView15"
+                android:layout_width="@dimen/_21sdp"
+                android:layout_height="@dimen/_21sdp"
+
+                android:src="@drawable/warning_icon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ImageView
             android:id="@+id/imageView19"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="32dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView18"
+            app:layout_constraintTop_toBottomOf="@+id/imageView20"
             app:srcCompat="@drawable/samwill_backbar" />
 
-        <ImageView
+        <TextView
             android:id="@+id/imageView20"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            app:layout_constraintBottom_toTopOf="@+id/imageView19"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:fontFamily="@font/din_pro_bold"
+            android:text="ИДЁТ СРУБКА ДЕРЕВА..."
+            android:textColor="@color/white"
+            android:textFontWeight="700"
+            android:textSize="@dimen/_25sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView18"
-            app:srcCompat="@drawable/samwill_process" />
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout12" />
 
         <ImageView
             android:id="@+id/samwill_btn"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:layout_marginEnd="25dp"
-            android:layout_marginBottom="75dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="32dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/imageView20"
-            app:layout_constraintTop_toBottomOf="@+id/imageView19"
             app:srcCompat="@drawable/samwill_button" />
 
         <TextView
@@ -91,6 +118,7 @@
 
             <ImageView
                 android:id="@+id/samwill_1"
+                android:alpha="0.9"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -98,6 +126,7 @@
 
             <ImageView
                 android:id="@+id/samwill_2"
+                android:alpha="0.9"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -105,6 +134,7 @@
 
             <ImageView
                 android:id="@+id/samwill_3"
+                android:alpha="0.9"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -112,6 +142,7 @@
 
             <ImageView
                 android:id="@+id/samwill_4"
+                android:alpha="0.9"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -119,6 +150,7 @@
 
             <ImageView
                 android:id="@+id/samwill_5"
+                android:alpha="0.9"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

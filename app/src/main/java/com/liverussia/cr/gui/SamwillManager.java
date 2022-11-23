@@ -61,6 +61,7 @@ public class SamwillManager {
                 samwillpacket++;
                 samwill1 = 1;
                 samwill_1.setImageResource(R.drawable.samwill_green);
+                tick = 4050;
                 return;
             }
             else if (samwill_progress.getProgress() < 4050){
@@ -74,6 +75,7 @@ public class SamwillManager {
                 samwillpacket++;
                 samwill2 = 1;
                 samwill_2.setImageResource(R.drawable.samwill_green);
+                tick = 8650;
                 return;
             }
             else if (samwill_progress.getProgress() < 8650 ){
@@ -87,6 +89,7 @@ public class SamwillManager {
                 samwillpacket++;
                 samwill3 = 1;
                 samwill_3.setImageResource(R.drawable.samwill_green);
+                tick = 13250;
                 return;
             }else if (samwill_progress.getProgress() < 13250) {
                 tick = 13250;
@@ -99,6 +102,7 @@ public class SamwillManager {
                 samwillpacket++;
                 samwill4 = 1;
                 samwill_4.setImageResource(R.drawable.samwill_green);
+                tick = 17870;
                 return;
             }else if (samwill_progress.getProgress() < 17870) {
                 tick = 17870;
@@ -111,6 +115,7 @@ public class SamwillManager {
                 samwillpacket++;
                 samwill5 = 1;
                 samwill_5.setImageResource(R.drawable.samwill_green);
+                tick = 22480;
                 return;
             }else if (samwill_progress.getProgress() < 22480) {
                 tick = 22480;
@@ -153,10 +158,10 @@ public class SamwillManager {
             countDownTimer = null;
             tick = 0;
         }
-        countDownTimer = new CountDownTimer(samwill_progress.getProgress(), 1) {
+        countDownTimer = new CountDownTimer(999999999, 1) {
             @Override
             public void onTick(long j) {
-                tick+=25;
+                tick+=27;
                 samwill_progress.setProgress((int)tick);
                 int progresstext = samwill_progress.getProgress() / 25 / 10;
                 String str = String.format("%d", progresstext);
@@ -186,10 +191,15 @@ public class SamwillManager {
                     samwill5 = 0;
                     samwill_5.setImageResource(R.drawable.samwill_red);
                 }
+                if(samwill_progress.getProgress() >= samwill_progress.getMax()){
+                    Hide();
+                    countDownTimer.cancel();
+                }
+
             }
             @Override
             public void onFinish() {
-                Hide();
+               // Hide();
             }
         }.start();
     }

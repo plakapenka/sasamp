@@ -357,7 +357,7 @@
             android:id="@+id/autologin_main_help"
             android:visibility="gone"
             android:layout_width="@dimen/_250sdp"
-            android:layout_height="@dimen/_150sdp"
+            android:layout_height="@dimen/_160sdp"
             android:background="@drawable/autologin_bg_dialog"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -378,9 +378,12 @@
 
             <TextView
                 android:id="@+id/textView6"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="При активации переключателя автовхода, система запомнит ваши данные и авторзизует Вас автоматически, без ввода данных.\nАктивация автовхода работает в течении 15 минут после отключения от сервера."
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:textSize="@dimen/_11sdp"
+                android:text="При активации переключателя автовхода, система запомнит ваши данные и авторзизует Вас автоматически, без ввода данных.\n\nАктивация автовхода работает в течении 15 минут после отключения от сервера."
                 android:textAlignment="center"
                 android:textColor="@color/white"
                 app:layout_constraintBottom_toTopOf="@+id/autologin_help_close"

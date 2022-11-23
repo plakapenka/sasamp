@@ -30,7 +30,6 @@ import java.util.Locale;
 
 public class HudManager {
     private Activity activity;
-    private ImageView radar_dics;
     private ConstraintLayout hud_main;
     private ConstraintLayout target_notify;
     private ConstraintLayout yearn_money;
@@ -456,22 +455,5 @@ public class HudManager {
     }
 
     public void HideBusInfo() { Utils.HideLayout(bus_layout, true); }
-
-    public int GetScreenSize(boolean isWidth)
-    {
-        int test1[] = new int[2];
-        //Log.d()
-        radar_dics.getLocationOnScreen(test1);
-        if(isWidth)
-        {
-
-            return test1[0];
-        }
-        else
-        {
-            return test1[1];
-        }
-    }
-
 
 }
