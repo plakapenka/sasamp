@@ -3,6 +3,7 @@ package com.liverussia.cr.gui;
 import android.app.Activity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -14,62 +15,7 @@ import java.util.List;
 
 
 public class Inventory {
-    String [] items_spite = {
-            "inv_cigarettes",
-            "inv_bottle",
-            "inv_repair",
-            "inv_simcard",
-            "inv_heal",
-            "inv_canister",
-            "inv_mask5",
-            "item_none",
-            "inv_cap7",
-            "inv_cap3",
-            "inv_cap6",
-            "inv_cap5",
-            "inv_mask5",
-            "inv_mask6",
-            "item_none",
-            "inv_mask7",
-            "inv_mask5",
-            "inv_mask_kabyki",
-            "inv_mask",
-            "inv_mask2",
-            "inv_mask_payday",
-            "inv_blackpack7",
-            "inv_blackpack3",
-            "inv_blackpack",
-            "inv_blackpack2",
-            "inv_blackpack5",
-            "inv_blackpack4",
-            "inv_key",
-            "Skin_none",
-            "inv_oil",
-            "item_none",
-            "inv_shyka",
-            "inv_lew",
-            "inv_skymbriya",
-            "inv_semga",
-            "inv_sydak",
-            "inv_tynec",
-            "inv_treska",
-            "inv_som",
-            "inv_sazan",
-            "inv_gorbywa",
-            "item_none",
-            "inv_makrel",
-            "inv_lacendra",
-            "inv_forel",
-            "inv_plotva",
-            "inv_mask_elka",
-            "inv_mask_dog",
-            "inv_blackpack6",
-            "plate_ru",
-            "plate_kz",
-            "plate_bu",
-            "plate_ua",
-            "inv_adrenaline"
-    };
+
     List<ArrayList<ConstraintLayout>> items = new ArrayList<>();
 
     private Activity activity;
@@ -101,12 +47,17 @@ public class Inventory {
 
     private TextView inv_health_text;
     private TextView inv_satiety_text;
+    private ProgressBar inv_progress;
+    private TextView inv_progress_text;
 
     public Inventory(Activity activity)
     {
         this.activity = activity;
 
         InventoryInit();
+
+        inv_progress = activity.findViewById(R.id.inv_progress);
+        inv_progress_text = activity.findViewById(R.id.inv_progress_text);
 
         inv_satiety_text = activity.findViewById(R.id.inv_satiety_text);
         inv_health_text = activity.findViewById(R.id.inv_health_text);
@@ -273,6 +224,16 @@ public class Inventory {
             }
 
             inv_main_layout.invalidate();
+        });
+    }
+
+    public void UpdateCarryng(int matrixindex, int brutto, int maxbrutto){
+        activity.runOnUiThread(() -> {
+            // if(matrixindex < 1)return;
+            inv_progress.setProgress(brutto);
+            inv_progress.setMax(maxbrutto);
+            inv_progress_text.setText(String.format("%d/%d кг.", brutto, maxbrutto));
+
         });
     }
     public void ToggleShow(boolean toggle, float satiety, float health)

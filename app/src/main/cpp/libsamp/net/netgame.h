@@ -91,6 +91,7 @@
 #define RPC_MAFIA_WAR 52
 #define RPC_MATRIX_CLICK 53
 #define RPC_INVENTAR_BUTTONS 54
+#define RPC_INVENTAR_CARRYNG 55
 #define RPC_ITEM_ACTIVETOGGLE   56
 
 // Packet 252
@@ -222,6 +223,7 @@ public:
 	void Packet_InventoryToggle(Packet *p);
 
     void Packet_InventoryUpdateItem(Packet *p);
+	void Packet_InventoryUpdateCarryng(Packet *p);
 
 	void Packet_InventoryItemActive(Packet *p);
 };

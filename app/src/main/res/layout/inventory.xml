@@ -1421,7 +1421,7 @@
                 app:layout_constraintTop_toTopOf="@+id/inv_menu_butt" />
 
             <ProgressBar
-                android:id="@id/progressBar"
+                android:id="@id/inv_progress"
                 style="@android:style/Widget.ProgressBar.Horizontal"
                 android:layout_width="@dimen/_192sdp"
                 android:layout_height="@dimen/_10sdp"
@@ -1434,16 +1434,17 @@
                 app:layout_constraintTop_toBottomOf="@+id/inv_menu_butt" />
 
             <TextView
+                android:id="@+id/inv_progress_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/din_pro_bold"
                 android:text="3/50 КГ"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_5sdp"
-                app:layout_constraintBottom_toBottomOf="@+id/progressBar"
-                app:layout_constraintEnd_toEndOf="@+id/progressBar"
-                app:layout_constraintStart_toStartOf="@+id/progressBar"
-                app:layout_constraintTop_toTopOf="@+id/progressBar" />
+                app:layout_constraintBottom_toBottomOf="@+id/inv_progress"
+                app:layout_constraintEnd_toEndOf="@+id/inv_progress"
+                app:layout_constraintStart_toStartOf="@+id/inv_progress"
+                app:layout_constraintTop_toTopOf="@+id/inv_progress" />
 
             <View
                 android:id="@+id/inv_help_butt"

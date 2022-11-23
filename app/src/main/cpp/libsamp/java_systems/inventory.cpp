@@ -42,6 +42,16 @@ void CINVENTORY::InventoryUpdateItem(int matrixindex, int pos, const char sprite
     env->CallVoidMethod(jInventory, InventoryUpdateItem, matrixindex, pos, jsprite, jcaption, active);
 }
 
+void CINVENTORY::UpdateCarryng(int matrixindex, int brutto, bool maxbrutto) {
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+
+    jclass clazz = env->GetObjectClass(jInventory);
+    jmethodID UpdateCarryng = env->GetMethodID(clazz, "UpdateCarryng", "(III)V");
+
+
+    env->CallVoidMethod(jInventory, UpdateCarryng, matrixindex, brutto, maxbrutto);
+}
+
 void CINVENTORY::UpdateItem(int matrixindex, int pos, bool active) {
     JNIEnv* env = g_pJavaWrapper->GetEnv();
 
@@ -93,6 +103,25 @@ void CNetGame::Packet_InventoryToggle(Packet* p)
     pInventory->ToggleShow(toggle, satiety);
 
     Log("Packet_InventoryToggle %d", toggle);
+}
+
+void CNetGame::Packet_InventoryUpdateCarryng(Packet* p)
+{
+    RakNet::BitStream bs((unsigned char*)p->data, p->length, false);
+    uint8_t packetID;
+    uint32_t rpcID;
+    uint16_t matrixindex;
+    uint16_t brutto;
+    uint16_t maxbrutto;
+
+    bs.Read(packetID);
+    bs.Read(rpcID);
+    bs.Read(matrixindex);
+    bs.Read(brutto);
+    bs.Read(maxbrutto);
+
+    pInventory->UpdateCarryng(matrixindex, brutto, maxbrutto);
+
 }
 
 void CNetGame::Packet_InventoryUpdateItem(Packet* p)
