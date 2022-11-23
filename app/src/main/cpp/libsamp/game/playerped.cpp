@@ -1325,19 +1325,21 @@ void CPlayerPed::ApplyAnimation(char* szAnimName, char* szAnimFile, float fDelta
     if (!GamePool_Ped_GetAt(m_dwGTAId)) return;
 
     if (!strcasecmp(szAnimFile, "SEX")) return;
-    if(!pGame->IsAnimationLoaded(szAnimFile))
-    {
-        pGame->RequestAnimation(szAnimFile);
-     //   ScriptCommand(&apply_animation, m_dwGTAId, szAnimName, szAnimFile, fDelta, bLoop, bLockX, bLockY, bFreeze, uiTime);
-    }
+
+	if(!pGame->IsAnimationLoaded(szAnimFile)) {
+		CGame::RequestAnimation(szAnimFile);
+
+		ScriptCommand(&apply_animation, m_dwGTAId, szAnimName, szAnimFile, fDelta, bLoop, bLockX, bLockY, bFreeze, uiTime);
+	//	usleep(100000);
+	}
 
 	animFlagTime = (uint8_t)uiTime;
 	animFlagFreeze = bFreeze;
 	animFlagLoop = bLoop;
 
-	Log("ApplyAnimation(%s, %s, %.2f, %d, %d, %d %d, %d)", szAnimName, szAnimFile, fDelta, bLoop, bLockX, bLockY, bFreeze, uiTime);
-    ScriptCommand(&apply_animation, m_dwGTAId, szAnimName, szAnimFile, fDelta, bLoop, bLockX, bLockY, bFreeze, uiTime);
+	ScriptCommand(&apply_animation, m_dwGTAId, szAnimName, szAnimFile, fDelta, bLoop, bLockX, bLockY, bFreeze, uiTime);
 }
+
 
 PLAYERID CPlayerPed::FindDeathResponsiblePlayer()
 {
@@ -1718,4 +1720,28 @@ void CPlayerPed::ProcessSpecialAction(BYTE byteSpecialAction) {
 		//ApplyAnimation("CRRY_PRTIAL", "CARRY", 4.0, 0, 0, 0, 0, 0);
 		IsActionCarry = false;
 	}
+
+    // pissing:start
+    if(!m_iPissingState && byteSpecialAction == SPECIAL_ACTION_PISSING) {
+        ApplyAnimation("PISS_LOOP", "PAULNMAC", 4.0f, 1, true, true, true, -1);
+
+        //opcode_066a('PETROLCAN', lhActor0, 0.0, 0.58, -0.08, 0.0, 0.01, 0.0, 1, l000f);
+
+        ScriptCommand(&attach_particle_to_actor2,"PETROLCAN",m_dwGTAId,
+                      0.0f, 0.58f, -0.08f, 0.0f, 0.01f, 0.0f, 1, &m_dwPissParticlesHandle);
+
+        ScriptCommand(&make_particle_visible,m_dwPissParticlesHandle);
+
+        m_iPissingState = 1;
+    }
+
+    // pissing:stop
+    if(m_iPissingState && byteSpecialAction != SPECIAL_ACTION_PISSING) {
+        if(m_dwPissParticlesHandle) {
+            ScriptCommand(&destroy_particle,m_dwPissParticlesHandle);
+            m_dwPissParticlesHandle = 0;
+        }
+        ClearAnimations();
+        m_iPissingState = 0;
+    }
 }

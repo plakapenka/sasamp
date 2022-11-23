@@ -367,3 +367,6 @@ const SCRIPT_COMMAND force_car_lights = { 0x067F, "ii" };
 const SCRIPT_COMMAND BURST_CAR_TYRE = { 0x04FE, "ii" };
 const SCRIPT_COMMAND FIX_CAR_TYRE = { 0x0699, "ii" };
 const SCRIPT_COMMAND TASK_LOOK_AT_COORD = { 0x06A9, "ifffi" };
+
+//opcode_066a('PETROLCAN', lhActor47, 0.0, 0.116, 0.048, lf05f, lf060, lf061, 1, l0089);
+const SCRIPT_COMMAND attach_particle_to_actor2			= { 0x066a, "siffffffiv" };

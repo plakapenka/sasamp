@@ -1,4 +1,6 @@
 #pragma once
+
+#include <thread>
 #include "rgba.h"
 #include "common.h"
 #include "aimstuff.h"
@@ -124,7 +126,10 @@ public:
 	uint8_t GetWantedLevel();
 
 	bool IsAnimationLoaded(const char szAnimFile[]);
-	void RequestAnimation(char* szAnimFile);
+
+	static void RequestAnimation(const char szAnimFile[]) {
+		ScriptCommand(&request_animation, szAnimFile);
+	}
 	// 0.3.7
 	void DisplayGameText(char* szStr, int iTime, int iType);
 	// 0.3.7

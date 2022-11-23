@@ -149,4 +149,7 @@ public:
 	bool animFlagLockY;
 	bool animFlagLockX;
 	bool IsActionCarry;
+    bool m_iPissingState = false;
+	DWORD m_dwPissParticlesHandle = 0;
+
 };

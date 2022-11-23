@@ -194,12 +194,6 @@ void ScrApplyPlayerAnimation(RPCParameters *rpcParams)
 	szAnimLib[byteAnimLibLen] = '\0';
 	szAnimName[byteAnimNameLen] = '\0';
 
-	if(!pGame->IsAnimationLoaded(szAnimLib))
-	{
-		pGame->RequestAnimation(szAnimLib);
-        usleep(100000);
-	}
-
 	pPlayerPool = pNetGame->GetPlayerPool();
 
 	if(pPlayerPool)
@@ -209,8 +203,6 @@ void ScrApplyPlayerAnimation(RPCParameters *rpcParams)
 		}
 		else if(pPlayerPool->GetSlotState(playerId))
 			pPlayerPed = pPlayerPool->GetAt(playerId)->GetPlayerPed();
-
-		Log("%s, %s", szAnimLib, szAnimName);
 
 		if(pPlayerPed)
 			pPlayerPed->ApplyAnimation(szAnimName, szAnimLib, fDelta, (bool)loop, (bool)lockx, (bool)locky, (bool)freeze, (int)dTime);

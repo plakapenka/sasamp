@@ -583,6 +583,7 @@ void CLocalPlayer::GoEnterVehicle(bool passenger)
 	if (ClosetVehicleID != INVALID_VEHICLE_ID)
 	{
 		CVehicle* pVehicle = pVehiclePool->GetAt(ClosetVehicleID);
+
 		if (pVehicle != nullptr && pVehicle->GetDistanceFromLocalPlayerPed() < 4.0f)
 		{
 			m_pPlayerPed->EnterVehicle(pVehicle->m_dwGTAId, passenger);

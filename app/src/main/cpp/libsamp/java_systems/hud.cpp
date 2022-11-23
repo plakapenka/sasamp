@@ -215,10 +215,18 @@ JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_HudManager_ClickEnterExitVehicleButton(JNIEnv *env, jobject thiz) {
     CLocalPlayer *pPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer();
     if(pPlayer != nullptr && pPlayer->GetPlayerPed()->IsInVehicle()) {
-        pPlayer->GetPlayerPed()->ExitCurrentVehicle();
 
         CVehiclePool *pVehiclePool=pNetGame->GetVehiclePool();
         VEHICLEID VehicleID=pVehiclePool->FindIDFromGtaPtr((VEHICLE_TYPE *)GamePool_FindPlayerPed()->pVehicle);
+
+        if(!VehicleID)return;
+
+//        VEHICLE_TYPE* CheckVeh = GamePool_Vehicle_GetAt(VehicleID);
+//
+//        if (CheckVeh->fHealth == 0.0f) return;
+//        if (CheckVeh->entity.vtable == g_libGTASA + 0x5C7358) return;
+
+        pPlayer->GetPlayerPed()->ExitCurrentVehicle();
 
         pPlayer->SendExitVehicleNotification(VehicleID);
     }

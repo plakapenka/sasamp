@@ -461,10 +461,6 @@ void CGame::SetWantedLevel(uint8_t byteLevel)
 	pHud->UpdateWanted();
 //	WriteMemory(g_libGTASA+0x27D8D2, (uintptr_t)&byteLevel, 1);
 }
-void CGame::RequestAnimation(char *szAnimFile)
-{
-	ScriptCommand(&request_animation, szAnimFile);
-}
 
 bool CGame::IsAnimationLoaded(const char szAnimFile[])
 {
@@ -537,4 +533,7 @@ void CGame::DrawGangZone(float fPos[], uint32_t dwColor)
 {
     (( void (*)(float*, uint32_t*, uint8_t))(g_libGTASA+0x3DE7F8+1))(fPos, &dwColor, bGZ);
 }
+
+
+
 
