@@ -34,15 +34,20 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.liverussia.cr.core.DownloadUtils;
+import com.liverussia.cr.core.GTASA;
 import com.liverussia.launcher.async.DownloadTask;
 import com.liverussia.launcher.domain.LoaderSliderItemData;
 import com.liverussia.launcher.dto.response.LoaderSliderInfoResponseDto;
 import com.liverussia.launcher.enums.DownloadType;
+import com.liverussia.launcher.enums.NativeStorageElements;
 import com.liverussia.launcher.messages.ErrorMessages;
 import com.liverussia.launcher.other.NetworkService;
 import com.liverussia.launcher.service.ActivityService;
 import com.liverussia.launcher.service.impl.ActivityServiceImpl;
+import com.liverussia.launcher.storage.NativeStorage;
 import com.liverussia.launcher.ui.adapters.LoaderSliderAdapter;
+
+import org.apache.commons.lang3.StringUtils;
 
 import lombok.Getter;
 import retrofit2.Call;
@@ -214,7 +219,19 @@ public class LoaderActivity extends AppCompatActivity {
     }
 
     private void performAfterDownload() {
-        if (DownloadType.LOAD_ALL_CACHE.equals(DownloadUtils.getType()) || DownloadType.RELOAD_OR_ADD_PART_OF_CACHE.equals(DownloadUtils.getType())) {
+
+        if (DownloadType.LOAD_ALL_CACHE.equals(DownloadUtils.getType())) {
+            redirectToSettings();
+        }
+
+        if (DownloadType.RELOAD_OR_ADD_PART_OF_CACHE.equals(DownloadUtils.getType())) {
+            String nickname = NativeStorage.getClientProperty(NativeStorageElements.NICKNAME, this);
+
+            if (StringUtils.isNotBlank(nickname)) {
+                startActivity(new Intent(this, GTASA.class));
+                return;
+            }
+
             redirectToSettings();
         }
 

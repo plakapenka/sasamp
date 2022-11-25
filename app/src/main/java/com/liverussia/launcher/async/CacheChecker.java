@@ -26,11 +26,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -98,8 +100,9 @@ public class CacheChecker implements Listener<FileInfo[]> {
         FileInfo[] filesToReload = Optional.ofNullable(gameFileInfo.getFiles())
                 .orElse(Collections.emptyList())
                 .stream()
-                .filter(fileInfo -> !fileInfo.getPath().contains(NATIVE_SETTINGS_FILE_PATH))
-                .filter(fileInfo -> !fileInfo.getPath().contains(SETTINGS_FILE_PATH))
+                //TODO при добавлении проверки по хэшу, это в проверку на существование файла перекинуть
+//                .filter(fileInfo -> !fileInfo.getPath().contains(NATIVE_SETTINGS_FILE_PATH))
+//                .filter(fileInfo -> !fileInfo.getPath().contains(SETTINGS_FILE_PATH))
                 .filter(this::isInvalidFile)
                 .peek(this::removeFile)
                 .toArray(FileInfo[]::new);
@@ -128,7 +131,9 @@ public class CacheChecker implements Listener<FileInfo[]> {
                 .concat(filePath)
         );
 
-        return !file.exists() || !isValidHash(filePath, fileInfo);
+        //TODO сделать проверку файлов по хэшу
+//        return !file.exists() || !isValidHash(filePath, fileInfo);
+        return !file.exists();
     }
 
     private boolean isValidHash(String filePath, FileInfo fileInfo) {
@@ -141,10 +146,32 @@ public class CacheChecker implements Listener<FileInfo[]> {
     }
 
     public String calculateHash(String filename) {
+
+//        try {
+//            MessageDigest md = MessageDigest.getInstance("MD5");
+//
+//            try (DigestInputStream dis = new DigestInputStream(new FileInputStream(filename), md)) {
+//                while (dis.read() != -1) ; // пустой цикл для очистки данных
+//                md = dis.getMessageDigest();
+//            }
+//
+//            StringBuilder result = new StringBuilder();
+//
+//            for (byte b : md.digest()) {
+//                result.append(String.format("%02x", b));
+//            }
+//
+//            return result.toString();
+//        } catch (NoSuchAlgorithmException | IOException e) {
+//            throw new RuntimeException(e);
+//        }
+
+
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] buffer = new byte[8192];
-            try (InputStream is = new FileInputStream(filename)) {
+
+            try (InputStream is = new BufferedInputStream(new FileInputStream(filename))) {
                 int read;
                 while ((read = is.read(buffer)) > 0) {
                     md.update(buffer, 0, read);

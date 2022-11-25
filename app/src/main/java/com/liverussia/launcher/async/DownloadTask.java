@@ -103,8 +103,7 @@ public class DownloadTask implements Listener<TaskStatus> {
     @WorkerThread
     private void reloadGameFiles(List<FileInfo> filesInfo) {
         try {
-//            fileLengthFull = calculateSize(filesInfo); TODO добавить вес файла в json
-            fileLengthFull = 26428800;
+            fileLengthFull = calculateSize(filesInfo);
             fileLengthMin = new AtomicLong(0);
             total = 0;
 
@@ -240,17 +239,14 @@ public class DownloadTask implements Listener<TaskStatus> {
 //                    throw new ApiException(ErrorContainer.DOWNLOAD_WAS_INTERRUPTED);
 //                }
 
-//                //todo убрать 26428800
-//                if (total > 26428800) {
-//                    throw new UnknownHostException();
-//                }
-//                //todo
-
                 total += count;
                 fileLoadedSize += count;
 
                 if (fileLength > 0) {
                     uiThreadPoster.post(() -> {
+                        if (fileLengthFull == 0) {
+                            fileLengthFull += 1;
+                        }
                         publishProgress((int) (total * 100 / fileLengthFull));
                     });
                 }
@@ -262,6 +258,10 @@ public class DownloadTask implements Listener<TaskStatus> {
 
             files.remove(fileInfo);
         } catch (ApiException e) {
+            if (file != null && file.exists()) {
+                file.delete();
+            }
+
             throw new ApiException(e);
         } catch (UnknownHostException | SocketException | SSLException e) {
             boolean isDeleted = false;
@@ -276,6 +276,10 @@ public class DownloadTask implements Listener<TaskStatus> {
 
             throw new ApiException(ErrorContainer.INTERNET_WAS_DISABLE);
         } catch (Exception e) {
+            if (file != null && file.exists()) {
+                file.delete();
+            }
+
             //TODO исправить
             throw new ApiException(ErrorContainer.DOWNLOAD_FILES_ERROR, e.toString());
         } finally {
