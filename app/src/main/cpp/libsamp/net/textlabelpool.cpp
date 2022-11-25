@@ -1,11 +1,9 @@
 #include "../main.h"
 #include "../gui/gui.h"
 #include "../game/game.h"
-#include "../chatwindow.h"
 #include "netgame.h"
 
 extern CNetGame *pNetGame;
-extern CChatWindow *pChatWindow;
 extern CGUI *pGUI;
 
 void TextWithColors(ImVec2 pos, ImColor col, const char* szStr, const char* szStrWithoutColors);
@@ -132,6 +130,65 @@ void CText3DLabelsPool::DrawAttachedToVehicle(TEXT_LABELS* pLabel)
 	pos.Z += pLabel->offsetCoords.Z;
 
 	DrawTextLabel(pLabel, &pos);
+}
+
+void CText3DLabelsPool::DrawVehiclesInfo()
+{
+	char inf[255];
+	CVehiclePool* pVehiclePool = nullptr;
+	if (pNetGame)
+	{
+		pVehiclePool = pNetGame->GetVehiclePool();
+	}
+	if (!pVehiclePool)
+	{
+		return;
+	}
+	for(int i = 0; i < MAX_VEHICLES; i++)
+	{
+		if(pVehiclePool->GetSlotState(i) && pVehiclePool->m_bIsActive[i])
+		{
+			int distance = pVehiclePool->m_pVehicles[i]->GetDistanceFromLocalPlayerPed();
+			if(distance < 20){
+				CVehicle* pVehicle = pVehiclePool->GetAt(i);
+
+				VECTOR pos;
+				memset((void*)&pos, 0, sizeof(VECTOR));
+
+				MATRIX4X4 mat;
+				memset((void*)& mat, 0, sizeof(MATRIX4X4));
+
+				pVehicle->GetMatrix(&mat);
+
+				memcpy((void*)& pos, (const void*)& mat.pos, sizeof(VECTOR));
+
+				//memcpy((void*)& pos, (const void*)& mat.pos, sizeof(VECTOR));
+
+				VECTOR Out;
+				memset((void*)&Out, 0, sizeof(VECTOR));
+				// CSprite::CalcScreenCoors
+				((void (*)(VECTOR*, VECTOR*, float*, float*, bool, bool))(g_libGTASA + 0x54EEC0 + 1))(&pos, &Out, 0, 0, 0, 0);
+				if (Out.Z < 1.0f)
+				{
+					return;
+				}
+
+				ImVec2 vpos = ImVec2(Out.X, Out.Y);
+
+
+				sprintf(inf, "id: %d, type: %d\nHealth: %.2f\nDistance: %dm\n Immun: %d",
+						i,
+						pVehicle->GetModelIndex(),
+						pVehicle->GetHealth(),
+						distance,
+						pVehicle->m_bIsInvulnerable
+						);
+
+				TextWithColors(vpos, __builtin_bswap32(0xf48fb1FF), inf, inf);
+			}
+		}
+
+	}
 }
 
 void CText3DLabelsPool::DrawTextLabel(TEXT_LABELS* pLabel, VECTOR* pPos)
@@ -526,6 +583,7 @@ void CText3DLabelsPool::Draw()
 	{
 		return;
 	}
+	if(pGame->isDlinfocar) DrawVehiclesInfo();
 	for (int i = 0; i < TEXT_LABEL_POOL_SIZE; i++)
 	{
 		if (!m_pTextLabels[i] || !m_bSlotState[i])
@@ -558,4 +616,30 @@ void CText3DLabelsPool::Draw()
 		}
 
 	}
+}
+bool ProcessInlineHexColor(const char* start, const char* end, ImVec4& color)
+{
+	const int hexCount = (int)(end - start);
+	if (hexCount == 6 || hexCount == 8)
+	{
+		char hex[9];
+		strncpy(hex, start, hexCount);
+		hex[hexCount] = 0;
+
+		unsigned int hexColor = 0;
+		if (sscanf(hex, "%x", &hexColor) > 0)
+		{
+			color.x = static_cast<float>((hexColor & 0x00FF0000) >> 16) / 255.0f;
+			color.y = static_cast<float>((hexColor & 0x0000FF00) >> 8) / 255.0f;
+			color.z = static_cast<float>((hexColor & 0x000000FF)) / 255.0f;
+			color.w = 1.0f;
+
+			if (hexCount == 8)
+				color.w = static_cast<float>((hexColor & 0xFF000000) >> 24) / 255.0f;
+
+			return true;
+		}
+	}
+
+	return false;
 }
