@@ -14,7 +14,7 @@ void CRadarRect::LoadTextures()
 {
 	m_pRectTexture = (RwTexture*)LoadTextureFromDB("txd", "radardisc_r");
 }
-extern CChatWindow* pChatWindow;
+
 float CRadarRect::CRadar__LimitRadarPoint_hook(float* pos)
 {
 
@@ -37,25 +37,25 @@ float CRadarRect::CRadar__LimitRadarPoint_hook(float* pos)
 			{
 				pos[0] = 1.0f;
 				pos[1] = sinf(angle / 57.295779513f) * 1.4142135623f;
-				//if (pChatWindow) pChatWindow->AddDebugMessage("process 1");
+				//if (pChatWindow) CChatWindow::AddDebugMessage("process 1");
 			}
 			else if (angle > 45 && angle <= 135)
 			{
 				pos[0] = cosf(angle / 57.295779513f) * 1.4142135623f;
 				pos[1] = 1.0f;
-				//if (pChatWindow) pChatWindow->AddDebugMessage("process 2");
+				//if (pChatWindow) CChatWindow::AddDebugMessage("process 2");
 			}
 			else if (angle > 135 && angle <= 225)
 			{
 				pos[0] = -1.0f;
 				pos[1] = sinf(angle / 57.295779513f) * 1.4142135623f;
-				//if (pChatWindow) pChatWindow->AddDebugMessage("process 3");
+				//if (pChatWindow) CChatWindow::AddDebugMessage("process 3");
 			}
 			else
 			{
 				pos[0] = cosf(angle / 57.295779513f) * 1.4142135623f;
 				pos[1] = -1.0f;
-				//if (pChatWindow) pChatWindow->AddDebugMessage("process 1");
+				//if (pChatWindow) CChatWindow::AddDebugMessage("process 1");
 			}
 
 			pos[0] *= (-1.0f);

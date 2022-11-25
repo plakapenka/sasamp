@@ -214,7 +214,6 @@ public abstract class NvEventQueueActivity
     public native void setNativeHpArmourText(boolean b);
     public native void setNativeRadarrect(boolean b);
     public native void setNativeSkyBox(boolean b);
-    public native void setNativeHud(boolean b);
 
     public native boolean getNativeCutoutSettings();
     public native boolean getNativeKeyboardSettings();
@@ -222,9 +221,7 @@ public abstract class NvEventQueueActivity
     public native boolean getNativeOutfitGunsSettings();
     public native boolean getNativeHpArmourText();
     public native boolean getNativeRadarrect();
-    public native boolean getNativePcMoney();
     public native boolean getNativeSkyBox();
-    public native boolean getNativeHud();
 
     public native void setNativeHudElementColor(int id, int a, int r, int g, int b);
     public native byte[] getNativeHudElementColor(int id);
@@ -391,8 +388,6 @@ public abstract class NvEventQueueActivity
         return true;
     }
 
-    private native void onNativeHeightChanged(int orientation, int height);
-
     @Override
     public void onHeightChanged(int orientation, int height)
     {
@@ -403,10 +398,6 @@ public abstract class NvEventQueueActivity
         Dialog dialog = mDialog;
         if (dialog != null) {
             dialog.onHeightChanged(height);
-        }
-        if(orientation == Configuration.ORIENTATION_LANDSCAPE)
-        {
-           // onNativeHeightChanged(orientation, height + findViewById(R.id.main_input).getHeight());
         }
     }
 

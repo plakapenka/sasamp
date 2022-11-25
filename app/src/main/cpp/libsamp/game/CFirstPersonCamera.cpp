@@ -9,7 +9,6 @@ extern CNetGame* pNetGame;
 
 bool CFirstPersonCamera::m_bEnabled = false;
 
-extern CChatWindow* pChatWindow;
 MATRIX4X4* RwMatrixMultiplyByVector(VECTOR* out, MATRIX4X4* a2, VECTOR* in);
 void CFirstPersonCamera::ProcessCameraOnFoot(uintptr_t pCam, CPlayerPed* pPed)
 {

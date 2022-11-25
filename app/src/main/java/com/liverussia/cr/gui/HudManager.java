@@ -2,21 +2,24 @@ package com.liverussia.cr.gui;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.graphics.Point;
+import android.content.Context;
 import android.text.Html;
 import android.util.Log;
-import android.view.Display;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewTreeObserver;
-import android.view.WindowManager;
-import android.widget.ImageButton;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.factor.bouncy.BouncyRecyclerView;
 import com.liverussia.cr.gui.util.Utils;
 import com.nvidia.devtech.NvEventQueueActivity;
 import com.liverussia.cr.R;
@@ -24,8 +27,8 @@ import com.liverussia.cr.R;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Formatter;
+import java.util.List;
 import java.util.Locale;
 
 public class HudManager {
@@ -63,8 +66,14 @@ public class HudManager {
     private TextView opg_defender_score;
     private TextView opg_time_text;
     private ImageView hud_bg;
+    private ConstraintLayout chat_layout;
+    private EditText chat_input;
+    private TextView armour_text;
+    private TextView hp_text;
     long buttonLockCD;
     private boolean isHudSetPos = false;
+
+    private RecyclerView chat;
 
     DecimalFormat formatter;
 
@@ -75,17 +84,57 @@ public class HudManager {
     public native void PressedHorn(boolean pressed);
     public native void SetRadarBgPos(float x1, float y1, float x2, float y2);
     public native void SetRadarPos(float x1, float y1);
+    public native void ToggleKeyBoard(boolean toggle);
+    public native void SendChatMessage(byte str[]);
+    ChatAdapter adapter;
 
-
+    ArrayList<String> chat_lines = new ArrayList<>();
 
     @SuppressLint("ClickableViewAccessibility")
     public HudManager(Activity aactivity) {
+        activity = aactivity;
+
+        armour_text = activity.findViewById(R.id.armour_text);
+        hp_text = activity.findViewById(R.id.hp_text);
+
+        chat_input = activity.findViewById(R.id.chat_input);
+        chat_input.setShowSoftInputOnFocus(false);
+//        chat_input.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+//            @Override
+//            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+//                if (actionId == EditorInfo.IME_ACTION_SEND) {
+//                    try {
+//                        SendChatMessage(chat_input.getText().toString().getBytes("windows-1251"));
+//                    } catch (UnsupportedEncodingException e) {
+//                        e.printStackTrace();
+//                    }
+//                    chat_input.getText().clear();
+//                    ClickChatj();
+//                    return true;
+//                }
+//                return false;
+//            }
+//        });
+
+        {
+
+        }
+        chat = activity.findViewById(R.id.chat);
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(activity);
+
+        mLayoutManager.setStackFromEnd(true);
+        chat.setLayoutManager(mLayoutManager);
+
+
+        // создаем адаптер
+        adapter = new ChatAdapter(activity, chat_lines);
+        // устанавливаем для списка адаптер
+        chat.setAdapter(adapter);
+
         HudInit();
         DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
         otherSymbols.setGroupingSeparator('.');
         formatter = new DecimalFormat("###,###.###", otherSymbols);
-
-        activity = aactivity;
 
         hud_bg = activity.findViewById(R.id.hud_bg);
         // OPG WAR
@@ -240,6 +289,31 @@ public class HudManager {
         Utils.HideLayout(hud_gpsactive, false);
     }
 
+    public void ToggleHpText(boolean toggle)
+    {
+        activity.runOnUiThread(() -> {
+            if(!toggle){
+                armour_text.setVisibility(View.GONE);
+                hp_text.setVisibility(View.GONE);
+            } else {
+                armour_text.setVisibility(View.VISIBLE);
+                hp_text.setVisibility(View.VISIBLE);
+            }
+        });
+
+    }
+    public void ToggleChat(boolean toggle){
+        activity.runOnUiThread(()-> {
+            if(toggle){
+                chat.setVisibility(View.VISIBLE);
+            } else {
+                chat.setVisibility(View.GONE);
+            }
+        });
+    }
+    public void AddChatMessage(String msg){
+        adapter.addItem(msg);
+    }
     public void ToggleEnterPassengerButton(boolean toggle)
     {
         if(toggle)
@@ -299,6 +373,12 @@ public class HudManager {
             activity.runOnUiThread(() -> Utils.HideLayout(lock_vehicle, true) );
         }
     }
+    public void ChangeChatHeight(int height)
+    {
+        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) chat.getLayoutParams();
+        layoutParams.height = height;
+        chat.setLayoutParams(layoutParams);
+    }
 
     public void UpdateHudInfo(int health, int armour, int hunger, int weaponid, int ammo, int ammoclip)
     {
@@ -306,6 +386,8 @@ public class HudManager {
         {
             progressHP.setProgress(health);
             progressArmor.setProgress(armour);
+            armour_text.setText(String.format("%d", armour));
+            hp_text.setText(String.format("%d", health));
 
             int id = activity.getResources().getIdentifier(new Formatter().format("weapon_%d", Integer.valueOf(weaponid)).toString(), "drawable", activity.getPackageName());
             hud_weapon.setImageResource(id);
@@ -456,4 +538,96 @@ public class HudManager {
 
     public void HideBusInfo() { Utils.HideLayout(bus_layout, true); }
 
+    public void AddToChatInput(String msg){
+        activity.runOnUiThread(() -> {
+            chat_input.setText(msg);
+            chat_input.setSelection(msg.length());
+        });
+
+    }
+    public void ClickChatj(){
+        activity.runOnUiThread(() -> {
+            InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (chat_input.getVisibility() == View.VISIBLE) {
+                chat_input.setVisibility(View.GONE);
+                ToggleKeyBoard(false);
+                //   imm.hideSoftInputFromWindow(chat_input.getWindowToken(), 0);
+
+            } else {
+                chat_input.setVisibility(View.VISIBLE);
+                chat_input.requestFocus();
+                ToggleKeyBoard(true);
+
+                // imm.showSoftInput(chat_input, InputMethodManager.SHOW_IMPLICIT);
+            }
+        });
+
+       // ClickChat();
+    }
+    public void ToggleChatInput(boolean toggle){
+        activity.runOnUiThread(() ->
+        {
+            if(toggle){
+                chat_input.setVisibility(View.VISIBLE);
+            }else {
+                chat_input.setVisibility(View.GONE);
+            }
+        });
+    }
+    public class ChatAdapter  extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
+
+        private final LayoutInflater inflater;
+        private final List<String> chat_lines;
+
+        ChatAdapter(Context context, List<String> chat_lines) {
+            this.chat_lines = chat_lines;
+            this.inflater = LayoutInflater.from(context);
+        }
+        @Override
+        public ChatAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+            View view = inflater.inflate(R.layout.chatline, parent, false);
+            view.setOnClickListener(view1 -> {
+                //ClickChat();
+                ClickChatj();
+            });
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(ChatAdapter.ViewHolder holder, int position) {
+            holder.chat_line_text.setText(Html.fromHtml(chat_lines.get(position)));
+            holder.chat_line_shadow.setText(Html.fromHtml(chat_lines.get(position)));
+        }
+
+        @Override
+        public int getItemCount() {
+            return chat_lines.size();
+        }
+
+        public class ViewHolder extends RecyclerView.ViewHolder {
+            final TextView chat_line_text;
+            final TextView chat_line_shadow;
+            ViewHolder(View view){
+                super(view);
+                chat_line_text = view.findViewById(R.id.chat_line_text);
+                chat_line_shadow = view.findViewById(R.id.chat_line_shadow);
+            }
+        }
+        public void addItem(String item) {
+            activity.runOnUiThread(() -> {
+                if(this.chat_lines.size() > 40){
+                    this.chat_lines.remove(0);
+                    notifyItemRemoved(0);
+                }
+                this.chat_lines.add(item);
+                notifyItemInserted(this.chat_lines.size()-1);
+
+                chat.scrollToPosition(this.chat_lines.size()-1);
+
+            });
+
+        }
+    }
 }
+

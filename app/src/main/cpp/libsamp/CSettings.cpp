@@ -55,6 +55,7 @@ void CSettings::Save(int iIgnoreCategory)
 	ini_table_create_entry(config, "client", "player_password", m_Settings.player_password);
 	
 	ini_table_create_entry_as_int(config, "client", "autologin", m_Settings.szAutoLogin);
+	ini_table_create_entry_as_int(config, "gui", "hparmourtext", m_Settings.iHPArmourText);
 	
 
 
@@ -69,13 +70,6 @@ void CSettings::Save(int iIgnoreCategory)
 	ini_table_create_entry_as_float(config, "gui", "FontSize", m_Settings.fFontSize);
 	ini_table_create_entry_as_int(config, "gui", "FontOutline", m_Settings.iFontOutline);
 
-	if (iIgnoreCategory != 1)
-	{
-		ini_table_create_entry_as_float(config, "gui", "ChatPosX", m_Settings.fChatPosX);
-		ini_table_create_entry_as_float(config, "gui", "ChatPosY", m_Settings.fChatPosY);
-	}
-	ini_table_create_entry_as_float(config, "gui", "ChatSizeX", m_Settings.fChatSizeX);
-	ini_table_create_entry_as_float(config, "gui", "ChatSizeY", m_Settings.fChatSizeY);
 	ini_table_create_entry_as_int(config, "gui", "ChatMaxMessages", m_Settings.iChatMaxMessages);
 
 	ini_table_create_entry_as_float(config, "gui", "HealthBarWidth", m_Settings.fHealthBarWidth);
@@ -106,7 +100,6 @@ void CSettings::Save(int iIgnoreCategory)
 		ini_table_create_entry_as_int(config, "gui", "outfit", m_Settings.iOutfitGuns);
 		ini_table_create_entry_as_int(config, "gui", "radarrect", m_Settings.iRadarRect);
 
-		ini_table_create_entry_as_int(config, "gui", "hud", m_Settings.iHud);
 		// ini_table_create_entry_as_int(config, "gui", "hparmourtext", m_Settings.iHPArmourText);
 		// ini_table_create_entry_as_int(config, "gui", "pcmoney", m_Settings.iPCMoney);
 		// ini_table_create_entry_as_int(config, "gui", "ctimecyc", m_Settings.iSkyBox);
@@ -258,11 +251,7 @@ void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 	m_Settings.fFontSize = ini_table_get_entry_as_float(config, "gui", "FontSize", 30.0f);
 	m_Settings.iFontOutline = ini_table_get_entry_as_int(config, "gui", "FontOutline", 2);
 
-	m_Settings.fChatPosX = ini_table_get_entry_as_float(config, "gui", "ChatPosX", 325.0f);
-	m_Settings.fChatPosY = ini_table_get_entry_as_float(config, "gui", "ChatPosY", 25.0f);
-	m_Settings.fChatSizeX = ini_table_get_entry_as_float(config, "gui", "ChatSizeX", 1150.0f);
-	m_Settings.fChatSizeY = ini_table_get_entry_as_float(config, "gui", "ChatSizeY", 220.0f);
-	m_Settings.iChatMaxMessages = ini_table_get_entry_as_int(config, "gui", "ChatMaxMessages", 8);
+	m_Settings.iChatMaxMessages = ini_table_get_entry_as_int(config, "gui", "ChatMaxMessages", 60);
 
 	m_Settings.fHealthBarWidth = ini_table_get_entry_as_float(config, "gui", "HealthBarWidth", 60.0f);
 	m_Settings.fHealthBarHeight = ini_table_get_entry_as_float(config, "gui", "HealthBarHeight", 10.0f);
@@ -290,10 +279,9 @@ void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 	m_Settings.iOutfitGuns = ini_table_get_entry_as_int(config, "gui", "outfit", 1);
 	m_Settings.iRadarRect = ini_table_get_entry_as_int(config, "gui", "radarrect", 0);
 	m_Settings.iHPArmourText = ini_table_get_entry_as_int(config, "gui", "hparmourtext", 0);
-	m_Settings.iPCMoney = ini_table_get_entry_as_int(config, "gui", "pcmoney", 0);
 	m_Settings.iSkyBox = ini_table_get_entry_as_int(config, "gui", "ctimecyc", 1);
 	m_Settings.iSnow = ini_table_get_entry_as_int(config, "gui", "snow", 1);
-	m_Settings.iHud = ini_table_get_entry_as_int(config, "gui", "hud", 1);
+
 	for (int i = 0; i < E_HUD_ELEMENT::HUD_SIZE; i++)
 	{
 		char buff[30];
@@ -348,9 +336,36 @@ void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 extern CSettings* pSettings;
 
 extern "C"
+{
+
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_AuthorizationManager_ToggleAutoLogin(JNIEnv *env, jobject thiz,
 																jboolean toggle) {
 	pSettings->GetWrite().szAutoLogin = toggle;
 	pSettings->Save();
+}
+
+JNIEXPORT void JNICALL
+Java_com_nvidia_devtech_NvEventQueueActivity_setNativeHpArmourText(JNIEnv *pEnv, jobject thiz,
+																   jboolean b) {
+	if (pSettings) {
+		pSettings->GetWrite().iHPArmourText = b;
+	}
+	pHud->ToggleHpText(b);
+	pSettings->Save();
+	//CInfoBarText::SetEnabled(b);
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_ChatLineChanged(JNIEnv *env,
+																			   jobject thiz,
+																			   jint newcount) {
+	if (pSettings)
+	{
+		pSettings->GetWrite().iChatMaxMessages = newcount;
+		pSettings->Save();
+	}
+}
+
 }

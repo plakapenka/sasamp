@@ -12,7 +12,6 @@
 #include "util/armhook.h"
 
 extern CGUI* pGUI;
-extern CChatWindow* pChatWindow;
 
 char CLocalisation::m_szMessages[E_MSG::MSG_COUNT][MAX_LOCALISATION_LENGTH] = {
 	"{bbbbbb}Соединение к LIVE RUSSIA{ffffff}",

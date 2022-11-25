@@ -53,8 +53,7 @@ void CWidget::SetTexture(const char* szDB, const char* szTexture)
 {
 	m_pSprite->m_pRwTexture = (RwTexture*)LoadTextureFromDB(szDB, szTexture);
 }
-#include "..//chatwindow.h"
-extern CChatWindow* pChatWindow;
+
 void CWidget::Draw()
 {
 	if (!m_pSprite) return;

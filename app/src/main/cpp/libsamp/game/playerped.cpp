@@ -748,8 +748,6 @@ void CPlayerPed::ClearAllTasks()
 
 	ScriptCommand(&clear_char_tasks, m_dwGTAId);
 }
-#include "..//chatwindow.h"
-extern CChatWindow* pChatWindow;
 
 void CPlayerPed::ClearAnimations()
 {
@@ -1302,8 +1300,7 @@ void CPlayerPed::HideMarker()
 }
 
 // 0.3.7
-#include "..//chatwindow.h"
-extern CChatWindow* pChatWindow;
+
 void CPlayerPed::SetFightingStyle(int iStyle)
 {
 	
@@ -1312,7 +1309,7 @@ void CPlayerPed::SetFightingStyle(int iStyle)
 	{
 		return;
 	}
-	//pChatWindow->AddDebugMessage("set fighting style %d", iStyle);
+	//CChatWindow::AddDebugMessage("set fighting style %d", iStyle);
 	ScriptCommand( &set_fighting_style, m_dwGTAId, iStyle, 6 );
 }
 

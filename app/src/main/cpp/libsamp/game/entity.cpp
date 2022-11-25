@@ -7,7 +7,6 @@
 
 extern CGame *pGame;
 extern CNetGame *pNetGame;
-extern CChatWindow *pChatWindow;
 
 void CEntity::Add()
 {
@@ -224,7 +223,7 @@ bool CEntity::SetModelIndex(unsigned int uiModel)
 			usleep(1000);
 			if(iTryCount > 200)
 			{
-				if(pChatWindow) pChatWindow->AddDebugMessage("Warning: Model %u wouldn't load in time!", uiModel);
+				CChatWindow::AddDebugMessage("Warning: Model %u wouldn't load in time!", uiModel);
 				return false;
 			}
 

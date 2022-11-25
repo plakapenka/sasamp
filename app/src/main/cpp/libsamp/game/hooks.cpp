@@ -12,11 +12,9 @@
 #include "..///..//santrope-tea-gtasa/CGameResourcesDecryptor.h"
 
 #include "..//voice/CVoiceChatClient.h"
-#include "..//chatwindow.h"
 extern CGame* pGame;
 #include "..//CSettings.h"
 extern CSettings* pSettings;
-extern CChatWindow* pChatWindow;
 extern CVoiceChatClient* pVoice;
 extern CHUD *pHud;
 
@@ -137,32 +135,6 @@ open:
 }
 
 /* ====================================================== */
-void ShowHud() 
-{	
-	CLocalPlayer *pLocalPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer();
-	if(pGame) 
-	{
-		if(pNetGame && pLocalPlayer->lToggle) 
-		{
-			if(pGame->FindPlayerPed() || GamePool_FindPlayerPed()) 
-			{
-				CPlayerPool *pPlayerPool = pNetGame->GetPlayerPool();
-
-				if(pSettings && pSettings->GetReadOnly().iHud)
-				{
-					*(uint8_t*)(g_libGTASA+0x7165E8) = 0;
-				}
-				else if(pSettings && !pSettings->GetReadOnly().iHud)
-				{
-					*(uint8_t*)(g_libGTASA+0x7165E8) = 1;
-				}
-			}
-		}
-	}
-}
-
-
-/* ====================================================== */
 bool bGameStarted = false;
 uint32_t bProcessedRender2dstuff = 0;
 void RenderBackgroundHud();
@@ -174,7 +146,6 @@ void Render2dStuff_hook()
 	bGameStarted = true;
 	MAKE_PROFILE(test, test_time);
 	MainLoop();
-	ShowHud();
 	RenderBackgroundHud();
 	LOG_PROFILE(test, test_time);
 	bProcessedRender2dstuff = GetTickCount();
@@ -190,21 +161,7 @@ void Render2dStuff_hook()
 				pNetGame->GetTextDrawPool()->Draw();
 			}
 		}
-		if (pNetGame->GetPlayerPool())
-		{
-			if (pNetGame->GetPlayerPool()->GetLocalPlayer())
-			{
-				CPlayerPed* pPed = pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed();
-				if (pPed)
-				{
-					CInfoBarText::Draw(pPed->GetHealth(), pPed->GetArmour());
-				}
-			}
-		}
 	}
-
-
-
 	return;
 }
 
@@ -1100,7 +1057,7 @@ char CStreaming__ConvertBufferToObject_hook(int a1, int a2, int a3)
 	CGameResourcesDecryptor::CStreaming__ConvertBufferToObject_hook((char*)a1, a2, a3);
 	if (a2 >= 15000 && a2 <= 15100)
 	{
-		//pChatWindow->AddDebugMessage("loading time %d", GetTickCount() - tickStart);
+		//CChatWindow::AddDebugMessage("loading time %d", GetTickCount() - tickStart);
 	}
 	char a12 = CStreaming__ConvertBufferToObject(a1, a2, a3);
 	return a12;
@@ -1623,13 +1580,6 @@ void CRopes__Update_hook()
 	
 }
 
-void* (*CCustomCarEnvMapPipeline__pluginEnvMatDestructorCB)(void* object, RwInt32 offset, RwInt32 size);
-void* CCustomCarEnvMapPipeline__pluginEnvMatDestructorCB_hook(void* object, RwInt32 offset, RwInt32 size)
-{
-	if(pChatWindow) pChatWindow->AddDebugMessage("m_objects %x", *(uintptr_t * *)(g_libGTASA + 0x00669E48));
-	return CCustomCarEnvMapPipeline__pluginEnvMatDestructorCB(object, offset, size);
-}
-
 #include "CRenderTarget.h"
 #include "..//gui/CFontInstance.h"
 #include "..//gui/CFontRenderer.h"
@@ -2052,11 +2002,6 @@ float CRadar__LimitRadarPoint_hook(float* a1)
 	}
 	float value = CRadarRect::CRadar__LimitRadarPoint_hook(a1);
 
-	if (pChatWindow)
-	{
-		//pChatWindow->AddDebugMessage("VALUE %f", value);
-	}
-
 	return value;
 }
 
@@ -2261,12 +2206,12 @@ void CSprite2d__Draw_hook(CSprite2d* a1, CRect* a2, CRGBA* a3)
 		if (CRadarRect::IsEnabled() && CRadarRect::m_pRectTexture)
 		{
 			a1->m_pRwTexture = CRadarRect::m_pRectTexture;
-			//pChatWindow->AddDebugMessage("Replacing for rect");
+			//CChatWindow::AddDebugMessage("Replacing for rect");
 		}
 		else
 		{
 			a1->m_pRwTexture = CRadarRect::m_pDiscTexture;
-			//pChatWindow->AddDebugMessage("Replacing for disc");
+			//CChatWindow::AddDebugMessage("Replacing for disc");
 		}
 
 		if (CAdjustableHudColors::IsUsingHudColor(E_HUD_ELEMENT::HUD_RADAR))
@@ -2347,12 +2292,6 @@ void CHud__Draw_hook()
 void (*CCam__Process)(uintptr_t);
 void CCam__Process_hook(uintptr_t thiz)
 {
-
-	if (pChatWindow)
-	{
-		//pChatWindow->AddDebugMessage("time %d %d %d", *(uint32_t*)(g_libGTASA + 0x008B0808 + 116), *(uint32_t*)(g_libGTASA + 0x008B0808 + 120), *(uint32_t*)(g_libGTASA + 0x008B0808 + 124));
-		//pChatWindow->AddDebugMessage("camera %d %f %f", *(uint16_t*)(thiz + 14), *(float*)(thiz + 132), *(float*)(thiz + 148)); // 140 - fov, 132 - vertical, 148 - horizontal angle
-	}
 
 	VECTOR vecSpeed;
 	CVehicle* pVeh = nullptr;

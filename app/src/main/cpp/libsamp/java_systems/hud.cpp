@@ -11,7 +11,11 @@
 #include "net/netgame.h"
 #include "gui/gui.h"
 #include "keyboard.h"
+#include "CSettings.h"
+#include "chatwindow.h"
+#include "util/armhook.h"
 
+extern CSettings* pSettings;
 extern CJavaWrapper *g_pJavaWrapper;
 extern CGame *pGame;
 extern CHUD *pHud;
@@ -34,6 +38,14 @@ void CHUD::InitServerLogo(int serverID) {
     env->CallVoidMethod(jHudManager, InitServerLogo, serverID);
 }
 
+void CHUD::ChangeChatHeight(int height) {
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+
+    jclass clazz = env->GetObjectClass(jHudManager);
+    jmethodID ChangeChatHeight = env->GetMethodID(clazz, "ChangeChatHeight", "(I)V");
+
+    env->CallVoidMethod(jHudManager, ChangeChatHeight, height);
+}
 
 extern "C"
 JNIEXPORT void JNICALL
@@ -41,6 +53,10 @@ Java_com_liverussia_cr_gui_HudManager_HudInit(JNIEnv *env, jobject thiz) {
 
     jHudManager = env->NewGlobalRef(thiz);
     jUpdateHudInfo = env->GetMethodID(env->GetObjectClass(thiz), "UpdateHudInfo", "(IIIIII)V");
+
+    pHud->ToggleHpText(pSettings->GetWrite().iHPArmourText);
+    pHud->ChangeChatHeight(pSettings->GetWrite().iChatMaxMessages);
+
 }
 extern bool showSpeedometr;
 void CHUD::ToggleAll(bool toggle, bool withchat)
@@ -64,12 +80,9 @@ void CHUD::ToggleAll(bool toggle, bool withchat)
     }
 
     isHudToggle = toggle;
-    pGame->DisplayHUD(toggle);
 
-
-    if(withchat || toggle)pGame->ToggleHUDElement(HUD_ELEMENT_CHAT, toggle);
     pGame->ToggleHUDElement(HUD_ELEMENT_BUTTONS, toggle);
-    //pGame->DisplayWidgets(toggle); ?? не работает тоже
+
     pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->TogglePlayerControllable(toggle, true);
     pGame->ToggleHUDElement(HUD_ELEMENT_FPS, toggle);
 
@@ -84,9 +97,7 @@ void CHUD::ToggleAll(bool toggle, bool withchat)
     jmethodID ToggleAll = env->GetMethodID(clazz, "ToggleAll", "(Z)V");
     env->CallVoidMethod(jHudManager, ToggleAll, toggle);
 
-  //  int radarPosX = (int)pHud->GetScreenSize(true)/11.13;
-   // int radarPosY = (int)pHud->GetScreenSize(false)/24.8;
-
+    *(uint8_t*)(g_libGTASA+0x7165E8) = 0;
 }
 //
 void CHUD::ToggleEnterPassengerButton(bool toggle)
@@ -301,6 +312,68 @@ void CHUD::UpdateOpgWarLayout(int time, int attack_score, int def_score)
     else isMafia_war_layout_active = true;
 }
 
+void CHUD::AddToChatInput(const char ch[])
+{
+    char msg_utf[255];
+    cp1251_to_utf8(msg_utf, ch);
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+
+    jstring jch = env->NewStringUTF(msg_utf);
+
+    jclass clazz = env->GetObjectClass(jHudManager);
+    jmethodID AddToChatInput = env->GetMethodID(clazz, "AddToChatInput", "(Ljava/lang/String;)V");
+
+    env->CallVoidMethod(jHudManager, AddToChatInput, jch);
+}
+
+void CHUD::ToggleChatInput(bool toggle)
+{
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+
+
+    jclass clazz = env->GetObjectClass(jHudManager);
+    jmethodID ToggleChatInput = env->GetMethodID(clazz, "ToggleChatInput", "(Z)V");
+
+    env->CallVoidMethod(jHudManager, ToggleChatInput, toggle);
+}
+
+void CHUD::AddChatMessage(const char msg[])
+{
+    if(!jHudManager)return;
+
+    char msg_utf[1024];
+    cp1251_to_utf8(msg_utf, msg);
+    //CChatWindow::FilterInvalidChars(msg_utf);
+
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+    //
+    jstring jmsg = env->NewStringUTF( ConvertColorToHtml(msg_utf) );
+
+    jclass clazz = env->GetObjectClass(jHudManager);
+    jmethodID AddChatMessage = env->GetMethodID(clazz, "AddChatMessage", "(Ljava/lang/String;)V");
+
+    env->CallVoidMethod(jHudManager, AddChatMessage, jmsg);
+}
+
+void CHUD::ToggleHpText(bool toggle)
+{
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+
+    jclass clazz = env->GetObjectClass(jHudManager);
+    jmethodID ToggleHpText = env->GetMethodID(clazz, "ToggleHpText", "(Z)V");
+    env->CallVoidMethod(jHudManager, ToggleHpText, toggle);
+}
+
+void CHUD::ToggleChat(bool toggle){
+    isChatOn = toggle;
+
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+
+    jclass clazz = env->GetObjectClass(jHudManager);
+    jmethodID ToggleChat = env->GetMethodID(clazz, "ToggleChat" , "(Z)V");
+    env->CallVoidMethod(jHudManager, ToggleChat, toggle);
+}
+
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_HudManager_SetRadarBgPos(JNIEnv *env, jobject thiz, jfloat x1, jfloat y1,
@@ -318,4 +391,32 @@ Java_com_liverussia_cr_gui_HudManager_SetRadarPos(JNIEnv *env, jobject thiz, jfl
     pHud->radarx1 = x1;
     pHud->radary1 = y1;
 
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_HudManager_SendChatMessage(JNIEnv *env, jobject thiz, jbyteArray str) {
+    jbyte* pMsg = env->GetByteArrayElements(str, nullptr);
+    jsize length = env->GetArrayLength(str);
+
+    std::string szStr((char*)pMsg, length);
+    //const char *inputText = pEnv->GetStringUTFChars(str, nullptr);
+
+    if(pNetGame) {
+        pNetGame->SendChatMessage(const_cast<char *>(szStr.c_str()));
+
+    }
+
+    env->ReleaseByteArrayElements(str, pMsg, JNI_ABORT);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_HudManager_ToggleKeyBoard(JNIEnv *env, jobject thiz, jboolean toggle) {
+    if (pKeyBoard) {
+        if (toggle) {
+            pKeyBoard->Open();
+        } else {
+            pKeyBoard->Close();
+        }
+    }
 }

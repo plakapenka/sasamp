@@ -20,10 +20,6 @@ struct stSettings
 	float fFontSize;
 	int iFontOutline;
 
-	float fChatPosX;
-	float fChatPosY;
-	float fChatSizeX;
-	float fChatSizeY;
 	int iChatMaxMessages;
 
 	float fHealthBarWidth;
@@ -53,11 +49,8 @@ struct stSettings
 	int iOutfitGuns;
 	int iRadarRect;
 	int iHPArmourText;
-	int iPCMoney;
 	int iSkyBox;
 	int iSnow;
-
-	int iHud;
 };
 
 class CSettings

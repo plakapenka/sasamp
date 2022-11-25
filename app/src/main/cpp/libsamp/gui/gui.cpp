@@ -11,7 +11,6 @@
 #include "../util/util.h"
 #include "../game/vehicle.h"
 
-extern CChatWindow *pChatWindow;
 extern CPlayerTags *pPlayerTags;
 extern CSettings *pSettings;
 extern CKeyBoard *pKeyBoard;
@@ -239,10 +238,7 @@ void CGUI::Render()
 	PreProcessInput();
 
 	ProcessPushedTextdraws();
-	if (pChatWindow)
-	{
-		pChatWindow->ProcessPushedCommands();
-	}
+	CChatWindow::ProcessPushedCommands();
 
 	ImGui_ImplRenderWare_NewFrame();
 	ImGui::NewFrame();
@@ -252,19 +248,12 @@ void CGUI::Render()
 	RenderVersion();
 	//RenderRakNetStatistics();
 
-	if (pKeyBoard)
-	{
-		pKeyBoard->ProcessInputCommands();
-	}
-
 	if (pPlayerTags) pPlayerTags->Render();
 	
 	if(pNetGame && pNetGame->GetLabelPool())
 	{
 		pNetGame->GetLabelPool()->Draw();
 	}
-
-	if (pChatWindow) pChatWindow->Render();
 
 	if(pGame->FindPlayerPed()->IsInVehicle() && !pGame->FindPlayerPed()->IsAPassenger() && !pKeyBoard->IsOpen() && !pGame->isDialogActive)
 	{
@@ -385,7 +374,6 @@ bool CGUI::OnTouchEvent(int type, bool multi, int x, int y)
 	{
 		if (pNetGame->GetTextDrawPool()->OnTouchEvent(type, multi, x, y))
 		{
-			if (!pChatWindow->OnTouchEvent(type, multi, x, y)) return false;
 		}
 		else
 		{

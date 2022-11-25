@@ -40,7 +40,6 @@ const cryptor::string_encryptor encLib = cryptor::create("libsamp.so", 11);
 void CrashLog(const char* fmt, ...);
 CGame *pGame = nullptr;
 CNetGame *pNetGame = nullptr;
-CChatWindow *pChatWindow = nullptr; 
 CPlayerTags *pPlayerTags = nullptr;
 CVoiceChatClient* pVoice = nullptr;
 CSnapShotHelper* pSnapShotHelper = nullptr;
@@ -127,11 +126,10 @@ void InitSAMP(JNIEnv* pEnv, jobject thiz)
 	pHud = new CHUD();
 	pInventory = new CINVENTORY();
 
+	//ÒÓÒ ÌÎÆÍÎ ÇÀÃÐÓÇÈÒÜ
 	CWeaponsOutFit::SetEnabled(pSettings->GetReadOnly().iOutfitGuns);
 	CRadarRect::SetEnabled(pSettings->GetReadOnly().iRadarRect);
-	CGame::SetEnabledPCMoney(pSettings->GetReadOnly().iPCMoney);
 	CDebugInfo::SetDrawFPS(pSettings->GetReadOnly().szDebug);
-	CInfoBarText::SetEnabled(pSettings->GetReadOnly().iHPArmourText);
 	CSnow::SetCurrentSnow(pSettings->GetReadOnly().iSnow);
 
 	g_pJavaWrapper = new CJavaWrapper(pEnv, thiz);
@@ -161,7 +159,6 @@ void InitInMenu()
 
 	pGUI = new CGUI();
 	pKeyBoard = new CKeyBoard();
-	pChatWindow = new CChatWindow();
 	pPlayerTags = new CPlayerTags();
 	pSnapShotHelper = new CSnapShotHelper();
 
@@ -239,9 +236,9 @@ void InitInGame()
 
 	if (!bNetworkInited)
 	{
-		if (pChatWindow)
-			pChatWindow->AddDebugMessage("{bbbbbb}Êëèåíò {ff0000}LIVE RUSSIA{bbbbbb} çàïóùåí");
-
+		Log("dopustim");
+		CChatWindow::AddDebugMessage("{bbbbbb}Êëèåíò {ff0000}LIVE RUSSIA{bbbbbb} çàïóùåí");
+		Log("dopustim2");
 		pNetGame = new CNetGame(
 			g_sEncryptedAddresses[pSettings->GetReadOnly().szServer].decrypt(),
 			g_sEncryptedAddresses[pSettings->GetReadOnly().szServer].getPort(),
@@ -249,6 +246,7 @@ void InitInGame()
 			pSettings->GetReadOnly().szPassword);
 
 		bNetworkInited = true;
+		Log("InitInGame() end");
 		return;
 	}
 }

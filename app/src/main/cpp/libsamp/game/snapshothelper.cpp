@@ -142,8 +142,7 @@ uintptr_t CSnapShotHelper::CreatePedSnapShot(int iModel, uint32_t dwColor, VECTO
 
 	return bufferTexture;
 }
-#include "..//chatwindow.h"
-extern CChatWindow* pChatWindow;
+
 uintptr_t CSnapShotHelper::CreateVehicleSnapShot(int iModel, uint32_t dwColor, VECTOR* vecRot, float fZoom, int dwColor1, int dwColor2)
 {
 	Log("CreateVehicleSnapShot: %d %f, %f, %f, (%d, %d)", iModel, vecRot->X, vecRot->Y, vecRot->Z, dwColor1, dwColor2);

@@ -34,8 +34,7 @@ done:
 	return address;
 }
 void CrashLog(const char* fmt, ...);
-#include "..//chatWindow.h"
-extern CChatWindow* pChatWindow;
+
 #include <algorithm>
 #include "..//cryptors/DUMPLIBRARIES_result.h"
 #include "..//str_obfuscator_no_template.hpp"
@@ -185,7 +184,7 @@ void cp1251_to_utf8(char* out, const char* in, unsigned int len)
 
 		if (*in & 0x80)
 		{
-			register int v = table[(int)(0x7f & *in++)];
+			int v = table[(int)(0x7f & *in++)];
 			if (!v)
 				continue;
 			*out++ = (char)v;
@@ -207,7 +206,8 @@ void AND_OpenLink(const char* szLink)
 	((void (*)(const char*))(g_libGTASA + 0x00242A64 + 1))(szLink);
 }
 
-std::string ConvertColorToHtml(std::string format) {
+char* ConvertColorToHtml(std::string format) {
+
 	bool first_time_flag = 1;
 	for (int i = 0; i < format.length(); i++) {
 		if (format[i] == '{') {
@@ -235,7 +235,7 @@ std::string ConvertColorToHtml(std::string format) {
 			i+=3;
 		}
 	}
-	return format;
+	return const_cast<char *>(format.c_str());
 }
 
 std::string str_replace(std::string str)

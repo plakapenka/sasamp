@@ -17,8 +17,7 @@ void CSnow::Initialise()
 	m_dwParticeHandle2 = 0;
 	m_dwLastTickCreated = GetTickCount();
 }
-#include "..//chatwindow.h"
-extern CChatWindow* pChatWindow;
+
 void CSnow::Process(CPlayerPed* pPed, int iInterior)
 {
 	if (!pPed)
@@ -45,7 +44,7 @@ void CSnow::Process(CPlayerPed* pPed, int iInterior)
 		{
 			m_iCurrentSnow = 1;
 		}
-		//pChatWindow->AddDebugMessage("govno %d", m_iCurrentSnow);
+		//CChatWindow::AddDebugMessage("govno %d", m_iCurrentSnow);
 		uint32_t dwActorhandle = pPed->m_dwGTAId;
 
 		ScriptCommand(&attach_particle_to_actor, g_iSnows[m_iCurrentSnow-1], dwActorhandle, 0.0f, 10.0f, 2.0f, 1, &m_dwParticeHandle1);

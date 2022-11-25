@@ -10,9 +10,12 @@ import android.widget.SeekBar;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.factor.bouncy.BouncyRecyclerView;
 import com.nvidia.devtech.NvEventQueueActivity;
 import com.liverussia.cr.R;
 
@@ -26,7 +29,6 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
     private SwitchCompat mSwitchHpArmour;
     private SwitchCompat mSwitchRadarrect;
     private SwitchCompat mSwitchSkyBox;
-    private SwitchCompat mSwitchHud;
     private SeekBar chat_line_count;
     private SeekBar chat_font_size;
 
@@ -85,8 +87,8 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
         mSwitchOutfit = mRootView.findViewById(R.id.switch_outfit_weapons);
         mSwitchRadarrect = mRootView.findViewById(R.id.switch_radar_rect);
         mSwitchSkyBox = mRootView.findViewById(R.id.switch_skybox);
-        mSwitchHud = mRootView.findViewById(R.id.switch_hud);
         chat_line_count = mRootView.findViewById(R.id.chat_line_count);
+        chat_line_count.setProgress(mContext.findViewById(R.id.chat).getHeight());
 //        chat_font_size = mRootView.findViewById(R.id.chat_font_size);
 
 //        chat_font_size.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -106,7 +108,12 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
         chat_line_count.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                ChatLineChanged(progress);
+               // ChatLineChanged(progress);
+                BouncyRecyclerView chat = mContext.findViewById(R.id.chat);
+                ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) chat.getLayoutParams();
+                layoutParams.height = progress;
+                chat.setLayoutParams(layoutParams);
+
             }
             @Override public void onStartTrackingTouch(SeekBar seekBar) {
 
@@ -114,6 +121,7 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
 
             @Override public void onStopTrackingTouch(SeekBar seekBar) {
 
+                ChatLineChanged(seekBar.getProgress());
             }
         });
 
@@ -135,13 +143,6 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 mContext.setNativeSkyBox(b);
-            }
-        });
-
-        mSwitchHud.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                mContext.setNativeHud(b);
             }
         });
 
@@ -262,7 +263,6 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
         mSwitchOutfit.setChecked(mContext.getNativeOutfitGunsSettings());
         mSwitchRadarrect.setChecked(mContext.getNativeRadarrect());
         mSwitchSkyBox.setChecked(mContext.getNativeSkyBox());
-        mSwitchHud.setChecked(mContext.getNativeHud());
 
         bChangeAllowed = false;
         for(int i = DialogClientSettings.mSettingsComonStart; i < DialogClientSettings.mSettingsComonEnd; i++)

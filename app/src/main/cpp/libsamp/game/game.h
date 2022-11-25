@@ -28,7 +28,6 @@
 #include "CRadarRect.h"
 #include "CAdjustableHudColors.h"
 #include "CAdjustableHudPosition.h"
-#include "CInfoBarText.h"
 #include "CAdjustableHudScale.h"
 #include "CFirstPersonCamera.h"
 #include "CSnow.h"
@@ -54,7 +53,6 @@ public:
 	void HandleChangedHUDStatus();
 	bool IsToggledHUDElement(int iID);
 
-	static void SetEnabledPCMoney(bool bEnabled);
 	void ToggleHUDElement(int iID, bool bToggle);
 
 	CCamera* GetCamera() { return m_pGameCamera; }
@@ -167,6 +165,7 @@ public:
 	bool isBanJump = false;
 
 	bool isPreDeathActive = false;
+	bool 			isDlinfocar = false;
 private:
 	bool aToggleStatusHUD[HUD_MAX];
 	CCamera* 		m_pGameCamera;

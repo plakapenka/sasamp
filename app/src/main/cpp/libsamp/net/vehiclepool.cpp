@@ -1,11 +1,9 @@
 #include "../main.h"
 #include "../game/game.h"
 #include "netgame.h"
-#include "../chatwindow.h"
 
 extern CGame *pGame;
 extern CNetGame *pNetGame;
-extern CChatWindow *pChatWindow;
 
 CVehiclePool::CVehiclePool()
 {
@@ -79,14 +77,16 @@ void CVehiclePool::Process()
 	}
 }
 #include "..//game/CCustomPlateManager.h"
+#include "chatwindow.h"
+
 bool CVehiclePool::New(NEW_VEHICLE *pNewVehicle)
 {
 #ifdef _CDEBUG
-	pChatWindow->AddDebugMessage("Added veh %d %d", pNewVehicle->VehicleID, pNewVehicle->iVehicleType);
+	CChatWindow::AddDebugMessage("Added veh %d %d", pNewVehicle->VehicleID, pNewVehicle->iVehicleType);
 #endif
 	if(m_pVehicles[pNewVehicle->VehicleID] != nullptr)
 	{
-		pChatWindow->AddDebugMessage("Warning: vehicle %u was not deleted", pNewVehicle->VehicleID);
+		CChatWindow::AddDebugMessage("Warning: vehicle %u was not deleted", pNewVehicle->VehicleID);
 		Delete(pNewVehicle->VehicleID);
 	}
 

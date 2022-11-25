@@ -1,3 +1,4 @@
+#include <sstream>
 #include "../main.h"
 #include "../game/game.h"
 #include "netgame.h"
@@ -11,7 +12,6 @@ extern CVoiceChatClient* pVoice;
 bool g_IsVoiceServer();
 extern CGame *pGame;
 extern CNetGame *pNetGame;
-extern CChatWindow *pChatWindow;
 extern CSettings *pSettings;
 extern CHUD *pHud;
 
@@ -98,7 +98,7 @@ void InitGame(RPCParameters *rpcParams)
 				//Log("Created voice");
 			}
 
-	if(pChatWindow) pChatWindow->AddDebugMessage("Ïðèñîåäèíåíî ê {B9C9BF}%.64s", pNetGame->m_szHostName);
+	CChatWindow::AddDebugMessage("Ïðèñîåäèíåíî ê {B9C9BF}%.64s", pNetGame->m_szHostName);
 
 }
 
@@ -142,8 +142,10 @@ void ServerQuit(RPCParameters *rpcParams)
 	CPlayerPool *pPlayerPool = pNetGame->GetPlayerPool();
 	pPlayerPool->Delete(playerId, byteReason);
 }
+
 void ClientMessage(RPCParameters *rpcParams)
 {
+
 	unsigned char* Data = reinterpret_cast<unsigned char *>(rpcParams->input);
 	int iBitLength = rpcParams->numberOfBitsOfData;
 
@@ -157,7 +159,12 @@ void ClientMessage(RPCParameters *rpcParams)
 	bsData.Read(szMsg, dwStrLen);
 	szMsg[dwStrLen] = 0;
 
-	pChatWindow->AddClientMessage(dwColor, szMsg);
+	std::string msg = szMsg;
+
+	char buf[dwStrLen+55];
+	snprintf(buf, sizeof(buf), "{%x}%s", (dwColor>>8)&0xFFFFFF, szMsg);
+
+	pHud->AddChatMessage(buf);
 
 	free(szMsg);
 }
@@ -188,7 +195,7 @@ void Chat(RPCParameters *rpcParams)
 		CLocalPlayer *pLocalPlayer = pPlayerPool->GetLocalPlayer();
 		if (pLocalPlayer) 
 		{
-			pChatWindow->AddChatMessage(pPlayerPool->GetLocalPlayerName(),
+			CChatWindow::AddChatMessage(pPlayerPool->GetLocalPlayerName(),
 			pLocalPlayer->GetPlayerColor(), (char*)szText);
 		}
 	} 
@@ -592,8 +599,8 @@ void DialogBox(RPCParameters *rpcParams)
 
 void GameModeRestart(RPCParameters *rpcParams)
 {
-	// pChatWindow->AddInfoMessage("The server is restarting..");
-	pChatWindow->AddInfoMessage("{ff0000}Ñåðâåð ïåðåçàãðóæàåòñÿ...");
+	// CChatWindow::AddInfoMessage("The server is restarting..");
+	CChatWindow::AddInfoMessage("{ff0000}Ñåðâåð ïåðåçàãðóæàåòñÿ...");
 	pNetGame->ShutDownForGameRestart();
 }
 
@@ -612,23 +619,23 @@ void ConnectionRejected(RPCParameters *rpcParams)
 	bsData.Read(byteRejectReason);
 
 	if(byteRejectReason == REJECT_REASON_BAD_VERSION)
-		pChatWindow->AddInfoMessage("ÎÒÊËÞ×ÅÍÈÅ ÎÒÊËÞ×ÅÍÎ. ÑÅÐÂÅÐ ÍÅ ÐÀÇÐÅØÈË ÑÎÅÄÈÍÅÍÈÅ.");
+		CChatWindow::AddInfoMessage("ÎÒÊËÞ×ÅÍÈÅ ÎÒÊËÞ×ÅÍÎ. ÑÅÐÂÅÐ ÍÅ ÐÀÇÐÅØÈË ÑÎÅÄÈÍÅÍÈÅ.");
 	else if(byteRejectReason == REJECT_REASON_BAD_NICKNAME)
 	{
-		pChatWindow->AddInfoMessage("ÑÎÅÄÈÍÅÍÈÅ ÎÒÊËÎÍÅÍÎ. ÍÅÏÐÀÂÈËÜÍÛÉ ÍÈÊ!");
-		pChatWindow->AddInfoMessage("Ïîæàëóéñòà, âûáåðèòå äðóãîé íèê èç 5-20 ñèìâîëîâ");
-		pChatWindow->AddInfoMessage("ñîäåðæàùèé òîëüêî A-Z a-z 0-9 [] èëè _");
-		pChatWindow->AddInfoMessage("Èñïîëüçóéòå /quit äëÿ âûõîäà èëè íàæìèòå ESC è âûáåðèòå Âûéòè èç èãðû");
+		CChatWindow::AddInfoMessage("ÑÎÅÄÈÍÅÍÈÅ ÎÒÊËÎÍÅÍÎ. ÍÅÏÐÀÂÈËÜÍÛÉ ÍÈÊ!");
+		CChatWindow::AddInfoMessage("Ïîæàëóéñòà, âûáåðèòå äðóãîé íèê èç 5-20 ñèìâîëîâ");
+		CChatWindow::AddInfoMessage("ñîäåðæàùèé òîëüêî A-Z a-z 0-9 [] èëè _");
+		CChatWindow::AddInfoMessage("Èñïîëüçóéòå /quit äëÿ âûõîäà èëè íàæìèòå ESC è âûáåðèòå Âûéòè èç èãðû");
 	}
 	else if(byteRejectReason == REJECT_REASON_BAD_MOD)
 	{
-		pChatWindow->AddInfoMessage("ÑÎÅÄÈÍÅÍÈÅ ÎÒÊËÎÍÅÍÎ");
-		pChatWindow->AddInfoMessage("ÂÛ ÈÑÏÎËÜÇÓÅÒÅ ÍÅÏÐÀÂÈËÜÍÛÉ ÌÎÄ!");
+		CChatWindow::AddInfoMessage("ÑÎÅÄÈÍÅÍÈÅ ÎÒÊËÎÍÅÍÎ");
+		CChatWindow::AddInfoMessage("ÂÛ ÈÑÏÎËÜÇÓÅÒÅ ÍÅÏÐÀÂÈËÜÍÛÉ ÌÎÄ!");
 	}
 	else if(byteRejectReason == REJECT_REASON_BAD_PLAYERID)
 	{
-		pChatWindow->AddInfoMessage("Ñîåäèíåíèå áûëî çàêðûòî ñåðâåðîì.");
-		pChatWindow->AddInfoMessage("Íå óäàëîñü âûäåëèòü ñëîò äëÿ èãðîêà. Ïîâòîðèòå ïîïûòêó.");
+		CChatWindow::AddInfoMessage("Ñîåäèíåíèå áûëî çàêðûòî ñåðâåðîì.");
+		CChatWindow::AddInfoMessage("Íå óäàëîñü âûäåëèòü ñëîò äëÿ èãðîêà. Ïîâòîðèòå ïîïûòêó.");
 	}
 
 	pNetGame->GetRakClient()->Disconnect(500);
@@ -778,11 +785,11 @@ void ProcessIncommingEvent(BYTE bytePlayerID, int iEventType, uint32_t dwParam1,
 		}
 		if (!iWait) 
 		{
-			pChatWindow->AddDebugMessage("Timeout on car component.");
+			CChatWindow::AddDebugMessage("Timeout on car component.");
 			break;
 		}
 		ScriptCommand(&add_car_component, iVehicleID, iComponent, &v);
-		pChatWindow->AddDebugMessage("Added car component: %d",iComponent);
+		CChatWindow::AddDebugMessage("Added car component: %d",iComponent);
 		break;
 
 	case EVENT_TYPE_CARCOLOR:
@@ -1155,7 +1162,7 @@ void WorldActorAdd(RPCParameters* rpcParams)
 	bsData.Read(bInvulnerable);
 
 #ifdef _CDEBUG
-	pChatWindow->AddDebugMessage("Add actor %d %d %f %f", actorId, fRotation, fHealth);
+	CChatWindow::AddDebugMessage("Add actor %d %d %f %f", actorId, fRotation, fHealth);
 #endif
 	CActorPool* pActorPool = pNetGame->GetActorPool();
 	if (pActorPool) 
@@ -1175,7 +1182,7 @@ void WorldActorRemove(RPCParameters* rpcParams)
 	bsData.Read(actorId);
 	
 #ifdef _CDEBUG
-	pChatWindow->AddDebugMessage("DESTROY actor %d", actorId);
+	CChatWindow::AddDebugMessage("DESTROY actor %d", actorId);
 #endif
 	CActorPool* pActorPool = pNetGame->GetActorPool();
 	if (pActorPool) 
@@ -1195,7 +1202,7 @@ void SetActorHealth(RPCParameters* rpcParams)
 	bsData.Read(actorId);
 	bsData.Read(fHealth);
 #ifdef _CDEBUG
-	pChatWindow->AddDebugMessage("Set actor h[p %d %f", actorId, fHealth);
+	CChatWindow::AddDebugMessage("Set actor h[p %d %f", actorId, fHealth);
 #endif
 	CActorPool* pActorPool = pNetGame->GetActorPool();
 	if (pActorPool)
@@ -1219,7 +1226,7 @@ void SetActorPos(RPCParameters* rpcParams)
 	bsData.Read((char*)& pos, sizeof(VECTOR));
 	CActorPool* pActorPool = pNetGame->GetActorPool();
 #ifdef _CDEBUG
-	pChatWindow->AddDebugMessage("Set actor pos %d %f %f %f", actorId, pos.X, pos.Y, pos.Z);
+	CChatWindow::AddDebugMessage("Set actor pos %d %f %f %f", actorId, pos.X, pos.Y, pos.Z);
 #endif
 	if (pActorPool)
 	{
@@ -1242,7 +1249,7 @@ void SetActorFacingAngle(RPCParameters* rpcParams)
 	bsData.Read(angle);
 	CActorPool* pActorPool = pNetGame->GetActorPool();
 #ifdef _CDEBUG
-	pChatWindow->AddDebugMessage("Apply actor facing %d %f", actorId, angle);
+	CChatWindow::AddDebugMessage("Apply actor facing %d %f", actorId, angle);
 #endif
 	if (pActorPool)
 	{
@@ -1286,7 +1293,7 @@ void SetActorAnimation(RPCParameters* rpcParams)
 	szAnimLib[byteAnimLibLen] = '\0';
 	szAnimName[byteAnimNameLen] = '\0';
 #ifdef _CDEBUG
-	pChatWindow->AddDebugMessage("Apply actor animation %d %s %s %f", actorId, szAnimName, szAnimLib, fS);
+	CChatWindow::AddDebugMessage("Apply actor animation %d %s %s %f", actorId, szAnimName, szAnimLib, fS);
 #endif
 	CActorPool* pActorPool = pNetGame->GetActorPool();
 	if (pActorPool)
@@ -1309,7 +1316,7 @@ void ClearActorAnimations(RPCParameters* rpcParams)
 	bsData.Read(actorId);
 	CActorPool* pActorPool = pNetGame->GetActorPool();
 #ifdef _CDEBUG
-	pChatWindow->AddDebugMessage("Clear actor animation %d", actorId);
+	CChatWindow::AddDebugMessage("Clear actor animation %d", actorId);
 #endif
 	if (pActorPool)
 	{

@@ -14,7 +14,6 @@
 #include "java_systems/inventrory.h"
 
 extern CKeyBoard* pKeyBoard;
-extern CChatWindow* pChatWindow;
 extern CINVENTORY *pInventory;
 extern CGame *pGame;
 extern CSettings *pSettings;
@@ -144,7 +143,7 @@ void CLocalPlayer::CheckWeapons()
 			//bsWeapons.Write(m_dwLastAmmo[i]);
 			if (bSend)
 			{
-				//pChatWindow->AddDebugMessage("Id: %u, Weapon: %u, Ammo: %d\n", i, m_byteLastWeapon[i], m_dwLastAmmo[i]);
+				//CChatWindow::AddDebugMessage("Id: %u, Weapon: %u, Ammo: %d\n", i, m_byteLastWeapon[i], m_dwLastAmmo[i]);
 				bsWeapons.Write((uint8_t)i);
 				bsWeapons.Write((uint8_t)m_byteLastWeapon[i]);
 				bsWeapons.Write((uint16_t)m_dwLastAmmo[i]);
@@ -275,17 +274,17 @@ bool CLocalPlayer::Process()
 				 m_pPlayerPed->GetActionTrigger() == ACTION_SCOPE) {
 			UpdateSurfing();
 
-//			if ((dwThisTick - m_dwLastHeadUpdate) > 1000 && g_uiHeadMoveEnabled) {
-//				VECTOR LookAt;
-//				CAMERA_AIM *Aim = GameGetInternalAim();
-//				LookAt.X = Aim->pos1x + (Aim->f1x * 20.0f);
-//				LookAt.Y = Aim->pos1y + (Aim->f1y * 20.0f);
-//				LookAt.Z = Aim->pos1z + (Aim->f1z * 20.0f);
-//
-//				ScriptCommand(&TASK_LOOK_AT_COORD, m_pPlayerPed->m_dwGTAId, LookAt.X, LookAt.Y, LookAt.Z, 3000);
-//			//	pGame->FindPlayerPed()->ApplyCommandTask("FollowPedSA", 0, 2000, -1, &LookAt, 0,0.1f, 500, 3, 0);
-//				m_dwLastHeadUpdate = dwThisTick;
-//			}
+			if ((dwThisTick - m_dwLastHeadUpdate) > 1000 && g_uiHeadMoveEnabled) {
+				VECTOR LookAt;
+				CAMERA_AIM *Aim = GameGetInternalAim();
+				LookAt.X = Aim->pos1x + (Aim->f1x * 20.0f);
+				LookAt.Y = Aim->pos1y + (Aim->f1y * 20.0f);
+				LookAt.Z = Aim->pos1z + (Aim->f1z * 20.0f);
+
+			//	ScriptCommand(&TASK_LOOK_AT_COORD, m_pPlayerPed->m_dwGTAId, LookAt.X, LookAt.Y, LookAt.Z, 3000);
+				pGame->FindPlayerPed()->ApplyCommandTask("FollowPedSA", 0, 2000, -1, &LookAt, 0,0.1f, 500, 3, 0);
+				m_dwLastHeadUpdate = dwThisTick;
+			}
 
 			if (m_CurrentVehicle != INVALID_VEHICLE_ID) {
 				m_LastVehicle = m_CurrentVehicle;
@@ -1134,8 +1133,6 @@ void CLocalPlayer::ProcessSpectating()
 			
 		}
 	}
-
-	pGame->DisplayHUD(false);
 
 	m_pPlayerPed->SetHealth(100.0f);
 	GetPlayerPed()->TeleportTo(spSync.vecPos.X, spSync.vecPos.Y, spSync.vecPos.Z + 20.0f);

@@ -5,7 +5,7 @@
 
 #include <sstream>
 #include <iomanip>
-extern CChatWindow* pChatWindow;
+
 CVector2D CAdjustableHudPosition::m_aPosition[E_HUD_ELEMENT::HUD_SIZE];
 
 CVector2D CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT id)

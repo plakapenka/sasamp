@@ -68,7 +68,7 @@ void CGameResourcesDecryptor::DecryptBinaryStreamVersion3(char* pStream)
 		
 		pBufferChunk += PART_SIZE;
 	}
-	//pChatWindow->AddDebugMessage("TIME %u", GetTickCount() - tickStart);
+	//CChatWindow::AddDebugMessage("TIME %u", GetTickCount() - tickStart);
 	memcpy((void*)(pStream - sizeof(SEncryptedHeader)), (const void*)pStream, pHeader->dwFileSize);
 }
 
@@ -88,7 +88,7 @@ void CGameResourcesDecryptor::DecryptBinaryStreamVersion4(char* pStream)
 		encr.DecryptData((void*)& pBufferChunk[0], PART_SIZE, 32);
 		pBufferChunk += PART_SIZE;
 	}
-	//pChatWindow->AddDebugMessage("TIME binary 444 %u", GetTickCount() - tickStart);
+	//CChatWindow::AddDebugMessage("TIME binary 444 %u", GetTickCount() - tickStart);
 	memcpy((void*)(pStream - sizeof(SEncryptedHeader)), (const void*)pStream, pHeader->dwFileSize);
 }
 
@@ -109,7 +109,7 @@ void CGameResourcesDecryptor::DecryptBinaryStreamVersion5(char* pStream)
 		encr.DecryptData((void*)& pBufferChunk[0], PART_SIZE, 8);
 		pBufferChunk += PART_SIZE;
 	}
-	//pChatWindow->AddDebugMessage("TIME binary 55555 %u", GetTickCount() - tickStart);
+	//CChatWindow::AddDebugMessage("TIME binary 55555 %u", GetTickCount() - tickStart);
 	memcpy((void*)(pStream - sizeof(SEncryptedHeader)), (const void*)pStream, pHeader->dwFileSize);
 }
 

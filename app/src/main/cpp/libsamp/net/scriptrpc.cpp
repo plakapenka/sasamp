@@ -1,12 +1,10 @@
 #include "../main.h"
 #include "../game/game.h"
 #include "netgame.h"
-#include "../chatwindow.h"
 #include "../gui/gui.h"
 
 extern CGame *pGame;
 extern CNetGame *pNetGame;
-extern CChatWindow *pChatWindow;
 extern CGUI *pGUI;
 
 void ScrDisplayGameText(RPCParameters *rpcParams)
@@ -1218,7 +1216,7 @@ void ScrGivePlayerWeapon(RPCParameters* rpcParams)
 	bsData.Read(iWeaponID);
 	bsData.Read(iAmmo);
 
-	//pChatWindow->AddDebugMessage("giveweapon | weaponid: %d ammo: %d", iWeaponID, iAmmo);
+	//CChatWindow::AddDebugMessage("giveweapon | weaponid: %d ammo: %d", iWeaponID, iAmmo);
 
 	CLocalPlayer* pPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer();
 	pPlayer->GetPlayerPed()->GiveWeapon(iWeaponID, iAmmo);
@@ -1237,7 +1235,7 @@ void ScrSetWeaponAmmo(RPCParameters* rpcParams)
 	bsData.Read(iWeaponID);
 	bsData.Read(iAmmo);
 
-	//pChatWindow->AddDebugMessage("setweaponammo | weaponid: %d ammo: %d", iWeaponID, iAmmo);
+	//CChatWindow::AddDebugMessage("setweaponammo | weaponid: %d ammo: %d", iWeaponID, iAmmo);
 
 
 	CLocalPlayer* pPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer();

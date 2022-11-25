@@ -5,7 +5,7 @@
 
 #include <sstream>
 #include <iomanip>
-extern CChatWindow* pChatWindow;
+
 CVector2D CAdjustableHudScale::m_aScale[E_HUD_ELEMENT::HUD_SIZE];
 
 CVector2D CAdjustableHudScale::GetElementScale(E_HUD_ELEMENT id)

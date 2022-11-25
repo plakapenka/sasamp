@@ -24,7 +24,6 @@ extern CSettings* pSettings;
 //#define AUTH_BS "1528354F18550C00AB504591304D0379BB0ACA99043"
 
 extern CGame *pGame;
-extern CChatWindow *pChatWindow;
 extern CGUI *pGUI;
 
 int iVehiclePoolProcessFlag = 0;
@@ -59,6 +58,7 @@ CNetGame::CNetGame(const char* szHostOrIp, int iPort, const char* szPlayerName, 
 	m_pPickupPool = new CPickupPool();
 	m_pGangZonePool = new CGangZonePool();
 	m_pLabelPool = new CText3DLabelsPool();
+
 	m_pTextDrawPool = new CTextDrawPool();
 	g_pWidgetManager = new CWidgetManager();
 	m_pStreamPool = new CStreamPool();
@@ -92,6 +92,8 @@ CNetGame::CNetGame(const char* szHostOrIp, int iPort, const char* szPlayerName, 
 
 	pGame->EnableClock(false);
 	pGame->EnableZoneNames(false);
+
+	Log("CNetGame createt obj");
 }
 #include "..//voice/CVoiceChatClient.h"
 extern CVoiceChatClient* pVoice;
@@ -235,7 +237,7 @@ void CNetGame::Process()
 	{
 		/*if (CClientInfo::bSAMPModified)
 		{
-			if (pChatWindow) pChatWindow->AddDebugMessageNonFormatted(CLocalisation::GetMessage(E_MSG::MODIFIED_FILES));
+			if (pChatWindow) CChatWindow::AddDebugMessageNonFormatted(CLocalisation::GetMessage(E_MSG::MODIFIED_FILES));
 			SetGameState(GAMESTATE_CONNECTING);
 			m_dwLastConnectAttempt = GetTickCount();
 			return;
@@ -243,13 +245,14 @@ void CNetGame::Process()
 
 		if (!CClientInfo::bJoinedFromLauncher)
 		{
-			if (pChatWindow) pChatWindow->AddDebugMessageNonFormatted(CLocalisation::GetMessage(E_MSG::NOT_FROM_LAUNCHER));
+			if (pChatWindow) CChatWindow::AddDebugMessageNonFormatted(CLocalisation::GetMessage(E_MSG::NOT_FROM_LAUNCHER));
 			SetGameState(GAMESTATE_CONNECTING);
 			m_dwLastConnectAttempt = GetTickCount();
 			return;
 		}*/
-
-		if(pChatWindow) pChatWindow->AddDebugMessageNonFormatted(CLocalisation::GetMessage(E_MSG::CONNECTING));
+        Log("blizko");
+		CChatWindow::AddDebugMessageNonFormatted(CLocalisation::GetMessage(E_MSG::CONNECTING));
+        Log("blizko2");
 		static bool sent = false;
 		CUDPSocket sock;
 		for (int i = 0; i < 100; i++)
@@ -318,12 +321,12 @@ void CNetGame::UpdateNetwork()
 				break;
 
 			case ID_CONNECTION_ATTEMPT_FAILED:
-				pChatWindow->AddDebugMessageNonFormatted(CLocalisation::GetMessage(E_MSG::CONNECTION_ATTEMPT_FAILED));
+				CChatWindow::AddDebugMessageNonFormatted(CLocalisation::GetMessage(E_MSG::CONNECTION_ATTEMPT_FAILED));
 				SetGameState(GAMESTATE_WAIT_CONNECT);
 				break;
 
 			case ID_NO_FREE_INCOMING_CONNECTIONS:
-				pChatWindow->AddDebugMessageNonFormatted(CLocalisation::GetMessage(E_MSG::FULL_SERVER));
+				CChatWindow::AddDebugMessageNonFormatted(CLocalisation::GetMessage(E_MSG::FULL_SERVER));
 				SetGameState(GAMESTATE_WAIT_CONNECT);
 				break;
 
@@ -340,15 +343,15 @@ void CNetGame::UpdateNetwork()
 				break;
 
 			case ID_FAILED_INITIALIZE_ENCRIPTION:
-				pChatWindow->AddDebugMessage("Failed to initialize encryption.");
+				CChatWindow::AddDebugMessage("Failed to initialize encryption.");
 				break;
 
 			case ID_CONNECTION_BANNED:
-				pChatWindow->AddDebugMessageNonFormatted(CLocalisation::GetMessage(E_MSG::BANNED));
+				CChatWindow::AddDebugMessageNonFormatted(CLocalisation::GetMessage(E_MSG::BANNED));
 				break;
 
 			case ID_INVALID_PASSWORD:
-				pChatWindow->AddDebugMessage("Неверный пароль");
+				CChatWindow::AddDebugMessage("Неверный пароль");
 				m_pRakClient->Disconnect(0);
 				break;
 
@@ -431,7 +434,7 @@ void CNetGame::Packet_AuthRPC(Packet *p)
 	uint32_t rpcID;
 	bs.Read(packetID);
 	bs.Read(rpcID);
-	// pChatWindow->AddDebugMessage("packet: %d rpc: %d", packetID, rpcID);
+	// CChatWindow::AddDebugMessage("packet: %d rpc: %d", packetID, rpcID);
 
 	switch (rpcID)
 	{
@@ -492,7 +495,7 @@ void CNetGame::Packet_SpecialCustomRPC(Packet *p)
 	uint32_t rpcID;
 	bs.Read(packetID);
 	bs.Read(rpcID);
-	// pChatWindow->AddDebugMessage("packet: %d rpc: %d", packetID, rpcID);
+	// CChatWindow::AddDebugMessage("packet: %d rpc: %d", packetID, rpcID);
 
 	switch (rpcID)
 	{
@@ -513,7 +516,7 @@ void CNetGame::Packet_SpecialCustomRPC(Packet *p)
 			bs.Read(garage);
 			bs.Read(house);
 
-			// pChatWindow->AddDebugMessage("toggle: %d organization: %d station: %d exit: %d garage: %d house: %d", toggle, organization, station, exit, garage, house);
+			// CChatWindow::AddDebugMessage("toggle: %d organization: %d station: %d exit: %d garage: %d house: %d", toggle, organization, station, exit, garage, house);
 
 			if (toggle == 1)
 			{
@@ -536,7 +539,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 	uint32_t rpcID;
 	bs.Read(packetID);
 	bs.Read(rpcID);
-	//pChatWindow->AddDebugMessage("p %d rpc %d", packetID, rpcID);
+	//CChatWindow::AddDebugMessage("p %d rpc %d", packetID, rpcID);
 	switch (rpcID)
 	{
 		case RPC_INVENTAR_CARRYNG: {
@@ -661,7 +664,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 					g_pJavaWrapper->UpdateYearnMoney(toggle);
 				}
 			}
-			// pChatWindow->AddDebugMessage("hud %d toggle %d", hud, toggle);
+			// CChatWindow::AddDebugMessage("hud %d toggle %d", hud, toggle);
 			pGame->ToggleHUDElement(hud, toggle);
 			//pGame->HandleChangedHUDStatus();
 			break;
@@ -791,7 +794,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 					}
 
 					//Log("RPC_PRE_DEATH: %s (%d)", killername, killerId);
-					//pChatWindow->AddDebugMessage("RPC_PRE_DEATH: %s (%d)", killername, killerId);
+					//CChatWindow::AddDebugMessage("RPC_PRE_DEATH: %s (%d)", killername, killerId);
 
 					g_pJavaWrapper->ShowDeathInfo(killername, killerId);
 				}
@@ -1125,7 +1128,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 					pVeh->ApplyToner(2, bToner[1]);
 					pVeh->ApplyToner(3, bToner[2]);
 					pVeh->ApplyVinyls(bVinyls[0], bVinyls[1]);
-					//pChatWindow->AddDebugMessage("%d %d %d %d %d", bToner[0], bToner[1], bToner[2], bVinyls[0], bVinyls[1]);
+					//CChatWindow::AddDebugMessage("%d %d %d %d %d", bToner[0], bToner[1], bToner[2], bVinyls[0], bVinyls[1]);
 					if (bPlateType)
 					{
 						CCustomPlateManager::PushPlate(vehId, (uint32_t)bPlateType, szText, szRegion);
@@ -1207,7 +1210,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			bs.Read(len);
 			bs.Read(&str[0], len);
 			str[len] = '\0';
-			//pChatWindow->AddDebugMessage("%d %f %f %f %f %d %d %d %s", id, pos.X, pos.Y, pos.Z, fDistance, vw, interior, len, str);
+			//CChatWindow::AddDebugMessage("%d %f %f %f %f %d %d %d %s", id, pos.X, pos.Y, pos.Z, fDistance, vw, interior, len, str);
 			GetStreamPool()->AddStream(id, &pos, vw, interior, fDistance, (const char*)&str[0]);
 			break;
 		}
@@ -1218,8 +1221,8 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			bs.Read(len);
 			bs.Read(&str[0], len);
 			str[len] = '\0';
-			//pChatWindow->AddDebugMessage("%s", str);
-			//pChatWindow->AddDebugMessage("Playing audiostream %s", str);
+			//CChatWindow::AddDebugMessage("%s", str);
+			//CChatWindow::AddDebugMessage("Playing audiostream %s", str);
 			GetStreamPool()->PlayIndividualStream(&str[0]);
 			break;
 		}
@@ -1241,7 +1244,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		{
 			uint32_t id;
 			bs.Read(id);
-			//pChatWindow->AddDebugMessage("%d", id);
+			//CChatWindow::AddDebugMessage("%d", id);
 			m_pStreamPool->DeleteStreamByID(id);
 			break;
 		}
@@ -1251,7 +1254,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			float fVolume;
 			bs.Read(id);
 			bs.Read(fVolume);
-			//pChatWindow->AddDebugMessage("%d %f", id, fVolume);
+			//CChatWindow::AddDebugMessage("%d %f", id, fVolume);
 			m_pStreamPool->SetStreamVolume(id, fVolume);
 			break;
 		}
@@ -1288,15 +1291,15 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_TIMEOUT_CHAT:
 		{
-			uint32_t timeoutStart = 0;
-			uint32_t timeoutEnd = 0;
-			bs.Read(timeoutStart);
-			bs.Read(timeoutEnd);
-
-			if (pChatWindow)
-			{
-				pChatWindow->SetChatDissappearTimeout(timeoutStart, timeoutEnd);
-			}
+//			uint32_t timeoutStart = 0;
+//			uint32_t timeoutEnd = 0;
+//			bs.Read(timeoutStart);
+//			bs.Read(timeoutEnd);
+//
+//			if (pChatWindow)
+//			{
+//				CChatWindow::SetChatDissappearTimeout(timeoutStart, timeoutEnd);
+//			}
 
 			break;
 		}
@@ -1536,7 +1539,7 @@ void CNetGame::SendCheckClientPacket(const char password[])
 	bsSend.Write(password, bytePasswordLen);
 	GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, UNRELIABLE_SEQUENCED, 0);
 
-	//pChatWindow->AddDebugMessage("key: %s", password);
+	//CChatWindow::AddDebugMessage("key: %s", password);
 }
 
 void CNetGame::SendSpeedTurnPacket(uint8_t turnId, uint8_t state)
@@ -1601,7 +1604,7 @@ void CNetGame::SendCustomCasinoChipPacket(uint8_t packet, uint8_t RPC, uint8_t t
 	bsSend.Write(type);
 	bsSend.Write(button);
 	bsSend.Write(money);
-	pChatWindow->AddDebugMessage("packet: %d rpc: %d type: %d button: %d money: %d", packet, RPC, type, button, money);
+	CChatWindow::AddDebugMessage("packet: %d rpc: %d type: %d button: %d money: %d", packet, RPC, type, button, money);
 	GetRakClient()->Send(&bsSend, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0);
 }
 
@@ -1734,8 +1737,7 @@ void CNetGame::Packet_AuthKey(Packet* pkt)
 
 void CNetGame::Packet_DisconnectionNotification(Packet* pkt)
 {
-	if(pChatWindow)
-		pChatWindow->AddDebugMessageNonFormatted(CLocalisation::GetMessage(E_MSG::SERVER_CLOSED_CONNECTION));
+	CChatWindow::AddDebugMessageNonFormatted(CLocalisation::GetMessage(E_MSG::SERVER_CLOSED_CONNECTION));
 	m_pRakClient->Disconnect(2000);
 	if(pVoice) pVoice->FullDisconnect();
 	g_pJavaWrapper->ClearScreen();
@@ -1747,8 +1749,7 @@ void CNetGame::Packet_ConnectionLost(Packet* pkt)
 {
 	if(m_pRakClient) m_pRakClient->Disconnect(0);
 
-	if(pChatWindow)
-		pChatWindow->AddDebugMessageNonFormatted(CLocalisation::GetMessage(E_MSG::CONNECTION_LOST));
+	CChatWindow::AddDebugMessageNonFormatted(CLocalisation::GetMessage(E_MSG::CONNECTION_LOST));
 	if(pVoice) pVoice->Disconnect();
 	ShutDownForGameRestart();
 
@@ -1778,8 +1779,7 @@ bool g_isValidSum(int a)
 void WriteVerified1();
 void CNetGame::Packet_ConnectionSucceeded(Packet* pkt)
 {
-	if(pChatWindow)
-		pChatWindow->AddDebugMessageNonFormatted(CLocalisation::GetMessage(E_MSG::CONNECTED));
+	CChatWindow::AddDebugMessageNonFormatted(CLocalisation::GetMessage(E_MSG::CONNECTED));
 	SetGameState(GAMESTATE_AWAIT_JOIN);
 
 
@@ -1834,6 +1834,7 @@ void CNetGame::Packet_ConnectionSucceeded(Packet* pkt)
 	CClientInfo::WriteClientInfoToBitStream(bsSend);
 
 	m_pRakClient->RPC(&RPC_ClientJoin, &bsSend, HIGH_PRIORITY, RELIABLE, 0, false, UNASSIGNED_NETWORK_ID, NULL);
+	Log("Packet_ConnectionSucceeded");
 }
 void CNetGame::Packet_PlayerSync(Packet* pkt)
 {

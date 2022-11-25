@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -281,6 +282,20 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/armour_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_2sdp"
+                    android:fontFamily="@font/visby_round_cf_extra_bold"
+                    android:text="99"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_6sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -306,6 +321,20 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/hp_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_2sdp"
+                    android:fontFamily="@font/visby_round_cf_extra_bold"
+                    android:text="99"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_6sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -608,4 +637,42 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+
+    <com.factor.bouncy.BouncyRecyclerView
+        android:id="@+id/chat"
+        android:layout_width="@dimen/_380sdp"
+        android:layout_height="@dimen/_70sdp"
+        android:layout_marginStart="@dimen/_180sdp"
+        android:layout_marginTop="@dimen/_5sdp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:recyclerview_fling_animation_size="0.1"
+        app:recyclerview_overscroll_animation_size="0.1"
+        app:stackFromEnd="true"
+        android:scrollbarSize="@dimen/_6sdp"
+        android:scrollbarStyle="insideInset"
+        android:scrollbarThumbVertical="@drawable/chat_scroll_front"
+        android:scrollbarTrackVertical="@drawable/chat_scroll_back"
+        android:scrollbars="vertical"
+        >
+
+    </com.factor.bouncy.BouncyRecyclerView>
+
+    <EditText
+        android:visibility="gone"
+        android:inputType="none"
+        android:textIsSelectable="true"
+        android:textColor="@color/white"
+        android:paddingLeft="@dimen/_3sdp"
+        android:fontFamily="@font/visby_round_cf_extra_bold"
+        android:imeOptions="flagNoExtractUi|actionSend"
+        android:id="@+id/chat_input"
+        android:singleLine="true"
+        android:layout_width="@dimen/_380sdp"
+        android:layout_height="@dimen/_20sdp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/chat_input"
+        app:layout_constraintEnd_toEndOf="@+id/chat"
+        app:layout_constraintStart_toStartOf="@+id/chat"
+        app:layout_constraintTop_toBottomOf="@+id/chat" />
 </androidx.constraintlayout.widget.ConstraintLayout>

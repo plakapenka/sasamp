@@ -22,11 +22,10 @@ uint16_t CPad__GetPedWalkLeftRight_hook(uintptr_t thiz)
 	{
 		// Remote player
 		uint16_t dwResult = RemotePlayerKeys[byteCurPlayer].wKeyLR;
-		if((dwResult == 0xFF80 || dwResult == 0x80) &&  
-			RemotePlayerKeys[byteCurPlayer].bKeys[ePadKeys::KEY_WALK])
-		{
-			dwResult = 0x40;
-		}
+//		if(RemotePlayerKeys[byteCurPlayer].bKeys[ePadKeys::KEY_WALK])
+//		{
+//			dwResult = 0x40;
+//		}
 		return dwResult;
 	}
 	else
@@ -44,11 +43,10 @@ uint16_t CPad__GetPedWalkUpDown_hook(uintptr_t thiz)
 	{
 		// Remote player
 		uint16_t dwResult = RemotePlayerKeys[byteCurPlayer].wKeyUD;
-		if((dwResult == 0xFF80 || dwResult == 0x80) &&  
-			RemotePlayerKeys[byteCurPlayer].bKeys[ePadKeys::KEY_WALK])
-		{
-			dwResult = 0x40;
-		}
+//		if(RemotePlayerKeys[byteCurPlayer].bKeys[ePadKeys::KEY_WALK])
+//		{
+//			dwResult = 0x40;
+//		}
 		return dwResult;
 	}
 	else
@@ -535,10 +533,9 @@ uint32_t CPad__GetWeapon_hook(uintptr_t thiz, uintptr_t ped, bool unk)
 		return value;
 	}
 }
-#include "../chatwindow.h"
+
 #include "gui/gui.h"
 
-extern CChatWindow* pChatWindow;
 
 uintptr_t g_playerPed;
 uintptr_t(*ProcessPlayerWeapon)(uintptr_t thiz, uintptr_t playerPed);

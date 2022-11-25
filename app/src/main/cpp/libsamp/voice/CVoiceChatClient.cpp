@@ -14,7 +14,7 @@
 extern CNetGame* pNetGame;
 void Log(const char*, ...);
 void CrashLog(const char*, ...);
-extern CChatWindow* pChatWindow;
+
 extern CVoiceChatClient* pVoice;
 void CVoiceChatClient::OnVoiceInput(CVoiceChatClient* thisptr, void* pData, int iSize)
 {
@@ -108,7 +108,7 @@ void CVoiceChatClient::OnPacketIncoming(ENetEvent& event)
 				return;
 			}
 			lastMuted = GetTickCount();
-			pChatWindow->AddDebugMessageNonFormatted(CLocalisation::GetMessage(E_MSG::VOICE_MUTED));
+			CChatWindow::AddDebugMessageNonFormatted(CLocalisation::GetMessage(E_MSG::VOICE_MUTED));
 			pVoice->m_bRecording = false;
 			OPENSL_STREAM* m_pPlayer;
 			m_pPlayer = pVoice->m_pPlayer;
@@ -308,7 +308,7 @@ void CVoiceChatClient::Disconnect()
 }
 void CVoiceChatClient::FullDisconnect()
 {
-	if (pChatWindow) pChatWindow->AddDebugMessage("Вы отключены от войс чата");
+	CChatWindow::AddDebugMessage("Вы отключены от войс чата");
 	SetNetworkState(VOICECHAT_FULLDISCONNECTED);
 }
 bool CVoiceChatClient::IsDisconnected()
@@ -483,7 +483,7 @@ void CVoiceChatClient::StartProcessing()
 }
 void AddDebugGOVNO(char* str, int num)
 {
-	pChatWindow->AddDebugMessage(str, num);
+	CChatWindow::AddDebugMessage(str, num);
 }
 void CVoiceChatClient::Process()
 {

@@ -28,7 +28,6 @@ CPlayerPool::~CPlayerPool()
 #include "..//CSettings.h"
 extern CSettings* pSettings;
 extern CGame* pGame;
-extern CChatWindow* pChatWindow;
 extern CVoiceChatClient* pVoice;
 extern CNetGame* pNetGame;
 uint32_t bProcessedfsaf = 0;
@@ -82,7 +81,7 @@ bool CPlayerPool::Process()
 					pos.pos.Y = mat.pos.Y;
 					pos.pos.Z = mat.pos.Z;
 					if (pVoice) pVoice->PostNewPlayerInfo(playerId, &pos);
-					//pChatWindow->AddDebugMessage("Playerid %d is in the same vehicle", playerId);
+					//CChatWindow::AddDebugMessage("Playerid %d is in the same vehicle", playerId);
 				}
 				else
 				{

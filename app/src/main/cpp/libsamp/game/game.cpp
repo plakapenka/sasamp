@@ -178,7 +178,6 @@ bool CGame::IsToggledHUDElement(int iID)
 
 void CGame::HandleChangedHUDStatus()
 {
-	DisplayHUD(aToggleStatusHUD[HUD_ELEMENT_HUD]);
 	ToggleRadar(aToggleStatusHUD[HUD_ELEMENT_MAP]);
 	DisplayWidgets(aToggleStatusHUD[HUD_ELEMENT_BUTTONS]);
 }
@@ -187,18 +186,6 @@ uint8_t CGame::GetWantedLevel()
 {
 	return wantedLvl;
 	//return *(uint8_t*)(g_libGTASA + 0x27D8D2);
-}
-
-void CGame::SetEnabledPCMoney(bool bEnabled)
-{
-	if (bEnabled)
-	{
-		WriteMemory(g_libGTASA + 0x00599510, (uintptr_t)"$%08d", 6);
-	}
-	else
-	{
-		WriteMemory(g_libGTASA + 0x00599510, (uintptr_t)"$%d", 6);
-	}
 }
 
 float CGame::FindGroundZForCoord(float x, float y, float z)
@@ -405,10 +392,10 @@ void CGame::DisplayHUD(bool bDisp)
 	{	
 		// CTheScripts11bDisplayHud
 		*(uint8_t*)(g_libGTASA+0x7165E8) = 1;
-		ToggleRadar(1);
+		//ToggleRadar(1);
 	} else {
 		*(uint8_t*)(g_libGTASA+0x7165E8) = 0;
-		ToggleRadar(0);
+		//ToggleRadar(0);
 	}
 }
 

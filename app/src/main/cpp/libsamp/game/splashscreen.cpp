@@ -165,6 +165,7 @@ void RenderSplashScreen()
 
 void RenderBackgroundHud()
 {
+	// бэкграунд радара
 	if (!pGUI)
 		return;
 

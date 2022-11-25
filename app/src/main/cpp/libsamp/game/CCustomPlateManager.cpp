@@ -7,7 +7,6 @@
 #include "..//net/netgame.h"
 #include "..//chatwindow.h"
 
-extern CChatWindow* pChatWindow;
 extern CNetGame* pNetGame;
 
 CRenderTarget* CCustomPlateManager::m_pRenderTarget = nullptr;

@@ -1,8 +1,7 @@
 #include "../main.h"
 #include "game.h"
 #include "CWeaponsOutFit.h"
-#include "..//chatwindow.h"
-extern CChatWindow* pChatWindow;
+
 int GameGetWeaponModelIDFromWeaponID(int iWeaponID);
 
 CWeaponsOutFit::SWeaponOutFitSettings CWeaponsOutFit::m_Settings[MAX_WEAPON_MODELS];
@@ -96,7 +95,7 @@ void CWeaponsOutFit::OnWeaponAdded(CPlayerPed* pPed, int iWeaponID)
 	info.vecScale.Z = 1.0f;
 
 	pPed->AttachObject(&info, iSlot + 10);
-	//pChatWindow->AddDebugMessage("ATTACH slot %d %f %f %f %d", iSlot + 10, info.vecOffset.X, info.vecOffset.Y, info.vecOffset.Z, info.dwBone);
+	//CChatWindow::AddDebugMessage("ATTACH slot %d %f %f %f %d", iSlot + 10, info.vecOffset.X, info.vecOffset.Y, info.vecOffset.Z, info.dwBone);
 }
 
 void CWeaponsOutFit::OnWeaponRemoved(CPlayerPed* pPed, int iWeaponID)
@@ -114,7 +113,7 @@ void CWeaponsOutFit::OnWeaponRemoved(CPlayerPed* pPed, int iWeaponID)
 	m_bUsedSlots[iSlot] = false;
 	m_iSlots[iWeaponID] = -1;
 	pPed->DeattachObject(iSlot + 10);
-	//pChatWindow->AddDebugMessage("DETACH slot %d", iSlot + 10);
+	//CChatWindow::AddDebugMessage("DETACH slot %d", iSlot + 10);
 }
 
 void CWeaponsOutFit::OnPedDie(CPlayerPed* pPed)

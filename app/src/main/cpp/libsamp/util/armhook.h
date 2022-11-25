@@ -8,6 +8,6 @@ void ReadMemory(uintptr_t dest, uintptr_t src, size_t size);
 
 void SetUpHook(uintptr_t addr, uintptr_t func, uintptr_t *orig);
 void InstallMethodHook(uintptr_t addr, uintptr_t func);
-void CodeInject(uintptr_t addr, uintptr_t func, int register);
+void CodeInject(uintptr_t addr, uintptr_t func, int reg);
 uintptr_t zalupa(uintptr_t func, uintptr_t addr);
 void JMPCode(uintptr_t func, uintptr_t addr);

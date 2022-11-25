@@ -20,7 +20,7 @@
 #define KEY_UP 7
 #define KEY_DOWN 8
 
-#define MAX_INPUT_LEN 0xBF
+#define MAX_INPUT_LEN 255
 
 struct kbKey
 {
@@ -33,8 +33,6 @@ struct kbKey
 	int id;
 };
 
-typedef void keyboard_callback(const char *result);
-
 class CKeyBoard
 {
 	friend class CGUI;
@@ -43,11 +41,10 @@ public:
 	CKeyBoard();
 	~CKeyBoard();
 
-	void Open(keyboard_callback *handler, bool bHiden = false);
+	void Open();
 	void Close();
 
 	bool IsOpen() { return m_bEnable; }
-	bool IsHidden() { return m_bInputFlag; }
 	void AddCharToInput(char sym);
 	void Flush();
 
@@ -77,8 +74,7 @@ private:
 	void Send();
 
 	bool m_bEnable;
-	bool m_bInited;
-	bool m_bInputFlag;
+
 	ImVec2 m_Size;
 	ImVec2 m_Pos;
 	float m_fKeySizeY;
@@ -96,9 +92,6 @@ private:
 	ImFont *fonticon;
 	ImFont *chatfuncfont;
 
-	float m_fChatPosX, m_fChatPosY;
-	float m_fChatSizeX, m_fChatSizeY;
-
 	int m_iLayout;
 	int m_iCase;
 	int m_iPushedKey;
@@ -108,7 +101,6 @@ private:
 	char m_utf8Input[MAX_INPUT_LEN * 3 + 0xF];
 	int m_iInputOffset;
 	CKeyBoardHistory *m_pkHistory;
-	keyboard_callback *m_pHandler;
 
 	bool m_bNewKeyboard;
 	DataStructures::SingleProducerConsumer<std::string> bufferedStrings;

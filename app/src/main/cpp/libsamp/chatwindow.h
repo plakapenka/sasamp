@@ -39,26 +39,25 @@ public:
 	CChatWindow();
 	~CChatWindow();
 
-	void AddChatMessage(char* szNick, uint32_t dwNickColor, char* szMessage);
-	void AddInfoMessage(char* szFormat, ...);
-	void AddDebugMessage(char* szFormat, ...);
-	void AddDebugMessageNonFormatted(char* szStr);
-	void AddClientMessage(uint32_t dwColor, char* szStr);
-	void SetLowerBound(int bound);
+	static void AddChatMessage(char* szNick, uint32_t dwNickColor, char* szMessage);
+	static void AddInfoMessage(char* szFormat, ...);
+	static void AddDebugMessage(char* szFormat, ...);
+	static void AddDebugMessageNonFormatted(char* szStr);
+
+	static void FilterInvalidChars(char* szString);
 
 protected:
-	void Render();
-	bool OnTouchEvent(int type, bool multi, int x, int y);
+	//void Render();
 
 public:
-	void RenderText(const char* u8Str, float posX, float posY, uint32_t dwColor, float alphaNewMessage);
+	//void RenderText(const char* u8Str, float posX, float posY, uint32_t dwColor, float alphaNewMessage);
 	void SetChatDissappearTimeout(uint32_t uiTimeoutStart, uint32_t uiTimeoutEnd);
 
-	void ProcessPushedCommands();
+	static void ProcessPushedCommands();
 private:
 	void ReInit();
-	void FilterInvalidChars(char* szString);
-	void AddToChatWindowBuffer(eChatMessageType eType, char* szString, char* szNick, 
+
+	void AddToChatWindowBuffer(eChatMessageType eType, char* szString, char* szNick,
 		uint32_t dwTextColor, uint32_t dwNickColor);
 	void PushBack(CHAT_WINDOW_ENTRY &entry);
 
@@ -68,9 +67,6 @@ private:
 	
 	uint32_t m_uiMaxTimeChatHide;
 	uint32_t m_uiTimeChatHideBegin;
-
-	float m_fChatPosX, m_fChatPosY;
-	float m_fChatSizeX, m_fChatSizeY;
 
 	int m_iMaxMessages;
 	std::vector<CHAT_WINDOW_ENTRY*> m_vChatWindowEntries;
@@ -88,5 +84,5 @@ private:
 	float m_fOffsetBefore;
 public:
 	bool m_bPendingReInit;
-	DataStructures::SingleProducerConsumer< BUFFERED_COMMAND_CHAT> bufferedChat;
+	static DataStructures::SingleProducerConsumer< BUFFERED_COMMAND_CHAT> bufferedChat;
 };

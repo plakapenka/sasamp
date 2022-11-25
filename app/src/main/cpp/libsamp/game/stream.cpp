@@ -15,8 +15,7 @@ Version: $Id: textdraw.cpp,v 1.4 2008-04-16 08:54:17 kyecvs Exp $
 #include <string>
 #include <thread>
 #include <sstream>
-#include "../chatwindow.h"
-extern CChatWindow* pChatWindow;
+
 extern CGame* pGame;
 #include "..//net/netgame.h"
 extern CNetGame* pNetGame;
@@ -65,7 +64,7 @@ void CStream::ProcessAttached() // todo
 		MATRIX4X4 mat;
 		pVeh->GetMatrix(&mat);
 		memcpy(&m_vPos, &mat.pos, sizeof(VECTOR));
-		//pChatWindow->AddDebugMessage("processed for vehicle %d", m_iAttachedTo);
+		//CChatWindow::AddDebugMessage("processed for vehicle %d", m_iAttachedTo);
 	}
 	if (m_iAttachType == 2) // player
 	{
@@ -81,7 +80,7 @@ void CStream::ProcessAttached() // todo
 		MATRIX4X4 mat;
 		pPed->GetMatrix(&mat);
 		memcpy(&m_vPos, &mat.pos, sizeof(VECTOR));
-		//pChatWindow->AddDebugMessage("processed for player %d", m_iAttachedTo);
+		//CChatWindow::AddDebugMessage("processed for player %d", m_iAttachedTo);
 	}
 
 	BASS_3DVECTOR vec(m_vPos.X, m_vPos.Y, m_vPos.Z);
@@ -142,12 +141,12 @@ void CStream::Process(MATRIX4X4* pMatListener) // todo
 	float fDistance = GetDistanceBetween3DPoints(&(pMatListener->pos), &m_vPos);
 	if (fDistance <= m_fDistance && !m_hStream && !m_bIsDeactivated)
 	{
-		//pChatWindow->AddDebugMessage("create stream");
+		//CChatWindow::AddDebugMessage("create stream");
 		CreateStream();
 	}
 	else if (fDistance > m_fDistance && m_hStream)
 	{
-		//pChatWindow->AddDebugMessage("destroy stream");
+		//CChatWindow::AddDebugMessage("destroy stream");
 		DestroyStream();
 	}
 

@@ -118,8 +118,8 @@ void seedMT( unsigned int seed )   // Defined in cokus_c.c
 	// so-- that's why the only change I made is to restrict to odd seeds.
 	//
 
-	register unsigned int x = ( seed | 1U ) & 0xFFFFFFFFU, *s = state;
-	register int j;
+	unsigned int x = ( seed | 1U ) & 0xFFFFFFFFU, *s = state;
+	int j;
 
 	for ( left = 0, *s++ = x, j = N; --j;
 		*s++ = ( x *= 69069U ) & 0xFFFFFFFFU )
@@ -130,8 +130,8 @@ void seedMT( unsigned int seed )   // Defined in cokus_c.c
 
 unsigned int reloadMT( void )
 {
-	register unsigned int * p0 = state, *p2 = state + 2, *pM = state + M, s0, s1;
-	register int j;
+	unsigned int * p0 = state, *p2 = state + 2, *pM = state + M, s0, s1;
+	int j;
 
 	if ( left < -1 )
 		seedMT( 4357U );

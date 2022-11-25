@@ -2,7 +2,6 @@
 #include <string>
 #include "bass.h"
 
-#define HUD_ELEMENT_CHAT    0
 #define HUD_ELEMENT_MAP     1
 #define HUD_ELEMENT_TAGS    2
 #define HUD_ELEMENT_BUTTONS 3

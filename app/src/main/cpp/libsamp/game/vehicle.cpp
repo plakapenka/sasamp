@@ -4,9 +4,6 @@
 extern CGame* pGame;
 #include "..//CDebugInfo.h"
 
-#include "..//chatwindow.h"
-extern CChatWindow* pChatWindow;
-
 CVehicle::CVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRotation, bool bSiren)
 {
 	Log("CVehicle(%d, %4.f, %4.f, %4.f, %4.f)", iType, fPosX, fPosY, fPosZ, fRotation);
@@ -156,7 +153,7 @@ CVehicle::CVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRota
 		memcpy(&m_vInitialWheelMatrix[3], (const void*)&(pWheelLB->modelling), sizeof(MATRIX4X4));
 	}
 
-	//pChatWindow->AddDebugMessage("time for CVehicle::CVehicle %d", GetTickCount() - tickStart);
+	//CChatWindow::AddDebugMessage("time for CVehicle::CVehicle %d", GetTickCount() - tickStart);
 }
 
 CVehicle::~CVehicle()
@@ -607,9 +604,6 @@ void CVehicle::RemoveComponent(uint16_t uiComponent)
 	}
 }
 
-#include "..//chatwindow.h"
-extern CChatWindow* pChatWindow;
-
 void CVehicle::SetComponentVisible(uint8_t group, uint16_t components)
 {
 	
@@ -708,15 +702,15 @@ void CVehicle::SetHandlingData(std::vector<SHandlingData>& vHandlingData)
 		return;
 	}
 
-	//pChatWindow->AddDebugMessage("handling id %d", *(uint16_t*)(pModelInfoStart + 98));
+	//CChatWindow::AddDebugMessage("handling id %d", *(uint16_t*)(pModelInfoStart + 98));
 
 	CHandlingDefault::GetDefaultHandling(*(uint16_t*)(pModelInfoStart + 98), m_pCustomHandling);
 
-	/*pChatWindow->AddDebugMessage("mass %f", m_pCustomHandling->m_fMass);
-	pChatWindow->AddDebugMessage("turn %f", m_pCustomHandling->m_fTurnMass);
-	pChatWindow->AddDebugMessage("m_fEngineAcceleration %f", m_pCustomHandling->m_transmissionData.m_fEngineAcceleration);
-	pChatWindow->AddDebugMessage("m_fMaxGearVelocity %f", m_pCustomHandling->m_transmissionData.m_fMaxGearVelocity);
-	pChatWindow->AddDebugMessage("flags 0x%x", m_pCustomHandling->m_nHandlingFlags);*/
+	/*CChatWindow::AddDebugMessage("mass %f", m_pCustomHandling->m_fMass);
+	CChatWindow::AddDebugMessage("turn %f", m_pCustomHandling->m_fTurnMass);
+	CChatWindow::AddDebugMessage("m_fEngineAcceleration %f", m_pCustomHandling->m_transmissionData.m_fEngineAcceleration);
+	CChatWindow::AddDebugMessage("m_fMaxGearVelocity %f", m_pCustomHandling->m_transmissionData.m_fMaxGearVelocity);
+	CChatWindow::AddDebugMessage("flags 0x%x", m_pCustomHandling->m_nHandlingFlags);*/
 
 	bool bNeedRecalculate = false;
 
@@ -810,12 +804,12 @@ void CVehicle::SetHandlingData(std::vector<SHandlingData>& vHandlingData)
 		*(float*)(pModelInfoStart + 92) = m_fWheelSize;
 	}
 
-	/*pChatWindow->AddDebugMessage("AFTER");
-	pChatWindow->AddDebugMessage("mass %f", m_pCustomHandling->m_fMass);
-	pChatWindow->AddDebugMessage("turn %f", m_pCustomHandling->m_fTurnMass);
-	pChatWindow->AddDebugMessage("m_fEngineAcceleration %f", m_pCustomHandling->m_transmissionData.m_fEngineAcceleration);
-	pChatWindow->AddDebugMessage("m_fMaxGearVelocity %f", m_pCustomHandling->m_transmissionData.m_fMaxGearVelocity);
-	pChatWindow->AddDebugMessage("flags 0x%x", m_pCustomHandling->m_nHandlingFlags);*/
+	/*CChatWindow::AddDebugMessage("AFTER");
+	CChatWindow::AddDebugMessage("mass %f", m_pCustomHandling->m_fMass);
+	CChatWindow::AddDebugMessage("turn %f", m_pCustomHandling->m_fTurnMass);
+	CChatWindow::AddDebugMessage("m_fEngineAcceleration %f", m_pCustomHandling->m_transmissionData.m_fEngineAcceleration);
+	CChatWindow::AddDebugMessage("m_fMaxGearVelocity %f", m_pCustomHandling->m_transmissionData.m_fMaxGearVelocity);
+	CChatWindow::AddDebugMessage("flags 0x%x", m_pCustomHandling->m_nHandlingFlags);*/
 
 	((void (*)(int, tHandlingData*))(g_libGTASA + 0x004FBCF4 + 1))(0, m_pCustomHandling);
 	m_pVehicle->pHandling = m_pCustomHandling;
@@ -980,7 +974,7 @@ void CVehicle::ApplyTexture(const char* szTexture, RwTexture* pTexture)
 	{
 		RemoveTexture(szTexture);
 	}
-	//pChatWindow->AddDebugMessage("apply tex %s", szTexture);
+	//CChatWindow::AddDebugMessage("apply tex %s", szTexture);
 	uint8_t bID = 255;
 	for (uint8_t i = 0; i < MAX_REPLACED_TEXTURES; i++)
 	{
@@ -1098,7 +1092,7 @@ void CVehicle::SetWheelOffset(int iWheel, float offset)
 		return;
 	}
 
-	//pChatWindow->AddDebugMessage("set for %d wheel %f offset", iWheel, offset);
+	//CChatWindow::AddDebugMessage("set for %d wheel %f offset", iWheel, offset);
 	if (iWheel == 0)
 	{
 		m_bWheelOffsetX = true;
@@ -1139,7 +1133,7 @@ void CVehicle::ProcessWheelsOffset()
 	{
 		if (m_bWheelOffsetX)
 		{
-			//pChatWindow->AddDebugMessage("setting wheel offset X");
+			//CChatWindow::AddDebugMessage("setting wheel offset X");
 			RwFrame* pWheelLF = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x00335CEC + 1))(m_pVehicle->entity.m_RwObject, "wheel_lf_dummy"); // GetFrameFromname
 			RwFrame* pWheelRF = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x00335CEC + 1))(m_pVehicle->entity.m_RwObject, "wheel_rf_dummy"); // GetFrameFromname
 
@@ -1150,7 +1144,7 @@ void CVehicle::ProcessWheelsOffset()
 
 				m_fWheelOffsetX = m_fNewOffsetX;
 				m_fNewOffsetX = 0.0f;
-				//pChatWindow->AddDebugMessage("moved old X");
+				//CChatWindow::AddDebugMessage("moved old X");
 			}*/
 			m_fWheelOffsetX = m_fNewOffsetX;
 
@@ -1164,7 +1158,7 @@ void CVehicle::ProcessWheelsOffset()
 	{
 		if (m_bWheelOffsetY)
 		{
-			//pChatWindow->AddDebugMessage("setting wheel offset Y");
+			//CChatWindow::AddDebugMessage("setting wheel offset Y");
 			RwFrame* pWheelRB = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x00335CEC + 1))(m_pVehicle->entity.m_RwObject, "wheel_rb_dummy"); // GetFrameFromname
 			RwFrame* pWheelLB = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x00335CEC + 1))(m_pVehicle->entity.m_RwObject, "wheel_lb_dummy"); // GetFrameFromname
 
@@ -1175,7 +1169,7 @@ void CVehicle::ProcessWheelsOffset()
 				m_fWheelOffsetY = m_fNewOffsetY;
 				m_fNewOffsetY = 0.0f;
 
-				//pChatWindow->AddDebugMessage("moved old Y");
+				//CChatWindow::AddDebugMessage("moved old Y");
 			}*/
 			m_fWheelOffsetY = m_fNewOffsetY;
 			ProcessWheelOffset(pWheelRB, false, m_fWheelOffsetY, 2);

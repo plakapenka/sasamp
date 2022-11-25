@@ -13,7 +13,6 @@
 
 extern CGUI* pGUI;
 extern CGame *pGame;
-extern CChatWindow* pChatWindow;
 
 uint32_t CDebugInfo::uiStreamedPeds = 0;
 uint32_t CDebugInfo::uiStreamedVehicles = 0;
@@ -82,19 +81,6 @@ void CDebugInfo::ApplyDebugPatches()
 #endif
 }
 
-void CDebugInfo::ToggleSpeedMode()
-{
-	m_dwSpeedMode ^= 1;
-	if (m_dwSpeedMode)
-	{
-		pChatWindow->AddDebugMessage("Speed mode enabled");
-	}
-	else
-	{
-		pChatWindow->AddDebugMessage("Speed mode disabled");
-	}
-}
-
 void CDebugInfo::ProcessSpeedMode(VECTOR* pVecSpeed)
 {
 	if (!m_dwSpeedMode)
@@ -109,17 +95,17 @@ void CDebugInfo::ProcessSpeedMode(VECTOR* pVecSpeed)
 		{
 			m_dwSpeedStart = GetTickCount();
 			m_dwState = 0;
-			pChatWindow->AddDebugMessage("Start");
+			CChatWindow::AddDebugMessage("Start");
 		}
 		if ((speed >= 119.0f) && (speed <= 121.0f) && (m_dwState == 0))
 		{
-			pChatWindow->AddDebugMessage("1 to 100: %d", GetTickCount() - m_dwSpeedStart);
+			CChatWindow::AddDebugMessage("1 to 100: %d", GetTickCount() - m_dwSpeedStart);
 			m_dwSpeedStart = GetTickCount();
 			m_dwState = 1;
 		}
 		if ((speed >= 230.0f) && (speed <= 235.0f) && (m_dwState == 1))
 		{
-			pChatWindow->AddDebugMessage("100 to 200: %d", GetTickCount() - m_dwSpeedStart);
+			CChatWindow::AddDebugMessage("100 to 200: %d", GetTickCount() - m_dwSpeedStart);
 			m_dwSpeedStart = 0;
 			m_dwState = 0;
 		}
@@ -131,7 +117,7 @@ void CDebugInfo::ProcessSpeedMode(VECTOR* pVecSpeed)
 		{
 			m_dwSpeedStart = 0;
 			m_dwState = 0;
-			pChatWindow->AddDebugMessage("Reseted");
+			CChatWindow::AddDebugMessage("Reseted");
 			return;
 		}
 	}

@@ -1,8 +1,7 @@
 #include "../main.h"
 #include "../game/game.h"
 #include "netgame.h"
-#include "..//chatwindow.h"
-extern CChatWindow* pChatWindow;
+
 extern CGame* pGame;
 
 CStreamPool::CStreamPool() // ready

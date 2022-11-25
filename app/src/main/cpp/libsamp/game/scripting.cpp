@@ -98,6 +98,7 @@ int ScriptCommand(const SCRIPT_COMMAND *pScriptCommand, ...)
 
 void InitScripting()
 {
+	Log("InitScripting");
 	gst = new GAME_SCRIPT_THREAD;
 	memset(gst, 0, sizeof(GAME_SCRIPT_THREAD));
 

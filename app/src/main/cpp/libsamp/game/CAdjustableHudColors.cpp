@@ -27,8 +27,7 @@ void CAdjustableHudColors::SetHudColorFromString(E_HUD_ELEMENT id, std::string s
 
 	m_bUseColors[id] = true;
 }
-#include "..//chatwindow.h"
-extern CChatWindow* pChatWindow;
+
 void CAdjustableHudColors::SetHudColorFromRGBA(E_HUD_ELEMENT id, int r, int g, int b, int a)
 {
 	if (id < E_HUD_ELEMENT::HUD_HP || id >= E_HUD_ELEMENT::HUD_SIZE)

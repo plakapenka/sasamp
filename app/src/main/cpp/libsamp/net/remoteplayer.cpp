@@ -4,7 +4,6 @@
 #include "../chatwindow.h"
 
 extern CGame *pGame;
-extern CChatWindow *pChatWindow;
 
 CRemotePlayer::CRemotePlayer()
 {
@@ -56,22 +55,22 @@ void CRemotePlayer::ProcessSpecialActions(BYTE byteSpecialAction)
 	m_pPlayerPed->ProcessSpecialAction(byteSpecialAction);
 
 //	// headsync:always
-//	if (GetState() == PLAYER_STATE_ONFOOT)
-//	{
-//
-//
-//		//headmove?
-//		if ((GetTickCount() - m_dwLastHeadUpdate) > 500 && g_uiHeadMoveEnabled)
-//		{
-//			VECTOR LookAt;
-//			CAMERA_AIM* Aim = GameGetRemotePlayerAim(m_pPlayerPed->m_bytePlayerNumber);
-//			LookAt.X = Aim->pos1x + (Aim->f1x * 20.0f);
-//			LookAt.Y = Aim->pos1y + (Aim->f1y * 20.0f);
-//			LookAt.Z = Aim->pos1z + (Aim->f1z * 20.0f);
-//			ScriptCommand(&TASK_LOOK_AT_COORD, m_pPlayerPed->m_dwGTAId, LookAt.X, LookAt.Y, LookAt.Z, 3000);
-//			m_dwLastHeadUpdate = GetTickCount();
-//		}
-//	}
+	if (GetState() == PLAYER_STATE_ONFOOT)
+	{
+
+
+		//headmove?
+		if ((GetTickCount() - m_dwLastHeadUpdate) > 500 && g_uiHeadMoveEnabled)
+		{
+			VECTOR LookAt;
+			CAMERA_AIM* Aim = GameGetRemotePlayerAim(m_pPlayerPed->m_bytePlayerNumber);
+			LookAt.X = Aim->pos1x + (Aim->f1x * 20.0f);
+			LookAt.Y = Aim->pos1y + (Aim->f1y * 20.0f);
+			LookAt.Z = Aim->pos1z + (Aim->f1z * 20.0f);
+			ScriptCommand(&TASK_LOOK_AT_COORD, m_pPlayerPed->m_dwGTAId, LookAt.X, LookAt.Y, LookAt.Z, 3000);
+			m_dwLastHeadUpdate = GetTickCount();
+		}
+	}
 }
 extern uint32_t bProcessedfsaf;
 #define OUTCOMING_KEY 0x87
@@ -778,7 +777,7 @@ void CRemotePlayer::StoreBulletSyncData(BULLET_SYNC* blSync)
 
 		pLocalPed->SetHealth(0.0f);
 
-		//pChatWindow->AddDebugMessage("sendWasted from sync");
+		//CChatWindow::AddDebugMessage("sendWasted from sync");
 		//pPlayerPool->GetLocalPlayer()->SendWastedNotification();
 	}
 }
@@ -795,7 +794,7 @@ void CRemotePlayer::Say(unsigned char* szText)
 	if (pPlayerPool) 
 	{
 		char * szPlayerName = pPlayerPool->GetPlayerName(m_PlayerID);
-		pChatWindow->AddChatMessage(szPlayerName,GetPlayerColor(), (char*)szText);
+		CChatWindow::AddChatMessage(szPlayerName,GetPlayerColor(), (char*)szText);
 	}
 }
 
@@ -940,14 +939,14 @@ void CRemotePlayer::HandleAnimations()
 	}
 
 	int flag = m_ofSync.dwAnimation >> 31;
-	//pChatWindow->AddDebugMessage("FLAG REMOTE %d", flag);
+	//CChatWindow::AddDebugMessage("FLAG REMOTE %d", flag);
 
 	if (!flag)
 	{
 		uint16_t newAnim = (uint16_t)m_ofSync.dwAnimation;
 		if (newAnim != m_usPlayingAnimIdx)
 		{
-			//pChatWindow->AddDebugMessage("applying %hu anium", newAnim);
+			//CChatWindow::AddDebugMessage("applying %hu anium", newAnim);
 			m_usPlayingAnimIdx = newAnim;
 			m_pPlayerPed->PlayAnimByIdx(newAnim, 4.0f);
 		}
@@ -967,10 +966,11 @@ void CRemotePlayer::HandleAnimations()
 		m_pPlayerPed->PlayAnimByIdx(0, 4.0f,
 									m_ofSync.animation.flags.loop,
 									m_ofSync.animation.flags.freeze
-									);
+		);
 		m_bWasSettedFlag = false;
 	}
 }
+
 
 uint32_t CRemotePlayer::GetPlayerColor()
 {

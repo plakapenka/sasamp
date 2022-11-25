@@ -4,7 +4,6 @@
 extern "C" JavaVM* javaVM;
 
 #include "..//keyboard.h"
-#include "..//chatwindow.h"
 #include "..//CSettings.h"
 #include "..//net/netgame.h"
 #include "../game/game.h"
@@ -13,7 +12,6 @@ extern "C" JavaVM* javaVM;
 #include "java_systems/hud.h"
 
 extern CKeyBoard* pKeyBoard;
-extern CChatWindow* pChatWindow;
 extern CSettings* pSettings;
 extern CNetGame* pNetGame;
 extern CGame* pGame;
@@ -179,6 +177,8 @@ void CJavaWrapper::SetUseFullScreen(int b)
 }
 extern int g_iStatusDriftChanged;
 #include "..//CDebugInfo.h"
+#include "chatwindow.h"
+
 extern "C"
 {
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onInputEnd(JNIEnv* pEnv, jobject thiz, jbyteArray str)
@@ -263,7 +263,7 @@ extern "C"
 				switch(action) {
 					case 0:
 						//if (pChatWindow)
-						//	pChatWindow->AddDebugMessage("{bbbbbb}Клиент {ff0000}LIVE RUSSIA{bbbbbb} запущен{ffffff}");
+						//	CChatWindow::AddDebugMessage("{bbbbbb}Клиент {ff0000}LIVE RUSSIA{bbbbbb} запущен{ffffff}");
 						//pNetGame = new CNetGame(cryptor::create("46.174.49.47", 14).decrypt(), atoi(cryptor::create("7788", 4).decrypt()), pSettings->GetReadOnly().szNickName, pSettings->GetReadOnly().szPassword);
 						//pSettings->GetWrite().szServer = 0;
 						break;
@@ -290,13 +290,6 @@ extern "C"
 				Log("Closing keyboard");
 				pKeyBoard->Close();
 			}
-		}
-	}
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onNativeHeightChanged(JNIEnv* pEnv, jobject thiz, jint orientation, jint height)
-	{
-		if (pChatWindow)
-		{
-			pChatWindow->SetLowerBound(height);
 		}
 	}
 
@@ -335,63 +328,6 @@ extern "C"
 		CDebugInfo::SetDrawFPS(b);
 	}
 
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_setNativeHud(JNIEnv* pEnv, jobject thiz, jboolean b)
-	{
-		if (pSettings)
-		{
-			pSettings->GetWrite().iHud = b;
-			if(!b)
-			{
-				*(uint8_t*)(g_libGTASA+0x7165E8) = 1;
-				//g_pJavaWrapper->HideHud(true);
-			}
-			else
-			{
-				*(uint8_t*)(g_libGTASA+0x7165E8) = 0;
-				//g_pJavaWrapper->ShowHud();
-			}
-		}
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_setNativeHpArmourText(JNIEnv* pEnv, jobject thiz, jboolean b)
-	{
-		if (pSettings)
-		{
-			if (!pSettings->GetWrite().iHPArmourText && b)
-			{
-				if (CAdjustableHudColors::IsUsingHudColor(HUD_HP_TEXT) == false)
-				{
-					CAdjustableHudColors::SetHudColorFromRGBA(HUD_HP_TEXT, 255, 0, 0, 255);
-				}
-				if (CAdjustableHudPosition::GetElementPosition(HUD_HP_TEXT).X == -1 || CAdjustableHudPosition::GetElementPosition(HUD_HP_TEXT).Y == -1)
-				{
-					CAdjustableHudPosition::SetElementPosition(HUD_HP_TEXT, 500, 500);
-				}
-				if (CAdjustableHudScale::GetElementScale(HUD_HP_TEXT).X == -1 || CAdjustableHudScale::GetElementScale(HUD_HP_TEXT).Y == -1)
-				{
-					CAdjustableHudScale::SetElementScale(HUD_HP_TEXT, 400, 400);
-				}
-
-				if (CAdjustableHudColors::IsUsingHudColor(HUD_ARMOR_TEXT) == false)
-				{
-					CAdjustableHudColors::SetHudColorFromRGBA(HUD_ARMOR_TEXT, 255, 0, 0, 255);
-				}
-				if (CAdjustableHudPosition::GetElementPosition(HUD_ARMOR_TEXT).X == -1 || CAdjustableHudPosition::GetElementPosition(HUD_ARMOR_TEXT).Y == -1)
-				{
-					CAdjustableHudPosition::SetElementPosition(HUD_ARMOR_TEXT, 300, 500);
-				}
-				if (CAdjustableHudScale::GetElementScale(HUD_ARMOR_TEXT).X == -1 || CAdjustableHudScale::GetElementScale(HUD_ARMOR_TEXT).Y == -1)
-				{
-					CAdjustableHudScale::SetElementScale(HUD_ARMOR_TEXT, 400, 400);
-				}
-			}
-
-			pSettings->GetWrite().iHPArmourText = b;
-		}
-
-		CInfoBarText::SetEnabled(b);
-	}
-
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_setNativeOutfitGunsSettings(JNIEnv* pEnv, jobject thiz, jboolean b)
 	{
 		if (pSettings)
@@ -426,15 +362,6 @@ extern "C"
 		if (pSettings)
 		{
 			return pSettings->GetReadOnly().iCutout;
-		}
-		return 0;
-	}
-	
-	JNIEXPORT jboolean JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_getNativeHud(JNIEnv* pEnv, jobject thiz)
-	{
-		if (pSettings)
-		{
-			return pSettings->GetReadOnly().iHud;
 		}
 		return 0;
 	}
@@ -475,15 +402,6 @@ extern "C"
 		return 0;
 	}
 
-	JNIEXPORT jboolean JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_getNativePcMoney(JNIEnv* pEnv, jobject thiz)
-	{
-		if (pSettings)
-		{
-			return pSettings->GetReadOnly().iPCMoney;
-		}
-		return 0;
-	}
-
 	JNIEXPORT jboolean JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_getNativeRadarrect(JNIEnv* pEnv, jobject thiz)
 	{
 		if (pSettings)
@@ -515,10 +433,7 @@ extern "C"
 		if (pSettings)
 		{
 			pSettings->ToDefaults(category);
-			if (pChatWindow)
-			{
-				pChatWindow->m_bPendingReInit = true;
-			}
+			//CChatWindow::m_bPendingReInit = true;
 		}
 	}
 
@@ -544,20 +459,6 @@ extern "C"
 
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_setNativeHudElementPosition(JNIEnv* pEnv, jobject thiz, jint id, jint x, jint y)
 	{
-		if (id == 7)
-		{
-			if (pSettings)
-			{
-				pSettings->GetWrite().fChatPosX = x;
-				pSettings->GetWrite().fChatPosY = y;
-				if (pChatWindow)
-				{
-					pChatWindow->m_bPendingReInit = true;
-				}
-				return;
-			}
-			return;
-		}
 		if (id == HUD_SNOW)
 		{
 			if (pSettings)
@@ -655,12 +556,7 @@ extern "C"
 		}
 		int arr[2];
 
-		if (id == 7 && pSettings)
-		{
-			arr[0] = pSettings->GetReadOnly().fChatPosX;
-			arr[1] = pSettings->GetReadOnly().fChatPosY;
-		}
-		else if (id == HUD_SNOW && pSettings)
+		if (id == HUD_SNOW && pSettings)
 		{
 			arr[0] = CSnow::GetCurrentSnow();
 			arr[1] = CSnow::GetCurrentSnow();
@@ -747,7 +643,7 @@ extern "C"
 				g_pJavaWrapper->RegisterSkinValue = 4;
 			}
 		}
-		//pChatWindow->AddDebugMessage("chooseskinvalue: %d, chooseskinid: %d", g_pJavaWrapper->RegisterSkinValue, g_pJavaWrapper->ChangeRegisterSkin(g_pJavaWrapper->RegisterSkinValue));
+		//CChatWindow::AddDebugMessage("chooseskinvalue: %d, chooseskinid: %d", g_pJavaWrapper->RegisterSkinValue, g_pJavaWrapper->ChangeRegisterSkin(g_pJavaWrapper->RegisterSkinValue));
 		pNetGame->SendRegisterSkinPacket(g_pJavaWrapper->ChangeRegisterSkin(g_pJavaWrapper->RegisterSkinValue));
 	}
 
@@ -767,7 +663,7 @@ extern "C"
 				g_pJavaWrapper->RegisterSkinValue = 1;
 			}
 		}
-		//pChatWindow->AddDebugMessage("chooseskinvalue: %d, chooseskinid: %d", g_pJavaWrapper->RegisterSkinValue, g_pJavaWrapper->ChangeRegisterSkin(g_pJavaWrapper->RegisterSkinValue));
+		//CChatWindow::AddDebugMessage("chooseskinvalue: %d, chooseskinid: %d", g_pJavaWrapper->RegisterSkinValue, g_pJavaWrapper->ChangeRegisterSkin(g_pJavaWrapper->RegisterSkinValue));
 		pNetGame->SendRegisterSkinPacket(g_pJavaWrapper->ChangeRegisterSkin(g_pJavaWrapper->RegisterSkinValue));
 	}
 
@@ -882,7 +778,6 @@ extern "C"
 	}
 
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onAuctionButtonClick(JNIEnv *pEnv, jobject thiz, jint btnid) {
-		pChatWindow->AddDebugMessage("onAuctionButtonClick: %d",btnid);
 		pNetGame->SendCustomPacket(251, 52, btnid);
 	}
 }
@@ -1710,19 +1605,6 @@ Java_com_liverussia_cr_gui_Casino_1LuckyWheel_ClickButt(JNIEnv *env, jobject thi
 	pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
 }
 
-
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_ChatLineChanged(JNIEnv *env,
-																			   jobject thiz,
-																			   jint newcount) {
-	if (pSettings)
-	{
-		pSettings->GetWrite().iChatMaxMessages = newcount;
-		pChatWindow->m_bPendingReInit = true;
-	}
-}
-
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_ChatFontSizeChanged(JNIEnv *env,
@@ -1731,7 +1613,7 @@ Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_ChatFontSizeChang
 	if (pSettings)
 	{
 		pSettings->GetWrite().fFontSize = size;
-		pChatWindow->m_bPendingReInit = true;
+		//CChatWindow::m_bPendingReInit = true;
 	}
 }
 extern "C"

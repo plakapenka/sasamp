@@ -88,9 +88,7 @@ void CTextDrawPool::Draw()
 		x++;
 	}
 }
-#include "..//chatwindow.h"
 
-extern CChatWindow* pChatWindow;
 bool CTextDrawPool::OnTouchEvent(int type, int num, int x, int y)
 {
 	CTouchListenerLock(this);
@@ -145,12 +143,10 @@ void CTextDrawPool::SetSelectState(bool bState, uint32_t dwColor)
 	if (bState)
 	{
 		m_bSelectState = true;
-		pGame->DisplayHUD(false);
 		pGame->FindPlayerPed()->TogglePlayerControllable(false);
 	}
 	else {
 		m_bSelectState = false;
-		pGame->DisplayHUD(true);
 		pGame->FindPlayerPed()->TogglePlayerControllable(true);
 	}
 }

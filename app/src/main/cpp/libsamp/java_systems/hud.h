@@ -28,6 +28,7 @@ public:
     bool isEnterExitVehicleButtonOn = false;
     bool isLockVehicleButtonOn = false;
     bool isHornButtonOn = false;
+    bool isChatOn = true;
 
     void UpdateWanted();
 
@@ -47,6 +48,18 @@ public:
     float radary1;
     float radarScalex;
     float radarScaley;
+
+    void AddChatMessage(const char msg[]);
+
+    void AddToChatInput(const char ch[]);
+
+    void ToggleChatInput(bool toggle);
+
+    void ToggleHpText(bool toggle);
+
+    void ChangeChatHeight(int height);
+
+    void ToggleChat(bool toggle);
 };
 
 

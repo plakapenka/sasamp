@@ -6,7 +6,6 @@
 #include "gui/gui.h"
 #include "game/game.h"
 #include "keyboard.h"
-#include "scrollbar.h"
 #include "vendor/imgui/fontawesome.h"
 #include "vendor/imgui/fonts.h"
 #include "net/netgame.h"
@@ -37,11 +36,6 @@ CKeyBoard::CKeyBoard()
 	fonticon = io.Fonts->AddFontFromMemoryTTF(iconfont, sizeof(iconfont), 20.0f, &config, icon_ranges);
 
 	chatfuncfont = pGUI->LoadFont("visby-round-cf-extra-bold.ttf", 22);
-
-	m_fChatPosX = pGUI->ScaleX(pSettings->GetReadOnly().fChatPosX);
-	m_fChatPosY = pGUI->ScaleY(pSettings->GetReadOnly().fChatPosY);
-	m_fChatSizeX = pGUI->ScaleX(pSettings->GetReadOnly().fChatSizeX);
-	m_fChatSizeY = pGUI->ScaleY(pSettings->GetReadOnly().fChatSizeY);
 
 	Log("Size: %f, %f. Pos: %f, %f", m_Size.x, m_Size.y, m_Pos.x, m_Pos.y);
 	Log("font size: %f. Key's height: %f", m_fFontSize, m_fKeySizeY);
@@ -107,83 +101,55 @@ void CKeyBoard::Render()
 				0xFF8A8886);
 
 	// background-inputbar
-	ImGui::GetOverlayDrawList()->AddRectFilled(ImVec2(m_fChatPosX, m_fChatPosY + m_fChatSizeY + 50 - 40), ImVec2(m_fChatPosX + m_fChatSizeX + 45, m_fChatPosY + m_fChatSizeY + 125 - 40), 0xB0000000, 10);
+	//ImGui::GetOverlayDrawList()->AddRectFilled(ImVec2(m_fChatPosX, m_fChatPosY + m_fChatSizeY + 50 - 40), ImVec2(m_fChatPosX + m_fChatSizeX + 45, m_fChatPosY + m_fChatSizeY + 125 - 40), 0xB0000000, 10);
 
 	// background-settings
-	ImGui::GetOverlayDrawList()->AddRectFilled(ImVec2(m_fChatPosX, m_fChatPosY + m_fChatSizeY + 135 - 40), ImVec2(m_fChatPosX + 70, m_fChatPosY + m_fChatSizeY + 205 - 40), 0xB0000000, 10);
+	//ImGui::GetOverlayDrawList()->AddRectFilled(ImVec2(m_fChatPosX, m_fChatPosY + m_fChatSizeY + 135 - 40), ImVec2(m_fChatPosX + 70, m_fChatPosY + m_fChatSizeY + 205 - 40), 0xB0000000, 10);
 
-	ImGui::GetOverlayDrawList()->AddText(fonticon, ImGui::GetFontSize(),
-										 ImVec2(m_fChatPosX + 16, m_fChatPosY + m_fChatSizeY + 135 + 27 - 40), 0xFFFFFFFF, ICON_FA_COG);
+	//ImGui::GetOverlayDrawList()->AddText(fonticon, ImGui::GetFontSize(),
+										// ImVec2(m_fChatPosX + 16, m_fChatPosY + m_fChatSizeY + 135 + 27 - 40), 0xFFFFFFFF, ICON_FA_COG);
 
 	// background-me
-	ImGui::GetOverlayDrawList()->AddRectFilled(ImVec2(m_fChatPosX + 80, m_fChatPosY + m_fChatSizeY + 135 - 40), ImVec2(m_fChatPosX + 200, m_fChatPosY + m_fChatSizeY + 205 - 40), 0xB0000000, 10);
+//	ImGui::GetOverlayDrawList()->AddRectFilled(ImVec2(m_fChatPosX + 80, m_fChatPosY + m_fChatSizeY + 135 - 40), ImVec2(m_fChatPosX + 200, m_fChatPosY + m_fChatSizeY + 205 - 40), 0xB0000000, 10);
+//
+//	ImGui::GetOverlayDrawList()->AddText(pGUI->GetFont(), m_fFontSize - pGUI->ScaleY(35.0f),
+//										 ImVec2(m_fChatPosX + 80 + 23, m_fChatPosY + m_fChatSizeY + 135 + 17.5 - 40), sME ? 0xFFFFFFFF : 0xFF90908E, "/me");
+//
+//	// background-try
+//	ImGui::GetOverlayDrawList()->AddRectFilled(ImVec2(m_fChatPosX + 210, m_fChatPosY + m_fChatSizeY + 135 - 40), ImVec2(m_fChatPosX + 330, m_fChatPosY + m_fChatSizeY + 205 - 40), 0xB0000000, 10);
+//
+//	ImGui::GetOverlayDrawList()->AddText(pGUI->GetFont(), m_fFontSize - pGUI->ScaleY(35.0f),
+//										 ImVec2(m_fChatPosX + 210 + 23, m_fChatPosY + m_fChatSizeY + 135 + 17.5 - 40), sTRY ? 0xFFFFFFFF : 0xFF90908E, "/try");
+//
+//	// background-do
+//	ImGui::GetOverlayDrawList()->AddRectFilled(ImVec2(m_fChatPosX + 340, m_fChatPosY + m_fChatSizeY + 135 - 40), ImVec2(m_fChatPosX + 460, m_fChatPosY + m_fChatSizeY + 205 - 40), 0xB0000000, 10);
+//
+//	ImGui::GetOverlayDrawList()->AddText(pGUI->GetFont(), m_fFontSize - pGUI->ScaleY(35.0f),
+//										 ImVec2(m_fChatPosX + 340 + 26, m_fChatPosY + m_fChatSizeY + 135 + 17.5 - 40), sDO ? 0xFFFFFFFF : 0xFF90908E, "/do");
+//
+//	// background-gov
+//	ImGui::GetOverlayDrawList()->AddRectFilled(ImVec2(m_fChatPosX + 470, m_fChatPosY + m_fChatSizeY + 135 - 40), ImVec2(m_fChatPosX + 640, m_fChatPosY + m_fChatSizeY + 205 - 40), 0xB0000000, 10);
+//
+//	ImGui::GetOverlayDrawList()->AddText(pGUI->GetFont(), m_fFontSize - pGUI->ScaleY(35.0f),
+									//	 ImVec2(m_fChatPosX + 470 + 17, m_fChatPosY + m_fChatSizeY + 135 + 17.5 - 40), sGOV ? 0xFFFFFFFF : 0xFF90908E, "/gnews");
 
-	ImGui::GetOverlayDrawList()->AddText(pGUI->GetFont(), m_fFontSize - pGUI->ScaleY(35.0f),
-										 ImVec2(m_fChatPosX + 80 + 23, m_fChatPosY + m_fChatSizeY + 135 + 17.5 - 40), sME ? 0xFFFFFFFF : 0xFF90908E, "/me");
-
-	// background-try
-	ImGui::GetOverlayDrawList()->AddRectFilled(ImVec2(m_fChatPosX + 210, m_fChatPosY + m_fChatSizeY + 135 - 40), ImVec2(m_fChatPosX + 330, m_fChatPosY + m_fChatSizeY + 205 - 40), 0xB0000000, 10);
-
-	ImGui::GetOverlayDrawList()->AddText(pGUI->GetFont(), m_fFontSize - pGUI->ScaleY(35.0f),
-										 ImVec2(m_fChatPosX + 210 + 23, m_fChatPosY + m_fChatSizeY + 135 + 17.5 - 40), sTRY ? 0xFFFFFFFF : 0xFF90908E, "/try");
-
-	// background-do
-	ImGui::GetOverlayDrawList()->AddRectFilled(ImVec2(m_fChatPosX + 340, m_fChatPosY + m_fChatSizeY + 135 - 40), ImVec2(m_fChatPosX + 460, m_fChatPosY + m_fChatSizeY + 205 - 40), 0xB0000000, 10);
-
-	ImGui::GetOverlayDrawList()->AddText(pGUI->GetFont(), m_fFontSize - pGUI->ScaleY(35.0f),
-										 ImVec2(m_fChatPosX + 340 + 26, m_fChatPosY + m_fChatSizeY + 135 + 17.5 - 40), sDO ? 0xFFFFFFFF : 0xFF90908E, "/do");
-
-	// background-gov
-	ImGui::GetOverlayDrawList()->AddRectFilled(ImVec2(m_fChatPosX + 470, m_fChatPosY + m_fChatSizeY + 135 - 40), ImVec2(m_fChatPosX + 640, m_fChatPosY + m_fChatSizeY + 205 - 40), 0xB0000000, 10);
-
-	ImGui::GetOverlayDrawList()->AddText(pGUI->GetFont(), m_fFontSize - pGUI->ScaleY(35.0f),
-										 ImVec2(m_fChatPosX + 470 + 17, m_fChatPosY + m_fChatSizeY + 135 + 17.5 - 40), sGOV ? 0xFFFFFFFF : 0xFF90908E, "/gnews");
-
-	if (sME)
-	{
-		ImGui::GetOverlayDrawList()->AddRectFilled(ImVec2(m_fChatPosX + 10, m_fChatPosY + m_fChatSizeY + 50 - 40 + 13), ImVec2(m_fChatPosX + 120 - 17, m_fChatPosY + m_fChatSizeY + 125 - 40 - 13), 0xFFFABFFF, 10);
-		ImGui::GetOverlayDrawList()->AddText(chatfuncfont, m_fFontSize - pGUI->ScaleY(45.0f), ImVec2(m_fChatPosX + 10 + 18, m_fChatPosY + m_fChatSizeY + 50 + 18 - 33), 0xB0000000, "/me");
-		chatinputposx = 93;
-	}
-	else if (sTRY)
-	{
-		ImGui::GetOverlayDrawList()->AddRectFilled(ImVec2(m_fChatPosX + 10, m_fChatPosY + m_fChatSizeY + 50 - 40 + 13), ImVec2(m_fChatPosX + 120 - 17, m_fChatPosY + m_fChatSizeY + 125 - 40 - 13), 0xFF13A512, 10);
-		ImGui::GetOverlayDrawList()->AddText(chatfuncfont, m_fFontSize - pGUI->ScaleY(45.0f), ImVec2(m_fChatPosX + 10 + 22, m_fChatPosY + m_fChatSizeY + 50 + 18 - 33), 0xB0000000, "/try");
-		chatinputposx = 93;
-	}
-	else if (sDO)
-	{
-		ImGui::GetOverlayDrawList()->AddRectFilled(ImVec2(m_fChatPosX + 10, m_fChatPosY + m_fChatSizeY + 50 - 40 + 13), ImVec2(m_fChatPosX + 120 - 17, m_fChatPosY + m_fChatSizeY + 125 - 40 - 13), 0xFF0E91E9, 10);
-		ImGui::GetOverlayDrawList()->AddText(chatfuncfont, m_fFontSize - pGUI->ScaleY(45.0f), ImVec2(m_fChatPosX + 10 + 22, m_fChatPosY + m_fChatSizeY + 50 + 18 - 33), 0xB0000000, "/do");
-		chatinputposx = 93;
-	}
-	else if (sGOV)
-	{
-		ImGui::GetOverlayDrawList()->AddRectFilled(ImVec2(m_fChatPosX + 10, m_fChatPosY + m_fChatSizeY + 50 - 40 + 13), ImVec2(m_fChatPosX + 155 - 17, m_fChatPosY + m_fChatSizeY + 125 - 40 - 13), 0xFFFF9900, 10);
-		ImGui::GetOverlayDrawList()->AddText(chatfuncfont, m_fFontSize - pGUI->ScaleY(45.0f), ImVec2(m_fChatPosX + 10 + 17, m_fChatPosY + m_fChatSizeY + 50 + 18 - 33), 0xB0000000, "/gnews");
-		chatinputposx = 128;
-	}
-	else
-	{
-		chatinputposx = 0;
-	}
 
 	// input string
-	if (IsHidden())
-	{
-		char _utf8DialogInputBuffer[100 * 3 + 1];
-		strcpy(_utf8DialogInputBuffer, m_utf8Input);
-
-		for (int i = 0; i < strlen(_utf8DialogInputBuffer); i++)
-		{
-			if (_utf8DialogInputBuffer[i] == '\0')
-				break;
-			_utf8DialogInputBuffer[i] = '*';
-		}
-		ImGui::GetOverlayDrawList()->AddText(pGUI->GetFont(), m_fFontSize - pGUI->ScaleY(30.0f), ImVec2(m_fChatPosX + m_Size.x * 0.02 - 25, m_fChatPosY + m_fChatSizeY + 50 - 40 + m_Pos.y * 0.05 - 5), 0xFFFFFFFF, _utf8DialogInputBuffer);
-	}
-	else
-		ImGui::GetOverlayDrawList()->AddText(pGUI->GetFont(), m_fFontSize - pGUI->ScaleY(30.0f), ImVec2(m_fChatPosX + m_Size.x * 0.02 - 25 + chatinputposx, m_fChatPosY + m_fChatSizeY + 50 - 40 + m_Pos.y * 0.05 - 5), 0xFFFFFFFF, m_utf8Input);
+//	if (IsHidden())
+//	{
+//		char _utf8DialogInputBuffer[100 * 3 + 1];
+//		strcpy(_utf8DialogInputBuffer, m_utf8Input);
+//
+//		for (int i = 0; i < strlen(_utf8DialogInputBuffer); i++)
+//		{
+//			if (_utf8DialogInputBuffer[i] == '\0')
+//				break;
+//			_utf8DialogInputBuffer[i] = '*';
+//		}
+//		ImGui::GetOverlayDrawList()->AddText(pGUI->GetFont(), m_fFontSize - pGUI->ScaleY(30.0f), ImVec2(m_fChatPosX + m_Size.x * 0.02 - 25, m_fChatPosY + m_fChatSizeY + 50 - 40 + m_Pos.y * 0.05 - 5), 0xFFFFFFFF, _utf8DialogInputBuffer);
+//	}
+//	else
+//		ImGui::GetOverlayDrawList()->AddText(pGUI->GetFont(), m_fFontSize - pGUI->ScaleY(30.0f), ImVec2(m_fChatPosX + m_Size.x * 0.02 - 25 + chatinputposx, m_fChatPosY + m_fChatSizeY + 50 - 40 + m_Pos.y * 0.05 - 5), 0xFFFFFFFF, m_utf8Input);
 
 	// dividing line
 	ImGui::GetOverlayDrawList()->AddLine(
@@ -196,13 +162,13 @@ void CKeyBoard::Render()
 	{
 		for (auto key : m_Rows[m_iLayout][i])
 		{
-			if (key.id == m_iPushedKey && key.type != KEY_SPACE && !IsHidden())
+			if (key.id == m_iPushedKey && key.type != KEY_SPACE)
 				ImGui::GetOverlayDrawList()->AddRectFilled(
 					key.pos,
 					ImVec2(key.pos.x + key.width, key.pos.y + fKeySizeY),
 					0xFF3291F5);
 
-			if (m_iPushedKeyUp && !IsHidden())
+			if (m_iPushedKeyUp)
 			{
 				ImGui::GetOverlayDrawList()->AddRectFilled(ImVec2(m_fKeySizeX * 7.6, m_Pos.y), ImVec2(m_fKeySizeX * 8.6, m_Pos.y + m_fKeySizeY), 0xFF3291F5);
 				ImGui::GetOverlayDrawList()->AddTriangleFilled(
@@ -211,7 +177,7 @@ void CKeyBoard::Render()
 				ImVec2(m_fKeySizeX * 7.6 + 160, m_Pos.y + 100),
 				0xFF8A8886);
 			}
-			else if (m_iPushedKeyDown && !IsHidden())
+			else if (m_iPushedKeyDown)
 			{
 				ImGui::GetOverlayDrawList()->AddRectFilled(ImVec2(m_fKeySizeX * 8.8, m_Pos.y), ImVec2(m_fKeySizeX * 9.8, m_Pos.y + m_fKeySizeY), 0xFF3291F5);
 				ImGui::GetOverlayDrawList()->AddTriangleFilled(
@@ -257,7 +223,7 @@ void CKeyBoard::Render()
 				ImGui::GetOverlayDrawList()->AddRectFilled(
 					ImVec2(key.pos.x + key.width * 0.07, key.pos.y + fKeySizeY * 0.3),
 					ImVec2(key.pos.x + key.width * 0.93, key.pos.y + fKeySizeY * 0.7),
-					key.id == m_iPushedKey && !IsHidden() ? 0xFF3291F5 : 0xFF8A8886);
+					key.id == m_iPushedKey ? 0xFF3291F5 : 0xFF8A8886);
 				break;
 
 			case KEY_SEND:
@@ -288,20 +254,14 @@ void CKeyBoard::Render()
 	}
 }
 
-void CKeyBoard::Open(keyboard_callback *handler, bool bHiden)
+void CKeyBoard::Open()
 {
-
-	if (handler == nullptr)
-		return;
-
 	Close();
 	if (m_pkHistory)
 	{
 		m_pkHistory->m_iCounter = 0;
 	}
-	m_pHandler = handler;
 	m_bEnable = true;
-	m_bInputFlag = bHiden;
 
 	//g_pJavaWrapper->HideVoice();
 
@@ -330,11 +290,11 @@ void CKeyBoard::Close()
 	m_bEnable = false;
 
 	m_sInput.clear();
+	pHud->AddToChatInput(m_sInput.c_str());
 	m_iInputOffset = 0;
 	m_utf8Input[0] = 0;
 	m_iCase = LOWER_CASE;
 	m_iPushedKey = -1;
-	m_pHandler = nullptr;
 
 	g_pJavaWrapper->ShowServerLogo();
 	if (pGame->m_bRaceCheckpointsEnabled)
@@ -356,6 +316,9 @@ void CKeyBoard::Close()
 	return;
 }
 #include "util/CJavaWrapper.h"
+#include "chatwindow.h"
+#include "CDebugInfo.h"
+
 bool CKeyBoard::OnTouchEvent(int type, bool multi, int x, int y)
 {
 	static bool bWannaClose = false;
@@ -370,118 +333,109 @@ bool CKeyBoard::OnTouchEvent(int type, bool multi, int x, int y)
 		return true;
 	}
 
-	if (pScrollbar)
-	{
-		if (x >= m_fChatPosX && x <= m_fChatPosX + m_fChatSizeX &&
-			y >= m_fChatPosY && y <= m_fChatPosY + m_fChatSizeY) {
-			if(pScrollbar->OnTouchEvent(type, multi, x, y)){
-				return true;
-			}
-		}
-	}
 
 	static bool bWannaCopy = false;
 	static uint32_t uiTouchTick = 0;
 
-	ImVec2 leftCorner(m_fChatPosX, m_fChatPosY + m_fChatSizeY + 50 - 40);
-	ImVec2 rightCorner(m_fChatPosX + m_fChatSizeX / 1.35, m_fChatPosY + m_fChatSizeY + 125 - 40);
+	//ImVec2 leftCorner(m_fChatPosX, m_fChatPosY + m_fChatSizeY + 50 - 40);
+	//ImVec2 rightCorner(m_fChatPosX + m_fChatSizeX / 1.35, m_fChatPosY + m_fChatSizeY + 125 - 40);
 
-	if (g_pJavaWrapper)
-	{
-		if (type == TOUCH_PUSH && x >= leftCorner.x && y >= leftCorner.y && x <= rightCorner.x && y <= rightCorner.y)
-		{
-			if (bWannaCopy && GetTickCount() - uiTouchTick <= 150)
-			{
-				std::string msg = g_pJavaWrapper->GetClipboardString();
-				for (int i = 0; i < msg.size(); i++)
-				{
-					AddCharToInput((char)msg[i]);
-				}
-				bWannaCopy = false;
-			}
-			else
-			{
-				bWannaCopy = true;
-				uiTouchTick = GetTickCount();
-			}
-		}
+//	if (g_pJavaWrapper)
+//	{
+//		if (type == TOUCH_PUSH && x >= leftCorner.x && y >= leftCorner.y && x <= rightCorner.x && y <= rightCorner.y)
+//		{
+//			if (bWannaCopy && GetTickCount() - uiTouchTick <= 150)
+//			{
+//				std::string msg = g_pJavaWrapper->GetClipboardString();
+//				for (int i = 0; i < msg.size(); i++)
+//				{
+//					AddCharToInput((char)msg[i]);
+//				}
+//				bWannaCopy = false;
+//			}
+//			else
+//			{
+//				bWannaCopy = true;
+//				uiTouchTick = GetTickCount();
+//			}
+//		}
+//
+//		if (type == TOUCH_POP)
+//		{
+//			if (GetTickCount() - uiTouchTick <= 150 && bWannaCopy)
+//			{
+//				bWannaCopy = true;
+//				uiTouchTick = GetTickCount();
+//			}
+//			else
+//			{
+//				bWannaCopy = false;
+//			}
+//		}
+//	}
 
-		if (type == TOUCH_POP)
-		{
-			if (GetTickCount() - uiTouchTick <= 150 && bWannaCopy)
-			{
-				bWannaCopy = true;
-				uiTouchTick = GetTickCount();
-			}
-			else
-			{
-				bWannaCopy = false;
-			}
-		}
-	}
-
-	ImVec2 leftCornersettings(m_fChatPosX, m_fChatPosY + m_fChatSizeY + 135 - 40);
-	ImVec2 rightCornersettings(m_fChatPosX + 70, m_fChatPosY + m_fChatSizeY + 205 - 40);
-
-	if (type == TOUCH_POP && x >= leftCornersettings.x && y >= leftCornersettings.y && x <= rightCornersettings.x && y <= rightCornersettings.y)
-	{
-		g_pJavaWrapper->ShowClientSettings();
-	}
-
-	ImVec2 leftCornerME(m_fChatPosX + 80, m_fChatPosY + m_fChatSizeY + 135 - 40);
-	ImVec2 rightCornerME(m_fChatPosX + 200, m_fChatPosY + m_fChatSizeY + 205 - 40);
-
-	if (type == TOUCH_POP && x >= leftCornerME.x && y >= leftCornerME.y && x <= rightCornerME.x && y <= rightCornerME.y)
-	{
-		sME = !sME;
-		sTRY = false;
-		sDO = false;
-		sGOV = false;
-	}
-
-	ImVec2 leftCornerTRY(m_fChatPosX + 210, m_fChatPosY + m_fChatSizeY + 135 - 40);
-	ImVec2 rightCornerTRY(m_fChatPosX + 330, m_fChatPosY + m_fChatSizeY + 205 - 40);
-
-	if (type == TOUCH_POP && x >= leftCornerTRY.x && y >= leftCornerTRY.y && x <= rightCornerTRY.x && y <= rightCornerTRY.y)
-	{
-		sTRY = !sTRY;
-		sME = false;
-		sDO = false;
-		sGOV = false;
-	}
-
-	ImVec2 leftCornerDO(m_fChatPosX + 340, m_fChatPosY + m_fChatSizeY + 135 - 40);
-	ImVec2 rightCornerDO(m_fChatPosX + 460, m_fChatPosY + m_fChatSizeY + 205 - 40);
-
-	if (type == TOUCH_POP && x >= leftCornerDO.x && y >= leftCornerDO.y && x <= rightCornerDO.x && y <= rightCornerDO.y)
-	{
-		sDO = !sDO;
-		sME = false;
-		sTRY = false;
-		sGOV = false;
-	}
-
-	ImVec2 leftCornerGOV(m_fChatPosX + 470, m_fChatPosY + m_fChatSizeY + 135 - 40);
-	ImVec2 rightCornerGOV(m_fChatPosX + 590, m_fChatPosY + m_fChatSizeY + 205 - 40);
-
-	if (type == TOUCH_POP && x >= leftCornerGOV.x && y >= leftCornerGOV.y && x <= rightCornerGOV.x && y <= rightCornerGOV.y)
-	{
-		sGOV = !sGOV;
-		sME = false;
-		sTRY = false;
-		sDO = false;
-	}
-
-	if (type == TOUCH_PUSH && y < m_Pos.y)
-	{
-		bWannaClose = true;
-	}
-	if (type == TOUCH_POP && y < m_fChatPosY + m_fChatSizeY + 50 - 40 && bWannaClose)
-	{
-		bWannaClose = false;
-		Close();
-		return false;
-	}
+//	ImVec2 leftCornersettings(m_fChatPosX, m_fChatPosY + m_fChatSizeY + 135 - 40);
+//	ImVec2 rightCornersettings(m_fChatPosX + 70, m_fChatPosY + m_fChatSizeY + 205 - 40);
+//
+//	if (type == TOUCH_POP && x >= leftCornersettings.x && y >= leftCornersettings.y && x <= rightCornersettings.x && y <= rightCornersettings.y)
+//	{
+//		g_pJavaWrapper->ShowClientSettings();
+//	}
+//
+//	ImVec2 leftCornerME(m_fChatPosX + 80, m_fChatPosY + m_fChatSizeY + 135 - 40);
+//	ImVec2 rightCornerME(m_fChatPosX + 200, m_fChatPosY + m_fChatSizeY + 205 - 40);
+//
+//	if (type == TOUCH_POP && x >= leftCornerME.x && y >= leftCornerME.y && x <= rightCornerME.x && y <= rightCornerME.y)
+//	{
+//		sME = !sME;
+//		sTRY = false;
+//		sDO = false;
+//		sGOV = false;
+//	}
+//
+//	ImVec2 leftCornerTRY(m_fChatPosX + 210, m_fChatPosY + m_fChatSizeY + 135 - 40);
+//	ImVec2 rightCornerTRY(m_fChatPosX + 330, m_fChatPosY + m_fChatSizeY + 205 - 40);
+//
+//	if (type == TOUCH_POP && x >= leftCornerTRY.x && y >= leftCornerTRY.y && x <= rightCornerTRY.x && y <= rightCornerTRY.y)
+//	{
+//		sTRY = !sTRY;
+//		sME = false;
+//		sDO = false;
+//		sGOV = false;
+//	}
+//
+//	ImVec2 leftCornerDO(m_fChatPosX + 340, m_fChatPosY + m_fChatSizeY + 135 - 40);
+//	ImVec2 rightCornerDO(m_fChatPosX + 460, m_fChatPosY + m_fChatSizeY + 205 - 40);
+//
+//	if (type == TOUCH_POP && x >= leftCornerDO.x && y >= leftCornerDO.y && x <= rightCornerDO.x && y <= rightCornerDO.y)
+//	{
+//		sDO = !sDO;
+//		sME = false;
+//		sTRY = false;
+//		sGOV = false;
+//	}
+//
+//	ImVec2 leftCornerGOV(m_fChatPosX + 470, m_fChatPosY + m_fChatSizeY + 135 - 40);
+//	ImVec2 rightCornerGOV(m_fChatPosX + 590, m_fChatPosY + m_fChatSizeY + 205 - 40);
+//
+//	if (type == TOUCH_POP && x >= leftCornerGOV.x && y >= leftCornerGOV.y && x <= rightCornerGOV.x && y <= rightCornerGOV.y)
+//	{
+//		sGOV = !sGOV;
+//		sME = false;
+//		sTRY = false;
+//		sDO = false;
+//	}
+//
+//	if (type == TOUCH_PUSH && y < m_Pos.y)
+//	{
+//		bWannaClose = true;
+//	}
+//	if (type == TOUCH_POP && y < m_fChatPosY + m_fChatSizeY + 50 - 40 && bWannaClose)
+//	{
+//		bWannaClose = false;
+//		Close();
+//		return false;
+//	}
 
 	m_iPushedKey = -1;
 	m_iPushedKeyUp = false;
@@ -577,14 +531,8 @@ void CKeyBoard::AddCharToInput(char sym)
 		m_sInput.push_back(sym);
 		cp1251_to_utf8(m_utf8Input, &m_sInput.c_str()[m_iInputOffset]);
 
-	check:
-		ImVec2 textSize = pGUI->GetFont()->CalcTextSizeA(m_fFontSize, FLT_MAX, 0.0f, m_utf8Input, nullptr, nullptr);
-		if (textSize.x >= (m_Size.x - (m_Size.x * 0.04)))
-		{
-			m_iInputOffset++;
-			cp1251_to_utf8(m_utf8Input, &m_sInput.c_str()[m_iInputOffset]);
-			goto check;
-		}
+		pHud->AddToChatInput(m_sInput.c_str());
+
 	}
 }
 
@@ -593,53 +541,41 @@ void CKeyBoard::DeleteCharFromInput()
 	if (!m_sInput.length())
 		return;
 
-	ImVec2 textSize;
 	m_sInput.pop_back();
 
-check:
-	if (m_iInputOffset == 0)
-		goto ret;
-	cp1251_to_utf8(m_utf8Input, &m_sInput.c_str()[m_iInputOffset - 1]);
-	textSize = pGUI->GetFont()->CalcTextSizeA(m_fFontSize, FLT_MAX, 0.0f, m_utf8Input, nullptr, nullptr);
+	pHud->AddToChatInput(m_sInput.c_str());
 
-	if (textSize.x <= (m_Size.x - (m_Size.x * 0.04)))
-	{
-		m_iInputOffset--;
-		goto check;
-	}
-	else
-	{
-	ret:
-		cp1251_to_utf8(m_utf8Input, &m_sInput.c_str()[m_iInputOffset]);
-		return;
-	}
 }
+extern bool ProcessLocalCommands(const char str[]);
 
 void CKeyBoard::Send()
 {
-	if (m_pHandler)
-	{
-		if (sME)
-		{
+	if(!m_sInput.empty()) {
+
+		if (sME) {
 			m_sInput = "/me " + m_sInput;
-		}
-		else if (sTRY)
-		{
+		} else if (sTRY) {
 			m_sInput = "/try " + m_sInput;
-		}
-		else if (sDO)
-		{
+		} else if (sDO) {
 			m_sInput = "/do " + m_sInput;
-		}
-		else if (sGOV)
-		{
+		} else if (sGOV) {
 			m_sInput = "/gnews " + m_sInput;
 		}
-		m_pHandler(m_sInput.c_str());
-		if (m_pkHistory && !IsHidden())
-			m_pkHistory->AddStringToHistory(m_sInput);
+
+		if (m_pkHistory) m_pkHistory->AddStringToHistory(m_sInput);
+
+		if (m_sInput[0] == '/') {
+			if (!ProcessLocalCommands(m_sInput.c_str())) {
+				pNetGame->SendChatCommand(m_sInput.c_str());
+			}
+		} else {
+			pNetGame->SendChatMessage(m_sInput.c_str());
+		}
 	}
+
 	m_bEnable = false;
+	pHud->ToggleChatInput(false);
+
 	g_pJavaWrapper->ShowServerLogo();
 	if(pNetGame->m_GreenZoneState)g_pJavaWrapper->ShowGreenZone();
 	if(pGame->isCasinoDiceActive)g_pJavaWrapper->TempToggleCasinoDice(true);
@@ -2344,6 +2280,7 @@ void CKeyBoard::Flush()
 		return;
 
 	m_sInput.clear();
+	pHud->AddToChatInput(m_sInput.c_str());
 	m_iInputOffset = 0;
 	memset(m_utf8Input, 0, sizeof(m_utf8Input) - 1);
 }
@@ -2361,21 +2298,6 @@ void CKeyBoard::EnableOldKeyboard()
 bool CKeyBoard::IsNewKeyboard()
 {
 	return m_bNewKeyboard;
-}
-
-void CKeyBoard::ProcessInputCommands()
-{
-	std::string *pStr = nullptr;
-	while (pStr = bufferedStrings.ReadLock())
-	{
-		if (m_pHandler)
-		{
-			m_pHandler(pStr->c_str());
-		}
-		Close();
-
-		bufferedStrings.ReadUnlock();
-	}
 }
 
 void CKeyBoard::OnNewKeyboardInput(JNIEnv *pEnv, jobject thiz, jbyteArray str)
@@ -2398,4 +2320,57 @@ void CKeyBoard::OnNewKeyboardInput(JNIEnv *pEnv, jobject thiz, jbyteArray str)
 	bufferedStrings.WriteUnlock();
 
 	pEnv->ReleaseByteArrayElements(str, pMsg, JNI_ABORT);
+}
+
+extern void ToggleTab();
+bool ProcessLocalCommands(const char str[])
+{
+	if (strcmp(str, "/q") == 0)
+	{
+		// Update this flag so DoGameRestart finishes the game.
+		*(uint8_t *)(g_libGTASA + 0x63E094) = 0;
+
+		// DoGameRestart
+		((void (*)())(g_libGTASA + 0x261C8C + 1))();
+		return true;
+	}
+
+	if (strstr(str, "/reconnect"))
+	{
+		pNetGame->ShutDownForGameRestart();
+		pNetGame->SetGameState(GAMESTATE_WAIT_CONNECT);
+		return true;
+	}
+
+//	if (strstr(str, "/chat"))
+//	{
+//		pHud->ToggleChat( !pHud->isChatOn);
+//		return true;
+//	}
+
+
+	if (strstr(str, "/tab"))
+	{
+		ToggleTab();
+		return true;
+	}
+	if (strstr(str, "/dl"))
+	{
+		pGame->isDlinfocar = !pGame->isDlinfocar;
+		return true;
+	}
+
+	if (strstr(str, "/settings"))
+	{
+		g_pJavaWrapper->ShowClientSettings();
+		return true;
+	}
+
+	if (strstr(str, "/fpsinfo"))
+	{
+		CDebugInfo::ToggleDebugDraw();
+		return true;
+	}
+
+	return false;
 }

@@ -1,11 +1,9 @@
 #include "../main.h"
 #include "../game/game.h"
-#include "../chatwindow.h"
 #include "../net/netgame.h"
 #include "../CSettings.h"
 
 extern CGame *pGame;
-extern CChatWindow *pChatWindow;
 extern CNetGame *pNetGame;
 extern CSettings *pSettings;
 
