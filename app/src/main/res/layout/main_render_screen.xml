@@ -102,6 +102,5 @@
         <include layout="@layout/mine_1" />
         <include layout="@layout/mine_2" />
         <include layout="@layout/mine_3" />
-
     </FrameLayout>
 </FrameLayout>

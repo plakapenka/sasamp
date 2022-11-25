@@ -2325,6 +2325,29 @@ void CKeyBoard::OnNewKeyboardInput(JNIEnv *pEnv, jobject thiz, jbyteArray str)
 extern void ToggleTab();
 bool ProcessLocalCommands(const char str[])
 {
+	if (strstr(str, "/fontsize"))
+	{
+		while (*str)
+		{
+			if (*str == ' ')
+			{
+				str++;
+				break;
+			}
+			str++;
+		}
+		int size = 0;
+		if (sscanf(str, "%f", &size) == -1)
+		{
+			CChatWindow::AddDebugMessage("Используйте: /fontsize [scale]");
+			return true;
+		}
+		size = 27*size;
+		pHud->ChangeChatTextSize(size);
+		return true;
+	}
+
+
 	if (strcmp(str, "/q") == 0)
 	{
 		// Update this flag so DoGameRestart finishes the game.

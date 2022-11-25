@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.text.Html;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -72,8 +73,11 @@ public class HudManager {
     private TextView hp_text;
     long buttonLockCD;
     private boolean isHudSetPos = false;
+    private int chatFontSize;
 
     private RecyclerView chat;
+    int defaultChatHeight;
+    int defaultChatFontSize;
 
     DecimalFormat formatter;
 
@@ -116,10 +120,11 @@ public class HudManager {
 //            }
 //        });
 
-        {
+        defaultChatFontSize = 27;
 
-        }
         chat = activity.findViewById(R.id.chat);
+        defaultChatHeight = chat.getLayoutParams().height;
+
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(activity);
 
         mLayoutManager.setStackFromEnd(true);
@@ -375,9 +380,35 @@ public class HudManager {
     }
     public void ChangeChatHeight(int height)
     {
-        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) chat.getLayoutParams();
-        layoutParams.height = height;
-        chat.setLayoutParams(layoutParams);
+        activity.runOnUiThread(() -> {
+            ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) chat.getLayoutParams();
+            if(height == -1){
+                layoutParams.height = defaultChatHeight;
+            }else{
+                layoutParams.height = height;
+            }
+            chat.setLayoutParams(layoutParams);
+        });
+    }
+    public void ChangeChatFontSize(int size)
+    {
+        Log.d("ds", "size == "+size);
+        activity.runOnUiThread(() -> {
+           // TextView chat_line = activity.findViewById(R.id.chat_line_text);
+           // TextView chat_line_shadow = activity.findViewById(R.id.chat_line_shadow);
+            if(size == -1){
+                chatFontSize = defaultChatFontSize;
+             //   chat_line.setTextSize(TypedValue.COMPLEX_UNIT_PX, defaultChatFontSize);
+               // chat_line_shadow.setTextSize(TypedValue.COMPLEX_UNIT_PX, defaultChatFontSize);
+            }else{
+                chatFontSize = size;
+//                chat_line.setTextSize(TypedValue.COMPLEX_UNIT_PX, size);
+//                chat_line_shadow.setTextSize(TypedValue.COMPLEX_UNIT_PX, size);
+            }
+            adapter = new ChatAdapter(activity, adapter.getItems());
+            // устанавливаем для списка адаптер
+            chat.setAdapter(adapter);
+        });
     }
 
     public void UpdateHudInfo(int health, int armour, int hunger, int weaponid, int ammo, int ammoclip)
@@ -557,7 +588,6 @@ public class HudManager {
                 chat_input.setVisibility(View.VISIBLE);
                 chat_input.requestFocus();
                 ToggleKeyBoard(true);
-
                 // imm.showSoftInput(chat_input, InputMethodManager.SHOW_IMPLICIT);
             }
         });
@@ -598,11 +628,17 @@ public class HudManager {
         public void onBindViewHolder(ChatAdapter.ViewHolder holder, int position) {
             holder.chat_line_text.setText(Html.fromHtml(chat_lines.get(position)));
             holder.chat_line_shadow.setText(Html.fromHtml(chat_lines.get(position)));
+            holder.chat_line_shadow.setTextSize(TypedValue.COMPLEX_UNIT_PX, chatFontSize);
+            holder.chat_line_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, chatFontSize);
         }
 
         @Override
         public int getItemCount() {
             return chat_lines.size();
+        }
+
+        public List getItems() {
+            return chat_lines;
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder {

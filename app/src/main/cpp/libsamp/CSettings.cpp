@@ -6,6 +6,8 @@
 #include "game/CAdjustableHudPosition.h"
 #include "game/CAdjustableHudScale.h"
 #include "java_systems/hud.h"
+extern CGame* pGame;
+extern CHUD *pHud;
 
 static void ClearBackslashN(char *pStr, size_t size)
 {
@@ -39,7 +41,11 @@ void CSettings::ToDefaults(int iCategory)
 	fclose(pFile);
 
 	Save(iCategory);
-	LoadSettings(m_Settings.szNickName, m_Settings.iChatMaxMessages);
+	LoadSettings(m_Settings.szNickName);
+
+	pHud->ChangeChatHeight(m_Settings.iChatMaxMessages);
+	pHud->ChangeChatTextSize(m_Settings.iChatFontSize);
+
 }
 
 void CSettings::Save(int iIgnoreCategory)
@@ -70,11 +76,6 @@ void CSettings::Save(int iIgnoreCategory)
 	ini_table_create_entry_as_float(config, "gui", "FontSize", m_Settings.fFontSize);
 	ini_table_create_entry_as_int(config, "gui", "FontOutline", m_Settings.iFontOutline);
 
-	ini_table_create_entry_as_int(config, "gui", "ChatMaxMessages", m_Settings.iChatMaxMessages);
-
-	ini_table_create_entry_as_float(config, "gui", "HealthBarWidth", m_Settings.fHealthBarWidth);
-	ini_table_create_entry_as_float(config, "gui", "HealthBarHeight", m_Settings.fHealthBarHeight);
-
 	if (iIgnoreCategory != 2)
 	{
 
@@ -95,6 +96,9 @@ void CSettings::Save(int iIgnoreCategory)
 
 	if (iIgnoreCategory != 1)
 	{
+		ini_table_create_entry_as_int(config, "gui", "ChatFontSize", m_Settings.iChatFontSize);
+		ini_table_create_entry_as_int(config, "gui", "ChatMaxMessages", m_Settings.iChatMaxMessages);
+
 		ini_table_create_entry_as_int(config, "gui", "cutout", m_Settings.iCutout);
 		ini_table_create_entry_as_int(config, "gui", "androidKeyboard", m_Settings.iAndroidKeyboard);
 		ini_table_create_entry_as_int(config, "gui", "outfit", m_Settings.iOutfitGuns);
@@ -179,8 +183,7 @@ stSettings &CSettings::GetWrite()
 	Save();
 	return m_Settings;
 }
-extern CGame* pGame;
-extern CHUD *pHud;
+
 void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 {
 	char tempNick[40];
@@ -249,12 +252,10 @@ void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 	}
 
 	m_Settings.fFontSize = ini_table_get_entry_as_float(config, "gui", "FontSize", 30.0f);
+	m_Settings.iChatFontSize = ini_table_get_entry_as_int(config, "gui", "ChatFontSize", -1);
 	m_Settings.iFontOutline = ini_table_get_entry_as_int(config, "gui", "FontOutline", 2);
 
-	m_Settings.iChatMaxMessages = ini_table_get_entry_as_int(config, "gui", "ChatMaxMessages", 60);
-
-	m_Settings.fHealthBarWidth = ini_table_get_entry_as_float(config, "gui", "HealthBarWidth", 60.0f);
-	m_Settings.fHealthBarHeight = ini_table_get_entry_as_float(config, "gui", "HealthBarHeight", 10.0f);
+	m_Settings.iChatMaxMessages = ini_table_get_entry_as_int(config, "gui", "ChatMaxMessages", -1);
 
 	m_Settings.fButtonMicrophoneSize = ini_table_get_entry_as_float(config, "gui", "MicrophoneSize", 130.0f);
 	m_Settings.fButtonMicrophoneX = ini_table_get_entry_as_float(config, "gui", "MicrophoneX", 1650.0f);
@@ -365,6 +366,19 @@ Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_ChatLineChanged(J
 	{
 		pSettings->GetWrite().iChatMaxMessages = newcount;
 		pSettings->Save();
+	}
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_ChatFontSizeChanged(JNIEnv *env,
+																				   jobject thiz,
+																				   jint size) {
+	if (pSettings)
+	{
+		pSettings->GetWrite().iChatFontSize = size;
+		pSettings->Save();
+        pHud->ChangeChatTextSize(size);
 	}
 }
 

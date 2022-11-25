@@ -40,11 +40,22 @@ void CHUD::InitServerLogo(int serverID) {
 
 void CHUD::ChangeChatHeight(int height) {
     JNIEnv* env = g_pJavaWrapper->GetEnv();
+    if(!env)return;
 
     jclass clazz = env->GetObjectClass(jHudManager);
     jmethodID ChangeChatHeight = env->GetMethodID(clazz, "ChangeChatHeight", "(I)V");
 
     env->CallVoidMethod(jHudManager, ChangeChatHeight, height);
+}
+
+void CHUD::ChangeChatTextSize(int size) {
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+    if(!env)return;
+
+    jclass clazz = env->GetObjectClass(jHudManager);
+    jmethodID ChangeChatFontSize = env->GetMethodID(clazz, "ChangeChatFontSize", "(I)V");
+
+    env->CallVoidMethod(jHudManager, ChangeChatFontSize, size);
 }
 
 extern "C"
@@ -56,6 +67,7 @@ Java_com_liverussia_cr_gui_HudManager_HudInit(JNIEnv *env, jobject thiz) {
 
     pHud->ToggleHpText(pSettings->GetWrite().iHPArmourText);
     pHud->ChangeChatHeight(pSettings->GetWrite().iChatMaxMessages);
+    pHud->ChangeChatTextSize(pSettings->GetWrite().iChatFontSize);
 
 }
 extern bool showSpeedometr;

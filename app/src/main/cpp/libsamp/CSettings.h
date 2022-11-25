@@ -18,12 +18,10 @@ struct stSettings
 	// gui
 	char szFont[40];
 	float fFontSize;
+	int iChatFontSize;
 	int iFontOutline;
 
 	int iChatMaxMessages;
-
-	float fHealthBarWidth;
-	float fHealthBarHeight;
 
 	int iFPS;
 
@@ -65,7 +63,7 @@ public:
 
 	const stSettings& GetReadOnly();
 	stSettings& GetWrite();
-	void LoadSettings(const char* szNickName, int iChatLines = 8);
+	void LoadSettings(const char* szNickName, int iChatLines = -1);
 private:
 	stSettings m_Settings;
 };

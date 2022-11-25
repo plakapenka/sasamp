@@ -2,11 +2,13 @@ package com.liverussia.cr.core;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
@@ -76,7 +78,7 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
 
 
 
-                mContext = (NvEventQueueActivity) getActivity();
+        mContext = (NvEventQueueActivity) getActivity();
 
         mRootView = inflater.inflate(R.layout.dialog_settings_common,container,false);
 
@@ -88,22 +90,28 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
         mSwitchRadarrect = mRootView.findViewById(R.id.switch_radar_rect);
         mSwitchSkyBox = mRootView.findViewById(R.id.switch_skybox);
         chat_line_count = mRootView.findViewById(R.id.chat_line_count);
-        chat_line_count.setProgress(mContext.findViewById(R.id.chat).getHeight());
-//        chat_font_size = mRootView.findViewById(R.id.chat_font_size);
+        chat_line_count.setProgress(mContext.findViewById(R.id.chat).getLayoutParams().height);
+        chat_font_size = mRootView.findViewById(R.id.chat_font_size);
+        TextView chatlinelayout = mContext.findViewById(R.id.chat_line_text);
+        chat_font_size.setProgress((int) chatlinelayout.getTextSize());
 
-//        chat_font_size.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-//            @Override
-//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-//                ChatFontSizeChanged(progress);
-//            }
-//            @Override public void onStartTrackingTouch(SeekBar seekBar) {
-//
-//            }
-//
-//            @Override public void onStopTrackingTouch(SeekBar seekBar) {
-//
-//            }
-//        });
+        chat_font_size.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//                TextView chatlinelayout = mContext.findViewById(R.id.chat_line_text);
+//                TextView chat_shadow = mContext.findViewById(R.id.chat_line_shadow);
+//                chatlinelayout.setTextSize(TypedValue.COMPLEX_UNIT_PX, progress);
+//                chat_shadow.setTextSize(TypedValue.COMPLEX_UNIT_PX, progress);
+                ChatFontSizeChanged(progress);
+            }
+            @Override public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
         chat_line_count.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override

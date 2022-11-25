@@ -433,6 +433,7 @@ extern "C"
 		if (pSettings)
 		{
 			pSettings->ToDefaults(category);
+
 			//CChatWindow::m_bPendingReInit = true;
 		}
 	}
@@ -1605,17 +1606,7 @@ Java_com_liverussia_cr_gui_Casino_1LuckyWheel_ClickButt(JNIEnv *env, jobject thi
 	pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
 }
 
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_ChatFontSizeChanged(JNIEnv *env,
-																				   jobject thiz,
-																				   jint size) {
-	if (pSettings)
-	{
-		pSettings->GetWrite().fFontSize = size;
-		//CChatWindow::m_bPendingReInit = true;
-	}
-}
+
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_PreDeath_OnClickPreDeathButton(JNIEnv *env, jobject thiz,

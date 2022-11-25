@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SeekBar;
 
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.DialogFragment;
@@ -69,6 +70,9 @@ public class DialogClientSettings extends DialogFragment {
                 fragment.getValues();
 
                 mContext.onSettingsWindowSave();
+
+                getDialog().dismiss();
+
             }
         });
 

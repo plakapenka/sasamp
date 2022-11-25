@@ -641,7 +641,7 @@
     <com.factor.bouncy.BouncyRecyclerView
         android:id="@+id/chat"
         android:layout_width="@dimen/_380sdp"
-        android:layout_height="@dimen/_70sdp"
+        android:layout_height="@dimen/_71sdp"
         android:layout_marginStart="@dimen/_180sdp"
         android:layout_marginTop="@dimen/_5sdp"
         app:layout_constraintStart_toStartOf="parent"
@@ -653,7 +653,7 @@
         android:scrollbarStyle="insideInset"
         android:scrollbarThumbVertical="@drawable/chat_scroll_front"
         android:scrollbarTrackVertical="@drawable/chat_scroll_back"
-        android:scrollbars="vertical"
+        android:scrollbars="none"
         >
 
     </com.factor.bouncy.BouncyRecyclerView>

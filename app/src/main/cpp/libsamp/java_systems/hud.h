@@ -60,6 +60,8 @@ public:
     void ChangeChatHeight(int height);
 
     void ToggleChat(bool toggle);
+
+    void ChangeChatTextSize(int size);
 };
 
 

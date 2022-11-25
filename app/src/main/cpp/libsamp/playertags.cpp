@@ -351,8 +351,8 @@ void CPlayerTags::Draw(VECTOR* vec, char* szName, uint32_t dwColor,
 	HealthBarColor = ImColor( 0xB9, 0x22, 0x28, 0xFF );
 	HealthBarBGColor = ImColor( 0x4B, 0x0B, 0x14, 0xFF );
 
-	float fWidth = pGUI->ScaleX( pSettings->GetReadOnly().fHealthBarWidth );
-	float fHeight = pGUI->ScaleY( pSettings->GetReadOnly().fHealthBarHeight );
+	float fWidth = pGUI->ScaleX( 60.0f );
+	float fHeight = pGUI->ScaleY( 10.0f );
 	float fOutline = (float)pSettings->GetReadOnly().iFontOutline;
 
 	// top left

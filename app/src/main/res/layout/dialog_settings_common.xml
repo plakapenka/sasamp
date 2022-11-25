@@ -166,35 +166,37 @@
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
-<!--            <androidx.appcompat.widget.LinearLayoutCompat-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent"-->
-<!--                android:layout_marginTop="5dp"-->
-<!--                android:layout_marginBottom="5dp"-->
-<!--                android:layout_weight="0.5"-->
-<!--                android:gravity="center"-->
-<!--                android:orientation="horizontal"-->
-<!--                android:weightSum="4.0">-->
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="0.5"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="4.0">
 
-<!--                <androidx.appcompat.widget.AppCompatTextView-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:paddingLeft="10dp"-->
-<!--                    android:paddingTop="5dp"-->
-<!--                    android:paddingRight="10dp"-->
-<!--                    android:paddingBottom="5dp"-->
-<!--                    android:text="Размер шрифта"-->
-<!--                    android:textColor="@android:color/white"-->
-<!--                    android:textSize="12sp" />-->
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="5dp"
+                    android:paddingRight="10dp"
+                    android:paddingBottom="5dp"
+                    android:text="Размер шрифта чата"
+                    android:textColor="@android:color/white"
+                    android:textSize="11sp" />
 
-<!--                <SeekBar-->
-<!--                    android:id="@+id/chat_font_size"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:max="40"-->
-<!--                    android:progress="30" />-->
+                <SeekBar
+                    android:id="@+id/chat_font_size"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="40"
+                    android:progress="30" />
 
-<!--            </androidx.appcompat.widget.LinearLayoutCompat>-->
+
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
