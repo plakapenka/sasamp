@@ -229,6 +229,7 @@ public class LoaderActivity extends AppCompatActivity {
 
             if (StringUtils.isNotBlank(nickname)) {
                 startActivity(new Intent(this, GTASA.class));
+                this.finish();
                 return;
             }
 
