@@ -1,11 +1,17 @@
 package com.liverussia.launcher.async;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.view.WindowManager;
+import android.widget.ProgressBar;
 
 import androidx.annotation.UiThread;
 import androidx.annotation.WorkerThread;
 
 import com.liverussia.launcher.activity.MainActivity;
+import com.liverussia.launcher.activity.dialogs.DialogProgress;
 import com.liverussia.launcher.async.domain.AsyncTaskResult;
 import com.liverussia.launcher.async.listener.OnAsyncCriticalErrorListener;
 import com.liverussia.launcher.async.listener.OnAsyncSuccessListener;
@@ -53,7 +59,8 @@ public class CacheChecker implements Listener<FileInfo[]> {
     private final UiThreadPoster uiThreadPoster;
     private final BackgroundThreadPoster backgroundThreadPoster;
 
-    private ProgressDialog progressDialog;
+//    private ProgressDialog progressDialog;
+    private DialogProgress dialogProgress;
     private OnAsyncSuccessListenerWithResponse<FileInfo[]> onAsyncSuccessListener;
     private OnAsyncCriticalErrorListener onAsyncCriticalErrorListener;
 
@@ -75,9 +82,11 @@ public class CacheChecker implements Listener<FileInfo[]> {
 
     @UiThread
     private void startProgressBar() {
-        progressDialog = ProgressDialog.show(mainActivity,
-                "Идет проверка файлов",
-                "Не выключайте устройство и не выходите из игры");
+        mainActivity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+        dialogProgress = new DialogProgress();
+        dialogProgress.show(mainActivity.getSupportFragmentManager(), "progressDialog");
     }
 
     @WorkerThread
@@ -222,7 +231,8 @@ public class CacheChecker implements Listener<FileInfo[]> {
     @UiThread
     @Override
     public void onAsyncFinished(AsyncTaskResult<FileInfo[]> result) {
-        progressDialog.dismiss();
+        mainActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        dialogProgress.dismiss();
 
         if (result.getException() != null) {
             ApiException apiException = result.getException();

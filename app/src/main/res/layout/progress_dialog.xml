@@ -1,0 +1,11 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content">
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="68dip"
+        android:layout_height="68dip"
+        android:layout_gravity = "center"
+        android:indeterminateDrawable="@drawable/circle_progress_bar"
+        android:indeterminateOnly="true" />
+</FrameLayout>
