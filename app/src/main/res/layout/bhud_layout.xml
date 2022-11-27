@@ -658,21 +658,81 @@
 
     </com.factor.bouncy.BouncyRecyclerView>
 
-    <EditText
-        android:visibility="gone"
-        android:inputType="none"
-        android:textIsSelectable="true"
-        android:textColor="@color/white"
-        android:paddingLeft="@dimen/_3sdp"
-        android:fontFamily="@font/visby_round_cf_extra_bold"
-        android:imeOptions="flagNoExtractUi|actionSend"
-        android:id="@+id/chat_input"
-        android:singleLine="true"
-        android:layout_width="@dimen/_380sdp"
-        android:layout_height="@dimen/_20sdp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/chat_input"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/chat_input_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="@+id/chat"
+        android:layout_marginTop="@dimen/_3sdp"
         app:layout_constraintStart_toStartOf="@+id/chat"
-        app:layout_constraintTop_toBottomOf="@+id/chat" />
+        app:layout_constraintTop_toBottomOf="@+id/chat">
+
+        <AutoCompleteTextView
+            android:id="@+id/chat_input"
+            android:layout_width="@dimen/_380sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:background="@drawable/chat_input"
+            android:completionThreshold="2"
+            android:fontFamily="@font/visby_round_cf_extra_bold"
+            android:imeOptions="flagNoExtractUi|actionSend"
+            android:inputType="none"
+            android:paddingLeft="@dimen/_3sdp"
+            android:singleLine="true"
+            android:textColor="@color/white"
+
+            android:textIsSelectable="true"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:backgroundTint="#9c27b0"
+        android:id="@+id/me_button"
+        android:layout_width="@dimen/_22sdp"
+        android:layout_height="@dimen/_15sdp"
+        android:layout_marginTop="@dimen/_2sdp"
+        android:background="@drawable/chat_input"
+        android:gravity="center"
+        android:fontFamily="@font/visby_round_cf_extra_bold"
+        android:text="/me"
+        android:textColor="#DDDDDB"
+        android:textSize="@dimen/_6sdp"
+        app:layout_constraintStart_toStartOf="@+id/chat_input"
+        app:layout_constraintTop_toBottomOf="@+id/chat_input" />
+
+    <TextView
+        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:id="@+id/try_button"
+        android:layout_width="@dimen/_22sdp"
+        android:layout_height="@dimen/_15sdp"
+        android:layout_marginStart="@dimen/_3sdp"
+        android:layout_marginTop="@dimen/_2sdp"
+        android:background="@drawable/chat_input"
+        android:fontFamily="@font/visby_round_cf_extra_bold"
+        android:gravity="center"
+        android:text="/try"
+        android:textColor="#DDDDDB"
+        android:textSize="@dimen/_6sdp"
+        app:layout_constraintStart_toEndOf="@+id/me_button"
+        app:layout_constraintTop_toBottomOf="@+id/chat_input" />
+
+    <TextView
+        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:id="@+id/do_button"
+        android:layout_width="@dimen/_22sdp"
+        android:layout_height="@dimen/_15sdp"
+        android:layout_marginStart="@dimen/_3sdp"
+        android:layout_marginTop="@dimen/_2sdp"
+        android:background="@drawable/chat_input"
+        android:fontFamily="@font/visby_round_cf_extra_bold"
+        android:gravity="center"
+        android:text="/do"
+        android:textColor="#DDDDDB"
+        android:textSize="@dimen/_6sdp"
+        app:layout_constraintStart_toEndOf="@+id/try_button"
+        app:layout_constraintTop_toBottomOf="@+id/chat_input" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,6 +3,8 @@ package com.liverussia.cr.gui;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.text.Html;
 import android.util.Log;
 import android.util.TypedValue;
@@ -11,6 +13,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -67,10 +71,19 @@ public class HudManager {
     private TextView opg_defender_score;
     private TextView opg_time_text;
     private ImageView hud_bg;
-    private ConstraintLayout chat_layout;
-    private EditText chat_input;
+    private AutoCompleteTextView chat_input;
+    private ConstraintLayout chat_input_layout;
     private TextView armour_text;
     private TextView hp_text;
+    private TextView me_button;
+    private TextView try_button;
+    private TextView do_button;
+
+    private final int INVALID = -1;
+    private final int ME_BUTTON = 0;
+    private final int DO_BUTTON = 1;
+    private final int TRY_BUTTON = 2;
+    private int chat_button = -1;
     long buttonLockCD;
     private boolean isHudSetPos = false;
     private int chatFontSize;
@@ -90,6 +103,7 @@ public class HudManager {
     public native void SetRadarPos(float x1, float y1);
     public native void ToggleKeyBoard(boolean toggle);
     public native void SendChatMessage(byte str[]);
+    public native void SendChatButton(int buttonID);
     ChatAdapter adapter;
 
     ArrayList<String> chat_lines = new ArrayList<>();
@@ -101,8 +115,59 @@ public class HudManager {
         armour_text = activity.findViewById(R.id.armour_text);
         hp_text = activity.findViewById(R.id.hp_text);
 
+        // ================ CHAT
+        me_button = activity.findViewById(R.id.me_button);
+        me_button.setOnClickListener(view -> {
+            if(chat_button == ME_BUTTON){
+                me_button.setBackgroundTintList(null);
+                chat_button = INVALID;
+            }else {
+                chat_button = ME_BUTTON;
+                SendChatButton(chat_button);
+                me_button.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#9c27b0")));
+                try_button.setBackgroundTintList(null);
+                do_button.setBackgroundTintList(null);
+            }
+        });
+
+        try_button = activity.findViewById(R.id.try_button);
+        try_button.setOnClickListener(view -> {
+            if(chat_button == TRY_BUTTON){
+                try_button.setBackgroundTintList(null);
+                chat_button = INVALID;
+            }else {
+                chat_button = TRY_BUTTON;
+                SendChatButton(chat_button);
+                try_button.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#087f23")));
+                me_button.setBackgroundTintList(null);
+                do_button.setBackgroundTintList(null);
+            }
+        });
+
+        do_button = activity.findViewById(R.id.do_button);
+        do_button.setOnClickListener(view -> {
+            if(chat_button == DO_BUTTON){
+                do_button.setBackgroundTintList(null);
+                chat_button = INVALID;
+            }else {
+                chat_button = DO_BUTTON;
+                SendChatButton(chat_button);
+                do_button.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#c67100")));
+                try_button.setBackgroundTintList(null);
+                me_button.setBackgroundTintList(null);
+            }
+        });
+
+        chat_input_layout = activity.findViewById(R.id.chat_input_layout);
+        chat_input_layout.setVisibility(View.GONE);
         chat_input = activity.findViewById(R.id.chat_input);
         chat_input.setShowSoftInputOnFocus(false);
+
+        String[] cities = {"Москва", "Самара", "Вологда", "Волгоград", "Саратов", "Воронеж"};
+       // AutoCompleteTextView autoCompleteTextView = findViewById(R.id.autocomplete);
+        // Создаем адаптер для автозаполнения элемента AutoCompleteTextView
+        ArrayAdapter<String> autocompleete = new ArrayAdapter (activity, R.layout.chat_autocompleete_line, cities);
+        chat_input.setAdapter(autocompleete);
 //        chat_input.setOnEditorActionListener(new EditText.OnEditorActionListener() {
 //            @Override
 //            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -572,21 +637,21 @@ public class HudManager {
     public void AddToChatInput(String msg){
         activity.runOnUiThread(() -> {
             chat_input.setText(msg);
-            chat_input.setSelection(msg.length());
+           // chat_input.setSelection(msg.length());
         });
 
     }
     public void ClickChatj(){
         activity.runOnUiThread(() -> {
             InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-            if (chat_input.getVisibility() == View.VISIBLE) {
-                chat_input.setVisibility(View.GONE);
+            if (chat_input_layout.getVisibility() == View.VISIBLE) {
+                chat_input_layout.setVisibility(View.GONE);
                 ToggleKeyBoard(false);
                 //   imm.hideSoftInputFromWindow(chat_input.getWindowToken(), 0);
 
             } else {
-                chat_input.setVisibility(View.VISIBLE);
-                chat_input.requestFocus();
+                chat_input_layout.setVisibility(View.VISIBLE);
+             //   chat_input.requestFocus();
                 ToggleKeyBoard(true);
                 // imm.showSoftInput(chat_input, InputMethodManager.SHOW_IMPLICIT);
             }
@@ -598,9 +663,9 @@ public class HudManager {
         activity.runOnUiThread(() ->
         {
             if(toggle){
-                chat_input.setVisibility(View.VISIBLE);
+                chat_input_layout.setVisibility(View.VISIBLE);
             }else {
-                chat_input.setVisibility(View.GONE);
+                chat_input_layout.setVisibility(View.GONE);
             }
         });
     }

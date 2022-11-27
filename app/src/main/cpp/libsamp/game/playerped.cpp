@@ -862,6 +862,11 @@ bool CPlayerPed::IsHasAttach()
 	return false;
 }
 
+bool CPlayerPed::IsValidAttach(int iSlot)
+{
+	if(m_aAttachedObjects[iSlot].bState)return true;
+	return false;
+}
 void CPlayerPed::FlushAttach()
 {
 	for (int i = 0; i < MAX_ATTACHED_OBJECTS; i++)

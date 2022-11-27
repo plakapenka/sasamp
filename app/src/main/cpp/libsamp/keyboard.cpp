@@ -46,10 +46,7 @@ CKeyBoard::CKeyBoard()
 	m_iPushedKey = -1;
 	chatinputposx = 0;
 
-	sME = false;
-	sTRY = false;
-	sDO = false;
-	sGOV = false;
+	dop_butt = -1;
 
 	m_utf8Input[0] = '\0';
 	m_iInputOffset = 0;
@@ -552,14 +549,19 @@ void CKeyBoard::Send()
 {
 	if(!m_sInput.empty()) {
 
-		if (sME) {
-			m_sInput = "/me " + m_sInput;
-		} else if (sTRY) {
-			m_sInput = "/try " + m_sInput;
-		} else if (sDO) {
-			m_sInput = "/do " + m_sInput;
-		} else if (sGOV) {
-			m_sInput = "/gnews " + m_sInput;
+		switch (dop_butt) {
+			case 0:{
+				m_sInput = "/me " + m_sInput;
+				break;
+			}
+			case 1:{
+				m_sInput = "/do " + m_sInput;
+				break;
+			}
+			case 2:{
+				m_sInput = "/try " + m_sInput;
+				break;
+			}
 		}
 
 		if (m_pkHistory) m_pkHistory->AddStringToHistory(m_sInput);
@@ -2396,4 +2398,10 @@ bool ProcessLocalCommands(const char str[])
 	}
 
 	return false;
+}
+extern CKeyBoard *pKeyBoard;
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_HudManager_SendChatButton(JNIEnv *env, jobject thiz, jint button_id) {
+	pKeyBoard->dop_butt = button_id;
 }

@@ -60,6 +60,7 @@ public:
 
 	std::string m_sInput;
 
+	int dop_butt;
 private:
 	void Render();
 	bool OnTouchEvent(int type, bool multi, int x, int y);
@@ -80,11 +81,6 @@ private:
 	float m_fKeySizeY;
 	float m_fKeySizeX;
 	float m_fFontSize;
-
-	bool sME;
-	bool sTRY;
-	bool sDO;
-	bool sGOV;
 
 	bool m_iPushedKeyUp;
 	bool m_iPushedKeyDown;

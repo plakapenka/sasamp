@@ -192,6 +192,8 @@ uint32_t CLocalPlayer::GetCurrentAnimationIndexFlag()
 extern bool g_uiHeadMoveEnabled;
 extern bool tabToggle;
 #include "..//game/CWeaponsOutFit.h"
+#include "java_systems/CEditobject.h"
+
 bool CLocalPlayer::Process()
 {
 	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
@@ -457,7 +459,7 @@ bool CLocalPlayer::Process()
 	bool needDrawableHud = true;
 	if(pGame->isDialogActive || pGame->isCasinoDiceActive || tabToggle || pGame->isAutoShopActive
 	|| pGame->isCasinoWheelActive || !m_pPlayerPed || pGame->isRegistrationActive || pGame->isShopStoreActive ||
-    pGame->isPreDeathActive || pInventory->isToggle || bFirstSpawn)
+    pGame->isPreDeathActive || pInventory->isToggle || bFirstSpawn /*|| CEditobject::isToggle*/)
 	{
 		needDrawableHud = false;
 	}

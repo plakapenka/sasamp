@@ -152,4 +152,5 @@ public:
     bool m_iPissingState = false;
 	DWORD m_dwPissParticlesHandle = 0;
 
+    bool IsValidAttach(int iSlot);
 };

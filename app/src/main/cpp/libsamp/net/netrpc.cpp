@@ -7,6 +7,7 @@
 #include "../util/CJavaWrapper.h"
 #include "../voice/CVoiceChatClient.h"
 #include "java_systems/hud.h"
+#include "java_systems/CEditobject.h"
 
 extern CVoiceChatClient* pVoice;
 bool g_IsVoiceServer();
@@ -20,6 +21,21 @@ int iNetModeNormalInCarSendRate		= NETMODE_INCAR_SENDRATE;
 int iNetModeFiringSendRate			= NETMODE_FIRING_SENDRATE;
 int iNetModeSendMultiplier 			= NETMODE_SEND_MULTIPLIER;
 
+
+void EditAttachedObject(RPCParameters *rpcParams) {
+	unsigned char * Data = reinterpret_cast<unsigned char *>(rpcParams->input);
+	int iBitLength = rpcParams->numberOfBitsOfData;
+
+	RakNet::BitStream bsData(Data,(iBitLength/8)+1,false);
+
+	uint32_t index;
+
+	bsData.Read(index);
+
+	CEditobject::StartEditAttachedObject(index);
+
+	Log("RPC: EditAttachedObject %d", index);
+}
 void InitGame(RPCParameters *rpcParams)
 {
 	Log("RPC: InitGame");
@@ -1357,6 +1373,8 @@ void UpdateScoresPingsIPs(RPCParameters* rpcParams)
 void RegisterRPCs(RakClientInterface* pRakClient)
 {
 	Log("Registering RPC's..");
+
+	pRakClient->RegisterAsRemoteProcedureCall(&RPC_EditAttachedObject, EditAttachedObject);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_InitGame, InitGame);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ServerJoin, ServerJoin);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ServerQuit, ServerQuit);

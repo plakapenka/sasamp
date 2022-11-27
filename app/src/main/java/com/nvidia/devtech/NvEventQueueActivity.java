@@ -56,6 +56,7 @@ import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
 import com.liverussia.cr.R;
 import com.liverussia.cr.core.DialogClientSettings;
+import com.liverussia.cr.gui.AttachEdit;
 import com.liverussia.cr.gui.AutoShop;
 import com.liverussia.cr.gui.CasinoDice;
 import com.liverussia.cr.gui.Casino_LuckyWheel;
@@ -182,6 +183,7 @@ public abstract class NvEventQueueActivity
     private FuelStationManager mFuelStationManager = null;
     private OilFactoryManager mOilFactoryManager = null;
     private ArmyGameManager mArmyGameManager = null;
+    private AttachEdit mAttachEdit = null;
     private ShopStoreManager mShopStoreManager = null;
     private GunShopManager mGunShopManager = null;
     private ChooseSpawn mChooseSpawn = null;
@@ -1049,6 +1051,7 @@ public abstract class NvEventQueueActivity
         mFuelStationManager = new FuelStationManager(this);
         mOilFactoryManager = new OilFactoryManager(this);
         mArmyGameManager = new ArmyGameManager(this);
+        mAttachEdit = new AttachEdit(this);
         mShopStoreManager = new ShopStoreManager(this);
         mGunShopManager = new GunShopManager(this);
         mChooseSpawn = new ChooseSpawn(this);

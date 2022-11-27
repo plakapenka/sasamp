@@ -6,6 +6,7 @@
 #include "../game/game.h"
 #include "net/netgame.h"
 #include "inventrory.h"
+#include "chatwindow.h"
 
 extern CJavaWrapper *g_pJavaWrapper;
 extern CINVENTORY *pInventory;
@@ -119,6 +120,11 @@ void CNetGame::Packet_InventoryUpdateCarryng(Packet* p)
     bs.Read(matrixindex);
     bs.Read(brutto);
     bs.Read(maxbrutto);
+
+    CChatWindow::AddDebugMessage("mat = %d, brutto = %d, max = %d",
+                                 matrixindex,
+                                 brutto,
+                                 maxbrutto);
 
     pInventory->UpdateCarryng(matrixindex, brutto, maxbrutto);
 

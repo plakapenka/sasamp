@@ -250,9 +250,7 @@ void CNetGame::Process()
 			m_dwLastConnectAttempt = GetTickCount();
 			return;
 		}*/
-        Log("blizko");
 		CChatWindow::AddDebugMessageNonFormatted(CLocalisation::GetMessage(E_MSG::CONNECTING));
-        Log("blizko2");
 		static bool sent = false;
 		CUDPSocket sock;
 		for (int i = 0; i < 100; i++)
@@ -446,6 +444,11 @@ void CNetGame::Packet_AuthRPC(Packet *p)
 			bs.Read(timepassed);
 			bs.Read(email_acvive);
 
+			CChatWindow::AddDebugMessage("toggle = %d, ip_match = %d, timepassed = %d, email_acvive = %d",
+										 toggle,
+										 ip_match,
+										 timepassed,
+										 email_acvive);
 			if (toggle == 1) {
 				CPlayerPool *pPlayerPool = GetPlayerPool();
 				if (pPlayerPool) {
@@ -542,6 +545,14 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 	//CChatWindow::AddDebugMessage("p %d rpc %d", packetID, rpcID);
 	switch (rpcID)
 	{
+		case 555:{
+			uint8_t gg;
+			bool tt;
+			bs.Read(gg);
+			bs.Read(tt);
+
+			Log("%d - %d", gg, tt);
+		}
 		case RPC_INVENTAR_CARRYNG: {
 			Packet_InventoryUpdateCarryng(p);
 			break;
