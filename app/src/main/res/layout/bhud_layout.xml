@@ -687,7 +687,6 @@
     <TextView
         android:foreground="?android:attr/selectableItemBackgroundBorderless"
         android:clickable="true"
-        android:backgroundTint="#9c27b0"
         android:id="@+id/me_button"
         android:layout_width="@dimen/_22sdp"
         android:layout_height="@dimen/_15sdp"

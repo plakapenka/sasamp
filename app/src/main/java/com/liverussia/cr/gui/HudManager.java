@@ -123,11 +123,11 @@ public class HudManager {
                 chat_button = INVALID;
             }else {
                 chat_button = ME_BUTTON;
-                SendChatButton(chat_button);
                 me_button.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#9c27b0")));
                 try_button.setBackgroundTintList(null);
                 do_button.setBackgroundTintList(null);
             }
+            SendChatButton(chat_button);
         });
 
         try_button = activity.findViewById(R.id.try_button);
@@ -137,11 +137,11 @@ public class HudManager {
                 chat_button = INVALID;
             }else {
                 chat_button = TRY_BUTTON;
-                SendChatButton(chat_button);
                 try_button.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#087f23")));
                 me_button.setBackgroundTintList(null);
                 do_button.setBackgroundTintList(null);
             }
+            SendChatButton(chat_button);
         });
 
         do_button = activity.findViewById(R.id.do_button);
@@ -151,11 +151,11 @@ public class HudManager {
                 chat_button = INVALID;
             }else {
                 chat_button = DO_BUTTON;
-                SendChatButton(chat_button);
                 do_button.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#c67100")));
                 try_button.setBackgroundTintList(null);
                 me_button.setBackgroundTintList(null);
             }
+            SendChatButton(chat_button);
         });
 
         chat_input_layout = activity.findViewById(R.id.chat_input_layout);
