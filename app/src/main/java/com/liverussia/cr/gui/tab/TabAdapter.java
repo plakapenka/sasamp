@@ -1,6 +1,5 @@
 package com.liverussia.cr.gui.tab;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.animation.AnimationUtils;
 
 import com.liverussia.cr.R;
-import com.liverussia.cr.core.Utils;
+import com.liverussia.cr.core.DownloadUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +45,7 @@ public class TabAdapter extends RecyclerView.Adapter implements Filterable {
         holder.level.setText(String.valueOf(data.getLevel()));
         holder.ping.setText(String.valueOf(data.getPing()));
         holder.View.setOnClickListener(view ->  {
-            view.startAnimation(AnimationUtils.loadAnimation(Utils.currentContext, R.anim.button_click));
+            view.startAnimation(AnimationUtils.loadAnimation(DownloadUtils.currentContext, R.anim.button_click));
         });
     }
 

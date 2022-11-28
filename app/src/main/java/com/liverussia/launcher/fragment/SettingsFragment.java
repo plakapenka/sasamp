@@ -13,14 +13,14 @@ import android.widget.*;
 import androidx.fragment.app.Fragment;
 
 import com.liverussia.cr.R;
+import com.liverussia.cr.core.DownloadUtils;
 import com.liverussia.launcher.activity.dialogs.EnterNicknameDialogBuilder;
+import com.liverussia.launcher.enums.DownloadType;
 import com.liverussia.launcher.enums.NativeStorageElements;
-import com.liverussia.launcher.enums.StorageElements;
 import com.liverussia.launcher.messages.InfoMessages;
-import com.liverussia.launcher.other.Utils;
+import com.liverussia.launcher.other.FileUtils;
 import com.liverussia.launcher.service.impl.ActivityServiceImpl;
 import com.liverussia.launcher.storage.NativeStorage;
-import com.liverussia.launcher.storage.Storage;
 import com.liverussia.launcher.service.ActivityService;
 
 import java.io.File;
@@ -100,12 +100,16 @@ public class SettingsFragment extends Fragment implements View.OnClickListener{
 
     private void performReinstallGameButtonAction() {
         File gameDirectory = (new File(getActivity().getExternalFilesDir(null).toString()));
-        Utils.delete(gameDirectory);
+        FileUtils.delete(gameDirectory);
+        DownloadUtils.setType(DownloadType.LOAD_ALL_CACHE);
+
         startActivity(new Intent(getActivity(), com.liverussia.launcher.activity.LoaderActivity.class));
     }
 
     private void performResetSettingsButtonAction() {
-        if (!activityService.isGameInstalled()) {
+
+        //TODO править проверку (проверять на файл, который содержит настройки)
+        if (!activityService.isGameFileInstall(getActivity(), SETTINGS_FILE_PATH)) {
             activityService.showMessage(InfoMessages.INSTALL_GAME_FIRST.getText(), getActivity());
             return;
         }

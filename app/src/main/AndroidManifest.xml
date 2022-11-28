@@ -71,6 +71,7 @@
         </activity>
         <activity
             android:name="com.liverussia.launcher.activity.MainActivity"
+            android:noHistory="true"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
