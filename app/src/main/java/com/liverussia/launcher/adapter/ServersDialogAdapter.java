@@ -50,16 +50,19 @@ public class ServersDialogAdapter extends RecyclerView.Adapter<ServersAdapter.Se
     @Override
     public void onBindViewHolder(@NonNull ServersAdapter.ServersViewHolder holder, int position) {
         Servers servers = this.servers.get(position);
-        holder.bearPaw.setColorFilter(Color.parseColor("#" + servers.getColor()), PorterDuff.Mode.SRC_ATOP);
-        holder.people.setColorFilter(Color.parseColor("#" + servers.getColor()),PorterDuff.Mode.SRC_ATOP);
-        holder.backColor.getBackground().setColorFilter(Color.parseColor("#" + servers.getColor()),PorterDuff.Mode.SRC_ATOP);
+        int MainColor = Color.parseColor(servers.getColor());
+        int LightColor = Color.parseColor(servers.getColorl());
+
+        holder.bearPaw.setColorFilter(LightColor, PorterDuff.Mode.SRC_ATOP);
+        holder.people.setColorFilter(LightColor, PorterDuff.Mode.SRC_ATOP);
+        holder.backColor.getBackground().setColorFilter(MainColor, PorterDuff.Mode.SRC_ATOP);
         holder.name.setText(servers.getname());
-        holder.name.setTextColor(Color.parseColor("#" + servers.getColor()));
+        holder.name.setTextColor(LightColor);
         holder.dopname.setText(servers.getDopname());
         holder.textonline.setText(Integer.toString(servers.getOnline()));
         holder.textmaxonline.setText(new String("/" + Integer.toString(servers.getmaxOnline())));
-        holder.progressBar.setProgressStartColor(Color.parseColor("#" + servers.getColor()));
-        holder.progressBar.setProgressEndColor(Color.parseColor("#" + servers.getColor()));
+        holder.progressBar.setProgressStartColor(MainColor);
+        holder.progressBar.setProgressEndColor(LightColor);
         holder.progressBar.setProgress(servers.getOnline());
         holder.progressBar.setMax(servers.getmaxOnline());
         holder.container.setOnClickListener(new View.OnClickListener() {
