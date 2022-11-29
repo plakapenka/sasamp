@@ -11,6 +11,7 @@
         android:id="@+id/chat_line_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingBottom="0.1dp"
         android:textStyle="bold"
         android:shadowColor="#000000"
         android:shadowRadius="2"
@@ -19,11 +20,12 @@
         android:textFontWeight="500"
         android:letterSpacing="-0.03"
         android:textSize="27px"
-        android:textColor="#FF7B93"
-
+        android:textColor="#c2ddf8"
+        android:includeFontPadding="false"
         android:fontFamily="@font/visby_chat"
         android:text="Поздравляем молодую пару!"/>
     <TextView
+        android:paddingBottom="0.1dp"
         android:id="@+id/chat_line_shadow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -35,8 +37,8 @@
         android:textFontWeight="500"
         android:letterSpacing="-0.03"
         android:textSize="27px"
-        android:textColor="#FF7B93"
-
+        android:textColor="#c2ddf8"
+        android:includeFontPadding="false"
         android:fontFamily="@font/visby_chat"
         android:text="Поздравляем молодую пару!"/>
 
