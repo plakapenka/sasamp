@@ -459,7 +459,7 @@ bool CLocalPlayer::Process()
 	bool needDrawableHud = true;
 	if(pGame->isDialogActive || pGame->isCasinoDiceActive || tabToggle || pGame->isAutoShopActive
 	|| pGame->isCasinoWheelActive || !m_pPlayerPed || pGame->isRegistrationActive || pGame->isShopStoreActive ||
-    pGame->isPreDeathActive || pInventory->isToggle || bFirstSpawn /*|| CEditobject::isToggle*/)
+    pGame->isPreDeathActive || pInventory->isToggle || bFirstSpawn || CEditobject::isToggle)
 	{
 		needDrawableHud = false;
 	}
