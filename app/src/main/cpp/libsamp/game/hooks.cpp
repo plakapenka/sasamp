@@ -648,7 +648,7 @@ void (*NvUtilInit)(void);
 void NvUtilInit_hook(void)
 {	
 	NvUtilInit();
-	*(char**)(g_libGTASA + 0x5D1608) = "/storage/emulated/0/Android/data/com.liverussia.cr/files/";
+	*(char**)(g_libGTASA + 0x5D1608) = (char*)g_pszStorage;
 }
 
 void InstallSpecialHooks()
@@ -1423,6 +1423,20 @@ static bool ShouldBeProcessedButton(int result)
 	return 1;
 }
 
+uintptr_t (*CWidgetButton__Draw)(uintptr_t thiz);
+uintptr_t CWidgetButton__Draw_hook(uintptr_t thiz)
+{
+	if(!pHud->isHudToggle)return 0;
+	return CWidgetButton__Draw(thiz);
+}
+
+int (*CWidgetButton__IsTouched)(CVector2D* a1);
+int CWidgetButton__IsTouched_hook(CVector2D* a1)
+{
+	if(!pHud->isHudToggle)return 0;
+	return CWidgetButton__IsTouched(a1);
+}
+
 void (*CWidgetButton__Update)(int result, int a2, int a3, int a4);
 void CWidgetButton__Update_hook(int result, int a2, int a3, int a4)
 {
@@ -1432,7 +1446,7 @@ void CWidgetButton__Update_hook(int result, int a2, int a3, int a4)
 	}
 	CTouchInterface__m_bWidgets = (uintptr_t*)(g_libGTASA + 0x00657E48);
 
-	//((void (*)(unsigned int, unsigned int)) (g_libGTASA + 0x00274178 + 1))(CTouchInterface__m_bWidgets[0], 0); // Кнопка сесть в тачку
+	((void (*)(unsigned int, unsigned int)) (g_libGTASA + 0x00274178 + 1))(CTouchInterface__m_bWidgets[0], 0); // Кнопка сесть в тачку
 
 	if(pNetGame && pNetGame->m_GreenZoneState )
 	{
@@ -1701,6 +1715,15 @@ void CAutomobile__ProcessEntityCollision_hook(VEHICLE_TYPE* a1, ENTITY_TYPE* a2,
 	{
 		*(void**)(pColData + 16) = pOld;
 	}
+}
+
+
+void (*CWidget__DrawHelpIcon)();
+void CWidget__DrawHelpIcon_hook()
+{
+	Log("CWidget__DrawHelpIcon_hook");
+	return;
+	//return CGame__Shutdown();
 }
 
 bool (*CGame__Shutdown)();
@@ -2199,6 +2222,7 @@ void CSprite2d__Draw_hook(CSprite2d* a1, CRect* a2, CRGBA* a3)
 
 	if (dwRetAddr == 0x003D3796 + 1 || dwRetAddr == 0x003D376C + 1 || dwRetAddr == 0x003D373E + 1 || dwRetAddr == 0x003D3710 + 1)
 	{
+		if(!pHud->isHudToggle)return;
 		if (CRadarRect::m_pDiscTexture == nullptr)
 		{
 			CRadarRect::m_pDiscTexture = a1->m_pRwTexture;
@@ -2470,8 +2494,8 @@ void InstallHooks()
 {
 	PROTECT_CODE_INSTALLHOOKS;
 
-	SetUpHook(g_libGTASA+0x291104, (uintptr_t)CStreaming__ConvertBufferToObject_hook, (uintptr_t*)&CStreaming__ConvertBufferToObject);
-	SetUpHook(g_libGTASA+0x3961C8, (uintptr_t)CFileMgr__ReadLine_hook, (uintptr_t*)&CFileMgr__ReadLine);
+	//SetUpHook(g_libGTASA+0x291104, (uintptr_t)CStreaming__ConvertBufferToObject_hook, (uintptr_t*)&CStreaming__ConvertBufferToObject);
+	//SetUpHook(g_libGTASA+0x3961C8, (uintptr_t)CFileMgr__ReadLine_hook, (uintptr_t*)&CFileMgr__ReadLine);
 
 	SetUpHook(g_libGTASA + 0x00281398, (uintptr_t)CWidgetRegionLook__Update_hook, (uintptr_t*)& CWidgetRegionLook__Update);
 	SetUpHook(g_libGTASA+0x3D7CA8, (uintptr_t)CLoadingScreen_DisplayPCScreen_hook, (uintptr_t*)&CLoadingScreen_DisplayPCScreen);
@@ -2534,6 +2558,9 @@ void InstallHooks()
 
 	//SetUpHook(g_libGTASA + 0x0027548C, (DWORD)CWidgetButtonAttack_hook, (DWORD*)&CWidgetButtonAttack);
 	SetUpHook(g_libGTASA + 0x00274AB4, (uintptr_t)CWidgetButton__Update_hook, (uintptr_t*)& CWidgetButton__Update);
+
+	SetUpHook(g_libGTASA + 0x00274748, (uintptr_t)CWidgetButton__Draw_hook, (uintptr_t*)&CWidgetButton__Draw);
+	SetUpHook(g_libGTASA + 0x00274218, (uintptr_t)CWidgetButton__IsTouched_hook, (uintptr_t*)&CWidgetButton__IsTouched);
 	//SetUpHook(g_libGTASA + 0x0027455C, (uintptr_t)CWidget__IsTouched_hook, (uintptr_t*)& CWidget__IsTouched);
 
 	SetUpHook(g_libGTASA + 0x004052B8, (uintptr_t)CVehicleModelInfo__SetupCommonData_hook, (uintptr_t*)& CVehicleModelInfo__SetupCommonData);
@@ -2557,6 +2584,9 @@ void InstallHooks()
 	
 	SetUpHook(g_libGTASA + 0x00398334, (uintptr_t)CGame__Shutdown_hook, (uintptr_t*)& CGame__Shutdown);
 
+//	//CWidget::DrawHelpIcon
+//	SetUpHook(g_libGTASA + 0x002744F8, (uintptr_t)CWidget__DrawHelpIcon_hook, (uintptr_t*)&CWidget__DrawHelpIcon);
+
 	WriteMemory(g_libGTASA + 0x003DA86C,
 		(uintptr_t)"\x80\xB4"\
 		"\x00\xAF"\
@@ -2579,12 +2609,12 @@ void InstallHooks()
 
 	SetUpHook(g_libGTASA + 0x003DA86C, (uintptr_t)CRadar__LimitRadarPoint_hook, (uintptr_t*)& CRadar__LimitRadarPoint); // TO FIX
 	SetUpHook(g_libGTASA + 0x005529FC, (uintptr_t)CSprite2d__DrawBarChart_hook, (uintptr_t*)& CSprite2d__DrawBarChart);
-	SetUpHook(g_libGTASA + 0x005353B4, (uintptr_t)CFont__PrintString_hook, (uintptr_t*)& CFont__PrintString);
+	//SetUpHook(g_libGTASA + 0x005353B4, (uintptr_t)CFont__PrintString_hook, (uintptr_t*)& CFont__PrintString);
 	SetUpHook(g_libGTASA + 0x0055265C, (uintptr_t)CSprite2d__Draw_hook, (uintptr_t*)& CSprite2d__Draw);
 
 	//SetUpHook(g_libGTASA + 0x0027D8A8, (uintptr_t)CWidgetPlayerInfo__DrawWanted_hook, (uintptr_t*)& CWidgetPlayerInfo__DrawWanted);
 
-	SetUpHook(g_libGTASA + 0x0027CE88, (uintptr_t)CWidgetPlayerInfo__DrawWeaponIcon_hook, (uintptr_t*)& CWidgetPlayerInfo__DrawWeaponIcon);
+	//SetUpHook(g_libGTASA + 0x0027CE88, (uintptr_t)CWidgetPlayerInfo__DrawWeaponIcon_hook, (uintptr_t*)& CWidgetPlayerInfo__DrawWeaponIcon);
 	SetUpHook(g_libGTASA + 0x00389D74, (uintptr_t)CCam__Process_hook, (uintptr_t*)& CCam__Process);
 	// sub_45C88(dword_14A458 + 0x541AC4, sub_2CBF0, &unk_28E378); nop
 	//sub_45C88(g_libGTASA + 0x001A8530, sub_2CBDC, &dword_28E374);

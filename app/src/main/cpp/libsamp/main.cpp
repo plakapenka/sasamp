@@ -29,7 +29,7 @@
 #include <arpa/inet.h>
 
 uintptr_t g_libGTASA = 0;
-const char* g_pszStorage = nullptr;
+char g_pszStorage[255];
 
 #include "CServerManager.h"
 #include "CLocalisation.h"
@@ -89,17 +89,10 @@ void PrintBuildCrashInfo()
 #include "util/CJavaWrapper.h"
 #include "cryptors/INITSAMP_result.h"
 #include "CDebugInfo.h"
-void InitSAMP(JNIEnv* pEnv, jobject thiz);
-extern "C"
-{
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_initSAMP(JNIEnv* pEnv, jobject thiz)
-	{
-		InitSAMP(pEnv, thiz);
-	}
-}
+
 
 void InitBASSFuncs();
-void InitSAMP(JNIEnv* pEnv, jobject thiz)
+void InitSAMP(JNIEnv* pEnv, jobject thiz, const char* path)
 {
 	PROTECT_CODE_INITSAMP;
 
@@ -108,9 +101,11 @@ void InitSAMP(JNIEnv* pEnv, jobject thiz)
 	InitBASSFuncs();
 	BASS_Init(-1, 44100, BASS_DEVICE_3D, 0, NULL);
 
-	g_pszStorage = "/storage/emulated/0/Android/data/com.liverussia.cr/files/";
+	//g_pszStorage = path;
+	strcpy(g_pszStorage, path);
+//	g_pszStorage = "/storage/emulated/0/Android/data/com.liverussia.cr/files/";
 
-	if(!g_pszStorage)
+	if(!strlen(g_pszStorage))
 	{
 		Log("Error: storage path not found!");
 		std::terminate();
@@ -769,4 +764,20 @@ uint32_t GetTickCount()
 	struct timeval tv;
 	gettimeofday(&tv, nullptr);
 	return (tv.tv_sec*1000+tv.tv_usec/1000);
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_nvidia_devtech_NvEventQueueActivity_iniGameDir(JNIEnv *env, jobject thiz, jstring path) {
+	Log("// TODO: implement iniGameDir()");
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_nvidia_devtech_NvEventQueueActivity_initSAMP(JNIEnv *env, jobject thiz,
+													  jstring game_path) {
+	const char *path = env->GetStringUTFChars(game_path, nullptr);
+
+	InitSAMP(env, thiz, path);
+
+	env->ReleaseStringUTFChars(game_path, path);
 }

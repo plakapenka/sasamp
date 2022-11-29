@@ -1,16 +1,13 @@
 package com.liverussia.cr.core;
 
 import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.liverussia.launcher.dto.response.FileInfo;
 import com.liverussia.launcher.enums.DownloadType;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
-
-import static com.liverussia.cr.core.Config.GAME_PATH;
 
 
 public class DownloadUtils extends AppCompatActivity {

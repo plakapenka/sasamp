@@ -377,7 +377,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 	
 	private boolean isGameInstalled() {
-        String CheckFile = Config.GAME_PATH + "texdb/gta3.img";
+        String CheckFile = getExternalFilesDir(null)+ "/texdb/gta3.img";
         File file = new File(CheckFile);
         return file.exists();
     }

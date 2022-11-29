@@ -65,9 +65,9 @@ public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersV
                 view.startAnimation(AnimationUtils.loadAnimation(context, R.anim.button_click));
                 Toast.makeText(context, InfoMessages.SERVER_SELECTED.getText(), 0).show();
 				try {
-					File f = new File(Config.GAME_PATH + "SAMP/settings.ini");
+					File f = new File(context.getExternalFilesDir(null) + "/SAMP/settings.ini");
 					if (!f.exists()) { f.createNewFile(); f.mkdirs(); }
-					Wini w = new Wini(new File(Config.GAME_PATH + "SAMP/settings.ini"));
+					Wini w = new Wini(new File(context.getExternalFilesDir(null) + "/SAMP/settings.ini"));
 					w.put("client", "server", servers.getServerID());
 					w.store();
 				} catch (IOException e) {

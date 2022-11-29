@@ -26,7 +26,6 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -38,6 +37,7 @@ import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -52,8 +52,6 @@ import android.widget.FrameLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.common.base.Charsets;
-import com.google.common.hash.Hashing;
 import com.liverussia.cr.R;
 import com.liverussia.cr.core.DialogClientSettings;
 import com.liverussia.cr.gui.AttachEdit;
@@ -82,13 +80,11 @@ import com.liverussia.cr.gui.ChooseSpawn;
 import com.liverussia.cr.gui.Menu;
 import com.liverussia.cr.gui.ChooseServer;
 import com.liverussia.cr.gui.tab.Tab;
-import com.liverussia.cr.gui.util.Utils;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
@@ -580,7 +576,7 @@ public abstract class NvEventQueueActivity
      */
 		public native void cleanup();
 		public native boolean init(boolean z);
-		public native void initSAMP();
+		public native void initSAMP(String game_path);
 		public native void setWindowSize(int w, int h);
 		public native void quitAndWait();
 		public native void postCleanup();
@@ -625,8 +621,11 @@ public abstract class NvEventQueueActivity
 		{
 		    System.out.println("Calling init(false)");
             init(false);
+
             System.out.println("Calling initSAMP");
-            initSAMP();
+
+         //   Log.d("saf", "ABC = "+getExternalFilesDir(null).toString());
+            initSAMP(getExternalFilesDir(null).toString()+"/");
             System.out.println("Called");
         }
         handler = new Handler();
@@ -1675,6 +1674,5 @@ public abstract class NvEventQueueActivity
     public void hideBusInfo() { runOnUiThread(() -> { mHudManager.HideBusInfo(); } ); }
 
     public void showFuelStation(int type, int price1, int price2, int price3, int price4, int price5, int maxCount) { runOnUiThread(() -> { mFuelStationManager.Show(type, price1, price2, price3, price4, price5, maxCount); } ); }
-
-
+    
 }
