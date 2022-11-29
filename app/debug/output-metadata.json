@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 2,
   "artifactType": {
     "type": "APK",
     "kind": "Directory"
@@ -10,11 +10,9 @@
     {
       "type": "SINGLE",
       "filters": [],
-      "attributes": [],
       "versionCode": 10,
       "versionName": "lr-beta-build-stable",
       "outputFile": "app-debug.apk"
     }
-  ],
-  "elementType": "File"
+  ]
 }
