@@ -3,6 +3,7 @@ package com.liverussia.launcher.activity;
 import android.Manifest;
 import android.content.Intent;
 import android.content.Context;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,6 +22,9 @@ import java.util.TimerTask;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.liverussia.cr.core.DownloadUtils;
+import com.liverussia.launcher.dto.response.LatestVersionInfoDto;
+import com.liverussia.launcher.enums.DownloadType;
 import com.liverussia.launcher.error.apiException.ErrorContainer;
 import com.liverussia.launcher.messages.InfoMessages;
 import com.liverussia.launcher.model.News;
@@ -43,8 +47,7 @@ public class SplashActivity extends AppCompatActivity {
 
 	public static ArrayList<Servers> slist;
 	
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
@@ -64,6 +67,27 @@ public class SplashActivity extends AppCompatActivity {
 				.build();
 
 		NetworkService sNetworkService = retrofit.create(NetworkService.class);
+
+		Call<LatestVersionInfoDto> latestVersionInfoCall = sNetworkService.getLatestVersionInfoDto();
+
+		latestVersionInfoCall.enqueue(new Callback<LatestVersionInfoDto>() {
+			@Override
+			public void onResponse(Call<LatestVersionInfoDto> call, Response<LatestVersionInfoDto> response) {
+				if (!response.isSuccessful()) {
+					finish();
+					System.exit(0);
+				}
+
+				checkVersion(response.body());
+
+			}
+
+			@Override
+			public void onFailure(Call<LatestVersionInfoDto> call, Throwable t) {
+				finish();
+				System.exit(0);
+			}
+		});
 
 		Call<List<Servers>> scall = sNetworkService.getServers();
 
@@ -115,8 +139,33 @@ public class SplashActivity extends AppCompatActivity {
 			}
         } else startTimer();
 	}
-	
-    @Override
+
+	private void checkVersion(LatestVersionInfoDto latestVersionInfo) {
+
+    	String currentVersion = getCurrentVersion();
+    	String latestVersion = latestVersionInfo.getVersion();
+
+		if (currentVersion.equals(latestVersion)) {
+			return;
+		}
+
+		DownloadUtils.setType(DownloadType.UPDATE_APK);
+		DownloadUtils.LATEST_APK_INFO = latestVersionInfo;
+		startActivity(new Intent(this, LoaderActivity.class));
+	}
+
+	private String getCurrentVersion(){
+		PackageManager pm = this.getPackageManager();
+		PackageInfo pInfo = null;
+		try {
+			pInfo = pm.getPackageInfo(this.getPackageName(),0);
+		} catch (PackageManager.NameNotFoundException e1) {
+			e1.printStackTrace();
+		}
+		return pInfo.versionName;
+	}
+
+	@Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 1000) {

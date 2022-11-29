@@ -4,6 +4,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.liverussia.launcher.dto.response.FileInfo;
+import com.liverussia.launcher.dto.response.LatestVersionInfoDto;
 import com.liverussia.launcher.enums.DownloadType;
 
 import java.io.File;
@@ -17,6 +18,7 @@ public class DownloadUtils extends AppCompatActivity {
     public static AppCompatActivity currentContext;
     public static DownloadType TYPE = DownloadType.LOAD_ALL_CACHE;
     public static List<FileInfo> FILES_TO_RELOAD;
+    public static LatestVersionInfoDto LATEST_APK_INFO;
 
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);

@@ -183,12 +183,6 @@ public class LoaderActivity extends AppCompatActivity {
     private void installGame(DownloadType type) {
         switch (type) {
             case LOAD_ALL_CACHE: {
-//                File dir = new File(getExternalFilesDir(null).toString() + "/temp_downloads/");
-//
-//                if (!dir.exists()) {
-//                    dir.mkdirs();
-//                }
-
                 downloadTask = new DownloadTask(this, progressBar);
                 downloadTask.setOnAsyncSuccessListener(this::performAfterDownload);
                 downloadTask.setOnAsyncCriticalErrorListener(this::performAfterDownloadFailed);
@@ -204,6 +198,15 @@ public class LoaderActivity extends AppCompatActivity {
                 break;
             }
 
+            case UPDATE_APK: {
+                downloadTask = new DownloadTask(this, progressBar);
+                downloadTask.setOnAsyncSuccessListener(this::installAPK);
+                downloadTask.setOnAsyncCriticalErrorListener(this::performAfterUpdateApkFailed);
+                downloadTask.updateApk();
+            }
+
+
+
 //            case 1: {
 //                File dir = new File(getExternalFilesDir(null).toString() + "/temp_downloads/");
 //                if (!dir.exists()) dir.mkdirs();
@@ -212,6 +215,11 @@ public class LoaderActivity extends AppCompatActivity {
 //                break;
 //            }
         }
+    }
+
+    private void performAfterUpdateApkFailed() {
+        finish();
+        System.exit(0);
     }
 
     private void performAfterDownloadFailed() {
@@ -375,9 +383,16 @@ public class LoaderActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), _s, Toast.LENGTH_LONG).show();
     }
 
-    private void installAPK(final String apkname) {
+    private void installAPK() {
+
+//        Intent intent = new Intent(Intent.ACTION_VIEW);
+//        intent.setDataAndType(Uri.fromFile(new File("/mnt/sdcard/Download/update.apk")), "application/vnd.android.package-archive");
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // without this flag android returned a intent error!
+//        startActivity(intent);
+
+
         try {
-            File file = new File(getExternalFilesDir(null).toString() + "/temp_downloads/", apkname + ".apk");
+            File file = new File(getExternalFilesDir(null).toString() + "/temp_downloads/",  "liverussia.apk");
             Intent intent;
             if (file.exists()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -391,6 +406,7 @@ public class LoaderActivity extends AppCompatActivity {
                     intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 }
+//                startActivity(Intent.createChooser(intent, "Open_Apk"));
                 startActivity(intent);
                 finish();
             }
