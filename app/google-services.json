@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "29161192735",
+    "project_id": "liverussia-1668609119677",
+    "storage_bucket": "liverussia-1668609119677.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:29161192735:android:298121b46ae315123fc42a",
+        "android_client_info": {
+          "package_name": "com.liverussia.cr"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "29161192735-qmp4be8hh7hom2gvc28uua787tqfvnad.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEDp0gWNiwHkyC9TOx8W3LsFedUWWgLJc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "29161192735-qmp4be8hh7hom2gvc28uua787tqfvnad.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
