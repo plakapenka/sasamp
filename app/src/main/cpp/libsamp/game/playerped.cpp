@@ -622,6 +622,10 @@ void CPlayerPed::PutDirectlyInVehicle(int iVehicleID, int iSeat)
 void CPlayerPed::EnterVehicle(int iVehicleID, bool bPassenger)
 {
 	if(!m_pPed) return;
+	if(!GamePool_Ped_GetAt(m_dwGTAId)) {
+		return;
+	}
+
 	VEHICLE_TYPE* ThisVehicleType;
 	if((ThisVehicleType = GamePool_Vehicle_GetAt(iVehicleID)) == 0) return;
 	if (ThisVehicleType->fHealth == 0.0f) return;

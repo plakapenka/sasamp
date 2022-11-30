@@ -1284,6 +1284,23 @@ void CWidgetRegionLook__Update_hook(uintptr_t thiz)
 		return CWidgetRegionLook__Update(thiz);
 	}
 }
+
+void (*GivePedScriptedTask)(uintptr_t* a1, int a2, uintptr_t* a3, int a4);
+void GivePedScriptedTask_hook(uintptr_t* a1, int a2, uintptr_t* a3, int a4)
+{
+	if(!a3)return;
+
+	return GivePedScriptedTask(a1, a2, a3, a4);
+}
+
+void (*RpMaterialDestroy)(RpMaterial* mat);
+void RpMaterialDestroy_hook(RpMaterial* mat)
+{
+	if(!mat->texture)return;
+
+	return RpMaterialDestroy(mat);
+}
+
 uint8_t* (*RLEDecompress)(uint8_t* pDest, size_t uiDestSize, uint8_t const* pSrc, size_t uiSegSize, uint32_t uiEscape);
 uint8_t* RLEDecompress_hook(uint8_t* pDest, size_t uiDestSize, uint8_t const* pSrc, size_t uiSegSize, uint32_t uiEscape) {
 	if (!pDest) 
@@ -2548,6 +2565,11 @@ void InstallHooks()
 	// RLEDecompress fix
 	SetUpHook(g_libGTASA + 0x1BC314, (uintptr_t)RLEDecompress_hook, (uintptr_t*)&RLEDecompress);
 
+	//RpMaterialDestroy fix ? не точно
+	SetUpHook(g_libGTASA + 0x001E3C54, (uintptr_t)RpMaterialDestroy_hook, (uintptr_t*)&RpMaterialDestroy);
+
+	//CRunningScript fix ? не точно
+	SetUpHook(g_libGTASA + 0x002E5400, (uintptr_t)GivePedScriptedTask_hook, (uintptr_t*)&GivePedScriptedTask);
 
 	// todo: 3 pools fix crash
 
