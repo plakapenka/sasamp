@@ -23,9 +23,9 @@ public class GTASA extends WarMedia {
         }
         System.loadLibrary("SCAnd");
         System.loadLibrary("GTASA");
-        System.loadLibrary("samp");
-        System.loadLibrary("OpenAL32");
+     //   System.loadLibrary("OpenAL32");
 
+        System.loadLibrary("samp");
     }
 
     public static void staticEnterSocialClub()
