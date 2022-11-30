@@ -333,11 +333,7 @@ void handler3(int signum, siginfo_t* info, void* contextPtr)
 
 	if (info->si_signo == SIGBUS)
 	{
-		int crashId = (int)rand() % 20000;
-		Log("Crashed - 1. %d", crashId);
-		CrashLog(" ");
 		PrintBuildCrashInfo();
-		CrashLog("ID: %d", crashId);
 		CrashLog("Last rendered object: %d", g_iLastRenderedObject);
 		CrashLog("SIGBUS | Fault address: 0x%X", info->si_addr);
 		CrashLog("libGTASA base address: 0x%X", g_libGTASA);
@@ -395,12 +391,8 @@ void handler(int signum, siginfo_t *info, void* contextPtr)
 
 	if(info->si_signo == SIGSEGV)
 	{
-
-		int crashId = (int)rand() % 20000;
-		Log("Crashed - 2. %d", crashId);
 		CrashLog(" ");
 		PrintBuildCrashInfo();
-		CrashLog("ID: %d", crashId);
 		CrashLog("Last rendered object: %d", g_iLastRenderedObject);
 		CrashLog("SIGSEGV | Fault address: 0x%X", info->si_addr);
 		CrashLog("libGTASA base address: 0x%X", g_libGTASA);
@@ -457,12 +449,7 @@ void handler2(int signum, siginfo_t* info, void* contextPtr)
 
 	if (info->si_signo == SIGFPE)
 	{
-
-		int crashId = (int)rand() % 20000;
-		Log("Crashed - 3. %d", crashId);
-		CrashLog(" ");
 		PrintBuildCrashInfo();
-		CrashLog("ID: %d", crashId);
 		CrashLog("Last rendered object: %d", g_iLastRenderedObject);
 		CrashLog("SIGFPE | Fault address: 0x%X", info->si_addr);
 		CrashLog("libGTASA base address: 0x%X", g_libGTASA);
@@ -520,12 +507,8 @@ void handler1(int signum, siginfo_t* info, void* contextPtr)
 
 	if (info->si_signo == SIGABRT)
 	{
-
-		int crashId = (int)rand() % 20000;
-		Log("Crashed - 4. %d", crashId);
 		CrashLog(" ");
 		PrintBuildCrashInfo();
-		CrashLog("ID: %d", crashId);
 
 		CrashLog("Last rendered object: %d", g_iLastRenderedObject);
 		CrashLog("SIGABRT | Fault address: 0x%X", info->si_addr);
@@ -617,7 +600,9 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 	}
 	Log("libGTASA.so image base address: 0x%X", g_libGTASA);
 
-	firebase::crashlytics::Initialize();
+	firebase::crashlytics::SetCustomKey("build data", __DATE__);
+	firebase::crashlytics::SetCustomKey("build time", __TIME__);
+	//firebase::crashlytics::Initialize();
 
 	uintptr_t libgtasa = FindLibrary("libGTASA.so");
 	uintptr_t libsamp = FindLibrary("libsamp.so");
@@ -627,16 +612,16 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 	Log("libsamp.so: 0x%x", libsamp);
 	Log("libc.so: 0x%x", libc);
 
-	char str[100];
-
-	sprintf(str, "0x%x", libgtasa);
-	firebase::crashlytics::SetCustomKey("libGTASA.so", str);
-	
-	sprintf(str, "0x%x", libsamp);
-	firebase::crashlytics::SetCustomKey("libsamp.so", str);
-
-	sprintf(str, "0x%x", libc);
-	firebase::crashlytics::SetCustomKey("libc.so", str);
+//	char str[100];
+//
+//	sprintf(str, "0x%x", libgtasa);
+//	firebase::crashlytics::SetCustomKey("libGTASA.so", str);
+//
+//	sprintf(str, "0x%x", libsamp);
+//	firebase::crashlytics::SetCustomKey("libsamp.so", str);
+//
+//	sprintf(str, "0x%x", libc);
+//	firebase::crashlytics::SetCustomKey("libc.so", str);
 
 	srand(time(0));
 
@@ -717,7 +702,7 @@ void Log(const char *fmt, ...)
 	vsnprintf(buffer, sizeof(buffer), fmt, arg);
 	va_end(arg);
 
-	firebase::crashlytics::Log(buffer);
+//	firebase::crashlytics::Log(buffer);
 
 	//if(pDebug) pDebug->AddMessage(buffer);
 
@@ -732,7 +717,7 @@ void Log(const char *fmt, ...)
 
 void CrashLog(const char* fmt, ...)
 {
-	char buffer[0xFF];
+	char buffer[512];
 	static FILE* flLog = nullptr;
 
 	if (flLog == nullptr && g_pszStorage != nullptr)
@@ -748,7 +733,7 @@ void CrashLog(const char* fmt, ...)
 	vsnprintf(buffer, sizeof(buffer), fmt, arg);
 	va_end(arg);
 
-	__android_log_write(ANDROID_LOG_INFO, "AXL", buffer);
+	__android_log_write(ANDROID_LOG_FATAL, "AXL", buffer);
 
 	firebase::crashlytics::Log(buffer);
 
