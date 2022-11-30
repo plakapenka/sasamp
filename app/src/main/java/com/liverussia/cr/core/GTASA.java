@@ -23,6 +23,7 @@ public class GTASA extends WarMedia {
         }
         System.loadLibrary("SCAnd");
         System.loadLibrary("GTASA");
+       // System.loadLibrary("crashlytics");
      //   System.loadLibrary("OpenAL32");
 
         System.loadLibrary("samp");
