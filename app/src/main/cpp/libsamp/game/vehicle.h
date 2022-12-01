@@ -144,15 +144,14 @@ private:
 
 	void CopyGlobalSuspensionLinesToPrivate();
 public:
-	VEHICLE_TYPE* m_pVehicle;
+	VEHICLE_TYPE* 	m_pVehicle;
 	bool 			m_bIsLocked;
-	CVehicle* m_pTrailer;
+	CVehicle* 		m_pTrailer;
 	uint32_t		m_dwMarkerID;
 	bool 			m_bIsInvulnerable;
 	bool 			m_bDoorsLocked;
 	uint8_t			m_byteObjectiveVehicle; // Is this a special objective vehicle? 0/1
 	uint8_t			m_bSpecialMarkerEnabled;
-
 
 	uint8_t			m_byteColor1;
 	uint8_t			m_byteColor2;
@@ -204,4 +203,6 @@ public:
 	int bEngine;
 	int fDoorState;
 	int bLights;
+
+	bool IsTrailer();
 };
