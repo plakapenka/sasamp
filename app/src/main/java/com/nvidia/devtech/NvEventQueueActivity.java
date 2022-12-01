@@ -51,6 +51,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.liverussia.cr.R;
 import com.liverussia.cr.core.DialogClientSettings;
@@ -614,6 +615,7 @@ public abstract class NvEventQueueActivity
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         System.out.println("**** onCreate");
         super.onCreate(savedInstanceState);
         instance = this;
