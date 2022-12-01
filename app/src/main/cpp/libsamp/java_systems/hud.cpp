@@ -245,12 +245,11 @@ Java_com_liverussia_cr_gui_HudManager_ClickEnterExitVehicleButton(JNIEnv *env, j
 
         if(!VehicleID)return;
 
-        VEHICLE_TYPE* CheckVeh = GamePool_Vehicle_GetAt(VehicleID);
+       // VEHICLE_TYPE* CheckVeh = GamePool_Vehicle_GetAt(VehicleID);
 
-        if (CheckVeh->fHealth == 0.0f) return;
-        if (CheckVeh->entity.vtable == g_libGTASA + 0x5C7358) return;
+      //  if (CheckVeh->fHealth == 0.0f) return;
+      //  if (CheckVeh->entity.vtable == g_libGTASA + 0x5C7358) return;
 
-        pPlayer->GetPlayerPed()->ClearAllTasks();
         pPlayer->GetPlayerPed()->ExitCurrentVehicle();
 
         pPlayer->SendExitVehicleNotification(VehicleID);

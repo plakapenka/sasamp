@@ -251,4 +251,5 @@ private:
 
 	uint8_t					m_byteLastWeapon[13];
 	uint32_t					m_dwLastAmmo[13];
+	uint32_t m_dwLastUpdateHudButtons;
 };

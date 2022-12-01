@@ -1285,12 +1285,13 @@ void CWidgetRegionLook__Update_hook(uintptr_t thiz)
 	}
 }
 
-void (*GivePedScriptedTask)(uintptr_t* a1, int a2, uintptr_t* a3, int a4);
-void GivePedScriptedTask_hook(uintptr_t* a1, int a2, uintptr_t* a3, int a4)
+void (*GivePedScriptedTask)(uintptr_t* thiz, int pedHandle, uintptr_t* a3, int commandID);
+void GivePedScriptedTask_hook(uintptr_t* thiz, int pedHandle, uintptr_t* a3, int commandID)
 {
-	if(!a3 || !a1)return;
+	//Log("pedHandle = %d, local = %d", pedHandle, pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->m_dwGTAId);
+	if(!pedHandle || !commandID || !a3)return;
 
-	return GivePedScriptedTask(a1, a2, a3, a4);
+	return GivePedScriptedTask(thiz, pedHandle, a3, commandID);
 }
 
 void (*RpMaterialDestroy)(RpMaterial* mat);
