@@ -16,11 +16,11 @@ android {
         minSdkVersion 22
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 28
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    //    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         applicationId "com.liverussia.cr"
-        //versionName "lr-beta-build-stable"
-        versionCode 10
+        versionName "13"
+        versionCode 12
         vectorDrawables.useSupportLibrary = true
 
         multiDexEnabled = true
@@ -50,10 +50,9 @@ android {
     }
     ndkVersion '25.1.8937393'
     buildTypes {
-        debug {
-            jniDebuggable true
+        all{
+            debuggable true
             multiDexEnabled true
-
         }
     }
 }
