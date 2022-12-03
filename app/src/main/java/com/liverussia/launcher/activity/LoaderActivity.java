@@ -384,20 +384,14 @@ public class LoaderActivity extends AppCompatActivity {
     }
 
     private void installAPK() {
-
-//        Intent intent = new Intent(Intent.ACTION_VIEW);
-//        intent.setDataAndType(Uri.fromFile(new File("/mnt/sdcard/Download/update.apk")), "application/vnd.android.package-archive");
-//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // without this flag android returned a intent error!
-//        startActivity(intent);
-
-
         try {
             File file = new File(getExternalFilesDir(null).toString() + "/temp_downloads/",  "liverussia.apk");
             Intent intent;
             if (file.exists()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     Uri apkUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", file);
-                    intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
+//                    intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
+                    intent = new Intent(Intent.ACTION_VIEW);
                     intent.setData(apkUri);
                     intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 } else {
@@ -406,7 +400,6 @@ public class LoaderActivity extends AppCompatActivity {
                     intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 }
-//                startActivity(Intent.createChooser(intent, "Open_Apk"));
                 startActivity(intent);
                 finish();
             }
