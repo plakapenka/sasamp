@@ -1,5 +1,7 @@
 package com.liverussia.launcher.config;
 
+import android.os.Build;
+
 public class Config {
 
     //public static final String GAME_PATH = "/storage/emulated/0/Android/data/com.liverussia.cr/files/";
@@ -9,7 +11,7 @@ public class Config {
     public static final String URL_CLIENT = "https://vl4sov.com/Download/launcher.apk";
     public static final String URL_DONATE = "https://vl4sov.com/liverussia.online/Donate";
 
-    public static final String FILE_INFO_URL = "https://files.liverussia.online/downloads/files/files.json";
+    public static final String FILE_INFO_URL = "https://files.liverussia.online/testcash/files/files.json";
 
     public static final String DISCORD_URI = "https://discord.com/";
     public static final String VK_URI = "https://vk.com/";
