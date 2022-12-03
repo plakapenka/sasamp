@@ -30,7 +30,6 @@ void CINVENTORY::ToggleShow(bool toggle, float satiety)
 }
 
 void CINVENTORY::InventoryUpdateItem(int matrixindex, int pos, const char sprite[], const char caption[], bool active) {
-    Log("m = %d, pos = %d, sprite = %s, capt = %s, active = %d",matrixindex, pos, sprite, caption, active );
     JNIEnv* env = g_pJavaWrapper->GetEnv();
 
     jstring jsprite = env->NewStringUTF( sprite );

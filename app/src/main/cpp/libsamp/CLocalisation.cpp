@@ -26,7 +26,6 @@ char CLocalisation::m_szMessages[E_MSG::MSG_COUNT][MAX_LOCALISATION_LENGTH] = {
 
 void CLocalisation::Initialise(const char* szFile)
 {
-	Log("Initializing localisation...");
 	char buff[MAX_LOCALISATION_LENGTH];
 
 	sprintf(&buff[0], "%sSAMP/%s", g_pszStorage, szFile);
@@ -34,7 +33,7 @@ void CLocalisation::Initialise(const char* szFile)
 	FILE* pFile = fopen(&buff[0], "r");
 	if (!pFile)
 	{
-		Log("Localisation | Cannot initialise");
+		Log("Localisation | Cannot initialise %s", szFile);
 		return;
 	}
 

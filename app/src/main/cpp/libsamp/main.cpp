@@ -602,7 +602,7 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 
 	firebase::crashlytics::SetCustomKey("build data", __DATE__);
 	firebase::crashlytics::SetCustomKey("build time", __TIME__);
-	//firebase::crashlytics::Initialize();
+	firebase::crashlytics::Initialize();
 
 	uintptr_t libgtasa = FindLibrary("libGTASA.so");
 	uintptr_t libsamp = FindLibrary("libsamp.so");
@@ -682,12 +682,24 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 	act3.sa_flags = SA_SIGINFO;
 	sigaction(SIGBUS, &act3, &act3_old);
 
-	return JNI_VERSION_1_4;
+	return JNI_VERSION_1_6;
 }
 
 void Log(const char *fmt, ...)
 {	
-	char buffer[0xFF];
+	char buffer[512];
+
+	memset(buffer, 0, sizeof(buffer));
+
+	va_list arg;
+	va_start(arg, fmt);
+	vsnprintf(buffer, sizeof(buffer), fmt, arg);
+	va_end(arg);
+
+	firebase::crashlytics::Log(buffer);
+	__android_log_write(ANDROID_LOG_INFO, "AXL", buffer);
+
+	//if(pDebug) pDebug->AddMessage(buffer);
 	static FILE* flLog = nullptr;
 
 	if(flLog == nullptr && g_pszStorage != nullptr)
@@ -695,22 +707,10 @@ void Log(const char *fmt, ...)
 		sprintf(buffer, "%sSAMP/samp_log.txt", g_pszStorage);
 		flLog = fopen(buffer, "a");
 	}
-	memset(buffer, 0, sizeof(buffer));
-
-	va_list arg;
-	va_start(arg, fmt);
-	vsnprintf(buffer, sizeof(buffer), fmt, arg);
-	va_end(arg);
-
-//	firebase::crashlytics::Log(buffer);
-
-	//if(pDebug) pDebug->AddMessage(buffer);
 
 	if(flLog == nullptr) return;
 	fprintf(flLog, "%s\n", buffer);
 	fflush(flLog);
-
-	__android_log_write(ANDROID_LOG_INFO, "AXL", buffer);
 
 	return;
 }
@@ -718,14 +718,6 @@ void Log(const char *fmt, ...)
 void CrashLog(const char* fmt, ...)
 {
 	char buffer[512];
-	static FILE* flLog = nullptr;
-
-	if (flLog == nullptr && g_pszStorage != nullptr)
-	{
-		sprintf(buffer, "%sSAMP/crash_log.log", g_pszStorage);
-		flLog = fopen(buffer, "a");
-	}
-
 	memset(buffer, 0, sizeof(buffer));
 
 	va_list arg;
@@ -733,9 +725,16 @@ void CrashLog(const char* fmt, ...)
 	vsnprintf(buffer, sizeof(buffer), fmt, arg);
 	va_end(arg);
 
+	firebase::crashlytics::Log(buffer);
 	__android_log_write(ANDROID_LOG_FATAL, "AXL", buffer);
 
-	firebase::crashlytics::Log(buffer);
+	static FILE* flLog = nullptr;
+
+	if (flLog == nullptr && g_pszStorage != nullptr)
+	{
+		sprintf(buffer, "%sSAMP/crash_log.log", g_pszStorage);
+		flLog = fopen(buffer, "a");
+	}
 
 	if (flLog == nullptr) return;
 	fprintf(flLog, "%s\n", buffer);

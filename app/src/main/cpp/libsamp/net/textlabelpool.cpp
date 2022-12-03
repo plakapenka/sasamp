@@ -337,7 +337,7 @@ void CText3DLabelsPool::CreateTextLabel(int labelID, char* text, uint32_t color,
 	}
 
 	TEXT_LABELS* pTextLabel = new TEXT_LABELS;
-	Log("CREATE LABEL %d", labelID);
+
 	if (pTextLabel)
 	{
 		//pTextLabel->text = text;
@@ -374,7 +374,6 @@ void CText3DLabelsPool::Delete(int labelID)
 	{
 		return;
 	}
-	Log("DELETE LABEL %d", labelID);
 	m_bSlotState[labelID] = false;
 	if (m_pTextLabels[labelID])
 	{

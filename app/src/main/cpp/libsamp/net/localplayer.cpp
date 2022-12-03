@@ -549,7 +549,7 @@ void CLocalPlayer::SendBulletSyncData(PLAYERID byteHitID, uint8_t byteHitType, V
 	bsRPC.Write((uint32_t)blSync.weapId);
 	bsRPC.Write((uint32_t)1);
 	pNetGame->GetRakClient()->RPC(&RPC_PlayerGiveTakeDamage, &bsRPC, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0, false, UNASSIGNED_NETWORK_ID, nullptr);
-	Log("[BULLET_SYNC] sent.");
+
 }
 
 void CLocalPlayer::SendWastedNotification()

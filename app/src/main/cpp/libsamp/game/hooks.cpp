@@ -130,7 +130,7 @@ open:
 		Log("NVFOpen hook | Error: file not found (%s)", path);
 		free(st);
 		st = nullptr;
-		return 0;
+		return nullptr;
 	}
 }
 
@@ -171,7 +171,7 @@ void __fillArray()
 
 void InitCTX(AES_ctx&, unsigned char const*)
 {
-	
+
 }
 
 /* ====================================================== */
@@ -249,7 +249,7 @@ void InitialiseRenderWare_hook()
 	 //(( void (*)(const char*, int, int))(g_libGTASA+0x1BF244+1))("custom", 0, 5);
 	//((void (*)(const char*, int, int))(g_libGTASA + 0x1BF244 + 1))("gui", 0, 5);
 
-	return;
+	return InitialiseRenderWare(); // спорно
 }
 
 /* ====================================================== */
@@ -529,9 +529,6 @@ unsigned int MainMenuScreen__Update_hook(uintptr_t thiz, float a2)
 	return ret;
 }
 
-extern signed int (*OS_FileOpen)(unsigned int a1, int* a2, const char* a3, int a4);
-signed int OS_FileOpen_hook(unsigned int a1, int* a2, const char* a3, int a4);
-
 extern int(*OS_FileRead)(void* a1, void* a2, int a3);
 int OS_FileRead_hook(void* a1, void* a2, int a33);
 extern char(*CStreaming__ConvertBufferToObject)(int, int, int);
@@ -637,6 +634,13 @@ int32_t NVEventGetNextEvent_hook(NVEvent* ev, int waitMSecs)
 	return ret;
 }
 
+void(*TextureDatabaseRuntime)(uintptr_t thiz, bool a2);
+void TextureDatabaseRuntime_hook(uintptr_t thiz, bool a2)
+{
+	//Log("TextureDatabaseRuntime_hook %d", a2);
+	return TextureDatabaseRuntime(thiz, false);
+}
+
 void(*CStreaming__Init2)();
 void CStreaming__Init2_hook()
 {
@@ -651,12 +655,66 @@ void NvUtilInit_hook(void)
 	*(char**)(g_libGTASA + 0x5D1608) = (char*)g_pszStorage;
 }
 
+void (*OS_FileOpen)(unsigned int a1, void** a2, const char* a3, int a4);
+void OS_FileOpen_hook(unsigned int a1, void** a2, const char* a3, int a4)
+{
+//	char temp_file[123];
+//	strcpy(temp_file, a3);
+//
+//	for(int i = 0; i < strlen(temp_file); i++){
+//		if( (temp_file[i] == '.' && temp_file[i+1] == 'p' && a3[i+2] == 'v' && temp_file[i+3] == 'r') ||
+//			(temp_file[i] == '.' && temp_file[i+1] == 'e' && a3[i+2] == 't' && temp_file[i+3] == 'c') )
+//		{
+//			temp_file[i+1] = 'd';
+//			temp_file[i+2] = 'x';
+//			temp_file[i+3] = 't';
+//		}
+//	}
+    Log("%s", a3);
+//	uintptr_t calledFrom = 0;
+//	__asm__ volatile ("mov %0, lr" : "=r" (calledFrom));
+//	calledFrom -= g_libGTASA;
+    //void retn = OS_FileOpen(a1, a2, a3, a4);
+//
+//	if (calledFrom == 0x001BCE9A + 1)
+//	{
+//		if (isEncrypted(a3))
+//		{
+//			lastOpenedFile = *a2;
+//		}
+//	}
+    return OS_FileOpen(a1, a2, a3, a4);
+}
+
 void InstallSpecialHooks()
 {
+	//pvr
+	UnFuck(g_libGTASA + 0x00573670);
+	*(char*)(g_libGTASA + 0x00573670 + 12) = 'd';
+	*(char*)(g_libGTASA + 0x00573670 + 13) = 'x';
+	*(char*)(g_libGTASA + 0x00573670 + 14) = 't';
+
+	UnFuck(g_libGTASA + 0x005736CC);
+	*(char*)(g_libGTASA + 0x005736CC + 12) = 'd';
+	*(char*)(g_libGTASA + 0x005736CC + 13) = 'x';
+	*(char*)(g_libGTASA + 0x005736CC + 14) = 't';
+
+
+	//etc
+	UnFuck(g_libGTASA + 0x00573684);
+	*(char*)(g_libGTASA + 0x00573684 + 12) = 'd';
+	*(char*)(g_libGTASA + 0x00573684 + 13) = 'x';
+	*(char*)(g_libGTASA + 0x00573684 + 14) = 't';
+
+	UnFuck(g_libGTASA + 0x005736DC);
+	*(char*)(g_libGTASA + 0x005736DC + 12) = 'd';
+	*(char*)(g_libGTASA + 0x005736DC + 13) = 'x';
+	*(char*)(g_libGTASA + 0x005736DC + 14) = 't';
+
 	WriteMemory(g_libGTASA + 0x0023BEDC, (uintptr_t)"\xF8\xB5", 2);
 	WriteMemory(g_libGTASA + 0x0023BEDE, (uintptr_t)"\x00\x46\x00\x46", 4);
 
-	SetUpHook(g_libGTASA + 0x0023BEDC, (uintptr_t)OS_FileRead_hook, (uintptr_t*)& OS_FileRead);
+	//SetUpHook(g_libGTASA + 0x0023BEDC, (uintptr_t)OS_FileRead_hook, (uintptr_t*)& OS_FileRead);
 	SetUpHook(g_libGTASA + 0x23B3DC, (uintptr_t)NvFOpen_hook, (uintptr_t*)& NvFOpen);
 	SetUpHook(g_libGTASA + 0x241D94, (uintptr_t) NvUtilInit_hook, (uintptr_t *) &NvUtilInit);
 
@@ -664,12 +722,15 @@ void InstallSpecialHooks()
 	//SetUpHook(g_libGTASA+0x4D3864, (uintptr_t)CText_Get_hook, (uintptr_t*)&CText_Get);
 	SetUpHook(g_libGTASA+0x40C530, (uintptr_t)InitialiseRenderWare_hook, (uintptr_t*)&InitialiseRenderWare);
 	SetUpHook(g_libGTASA + 0x0025E660, (uintptr_t)MainMenuScreen__Update_hook, (uintptr_t*)& MainMenuScreen__Update);
-	//SetUpHook(g_libGTASA + 0x0023BB84, (uintptr_t)OS_FileOpen_hook, (uintptr_t*)& OS_FileOpen);
+	SetUpHook(g_libGTASA + 0x0023BB84, (uintptr_t)OS_FileOpen_hook, (uintptr_t*)& OS_FileOpen);
 
 	SetUpHook(g_libGTASA + 0x004FBBB0, (uintptr_t)cHandlingDataMgr__FindExactWord_hook, (uintptr_t*)& cHandlingDataMgr__FindExactWord);
 	SetUpHook(g_libGTASA + 0x004FBCF4, (uintptr_t)cHandlingDataMgr__ConvertDataToGameUnits_hook, (uintptr_t*)& cHandlingDataMgr__ConvertDataToGameUnits);
 	SetUpHook(g_libGTASA + 0x0023ACC4, (uintptr_t)NVEventGetNextEvent_hook, (uintptr_t*)& NVEventGetNextEvent_hooked);
 	SetUpHook(g_libGTASA + 0x004042A8, (uintptr_t)CStreaming__Init2_hook, (uintptr_t*)& CStreaming__Init2);	// increase stream memory value
+
+
+	SetUpHook(g_libGTASA + 0x001BEB9C, (uintptr_t)TextureDatabaseRuntime_hook, (uintptr_t*)& TextureDatabaseRuntime);
 }
 
 void ProcessPedDamage(PED_TYPE* pIssuer, PED_TYPE* pPlayer);
@@ -1074,23 +1135,6 @@ bool isEncrypted(const char* szArch)
 	return false;
 }
 
-signed int (*OS_FileOpen)(unsigned int a1, int* a2, const char* a3, int a4);
-signed int OS_FileOpen_hook(unsigned int a1, int* a2, const char* a3, int a4)
-{
-	uintptr_t calledFrom = 0;
-	__asm__ volatile ("mov %0, lr" : "=r" (calledFrom));
-	calledFrom -= g_libGTASA;
-	signed int retn = OS_FileOpen(a1, a2, a3, a4);
-
-	if (calledFrom == 0x001BCE9A + 1)
-	{
-		if (isEncrypted(a3))
-		{
-			lastOpenedFile = *a2;
-		}
-	}
-	return retn;
-}
 
 // CGameIntegrity
 // CodeObfuscation
@@ -1113,7 +1157,7 @@ int OS_FileRead_hook(void* a1, void* a2, int a3)
 	if (calledFrom == 0x001BCEE0 + 1 && a1 == (void*)lastOpenedFile)
 	{
 		lastOpenedFile = 0;
-		
+
 		AES_ctx ctx;
 		InitCTX(ctx, &g_iEncryptionKeyTXD[0]);
 
@@ -1285,6 +1329,15 @@ void CWidgetRegionLook__Update_hook(uintptr_t thiz)
 	}
 }
 
+void (*ProcessCommands1400To1499)(uintptr_t* thiz, int a2);
+void ProcessCommands1400To1499_hook(uintptr_t* thiz, int a2)
+{
+	//Log("pedHandle = %d, local = %d", pedHandle, pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->m_dwGTAId);
+	if(!a2)return;
+
+	return ProcessCommands1400To1499(thiz, a2);
+}
+
 void (*GivePedScriptedTask)(uintptr_t* thiz, int pedHandle, uintptr_t* a3, int commandID);
 void GivePedScriptedTask_hook(uintptr_t* thiz, int pedHandle, uintptr_t* a3, int commandID)
 {
@@ -1301,77 +1354,71 @@ void RpMaterialDestroy_hook(RpMaterial* mat)
 
 	return RpMaterialDestroy(mat);
 }
-
-uint8_t* (*RLEDecompress)(uint8_t* pDest, size_t uiDestSize, uint8_t const* pSrc, size_t uiSegSize, uint32_t uiEscape);
-uint8_t* RLEDecompress_hook(uint8_t* pDest, size_t uiDestSize, uint8_t const* pSrc, size_t uiSegSize, uint32_t uiEscape) {
-	if (!pDest) 
+uint8_t *(*RLEDecompress)(uint8_t *pDest, size_t uiDestSize, uint8_t const *pSrc, size_t uiSegSize, uint32_t uiEscape);
+uint8_t *RLEDecompress_hook(uint8_t *pDest, size_t uiDestSize, uint8_t const *pSrc, size_t uiSegSize, uint32_t uiEscape)
+{
+	if (!pDest)
 	{
-		Log("pDest0");
-		//return 0;
-		return 0;
+		return pDest;
 	}
 
-	if (!pSrc) 
+	if (!pSrc)
 	{
-		return 0;
+		return pDest;
 	}
 
-//	uint8_t* pTempDest = pDest;
-//	const uint8_t* pTempSrc = pSrc;
-//	uint8_t* pEndOfDest = &pDest[uiDestSize];
-//
-//	uint8_t* pEndOfSrc = (uint8_t*)&pSrc[dwRLEDecompressSourceSize];
-//
-//	if (pDest < pEndOfDest)
-//	{
-//		do
-//		{
-//			if (*pTempSrc == uiEscape)
-//			{
-//				uint8_t ucCurSeg = pTempSrc[1];
-//				if (ucCurSeg)
-//				{
-//					uint8_t* ucCurDest = pTempDest;
-//					uint8_t ucCount = 0;
-//					do
-//					{
-//						++ucCount;
-//						//Log("WRITE111 TO 0x%x FROM 0x%x SIZE %d", ucCurDest, pTempSrc + 2, uiSegSize);
-//						pDest = (uint8_t*)memcpy(ucCurDest, pTempSrc + 2, uiSegSize);
-//
-//						ucCurDest += uiSegSize;
-//					} while (ucCurSeg != ucCount);
-//
-//
-//					pTempDest += uiSegSize * ucCurSeg;
-//				}
-//				pTempSrc += 2 + uiSegSize;
-//			}
-//
-//			else
-//			{
-//				if (pTempSrc + uiSegSize >= pEndOfSrc)
-//				{
-//					//Log("AVOID CRASH TO 0x%x FROM 0x%x SIZE %d END OF SRC 0x%x", pTempDest, pTempSrc, pEndOfSrc - pTempSrc - 1, pEndOfSrc);
-//					return pDest;
-//				}
-//				else
-//				{
-//					//Log("WRITE222 TO 0x%x FROM 0x%x SIZE %d END OF SRC 0x%x", pTempDest, pTempSrc, uiSegSize, pEndOfSrc);
-//					pDest = (uint8_t*)memcpy(pTempDest, pTempSrc, uiSegSize);
-//					pTempDest += uiSegSize;
-//					pTempSrc += uiSegSize;
-//				}
-//			}
-//		} while (pEndOfDest > pTempDest);
-//	}
+	uint8_t *pTempDest = pDest;
+	const uint8_t *pTempSrc = pSrc;
+	uint8_t *pEndOfDest = &pDest[uiDestSize];
 
-//	dwRLEDecompressSourceSize = 0;
-//
-//	return pDest;
+	uint8_t *pEndOfSrc = (uint8_t *)&pSrc[uiSegSize];
 
-    //return RLEDecompress(reinterpret_cast<uint8_t *>(65165465465), uiDestSize, pSrc, 512665, uiEscape);
-	return RLEDecompress(pDest, uiDestSize, pSrc, uiSegSize, uiEscape);
+	if (pDest < pEndOfDest)
+	{
+		do
+		{
+			if (*pTempSrc == uiEscape)
+			{
+				uint8_t ucCurSeg = pTempSrc[1];
+				if (ucCurSeg)
+				{
+					uint8_t *ucCurDest = pTempDest;
+					uint8_t ucCount = 0;
+					do
+					{
+						++ucCount;
+						// Log("WRITE111 TO 0x%x FROM 0x%x SIZE %d", ucCurDest, pTempSrc + 2, uiSegSize);
+						pDest = (uint8_t *)memcpy(ucCurDest, pTempSrc + 2, uiSegSize);
+
+						ucCurDest += uiSegSize;
+					} while (ucCurSeg != ucCount);
+
+					pTempDest += uiSegSize * ucCurSeg;
+				}
+				pTempSrc += 2 + uiSegSize;
+			}
+
+			else
+			{
+				if (pTempSrc + uiSegSize >= pEndOfSrc)
+				{
+					// Log("AVOID CRASH TO 0x%x FROM 0x%x SIZE %d END OF SRC 0x%x", pTempDest, pTempSrc, pEndOfSrc - pTempSrc - 1, pEndOfSrc);
+					return pDest;
+				}
+				else
+				{
+					// Log("WRITE222 TO 0x%x FROM 0x%x SIZE %d END OF SRC 0x%x", pTempDest, pTempSrc, uiSegSize, pEndOfSrc);
+					pDest = (uint8_t *)memcpy(pTempDest, pTempSrc, uiSegSize);
+					pTempDest += uiSegSize;
+					pTempSrc += uiSegSize;
+				}
+			}
+		} while (pEndOfDest > pTempDest);
+	}
+
+	dwRLEDecompressSourceSize = 0;
+
+	return pDest;
 }
 
 #include "..//crashlytics.h"
@@ -2569,13 +2616,15 @@ void InstallHooks()
 	// GetFrameFromID fix
 	SetUpHook(g_libGTASA + 0x00335CC0, (uintptr_t)CClumpModelInfo_GetFrameFromId_hook, (uintptr_t*)& CClumpModelInfo_GetFrameFromId);
 	// RLEDecompress fix
-	SetUpHook(g_libGTASA + 0x1BC314, (uintptr_t)RLEDecompress_hook, (uintptr_t*)&RLEDecompress);
+	//SetUpHook(g_libGTASA + 0x1BC314, (uintptr_t)RLEDecompress_hook, (uintptr_t*)&RLEDecompress);
 
 	//RpMaterialDestroy fix ? не точно
 	SetUpHook(g_libGTASA + 0x001E3C54, (uintptr_t)RpMaterialDestroy_hook, (uintptr_t*)&RpMaterialDestroy);
 
 	//CRunningScript fix ? не точно
 	SetUpHook(g_libGTASA + 0x002E5400, (uintptr_t)GivePedScriptedTask_hook, (uintptr_t*)&GivePedScriptedTask);
+
+	SetUpHook(g_libGTASA + 0x00308640, (uintptr_t)ProcessCommands1400To1499_hook, (uintptr_t*)&ProcessCommands1400To1499);
 
 	// todo: 3 pools fix crash
 
