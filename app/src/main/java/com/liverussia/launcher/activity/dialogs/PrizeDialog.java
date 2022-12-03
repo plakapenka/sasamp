@@ -40,7 +40,7 @@ public class PrizeDialog extends DialogFragment implements View.OnClickListener 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setStyle(DialogFragment.STYLE_NORMAL, R.style.AppTheme_FullScreenDialog);
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.AppBaseTheme);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class PrizeDialog extends DialogFragment implements View.OnClickListener 
         btnGoBack.setOnClickListener(this);
 
         prizeAdditionalInfoTextView = view.findViewById(R.id.prize_info_additional_info);
-        prizeAdditionalInfoTextView.setText(prizeInfo.getAdditionalInfo());
+     //   prizeAdditionalInfoTextView.setText(prizeInfo.getAdditionalInfo());
 
         prizeInfoImageView = view.findViewById(R.id.prize_info_image);
         prizeInfoImageView.setImageBitmap(getDecodedImage());
