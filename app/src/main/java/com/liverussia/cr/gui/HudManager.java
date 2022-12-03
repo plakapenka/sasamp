@@ -78,6 +78,8 @@ public class HudManager {
     private TextView me_button;
     private TextView try_button;
     private TextView do_button;
+    private View hide_chat;
+    private ConstraintLayout chat_box;
 
     private final int INVALID = -1;
     private final int ME_BUTTON = 0;
@@ -116,6 +118,19 @@ public class HudManager {
         hp_text = activity.findViewById(R.id.hp_text);
 
         // ================ CHAT
+        chat_box = activity.findViewById(R.id.chat_box);
+
+        hide_chat = activity.findViewById(R.id.hide_chat);
+        hide_chat.setOnClickListener(view -> {
+            if(chat_box.getVisibility() == View.GONE){
+                Utils.ShowLayout(chat_box, true);
+                hide_chat.setScaleY(1);
+            } else{
+                Utils.HideLayout(chat_box, true);
+                hide_chat.setScaleY(-1);
+            }
+        });
+
         me_button = activity.findViewById(R.id.me_button);
         me_button.setOnClickListener(view -> {
             if(chat_button == ME_BUTTON){
@@ -653,7 +668,7 @@ public class HudManager {
                 chat_input_layout.setVisibility(View.VISIBLE);
              //   chat_input.requestFocus();
                 ToggleKeyBoard(true);
-                // imm.showSoftInput(chat_input, InputMethodManager.SHOW_IMPLICIT);
+               //  imm.showSoftInput(chat_input, InputMethodManager.SHOW_IMPLICIT);
             }
         });
 
@@ -672,7 +687,7 @@ public class HudManager {
     public class ChatAdapter  extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
 
         private final LayoutInflater inflater;
-        private final List<String> chat_lines;
+        private List<String> chat_lines;
 
         ChatAdapter(Context context, List<String> chat_lines) {
             this.chat_lines = chat_lines;
@@ -692,7 +707,8 @@ public class HudManager {
         @Override
         public void onBindViewHolder(ChatAdapter.ViewHolder holder, int position) {
             holder.chat_line_text.setText(Html.fromHtml(chat_lines.get(position)));
-            holder.chat_line_shadow.setText(Html.fromHtml(chat_lines.get(position)));
+            holder.chat_line_shadow.setText(Html.fromHtml(chat_lines.get(position)).toString());
+
             holder.chat_line_shadow.setTextSize(TypedValue.COMPLEX_UNIT_PX, chatFontSize);
             holder.chat_line_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, chatFontSize);
         }
@@ -721,7 +737,7 @@ public class HudManager {
                     this.chat_lines.remove(0);
                     notifyItemRemoved(0);
                 }
-                this.chat_lines.add(item);
+                this.chat_lines.add(" "+item+" ");
                 notifyItemInserted(this.chat_lines.size()-1);
 
                 chat.scrollToPosition(this.chat_lines.size()-1);
