@@ -1206,7 +1206,7 @@ public abstract class NvEventQueueActivity
             configAttrs = new int[] {EGL10.EGL_NONE};
         int[] oldConfES2 = configAttrs;
         
-        configAttrs = new int[13 + oldConfES2.length-1];
+        configAttrs = new int[17 + oldConfES2.length-1];
         for (i = 0; i < oldConfES2.length-1; i++)
             configAttrs[i] = oldConfES2[i];
         configAttrs[i++] = EGL10.EGL_RED_SIZE;
@@ -1221,6 +1221,12 @@ public abstract class NvEventQueueActivity
         configAttrs[i++] = stencilSize;
         configAttrs[i++] = EGL10.EGL_DEPTH_SIZE;
         configAttrs[i++] = depthSize;
+
+        configAttrs[i++] = EGL10.EGL_SAMPLE_BUFFERS; // сглаживание
+        configAttrs[i++] = 1;
+        configAttrs[i++] = EGL10.EGL_SAMPLES; // сглаживание
+        configAttrs[i++] = 4;
+
         configAttrs[i++] = EGL10.EGL_NONE;
 
         egl = (EGL10) EGLContext.getEGL();
@@ -1429,6 +1435,7 @@ public abstract class NvEventQueueActivity
     {
         if (!HasGLExtensions && gl != null && this.cachedSurfaceHolder != null)
         {
+           // gl.glEnable(GL10.GL_CULL_FACE); // ? сглаживание
             glVendor = gl.glGetString(GL10.GL_VENDOR);
             glExtensions = gl.glGetString(GL10.GL_EXTENSIONS);
             glRenderer = gl.glGetString(GL10.GL_RENDERER);
