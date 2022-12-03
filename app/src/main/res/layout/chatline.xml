@@ -1,45 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    xmlns:strokeAttrs="http://schemas.android.com/apk/res-auto"
 
-    android:id="@+id/chat_line"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:id="@+id/chat_line">
 
-    <TextView
-        android:id="@+id/chat_line_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingBottom="0.1dp"
-        android:textStyle="bold"
-        android:shadowColor="#000000"
-        android:shadowRadius="2"
-        android:shadowDx="1"
-        android:shadowDy="1"
-        android:textFontWeight="500"
-        android:letterSpacing="-0.03"
-        android:textSize="27px"
-        android:textColor="#c2ddf8"
-        android:includeFontPadding="false"
-        android:fontFamily="@font/visby_chat"
-        android:text="Поздравляем молодую пару!"/>
-    <TextView
-        android:paddingBottom="0.1dp"
+    <com.liverussia.cr.gui.util.StrokedTextView
         android:id="@+id/chat_line_shadow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingBottom="0.1dp"
         android:textStyle="bold"
-        android:shadowColor="#000000"
-        android:shadowRadius="1"
-        android:shadowDy="1"
-        android:shadowDx="1"
         android:textFontWeight="500"
-        android:letterSpacing="-0.03"
+        android:letterSpacing="-0.02"
         android:textSize="27px"
         android:textColor="#c2ddf8"
         android:includeFontPadding="false"
         android:fontFamily="@font/visby_chat"
-        android:text="Поздравляем молодую пару!"/>
+        android:text=" Клиент запущен "
+        strokeAttrs:textStrokeColor="@android:color/black"
+        strokeAttrs:textStrokeWidth="1.4"
+        />
+    <TextView
+        android:paddingBottom="0.1dp"
+        android:id="@+id/chat_line_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textFontWeight="500"
+        android:letterSpacing="-0.02"
+        android:textSize="27px"
+        android:textColor="#a9c4e4"
+        android:includeFontPadding="false"
+        android:fontFamily="@font/visby_chat"
+        android:text=" Клиент запущен "/>
 
 </FrameLayout>

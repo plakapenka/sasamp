@@ -185,7 +185,6 @@ public class Inventory {
                 item.getChildAt(0).setBackgroundResource(id);
             }
             else {
-                Log.d("dsf", "Clear item inv");
                 item.getChildAt(0).setBackgroundResource(0);
             }
 
