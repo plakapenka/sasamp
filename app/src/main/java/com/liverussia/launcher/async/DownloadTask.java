@@ -8,6 +8,7 @@ import android.widget.ProgressBar;
 import androidx.annotation.UiThread;
 import androidx.annotation.WorkerThread;
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.liverussia.cr.core.DownloadUtils;
 import com.liverussia.launcher.activity.LoaderActivity;
 import com.liverussia.launcher.async.domain.AsyncTaskResult;
@@ -315,6 +316,7 @@ public class DownloadTask implements Listener<TaskStatus> {
                 file.delete();
             }
 
+            FirebaseCrashlytics.getInstance().recordException(e);
             //TODO исправить
             throw new ApiException(ErrorContainer.DOWNLOAD_FILES_ERROR, e.toString());
         } finally {
