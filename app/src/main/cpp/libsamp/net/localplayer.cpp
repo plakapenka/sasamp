@@ -62,6 +62,7 @@ CLocalPlayer::CLocalPlayer()
 	m_dwLastSendTick = GetTickCount();
 	m_dwLastSendAimTick = GetTickCount();
 	m_dwLastSendSpecTick = GetTickCount();
+	m_dwLastUpdateHudButtons = GetTickCount();
 	m_dwLastAimSendTick = m_dwLastSendTick;
 	m_dwLastUpdateOnFootData = GetTickCount();
 	m_dwLastStatsUpdateTick = GetTickCount();
@@ -200,9 +201,10 @@ bool CLocalPlayer::Process()
 	uint32_t dwThisTick = GetTickCount();
 
 	if(m_bIsActive && m_pPlayerPed) {
-		if(m_pPlayerPed->drunk_level){
-			m_pPlayerPed->drunk_level --;
-			ScriptCommand(&SET_PLAYER_DRUNKENNESS, m_pPlayerPed->m_bytePlayerNumber, m_pPlayerPed->drunk_level/100);
+		if (m_pPlayerPed->drunk_level) {
+			m_pPlayerPed->drunk_level--;
+			ScriptCommand(&SET_PLAYER_DRUNKENNESS, m_pPlayerPed->m_bytePlayerNumber,
+						  m_pPlayerPed->drunk_level / 100);
 		}
 		// handle dead
 		if (!m_bIsWasted && m_pPlayerPed->GetActionTrigger() == ACTION_DEATH ||
@@ -283,8 +285,9 @@ bool CLocalPlayer::Process()
 				LookAt.Y = Aim->pos1y + (Aim->f1y * 20.0f);
 				LookAt.Z = Aim->pos1z + (Aim->f1z * 20.0f);
 
-			//	ScriptCommand(&TASK_LOOK_AT_COORD, m_pPlayerPed->m_dwGTAId, LookAt.X, LookAt.Y, LookAt.Z, 3000);
-				pGame->FindPlayerPed()->ApplyCommandTask("FollowPedSA", 0, 2000, -1, &LookAt, 0,0.1f, 500, 3, 0);
+				//	ScriptCommand(&TASK_LOOK_AT_COORD, m_pPlayerPed->m_dwGTAId, LookAt.X, LookAt.Y, LookAt.Z, 3000);
+				pGame->FindPlayerPed()->ApplyCommandTask("FollowPedSA", 0, 2000, -1, &LookAt, 0,
+														 0.1f, 500, 3, 0);
 				m_dwLastHeadUpdate = dwThisTick;
 			}
 
@@ -355,37 +358,50 @@ bool CLocalPlayer::Process()
 				SendPassengerFullSyncData();
 			}
 		}
+		if ((dwThisTick - m_dwLastUpdateHudButtons) > 100) {
+			m_dwLastUpdateHudButtons = GetTickCount();
+			//  нопки вход/выход/закрыть машину
+			if (!m_pPlayerPed->lToggle ||
+				m_pPlayerPed->m_iCurrentSpecialAction == SPECIAL_ACTION_CARRY) {
+				if (pHud->isEnterPassengerButtOn) {
+					pHud->ToggleEnterPassengerButton(false);
+				}
+				if (pHud->isEnterExitVehicleButtonOn) {
+					pHud->ToggleEnterExitVehicleButton(false);
+				}
+				if (pHud->isLockVehicleButtonOn) {
+					pHud->ToggleLockVehicleButton(false);
+				}
+			} else if (!m_pPlayerPed->IsInVehicle()) {
+				if (pHud->isHornButtonOn) {
+					pHud->ToggleHornButton(false);
+				}
+				if (pVehiclePool) {
+					VEHICLEID ClosetVehicleID = pVehiclePool->FindNearestToLocalPlayerPed();
 
-		//  нопки вход/выход/закрыть машину
-		if (!m_pPlayerPed->lToggle ||
-			m_pPlayerPed->m_iCurrentSpecialAction == SPECIAL_ACTION_CARRY) {
-			if (pHud->isEnterPassengerButtOn) {
-				pHud->ToggleEnterPassengerButton(false);
-			}
-			if (pHud->isEnterExitVehicleButtonOn) {
-				pHud->ToggleEnterExitVehicleButton(false);
-			}
-			if (pHud->isLockVehicleButtonOn) {
-				pHud->ToggleLockVehicleButton(false);
-			}
-		} else if (!m_pPlayerPed->IsInVehicle()) {
-			if (pHud->isHornButtonOn) {
-				pHud->ToggleHornButton(false);
-			}
-			if (pVehiclePool) {
-				VEHICLEID ClosetVehicleID = pVehiclePool->FindNearestToLocalPlayerPed();
+					if (ClosetVehicleID != INVALID_VEHICLE_ID) {
+						CVehicle *pVehicle = pVehiclePool->GetAt(ClosetVehicleID);
+						if (pVehicle && pVehicle->GetDistanceFromLocalPlayerPed() < 4.0f  && !pVehicle->IsTrailer()) {
+							//if(!pVehicle->m_bIsLocked)
+							if (!pVehicle->m_bDoorsLocked) {// тачка открыта
+								if (!pHud->isEnterPassengerButtOn) {
+									pHud->ToggleEnterPassengerButton(true);
+								}
+								if (!pHud->isEnterExitVehicleButtonOn) {
+									pHud->ToggleEnterExitVehicleButton(true);
+								}
+							} else {
+								if (pHud->isEnterPassengerButtOn) {
+									pHud->ToggleEnterPassengerButton(false);
+								}
+								if (pHud->isEnterExitVehicleButtonOn) {
+									pHud->ToggleEnterExitVehicleButton(false);
+								}
+							}
+							if (!pHud->isLockVehicleButtonOn) {
+								pHud->ToggleLockVehicleButton(true);
+							}
 
-				if (ClosetVehicleID != INVALID_VEHICLE_ID) {
-					CVehicle *pVehicle = pVehiclePool->GetAt(ClosetVehicleID);
-					if (pVehicle && pVehicle->GetDistanceFromLocalPlayerPed() < 4.0f) {
-						//if(!pVehicle->m_bIsLocked)
-						if (!pVehicle->m_bDoorsLocked) {// тачка открыта
-							if (!pHud->isEnterPassengerButtOn) {
-								pHud->ToggleEnterPassengerButton(true);
-							}
-							if (!pHud->isEnterExitVehicleButtonOn) {
-								pHud->ToggleEnterExitVehicleButton(true);
-							}
 						} else {
 							if (pHud->isEnterPassengerButtOn) {
 								pHud->ToggleEnterPassengerButton(false);
@@ -393,11 +409,10 @@ bool CLocalPlayer::Process()
 							if (pHud->isEnterExitVehicleButtonOn) {
 								pHud->ToggleEnterExitVehicleButton(false);
 							}
+							if (pHud->isLockVehicleButtonOn) {
+								pHud->ToggleLockVehicleButton(false);
+							}
 						}
-						if (!pHud->isLockVehicleButtonOn) {
-							pHud->ToggleLockVehicleButton(true);
-						}
-
 					} else {
 						if (pHud->isEnterPassengerButtOn) {
 							pHud->ToggleEnterPassengerButton(false);
@@ -409,48 +424,36 @@ bool CLocalPlayer::Process()
 							pHud->ToggleLockVehicleButton(false);
 						}
 					}
-				} else {
-					if (pHud->isEnterPassengerButtOn) {
-						pHud->ToggleEnterPassengerButton(false);
-					}
-					if (pHud->isEnterExitVehicleButtonOn) {
-						pHud->ToggleEnterExitVehicleButton(false);
+				}
+
+			} else {// в машине
+				if (m_pPlayerPed->IsAPassenger()) {// на пассажирке
+					if (!pHud->isEnterExitVehicleButtonOn) {
+						pHud->ToggleEnterExitVehicleButton(true);
 					}
 					if (pHud->isLockVehicleButtonOn) {
 						pHud->ToggleLockVehicleButton(false);
 					}
-				}
-			}
+					if (pHud->isHornButtonOn) {
+						pHud->ToggleHornButton(false);
+					}
+					if (pHud->isEnterPassengerButtOn) {
+						pHud->ToggleEnterPassengerButton(false);
+					}
+				} else {
+					if (!pHud->isEnterExitVehicleButtonOn) {
+						pHud->ToggleEnterExitVehicleButton(true);
+					}
 
-		} else {// в машине
-			if(m_pPlayerPed->IsAPassenger())
-			{// на пассажирке
-				if (!pHud->isEnterExitVehicleButtonOn) {
-					pHud->ToggleEnterExitVehicleButton(true);
-				}
-				if (pHud->isLockVehicleButtonOn) {
-					pHud->ToggleLockVehicleButton(false);
-				}
-				if (pHud->isHornButtonOn) {
-					pHud->ToggleHornButton(false);
-				}
-				if (pHud->isEnterPassengerButtOn) {
-					pHud->ToggleEnterPassengerButton(false);
-				}
-			}
-			else {
-				if (!pHud->isEnterExitVehicleButtonOn) {
-					pHud->ToggleEnterExitVehicleButton(true);
-				}
-
-				if (!pHud->isLockVehicleButtonOn) {
-					pHud->ToggleLockVehicleButton(true);
-				}
-				if (!pHud->isHornButtonOn) {
-					pHud->ToggleHornButton(true);
-				}
-				if (pHud->isEnterPassengerButtOn) {
-					pHud->ToggleEnterPassengerButton(false);
+					if (!pHud->isLockVehicleButtonOn) {
+						pHud->ToggleLockVehicleButton(true);
+					}
+					if (!pHud->isHornButtonOn) {
+						pHud->ToggleHornButton(true);
+					}
+					if (pHud->isEnterPassengerButtOn) {
+						pHud->ToggleEnterPassengerButton(false);
+					}
 				}
 			}
 		}
@@ -459,7 +462,7 @@ bool CLocalPlayer::Process()
 	bool needDrawableHud = true;
 	if(pGame->isDialogActive || pGame->isCasinoDiceActive || tabToggle || pGame->isAutoShopActive
 	|| pGame->isCasinoWheelActive || !m_pPlayerPed || pGame->isRegistrationActive || pGame->isShopStoreActive ||
-    pGame->isPreDeathActive || pInventory->isToggle || bFirstSpawn /*|| CEditobject::isToggle*/)
+    pGame->isPreDeathActive || pInventory->isToggle || bFirstSpawn || CEditobject::isToggle)
 	{
 		needDrawableHud = false;
 	}
@@ -546,7 +549,7 @@ void CLocalPlayer::SendBulletSyncData(PLAYERID byteHitID, uint8_t byteHitType, V
 	bsRPC.Write((uint32_t)blSync.weapId);
 	bsRPC.Write((uint32_t)1);
 	pNetGame->GetRakClient()->RPC(&RPC_PlayerGiveTakeDamage, &bsRPC, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0, false, UNASSIGNED_NETWORK_ID, nullptr);
-	Log("[BULLET_SYNC] sent.");
+
 }
 
 void CLocalPlayer::SendWastedNotification()

@@ -4,14 +4,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.liverussia.cr.R;
-import com.liverussia.cr.gui.util.MaskedEditText;
 import com.liverussia.cr.gui.util.Utils;
 
 import java.util.ArrayList;
@@ -98,7 +96,7 @@ public class DialogAdapter extends RecyclerView.Adapter {
         }
         for (int i = 0; i < this.mFieldHeaders.size(); i++) {
             int headerWidth = this.mFieldHeaders.get(i).getWidth();
-            Log.i("DIALOG", max[i] + "\t" + ((Object) this.mFieldHeaders.get(i).getText()) + MaskedEditText.SPACE + headerWidth);
+            Log.i("DIALOG", max[i] + "\t" + ((Object) this.mFieldHeaders.get(i).getText()) + " " + headerWidth);
             if (max[i] < headerWidth) {
                 max[i] = headerWidth;
             }

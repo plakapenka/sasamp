@@ -133,8 +133,6 @@ void WriteHookProc(uintptr_t addr, uintptr_t func)
 
 void SetUpHook(uintptr_t addr, uintptr_t func, uintptr_t *orig)
 {
-	Log("SetUpHook: 0x%X -> 0x%X", addr, func);
-
     if(memlib_end < (memlib_start + 0x10) || mmap_end < (mmap_start + 0x20))
     {
         Log("SetUpHook: space limit reached");

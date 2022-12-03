@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.KeyEvent;
+
+import androidx.appcompat.app.AppCompatDelegate;
+
 import com.wardrumstudios.utils.WarMedia;
 
 public class GTASA extends WarMedia {
@@ -23,9 +26,10 @@ public class GTASA extends WarMedia {
         }
         System.loadLibrary("SCAnd");
         System.loadLibrary("GTASA");
-        System.loadLibrary("samp");
-        System.loadLibrary("OpenAL32");
+     //   System.loadLibrary("crashlytics");
+     //   System.loadLibrary("OpenAL32");
 
+        System.loadLibrary("samp");
     }
 
     public static void staticEnterSocialClub()
@@ -73,6 +77,7 @@ public class GTASA extends WarMedia {
 
     public void onCreate(Bundle bundle)
     {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         if(!once)
         {
             once = true;

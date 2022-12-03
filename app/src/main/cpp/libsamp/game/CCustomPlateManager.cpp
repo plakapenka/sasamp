@@ -17,9 +17,9 @@ struct CSprite2d* CCustomPlateManager::m_pUaSprite = nullptr;
 struct CSprite2d* CCustomPlateManager::m_pBuSprite = nullptr;
 struct CSprite2d* CCustomPlateManager::m_pKzSprite = nullptr;
 struct CSprite2d* CCustomPlateManager::m_pRuPoliceSprite = nullptr;
-struct CSprite2d* CCustomPlateManager::m_pTaxiSprite = nullptr;
-struct CSprite2d* CCustomPlateManager::m_pRuGosSprite = nullptr;
-struct CSprite2d* CCustomPlateManager::m_pNoPlateSprite = nullptr;
+//struct CSprite2d* CCustomPlateManager::m_pTaxiSprite = nullptr;
+//struct CSprite2d* CCustomPlateManager::m_pRuGosSprite = nullptr;
+//struct CSprite2d* CCustomPlateManager::m_pNoPlateSprite = nullptr;
 
 CFontInstance* CCustomPlateManager::m_pRUFont = nullptr;
 CFontInstance* CCustomPlateManager::m_pKZFont = nullptr;
@@ -77,84 +77,6 @@ RwTexture* CCustomPlateManager::ProcessUaPlate(SCustomPlate& plate)
 	RwTexture* pTexture = m_pRenderTarget->End();
 
 	delete pText;
-
-	return pTexture;
-}
-
-RwTexture* CCustomPlateManager::ProcessTaxiPlate(SCustomPlate& plate)
-{
-	if (!m_pTaxiSprite)
-	{
-		return nullptr;
-	}
-	if (!m_pTaxiSprite->m_pRwTexture)
-	{
-		return nullptr;
-	}
-
-	// process text
-	memset(m_pBitmap, 0, PLATE_BITMAP_HEIGHT * PLATE_BITMAP_WIDTH);
-
-	int x_max, y_max;
-	CFontRenderer::RenderText(plate.szNumber, m_pRUFont, m_pBitmap, PLATE_BITMAP_WIDTH, x_max, y_max);
-
-	RwRaster* pTextRaster = GetRWRasterFromBitmapPalette(m_pBitmap + (PLATE_BITMAP_WIDTH * 30), PLATE_BITMAP_WIDTH, 256, 64, 255, 224, 47, 0);
-
-	// process region code
-	memset(m_pBitmap, 0, PLATE_BITMAP_HEIGHT * PLATE_BITMAP_WIDTH);
-	CFontRenderer::RenderText(plate.szRegion, m_pRUFont, m_pBitmap, PLATE_BITMAP_WIDTH, x_max, y_max);
-
-	RwRaster* pRegionRaster = GetRWRasterFromBitmapPalette(m_pBitmap + (PLATE_BITMAP_WIDTH * 30), PLATE_BITMAP_WIDTH, 128, 64, 255, 224, 47, 0);
-
-	if (!pRegionRaster || !pTextRaster)
-	{
-		if (pRegionRaster)
-		{
-			RwRasterDestroy(pRegionRaster);
-		}
-		if (pTextRaster)
-		{
-			RwRasterDestroy(pTextRaster);
-		}
-		return nullptr;
-	}
-
-	CSprite2d* pText = new CSprite2d();
-	CSprite2d* pRegion = new CSprite2d();
-
-	if (!pText || !pRegion)
-	{
-		if (pText)
-		{
-			delete pText;
-		}
-		if (pRegion)
-		{
-			delete pRegion;
-		}
-
-		RwRasterDestroy(pRegionRaster);
-		RwRasterDestroy(pTextRaster);
-		return nullptr;
-	}
-
-	pText->m_pRwTexture = ((struct RwTexture* (*)(struct RwRaster*))(g_libGTASA + 0x1B1B4C + 1))(pTextRaster); // RwTextureCreate
-	pRegion->m_pRwTexture = ((struct RwTexture* (*)(struct RwRaster*))(g_libGTASA + 0x1B1B4C + 1))(pRegionRaster); // RwTextureCreate
-
-	CRGBA white;
-	white.A = 255;
-	white.R = 255;
-	white.G = 255;
-	white.B = 255;
-
-	m_pRenderTarget->Begin();
-	m_pTaxiSprite->Draw(0.0f, 0.0f, 256.0f, 64.0f, white);
-	pText->Draw(22.0f, 10.0f, 160.0f, 40.0f, white);
-	pRegion->Draw(206.0f, 14.0f, 38.0f, 20.0f, white);
-	RwTexture* pTexture = m_pRenderTarget->End();
-
-	delete pText;
-	delete pRegion;
 
 	return pTexture;
 }
@@ -465,172 +387,6 @@ RwTexture* CCustomPlateManager::ProcessRuPlate(SCustomPlate& plate)
 	return pTexture;
 }
 
-RwTexture* CCustomPlateManager::ProcessNoPlatePlate(SCustomPlate& plate)
-{
-	if (!m_pNoPlateSprite)
-	{
-		return nullptr;
-	}
-	if (!m_pNoPlateSprite->m_pRwTexture)
-	{
-		return nullptr;
-	}
-
-	// process text
-	memset(m_pBitmap, 0, PLATE_BITMAP_HEIGHT * PLATE_BITMAP_WIDTH);
-
-	int x_max, y_max;
-	CFontRenderer::RenderText(plate.szNumber, m_pRUFont, m_pBitmap, PLATE_BITMAP_WIDTH, x_max, y_max);
-
-	for (int i = 0; i < PLATE_BITMAP_WIDTH * PLATE_BITMAP_HEIGHT; i++)
-	{
-		m_pBitmap[i] = 255 - m_pBitmap[i];
-	}
-
-	RwRaster* pTextRaster = GetRWRasterFromBitmapPalette(m_pBitmap + (PLATE_BITMAP_WIDTH * 30), PLATE_BITMAP_WIDTH, 256, 64, 0, 0, 0, 0);
-
-	// process region code
-	memset(m_pBitmap, 0, PLATE_BITMAP_HEIGHT * PLATE_BITMAP_WIDTH);
-	CFontRenderer::RenderText(plate.szRegion, m_pRUFont, m_pBitmap, PLATE_BITMAP_WIDTH, x_max, y_max);
-	for (int i = 0; i < PLATE_BITMAP_WIDTH * PLATE_BITMAP_HEIGHT; i++)
-	{
-		m_pBitmap[i] = 255 - m_pBitmap[i];
-	}
-
-	RwRaster* pRegionRaster = GetRWRasterFromBitmapPalette(m_pBitmap + (PLATE_BITMAP_WIDTH * 30), PLATE_BITMAP_WIDTH, 128, 64, 0, 0, 0, 0);
-
-
-	if (!pRegionRaster || !pTextRaster)
-	{
-		if (pRegionRaster)
-		{
-			RwRasterDestroy(pRegionRaster);
-		}
-		if (pTextRaster)
-		{
-			RwRasterDestroy(pTextRaster);
-		}
-		return nullptr;
-	}
-
-	CSprite2d* pText = new CSprite2d();
-	CSprite2d* pRegion = new CSprite2d();
-
-	if (!pText || !pRegion)
-	{
-		if (pText)
-		{
-			delete pText;
-		}
-		if (pRegion)
-		{
-			delete pRegion;
-		}
-
-		RwRasterDestroy(pRegionRaster);
-		RwRasterDestroy(pTextRaster);
-		return nullptr;
-	}
-
-	pText->m_pRwTexture = ((struct RwTexture* (*)(struct RwRaster*))(g_libGTASA + 0x1B1B4C + 1))(pTextRaster); // RwTextureCreate
-	pRegion->m_pRwTexture = ((struct RwTexture* (*)(struct RwRaster*))(g_libGTASA + 0x1B1B4C + 1))(pRegionRaster); // RwTextureCreate
-
-	CRGBA white;
-	white.A = 255;
-	white.R = 255;
-	white.G = 255;
-	white.B = 255;
-
-	m_pRenderTarget->Begin();
-	m_pNoPlateSprite->Draw(0.0f, 0.0f, 256.0f, 64.0f, white);
-
-	RwTexture* pTexture = m_pRenderTarget->End();
-
-	delete pText;
-	delete pRegion;
-
-	return pTexture;
-}
-
-
-RwTexture* CCustomPlateManager::ProcessRuGosPlate(SCustomPlate& plate)
-{
-	if (!m_pRuGosSprite)
-	{
-		return nullptr;
-	}
-	if (!m_pRuGosSprite->m_pRwTexture)
-	{
-		return nullptr;
-	}
-
-	// process text
-	memset(m_pBitmap, 0, PLATE_BITMAP_HEIGHT * PLATE_BITMAP_WIDTH);
-
-	int x_max, y_max;
-	CFontRenderer::RenderText(plate.szNumber, m_pRUFont, m_pBitmap, PLATE_BITMAP_WIDTH, x_max, y_max);
-
-	RwRaster* pTextRaster = GetRWRasterFromBitmapPalette(m_pBitmap + (PLATE_BITMAP_WIDTH * 30), PLATE_BITMAP_WIDTH, 256, 64, 151, 44, 21, 0);
-
-	// process region code
-	memset(m_pBitmap, 0, PLATE_BITMAP_HEIGHT * PLATE_BITMAP_WIDTH);
-	CFontRenderer::RenderText(plate.szRegion, m_pRUFont, m_pBitmap, PLATE_BITMAP_WIDTH, x_max, y_max);
-
-	RwRaster* pRegionRaster = GetRWRasterFromBitmapPalette(m_pBitmap + (PLATE_BITMAP_WIDTH * 30), PLATE_BITMAP_WIDTH, 128, 64, 151, 44, 21, 0);
-
-	if (!pRegionRaster || !pTextRaster)
-	{
-		if (pRegionRaster)
-		{
-			RwRasterDestroy(pRegionRaster);
-		}
-		if (pTextRaster)
-		{
-			RwRasterDestroy(pTextRaster);
-		}
-		return nullptr;
-	}
-
-	CSprite2d* pText = new CSprite2d();
-	CSprite2d* pRegion = new CSprite2d();
-
-	if (!pText || !pRegion)
-	{
-		if (pText)
-		{
-			delete pText;
-		}
-		if (pRegion)
-		{
-			delete pRegion;
-		}
-
-		RwRasterDestroy(pRegionRaster);
-		RwRasterDestroy(pTextRaster);
-		return nullptr;
-	}
-
-	pText->m_pRwTexture = ((struct RwTexture* (*)(struct RwRaster*))(g_libGTASA + 0x1B1B4C + 1))(pTextRaster); // RwTextureCreate
-	pRegion->m_pRwTexture = ((struct RwTexture* (*)(struct RwRaster*))(g_libGTASA + 0x1B1B4C + 1))(pRegionRaster); // RwTextureCreate
-
-	CRGBA white;
-	white.A = 255;
-	white.R = 255;
-	white.G = 255;
-	white.B = 255;
-
-	m_pRenderTarget->Begin();
-	m_pRuGosSprite->Draw(0.0f, 0.0f, 256.0f, 64.0f, white);
-	pText->Draw(22.0f, 10.0f, 160.0f, 40.0f, white);
-	pRegion->Draw(206.0f, 14.0f, 38.0f, 20.0f, white);
-	RwTexture* pTexture = m_pRenderTarget->End();
-
-	delete pText;
-	delete pRegion;
-
-	return pTexture;
-}
-
 void CCustomPlateManager::Initialise()
 {
 	char path[0xFF];
@@ -650,19 +406,19 @@ void CCustomPlateManager::Initialise()
 	m_pBuSprite = new CSprite2d();
 	m_pKzSprite = new CSprite2d();
 	m_pRuPoliceSprite = new CSprite2d();
-	m_pTaxiSprite = new CSprite2d();
-	m_pRuGosSprite = new CSprite2d();
-
-	m_pNoPlateSprite = new CSprite2d();
+//	m_pTaxiSprite = new CSprite2d();
+//	m_pRuGosSprite = new CSprite2d();
+//
+//	m_pNoPlateSprite = new CSprite2d();
 
 	m_pUaSprite->m_pRwTexture = (RwTexture*)LoadTextureFromDB("samp", "plate_ua");
 	m_pRuSprite->m_pRwTexture = (RwTexture*)LoadTextureFromDB("samp", "plate_ru");
 	m_pBuSprite->m_pRwTexture = (RwTexture*)LoadTextureFromDB("samp", "plate_bu");
 	m_pKzSprite->m_pRwTexture = (RwTexture*)LoadTextureFromDB("samp", "plate_kz");
 	m_pRuPoliceSprite->m_pRwTexture = (RwTexture*)LoadTextureFromDB("samp", "plate_ru_police");
-	m_pTaxiSprite->m_pRwTexture = (RwTexture*)LoadTextureFromDB("samp", "plate_taxi");
-	m_pRuGosSprite->m_pRwTexture = (RwTexture*)LoadTextureFromDB("samp", "plate_gos");
-	m_pNoPlateSprite->m_pRwTexture = (RwTexture*)LoadTextureFromDB("samp", "plate_outside");
+//	m_pTaxiSprite->m_pRwTexture = (RwTexture*)LoadTextureFromDB("samp", "plate_taxi");
+//	m_pRuGosSprite->m_pRwTexture = (RwTexture*)LoadTextureFromDB("samp", "plate_gos");
+//	m_pNoPlateSprite->m_pRwTexture = (RwTexture*)LoadTextureFromDB("samp", "plate_outside");
 
 	m_pBitmap = new uint8_t[PLATE_BITMAP_HEIGHT * PLATE_BITMAP_WIDTH];
 }
@@ -705,23 +461,23 @@ void CCustomPlateManager::Shutdown()
 		m_pRuPoliceSprite = nullptr;
 	}
 
-	if (m_pTaxiSprite)
-	{
-		delete m_pTaxiSprite;
-		m_pTaxiSprite = nullptr;
-	}
-
-	if(m_pRuGosSprite)
-	{
-		delete m_pRuGosSprite;
-		m_pRuGosSprite = nullptr;
-	}
-
-	if(m_pNoPlateSprite)
-	{
-		delete m_pNoPlateSprite;
-		m_pNoPlateSprite = nullptr;
-	}
+//	if (m_pTaxiSprite)
+//	{
+//		delete m_pTaxiSprite;
+//		m_pTaxiSprite = nullptr;
+//	}
+//
+//	if(m_pRuGosSprite)
+//	{
+//		delete m_pRuGosSprite;
+//		m_pRuGosSprite = nullptr;
+//	}
+//
+//	if(m_pNoPlateSprite)
+//	{
+//		delete m_pNoPlateSprite;
+//		m_pNoPlateSprite = nullptr;
+//	}
 
 
 	if (m_pBitmap)
@@ -781,18 +537,7 @@ void CCustomPlateManager::Process()
 		{
 			pPlate = ProcessRuPolicePlate(i);
 		}
-		else if (i.dwType == 6)
-		{
-			pPlate = ProcessTaxiPlate(i);
-		}	
-		else if (i.dwType == 7)
-		{
-			pPlate = ProcessRuGosPlate(i);
-		}
-		else if (i.dwType == 8)
-		{
-			pPlate = ProcessNoPlatePlate(i);
-		}	
+
 		if (pPlate)
 		{
 			if (pNetGame->GetVehiclePool())

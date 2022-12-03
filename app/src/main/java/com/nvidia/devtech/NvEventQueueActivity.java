@@ -26,7 +26,6 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -38,6 +37,7 @@ import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -51,9 +51,8 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
-import com.google.common.base.Charsets;
-import com.google.common.hash.Hashing;
 import com.liverussia.cr.R;
 import com.liverussia.cr.core.DialogClientSettings;
 import com.liverussia.cr.gui.AttachEdit;
@@ -82,13 +81,11 @@ import com.liverussia.cr.gui.ChooseSpawn;
 import com.liverussia.cr.gui.Menu;
 import com.liverussia.cr.gui.ChooseServer;
 import com.liverussia.cr.gui.tab.Tab;
-import com.liverussia.cr.gui.util.Utils;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
@@ -580,7 +577,7 @@ public abstract class NvEventQueueActivity
      */
 		public native void cleanup();
 		public native boolean init(boolean z);
-		public native void initSAMP();
+		public native void initSAMP(String game_path);
 		public native void setWindowSize(int w, int h);
 		public native void quitAndWait();
 		public native void postCleanup();
@@ -618,6 +615,7 @@ public abstract class NvEventQueueActivity
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         System.out.println("**** onCreate");
         super.onCreate(savedInstanceState);
         instance = this;
@@ -625,8 +623,11 @@ public abstract class NvEventQueueActivity
 		{
 		    System.out.println("Calling init(false)");
             init(false);
+
             System.out.println("Calling initSAMP");
-            initSAMP();
+
+         //   Log.d("saf", "ABC = "+getExternalFilesDir(null).toString());
+            initSAMP(getExternalFilesDir(null).toString()+"/");
             System.out.println("Called");
         }
         handler = new Handler();
@@ -1205,7 +1206,7 @@ public abstract class NvEventQueueActivity
             configAttrs = new int[] {EGL10.EGL_NONE};
         int[] oldConfES2 = configAttrs;
         
-        configAttrs = new int[13 + oldConfES2.length-1];
+        configAttrs = new int[17 + oldConfES2.length-1];
         for (i = 0; i < oldConfES2.length-1; i++)
             configAttrs[i] = oldConfES2[i];
         configAttrs[i++] = EGL10.EGL_RED_SIZE;
@@ -1220,6 +1221,12 @@ public abstract class NvEventQueueActivity
         configAttrs[i++] = stencilSize;
         configAttrs[i++] = EGL10.EGL_DEPTH_SIZE;
         configAttrs[i++] = depthSize;
+
+        configAttrs[i++] = EGL10.EGL_SAMPLE_BUFFERS; // сглаживание
+        configAttrs[i++] = 1;
+        configAttrs[i++] = EGL10.EGL_SAMPLES; // сглаживание
+        configAttrs[i++] = 4;
+
         configAttrs[i++] = EGL10.EGL_NONE;
 
         egl = (EGL10) EGLContext.getEGL();
@@ -1428,6 +1435,7 @@ public abstract class NvEventQueueActivity
     {
         if (!HasGLExtensions && gl != null && this.cachedSurfaceHolder != null)
         {
+           // gl.glEnable(GL10.GL_CULL_FACE); // ? сглаживание
             glVendor = gl.glGetString(GL10.GL_VENDOR);
             glExtensions = gl.glGetString(GL10.GL_EXTENSIONS);
             glRenderer = gl.glGetString(GL10.GL_RENDERER);
@@ -1675,6 +1683,5 @@ public abstract class NvEventQueueActivity
     public void hideBusInfo() { runOnUiThread(() -> { mHudManager.HideBusInfo(); } ); }
 
     public void showFuelStation(int type, int price1, int price2, int price3, int price4, int price5, int maxCount) { runOnUiThread(() -> { mFuelStationManager.Show(type, price1, price2, price3, price4, price5, maxCount); } ); }
-
 
 }

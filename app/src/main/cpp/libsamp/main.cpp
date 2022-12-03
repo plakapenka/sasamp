@@ -29,7 +29,7 @@
 #include <arpa/inet.h>
 
 uintptr_t g_libGTASA = 0;
-const char* g_pszStorage = nullptr;
+char g_pszStorage[255];
 
 #include "CServerManager.h"
 #include "CLocalisation.h"
@@ -89,17 +89,10 @@ void PrintBuildCrashInfo()
 #include "util/CJavaWrapper.h"
 #include "cryptors/INITSAMP_result.h"
 #include "CDebugInfo.h"
-void InitSAMP(JNIEnv* pEnv, jobject thiz);
-extern "C"
-{
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_initSAMP(JNIEnv* pEnv, jobject thiz)
-	{
-		InitSAMP(pEnv, thiz);
-	}
-}
+
 
 void InitBASSFuncs();
-void InitSAMP(JNIEnv* pEnv, jobject thiz)
+void InitSAMP(JNIEnv* pEnv, jobject thiz, const char* path)
 {
 	PROTECT_CODE_INITSAMP;
 
@@ -108,9 +101,11 @@ void InitSAMP(JNIEnv* pEnv, jobject thiz)
 	InitBASSFuncs();
 	BASS_Init(-1, 44100, BASS_DEVICE_3D, 0, NULL);
 
-	g_pszStorage = "/storage/emulated/0/Android/data/com.liverussia.cr/files/";
+	//g_pszStorage = path;
+	strcpy(g_pszStorage, path);
+//	g_pszStorage = "/storage/emulated/0/Android/data/com.liverussia.cr/files/";
 
-	if(!g_pszStorage)
+	if(!strlen(g_pszStorage))
 	{
 		Log("Error: storage path not found!");
 		std::terminate();
@@ -338,11 +333,7 @@ void handler3(int signum, siginfo_t* info, void* contextPtr)
 
 	if (info->si_signo == SIGBUS)
 	{
-		int crashId = (int)rand() % 20000;
-		Log("Crashed - 1. %d", crashId);
-		CrashLog(" ");
 		PrintBuildCrashInfo();
-		CrashLog("ID: %d", crashId);
 		CrashLog("Last rendered object: %d", g_iLastRenderedObject);
 		CrashLog("SIGBUS | Fault address: 0x%X", info->si_addr);
 		CrashLog("libGTASA base address: 0x%X", g_libGTASA);
@@ -400,12 +391,8 @@ void handler(int signum, siginfo_t *info, void* contextPtr)
 
 	if(info->si_signo == SIGSEGV)
 	{
-
-		int crashId = (int)rand() % 20000;
-		Log("Crashed - 2. %d", crashId);
 		CrashLog(" ");
 		PrintBuildCrashInfo();
-		CrashLog("ID: %d", crashId);
 		CrashLog("Last rendered object: %d", g_iLastRenderedObject);
 		CrashLog("SIGSEGV | Fault address: 0x%X", info->si_addr);
 		CrashLog("libGTASA base address: 0x%X", g_libGTASA);
@@ -462,12 +449,7 @@ void handler2(int signum, siginfo_t* info, void* contextPtr)
 
 	if (info->si_signo == SIGFPE)
 	{
-
-		int crashId = (int)rand() % 20000;
-		Log("Crashed - 3. %d", crashId);
-		CrashLog(" ");
 		PrintBuildCrashInfo();
-		CrashLog("ID: %d", crashId);
 		CrashLog("Last rendered object: %d", g_iLastRenderedObject);
 		CrashLog("SIGFPE | Fault address: 0x%X", info->si_addr);
 		CrashLog("libGTASA base address: 0x%X", g_libGTASA);
@@ -525,12 +507,8 @@ void handler1(int signum, siginfo_t* info, void* contextPtr)
 
 	if (info->si_signo == SIGABRT)
 	{
-
-		int crashId = (int)rand() % 20000;
-		Log("Crashed - 4. %d", crashId);
 		CrashLog(" ");
 		PrintBuildCrashInfo();
-		CrashLog("ID: %d", crashId);
 
 		CrashLog("Last rendered object: %d", g_iLastRenderedObject);
 		CrashLog("SIGABRT | Fault address: 0x%X", info->si_addr);
@@ -622,6 +600,8 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 	}
 	Log("libGTASA.so image base address: 0x%X", g_libGTASA);
 
+	firebase::crashlytics::SetCustomKey("build data", __DATE__);
+	firebase::crashlytics::SetCustomKey("build time", __TIME__);
 	firebase::crashlytics::Initialize();
 
 	uintptr_t libgtasa = FindLibrary("libGTASA.so");
@@ -632,16 +612,16 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 	Log("libsamp.so: 0x%x", libsamp);
 	Log("libc.so: 0x%x", libc);
 
-	char str[100];
-
-	sprintf(str, "0x%x", libgtasa);
-	firebase::crashlytics::SetCustomKey("libGTASA.so", str);
-	
-	sprintf(str, "0x%x", libsamp);
-	firebase::crashlytics::SetCustomKey("libsamp.so", str);
-
-	sprintf(str, "0x%x", libc);
-	firebase::crashlytics::SetCustomKey("libc.so", str);
+//	char str[100];
+//
+//	sprintf(str, "0x%x", libgtasa);
+//	firebase::crashlytics::SetCustomKey("libGTASA.so", str);
+//
+//	sprintf(str, "0x%x", libsamp);
+//	firebase::crashlytics::SetCustomKey("libsamp.so", str);
+//
+//	sprintf(str, "0x%x", libc);
+//	firebase::crashlytics::SetCustomKey("libc.so", str);
 
 	srand(time(0));
 
@@ -702,12 +682,24 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 	act3.sa_flags = SA_SIGINFO;
 	sigaction(SIGBUS, &act3, &act3_old);
 
-	return JNI_VERSION_1_4;
+	return JNI_VERSION_1_6;
 }
 
 void Log(const char *fmt, ...)
 {	
-	char buffer[0xFF];
+	char buffer[512];
+
+	memset(buffer, 0, sizeof(buffer));
+
+	va_list arg;
+	va_start(arg, fmt);
+	vsnprintf(buffer, sizeof(buffer), fmt, arg);
+	va_end(arg);
+
+	firebase::crashlytics::Log(buffer);
+	__android_log_write(ANDROID_LOG_INFO, "AXL", buffer);
+
+	//if(pDebug) pDebug->AddMessage(buffer);
 	static FILE* flLog = nullptr;
 
 	if(flLog == nullptr && g_pszStorage != nullptr)
@@ -715,6 +707,17 @@ void Log(const char *fmt, ...)
 		sprintf(buffer, "%sSAMP/samp_log.txt", g_pszStorage);
 		flLog = fopen(buffer, "a");
 	}
+
+	if(flLog == nullptr) return;
+	fprintf(flLog, "%s\n", buffer);
+	fflush(flLog);
+
+	return;
+}
+
+void CrashLog(const char* fmt, ...)
+{
+	char buffer[512];
 	memset(buffer, 0, sizeof(buffer));
 
 	va_list arg;
@@ -723,21 +726,8 @@ void Log(const char *fmt, ...)
 	va_end(arg);
 
 	firebase::crashlytics::Log(buffer);
+	__android_log_write(ANDROID_LOG_FATAL, "AXL", buffer);
 
-	//if(pDebug) pDebug->AddMessage(buffer);
-
-	if(flLog == nullptr) return;
-	fprintf(flLog, "%s\n", buffer);
-	fflush(flLog);
-
-	__android_log_write(ANDROID_LOG_INFO, "AXL", buffer);
-
-	return;
-}
-
-void CrashLog(const char* fmt, ...)
-{
-	char buffer[0xFF];
 	static FILE* flLog = nullptr;
 
 	if (flLog == nullptr && g_pszStorage != nullptr)
@@ -745,17 +735,6 @@ void CrashLog(const char* fmt, ...)
 		sprintf(buffer, "%sSAMP/crash_log.log", g_pszStorage);
 		flLog = fopen(buffer, "a");
 	}
-
-	memset(buffer, 0, sizeof(buffer));
-
-	va_list arg;
-	va_start(arg, fmt);
-	vsnprintf(buffer, sizeof(buffer), fmt, arg);
-	va_end(arg);
-
-	__android_log_write(ANDROID_LOG_INFO, "AXL", buffer);
-
-	firebase::crashlytics::Log(buffer);
 
 	if (flLog == nullptr) return;
 	fprintf(flLog, "%s\n", buffer);
@@ -769,4 +748,20 @@ uint32_t GetTickCount()
 	struct timeval tv;
 	gettimeofday(&tv, nullptr);
 	return (tv.tv_sec*1000+tv.tv_usec/1000);
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_nvidia_devtech_NvEventQueueActivity_iniGameDir(JNIEnv *env, jobject thiz, jstring path) {
+	Log("// TODO: implement iniGameDir()");
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_nvidia_devtech_NvEventQueueActivity_initSAMP(JNIEnv *env, jobject thiz,
+													  jstring game_path) {
+	const char *path = env->GetStringUTFChars(game_path, nullptr);
+
+	InitSAMP(env, thiz, path);
+
+	env->ReleaseStringUTFChars(game_path, path);
 }

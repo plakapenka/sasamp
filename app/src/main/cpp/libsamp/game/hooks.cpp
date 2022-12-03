@@ -130,7 +130,7 @@ open:
 		Log("NVFOpen hook | Error: file not found (%s)", path);
 		free(st);
 		st = nullptr;
-		return 0;
+		return nullptr;
 	}
 }
 
@@ -171,7 +171,7 @@ void __fillArray()
 
 void InitCTX(AES_ctx&, unsigned char const*)
 {
-	
+
 }
 
 /* ====================================================== */
@@ -249,7 +249,7 @@ void InitialiseRenderWare_hook()
 	 //(( void (*)(const char*, int, int))(g_libGTASA+0x1BF244+1))("custom", 0, 5);
 	//((void (*)(const char*, int, int))(g_libGTASA + 0x1BF244 + 1))("gui", 0, 5);
 
-	return;
+	return InitialiseRenderWare(); // спорно
 }
 
 /* ====================================================== */
@@ -529,9 +529,6 @@ unsigned int MainMenuScreen__Update_hook(uintptr_t thiz, float a2)
 	return ret;
 }
 
-extern signed int (*OS_FileOpen)(unsigned int a1, int* a2, const char* a3, int a4);
-signed int OS_FileOpen_hook(unsigned int a1, int* a2, const char* a3, int a4);
-
 extern int(*OS_FileRead)(void* a1, void* a2, int a3);
 int OS_FileRead_hook(void* a1, void* a2, int a33);
 extern char(*CStreaming__ConvertBufferToObject)(int, int, int);
@@ -637,6 +634,13 @@ int32_t NVEventGetNextEvent_hook(NVEvent* ev, int waitMSecs)
 	return ret;
 }
 
+void(*TextureDatabaseRuntime)(uintptr_t thiz, bool a2);
+void TextureDatabaseRuntime_hook(uintptr_t thiz, bool a2)
+{
+	//Log("TextureDatabaseRuntime_hook %d", a2);
+	return TextureDatabaseRuntime(thiz, false);
+}
+
 void(*CStreaming__Init2)();
 void CStreaming__Init2_hook()
 {
@@ -648,15 +652,69 @@ void (*NvUtilInit)(void);
 void NvUtilInit_hook(void)
 {	
 	NvUtilInit();
-	*(char**)(g_libGTASA + 0x5D1608) = "/storage/emulated/0/Android/data/com.liverussia.cr/files/";
+	*(char**)(g_libGTASA + 0x5D1608) = (char*)g_pszStorage;
+}
+
+void (*OS_FileOpen)(unsigned int a1, void** a2, const char* a3, int a4);
+void OS_FileOpen_hook(unsigned int a1, void** a2, const char* a3, int a4)
+{
+//	char temp_file[123];
+//	strcpy(temp_file, a3);
+//
+//	for(int i = 0; i < strlen(temp_file); i++){
+//		if( (temp_file[i] == '.' && temp_file[i+1] == 'p' && a3[i+2] == 'v' && temp_file[i+3] == 'r') ||
+//			(temp_file[i] == '.' && temp_file[i+1] == 'e' && a3[i+2] == 't' && temp_file[i+3] == 'c') )
+//		{
+//			temp_file[i+1] = 'd';
+//			temp_file[i+2] = 'x';
+//			temp_file[i+3] = 't';
+//		}
+//	}
+    Log("%s", a3);
+//	uintptr_t calledFrom = 0;
+//	__asm__ volatile ("mov %0, lr" : "=r" (calledFrom));
+//	calledFrom -= g_libGTASA;
+    //void retn = OS_FileOpen(a1, a2, a3, a4);
+//
+//	if (calledFrom == 0x001BCE9A + 1)
+//	{
+//		if (isEncrypted(a3))
+//		{
+//			lastOpenedFile = *a2;
+//		}
+//	}
+    return OS_FileOpen(a1, a2, a3, a4);
 }
 
 void InstallSpecialHooks()
 {
+	//pvr
+	UnFuck(g_libGTASA + 0x00573670);
+	*(char*)(g_libGTASA + 0x00573670 + 12) = 'd';
+	*(char*)(g_libGTASA + 0x00573670 + 13) = 'x';
+	*(char*)(g_libGTASA + 0x00573670 + 14) = 't';
+
+	UnFuck(g_libGTASA + 0x005736CC);
+	*(char*)(g_libGTASA + 0x005736CC + 12) = 'd';
+	*(char*)(g_libGTASA + 0x005736CC + 13) = 'x';
+	*(char*)(g_libGTASA + 0x005736CC + 14) = 't';
+
+
+	//etc
+	UnFuck(g_libGTASA + 0x00573684);
+	*(char*)(g_libGTASA + 0x00573684 + 12) = 'd';
+	*(char*)(g_libGTASA + 0x00573684 + 13) = 'x';
+	*(char*)(g_libGTASA + 0x00573684 + 14) = 't';
+
+	UnFuck(g_libGTASA + 0x005736DC);
+	*(char*)(g_libGTASA + 0x005736DC + 12) = 'd';
+	*(char*)(g_libGTASA + 0x005736DC + 13) = 'x';
+	*(char*)(g_libGTASA + 0x005736DC + 14) = 't';
+
 	WriteMemory(g_libGTASA + 0x0023BEDC, (uintptr_t)"\xF8\xB5", 2);
 	WriteMemory(g_libGTASA + 0x0023BEDE, (uintptr_t)"\x00\x46\x00\x46", 4);
 
-	SetUpHook(g_libGTASA + 0x0023BEDC, (uintptr_t)OS_FileRead_hook, (uintptr_t*)& OS_FileRead);
+	//SetUpHook(g_libGTASA + 0x0023BEDC, (uintptr_t)OS_FileRead_hook, (uintptr_t*)& OS_FileRead);
 	SetUpHook(g_libGTASA + 0x23B3DC, (uintptr_t)NvFOpen_hook, (uintptr_t*)& NvFOpen);
 	SetUpHook(g_libGTASA + 0x241D94, (uintptr_t) NvUtilInit_hook, (uintptr_t *) &NvUtilInit);
 
@@ -664,12 +722,15 @@ void InstallSpecialHooks()
 	//SetUpHook(g_libGTASA+0x4D3864, (uintptr_t)CText_Get_hook, (uintptr_t*)&CText_Get);
 	SetUpHook(g_libGTASA+0x40C530, (uintptr_t)InitialiseRenderWare_hook, (uintptr_t*)&InitialiseRenderWare);
 	SetUpHook(g_libGTASA + 0x0025E660, (uintptr_t)MainMenuScreen__Update_hook, (uintptr_t*)& MainMenuScreen__Update);
-	//SetUpHook(g_libGTASA + 0x0023BB84, (uintptr_t)OS_FileOpen_hook, (uintptr_t*)& OS_FileOpen);
+	SetUpHook(g_libGTASA + 0x0023BB84, (uintptr_t)OS_FileOpen_hook, (uintptr_t*)& OS_FileOpen);
 
 	SetUpHook(g_libGTASA + 0x004FBBB0, (uintptr_t)cHandlingDataMgr__FindExactWord_hook, (uintptr_t*)& cHandlingDataMgr__FindExactWord);
 	SetUpHook(g_libGTASA + 0x004FBCF4, (uintptr_t)cHandlingDataMgr__ConvertDataToGameUnits_hook, (uintptr_t*)& cHandlingDataMgr__ConvertDataToGameUnits);
 	SetUpHook(g_libGTASA + 0x0023ACC4, (uintptr_t)NVEventGetNextEvent_hook, (uintptr_t*)& NVEventGetNextEvent_hooked);
 	SetUpHook(g_libGTASA + 0x004042A8, (uintptr_t)CStreaming__Init2_hook, (uintptr_t*)& CStreaming__Init2);	// increase stream memory value
+
+
+	SetUpHook(g_libGTASA + 0x001BEB9C, (uintptr_t)TextureDatabaseRuntime_hook, (uintptr_t*)& TextureDatabaseRuntime);
 }
 
 void ProcessPedDamage(PED_TYPE* pIssuer, PED_TYPE* pPlayer);
@@ -1074,23 +1135,6 @@ bool isEncrypted(const char* szArch)
 	return false;
 }
 
-signed int (*OS_FileOpen)(unsigned int a1, int* a2, const char* a3, int a4);
-signed int OS_FileOpen_hook(unsigned int a1, int* a2, const char* a3, int a4)
-{
-	uintptr_t calledFrom = 0;
-	__asm__ volatile ("mov %0, lr" : "=r" (calledFrom));
-	calledFrom -= g_libGTASA;
-	signed int retn = OS_FileOpen(a1, a2, a3, a4);
-
-	if (calledFrom == 0x001BCE9A + 1)
-	{
-		if (isEncrypted(a3))
-		{
-			lastOpenedFile = *a2;
-		}
-	}
-	return retn;
-}
 
 // CGameIntegrity
 // CodeObfuscation
@@ -1113,7 +1157,7 @@ int OS_FileRead_hook(void* a1, void* a2, int a3)
 	if (calledFrom == 0x001BCEE0 + 1 && a1 == (void*)lastOpenedFile)
 	{
 		lastOpenedFile = 0;
-		
+
 		AES_ctx ctx;
 		InitCTX(ctx, &g_iEncryptionKeyTXD[0]);
 
@@ -1284,61 +1328,87 @@ void CWidgetRegionLook__Update_hook(uintptr_t thiz)
 		return CWidgetRegionLook__Update(thiz);
 	}
 }
-uint8_t* (*RLEDecompress)(uint8_t* pDest, size_t uiDestSize, uint8_t const* pSrc, size_t uiSegSize, uint32_t uiEscape);
-uint8_t* RLEDecompress_hook(uint8_t* pDest, size_t uiDestSize, uint8_t const* pSrc, size_t uiSegSize, uint32_t uiEscape) {
-	if (!pDest) 
+
+void (*ProcessCommands1400To1499)(uintptr_t* thiz, int a2);
+void ProcessCommands1400To1499_hook(uintptr_t* thiz, int a2)
+{
+	//Log("pedHandle = %d, local = %d", pedHandle, pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->m_dwGTAId);
+	if(!a2)return;
+
+	return ProcessCommands1400To1499(thiz, a2);
+}
+
+void (*GivePedScriptedTask)(uintptr_t* thiz, int pedHandle, uintptr_t* a3, int commandID);
+void GivePedScriptedTask_hook(uintptr_t* thiz, int pedHandle, uintptr_t* a3, int commandID)
+{
+	//Log("pedHandle = %d, local = %d", pedHandle, pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->m_dwGTAId);
+	if(!pedHandle || !commandID || !a3)return;
+
+	return GivePedScriptedTask(thiz, pedHandle, a3, commandID);
+}
+
+void (*RpMaterialDestroy)(RpMaterial* mat);
+void RpMaterialDestroy_hook(RpMaterial* mat)
+{
+	if(!mat->texture)return;
+
+	return RpMaterialDestroy(mat);
+}
+uint8_t *(*RLEDecompress)(uint8_t *pDest, size_t uiDestSize, uint8_t const *pSrc, size_t uiSegSize, uint32_t uiEscape);
+uint8_t *RLEDecompress_hook(uint8_t *pDest, size_t uiDestSize, uint8_t const *pSrc, size_t uiSegSize, uint32_t uiEscape)
+{
+	if (!pDest)
 	{
 		return pDest;
 	}
 
-	if (!pSrc) 
+	if (!pSrc)
 	{
 		return pDest;
 	}
 
-	uint8_t* pTempDest = pDest;
-	const uint8_t* pTempSrc = pSrc;
-	uint8_t* pEndOfDest = &pDest[uiDestSize];
+	uint8_t *pTempDest = pDest;
+	const uint8_t *pTempSrc = pSrc;
+	uint8_t *pEndOfDest = &pDest[uiDestSize];
 
-	uint8_t* pEndOfSrc = (uint8_t*)&pSrc[dwRLEDecompressSourceSize];
+	uint8_t *pEndOfSrc = (uint8_t *)&pSrc[uiSegSize];
 
-	if (pDest < pEndOfDest) 
+	if (pDest < pEndOfDest)
 	{
-		do 
+		do
 		{
-			if (*pTempSrc == uiEscape) 
+			if (*pTempSrc == uiEscape)
 			{
 				uint8_t ucCurSeg = pTempSrc[1];
-				if (ucCurSeg) 
+				if (ucCurSeg)
 				{
-					uint8_t* ucCurDest = pTempDest;
+					uint8_t *ucCurDest = pTempDest;
 					uint8_t ucCount = 0;
-					do 
+					do
 					{
 						++ucCount;
-						//Log("WRITE111 TO 0x%x FROM 0x%x SIZE %d", ucCurDest, pTempSrc + 2, uiSegSize);
-						pDest = (uint8_t*)memcpy(ucCurDest, pTempSrc + 2, uiSegSize);
-						
+						// Log("WRITE111 TO 0x%x FROM 0x%x SIZE %d", ucCurDest, pTempSrc + 2, uiSegSize);
+						pDest = (uint8_t *)memcpy(ucCurDest, pTempSrc + 2, uiSegSize);
+
 						ucCurDest += uiSegSize;
 					} while (ucCurSeg != ucCount);
-
 
 					pTempDest += uiSegSize * ucCurSeg;
 				}
 				pTempSrc += 2 + uiSegSize;
 			}
 
-			else 
+			else
 			{
 				if (pTempSrc + uiSegSize >= pEndOfSrc)
 				{
-					//Log("AVOID CRASH TO 0x%x FROM 0x%x SIZE %d END OF SRC 0x%x", pTempDest, pTempSrc, pEndOfSrc - pTempSrc - 1, pEndOfSrc);
+					// Log("AVOID CRASH TO 0x%x FROM 0x%x SIZE %d END OF SRC 0x%x", pTempDest, pTempSrc, pEndOfSrc - pTempSrc - 1, pEndOfSrc);
 					return pDest;
 				}
 				else
 				{
-					//Log("WRITE222 TO 0x%x FROM 0x%x SIZE %d END OF SRC 0x%x", pTempDest, pTempSrc, uiSegSize, pEndOfSrc);
-					pDest = (uint8_t*)memcpy(pTempDest, pTempSrc, uiSegSize);
+					// Log("WRITE222 TO 0x%x FROM 0x%x SIZE %d END OF SRC 0x%x", pTempDest, pTempSrc, uiSegSize, pEndOfSrc);
+					pDest = (uint8_t *)memcpy(pTempDest, pTempSrc, uiSegSize);
 					pTempDest += uiSegSize;
 					pTempSrc += uiSegSize;
 				}
@@ -1423,6 +1493,20 @@ static bool ShouldBeProcessedButton(int result)
 	return 1;
 }
 
+uintptr_t (*CWidgetButton__Draw)(uintptr_t thiz);
+uintptr_t CWidgetButton__Draw_hook(uintptr_t thiz)
+{
+	if(!pHud->isHudToggle)return 0;
+	return CWidgetButton__Draw(thiz);
+}
+
+int (*CWidgetButton__IsTouched)(CVector2D* a1);
+int CWidgetButton__IsTouched_hook(CVector2D* a1)
+{
+	if(!pHud->isHudToggle)return 0;
+	return CWidgetButton__IsTouched(a1);
+}
+
 void (*CWidgetButton__Update)(int result, int a2, int a3, int a4);
 void CWidgetButton__Update_hook(int result, int a2, int a3, int a4)
 {
@@ -1432,7 +1516,7 @@ void CWidgetButton__Update_hook(int result, int a2, int a3, int a4)
 	}
 	CTouchInterface__m_bWidgets = (uintptr_t*)(g_libGTASA + 0x00657E48);
 
-	//((void (*)(unsigned int, unsigned int)) (g_libGTASA + 0x00274178 + 1))(CTouchInterface__m_bWidgets[0], 0); // Кнопка сесть в тачку
+	((void (*)(unsigned int, unsigned int)) (g_libGTASA + 0x00274178 + 1))(CTouchInterface__m_bWidgets[0], 0); // Кнопка сесть в тачку
 
 	if(pNetGame && pNetGame->m_GreenZoneState )
 	{
@@ -1701,6 +1785,15 @@ void CAutomobile__ProcessEntityCollision_hook(VEHICLE_TYPE* a1, ENTITY_TYPE* a2,
 	{
 		*(void**)(pColData + 16) = pOld;
 	}
+}
+
+
+void (*CWidget__DrawHelpIcon)();
+void CWidget__DrawHelpIcon_hook()
+{
+	Log("CWidget__DrawHelpIcon_hook");
+	return;
+	//return CGame__Shutdown();
 }
 
 bool (*CGame__Shutdown)();
@@ -2199,6 +2292,7 @@ void CSprite2d__Draw_hook(CSprite2d* a1, CRect* a2, CRGBA* a3)
 
 	if (dwRetAddr == 0x003D3796 + 1 || dwRetAddr == 0x003D376C + 1 || dwRetAddr == 0x003D373E + 1 || dwRetAddr == 0x003D3710 + 1)
 	{
+		if(!pHud->isHudToggle)return;
 		if (CRadarRect::m_pDiscTexture == nullptr)
 		{
 			CRadarRect::m_pDiscTexture = a1->m_pRwTexture;
@@ -2470,8 +2564,8 @@ void InstallHooks()
 {
 	PROTECT_CODE_INSTALLHOOKS;
 
-	SetUpHook(g_libGTASA+0x291104, (uintptr_t)CStreaming__ConvertBufferToObject_hook, (uintptr_t*)&CStreaming__ConvertBufferToObject);
-	SetUpHook(g_libGTASA+0x3961C8, (uintptr_t)CFileMgr__ReadLine_hook, (uintptr_t*)&CFileMgr__ReadLine);
+	//SetUpHook(g_libGTASA+0x291104, (uintptr_t)CStreaming__ConvertBufferToObject_hook, (uintptr_t*)&CStreaming__ConvertBufferToObject);
+	//SetUpHook(g_libGTASA+0x3961C8, (uintptr_t)CFileMgr__ReadLine_hook, (uintptr_t*)&CFileMgr__ReadLine);
 
 	SetUpHook(g_libGTASA + 0x00281398, (uintptr_t)CWidgetRegionLook__Update_hook, (uintptr_t*)& CWidgetRegionLook__Update);
 	SetUpHook(g_libGTASA+0x3D7CA8, (uintptr_t)CLoadingScreen_DisplayPCScreen_hook, (uintptr_t*)&CLoadingScreen_DisplayPCScreen);
@@ -2522,8 +2616,15 @@ void InstallHooks()
 	// GetFrameFromID fix
 	SetUpHook(g_libGTASA + 0x00335CC0, (uintptr_t)CClumpModelInfo_GetFrameFromId_hook, (uintptr_t*)& CClumpModelInfo_GetFrameFromId);
 	// RLEDecompress fix
-	SetUpHook(g_libGTASA + 0x1BC314, (uintptr_t)RLEDecompress_hook, (uintptr_t*)&RLEDecompress);
+	//SetUpHook(g_libGTASA + 0x1BC314, (uintptr_t)RLEDecompress_hook, (uintptr_t*)&RLEDecompress);
 
+	//RpMaterialDestroy fix ? не точно
+	SetUpHook(g_libGTASA + 0x001E3C54, (uintptr_t)RpMaterialDestroy_hook, (uintptr_t*)&RpMaterialDestroy);
+
+	//CRunningScript fix ? не точно
+	SetUpHook(g_libGTASA + 0x002E5400, (uintptr_t)GivePedScriptedTask_hook, (uintptr_t*)&GivePedScriptedTask);
+
+	SetUpHook(g_libGTASA + 0x00308640, (uintptr_t)ProcessCommands1400To1499_hook, (uintptr_t*)&ProcessCommands1400To1499);
 
 	// todo: 3 pools fix crash
 
@@ -2534,6 +2635,9 @@ void InstallHooks()
 
 	//SetUpHook(g_libGTASA + 0x0027548C, (DWORD)CWidgetButtonAttack_hook, (DWORD*)&CWidgetButtonAttack);
 	SetUpHook(g_libGTASA + 0x00274AB4, (uintptr_t)CWidgetButton__Update_hook, (uintptr_t*)& CWidgetButton__Update);
+
+	SetUpHook(g_libGTASA + 0x00274748, (uintptr_t)CWidgetButton__Draw_hook, (uintptr_t*)&CWidgetButton__Draw);
+	SetUpHook(g_libGTASA + 0x00274218, (uintptr_t)CWidgetButton__IsTouched_hook, (uintptr_t*)&CWidgetButton__IsTouched);
 	//SetUpHook(g_libGTASA + 0x0027455C, (uintptr_t)CWidget__IsTouched_hook, (uintptr_t*)& CWidget__IsTouched);
 
 	SetUpHook(g_libGTASA + 0x004052B8, (uintptr_t)CVehicleModelInfo__SetupCommonData_hook, (uintptr_t*)& CVehicleModelInfo__SetupCommonData);
@@ -2557,6 +2661,9 @@ void InstallHooks()
 	
 	SetUpHook(g_libGTASA + 0x00398334, (uintptr_t)CGame__Shutdown_hook, (uintptr_t*)& CGame__Shutdown);
 
+//	//CWidget::DrawHelpIcon
+//	SetUpHook(g_libGTASA + 0x002744F8, (uintptr_t)CWidget__DrawHelpIcon_hook, (uintptr_t*)&CWidget__DrawHelpIcon);
+
 	WriteMemory(g_libGTASA + 0x003DA86C,
 		(uintptr_t)"\x80\xB4"\
 		"\x00\xAF"\
@@ -2579,12 +2686,12 @@ void InstallHooks()
 
 	SetUpHook(g_libGTASA + 0x003DA86C, (uintptr_t)CRadar__LimitRadarPoint_hook, (uintptr_t*)& CRadar__LimitRadarPoint); // TO FIX
 	SetUpHook(g_libGTASA + 0x005529FC, (uintptr_t)CSprite2d__DrawBarChart_hook, (uintptr_t*)& CSprite2d__DrawBarChart);
-	SetUpHook(g_libGTASA + 0x005353B4, (uintptr_t)CFont__PrintString_hook, (uintptr_t*)& CFont__PrintString);
+	//SetUpHook(g_libGTASA + 0x005353B4, (uintptr_t)CFont__PrintString_hook, (uintptr_t*)& CFont__PrintString);
 	SetUpHook(g_libGTASA + 0x0055265C, (uintptr_t)CSprite2d__Draw_hook, (uintptr_t*)& CSprite2d__Draw);
 
 	//SetUpHook(g_libGTASA + 0x0027D8A8, (uintptr_t)CWidgetPlayerInfo__DrawWanted_hook, (uintptr_t*)& CWidgetPlayerInfo__DrawWanted);
 
-	SetUpHook(g_libGTASA + 0x0027CE88, (uintptr_t)CWidgetPlayerInfo__DrawWeaponIcon_hook, (uintptr_t*)& CWidgetPlayerInfo__DrawWeaponIcon);
+	//SetUpHook(g_libGTASA + 0x0027CE88, (uintptr_t)CWidgetPlayerInfo__DrawWeaponIcon_hook, (uintptr_t*)& CWidgetPlayerInfo__DrawWeaponIcon);
 	SetUpHook(g_libGTASA + 0x00389D74, (uintptr_t)CCam__Process_hook, (uintptr_t*)& CCam__Process);
 	// sub_45C88(dword_14A458 + 0x541AC4, sub_2CBF0, &unk_28E378); nop
 	//sub_45C88(g_libGTASA + 0x001A8530, sub_2CBDC, &dword_28E374);

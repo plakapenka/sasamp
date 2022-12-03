@@ -1500,3 +1500,9 @@ unsigned int CVehicle::GetVehicleSubtype()
 
 	return 0;
 }
+
+bool CVehicle::IsTrailer()
+{
+
+	return ((bool (*)(int)) (g_libGTASA + 0x00336940 + 1))(m_pVehicle->entity.nModelIndex);
+}

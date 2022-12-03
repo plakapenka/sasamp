@@ -1,4 +1,8 @@
-apply plugin: 'com.android.application'
+plugins{
+    id 'com.android.application'
+    id 'com.google.firebase.crashlytics'
+    id 'com.google.gms.google-services'
+}
 
 android {
     compileSdkVersion 31
@@ -12,11 +16,11 @@ android {
         minSdkVersion 22
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 28
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    //    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         applicationId "com.liverussia.cr"
-        versionName "lr-beta-build-stable"
-        versionCode 10
+        versionName "17"
+        versionCode 17
         vectorDrawables.useSupportLibrary = true
 
         multiDexEnabled = true
@@ -46,8 +50,8 @@ android {
     }
     ndkVersion '25.1.8937393'
     buildTypes {
-        debug {
-            jniDebuggable true
+        all{
+            debuggable true
             multiDexEnabled true
         }
     }
@@ -74,22 +78,28 @@ dependencies {
     implementation 'com.makeramen:roundedimageview:2.3.0'
     implementation 'com.github.bumptech.glide:glide:4.13.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.13.0'
-    //noinspection GradleDependency
-    implementation 'com.google.firebase:firebase-database:20.0.4'
+
+    //CrashLytics
+    implementation 'com.google.firebase:firebase-crashlytics:18.3.2'
+    implementation platform('com.google.firebase:firebase-bom:31.1.0')
+
+    implementation 'com.google.firebase:firebase-crashlytics-ndk'
+    implementation 'com.google.firebase:firebase-analytics'
+    ///////////////////////////////////////////////////////////////
+
     implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
     implementation 'com.github.smarteist:autoimageslider:1.4.0'
     implementation 'com.github.valkriaine:Bouncy:2.3'
-    implementation platform('com.google.firebase:firebase-bom:29.2.1')
     implementation("com.google.guava:guava:31.1-jre")
     api("com.google.guava:guava:31.1-jre")
     implementation("com.google.guava:guava:31.1-android")
     api("com.google.guava:guava:31.1-android")
 
-    implementation 'com.mindorks.android:prdownloader:0.6.0'
+   // implementation 'com.mindorks.android:prdownloader:0.6.0'
 
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
-    implementation 'com.google.android.gms:play-services-safetynet:18.0.1' //
+  //  implementation 'com.google.android.gms:play-services-safetynet:18.0.1' //
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.3.2'

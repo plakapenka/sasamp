@@ -622,6 +622,10 @@ void CPlayerPed::PutDirectlyInVehicle(int iVehicleID, int iSeat)
 void CPlayerPed::EnterVehicle(int iVehicleID, bool bPassenger)
 {
 	if(!m_pPed) return;
+	if(!GamePool_Ped_GetAt(m_dwGTAId)) {
+		return;
+	}
+
 	VEHICLE_TYPE* ThisVehicleType;
 	if((ThisVehicleType = GamePool_Vehicle_GetAt(iVehicleID)) == 0) return;
 	if (ThisVehicleType->fHealth == 0.0f) return;
@@ -752,7 +756,7 @@ void CPlayerPed::ClearAllTasks()
 void CPlayerPed::ClearAnimations()
 {
 	ApplyAnimation("crry_prtial", "CARRY", 4.0, 0, 0, 0, 0, 1);
-	ClearAllTasks();
+	//ClearAllTasks();
 	MATRIX4X4 mat;
 	GetMatrix(&mat);
 	TeleportTo(mat.pos.X,mat.pos.Y,mat.pos.Z);

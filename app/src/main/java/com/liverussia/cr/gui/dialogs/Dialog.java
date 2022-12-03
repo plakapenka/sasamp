@@ -88,7 +88,7 @@ public class Dialog {
         this.mInput.setOnClickListener(view ->
         {
             this.mInput.requestFocus();
-            ((InputMethodManager) NvEventQueueActivity.getInstance().getSystemService("input_method")).showSoftInput(this.mInput, 1);
+            ((InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(this.mInput, 1);
         });
         Utils.HideLayout(this.mMainLayout, false);
     }

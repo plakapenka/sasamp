@@ -95,7 +95,7 @@ void CHUD::ToggleAll(bool toggle, bool withchat)
 
     pGame->ToggleHUDElement(HUD_ELEMENT_BUTTONS, toggle);
 
-    pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->TogglePlayerControllable(toggle, true);
+   // pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->TogglePlayerControllable(toggle, true);
     pGame->ToggleHUDElement(HUD_ELEMENT_FPS, toggle);
 
     JNIEnv *env = g_pJavaWrapper->GetEnv();
@@ -109,7 +109,8 @@ void CHUD::ToggleAll(bool toggle, bool withchat)
     jmethodID ToggleAll = env->GetMethodID(clazz, "ToggleAll", "(Z)V");
     env->CallVoidMethod(jHudManager, ToggleAll, toggle);
 
-    *(uint8_t*)(g_libGTASA+0x7165E8) = 0;
+    *(uint8_t*)(g_libGTASA+0x7165E8) = 0;//дефолт худ офф
+    ScriptCommand(&toggle_radar_blank, (int)toggle); // радар офф
 }
 //
 void CHUD::ToggleEnterPassengerButton(bool toggle)
@@ -244,10 +245,10 @@ Java_com_liverussia_cr_gui_HudManager_ClickEnterExitVehicleButton(JNIEnv *env, j
 
         if(!VehicleID)return;
 
-//        VEHICLE_TYPE* CheckVeh = GamePool_Vehicle_GetAt(VehicleID);
-//
-//        if (CheckVeh->fHealth == 0.0f) return;
-//        if (CheckVeh->entity.vtable == g_libGTASA + 0x5C7358) return;
+       // VEHICLE_TYPE* CheckVeh = GamePool_Vehicle_GetAt(VehicleID);
+
+      //  if (CheckVeh->fHealth == 0.0f) return;
+      //  if (CheckVeh->entity.vtable == g_libGTASA + 0x5C7358) return;
 
         pPlayer->GetPlayerPed()->ExitCurrentVehicle();
 
