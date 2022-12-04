@@ -12,15 +12,12 @@
         android:layout_height="wrap_content"
         android:paddingBottom="0.1dp"
         android:textStyle="bold"
-        android:textFontWeight="500"
         android:letterSpacing="-0.02"
         android:textSize="27px"
         android:textColor="#c2ddf8"
         android:includeFontPadding="false"
         android:fontFamily="@font/visby_chat"
-        android:text=" Клиент запущен "
-        strokeAttrs:textStrokeColor="@android:color/black"
-        strokeAttrs:textStrokeWidth="1.4"
+        android:text=" Platinum VIP.Благодарим "
         />
     <TextView
         android:paddingBottom="0.1dp"
@@ -28,12 +25,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="bold"
-        android:textFontWeight="500"
         android:letterSpacing="-0.02"
         android:textSize="27px"
         android:textColor="#a9c4e4"
         android:includeFontPadding="false"
         android:fontFamily="@font/visby_chat"
-        android:text=" Клиент запущен "/>
+        android:text=" Platinum VIP.Благодарим "/>
 
 </FrameLayout>

@@ -3,10 +3,12 @@ package com.liverussia.cr.core;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 
 import androidx.appcompat.app.AppCompatDelegate;
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.wardrumstudios.utils.WarMedia;
 
 public class GTASA extends WarMedia {
@@ -17,18 +19,13 @@ public class GTASA extends WarMedia {
     static {
         vmVersion = null;
         System.out.println("**** Loading SO's");
-        try
-        {
+        try {
             vmVersion = System.getProperty("java.vm.version");
-            System.out.println("vmVersion " + vmVersion);
+            Log.d("err", "vmVersion = " + vmVersion);
             System.loadLibrary("ImmEmulatorJ");
         } catch (ExceptionInInitializerError | UnsatisfiedLinkError e) {
         }
-        System.loadLibrary("SCAnd");
         System.loadLibrary("GTASA");
-     //   System.loadLibrary("crashlytics");
-     //   System.loadLibrary("OpenAL32");
-
         System.loadLibrary("samp");
     }
 
