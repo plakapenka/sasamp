@@ -183,7 +183,7 @@
                     tools:visibility="visible" />
 
 
-                <com.liverussia.launcher.domain.ui.ExpandableHeightGridView
+                <com.liverussia.launcher.ui.domain.ExpandableHeightGridView
                     android:id="@+id/possible_prizes_view"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

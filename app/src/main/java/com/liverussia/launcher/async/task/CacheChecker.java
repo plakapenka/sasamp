@@ -5,13 +5,13 @@ import android.view.WindowManager;
 import androidx.annotation.UiThread;
 import androidx.annotation.WorkerThread;
 
-import com.liverussia.launcher.activity.MainActivity;
-import com.liverussia.launcher.activity.dialogs.DialogProgress;
+import com.liverussia.launcher.ui.activity.MainActivity;
+import com.liverussia.launcher.ui.dialogs.DialogProgress;
 import com.liverussia.launcher.async.domain.AsyncTaskResult;
 import com.liverussia.launcher.async.listener.OnAsyncCriticalErrorListener;
 import com.liverussia.launcher.async.listener.OnAsyncSuccessListenerWithResponse;
-import com.liverussia.launcher.dto.response.FileInfo;
-import com.liverussia.launcher.dto.response.GameFileInfoDto;
+import com.liverussia.launcher.async.dto.response.FileInfo;
+import com.liverussia.launcher.async.dto.response.GameFileInfoDto;
 import com.liverussia.launcher.error.apiException.ApiException;
 import com.liverussia.launcher.error.apiException.ErrorContainer;
 import com.liverussia.launcher.service.ActivityService;

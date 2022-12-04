@@ -165,7 +165,7 @@
                 android:textColor="#FFFFFF"
                 android:textSize="25sp" />
 
-            <com.liverussia.launcher.domain.ui.ExpandableHeightGridView
+            <com.liverussia.launcher.ui.domain.ExpandableHeightGridView
                 android:id="@+id/donate_services_view"
                 android:layout_width="@dimen/_280sdp"
                 android:layout_height="wrap_content"

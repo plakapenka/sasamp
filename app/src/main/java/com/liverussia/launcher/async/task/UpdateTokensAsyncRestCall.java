@@ -1,27 +1,19 @@
 package com.liverussia.launcher.async.task;
 
 import android.app.Activity;
-import android.os.AsyncTask;
-import android.util.Log;
 
-import com.liverussia.launcher.dto.request.RefreshTokenRequestDto;
-import com.liverussia.launcher.dto.response.AuthenticationResponseDto;
-import com.liverussia.launcher.dto.response.UserInfoDto;
-import com.liverussia.launcher.enums.StorageElements;
+import com.liverussia.launcher.async.dto.request.RefreshTokenRequestDto;
+import com.liverussia.launcher.async.dto.response.AuthenticationResponseDto;
 import com.liverussia.launcher.error.ErrorUtils;
-import com.liverussia.launcher.error.apiException.ApiException;
 import com.liverussia.launcher.error.apiException.ErrorContainer;
-import com.liverussia.launcher.async.domain.AsyncTaskResult;
 import com.liverussia.launcher.async.listener.OnAsyncCriticalErrorListener;
 import com.liverussia.launcher.async.listener.OnAsyncNotCriticalErrorListener;
 import com.liverussia.launcher.async.listener.OnAsyncSuccessListener;
-import com.liverussia.launcher.other.NetworkService;
+import com.liverussia.launcher.async.service.NetworkService;
 import com.liverussia.launcher.service.ActivityService;
 import com.liverussia.launcher.service.AuthenticationService;
 import com.liverussia.launcher.service.impl.ActivityServiceImpl;
 import com.liverussia.launcher.service.impl.AuthenticationServiceImpl;
-import com.liverussia.launcher.storage.Storage;
-import com.liverussia.launcher.utils.DateTimeUtils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.client.ResourceAccessException;

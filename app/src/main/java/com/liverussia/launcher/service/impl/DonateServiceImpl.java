@@ -2,9 +2,9 @@ package com.liverussia.launcher.service.impl;
 
 import android.app.Activity;
 
-import com.liverussia.launcher.dto.response.ServerImagesResponseDto;
-import com.liverussia.launcher.rest.V3RestService;
-import com.liverussia.launcher.rest.impl.V3RestServiceImpl;
+import com.liverussia.launcher.async.dto.response.ServerImagesResponseDto;
+import com.liverussia.launcher.async.rest.V3RestService;
+import com.liverussia.launcher.async.rest.impl.V3RestServiceImpl;
 import com.liverussia.launcher.service.DonateService;
 
 public class DonateServiceImpl implements DonateService {

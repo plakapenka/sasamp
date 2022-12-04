@@ -1,25 +1,16 @@
 package com.liverussia.launcher.async.task;
 
 import android.app.Activity;
-import android.os.AsyncTask;
-import android.util.Log;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.liverussia.launcher.async.listener.OnAsyncCriticalErrorListener;
-import com.liverussia.launcher.dto.response.SpinRouletteResponseDto;
-import com.liverussia.launcher.dto.response.UserInfoDto;
-import com.liverussia.launcher.enums.StorageElements;
+import com.liverussia.launcher.async.dto.response.SpinRouletteResponseDto;
+import com.liverussia.launcher.domain.enums.StorageElements;
 import com.liverussia.launcher.error.ErrorUtils;
-import com.liverussia.launcher.error.apiException.ApiException;
 import com.liverussia.launcher.error.apiException.ErrorContainer;
-import com.liverussia.launcher.async.domain.AsyncTaskResult;
 import com.liverussia.launcher.async.listener.OnAsyncSuccessListenerWithResponse;
-import com.liverussia.launcher.other.NetworkService;
+import com.liverussia.launcher.async.service.NetworkService;
 import com.liverussia.launcher.service.ActivityService;
-import com.liverussia.launcher.service.RouletteService;
 import com.liverussia.launcher.service.impl.ActivityServiceImpl;
-import com.liverussia.launcher.service.impl.RouletteServiceImpl;
 import com.liverussia.launcher.storage.Storage;
 
 import org.apache.commons.lang3.StringUtils;

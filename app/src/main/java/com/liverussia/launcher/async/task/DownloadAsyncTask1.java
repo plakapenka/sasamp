@@ -9,12 +9,12 @@
 //import android.widget.ProgressBar;
 //
 //import com.liverussia.cr.core.Utils;
-//import com.liverussia.launcher.activity.LoaderActivity;
+//import com.liverussia.launcher.ui.activity.LoaderActivity;
 //import com.liverussia.launcher.async.domain.AsyncTaskResult;
 //import com.liverussia.launcher.async.listener.OnAsyncCriticalErrorListener;
 //import com.liverussia.launcher.async.listener.OnAsyncSuccessListener;
-//import com.liverussia.launcher.dto.response.FileInfo;
-//import com.liverussia.launcher.dto.response.GameFileInfoDto;
+//import com.liverussia.launcher.async.dto.response.FileInfo;
+//import com.liverussia.launcher.async.dto.response.GameFileInfoDto;
 //import com.liverussia.launcher.error.apiException.ApiException;
 //import com.liverussia.launcher.error.apiException.ErrorContainer;
 //import com.liverussia.launcher.service.ActivityService;

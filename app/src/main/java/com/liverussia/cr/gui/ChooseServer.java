@@ -23,8 +23,8 @@ import androidx.core.content.res.ResourcesCompat;
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.liverussia.cr.R;
 import com.liverussia.cr.gui.util.Utils;
-import com.liverussia.launcher.dto.response.Servers;
-import com.liverussia.launcher.other.Lists;
+import com.liverussia.launcher.async.dto.response.Servers;
+import com.liverussia.launcher.utils.MainUtils;
 import com.nvidia.devtech.NvEventQueueActivity;
 
 import java.io.UnsupportedEncodingException;
@@ -46,7 +46,7 @@ public class ChooseServer {
 
     public ChooseServer(Activity activity){
         aactivity = activity;
-        mServers = Lists.SERVERS;
+        mServers = MainUtils.SERVERS;
 
         load_game_progressBar = activity.findViewById(R.id.load_game_progressBar);
         serverLayout = activity.findViewById(R.id.br_serverselect_layout);

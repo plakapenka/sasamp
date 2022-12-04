@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.liverussia.cr.R;
 import com.liverussia.launcher.domain.LoaderSliderItemData;
-import com.liverussia.launcher.ui.LoaderSliderViewHolder;
+import com.liverussia.launcher.ui.holder.LoaderSliderViewHolder;
 
 import org.jetbrains.annotations.NotNull;
 

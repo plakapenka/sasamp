@@ -9,15 +9,15 @@ import androidx.annotation.UiThread;
 import androidx.annotation.WorkerThread;
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
-import com.liverussia.cr.core.DownloadUtils;
-import com.liverussia.launcher.activity.LoaderActivity;
+import com.liverussia.launcher.utils.MainUtils;
+import com.liverussia.launcher.ui.activity.LoaderActivity;
 import com.liverussia.launcher.async.domain.AsyncTaskResult;
 import com.liverussia.launcher.async.listener.OnAsyncCriticalErrorListener;
 import com.liverussia.launcher.async.listener.OnAsyncSuccessListener;
-import com.liverussia.launcher.dto.response.FileInfo;
-import com.liverussia.launcher.dto.response.GameFileInfoDto;
-import com.liverussia.launcher.dto.response.LatestVersionInfoDto;
-import com.liverussia.launcher.enums.DownloadType;
+import com.liverussia.launcher.async.dto.response.FileInfo;
+import com.liverussia.launcher.async.dto.response.GameFileInfoDto;
+import com.liverussia.launcher.async.dto.response.LatestVersionInfoDto;
+import com.liverussia.launcher.domain.enums.DownloadType;
 import com.liverussia.launcher.error.apiException.ApiException;
 import com.liverussia.launcher.error.apiException.ErrorContainer;
 import com.liverussia.launcher.service.ActivityService;
@@ -102,7 +102,7 @@ public class DownloadTask implements Listener<TaskStatus> {
 
     @WorkerThread
     private void downloadApk() {
-        LatestVersionInfoDto apkInfo = DownloadUtils.LATEST_APK_INFO;
+        LatestVersionInfoDto apkInfo = MainUtils.LATEST_APK_INFO;
         FileInfo fileInfo = buildFileInfoForApkFile(apkInfo);
 
         List<FileInfo> filesInfo = new ArrayList<>();
@@ -138,7 +138,7 @@ public class DownloadTask implements Listener<TaskStatus> {
 
     @WorkerThread
     private void reloadGameFiles() {
-        List<FileInfo> filesInfo = DownloadUtils.FILES_TO_RELOAD;
+        List<FileInfo> filesInfo = MainUtils.FILES_TO_RELOAD;
         fileLengthFull = calculateSize(filesInfo);
         fileLengthMin = new AtomicLong(0);
         total = 0;
@@ -335,13 +335,13 @@ public class DownloadTask implements Listener<TaskStatus> {
 
     @UiThread
     private void publishProgress(int progress) {
-        if (DownloadType.LOAD_ALL_CACHE.equals(DownloadUtils.getType()) || DownloadType.RELOAD_OR_ADD_PART_OF_CACHE.equals(DownloadUtils.getType())) {
+        if (DownloadType.LOAD_ALL_CACHE.equals(MainUtils.getType()) || DownloadType.RELOAD_OR_ADD_PART_OF_CACHE.equals(MainUtils.getType())) {
             loaderActivity.getLoading().setText("Загрузка файлов игры...");
             loaderActivity.getLoadingPercent().setText(progress + "%");
             loaderActivity.getFileName().setText(formatFileSize(fileLengthMin.longValue())+" из "+formatFileSize(fileLengthFull));
         }
 
-        if (DownloadType.UPDATE_APK.equals(DownloadUtils.getType())) {
+        if (DownloadType.UPDATE_APK.equals(MainUtils.getType())) {
             loaderActivity.getLoading().setText("Обновление...");
             loaderActivity.getLoadingPercent().setText(progress + "%");
             loaderActivity.getFileName().setText(formatFileSize(fileLengthMin.longValue())+" из "+formatFileSize(fileLengthFull));

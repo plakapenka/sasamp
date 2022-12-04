@@ -4,11 +4,6 @@ import android.app.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.liverussia.cr.core.Config;
-import com.liverussia.launcher.enums.ServerInfo;
-
-import java.io.File;
-
 public interface ActivityService {
 
     void showMessage(String message, Activity activity);
