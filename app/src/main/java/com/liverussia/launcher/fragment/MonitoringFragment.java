@@ -8,8 +8,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.fragment.app.Fragment;
 
 import android.view.View;
-import android.view.animation.AnimationUtils;
-import android.view.animation.Animation;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -36,26 +34,36 @@ public class MonitoringFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View inflate = inflater.inflate(R.layout.fragment_monitoring, container, false);
-    	Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.button_click);
 		
 	    recyclerNews = inflate.findViewById(R.id.newsRV);
 		recyclerNews.setHasFixedSize(true);
-		LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
-		recyclerNews.setLayoutManager(layoutManager);
-		
-		this.news = Lists.NEWS;
-		newsAdapter = new NewsAdapter(getContext(), this.news);
-		recyclerNews.setAdapter(newsAdapter);
 		
 		recyclerServers = inflate.findViewById(R.id.ourServersRV);
 		recyclerServers.setHasFixedSize(true);
-		LinearLayoutManager layoutManagerr = new LinearLayoutManager(getActivity());
-		recyclerServers.setLayoutManager(layoutManagerr);
-		
-		this.servers = Lists.SERVERS;
-		serversAdapter = new ServersAdapter(getContext(), this.servers);
-		recyclerServers.setAdapter(serversAdapter);
+
+		attachNews();
+		attachServers();
 		
         return inflate;
     }
+
+    public void attachNews() {
+		LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+		recyclerNews.setLayoutManager(layoutManager);
+
+		this.news = Lists.NEWS;
+		newsAdapter = new NewsAdapter(getContext(), this.news);
+		recyclerNews.setAdapter(newsAdapter);
+	}
+
+	public void attachServers() {
+		LinearLayoutManager layoutManagerr = new LinearLayoutManager(getActivity());
+		recyclerServers.setLayoutManager(layoutManagerr);
+
+		this.servers = Lists.SERVERS;
+		serversAdapter = new ServersAdapter(getContext(), this.servers);
+		recyclerServers.setAdapter(serversAdapter);
+	}
+
+
 }

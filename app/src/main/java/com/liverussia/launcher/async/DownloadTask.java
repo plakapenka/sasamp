@@ -8,6 +8,7 @@ import android.widget.ProgressBar;
 import androidx.annotation.UiThread;
 import androidx.annotation.WorkerThread;
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.liverussia.cr.core.DownloadUtils;
 import com.liverussia.launcher.activity.LoaderActivity;
 import com.liverussia.launcher.async.domain.AsyncTaskResult;
@@ -15,6 +16,7 @@ import com.liverussia.launcher.async.listener.OnAsyncCriticalErrorListener;
 import com.liverussia.launcher.async.listener.OnAsyncSuccessListener;
 import com.liverussia.launcher.dto.response.FileInfo;
 import com.liverussia.launcher.dto.response.GameFileInfoDto;
+import com.liverussia.launcher.dto.response.LatestVersionInfoDto;
 import com.liverussia.launcher.enums.DownloadType;
 import com.liverussia.launcher.error.apiException.ApiException;
 import com.liverussia.launcher.error.apiException.ErrorContainer;
@@ -85,30 +87,34 @@ public class DownloadTask implements Listener<TaskStatus> {
 
     public void download() {
         configureProgressBar();
-        backgroundThreadPoster.post(() -> downloadGameFiles());
-
-//        if (Utils.getType() == 1) {
-//            return downloadLauncher(sUrl[0]);
-//        }
-
-//        return new AsyncTaskResult<>(new ApiException(ErrorContainer.OTHER));
+        backgroundThreadPoster.post(this::downloadGameFiles);
     }
 
     public void reloadCache() {
         configureProgressBar();
-        backgroundThreadPoster.post(() -> reloadGameFiles(DownloadUtils.FILES_TO_RELOAD));
+        backgroundThreadPoster.post(this::reloadGameFiles);
+    }
 
+    public void updateApk() {
+        configureProgressBar();
+        backgroundThreadPoster.post(this::downloadApk);
     }
 
     @WorkerThread
-    private void reloadGameFiles(List<FileInfo> filesInfo) {
+    private void downloadApk() {
+        LatestVersionInfoDto apkInfo = DownloadUtils.LATEST_APK_INFO;
+        FileInfo fileInfo = buildFileInfoForApkFile(apkInfo);
+
+        List<FileInfo> filesInfo = new ArrayList<>();
+        filesInfo.add(fileInfo);
+
+        fileLengthFull = apkInfo.getSize();
+        fileLengthMin = new AtomicLong(0);
+        total = 0;
+
+        files = new HashSet<>(filesInfo);
+
         try {
-            fileLengthFull = calculateSize(filesInfo);
-            fileLengthMin = new AtomicLong(0);
-            total = 0;
-
-            files = new HashSet<>(filesInfo);
-
             downloadAndSaveFiles(filesInfo);
         } catch (ApiException e) {
             uiThreadPoster.post(() -> {
@@ -121,12 +127,34 @@ public class DownloadTask implements Listener<TaskStatus> {
         }
     }
 
-    private long calculateSize(List<FileInfo> filesInfo) {
-        return Optional.ofNullable(filesInfo)
-                .orElse(Collections.emptyList())
-                .stream()
-                .mapToLong(FileInfo::getSize)
-                .sum();
+    private FileInfo buildFileInfoForApkFile(LatestVersionInfoDto apkInfo) {
+        FileInfo fileInfo = new FileInfo();
+        fileInfo.setLink(apkInfo.getLink());
+        fileInfo.setSize(apkInfo.getSize());
+        fileInfo.setPath(apkInfo.getPath());
+
+        return fileInfo;
+    }
+
+    @WorkerThread
+    private void reloadGameFiles() {
+        List<FileInfo> filesInfo = DownloadUtils.FILES_TO_RELOAD;
+        fileLengthFull = calculateSize(filesInfo);
+        fileLengthMin = new AtomicLong(0);
+        total = 0;
+        files = new HashSet<>(filesInfo);
+
+        try {
+            downloadAndSaveFiles(filesInfo);
+        } catch (ApiException e) {
+            uiThreadPoster.post(() -> {
+                onAsyncFinished(new AsyncTaskResult<>(e));
+            });
+        } catch (Exception e) {
+            uiThreadPoster.post(() -> {
+                onAsyncFinished(new AsyncTaskResult<>(new ApiException(ErrorContainer.DOWNLOAD_FILES_ERROR)));
+            });
+        }
     }
 
     @WorkerThread
@@ -152,27 +180,6 @@ public class DownloadTask implements Listener<TaskStatus> {
         }
     }
 
-    private GameFileInfoDto getGameFilesInfo() {
-        URI url = URI.create(FILE_INFO_URL);
-
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-        ResponseEntity<GameFileInfoDto> response = restTemplate.exchange(url, HttpMethod.GET, HttpEntity.EMPTY, GameFileInfoDto.class);
-
-        return response.getBody();
-    }
-
-    private void downloadAndSaveFiles(List<FileInfo> gameFilesInfo) {
-        Optional.ofNullable(gameFilesInfo)
-                .orElse(Collections.emptyList())
-                .forEach(this::downloadAndSaveFile);
-
-        uiThreadPoster.post(() -> {
-            onAsyncFinished(new AsyncTaskResult<>(TaskStatus.SUCCESS));
-        });
-
-    }
-
     @WorkerThread
     private void downloadAndSaveFilesAfterFailed(List<FileInfo> gameFilesInfo) {
         try {
@@ -192,6 +199,35 @@ public class DownloadTask implements Listener<TaskStatus> {
                 onAsyncFinished(new AsyncTaskResult<>(new ApiException(ErrorContainer.DOWNLOAD_FILES_ERROR)));
             });
         }
+    }
+
+    private long calculateSize(List<FileInfo> filesInfo) {
+        return Optional.ofNullable(filesInfo)
+                .orElse(Collections.emptyList())
+                .stream()
+                .mapToLong(FileInfo::getSize)
+                .sum();
+    }
+
+    private GameFileInfoDto getGameFilesInfo() {
+        URI url = URI.create(FILE_INFO_URL);
+
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+        ResponseEntity<GameFileInfoDto> response = restTemplate.exchange(url, HttpMethod.GET, HttpEntity.EMPTY, GameFileInfoDto.class);
+
+        return response.getBody();
+    }
+
+    private void downloadAndSaveFiles(List<FileInfo> gameFilesInfo) {
+        Optional.ofNullable(gameFilesInfo)
+                .orElse(Collections.emptyList())
+                .forEach(this::downloadAndSaveFile);
+
+        uiThreadPoster.post(() -> {
+            onAsyncFinished(new AsyncTaskResult<>(TaskStatus.SUCCESS));
+        });
+
     }
 
     private void downloadAndSaveFile(FileInfo fileInfo) {
@@ -280,6 +316,7 @@ public class DownloadTask implements Listener<TaskStatus> {
                 file.delete();
             }
 
+            FirebaseCrashlytics.getInstance().recordException(e);
             //TODO исправить
             throw new ApiException(ErrorContainer.DOWNLOAD_FILES_ERROR, e.toString());
         } finally {
@@ -304,10 +341,11 @@ public class DownloadTask implements Listener<TaskStatus> {
             loaderActivity.getFileName().setText(formatFileSize(fileLengthMin.longValue())+" из "+formatFileSize(fileLengthFull));
         }
 
-//        if (Utils.getType() == 1) {
-//            loaderActivity.getLoading().setText("Загрузка лаунчера...");
-//            loaderActivity.getLoadingPercent().setText(progress + "%");
-//        }
+        if (DownloadType.UPDATE_APK.equals(DownloadUtils.getType())) {
+            loaderActivity.getLoading().setText("Обновление...");
+            loaderActivity.getLoadingPercent().setText(progress + "%");
+            loaderActivity.getFileName().setText(formatFileSize(fileLengthMin.longValue())+" из "+formatFileSize(fileLengthFull));
+        }
 
         progressBar.setProgress(progress);
     }

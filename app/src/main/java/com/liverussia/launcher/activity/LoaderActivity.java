@@ -6,7 +6,6 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -19,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.liverussia.cr.BuildConfig;
 import com.liverussia.cr.R;
 
@@ -56,12 +56,18 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static com.liverussia.launcher.config.Config.DOWNLOAD_DIRECTORY_NAME;
 import static com.liverussia.launcher.config.Config.LAUNCHER_SERVER_URI;
+import static com.liverussia.launcher.config.Config.UPDATED_APK_PATH;
 
 public class LoaderActivity extends AppCompatActivity {
 
     private final static String APK_NAME = "launcher";
     private final static String IS_AFTER_LOADING_KEY = "isAfterLoading";
+    private final static String APK_DATA_TYPE = "application/vnd.android.package-archive";
+    private final static String FILE_PROVIDER_EXTENSION = ".provider";
+    private final static int EXIT_SUCCESS_STATUS = 0;
+    private final static int LAST_VERSION_WITHOUT_NEED_PERMS = 23;
 
     private final ActivityService activityService;
 
@@ -71,16 +77,13 @@ public class LoaderActivity extends AppCompatActivity {
     private TextView loading;
     @Getter
     private TextView repeatLoadButton;
-
     @Getter
     private TextView loadingPercent;
-    private ProgressBar progressBar;
-
     @Getter
     private TextView fileName;
+    private ProgressBar progressBar;
     private ImageView leftButton;
     private ImageView rightButton;
-
     private ViewPager2 sliderView;
 
     {
@@ -101,7 +104,7 @@ public class LoaderActivity extends AppCompatActivity {
 
         initialize();
 
-        if (Build.VERSION.SDK_INT >= 23) {
+        if (Build.VERSION.SDK_INT >= LAST_VERSION_WITHOUT_NEED_PERMS) {
             if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED
                     || checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
                 requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1000);
@@ -164,33 +167,11 @@ public class LoaderActivity extends AppCompatActivity {
         finish();
     }
 
-//    @Override
-//    public void onStop() {
-//        Optional.ofNullable(downloadTask)
-//                .ifPresent(DownloadAsyncTask1::cancelDownload);
-//
-//        super.onStop();
-//    }
-//
-//    @Override
-//    public void onDestroy() {
-//        Optional.ofNullable(downloadTask)
-//                .ifPresent(DownloadAsyncTask1::cancelDownload);
-//
-//        super.onDestroy();
-//    }
-
     private void installGame(DownloadType type) {
         switch (type) {
             case LOAD_ALL_CACHE: {
-//                File dir = new File(getExternalFilesDir(null).toString() + "/temp_downloads/");
-//
-//                if (!dir.exists()) {
-//                    dir.mkdirs();
-//                }
-
                 downloadTask = new DownloadTask(this, progressBar);
-                downloadTask.setOnAsyncSuccessListener(this::performAfterDownload);
+                downloadTask.setOnAsyncSuccessListener(this::performAfterLoadCacheFailed);
                 downloadTask.setOnAsyncCriticalErrorListener(this::performAfterDownloadFailed);
                 downloadTask.download();
                 break;
@@ -198,19 +179,18 @@ public class LoaderActivity extends AppCompatActivity {
 
             case RELOAD_OR_ADD_PART_OF_CACHE: {
                 downloadTask = new DownloadTask(this, progressBar);
-                downloadTask.setOnAsyncSuccessListener(this::performAfterDownload);
+                downloadTask.setOnAsyncSuccessListener(this::performAfterReloadCacheFailed);
                 downloadTask.setOnAsyncCriticalErrorListener(this::performAfterDownloadFailed);
                 downloadTask.reloadCache();
                 break;
             }
 
-//            case 1: {
-//                File dir = new File(getExternalFilesDir(null).toString() + "/temp_downloads/");
-//                if (!dir.exists()) dir.mkdirs();
-//                DownloadAsyncTask1 downloadTask = new DownloadAsyncTask1(this, progressBar);
-//                downloadTask.execute(URL_CLIENT);
-//                break;
-//            }
+            case UPDATE_APK: {
+                downloadTask = new DownloadTask(this, progressBar);
+                downloadTask.setOnAsyncSuccessListener(this::installApk);
+                downloadTask.setOnAsyncCriticalErrorListener(this::performAfterUpdateApkFailed);
+                downloadTask.updateApk();
+            }
         }
     }
 
@@ -218,28 +198,25 @@ public class LoaderActivity extends AppCompatActivity {
         startActivity(new Intent(this, com.liverussia.launcher.activity.SplashActivity.class));
     }
 
-    private void performAfterDownload() {
+    private void performAfterLoadCacheFailed() {
+        redirectToSettings();
+    }
 
-        if (DownloadType.LOAD_ALL_CACHE.equals(DownloadUtils.getType())) {
-            redirectToSettings();
+    private void performAfterReloadCacheFailed() {
+        String nickname = NativeStorage.getClientProperty(NativeStorageElements.NICKNAME, this);
+
+        if (StringUtils.isNotBlank(nickname)) {
+            startActivity(new Intent(this, GTASA.class));
+            this.finish();
+            return;
         }
 
-        if (DownloadType.RELOAD_OR_ADD_PART_OF_CACHE.equals(DownloadUtils.getType())) {
-            String nickname = NativeStorage.getClientProperty(NativeStorageElements.NICKNAME, this);
+        redirectToSettings();
+    }
 
-            if (StringUtils.isNotBlank(nickname)) {
-                startActivity(new Intent(this, GTASA.class));
-                this.finish();
-                return;
-            }
-
-            redirectToSettings();
-        }
-
-//        if (Utils.getType() == 1) {
-//            showMessage(InfoMessages.APPROVE_INSTALL.getText());
-//            installAPK(APK_NAME);
-//        }
+    private void performAfterUpdateApkFailed() {
+        finish();
+        System.exit(EXIT_SUCCESS_STATUS);
     }
 
     private void initialize() {
@@ -375,29 +352,36 @@ public class LoaderActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), _s, Toast.LENGTH_LONG).show();
     }
 
-    private void installAPK(final String apkname) {
+    private void installApk() {
         try {
-            File file = new File(getExternalFilesDir(null).toString() + "/temp_downloads/", apkname + ".apk");
+            File file = new File(getExternalFilesDir(null).toString() + DOWNLOAD_DIRECTORY_NAME,  UPDATED_APK_PATH);
             Intent intent;
+
             if (file.exists()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    Uri apkUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", file);
-                    intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
+                    Uri apkUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + FILE_PROVIDER_EXTENSION, file);
+//                    intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
+                    intent = new Intent(Intent.ACTION_VIEW);
                     intent.setData(apkUri);
                     intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 } else {
                     Uri apkUri = Uri.fromFile(file);
                     intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
+                    intent.setDataAndType(apkUri, APK_DATA_TYPE);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 }
                 startActivity(intent);
                 finish();
             }
-            else showMessage("Ошибка установки: файл не найден");
+            else {
+                activityService.showMessage(ErrorMessages.APK_UPDATE_FILE_NOT_FOUND.getText(), this);
+                finish();
+                System.exit(EXIT_SUCCESS_STATUS);
+            }
         } catch (Exception e) {
-            Log.e("InstallAPK", "Ошибка установки:" + e.getMessage());
-            writeLog(e);
+            FirebaseCrashlytics.getInstance().recordException(e);
+            finish();
+            System.exit(EXIT_SUCCESS_STATUS);
         }
     }
 }

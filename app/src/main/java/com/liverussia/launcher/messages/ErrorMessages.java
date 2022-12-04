@@ -26,7 +26,8 @@ public enum ErrorMessages {
 
     FIRSTLY_LOAD_GAME("Сначала загрузите игру!"),
 
-    FAILED_LOAD_LOADER_SLIDER_DATA("Не удалось загрузить данные");
+    FAILED_LOAD_LOADER_SLIDER_DATA("Не удалось загрузить данные"),
+    APK_UPDATE_FILE_NOT_FOUND("Ошибка установки: файл не найден");
 
 
     private final String text;

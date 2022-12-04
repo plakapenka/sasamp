@@ -3,6 +3,7 @@ package com.liverussia.launcher.other;
 import com.liverussia.launcher.dto.request.LoginRequestDto;
 import com.liverussia.launcher.dto.request.RefreshTokenRequestDto;
 import com.liverussia.launcher.dto.response.AuthenticationResponseDto;
+import com.liverussia.launcher.dto.response.LatestVersionInfoDto;
 import com.liverussia.launcher.dto.response.LoaderSliderInfoResponseDto;
 import com.liverussia.launcher.dto.response.ServerImagesResponseDto;
 import com.liverussia.launcher.dto.response.SpinRouletteResponseDto;
@@ -34,6 +35,9 @@ public interface NetworkService {
 
     @GET("https://files.liverussia.online/roulette/prizes/urls.json")
     Call<ServerImagesResponseDto> getPossibleRoulettePrizes();
+
+    @GET("https://files.liverussia.online/apk/last_apk_info.json")
+    Call<LatestVersionInfoDto> getLatestVersionInfoDto();
 
     @POST("/api/v1/auth/android/refresh")
     Call<AuthenticationResponseDto> refreshTokens(@Body RefreshTokenRequestDto request);
