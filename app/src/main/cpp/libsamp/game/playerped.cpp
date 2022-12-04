@@ -596,27 +596,31 @@ void CPlayerPed::PutDirectlyInVehicle(int iVehicleID, int iSeat)
 	if(GetCurrentWeapon() == WEAPON_PARACHUTE) {
 		SetArmedWeapon(0);
 	}*/
+	MATRIX4X4 mat;
 
 	VEHICLE_TYPE *pVehicle = GamePool_Vehicle_GetAt(iVehicleID);
 
-	if(pVehicle->fHealth == 0.0f) return;
-	// check is cplaceable
-	if (pVehicle->entity.vtable == g_libGTASA+0x5C7358) return;
 	// check seatid
+	if(IsInVehicle()) {
+		GetMatrix(&mat);
+		RemoveFromVehicleAndPutAt(mat.pos.X, mat.pos.Y, mat.pos.Z);
+	}
 
 	if(iSeat == 0)
 	{
 		if(pVehicle->pDriver && IN_VEHICLE(pVehicle->pDriver)) return;
 		ScriptCommand(&TASK_WARP_CHAR_INTO_CAR_AS_DRIVER, m_dwGTAId, iVehicleID);
+        pGame->GetCamera()->SetBehindPlayer();
 	}
 	else
 	{
 		iSeat--;
 		ScriptCommand(&put_actor_in_car2, m_dwGTAId, iVehicleID, iSeat);
+        pGame->GetCamera()->SetBehindPlayer();
 	}
 
-	if(m_pPed == GamePool_FindPlayerPed() && IN_VEHICLE(m_pPed))
-		pGame->GetCamera()->SetBehindPlayer();
+//	if(m_pPed == GamePool_FindPlayerPed() && IN_VEHICLE(m_pPed))
+//		pGame->GetCamera()->SetBehindPlayer();
 }
 
 void CPlayerPed::EnterVehicle(int iVehicleID, bool bPassenger)
