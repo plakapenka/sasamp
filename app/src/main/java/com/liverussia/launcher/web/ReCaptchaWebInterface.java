@@ -3,7 +3,7 @@ package com.liverussia.launcher.web;
 import android.content.Context;
 import android.webkit.JavascriptInterface;
 
-import com.liverussia.launcher.activity.dialogs.ReCaptchaDialog;
+import com.liverussia.launcher.ui.dialogs.ReCaptchaDialog;
 
 public class ReCaptchaWebInterface {
     private Context mContext;

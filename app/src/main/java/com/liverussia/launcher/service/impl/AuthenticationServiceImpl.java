@@ -2,16 +2,14 @@ package com.liverussia.launcher.service.impl;
 
 import android.app.Activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.liverussia.launcher.domain.Token;
-import com.liverussia.launcher.dto.request.LoginRequestDto;
-import com.liverussia.launcher.dto.request.RefreshTokenRequestDto;
-import com.liverussia.launcher.dto.response.AuthenticationResponseDto;
-import com.liverussia.launcher.dto.response.UserInfoDto;
-import com.liverussia.launcher.enums.StorageElements;
-import com.liverussia.launcher.rest.V3RestService;
-import com.liverussia.launcher.rest.impl.V3RestServiceImpl;
+import com.liverussia.launcher.async.dto.request.LoginRequestDto;
+import com.liverussia.launcher.async.dto.request.RefreshTokenRequestDto;
+import com.liverussia.launcher.async.dto.response.AuthenticationResponseDto;
+import com.liverussia.launcher.async.dto.response.UserInfoDto;
+import com.liverussia.launcher.domain.enums.StorageElements;
+import com.liverussia.launcher.async.rest.V3RestService;
+import com.liverussia.launcher.async.rest.impl.V3RestServiceImpl;
 import com.liverussia.launcher.service.AuthenticationService;
 import com.liverussia.launcher.storage.Storage;
 import com.liverussia.launcher.utils.DateTimeUtils;
@@ -21,7 +19,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.threeten.bp.LocalDateTime;
 
-import java.util.Date;
 import java.util.Optional;
 
 public class AuthenticationServiceImpl implements AuthenticationService {

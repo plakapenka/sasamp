@@ -8,7 +8,7 @@ import android.view.KeyEvent;
 
 import androidx.appcompat.app.AppCompatDelegate;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.liverussia.launcher.utils.MainUtils;
 import com.wardrumstudios.utils.WarMedia;
 
 public class GTASA extends WarMedia {
@@ -84,7 +84,7 @@ public class GTASA extends WarMedia {
         gtasaSelf = this;
         wantsMultitouch = true;
         wantsAccelerometer = true;
-        DownloadUtils.currentContext = this;
+        MainUtils.currentContext = this;
         super.onCreate(bundle);
     }
 

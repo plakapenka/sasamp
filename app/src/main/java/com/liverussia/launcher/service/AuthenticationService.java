@@ -1,9 +1,8 @@
 package com.liverussia.launcher.service;
 
-import com.liverussia.launcher.dto.request.LoginRequestDto;
-import com.liverussia.launcher.dto.request.RefreshTokenRequestDto;
-import com.liverussia.launcher.dto.response.AuthenticationResponseDto;
-import com.liverussia.launcher.dto.response.UserInfoDto;
+import com.liverussia.launcher.async.dto.request.LoginRequestDto;
+import com.liverussia.launcher.async.dto.request.RefreshTokenRequestDto;
+import com.liverussia.launcher.async.dto.response.AuthenticationResponseDto;
 
 public interface AuthenticationService {
     AuthenticationResponseDto loginUser(LoginRequestDto loginRequestDto);

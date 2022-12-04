@@ -2,9 +2,9 @@ package com.liverussia.launcher.service.impl;
 
 import android.app.Activity;
 
-import com.liverussia.launcher.dto.response.LoaderSliderInfoResponseDto;
-import com.liverussia.launcher.rest.V3RestService;
-import com.liverussia.launcher.rest.impl.V3RestServiceImpl;
+import com.liverussia.launcher.async.dto.response.LoaderSliderInfoResponseDto;
+import com.liverussia.launcher.async.rest.V3RestService;
+import com.liverussia.launcher.async.rest.impl.V3RestServiceImpl;
 import com.liverussia.launcher.service.LoaderService;
 
 public class LoaderServiceImpl implements LoaderService {

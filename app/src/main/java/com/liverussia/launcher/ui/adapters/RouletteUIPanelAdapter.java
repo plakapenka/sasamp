@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.liverussia.cr.R;
-import com.liverussia.launcher.ui.RouletteUiPanelViewHolder;
+import com.liverussia.launcher.ui.holder.RouletteUiPanelViewHolder;
 import com.liverussia.launcher.domain.RouletteItem;
 
 import org.jetbrains.annotations.NotNull;

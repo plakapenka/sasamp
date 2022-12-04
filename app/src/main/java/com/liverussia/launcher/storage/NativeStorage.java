@@ -3,10 +3,10 @@ package com.liverussia.launcher.storage;
 import android.app.Activity;
 import android.widget.Toast;
 
-import com.liverussia.launcher.enums.NativeStorageElements;
+import com.liverussia.launcher.domain.enums.NativeStorageElements;
 import com.liverussia.launcher.error.apiException.ApiException;
 import com.liverussia.launcher.error.apiException.ErrorContainer;
-import com.liverussia.launcher.messages.ErrorMessages;
+import com.liverussia.launcher.domain.messages.ErrorMessages;
 
 import org.ini4j.Wini;
 

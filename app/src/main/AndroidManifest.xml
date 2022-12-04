@@ -40,7 +40,7 @@
        >
 
         <activity
-            android:name="com.liverussia.launcher.activity.StoryActivity"
+            android:name="com.liverussia.launcher.ui.activity.StoryActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"/>
@@ -60,7 +60,7 @@
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"/>
         <activity
-            android:name="com.liverussia.launcher.activity.SplashActivity"
+            android:name="com.liverussia.launcher.ui.activity.SplashActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.WithSplash">
@@ -70,23 +70,23 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.liverussia.launcher.activity.MainActivity"
+            android:name="com.liverussia.launcher.ui.activity.MainActivity"
             android:noHistory="true"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name="com.liverussia.launcher.activity.LoaderActivity"
+            android:name="com.liverussia.launcher.ui.activity.LoaderActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.liverussia.launcher.activity.PolicyActivity"
+            android:name="com.liverussia.launcher.ui.activity.PolicyActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity
-            android:name="com.liverussia.launcher.activity.ForumActivity"
+            android:name="com.liverussia.launcher.ui.activity.ForumActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>

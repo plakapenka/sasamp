@@ -6,8 +6,8 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.liverussia.launcher.dto.response.PrizeInfoResponseDto;
-import com.liverussia.launcher.fragment.RouletteFragment;
+import com.liverussia.launcher.async.dto.response.PrizeInfoResponseDto;
+import com.liverussia.launcher.ui.fragment.RouletteFragment;
 import com.liverussia.launcher.service.RouletteAnimationService;
 
 public class RouletteAnimationServiceImpl implements RouletteAnimationService {

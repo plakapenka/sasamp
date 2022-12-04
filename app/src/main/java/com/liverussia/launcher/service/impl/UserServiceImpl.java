@@ -2,12 +2,10 @@ package com.liverussia.launcher.service.impl;
 
 import android.app.Activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import com.liverussia.launcher.dto.response.UserInfoDto;
-import com.liverussia.launcher.enums.StorageElements;
-import com.liverussia.launcher.rest.V3RestService;
-import com.liverussia.launcher.rest.impl.V3RestServiceImpl;
+import com.liverussia.launcher.async.dto.response.UserInfoDto;
+import com.liverussia.launcher.domain.enums.StorageElements;
+import com.liverussia.launcher.async.rest.V3RestService;
+import com.liverussia.launcher.async.rest.impl.V3RestServiceImpl;
 import com.liverussia.launcher.service.UserService;
 import com.liverussia.launcher.storage.Storage;
 
