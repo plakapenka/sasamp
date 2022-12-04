@@ -2,6 +2,7 @@ package com.liverussia.launcher.activity;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
 import android.os.Build;
@@ -24,18 +25,31 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.liverussia.cr.R;
 import com.liverussia.cr.core.Config;
+import com.liverussia.cr.core.DownloadUtils;
+import com.liverussia.launcher.dto.response.LatestVersionInfoDto;
+import com.liverussia.launcher.enums.DownloadType;
 import com.liverussia.launcher.fragment.DonateFragment;
 import com.liverussia.launcher.fragment.MonitoringFragment;
 import com.liverussia.launcher.fragment.SettingsFragment;
+import com.liverussia.launcher.other.NetworkService;
 
 import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+import static com.liverussia.launcher.config.Config.LIVE_RUSSIA_RESOURCE_SERVER_URI;
+
 public class PolicyActivity extends AppCompatActivity {
 
     public ConstraintLayout policy_cancel;
     public ConstraintLayout policy_ok;
+    private NetworkService sNetworkService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +62,13 @@ public class PolicyActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(LIVE_RUSSIA_RESOURCE_SERVER_URI)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        sNetworkService = retrofit.create(NetworkService.class);
 
 		Animation animation = AnimationUtils.loadAnimation(this, R.anim.button_click);
 
@@ -73,7 +94,7 @@ public class PolicyActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 1000) {
-            startLauncher();
+            checkVersionAndStartLauncher();
         }
     }
 
@@ -83,30 +104,67 @@ public class PolicyActivity extends AppCompatActivity {
                     || checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED || checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED) {
                 requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO}, 1000);
             } else {
-                startTimer();
+                checkVersionAndStartLauncher();
             }
-        } else startTimer();
+        } else checkVersionAndStartLauncher();
     }
 
 	public void onClickCancel() {
         System.exit(0);
     }
 
-    private void startTimer()
-    {
-        Timer t = new Timer();
-        t.schedule(new TimerTask(){
-            @Override
-            public void run() {
-                startLauncher();
-            }
-        }, 1000L);
-    }
-
-    private void startLauncher()
-    {
+    private void startLauncher() {
         startActivity(new Intent(this, MainActivity.class));
         finish();
+    }
+
+
+    private void checkVersionAndStartLauncher() {
+        Call<LatestVersionInfoDto> latestVersionInfoCall = sNetworkService.getLatestVersionInfoDto();
+
+        latestVersionInfoCall.enqueue(new Callback<LatestVersionInfoDto>() {
+            @Override
+            public void onResponse(Call<LatestVersionInfoDto> call, Response<LatestVersionInfoDto> response) {
+                if (!response.isSuccessful()) {
+                    finish();
+                    System.exit(0);
+                }
+
+                checkVersion(response.body());
+
+            }
+
+            @Override
+            public void onFailure(Call<LatestVersionInfoDto> call, Throwable t) {
+                finish();
+                System.exit(0);
+            }
+        });
+    }
+
+    private void checkVersion(LatestVersionInfoDto latestVersionInfo) {
+        String currentVersion = getCurrentVersion();
+        String latestVersion = latestVersionInfo.getVersion();
+
+        if (currentVersion.equals(latestVersion)) {
+            startLauncher();
+            return;
+        }
+
+        DownloadUtils.setType(DownloadType.UPDATE_APK);
+        DownloadUtils.LATEST_APK_INFO = latestVersionInfo;
+        startActivity(new Intent(this, LoaderActivity.class));
+    }
+
+    private String getCurrentVersion(){
+        PackageManager pm = this.getPackageManager();
+        PackageInfo pInfo = null;
+        try {
+            pInfo = pm.getPackageInfo(this.getPackageName(),0);
+        } catch (PackageManager.NameNotFoundException e1) {
+            e1.printStackTrace();
+        }
+        return pInfo.versionName;
     }
 
 	public void onDestroy() {

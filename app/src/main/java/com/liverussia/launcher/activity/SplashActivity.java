@@ -26,7 +26,6 @@ import com.liverussia.cr.core.DownloadUtils;
 import com.liverussia.launcher.dto.response.LatestVersionInfoDto;
 import com.liverussia.launcher.enums.DownloadType;
 import com.liverussia.launcher.error.apiException.ErrorContainer;
-import com.liverussia.launcher.messages.InfoMessages;
 import com.liverussia.launcher.model.News;
 
 import com.liverussia.launcher.model.Servers;
@@ -46,7 +45,9 @@ public class SplashActivity extends AppCompatActivity {
 	private final static String IS_AFTER_LOADING_KEY = "isAfterLoading";
 
 	public static ArrayList<Servers> slist;
-	
+
+	private NetworkService sNetworkService;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
@@ -66,28 +67,7 @@ public class SplashActivity extends AppCompatActivity {
 				.addConverterFactory(GsonConverterFactory.create())
 				.build();
 
-		NetworkService sNetworkService = retrofit.create(NetworkService.class);
-
-		Call<LatestVersionInfoDto> latestVersionInfoCall = sNetworkService.getLatestVersionInfoDto();
-
-		latestVersionInfoCall.enqueue(new Callback<LatestVersionInfoDto>() {
-			@Override
-			public void onResponse(Call<LatestVersionInfoDto> call, Response<LatestVersionInfoDto> response) {
-				if (!response.isSuccessful()) {
-					finish();
-					System.exit(0);
-				}
-
-				checkVersion(response.body());
-
-			}
-
-			@Override
-			public void onFailure(Call<LatestVersionInfoDto> call, Throwable t) {
-				finish();
-				System.exit(0);
-			}
-		});
+		sNetworkService = retrofit.create(NetworkService.class);
 
 		Call<List<Servers>> scall = sNetworkService.getServers();
 
@@ -135,9 +115,9 @@ public class SplashActivity extends AppCompatActivity {
 				startActivity(new Intent(this, PolicyActivity.class));
 				finish();
 			} else {
-				startTimer();
+				checkVersionAndStartLauncher();
 			}
-        } else startTimer();
+        } else checkVersionAndStartLauncher();
 	}
 
 	private void checkVersion(LatestVersionInfoDto latestVersionInfo) {
@@ -146,6 +126,7 @@ public class SplashActivity extends AppCompatActivity {
     	String latestVersion = latestVersionInfo.getVersion();
 
 		if (currentVersion.equals(latestVersion)) {
+			startLauncher();
 			return;
 		}
 
@@ -193,13 +174,36 @@ public class SplashActivity extends AppCompatActivity {
 		return netInfo != null && netInfo.isConnectedOrConnecting();
 	}
 	
-	private void startTimer() {
-        Timer t = new Timer();
-        t.schedule(new TimerTask(){
-            @Override
-            public void run() {
-                startLauncher();
-            }
-        }, 1000L);
+	private void checkVersionAndStartLauncher() {
+
+		Call<LatestVersionInfoDto> latestVersionInfoCall = sNetworkService.getLatestVersionInfoDto();
+
+		latestVersionInfoCall.enqueue(new Callback<LatestVersionInfoDto>() {
+			@Override
+			public void onResponse(Call<LatestVersionInfoDto> call, Response<LatestVersionInfoDto> response) {
+				if (!response.isSuccessful()) {
+					finish();
+					System.exit(0);
+				}
+
+				checkVersion(response.body());
+
+			}
+
+			@Override
+			public void onFailure(Call<LatestVersionInfoDto> call, Throwable t) {
+				finish();
+				System.exit(0);
+			}
+		});
+
+
+//        Timer t = new Timer();
+//        t.schedule(new TimerTask(){
+//            @Override
+//            public void run() {
+//                startLauncher();
+//            }
+//        }, 1000L);
     }
 }

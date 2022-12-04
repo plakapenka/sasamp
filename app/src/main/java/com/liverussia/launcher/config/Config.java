@@ -11,7 +11,7 @@ public class Config {
     public static final String URL_CLIENT = "https://vl4sov.com/Download/launcher.apk";
     public static final String URL_DONATE = "https://vl4sov.com/liverussia.online/Donate";
 
-    //todo
+    //todo   тоооо
     public static final String FILE_INFO_URL = "https://files.liverussia.online/testcash/files/files.json";
 
     public static final String DISCORD_URI = "https://discord.com/";
