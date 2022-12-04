@@ -5,6 +5,8 @@ import android.os.Build;
 
 import android.widget.*;
 import android.graphics.PorterDuff;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import android.content.Intent;
@@ -56,8 +58,11 @@ import static com.liverussia.launcher.config.Config.LIVE_RUSSIA_RESOURCE_SERVER_
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private final static String IS_AFTER_LOADING_KEY = "isAfterLoading";
+    private final static int GAME_DIRECTORY_EMPTY_SIZE = 0;
+    private final static int LAST_VERSION_WITHOUT_NEED_PERMS = 23;
+
     private Animation animation;
-    
 	public LinearLayout donateButton;
     public ImageView donateImage;
     public TextView donateTV;
@@ -82,9 +87,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ServerImagesResponseDto possiblePrizesInfoResponseDto;
     private ServerImagesResponseDto donateServicesResponseDto;
 
-    private final static String IS_AFTER_LOADING_KEY = "isAfterLoading";
-    private final static int GAME_DIRECTORY_EMPTY_SIZE = 0;
-    private final static int LAST_VERSION_WITHOUT_NEED_PERMS = 23;
+    public MineGame3 gg;
 
     @Getter
     @Setter
@@ -93,7 +96,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     {
         activityService = new ActivityServiceImpl();
     }
-    public MineGame3 gg;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -160,6 +164,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         getDonateServices();
     }
 
+
+    //TODO сделать это как в сплеше с монтрингом и выпилить отсюда
     private void getPossiblePrizes() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(LIVE_RUSSIA_RESOURCE_SERVER_URI)
@@ -233,6 +239,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
 
+        //todo сделать как в прогресс баре с загнрузкой а это выпилить
         if (isFragmentBlockProcessRunning()) {
             return;
         }
