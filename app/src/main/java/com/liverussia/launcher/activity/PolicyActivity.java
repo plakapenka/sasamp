@@ -47,8 +47,11 @@ import static com.liverussia.launcher.config.Config.LIVE_RUSSIA_RESOURCE_SERVER_
 
 public class PolicyActivity extends AppCompatActivity {
 
-    public ConstraintLayout policy_cancel;
-    public ConstraintLayout policy_ok;
+    private final static int EXIT_SUCCESS_STATUS = 0;
+    private final static int LAST_VERSION_WITHOUT_NEED_PERMS = 23;
+
+    private ConstraintLayout policy_cancel;
+    private ConstraintLayout policy_ok;
     private NetworkService sNetworkService;
 
     @Override
@@ -99,7 +102,7 @@ public class PolicyActivity extends AppCompatActivity {
     }
 
     public void onClickOkey() {
-        if (Build.VERSION.SDK_INT >= 23) {
+        if (Build.VERSION.SDK_INT >= LAST_VERSION_WITHOUT_NEED_PERMS) {
             if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED
                     || checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED || checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED) {
                 requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO}, 1000);
@@ -110,7 +113,7 @@ public class PolicyActivity extends AppCompatActivity {
     }
 
 	public void onClickCancel() {
-        System.exit(0);
+        System.exit(EXIT_SUCCESS_STATUS);
     }
 
     private void startLauncher() {
@@ -127,7 +130,7 @@ public class PolicyActivity extends AppCompatActivity {
             public void onResponse(Call<LatestVersionInfoDto> call, Response<LatestVersionInfoDto> response) {
                 if (!response.isSuccessful()) {
                     finish();
-                    System.exit(0);
+                    System.exit(EXIT_SUCCESS_STATUS);
                 }
 
                 checkVersion(response.body());
@@ -137,7 +140,7 @@ public class PolicyActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<LatestVersionInfoDto> call, Throwable t) {
                 finish();
-                System.exit(0);
+                System.exit(EXIT_SUCCESS_STATUS);
             }
         });
     }
@@ -158,13 +161,18 @@ public class PolicyActivity extends AppCompatActivity {
 
     private String getCurrentVersion(){
         PackageManager pm = this.getPackageManager();
-        PackageInfo pInfo = null;
+
         try {
-            pInfo = pm.getPackageInfo(this.getPackageName(),0);
+            PackageInfo pInfo = pm.getPackageInfo(this.getPackageName(),0);
+            return pInfo.versionName;
         } catch (PackageManager.NameNotFoundException e1) {
             e1.printStackTrace();
         }
-        return pInfo.versionName;
+
+        finish();
+        System.exit(EXIT_SUCCESS_STATUS);
+
+        return null;
     }
 
 	public void onDestroy() {
