@@ -347,11 +347,6 @@ public class DownloadTask implements Listener<TaskStatus> {
             loaderActivity.getFileName().setText(formatFileSize(fileLengthMin.longValue())+" из "+formatFileSize(fileLengthFull));
         }
 
-//        if (Utils.getType() == 1) {
-//            loaderActivity.getLoading().setText("Загрузка лаунчера...");
-//            loaderActivity.getLoadingPercent().setText(progress + "%");
-//        }
-
         progressBar.setProgress(progress);
     }
 

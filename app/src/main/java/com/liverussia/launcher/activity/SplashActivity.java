@@ -16,9 +16,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.liverussia.cr.R;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,7 +78,6 @@ public class SplashActivity extends AppCompatActivity {
 		if (Build.VERSION.SDK_INT >= LAST_VERSION_WITHOUT_NEED_PERMS) {
 			if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED
 					|| checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED || checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED) {
-				//requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO}, 1000);
 				startActivity(new Intent(this, PolicyActivity.class));
 				finish();
 			} else {

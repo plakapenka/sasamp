@@ -4,38 +4,20 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.liverussia.cr.R;
-import com.liverussia.cr.core.Config;
 import com.liverussia.cr.core.DownloadUtils;
 import com.liverussia.launcher.dto.response.LatestVersionInfoDto;
 import com.liverussia.launcher.enums.DownloadType;
-import com.liverussia.launcher.fragment.DonateFragment;
-import com.liverussia.launcher.fragment.MonitoringFragment;
-import com.liverussia.launcher.fragment.SettingsFragment;
 import com.liverussia.launcher.other.NetworkService;
-
-import java.io.File;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -50,8 +32,6 @@ public class PolicyActivity extends AppCompatActivity {
     private final static int EXIT_SUCCESS_STATUS = 0;
     private final static int LAST_VERSION_WITHOUT_NEED_PERMS = 23;
 
-    private ConstraintLayout policy_cancel;
-    private ConstraintLayout policy_ok;
     private NetworkService sNetworkService;
 
     @Override
@@ -75,21 +55,17 @@ public class PolicyActivity extends AppCompatActivity {
 
 		Animation animation = AnimationUtils.loadAnimation(this, R.anim.button_click);
 
-        policy_cancel = (ConstraintLayout) findViewById(R.id.policy_cancel);
-        policy_ok = (ConstraintLayout) findViewById(R.id.policy_ok);
+        ConstraintLayout policy_cancel = findViewById(R.id.policy_cancel);
+        ConstraintLayout policy_ok = findViewById(R.id.policy_ok);
 
-        policy_cancel.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                v.startAnimation(animation);
-                onClickCancel();
-            }
+        policy_cancel.setOnClickListener(view -> {
+            view.startAnimation(animation);
+            onClickCancel();
         });
 
-        policy_ok.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                v.startAnimation(animation);
-                onClickOkey();
-            }
+        policy_ok.setOnClickListener(view -> {
+            view.startAnimation(animation);
+            onClickOkey();
         });
     }
 

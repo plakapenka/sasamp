@@ -1,6 +1,5 @@
 package com.liverussia.launcher.activity;
 
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Build;
 
@@ -18,13 +17,10 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.Animation;
 
 import com.liverussia.cr.R;
-import com.liverussia.cr.core.Config;
 import com.liverussia.cr.core.DownloadUtils;
 import com.liverussia.cr.core.GTASA;
 import com.liverussia.launcher.async.CacheChecker;
 import com.liverussia.launcher.dto.response.FileInfo;
-import com.liverussia.cr.gui.MineGame1;
-import com.liverussia.cr.gui.MineGame2;
 import com.liverussia.cr.gui.MineGame3;
 import com.liverussia.launcher.dto.response.ServerImagesResponseDto;
 import com.liverussia.launcher.enums.DownloadType;
@@ -46,7 +42,6 @@ import org.springframework.util.CollectionUtils;
 
 import java.io.File;
 
-import java.nio.file.Files;
 import java.util.*;
 
 import lombok.Getter;
@@ -89,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private final static String IS_AFTER_LOADING_KEY = "isAfterLoading";
     private final static int GAME_DIRECTORY_EMPTY_SIZE = 0;
+    private final static int LAST_VERSION_WITHOUT_NEED_PERMS = 23;
 
     @Getter
     @Setter
@@ -361,7 +357,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 	
 	public boolean isRecordAudioPermissionGranted() {
-        if (Build.VERSION.SDK_INT < 23 || checkSelfPermission("android.permission.RECORD_AUDIO") == 0) {
+        if (Build.VERSION.SDK_INT < LAST_VERSION_WITHOUT_NEED_PERMS || checkSelfPermission("android.permission.RECORD_AUDIO") == 0) {
             return true;
         }
         ActivityCompat.requestPermissions(this, new String[]{"android.permission.RECORD_AUDIO"}, 2);
@@ -369,29 +365,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public boolean isStoragePermissionGranted() {
-        if (Build.VERSION.SDK_INT < 23 || checkSelfPermission("android.permission.WRITE_EXTERNAL_STORAGE") == 0) {
+        if (Build.VERSION.SDK_INT < LAST_VERSION_WITHOUT_NEED_PERMS || checkSelfPermission("android.permission.WRITE_EXTERNAL_STORAGE") == 0) {
             return true;
         }
         ActivityCompat.requestPermissions(this, new String[]{"android.permission.WRITE_EXTERNAL_STORAGE"}, 1);
         return false;
-    }
-	
-	private boolean isGameInstalled() {
-        String CheckFile = getExternalFilesDir(null)+ "/texdb/gta3.img";
-        File file = new File(CheckFile);
-        return file.exists();
-    }
-	
-	private void startTimer()
-    {
-        Timer t = new Timer();
-        t.schedule(new TimerTask(){
-
-            @Override
-            public void run() {
-                onClickPlay();
-            }
-        }, 200L);
     }
 
     @Override
