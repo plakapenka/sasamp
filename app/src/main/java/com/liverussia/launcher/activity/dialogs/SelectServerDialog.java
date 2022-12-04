@@ -1,18 +1,11 @@
 package com.liverussia.launcher.activity.dialogs;
 
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,13 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.liverussia.cr.R;
 import com.liverussia.launcher.activity.ActivitySupportedServerSelection;
-import com.liverussia.launcher.adapter.ServersAdapter;
 import com.liverussia.launcher.adapter.ServersDialogAdapter;
-import com.liverussia.launcher.enums.ServerInfo;
-import com.liverussia.launcher.model.Servers;
+import com.liverussia.launcher.dto.response.Servers;
 import com.liverussia.launcher.other.Lists;
-
-import java.util.ArrayList;
 
 public class SelectServerDialog extends DialogFragment implements View.OnClickListener {
 

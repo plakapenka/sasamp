@@ -1,4 +1,4 @@
-package com.liverussia.launcher.model;
+package com.liverussia.launcher.dto.response;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

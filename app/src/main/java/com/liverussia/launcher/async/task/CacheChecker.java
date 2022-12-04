@@ -1,11 +1,6 @@
-package com.liverussia.launcher.async;
+package com.liverussia.launcher.async.task;
 
-import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.view.WindowManager;
-import android.widget.ProgressBar;
 
 import androidx.annotation.UiThread;
 import androidx.annotation.WorkerThread;
@@ -14,7 +9,6 @@ import com.liverussia.launcher.activity.MainActivity;
 import com.liverussia.launcher.activity.dialogs.DialogProgress;
 import com.liverussia.launcher.async.domain.AsyncTaskResult;
 import com.liverussia.launcher.async.listener.OnAsyncCriticalErrorListener;
-import com.liverussia.launcher.async.listener.OnAsyncSuccessListener;
 import com.liverussia.launcher.async.listener.OnAsyncSuccessListenerWithResponse;
 import com.liverussia.launcher.dto.response.FileInfo;
 import com.liverussia.launcher.dto.response.GameFileInfoDto;
@@ -38,18 +32,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.liverussia.launcher.config.Config.FILE_INFO_URL;
-import static com.liverussia.launcher.config.Config.NATIVE_SETTINGS_FILE_PATH;
-import static com.liverussia.launcher.config.Config.SETTINGS_FILE_PATH;
 
 public class CacheChecker implements Listener<FileInfo[]> {
 

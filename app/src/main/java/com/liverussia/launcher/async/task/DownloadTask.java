@@ -1,4 +1,4 @@
-package com.liverussia.launcher.async;
+package com.liverussia.launcher.async.task;
 
 import android.content.Context;
 import android.os.PowerManager;

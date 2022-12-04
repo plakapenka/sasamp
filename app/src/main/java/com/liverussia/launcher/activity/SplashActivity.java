@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -21,13 +20,16 @@ import java.util.List;
 
 import com.liverussia.cr.core.DownloadUtils;
 import com.liverussia.launcher.dto.response.LatestVersionInfoDto;
+import com.liverussia.launcher.dto.response.MonitoringData;
 import com.liverussia.launcher.enums.DownloadType;
 import com.liverussia.launcher.error.apiException.ErrorContainer;
-import com.liverussia.launcher.model.News;
+import com.liverussia.launcher.dto.response.News;
 
-import com.liverussia.launcher.model.Servers;
+import com.liverussia.launcher.dto.response.Servers;
 import com.liverussia.launcher.other.NetworkService;
 import com.liverussia.launcher.other.Lists;
+import com.liverussia.launcher.service.ActivityService;
+import com.liverussia.launcher.service.impl.ActivityServiceImpl;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -45,7 +47,22 @@ public class SplashActivity extends AppCompatActivity {
 
 	public static ArrayList<Servers> slist;
 
-	private NetworkService sNetworkService;
+	private final NetworkService networkService;
+	private final ActivityService activityService;
+
+	{
+		Retrofit retrofit = new Retrofit.Builder()
+				.baseUrl(LIVE_RUSSIA_RESOURCE_SERVER_URI)
+				.addConverterFactory(GsonConverterFactory.create())
+				.build();
+
+		networkService = retrofit.create(NetworkService.class);
+
+		activityService = new ActivityServiceImpl();
+
+		Lists.SERVERS = new ArrayList<>();
+		Lists.NEWS = new ArrayList<>();
+	}
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,19 +76,43 @@ public class SplashActivity extends AppCompatActivity {
 						| View.SYSTEM_UI_FLAG_FULLSCREEN
 						| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
-		Lists.SERVERS = new ArrayList<>();
-		Lists.NEWS = new ArrayList<>();
+		loadMonitoringData();
+	}
 
-		Retrofit retrofit = new Retrofit.Builder()
-				.baseUrl(LIVE_RUSSIA_RESOURCE_SERVER_URI)
-				.addConverterFactory(GsonConverterFactory.create())
-				.build();
+	private void loadMonitoringData() {
+		Call<MonitoringData> newsCall = networkService.getMonitoringData();
 
-		sNetworkService = retrofit.create(NetworkService.class);
+		newsCall.enqueue(new Callback<MonitoringData>() {
+			@Override
+			public void onResponse(Call<MonitoringData> call, Response<MonitoringData> response) {
+				if (response.isSuccessful()) {
+					MonitoringData monitoringData = response.body();
 
-		loadServers();
-		loadNews();
-		startApp();
+					saveData(monitoringData);
+					startApp();
+				}
+			}
+
+			@Override
+			public void onFailure(Call<MonitoringData> call, Throwable t) {
+				activityService.showMessage(ErrorContainer.SERVER_CONNECT_ERROR.getMessage(), SplashActivity.this);
+				startApp();
+			}
+		});
+	}
+
+	private void saveData(MonitoringData monitoringData) {
+		List<News> news = monitoringData.getNews();
+
+		for (News story : news) {
+			Lists.NEWS.add(new News(story.getImageUrl(), story.getTitle(), story.getUrl()));
+		}
+
+		List<Servers> servers = monitoringData.getServers();
+
+		for (Servers server : servers) {
+			Lists.SERVERS.add(new Servers(server.getColor(), server.getServerID(), server.getDopname(), server.getname(), server.getOnline(), server.getmaxOnline(), server.getColorl()));
+		}
 	}
 
 	private void startApp() {
@@ -87,59 +128,16 @@ public class SplashActivity extends AppCompatActivity {
 			checkVersionAndStartLauncher();
 		}
 	}
-
-	private void loadNews() {
-		Call<List<News>> newsCall = sNetworkService.getNews();
-
-		newsCall.enqueue(new Callback<List<News>>() {
-			@Override
-			public void onResponse(Call<List<News>> call, Response<List<News>> response) {
-				if (response.isSuccessful()) {
-					List<News> news = response.body();
-
-					for (News story : news) {
-						Lists.NEWS.add(new News(story.getImageUrl(), story.getTitle(), story.getUrl()));
-					}
-				}
-			}
-
-			@Override
-			public void onFailure(Call<List<News>> call, Throwable t) {
-			}
-		});
-	}
-
-	private void loadServers() {
-		Call<List<Servers>> serversCall = sNetworkService.getServers();
-
-		serversCall.enqueue(new Callback<List<Servers>>() {
-			@Override
-			public void onResponse(Call<List<Servers>> call, Response<List<Servers>> response) {
-				if (response.isSuccessful()) {
-					List<Servers> servers = response.body();
-
-					for (Servers server : servers) {
-						Lists.SERVERS.add(new Servers(server.getColor(), server.getServerID(), server.getDopname(), server.getname(), server.getOnline(), server.getmaxOnline(), server.getColorl()));
-					}
-				}
-			}
-
-			@Override
-			public void onFailure(Call<List<Servers>> call, Throwable t) {
-				Toast.makeText(getApplicationContext(), ErrorContainer.SERVER_CONNECT_ERROR.getMessage(), Toast.LENGTH_SHORT).show();
-			}
-		});
-	}
 	
 	private void checkVersionAndStartLauncher() {
-		Call<LatestVersionInfoDto> latestVersionInfoCall = sNetworkService.getLatestVersionInfoDto();
+		Call<LatestVersionInfoDto> latestVersionInfoCall = networkService.getLatestVersionInfoDto();
 
 		latestVersionInfoCall.enqueue(new Callback<LatestVersionInfoDto>() {
 			@Override
 			public void onResponse(Call<LatestVersionInfoDto> call, Response<LatestVersionInfoDto> response) {
 				if (!response.isSuccessful()) {
 					finish();
-					System.exit(0);
+					System.exit(EXIT_SUCCESS_STATUS);
 				}
 
 				checkVersion(response.body());
@@ -148,7 +146,7 @@ public class SplashActivity extends AppCompatActivity {
 			@Override
 			public void onFailure(Call<LatestVersionInfoDto> call, Throwable t) {
 				finish();
-				System.exit(0);
+				System.exit(EXIT_SUCCESS_STATUS);
 			}
 		});
     }

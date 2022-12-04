@@ -5,11 +5,12 @@ import com.liverussia.launcher.dto.request.RefreshTokenRequestDto;
 import com.liverussia.launcher.dto.response.AuthenticationResponseDto;
 import com.liverussia.launcher.dto.response.LatestVersionInfoDto;
 import com.liverussia.launcher.dto.response.LoaderSliderInfoResponseDto;
+import com.liverussia.launcher.dto.response.MonitoringData;
 import com.liverussia.launcher.dto.response.ServerImagesResponseDto;
 import com.liverussia.launcher.dto.response.SpinRouletteResponseDto;
 import com.liverussia.launcher.dto.response.UserInfoDto;
-import com.liverussia.launcher.model.News;
-import com.liverussia.launcher.model.Servers;
+import com.liverussia.launcher.dto.response.News;
+import com.liverussia.launcher.dto.response.Servers;
 
 import java.util.List;
 
@@ -20,6 +21,9 @@ import retrofit2.http.Header;
 import retrofit2.http.POST;
 
 public interface NetworkService {
+
+    @GET("https://files.liverussia.online/launcher/data.php")
+    Call<MonitoringData> getMonitoringData();
 
     @GET("https://files.liverussia.online/servers1.php")
     Call<List<Servers>> getServers();

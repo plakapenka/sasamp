@@ -1,27 +1,20 @@
-package com.liverussia.launcher.async;
+package com.liverussia.launcher.async.task;
 
 import android.app.Activity;
-import android.os.AsyncTask;
-import android.util.Log;
 
-import com.liverussia.launcher.dto.request.RefreshTokenRequestDto;
+import com.liverussia.launcher.dto.request.LoginRequestDto;
 import com.liverussia.launcher.dto.response.AuthenticationResponseDto;
-import com.liverussia.launcher.dto.response.UserInfoDto;
-import com.liverussia.launcher.enums.StorageElements;
 import com.liverussia.launcher.error.ErrorUtils;
 import com.liverussia.launcher.error.apiException.ApiException;
 import com.liverussia.launcher.error.apiException.ErrorContainer;
 import com.liverussia.launcher.async.domain.AsyncTaskResult;
 import com.liverussia.launcher.async.listener.OnAsyncCriticalErrorListener;
-import com.liverussia.launcher.async.listener.OnAsyncNotCriticalErrorListener;
 import com.liverussia.launcher.async.listener.OnAsyncSuccessListener;
 import com.liverussia.launcher.other.NetworkService;
 import com.liverussia.launcher.service.ActivityService;
 import com.liverussia.launcher.service.AuthenticationService;
 import com.liverussia.launcher.service.impl.ActivityServiceImpl;
 import com.liverussia.launcher.service.impl.AuthenticationServiceImpl;
-import com.liverussia.launcher.storage.Storage;
-import com.liverussia.launcher.utils.DateTimeUtils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.client.ResourceAccessException;
@@ -39,19 +32,19 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.liverussia.launcher.config.Config.LAUNCHER_SERVER_URI;
 
-public class UpdateTokensAsyncRestCall {
-    private final static Set<ErrorContainer> CRITICAL_ERRORS = new HashSet<>();
+public class AuthenticateAsyncRestCall {
 
     private final Activity activity;
     private final AuthenticationService authenticationService;
     private final ActivityService activityService;
     private final Retrofit retrofit;
 
-    private OnAsyncSuccessListener onAsyncSuccessListener;
     private OnAsyncCriticalErrorListener onAsyncCriticalErrorListener;
-    private OnAsyncNotCriticalErrorListener onAsyncNotCriticalErrorListener;
+    private OnAsyncSuccessListener onAsyncSuccessListener;
 
-    public UpdateTokensAsyncRestCall(Activity activity) {
+    private final static Set<ErrorContainer> CRITICAL_ERRORS = new HashSet<>();
+
+    public AuthenticateAsyncRestCall(Activity activity) {
         this.activity = activity;
         this.authenticationService = new AuthenticationServiceImpl(activity);
     }
@@ -67,13 +60,15 @@ public class UpdateTokensAsyncRestCall {
 
     static {
         CRITICAL_ERRORS.add(ErrorContainer.AUTHENTICATION_ERROR);
+        CRITICAL_ERRORS.add(ErrorContainer.CAPTCHA_ERROR);
+        CRITICAL_ERRORS.add(ErrorContainer.USER_NOT_FOUND);
     }
 
-    public void refreshTokens(boolean withErrorMessage) {
-        RefreshTokenRequestDto refreshTokenRequestDto = authenticationService.getRefreshTokenRequestDto();
+    public void loginUser(LoginRequestDto loginRequestDto) {
 
         NetworkService networkService = retrofit.create(NetworkService.class);
-        Call<AuthenticationResponseDto> call = networkService.refreshTokens(refreshTokenRequestDto);
+        Call<AuthenticationResponseDto> call = networkService.loginUser(loginRequestDto);
+
 
         call.enqueue(new Callback<AuthenticationResponseDto>() {
             @Override
@@ -83,9 +78,7 @@ public class UpdateTokensAsyncRestCall {
                     onAsyncSuccessListener.onSuccess();
                 } else {
                     ErrorContainer error = ErrorUtils.parseError(response, retrofit);
-                    if (withErrorMessage) {
-                        showErrorMessage(error);
-                    }
+                    showErrorMessage(error);
                     validateError(error);
                 }
             }
@@ -100,23 +93,21 @@ public class UpdateTokensAsyncRestCall {
                     error = ErrorContainer.OTHER;
                 }
 
-                if (withErrorMessage) {
-                    showErrorMessage(error);
-                }
+                showErrorMessage(error);
                 validateError(error);
             }
         });
+
     }
 
     private void validateError(ErrorContainer error) {
         if (CRITICAL_ERRORS.contains(error) && onAsyncCriticalErrorListener != null) {
             onAsyncCriticalErrorListener.onCriticalError();
-            return;
         }
+    }
 
-        if (onAsyncNotCriticalErrorListener != null) {
-            onAsyncNotCriticalErrorListener.onNotCriticalError();
-        }
+    public void setOnAsyncCriticalErrorListener(OnAsyncCriticalErrorListener onAsyncCriticalErrorListener) {
+        this.onAsyncCriticalErrorListener = onAsyncCriticalErrorListener;
     }
 
     private void showErrorMessage(ErrorContainer error) {
@@ -127,15 +118,8 @@ public class UpdateTokensAsyncRestCall {
         activityService.showMessage(errorMessage, activity);
     }
 
-    public void setOnAsyncSuccessListener(OnAsyncSuccessListener onClickListener) {
+    public void setOnSuccessListener(OnAsyncSuccessListener onClickListener) {
         this.onAsyncSuccessListener = onClickListener;
     }
 
-    public void setOnAsyncCriticalErrorListener(OnAsyncCriticalErrorListener onAsyncCriticalErrorListener) {
-        this.onAsyncCriticalErrorListener = onAsyncCriticalErrorListener;
-    }
-
-    public void setOnAsyncNotCriticalErrorListener(OnAsyncNotCriticalErrorListener onAsyncNotCriticalErrorListener) {
-        this.onAsyncNotCriticalErrorListener = onAsyncNotCriticalErrorListener;
-    }
 }

@@ -11,22 +11,15 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dinuscxj.progressbar.CircleProgressBar;
 import com.liverussia.cr.R;
-import com.liverussia.cr.core.Config;
-import com.liverussia.launcher.activity.ActivitySupportedServerSelection;
 import com.liverussia.launcher.activity.dialogs.SelectServerDialog;
-import com.liverussia.launcher.model.Servers;
+import com.liverussia.launcher.dto.response.Servers;
 
-import org.ini4j.Wini;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 public class ServersDialogAdapter extends RecyclerView.Adapter<ServersAdapter.ServersViewHolder> {

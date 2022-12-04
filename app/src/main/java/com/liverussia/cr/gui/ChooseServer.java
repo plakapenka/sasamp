@@ -23,12 +23,11 @@ import androidx.core.content.res.ResourcesCompat;
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.liverussia.cr.R;
 import com.liverussia.cr.gui.util.Utils;
-import com.liverussia.launcher.model.Servers;
+import com.liverussia.launcher.dto.response.Servers;
 import com.liverussia.launcher.other.Lists;
 import com.nvidia.devtech.NvEventQueueActivity;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ChooseServer {

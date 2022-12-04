@@ -3,11 +3,8 @@ package com.liverussia.launcher.utils;
 import android.app.Activity;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import com.liverussia.launcher.enums.ServerInfo;
 import com.liverussia.launcher.messages.ErrorMessages;
-import com.liverussia.launcher.model.Servers;
+import com.liverussia.launcher.dto.response.Servers;
 
 import org.apache.commons.lang3.StringUtils;
 

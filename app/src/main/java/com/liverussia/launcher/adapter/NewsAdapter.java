@@ -18,7 +18,7 @@ import androidx.annotation.NonNull;
 
 import com.liverussia.cr.R;
 import com.liverussia.launcher.activity.StoryActivity;
-import com.liverussia.launcher.model.News;
+import com.liverussia.launcher.dto.response.News;
 
 import java.util.List;
 

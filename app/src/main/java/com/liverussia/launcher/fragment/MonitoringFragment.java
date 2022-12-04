@@ -15,11 +15,11 @@ import java.util.List;
 
 import com.liverussia.cr.R;
 import com.liverussia.launcher.adapter.NewsAdapter;
-import com.liverussia.launcher.model.News;
+import com.liverussia.launcher.dto.response.News;
 import com.liverussia.launcher.other.Lists;
 
 import com.liverussia.launcher.adapter.ServersAdapter;
-import com.liverussia.launcher.model.Servers;
+import com.liverussia.launcher.dto.response.Servers;
 
 public class MonitoringFragment extends Fragment {
 	

@@ -13,9 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.annotation.NonNull;
 
 import com.liverussia.cr.R;
-import com.liverussia.cr.core.Config;
 import com.liverussia.launcher.messages.InfoMessages;
-import com.liverussia.launcher.model.Servers;
+import com.liverussia.launcher.dto.response.Servers;
 
 import java.io.File;
 import java.io.IOException;

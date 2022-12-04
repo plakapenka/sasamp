@@ -1,4 +1,4 @@
-package com.liverussia.launcher.async;
+package com.liverussia.launcher.async.task;
 
 import android.app.Activity;
 import android.os.AsyncTask;
@@ -6,27 +6,32 @@ import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.liverussia.launcher.async.listener.OnAsyncCriticalErrorListener;
-import com.liverussia.launcher.dto.response.SpinRouletteResponseDto;
+import com.liverussia.launcher.dto.request.LoginRequestDto;
+import com.liverussia.launcher.dto.response.AuthenticationResponseDto;
 import com.liverussia.launcher.dto.response.UserInfoDto;
 import com.liverussia.launcher.enums.StorageElements;
 import com.liverussia.launcher.error.ErrorUtils;
 import com.liverussia.launcher.error.apiException.ApiException;
 import com.liverussia.launcher.error.apiException.ErrorContainer;
 import com.liverussia.launcher.async.domain.AsyncTaskResult;
-import com.liverussia.launcher.async.listener.OnAsyncSuccessListenerWithResponse;
+import com.liverussia.launcher.async.listener.OnAsyncCriticalErrorListener;
+import com.liverussia.launcher.async.listener.OnAsyncNotCriticalErrorListener;
+import com.liverussia.launcher.async.listener.OnAsyncSuccessListener;
 import com.liverussia.launcher.other.NetworkService;
 import com.liverussia.launcher.service.ActivityService;
-import com.liverussia.launcher.service.RouletteService;
+import com.liverussia.launcher.service.AuthenticationService;
+import com.liverussia.launcher.service.UserService;
 import com.liverussia.launcher.service.impl.ActivityServiceImpl;
-import com.liverussia.launcher.service.impl.RouletteServiceImpl;
+import com.liverussia.launcher.service.impl.UserServiceImpl;
 import com.liverussia.launcher.storage.Storage;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.client.ResourceAccessException;
 
 import java.net.ConnectException;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -36,16 +41,22 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.liverussia.launcher.config.Config.LAUNCHER_SERVER_URI;
 
-public class SpinRouletteAsyncRestCall {
+public class UpdateUserInfoAsyncRestCall {
+
+    private final static Set<ErrorContainer> CRITICAL_ERRORS = new HashSet<>();
+
     private final Activity mainActivity;
+    private final UserService userService;
     private final ActivityService activityService;
     private final Retrofit retrofit;
 
-    private OnAsyncSuccessListenerWithResponse<SpinRouletteResponseDto> onAsyncSuccessListener;
+    private OnAsyncSuccessListener onAsyncSuccessListener;
     private OnAsyncCriticalErrorListener onAsyncCriticalErrorListener;
+    private OnAsyncNotCriticalErrorListener onAsyncNotCriticalErrorListener;
 
-    public SpinRouletteAsyncRestCall(Activity mainActivity) {
+    public UpdateUserInfoAsyncRestCall(Activity mainActivity) {
         this.mainActivity = mainActivity;
+        this.userService = new UserServiceImpl(mainActivity);
     }
 
     {
@@ -57,27 +68,32 @@ public class SpinRouletteAsyncRestCall {
                 .build();
     }
 
-    public void spinRoulette() {
+    static {
+        CRITICAL_ERRORS.add(ErrorContainer.AUTHENTICATION_ERROR);
+    }
+
+
+    public void updateUserInfo() {
         NetworkService networkService = retrofit.create(NetworkService.class);
 
         String token = Storage.getProperty(StorageElements.ACCESS_TOKEN.getValue(), mainActivity);
-        Call<SpinRouletteResponseDto> call = networkService.spinRoulette(token);
+        Call<UserInfoDto> call = networkService.updateUserInfo(token);
 
 
-        call.enqueue(new Callback<SpinRouletteResponseDto>() {
+        call.enqueue(new Callback<UserInfoDto>() {
             @Override
-            public void onResponse(Call<SpinRouletteResponseDto> call, Response<SpinRouletteResponseDto> response) {
+            public void onResponse(Call<UserInfoDto> call, Response<UserInfoDto> response) {
                 if (response.isSuccessful()) {
-                    onAsyncSuccessListener.onSuccess(response.body());
+                    userService.updateUserInfoInStorage(response.body());
+                    onAsyncSuccessListener.onSuccess();
                 } else {
                     ErrorContainer error = ErrorUtils.parseError(response, retrofit);
-                    showErrorMessage(error);
-                    onAsyncCriticalErrorListener.onCriticalError();
+                    validateError(error);
                 }
             }
 
             @Override
-            public void onFailure(Call<SpinRouletteResponseDto> call, Throwable throwable) {
+            public void onFailure(Call<UserInfoDto> call, Throwable throwable) {
                 ErrorContainer error;
 
                 if (throwable instanceof ResourceAccessException || throwable instanceof ConnectException) {
@@ -86,11 +102,21 @@ public class SpinRouletteAsyncRestCall {
                     error = ErrorContainer.OTHER;
                 }
 
-                showErrorMessage(error);
-                onAsyncCriticalErrorListener.onCriticalError();
+                validateError(error);
             }
         });
 
+    }
+
+    private void validateError(ErrorContainer error) {
+        if (CRITICAL_ERRORS.contains(error) && onAsyncCriticalErrorListener != null) {
+            onAsyncCriticalErrorListener.onCriticalError();
+            return;
+        }
+
+        if (onAsyncNotCriticalErrorListener != null) {
+            onAsyncNotCriticalErrorListener.onNotCriticalError();
+        }
     }
 
     private void showErrorMessage(ErrorContainer error) {
@@ -101,11 +127,15 @@ public class SpinRouletteAsyncRestCall {
         activityService.showMessage(errorMessage, mainActivity);
     }
 
-    public void setOnAsyncSuccessListener(OnAsyncSuccessListenerWithResponse<SpinRouletteResponseDto> onClickListener) {
+    public void setOnAsyncSuccessListener(OnAsyncSuccessListener onClickListener) {
         this.onAsyncSuccessListener = onClickListener;
     }
 
     public void setOnAsyncCriticalErrorListener(OnAsyncCriticalErrorListener onAsyncCriticalErrorListener) {
         this.onAsyncCriticalErrorListener = onAsyncCriticalErrorListener;
+    }
+
+    public void setOnAsyncNotCriticalErrorListener(OnAsyncNotCriticalErrorListener onAsyncNotCriticalErrorListener) {
+        this.onAsyncNotCriticalErrorListener = onAsyncNotCriticalErrorListener;
     }
 }

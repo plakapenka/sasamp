@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 
 import com.liverussia.cr.core.DownloadUtils;
 import com.liverussia.cr.core.GTASA;
-import com.liverussia.launcher.async.DownloadTask;
+import com.liverussia.launcher.async.task.DownloadTask;
 import com.liverussia.launcher.domain.LoaderSliderItemData;
 import com.liverussia.launcher.dto.response.LoaderSliderInfoResponseDto;
 import com.liverussia.launcher.enums.DownloadType;

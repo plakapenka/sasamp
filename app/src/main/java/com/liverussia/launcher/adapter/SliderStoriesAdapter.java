@@ -12,7 +12,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.liverussia.cr.R;
-import com.liverussia.launcher.model.News;
+import com.liverussia.launcher.dto.response.News;
 
 import com.bumptech.glide.Glide;
 import com.smarteist.autoimageslider.SliderViewAdapter;

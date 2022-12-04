@@ -19,8 +19,8 @@ import com.liverussia.cr.R;
 import com.liverussia.launcher.activity.ActivitySupportedServerSelection;
 import com.liverussia.launcher.dto.request.LoginRequestDto;
 import com.liverussia.launcher.messages.ErrorMessages;
-import com.liverussia.launcher.async.AuthenticateAsyncRestCall;
-import com.liverussia.launcher.model.Servers;
+import com.liverussia.launcher.async.task.AuthenticateAsyncRestCall;
+import com.liverussia.launcher.dto.response.Servers;
 import com.liverussia.launcher.service.ActivityService;
 import com.liverussia.launcher.utils.Validator;
 

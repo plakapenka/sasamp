@@ -1,7 +1,7 @@
 package com.liverussia.launcher.other;
 
-import com.liverussia.launcher.model.News;
-import com.liverussia.launcher.model.Servers;
+import com.liverussia.launcher.dto.response.News;
+import com.liverussia.launcher.dto.response.Servers;
 
 import java.util.ArrayList;
 import java.util.List;
