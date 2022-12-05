@@ -4,8 +4,8 @@ import android.view.WindowManager;
 
 import androidx.annotation.UiThread;
 import androidx.annotation.WorkerThread;
+import androidx.fragment.app.FragmentActivity;
 
-import com.liverussia.launcher.ui.activity.MainActivity;
 import com.liverussia.launcher.ui.dialogs.DialogProgress;
 import com.liverussia.launcher.async.domain.AsyncTaskResult;
 import com.liverussia.launcher.async.listener.OnAsyncCriticalErrorListener;
@@ -35,13 +35,15 @@ import java.net.URI;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import static com.liverussia.launcher.config.Config.FILE_INFO_URL;
 
 public class CacheChecker implements Listener<FileInfo[]> {
 
-    private final MainActivity mainActivity;
+    private final FragmentActivity activity;
 
     private final ActivityService activityService;
     private final UiThreadPoster uiThreadPoster;
@@ -52,8 +54,10 @@ public class CacheChecker implements Listener<FileInfo[]> {
     private OnAsyncSuccessListenerWithResponse<FileInfo[]> onAsyncSuccessListener;
     private OnAsyncCriticalErrorListener onAsyncCriticalErrorListener;
 
-    public CacheChecker(MainActivity mainActivity) {
-        this.mainActivity = mainActivity;
+    private final static Set<String> NOT_CHECK_BY_HASH_FILES;
+
+    public CacheChecker(FragmentActivity activity) {
+        this.activity = activity;
     }
 
     {
@@ -62,26 +66,41 @@ public class CacheChecker implements Listener<FileInfo[]> {
         backgroundThreadPoster = new BackgroundThreadPoster();
     }
 
-    public void checkCache() {
-        uiThreadPoster.post(() -> startProgressBar());
+    static {
+        NOT_CHECK_BY_HASH_FILES = new HashSet<>();
 
+        NOT_CHECK_BY_HASH_FILES.add("files/gta_sa.set");
+        NOT_CHECK_BY_HASH_FILES.add("files/GTASAMP10.b");
+        NOT_CHECK_BY_HASH_FILES.add("files/samp/settings.ini");
+        NOT_CHECK_BY_HASH_FILES.add("files/gtasatelem.set");
+        NOT_CHECK_BY_HASH_FILES.add("files/SAMP/samp_log.txt");
+        NOT_CHECK_BY_HASH_FILES.add("files/SAMP/crash_log.log");
+    }
+
+    public void checkIsAllCacheFilesExist() {
+        uiThreadPoster.post(() -> startProgressBar());
+        backgroundThreadPoster.post(() -> checkIsFilesExist());
+    }
+
+    public void validateCache() {
+        uiThreadPoster.post(() -> startProgressBar());
         backgroundThreadPoster.post(() -> checkFilesHash());
     }
 
     @UiThread
     private void startProgressBar() {
-        mainActivity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+        activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
         dialogProgress = new DialogProgress();
-        dialogProgress.show(mainActivity.getSupportFragmentManager(), "progressDialog");
+        dialogProgress.show(activity.getSupportFragmentManager(), "progressDialog");
     }
 
     @WorkerThread
     private void checkFilesHash() {
         try {
             GameFileInfoDto gameFilesInfo = getGameFilesInfo();
-            checkFiles(gameFilesInfo);
+            checkHash(gameFilesInfo);
         } catch (ApiException e) {
             uiThreadPoster.post(() -> {
                 onAsyncFinished(new AsyncTaskResult<>(e));
@@ -93,14 +112,41 @@ public class CacheChecker implements Listener<FileInfo[]> {
         }
     }
 
-    private void checkFiles(GameFileInfoDto gameFileInfo) {
+    @WorkerThread
+    private void checkIsFilesExist() {
+        try {
+            GameFileInfoDto gameFilesInfo = getGameFilesInfo();
+            checkIsExist(gameFilesInfo);
+        } catch (ApiException e) {
+            uiThreadPoster.post(() -> {
+                onAsyncFinished(new AsyncTaskResult<>(e));
+            });
+        } catch (Exception e) {
+            uiThreadPoster.post(() -> {
+                onAsyncFinished(new AsyncTaskResult<>(new ApiException(ErrorContainer.DOWNLOAD_FILES_ERROR)));
+            });
+        }
+    }
+
+    private void checkHash(GameFileInfoDto gameFileInfo) {
         FileInfo[] filesToReload = Optional.ofNullable(gameFileInfo.getFiles())
                 .orElse(Collections.emptyList())
                 .stream()
-                //TODO при добавлении проверки по хэшу, это в проверку на существование файла перекинуть
-//                .filter(fileInfo -> !fileInfo.getPath().contains(NATIVE_SETTINGS_FILE_PATH))
-//                .filter(fileInfo -> !fileInfo.getPath().contains(SETTINGS_FILE_PATH))
+                .filter(fileInfo -> !NOT_CHECK_BY_HASH_FILES.contains(fileInfo.getPath()) || isNotExistFile(fileInfo))
                 .filter(this::isInvalidFile)
+                .peek(this::removeFile)
+                .toArray(FileInfo[]::new);
+
+        uiThreadPoster.post(() -> {
+            onAsyncFinished(new AsyncTaskResult<>(filesToReload));
+        });
+    }
+
+    private void checkIsExist(GameFileInfoDto gameFileInfo) {
+        FileInfo[] filesToReload = Optional.ofNullable(gameFileInfo.getFiles())
+                .orElse(Collections.emptyList())
+                .stream()
+                .filter(this::isNotExistFile)
                 .peek(this::removeFile)
                 .toArray(FileInfo[]::new);
 
@@ -111,7 +157,7 @@ public class CacheChecker implements Listener<FileInfo[]> {
 
     private void removeFile(FileInfo fileInfo) {
         String filePath = fileInfo.getPath().replace("files/", "");
-        File file = new File(mainActivity.getExternalFilesDir(null).toString()
+        File file = new File(activity.getExternalFilesDir(null).toString()
                 .concat("/")
                 .concat(filePath)
         );
@@ -121,20 +167,28 @@ public class CacheChecker implements Listener<FileInfo[]> {
         }
     }
 
-    private boolean isInvalidFile(FileInfo fileInfo) {
+    private boolean isNotExistFile(FileInfo fileInfo) {
         String filePath = fileInfo.getPath().replace("files/", "");
-        File file = new File(mainActivity.getExternalFilesDir(null).toString()
+        File file = new File(activity.getExternalFilesDir(null).toString()
                 .concat("/")
                 .concat(filePath)
         );
 
-        //TODO сделать проверку файлов по хэшу
-//        return !file.exists() || !isValidHash(filePath, fileInfo);
         return !file.exists();
     }
 
+    private boolean isInvalidFile(FileInfo fileInfo) {
+        String filePath = fileInfo.getPath().replace("files/", "");
+        File file = new File(activity.getExternalFilesDir(null).toString()
+                .concat("/")
+                .concat(filePath)
+        );
+
+        return !file.exists() || !isValidHash(filePath, fileInfo);
+    }
+
     private boolean isValidHash(String filePath, FileInfo fileInfo) {
-        String hash = calculateHash(mainActivity.getExternalFilesDir(null).toString()
+        String hash = calculateHash(activity.getExternalFilesDir(null).toString()
                 .concat("/")
                 .concat(filePath)
         );
@@ -219,7 +273,7 @@ public class CacheChecker implements Listener<FileInfo[]> {
     @UiThread
     @Override
     public void onAsyncFinished(AsyncTaskResult<FileInfo[]> result) {
-        mainActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         dialogProgress.dismiss();
 
         if (result.getException() != null) {
@@ -237,7 +291,7 @@ public class CacheChecker implements Listener<FileInfo[]> {
                 .map(ErrorContainer::getMessage)
                 .orElse(StringUtils.EMPTY);
 
-        activityService.showMessage(errorMessage, mainActivity);
+        activityService.showMessage(errorMessage, activity);
     }
 
     private void onAsyncErrorDo() {

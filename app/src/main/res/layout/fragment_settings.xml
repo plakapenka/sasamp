@@ -135,6 +135,18 @@
                 android:textColor="@color/white"
                 android:textSize="@dimen/_13sdp" />
 
+            <TextView
+                android:id="@+id/validateCache"
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/_45sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:background="@drawable/button_red_rectangle"
+                android:fontFamily="@font/pt_root_ui_medium"
+                android:gravity="center"
+                android:text="Проверить целостность файлов"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_13sdp" />
+
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"

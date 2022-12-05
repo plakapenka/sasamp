@@ -286,7 +286,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (gameDirectory.list() != null && gameDirectory.list().length > GAME_DIRECTORY_EMPTY_SIZE) {
             CacheChecker cacheChecker = new CacheChecker(this);
             cacheChecker.setOnAsyncSuccessListener(this::doAfterCacheChecked);
-            cacheChecker.checkCache();
+            cacheChecker.checkIsAllCacheFilesExist();
         } else {
             MainUtils.setType(DownloadType.LOAD_ALL_CACHE);
             startActivity(new Intent(this, LoaderActivity.class));

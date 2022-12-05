@@ -164,10 +164,10 @@ public class SplashActivity extends AppCompatActivity {
 
 	private void checkVersion(LatestVersionInfoDto latestVersionInfo) {
 
-		String currentVersion = getCurrentVersion();
-		String latestVersion = latestVersionInfo.getVersion();
+		int currentVersion = getCurrentVersion();
+		int latestVersion = Integer.parseInt(latestVersionInfo.getVersion());
 
-		if (currentVersion.equals(latestVersion)) {
+		if (currentVersion >= latestVersion) {
 			startLauncher();
 			return;
 		}
@@ -177,12 +177,12 @@ public class SplashActivity extends AppCompatActivity {
 		startActivity(new Intent(this, LoaderActivity.class));
 	}
 
-	private String getCurrentVersion(){
+	private int getCurrentVersion(){
 		PackageManager pm = this.getPackageManager();
 
 		try {
 			PackageInfo pInfo = pm.getPackageInfo(this.getPackageName(),0);
-			return pInfo.versionName;
+			return pInfo.versionCode;
 		} catch (PackageManager.NameNotFoundException e1) {
 			e1.printStackTrace();
 		}
@@ -190,7 +190,7 @@ public class SplashActivity extends AppCompatActivity {
 		finish();
 		System.exit(EXIT_SUCCESS_STATUS);
 
-		return null;
+		return 0;
 	}
 
 	public static boolean isOnline(Context context) {

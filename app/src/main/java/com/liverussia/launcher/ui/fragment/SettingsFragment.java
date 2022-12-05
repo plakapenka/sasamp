@@ -13,6 +13,9 @@ import android.widget.*;
 import androidx.fragment.app.Fragment;
 
 import com.liverussia.cr.R;
+import com.liverussia.launcher.async.dto.response.FileInfo;
+import com.liverussia.launcher.async.task.CacheChecker;
+import com.liverussia.launcher.ui.activity.LoaderActivity;
 import com.liverussia.launcher.utils.MainUtils;
 import com.liverussia.launcher.ui.dialogs.EnterNicknameDialogBuilder;
 import com.liverussia.launcher.domain.enums.DownloadType;
@@ -23,11 +26,17 @@ import com.liverussia.launcher.service.impl.ActivityServiceImpl;
 import com.liverussia.launcher.storage.NativeStorage;
 import com.liverussia.launcher.service.ActivityService;
 
+import org.springframework.util.CollectionUtils;
+
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 import static com.liverussia.launcher.config.Config.SETTINGS_FILE_PATH;
 
-public class SettingsFragment extends Fragment implements View.OnClickListener{
+public class SettingsFragment extends Fragment implements View.OnClickListener {
+
+    private final static int GAME_DIRECTORY_EMPTY_SIZE = 0;
 
     private Animation animation;
     private TextView nicknameField;
@@ -52,6 +61,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener{
         inflate.findViewById(R.id.discordButton).setOnClickListener(this);
         inflate.findViewById(R.id.resetSettings).setOnClickListener(this);
         inflate.findViewById(R.id.reinstallGame).setOnClickListener(this);
+        inflate.findViewById(R.id.validateCache).setOnClickListener(this);
         inflate.findViewById(R.id.telegramButton).setOnClickListener(this);
 
         initUserData();
@@ -86,6 +96,10 @@ public class SettingsFragment extends Fragment implements View.OnClickListener{
                 view.startAnimation(animation);
                 performReinstallGameButtonAction();
                 break;
+            case R.id.validateCache:
+                view.startAnimation(animation);
+                performValidateCacheButtonAction();
+                break;
             case R.id.nick_edit:
                 performNickEditFieldOnClickAction();
                 break;
@@ -106,9 +120,37 @@ public class SettingsFragment extends Fragment implements View.OnClickListener{
         startActivity(new Intent(getActivity(), com.liverussia.launcher.ui.activity.LoaderActivity.class));
     }
 
-    private void performResetSettingsButtonAction() {
+    private void performValidateCacheButtonAction() {
+        File gameDirectory = new File(getActivity().getExternalFilesDir(null).toString());
 
-        //TODO править проверку (проверять на файл, который содержит настройки)
+        if (gameDirectory.list() != null && gameDirectory.list().length > GAME_DIRECTORY_EMPTY_SIZE) {
+            CacheChecker cacheChecker = new CacheChecker(getActivity());
+            cacheChecker.setOnAsyncSuccessListener(this::doAfterCacheChecked);
+            cacheChecker.validateCache();
+        } else {
+            MainUtils.setType(DownloadType.LOAD_ALL_CACHE);
+            startActivity(new Intent(getActivity(), LoaderActivity.class));
+        }
+    }
+
+    private void doAfterCacheChecked(FileInfo[] fileToReloadArray) {
+
+        List<FileInfo> filesToReloadList = Arrays.asList(fileToReloadArray);
+
+        if (CollectionUtils.isEmpty(filesToReloadList)) {
+            activityService.showMessage(InfoMessages.GAME_FILES_VALID.getText(), getActivity());
+        } else {
+            validateCache(filesToReloadList);
+        }
+    }
+
+    private void validateCache(List<FileInfo> filesToReloadList) {
+        MainUtils.FILES_TO_RELOAD = filesToReloadList;
+        MainUtils.setType(DownloadType.RELOAD_OR_ADD_PART_OF_CACHE);
+        startActivity(new Intent(getActivity(), LoaderActivity.class));
+    }
+
+    private void performResetSettingsButtonAction() {
         if (!activityService.isGameFileInstall(getActivity(), SETTINGS_FILE_PATH)) {
             activityService.showMessage(InfoMessages.INSTALL_GAME_FIRST.getText(), getActivity());
             return;
