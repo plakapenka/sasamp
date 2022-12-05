@@ -10,6 +10,7 @@ public enum  InfoMessages {
     CONNECTION_TO_SELECT_SERVER("Подключение к серверу: %s!"),
     SERVER_SELECTED("Сервер выбран! Для начала игры нажмите жёлтую кнопку"),
     INSTALL_GAME_FIRST("Сначала установите игру"),
+    GAME_FILES_VALID("Содержимое файлов валидно!"),
     SETTINGS_ALREADY_DEFAULT("Настройки по умолчанию уже установлены"),
     SUCCESSFULLY_SETTINGS_RESET("Вы успешно сбросили настройки!"),
     DOWNLOAD_SUCCESS_INPUT_YOUR_NICKNAME("Игра успешно установлена, введите свой никнейм"),
