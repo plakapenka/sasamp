@@ -192,8 +192,6 @@ public class CacheChecker implements Listener<FileInfo[]> {
                 .concat(filePath)
         );
 
-        boolean tmp =hash.equalsIgnoreCase(fileInfo.getHash());
-
         return hash.equalsIgnoreCase(fileInfo.getHash());
     }
 
