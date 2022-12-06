@@ -193,10 +193,12 @@ public class CacheChecker implements Listener<FileInfo[]> {
                 .concat(filePath)
         );
 
-        return hash.equals(fileInfo.getHash());
+        boolean tmp =hash.equalsIgnoreCase(fileInfo.getHash());
+
+        return hash.equalsIgnoreCase(fileInfo.getHash());
     }
 
-    public String calculateHash(String filename) {
+    private String calculateHash(String filename) {
 
 //        try {
 //            MessageDigest md = MessageDigest.getInstance("MD5");
