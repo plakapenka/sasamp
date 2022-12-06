@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.annotation.NonNull;
 
 import com.liverussia.cr.R;
+import com.liverussia.launcher.domain.enums.NativeStorageElements;
 import com.liverussia.launcher.domain.messages.InfoMessage;
 import com.liverussia.launcher.async.dto.response.Servers;
 
@@ -21,12 +22,21 @@ import java.io.IOException;
 import java.util.List;
 
 import com.dinuscxj.progressbar.CircleProgressBar;
+import com.liverussia.launcher.service.ActivityService;
+import com.liverussia.launcher.service.impl.ActivityServiceImpl;
+import com.liverussia.launcher.storage.NativeStorage;
 
+import org.apache.commons.lang3.StringUtils;
 import org.ini4j.Wini;
 
 public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersViewHolder> {
 	private Context context;
 	private List<Servers> servers;
+	private final ActivityService activityService;
+
+	{
+		activityService = new ActivityServiceImpl();
+	}
 
 	public ServersAdapter(Context context, List<Servers> servers){
 		 this.context = context;
@@ -59,21 +69,15 @@ public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersV
 		holder.progressBar.setProgress(servers.getOnline());
 		holder.progressBar.setMax(servers.getmaxOnline());
 
-		holder.container.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                view.startAnimation(AnimationUtils.loadAnimation(context, R.anim.button_click));
-                Toast.makeText(context, InfoMessage.SERVER_SELECTED.getText(), 0).show();
-				try {
-					File f = new File(context.getExternalFilesDir(null) + "/SAMP/settings.ini");
-					if (!f.exists()) { f.createNewFile(); f.mkdirs(); }
-					Wini w = new Wini(new File(context.getExternalFilesDir(null) + "/SAMP/settings.ini"));
-					w.put("client", "server", servers.getServerID());
-					w.store();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-            }
-        });
+		holder.container.setOnClickListener(view -> {
+			view.startAnimation(AnimationUtils.loadAnimation(context, R.anim.button_click));
+			NativeStorage.addClientProperty(NativeStorageElements.SERVER, servers.getServerID(), context);
+			String selectedServer = NativeStorage.getClientProperty(NativeStorageElements.SERVER, context);
+
+			if (StringUtils.isNotBlank(selectedServer)) {
+				activityService.showMessage(InfoMessage.SERVER_SELECTED.getText(), context);
+			}
+		});
     }
 
     @Override

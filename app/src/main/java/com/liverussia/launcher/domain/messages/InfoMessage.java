@@ -14,6 +14,7 @@ public enum InfoMessage {
     SETTINGS_ALREADY_DEFAULT("Настройки по умолчанию уже установлены"),
     SUCCESSFULLY_SETTINGS_RESET("Вы успешно сбросили настройки!"),
     DOWNLOAD_SUCCESS_INPUT_YOUR_NICKNAME("Игра успешно установлена, введите свой никнейм"),
+    DOWNLOAD_SUCCESS_SELECT_SERVER("Игра успешно установлена, выберите сервер"),
     REINSTALL_GAME_QUESTION("Переустановить игру?"),
     RESET_SETTINGS_QUESTION("Сбросить настройки игры?"),
     APPROVE_INSTALL("Подтвердите установку");

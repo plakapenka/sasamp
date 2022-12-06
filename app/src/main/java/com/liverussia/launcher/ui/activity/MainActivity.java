@@ -140,10 +140,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         settingsFragment = new SettingsFragment();
 
         if (savedInstanceState != null && savedInstanceState.getBoolean(IS_AFTER_LOADING_KEY)) {
-            activityService.showMessage(InfoMessage.DOWNLOAD_SUCCESS_INPUT_YOUR_NICKNAME.getText(), this);
             replaceFragment(settingsFragment);
         } else if (savedInstanceState == null && getIntent().getExtras() != null && getIntent().getExtras().getBoolean(IS_AFTER_LOADING_KEY)){
-            activityService.showMessage(InfoMessage.DOWNLOAD_SUCCESS_INPUT_YOUR_NICKNAME.getText(), this);
             onClickSettings();
         } else {
             replaceFragment(monitoringFragment);
@@ -314,14 +312,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void startGame() {
         String nickname = NativeStorage.getClientProperty(NativeStorageElements.NICKNAME, this);
+        String selectedServer = NativeStorage.getClientProperty(NativeStorageElements.SERVER, this);
 
-        if (StringUtils.isNotBlank(nickname)) {
-            startActivity(new Intent(this, GTASA.class));
+        if (StringUtils.isBlank(nickname)) {
+            activityService.showMessage(ErrorMessage.INPUT_NICKNAME_BEFORE_SERVER_CONNECT.getText(), this);
+            onClickSettings();
             return;
         }
 
-        activityService.showMessage(ErrorMessage.INPUT_NICKNAME_BEFORE_SERVER_CONNECT.getText(), this);
-        onClickSettings();
+        if (StringUtils.isBlank(selectedServer)) {
+            activityService.showMessage(ErrorMessage.SERVER_NOT_SELECTED.getText(), this);
+            onClickMonitoring();
+            return;
+        }
+
+        startActivity(new Intent(this, GTASA.class));
     }
 
     public void onClickSettings() {
