@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="@drawable/dialog_background"
+    android:paddingLeft="@dimen/_14sdp"
+    android:paddingTop="@dimen/_20sdp"
+    android:paddingRight="@dimen/_14sdp"
+    android:paddingBottom="@dimen/_20sdp"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/_14sdp"
+    android:layout_marginRight="@dimen/_14sdp">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/_40sdp">
+
+        <TextView
+            android:id="@+id/confirm_text_view"
+            android:textSize="@dimen/_16sdp"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:layout_width="0.0dip"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:layout_weight="1.0"
+            android:fontFamily="@font/pt_root_ui_medium" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:textSize="@dimen/_12sdp"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:id="@+id/confirm_ok"
+            android:background="@drawable/button_red_rectangle"
+            android:layout_width="0.0dip"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:text="Да"
+            android:layout_weight="1.0"
+            android:fontFamily="@font/pt_root_ui_medium" />
+        <TextView
+            android:textSize="@dimen/_12sdp"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:id="@+id/confirm_not"
+            android:background="@drawable/button_red_stroke_rectangle"
+            android:layout_width="0.0dip"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:text="Нет"
+            android:layout_weight="1.0"
+            android:fontFamily="@font/pt_root_ui_medium" />
+    </LinearLayout>
+</LinearLayout>

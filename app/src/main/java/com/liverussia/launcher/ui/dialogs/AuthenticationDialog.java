@@ -18,7 +18,7 @@ import androidx.fragment.app.Fragment;
 import com.liverussia.cr.R;
 import com.liverussia.launcher.ui.activity.ActivitySupportedServerSelection;
 import com.liverussia.launcher.async.dto.request.LoginRequestDto;
-import com.liverussia.launcher.domain.messages.ErrorMessages;
+import com.liverussia.launcher.domain.messages.ErrorMessage;
 import com.liverussia.launcher.async.task.AuthenticateAsyncRestCall;
 import com.liverussia.launcher.async.dto.response.Servers;
 import com.liverussia.launcher.service.ActivityService;
@@ -150,13 +150,13 @@ public class AuthenticationDialog extends DialogFragment implements View.OnClick
             iAmNotRobotCheckBox.setChecked(false);
             new ReCaptchaDialog(this);
         } else {
-            activityService.showMessage(ErrorMessages.CAPTCHA_NOT_PASSED.getText(), fragment.getActivity());
+            activityService.showMessage(ErrorMessage.CAPTCHA_NOT_PASSED.getText(), fragment.getActivity());
         }
     }
 
     //TODO
     private void performCaptchaFailureAction(Exception exception) {
-        activityService.showMessage(ErrorMessages.CAPTCHA_COMPLETING_PROBLEMS.getText(), fragment.getActivity());
+        activityService.showMessage(ErrorMessage.CAPTCHA_COMPLETING_PROBLEMS.getText(), fragment.getActivity());
         iAmNotRobotCheckBox.setChecked(false);
 
         Log.d("Captcha failed reason: ", exception.getMessage());

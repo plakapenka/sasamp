@@ -30,8 +30,8 @@ import com.liverussia.launcher.ui.fragment.MonitoringFragment;
 import com.liverussia.launcher.ui.fragment.DonateFragment;
 import com.liverussia.launcher.ui.fragment.RouletteFragment;
 import com.liverussia.launcher.ui.fragment.SettingsFragment;
-import com.liverussia.launcher.domain.messages.ErrorMessages;
-import com.liverussia.launcher.domain.messages.InfoMessages;
+import com.liverussia.launcher.domain.messages.ErrorMessage;
+import com.liverussia.launcher.domain.messages.InfoMessage;
 import com.liverussia.launcher.async.dto.response.Servers;
 import com.liverussia.launcher.async.service.NetworkService;
 import com.liverussia.launcher.service.ActivityService;
@@ -140,10 +140,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         settingsFragment = new SettingsFragment();
 
         if (savedInstanceState != null && savedInstanceState.getBoolean(IS_AFTER_LOADING_KEY)) {
-            activityService.showMessage(InfoMessages.DOWNLOAD_SUCCESS_INPUT_YOUR_NICKNAME.getText(), this);
             replaceFragment(settingsFragment);
         } else if (savedInstanceState == null && getIntent().getExtras() != null && getIntent().getExtras().getBoolean(IS_AFTER_LOADING_KEY)){
-            activityService.showMessage(InfoMessages.DOWNLOAD_SUCCESS_INPUT_YOUR_NICKNAME.getText(), this);
             onClickSettings();
         } else {
             replaceFragment(monitoringFragment);
@@ -314,14 +312,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void startGame() {
         String nickname = NativeStorage.getClientProperty(NativeStorageElements.NICKNAME, this);
+        String selectedServer = NativeStorage.getClientProperty(NativeStorageElements.SERVER, this);
 
-        if (StringUtils.isNotBlank(nickname)) {
-            startActivity(new Intent(this, GTASA.class));
+        if (StringUtils.isBlank(nickname)) {
+            activityService.showMessage(ErrorMessage.INPUT_NICKNAME_BEFORE_SERVER_CONNECT.getText(), this);
+            onClickSettings();
             return;
         }
 
-        activityService.showMessage(ErrorMessages.INPUT_NICKNAME_BEFORE_SERVER_CONNECT.getText(), this);
-        onClickSettings();
+        if (StringUtils.isBlank(selectedServer)) {
+            activityService.showMessage(ErrorMessage.SERVER_NOT_SELECTED.getText(), this);
+            onClickMonitoring();
+            return;
+        }
+
+        startActivity(new Intent(this, GTASA.class));
     }
 
     public void onClickSettings() {

@@ -1,6 +1,7 @@
 package com.liverussia.launcher.service.impl;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.widget.Toast;
@@ -35,8 +36,8 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public void showMessage(String message, Activity activity) {
-        Toast.makeText(activity, message, Toast.LENGTH_SHORT)
+    public void showMessage(String message, Context context) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT)
                 .show();
     }
 
