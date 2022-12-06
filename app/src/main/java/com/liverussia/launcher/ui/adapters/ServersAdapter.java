@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.annotation.NonNull;
 
 import com.liverussia.cr.R;
-import com.liverussia.launcher.domain.messages.InfoMessages;
+import com.liverussia.launcher.domain.messages.InfoMessage;
 import com.liverussia.launcher.async.dto.response.Servers;
 
 import java.io.File;
@@ -62,7 +62,7 @@ public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersV
 		holder.container.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 view.startAnimation(AnimationUtils.loadAnimation(context, R.anim.button_click));
-                Toast.makeText(context, InfoMessages.SERVER_SELECTED.getText(), 0).show();
+                Toast.makeText(context, InfoMessage.SERVER_SELECTED.getText(), 0).show();
 				try {
 					File f = new File(context.getExternalFilesDir(null) + "/SAMP/settings.ini");
 					if (!f.exists()) { f.createNewFile(); f.mkdirs(); }

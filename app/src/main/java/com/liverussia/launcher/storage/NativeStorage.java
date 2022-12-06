@@ -6,7 +6,7 @@ import android.widget.Toast;
 import com.liverussia.launcher.domain.enums.NativeStorageElements;
 import com.liverussia.launcher.error.apiException.ApiException;
 import com.liverussia.launcher.error.apiException.ErrorContainer;
-import com.liverussia.launcher.domain.messages.ErrorMessages;
+import com.liverussia.launcher.domain.messages.ErrorMessage;
 
 import org.ini4j.Wini;
 
@@ -33,9 +33,9 @@ public class NativeStorage {
             w.put(CLIENT_SECTION_NAME, propertyName.getValue(), value);
             w.store();
         } catch (ApiException e) {
-            showMessage(ErrorMessages.FIRSTLY_LOAD_GAME.getText(), activity);
+            showMessage(ErrorMessage.FIRSTLY_LOAD_GAME.getText(), activity);
         } catch (IOException e) {
-            showMessage(ErrorMessages.FIRSTLY_LOAD_GAME.getText(), activity);
+            showMessage(ErrorMessage.FIRSTLY_LOAD_GAME.getText(), activity);
         }
     }
 

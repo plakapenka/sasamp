@@ -16,11 +16,12 @@ import com.liverussia.cr.R;
 import com.liverussia.launcher.async.dto.response.FileInfo;
 import com.liverussia.launcher.async.task.CacheChecker;
 import com.liverussia.launcher.ui.activity.LoaderActivity;
+import com.liverussia.launcher.ui.dialogs.ConfirmDialog;
 import com.liverussia.launcher.utils.MainUtils;
-import com.liverussia.launcher.ui.dialogs.EnterNicknameDialogBuilder;
+import com.liverussia.launcher.ui.dialogs.EnterNicknameDialog;
 import com.liverussia.launcher.domain.enums.DownloadType;
 import com.liverussia.launcher.domain.enums.NativeStorageElements;
-import com.liverussia.launcher.domain.messages.InfoMessages;
+import com.liverussia.launcher.domain.messages.InfoMessage;
 import com.liverussia.launcher.utils.FileUtils;
 import com.liverussia.launcher.service.impl.ActivityServiceImpl;
 import com.liverussia.launcher.storage.NativeStorage;
@@ -109,15 +110,23 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     }
 
     private void performNickEditFieldOnClickAction() {
-        new EnterNicknameDialogBuilder(this);
+        new EnterNicknameDialog(this);
     }
 
     private void performReinstallGameButtonAction() {
-        File gameDirectory = (new File(getActivity().getExternalFilesDir(null).toString()));
-        FileUtils.delete(gameDirectory);
-        MainUtils.setType(DownloadType.LOAD_ALL_CACHE);
+        ConfirmDialog confirmDialog = new ConfirmDialog(getActivity(), InfoMessage.REINSTALL_GAME_QUESTION);
+        confirmDialog.setOnDialogCloseListener(this::onConfirmReinstallFinished);
+        confirmDialog.createDialog();
+    }
 
-        startActivity(new Intent(getActivity(), com.liverussia.launcher.ui.activity.LoaderActivity.class));
+    private void onConfirmReinstallFinished(Boolean isConfirm) {
+        if (isConfirm) {
+            File gameDirectory = (new File(getActivity().getExternalFilesDir(null).toString()));
+            FileUtils.delete(gameDirectory);
+            MainUtils.setType(DownloadType.LOAD_ALL_CACHE);
+
+            startActivity(new Intent(getActivity(), com.liverussia.launcher.ui.activity.LoaderActivity.class));
+        }
     }
 
     private void performValidateCacheButtonAction() {
@@ -138,7 +147,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         List<FileInfo> filesToReloadList = Arrays.asList(fileToReloadArray);
 
         if (CollectionUtils.isEmpty(filesToReloadList)) {
-            activityService.showMessage(InfoMessages.GAME_FILES_VALID.getText(), getActivity());
+            activityService.showMessage(InfoMessage.GAME_FILES_VALID.getText(), getActivity());
         } else {
             validateCache(filesToReloadList);
         }
@@ -151,8 +160,18 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     }
 
     private void performResetSettingsButtonAction() {
+        ConfirmDialog confirmDialog = new ConfirmDialog(getActivity(), InfoMessage.RESET_SETTINGS_QUESTION);
+        confirmDialog.setOnDialogCloseListener(this::onConfirmResetSettingsFinished);
+        confirmDialog.createDialog();
+    }
+
+    private void onConfirmResetSettingsFinished(Boolean isConfirm) {
+        if (!isConfirm) {
+            return;
+        }
+
         if (!activityService.isGameFileInstall(getActivity(), SETTINGS_FILE_PATH)) {
-            activityService.showMessage(InfoMessages.INSTALL_GAME_FIRST.getText(), getActivity());
+            activityService.showMessage(InfoMessage.INSTALL_GAME_FIRST.getText(), getActivity());
             return;
         }
 
@@ -160,11 +179,10 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
 
         if (settingsFile.exists()) {
             settingsFile.delete();
-            activityService.showMessage(InfoMessages.SUCCESSFULLY_SETTINGS_RESET.getText(), getActivity());
+            activityService.showMessage(InfoMessage.SUCCESSFULLY_SETTINGS_RESET.getText(), getActivity());
         } else {
-            activityService.showMessage(InfoMessages.SETTINGS_ALREADY_DEFAULT.getText(), getActivity());
+            activityService.showMessage(InfoMessage.SETTINGS_ALREADY_DEFAULT.getText(), getActivity());
         }
-
     }
 
     private void performDiscordButtonAction() {

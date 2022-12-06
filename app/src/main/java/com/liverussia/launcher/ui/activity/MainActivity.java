@@ -30,8 +30,8 @@ import com.liverussia.launcher.ui.fragment.MonitoringFragment;
 import com.liverussia.launcher.ui.fragment.DonateFragment;
 import com.liverussia.launcher.ui.fragment.RouletteFragment;
 import com.liverussia.launcher.ui.fragment.SettingsFragment;
-import com.liverussia.launcher.domain.messages.ErrorMessages;
-import com.liverussia.launcher.domain.messages.InfoMessages;
+import com.liverussia.launcher.domain.messages.ErrorMessage;
+import com.liverussia.launcher.domain.messages.InfoMessage;
 import com.liverussia.launcher.async.dto.response.Servers;
 import com.liverussia.launcher.async.service.NetworkService;
 import com.liverussia.launcher.service.ActivityService;
@@ -140,10 +140,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         settingsFragment = new SettingsFragment();
 
         if (savedInstanceState != null && savedInstanceState.getBoolean(IS_AFTER_LOADING_KEY)) {
-            activityService.showMessage(InfoMessages.DOWNLOAD_SUCCESS_INPUT_YOUR_NICKNAME.getText(), this);
+            activityService.showMessage(InfoMessage.DOWNLOAD_SUCCESS_INPUT_YOUR_NICKNAME.getText(), this);
             replaceFragment(settingsFragment);
         } else if (savedInstanceState == null && getIntent().getExtras() != null && getIntent().getExtras().getBoolean(IS_AFTER_LOADING_KEY)){
-            activityService.showMessage(InfoMessages.DOWNLOAD_SUCCESS_INPUT_YOUR_NICKNAME.getText(), this);
+            activityService.showMessage(InfoMessage.DOWNLOAD_SUCCESS_INPUT_YOUR_NICKNAME.getText(), this);
             onClickSettings();
         } else {
             replaceFragment(monitoringFragment);
@@ -320,7 +320,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return;
         }
 
-        activityService.showMessage(ErrorMessages.INPUT_NICKNAME_BEFORE_SERVER_CONNECT.getText(), this);
+        activityService.showMessage(ErrorMessage.INPUT_NICKNAME_BEFORE_SERVER_CONNECT.getText(), this);
         onClickSettings();
     }
 

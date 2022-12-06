@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum  InfoMessages {
+public enum InfoMessage {
     CONNECTION_TO_LAST_SERVER("Подключение к последнему выбранному серверу!"),
     CONNECTION_TO_SELECT_SERVER("Подключение к серверу: %s!"),
     SERVER_SELECTED("Сервер выбран! Для начала игры нажмите жёлтую кнопку"),
@@ -14,6 +14,8 @@ public enum  InfoMessages {
     SETTINGS_ALREADY_DEFAULT("Настройки по умолчанию уже установлены"),
     SUCCESSFULLY_SETTINGS_RESET("Вы успешно сбросили настройки!"),
     DOWNLOAD_SUCCESS_INPUT_YOUR_NICKNAME("Игра успешно установлена, введите свой никнейм"),
+    REINSTALL_GAME_QUESTION("Переустановить игру?"),
+    RESET_SETTINGS_QUESTION("Сбросить настройки игры?"),
     APPROVE_INSTALL("Подтвердите установку");
 
     private final String text;

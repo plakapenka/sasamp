@@ -40,7 +40,7 @@ import com.liverussia.launcher.domain.LoaderSliderItemData;
 import com.liverussia.launcher.async.dto.response.LoaderSliderInfoResponseDto;
 import com.liverussia.launcher.domain.enums.DownloadType;
 import com.liverussia.launcher.domain.enums.NativeStorageElements;
-import com.liverussia.launcher.domain.messages.ErrorMessages;
+import com.liverussia.launcher.domain.messages.ErrorMessage;
 import com.liverussia.launcher.async.service.NetworkService;
 import com.liverussia.launcher.service.ActivityService;
 import com.liverussia.launcher.service.impl.ActivityServiceImpl;
@@ -286,7 +286,7 @@ public class LoaderActivity extends AppCompatActivity {
         List<LoaderSliderItemData> sliderDataArrayList = new ArrayList<>();
 
         LoaderSliderItemData sliderItemData = new LoaderSliderItemData();
-        sliderItemData.setText(ErrorMessages.FAILED_LOAD_LOADER_SLIDER_DATA.getText());
+        sliderItemData.setText(ErrorMessage.FAILED_LOAD_LOADER_SLIDER_DATA.getText());
 
         sliderDataArrayList.add(sliderItemData);
 
@@ -374,7 +374,7 @@ public class LoaderActivity extends AppCompatActivity {
                 finish();
             }
             else {
-                activityService.showMessage(ErrorMessages.APK_UPDATE_FILE_NOT_FOUND.getText(), this);
+                activityService.showMessage(ErrorMessage.APK_UPDATE_FILE_NOT_FOUND.getText(), this);
                 finish();
                 System.exit(EXIT_SUCCESS_STATUS);
             }
