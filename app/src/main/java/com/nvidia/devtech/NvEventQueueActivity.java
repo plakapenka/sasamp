@@ -57,6 +57,7 @@ import com.liverussia.cr.R;
 import com.liverussia.cr.core.DialogClientSettings;
 import com.liverussia.cr.gui.AttachEdit;
 import com.liverussia.cr.gui.AutoShop;
+import com.liverussia.cr.gui.Casino;
 import com.liverussia.cr.gui.CasinoDice;
 import com.liverussia.cr.gui.Casino_LuckyWheel;
 import com.liverussia.cr.gui.Furniture_factory;
@@ -191,6 +192,7 @@ public abstract class NvEventQueueActivity
     private Menu mMenu = null;
     private ChooseServer mChooseServer = null;
     private Tab mTab = null;
+    private Casino mCasino = null;
 
     /* *
      * Helper function to select fixed window size.
@@ -615,7 +617,6 @@ public abstract class NvEventQueueActivity
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         System.out.println("**** onCreate");
         super.onCreate(savedInstanceState);
         instance = this;
@@ -626,7 +627,6 @@ public abstract class NvEventQueueActivity
 
             System.out.println("Calling initSAMP");
 
-         //   Log.d("saf", "ABC = "+getExternalFilesDir(null).toString());
             initSAMP(getExternalFilesDir(null).toString()+"/");
             System.out.println("Called");
         }
@@ -1035,7 +1035,7 @@ public abstract class NvEventQueueActivity
         mAndroidUI = findViewById(R.id.ui_layout);
 
         SurfaceHolder holder = view.getHolder();
-        holder.setType(SurfaceHolder.SURFACE_TYPE_GPU);
+
         holder.setKeepScreenOn(true);
 
         view.setFocusable(true);
@@ -1069,6 +1069,7 @@ public abstract class NvEventQueueActivity
         mAutoShop = new AutoShop(this);
         mCasinoDice = new CasinoDice(this);
         mTab = new Tab(this);
+        mCasino = new Casino(this);
 
         mMenu = new Menu(this);
         mChooseServer = new ChooseServer(this);
@@ -1646,7 +1647,9 @@ public abstract class NvEventQueueActivity
 
     public void updateSplash(int percent) { runOnUiThread(() -> { mChooseServer.Update(percent); } ); }
 
-    public void showSplash() { runOnUiThread(() -> { mChooseServer.Show(); } ); }
+    public void ExitGame(){ this.finishAffinity(); }
+
+   // public void showSplash() { runOnUiThread(() -> { mChooseServer.Show(); } ); }
 
     public void hideServerLogo()
     {
