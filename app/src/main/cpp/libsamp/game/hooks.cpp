@@ -804,7 +804,8 @@ void InstallSpecialHooks()
 	SetUpHook(g_libGTASA + 0x004042A8, (uintptr_t)CStreaming__Init2_hook, (uintptr_t*)& CStreaming__Init2);	// increase stream memory value
 
 	NOP(g_libGTASA + 0x00341FCC, 2); // nop PauseOpenSLES
-	NOP(g_libGTASA + 0x0046389E, 2); // nop saving
+
+	//NOP(g_libGTASA + 0x0046389E, 2); // nop saving
 }
 
 void ProcessPedDamage(PED_TYPE* pIssuer, PED_TYPE* pPlayer);
@@ -2497,6 +2498,12 @@ void CStreaming__RemoveModel_hook(int model)
 int g_iLastProcessedSkinCollision = 228;
 int g_iLastProcessedEntityCollision = 228;
 
+void (*SaveSlot)(uintptr_t *thiz, uintptr_t *a2, bool a3);
+void SaveSlot_hook(uintptr_t *thiz, uintptr_t *a2, bool a3)
+{
+	return;
+}
+
 void (*CPed__ProcessEntityCollision)(PED_TYPE* thiz, ENTITY_TYPE* ent, void* colPoint);
 void CPed__ProcessEntityCollision_hook(PED_TYPE* thiz, ENTITY_TYPE* ent, void* colPoint)
 {
@@ -2683,6 +2690,8 @@ void InstallHooks()
 	SetUpHook(g_libGTASA + 0x00391FE0, (uintptr_t)CEntity__GetIsOnScreen_hook, (uintptr_t*)& CEntity__GetIsOnScreen);
 	SetUpHook(g_libGTASA + 0x0031B164, (uintptr_t)FxEmitterBP_c__Render_hook, (uintptr_t*)& FxEmitterBP_c__Render);
 	SetUpHook(g_libGTASA + 0x0043A17C, (uintptr_t)CPed__ProcessEntityCollision_hook, (uintptr_t*)&CPed__ProcessEntityCollision);
+
+	SetUpHook(g_libGTASA + 0x00463870, (uintptr_t)SaveSlot_hook, (uintptr_t*)& SaveSlot);
 
 	HookCPad();
 }
