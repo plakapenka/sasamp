@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/casino_chip_main_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -16,6 +17,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
+        <View
+            android:id="@+id/casino_chip_exit_button"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/cross"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:layout_width="@dimen/_80sdp"
@@ -128,6 +141,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+                android:id="@+id/casino_chip_balance_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -144,15 +158,16 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/casino_chip_bg_2"
             android:layout_width="@dimen/_164sdp"
             android:layout_height="@dimen/_154sdp"
-            android:background="@drawable/casino_chip_bg_2"
+            android:background="@drawable/casino_chip_bg_2_buy"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
             <TextView
-                android:id="@+id/casino_action_caption"
+                android:id="@+id/casino_chip_action_caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_31sdp"
@@ -165,7 +180,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
-                android:id="@+id/auth_password"
+                android:id="@+id/casino_chip_input"
                 android:layout_width="@dimen/_118sdp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -181,12 +196,12 @@
                 android:paddingBottom="@dimen/_4sdp"
                 android:singleLine="true"
                 android:textColor="#ffffffff"
-                android:textColorHint="#5186A0"
+                android:textColorHint="#6DF4F4F4"
                 android:textCursorDrawable="@drawable/text_cursor"
                 android:textSize="@dimen/_8sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/casino_action_caption"
+                app:layout_constraintTop_toBottomOf="@+id/casino_chip_action_caption"
                 tools:ignore="TouchTargetSizeCheck" />
 
             <View
@@ -197,7 +212,7 @@
                 android:background="@drawable/casino_luckywheel_line"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/auth_password" />
+                app:layout_constraintTop_toBottomOf="@+id/casino_chip_input" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/chip_currency_layout"
@@ -241,7 +256,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/chip_currency_layout" />
 
             <TextView
-                android:id="@+id/textView31"
+                android:id="@+id/casino_chip_get_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -259,20 +274,23 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView31">
+                app:layout_constraintTop_toBottomOf="@+id/casino_chip_get_count">
 
                 <ImageView
-                    android:id="@+id/imageView59"
+                    android:id="@+id/casino_chip_back_button"
                     android:layout_width="@dimen/_18sdp"
                     android:layout_height="@dimen/_19sdp"
                     android:background="@drawable/casino_chip_bg_back"
                     android:src="@drawable/back_"
                     android:scaleType="center"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/casino_chip_buy_button"
                     android:layout_width="@dimen/_70sdp"
                     android:layout_height="@dimen/_27sdp"
                     android:layout_marginStart="8dp"
@@ -280,7 +298,7 @@
                     android:text="купить"
                     android:textColor="#017088"
                     android:textSize="@dimen/_8sdp"
-                    app:layout_constraintStart_toEndOf="@+id/imageView59" />
+                    app:layout_constraintStart_toEndOf="@+id/casino_chip_back_button" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
             

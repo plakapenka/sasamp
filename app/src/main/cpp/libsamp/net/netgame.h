@@ -226,6 +226,8 @@ public:
 	void Packet_InventoryUpdateCarryng(Packet *p);
 
 	void Packet_InventoryItemActive(Packet *p);
+
+	void Packet_CasinoChip(Packet *p);
 };
 
 extern CNetGame *pNetGame;
