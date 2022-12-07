@@ -69,8 +69,9 @@ class CJavaWrapper
 
 	jmethodID s_setPauseState;
 
-	jmethodID s_showSplash;
+	//jmethodID s_showSplash;
 	jmethodID s_updateSplash;
+	jmethodID s_ExitGame;
 
 	jmethodID s_hideServerLogo;
 	jmethodID s_showServerLogo;
@@ -161,7 +162,7 @@ public:
 
 	void SetPauseState(bool a1);
 
-	void ShowSplash();
+	//void ShowSplash();
 	void UpdateSplash(int progress);	
 
 	uint32_t ChangeRegisterSkin(int skin);
@@ -190,6 +191,8 @@ public:
 	void ShowMiningGame2(bool toggle);
 
     void ShowMiningGame3(bool toggle);
+
+	void ExitGame();
 };
 
 extern CJavaWrapper* g_pJavaWrapper;

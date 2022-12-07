@@ -3,7 +3,7 @@
 #include "game.h"
 #include "../gui/gui.h"
 #include "../util/CJavaWrapper.h"
-#include "java_systems/hud.h"
+#include "java_systems/CHUD.h"
 
 extern CGame *pGame;
 extern CGUI* pGUI;
@@ -98,70 +98,8 @@ void Draw(stRect* rect, uint32_t color, RwRaster* raster = nullptr, stfRect* uv 
 	RwRenderStateSet(rwRENDERSTATETEXTURERASTER, (void*)0);*/
 }
 
-
-void RenderSplash()
-{
-	/*stRect rect;
-	stfRect uv;
-
-	// background
-	rect.x1 = 0;
-	rect.y1 = 0;
-	rect.x2 = RsGlobal->maximumWidth;
-	rect.y2 = RsGlobal->maximumHeight;
-	Draw(&rect, colors[color_scheme][0]);
-
-	RwRenderStateSet(rwRENDERSTATEVERTEXALPHAENABLE, (void*)1);
-	RwRenderStateSet(rwRENDERSTATETEXTUREFILTER, (void*)rwFILTERLINEAR);
-
-	// texture
-	rect.x1 = 0;
-	rect.y1 = 0;
-	rect.x2 = RsGlobal->maximumWidth;
-	rect.y2 = RsGlobal->maximumHeight;
-	uv.x1 = 0.0f;
-	uv.y1 = 0.0f;
-	uv.x2 = 1.0;
-	uv.y2 = 1.0;
-	if (splashTexture)
-	{
-		Draw(&rect, COLOR_WHITE, splashTexture->raster, &uv);
-	}*/
-
-	const float percent = *(float*)(g_libGTASA + 0x8F08C0)*2;
-	if (percent <= 0.0f) return;
-
-	int intMult = (int)percent;
-
-	//if (intMult == 51) intMult = 100;
-
-	g_pJavaWrapper->UpdateSplash(intMult);
-
-	/*rect.x1 = RsGlobal->maximumWidth * 0.05f;
-	rect.y1 = RsGlobal->maximumHeight * 0.95f;
-	rect.x2 = (RsGlobal->maximumWidth * 0.95f) * mult;
-	rect.y2 = RsGlobal->maximumHeight * 0.97f;
-
-	Draw(&rect, colors[color_scheme][1]);*/
-}
-
 void ImGui_ImplRenderWare_RenderDrawData(ImDrawData* draw_data);
 void ImGui_ImplRenderWare_NewFrame();
-
-void RenderSplashScreen()
-{
-	RenderSplash();
-	g_pJavaWrapper->ShowSplash();
-
-	if (!pGUI) return;
-
-	ImGui_ImplRenderWare_NewFrame();
-	ImGui::NewFrame();
-
-	ImGui::EndFrame();
-	ImGui::Render();
-	ImGui_ImplRenderWare_RenderDrawData(ImGui::GetDrawData());
-}
 
 void RenderBackgroundHud()
 {

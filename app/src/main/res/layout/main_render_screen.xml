@@ -81,7 +81,6 @@
         <include layout="@layout/casino_dice" />
         <include layout="@layout/bspeed_layout"/>
         <include layout="@layout/menu_action_dialog" />
-        <include layout="@layout/br_serverselect" />
         <include layout="@layout/br_registration" />
         <include layout="@layout/br_authorization" />
         <include layout="@layout/br_choosespawn" />
@@ -103,5 +102,9 @@
         <include layout="@layout/mine_2" />
         <include layout="@layout/mine_3" />
         <include layout="@layout/attachedit" />
+        <include layout="@layout/casino_chip" />
+
+
+        <include layout="@layout/br_serverselect" />
     </FrameLayout>
 </FrameLayout>

@@ -77,10 +77,6 @@ CGUI::CGUI()
 
 	style.WindowRounding = 0.0f;
 
-	m_pSplashTexture = nullptr;
-
-	m_pSplashTexture = (RwTexture*)LoadTextureFromDB("txd", "splash_icon");
-
 	CRadarRect::LoadTextures();
 
 	m_bKeysStatus = false;
@@ -522,16 +518,10 @@ void CGUI::RenderText(ImVec2& posCur, ImU32 col, bool bOutline, const char* text
 		else
 		{
 			ImVec2 b(posCur.x + ImGui::CalcTextSize(text_begin, text_end).x, posCur.y + GetFontSize());
-			if (m_pSplashTexture)
-			{
-				ImColor co(1.0f, 1.0f, 1.0f, 0.4f);
-				ImGui::GetBackgroundDrawList()->AddImage((ImTextureID)m_pSplashTexture->raster, posCur, b, ImVec2(0, 0), ImVec2(1, 1), co);
-			}
-			else
-			{
-				ImColor co(0.0f, 0.0f, 0.0f, 0.4f);
-				ImGui::GetBackgroundDrawList()->AddRectFilled(posCur, b, co);
-			}
+
+			ImColor co(0.0f, 0.0f, 0.0f, 0.4f);
+			ImGui::GetBackgroundDrawList()->AddRectFilled(posCur, b, co);
+
 		}
 	}
 

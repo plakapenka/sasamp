@@ -9,7 +9,7 @@ extern "C" JavaVM* javaVM;
 #include "../game/game.h"
 #include "../str_obfuscator_no_template.hpp"
 #include "java_systems/scoreboard.h"
-#include "java_systems/hud.h"
+#include "java_systems/CHUD.h"
 
 extern CKeyBoard* pKeyBoard;
 extern CSettings* pSettings;
@@ -1068,18 +1068,18 @@ void CJavaWrapper::SetPauseState(bool a1)
     env->CallVoidMethod(this->activity, this->s_setPauseState, a1);
 }
 
-void CJavaWrapper::ShowSplash() {
-
-	JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-
-	env->CallVoidMethod(this->activity, this->s_showSplash);
-}
+//void CJavaWrapper::ShowSplash() {
+//
+//	JNIEnv* env = GetEnv();
+//
+//	if (!env)
+//	{
+//		Log("No env");
+//		return;
+//	}
+//
+//	env->CallVoidMethod(this->activity, this->s_showSplash);
+//}
 
 void CJavaWrapper::UpdateSplash(int percent) {
 	
@@ -1094,6 +1094,18 @@ void CJavaWrapper::UpdateSplash(int percent) {
 	env->CallVoidMethod(this->activity, this->s_updateSplash, percent);
 }
 
+void CJavaWrapper::ExitGame() {
+
+	JNIEnv* env = GetEnv();
+
+	if (!env)
+	{
+		Log("No env");
+		return;
+	}
+
+	env->CallVoidMethod(this->activity, this->s_ExitGame);
+}
 
 void CJavaWrapper::ShowServerLogo() {
 
@@ -1479,7 +1491,8 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 	s_setPauseState = env->GetMethodID(nvEventClass, "setPauseState", "(Z)V");
 
 	s_updateSplash = env->GetMethodID(nvEventClass, "updateSplash", "(I)V");
-	s_showSplash = env->GetMethodID(nvEventClass, "showSplash", "()V");
+	s_ExitGame = env->GetMethodID(nvEventClass, "ExitGame", "()V");
+	//s_showSplash = env->GetMethodID(nvEventClass, "showSplash", "()V");
 
 	s_showServerLogo = env->GetMethodID(nvEventClass, "showServerLogo", "()V");
 	s_hideServerLogo = env->GetMethodID(nvEventClass, "hideServerLogo", "()V");

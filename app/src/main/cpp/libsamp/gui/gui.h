@@ -63,7 +63,6 @@ private:
 private:
 	DataStructures::SingleProducerConsumer<BUFFERED_COMMAND_TEXTDRAW> m_BufferedCommandTextdraws;
 
-	struct RwTexture* m_pSplashTexture;
 	ImFont* 	m_pFont;
 	ImFont*		m_pSampFont;
 
