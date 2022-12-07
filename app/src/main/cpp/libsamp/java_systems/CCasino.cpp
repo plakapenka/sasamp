@@ -35,16 +35,16 @@ void CNetGame::Packet_CasinoChip(Packet* p)
     if(!type) {
         balance = pHud->localMoney;
     }
-    CCasino::OpenChipBuySell(type, balance);
+    CCasino::OpenChipBuySell(!type, balance);
 }
 
-void CCasino::OpenChipBuySell(bool isBuy, int balance){
+void CCasino::OpenChipBuySell(bool isSell, int balance){
     JNIEnv* env = g_pJavaWrapper->GetEnv();
 
     jclass clazz = env->GetObjectClass(jCasino);
     jmethodID OpenChipBuySell = env->GetMethodID(clazz, "OpenChipBuySell", "(ZI)V");
 
-    env->CallVoidMethod(jCasino, OpenChipBuySell, isBuy, balance);
+    env->CallVoidMethod(jCasino, OpenChipBuySell, isSell, balance);
 
     CCasino::isCasinoChipToggle = true;
 }

@@ -114,6 +114,7 @@ public class Casino {
                 casino_chip_buy_button.setText("продать");
                 casino_chip_buy_button.setTextColor(Color.parseColor("#A01618"));
             }
+            casino_chip_input.setText(null);
             Utils.ShowLayout(casino_chip_main_layout, true);
         });
         ChipUpdateGetting();
@@ -125,9 +126,9 @@ public class Casino {
     void ChipUpdateGetting(){
         activity.runOnUiThread(() -> {
             if(chip_isSell){
-                casino_chip_get_count.setText(String.format("К оплате: %s руб.", price_format.format(getChipGetCount())));
+                casino_chip_get_count.setText(String.format("К оплате: %s руб.", price_format.format(getChipGetCount()* 1000L)));
             }else {
-                casino_chip_get_count.setText(String.format("К получению: %s руб.", price_format.format(getChipGetCount())));
+                casino_chip_get_count.setText(String.format("К получению: %s руб.", price_format.format(getChipGetCount()* 950L)));
             }
         });
     }
