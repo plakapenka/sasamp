@@ -9,7 +9,7 @@
 #include <dlfcn.h>
 #include "voice/CVoiceChatClient.h"
 #include "java_systems/scoreboard.h"
-#include "java_systems/hud.h"
+#include "java_systems/CHUD.h"
 
 extern CHUD *pHud;
 extern CGUI *pGUI;

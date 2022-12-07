@@ -6,7 +6,7 @@
 #include "../CSettings.h"
 #include "../util/CJavaWrapper.h"
 #include "../voice/CVoiceChatClient.h"
-#include "java_systems/hud.h"
+#include "java_systems/CHUD.h"
 #include "java_systems/CEditobject.h"
 
 extern CVoiceChatClient* pVoice;

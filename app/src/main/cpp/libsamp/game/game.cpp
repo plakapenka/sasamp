@@ -3,7 +3,7 @@
 #include "../util/armhook.h"
 #include "util/CJavaWrapper.h"
 #include "net/netgame.h"
-#include "java_systems/hud.h"
+#include "java_systems/CHUD.h"
 
 extern CHUD *pHud;
 void ApplyPatches();

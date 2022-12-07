@@ -1,4 +1,4 @@
-#include "hud.h"
+#include "CHUD.h"
 #include <jni.h>
 
 #include "main.h"

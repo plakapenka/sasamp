@@ -3,7 +3,7 @@
 #include "../gui/gui.h"
 #include "..//util/CJavaWrapper.h"
 #include "netgame.h"
-#include "java_systems/hud.h"
+#include "java_systems/CHUD.h"
 #include "CSettings.h"
 #include <thread>
 #include <chrono>
@@ -563,6 +563,10 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_ITEM_ACTIVETOGGLE: {
 			Packet_InventoryItemActive(p);
+			break;
+		}
+		case RPC_SHOW_CASINO_BUY_CHIP: {
+			Packet_CasinoChip(p);
 			break;
 		}
 		case RPC_INVENTAR_SHOWHIDE: {

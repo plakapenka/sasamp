@@ -9,7 +9,7 @@
 #include "vendor/imgui/fontawesome.h"
 #include "vendor/imgui/fonts.h"
 #include "net/netgame.h"
-#include "java_systems/hud.h"
+#include "java_systems/CHUD.h"
 
 extern CGUI *pGUI;
 extern CJavaWrapper *pJavaWrapper;

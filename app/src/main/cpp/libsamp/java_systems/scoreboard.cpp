@@ -6,7 +6,7 @@
 #include "vendor/imgui/imgui_internal.h"
 #include "util/CJavaWrapper.h"
 #include "CSettings.h"
-#include "hud.h"
+#include "CHUD.h"
 
 #ifndef min
 #define min(a,b) (((a) < (b)) ? (a) : (b))

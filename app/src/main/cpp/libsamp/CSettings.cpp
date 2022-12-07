@@ -5,7 +5,7 @@
 #include "game/CAdjustableHudColors.h"
 #include "game/CAdjustableHudPosition.h"
 #include "game/CAdjustableHudScale.h"
-#include "java_systems/hud.h"
+#include "java_systems/CHUD.h"
 extern CGame* pGame;
 extern CHUD *pHud;
 

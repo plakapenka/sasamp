@@ -15,7 +15,7 @@
 #include "keyboard.h"
 #include "CSettings.h"
 #include "CClientInfo.h"
-#include "java_systems/hud.h"
+#include "java_systems/CHUD.h"
 
 #include "util/armhook.h"
 #include "CCheckFileHash.h"
@@ -33,7 +33,7 @@ char g_pszStorage[255];
 
 #include "CServerManager.h"
 #include "CLocalisation.h"
-#include "java_systems/hud.h"
+#include "java_systems/CHUD.h"
 #include "java_systems/inventrory.h"
 
 const cryptor::string_encryptor encLib = cryptor::create("libsamp.so", 11);

@@ -2,7 +2,7 @@
 // Created by plaka on 07.11.2022.
 //
 
-#include "hud.h"
+#include "CHUD.h"
 #include <jni.h>
 
 #include "main.h"

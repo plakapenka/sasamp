@@ -6,7 +6,7 @@
 #include "../net/netgame.h"
 #include "../gui/gui.h"
 #include "../util/CJavaWrapper.h"
-#include "../java_systems/hud.h"
+#include "../java_systems/CHUD.h"
 #include "..///..//santrope-tea-gtasa/encryption/CTinyEncrypt.h"
 #include "..///..//santrope-tea-gtasa/encryption/encrypt.h"
 extern "C"
@@ -40,7 +40,6 @@ const cryptor::string_encryptor encrArch[MAX_ENCRYPTED_TXD] = {
 
 bool isEncrypted(const char *szArch)
 {
-	false;
     for (int i = 0; i < MAX_ENCRYPTED_TXD; i++)
     {
         if (!strcmp(encrArch[i].decrypt(), szArch))
@@ -284,22 +283,26 @@ void InitialiseRenderWare_hook()
 
 /* ====================================================== */
 
-void RenderSplashScreen();
 void (*CLoadingScreen_DisplayPCScreen)();
 void CLoadingScreen_DisplayPCScreen_hook()
 {
-	RwCamera* camera = *(RwCamera**)(g_libGTASA+0x95B064);
+	//RwCamera* camera = *(RwCamera**)(g_libGTASA+0x95B064);
 
-	if(RwCameraBeginUpdate(camera))
-	{
-		DefinedState2d();
-		(( void (*)())(g_libGTASA+0x5519C8+1))(); // CSprite2d::InitPerFrame()
-		RwRenderStateSet(rwRENDERSTATETEXTUREADDRESS, (void*)rwTEXTUREADDRESSCLAMP);
-		(( void (*)(bool))(g_libGTASA+0x198010+1))(false); // emu_GammaSet()
-		RenderSplashScreen();
-		RwCameraEndUpdate(camera);
-		RwCameraShowRaster(camera, 0, 0);
-	}
+	//if(RwCameraBeginUpdate(camera))
+	//{
+		//DefinedState2d();
+		//(( void (*)())(g_libGTASA+0x5519C8+1))(); // CSprite2d::InitPerFrame()
+		//RwRenderStateSet(rwRENDERSTATETEXTUREADDRESS, (void*)rwTEXTUREADDRESSCLAMP);
+		//(( void (*)(bool))(g_libGTASA+0x198010+1))(false); // emu_GammaSet()
+
+		//RwCameraEndUpdate(camera);
+	//	RwCameraShowRaster(camera, 0, 0);
+
+		const float percent = *(float*)(g_libGTASA + 0x8F08C0)*2;
+		if (percent <= 0.0f) return;
+
+		g_pJavaWrapper->UpdateSplash((int)percent);
+	//}
 
 	return;
 }
@@ -701,6 +704,11 @@ signed int OS_FileOpen_hook(unsigned int a1, int *a2, const char *a3, int a4)
     return retn;
 }
 
+uintptr_t (*VolumetricCloudsInit)(uintptr_t thiz);
+uintptr_t VolumetricCloudsInit_hook(uintptr_t thiz)
+{
+	return 0;
+}
 
 size_t (*OS_FileRead)(FILE *a1, void *a2, size_t a3);
 size_t OS_FileRead_hook(FILE *a1, void *a2, size_t a3)
@@ -775,6 +783,8 @@ void InstallSpecialHooks()
 	*(char*)(g_libGTASA + 0x005736DC + 13) = 'x';
 	*(char*)(g_libGTASA + 0x005736DC + 14) = 't';
 
+	SetUpHook(g_libGTASA+0x0052B810, (uintptr_t)VolumetricCloudsInit_hook, (uintptr_t*)&VolumetricCloudsInit);
+
 	WriteMemory(g_libGTASA + 0x0023BEDC, (uintptr_t)"\xF8\xB5", 2);
 	WriteMemory(g_libGTASA + 0x0023BEDE, (uintptr_t)"\x00\x46\x00\x46", 4);
 
@@ -793,8 +803,8 @@ void InstallSpecialHooks()
 	SetUpHook(g_libGTASA + 0x0023ACC4, (uintptr_t)NVEventGetNextEvent_hook, (uintptr_t*)& NVEventGetNextEvent_hooked);
 	SetUpHook(g_libGTASA + 0x004042A8, (uintptr_t)CStreaming__Init2_hook, (uintptr_t*)& CStreaming__Init2);	// increase stream memory value
 
-    // fix sort entr??
-	//SetUpHook(g_libGTASA + 0x001BEB9C, (uintptr_t)TextureDatabaseRuntime_hook, (uintptr_t*)& TextureDatabaseRuntime);
+	NOP(g_libGTASA + 0x00341FCC, 2); // nop PauseOpenSLES
+	NOP(g_libGTASA + 0x0046389E, 2); // nop saving
 }
 
 void ProcessPedDamage(PED_TYPE* pIssuer, PED_TYPE* pPlayer);
@@ -1286,7 +1296,7 @@ void GivePedScriptedTask_hook(uintptr_t* thiz, int pedHandle, uintptr_t* a3, int
 void (*RpMaterialDestroy)(RpMaterial* mat);
 void RpMaterialDestroy_hook(RpMaterial* mat)
 {
-	if(!mat->texture)return;
+	if(!mat->texture )return;
 
 	return RpMaterialDestroy(mat);
 }
@@ -1736,8 +1746,7 @@ bool (*CGame__Shutdown)();
 bool CGame__Shutdown_hook()
 {
 	Log("Exiting game...");
-	NOP(g_libGTASA + 0x00341FCC, 2); // nop PauseOpenSLES
-	NOP(g_libGTASA + 0x0046389E, 2); // nop saving
+
 	if (pNetGame)
 	{
 		if (pNetGame->GetRakClient())
@@ -1745,10 +1754,11 @@ bool CGame__Shutdown_hook()
 			pNetGame->GetRakClient()->Disconnect(500, 0);
 		}
 	}
+	g_pJavaWrapper->ExitGame();
+	//std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
-	return CGame__Shutdown();
+	return 0;
+	//return CGame__Shutdown();
 }
 
 // TODO: VEHICLE RESET SUSPENSION
@@ -2537,7 +2547,9 @@ void InstallHooks()
 	SetUpHook(g_libGTASA+0x3961C8, (uintptr_t)CFileMgr__ReadLine_hook, (uintptr_t*)&CFileMgr__ReadLine);
 
 	SetUpHook(g_libGTASA + 0x00281398, (uintptr_t)CWidgetRegionLook__Update_hook, (uintptr_t*)& CWidgetRegionLook__Update);
+
 	SetUpHook(g_libGTASA+0x3D7CA8, (uintptr_t)CLoadingScreen_DisplayPCScreen_hook, (uintptr_t*)&CLoadingScreen_DisplayPCScreen);
+
 	SetUpHook(g_libGTASA+0x39AEF4, (uintptr_t)Render2dStuff_hook, (uintptr_t*)&Render2dStuff);
 	SetUpHook(g_libGTASA+0x39B098, (uintptr_t)Render2dStuffAfterFade_hook, (uintptr_t*)&Render2dStuffAfterFade);
 	SetUpHook(g_libGTASA+0x239D5C, (uintptr_t)TouchEvent_hook, (uintptr_t*)&TouchEvent);
