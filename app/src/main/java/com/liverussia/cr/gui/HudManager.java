@@ -16,6 +16,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -280,6 +281,7 @@ public class HudManager {
 
         ///
         hud_main = aactivity.findViewById(R.id.hud_main);
+       // hud_main.setVisibility(View.GONE);
 
         bus_layout = aactivity.findViewById(R.id.bus_layout);
         bus_layout.setVisibility(View.GONE);
@@ -461,7 +463,7 @@ public class HudManager {
     public void ChangeChatHeight(int height)
     {
         activity.runOnUiThread(() -> {
-            ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) chat.getLayoutParams();
+            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) chat.getLayoutParams();
             if(height == -1){
                 layoutParams.height = defaultChatHeight;
             }else{
@@ -642,12 +644,11 @@ public class HudManager {
     }
 
     public void ShowBusInfo(int time) {
-        String strbustime = String.format("%d", time);
-        bus_text.setText(String.valueOf(strbustime));
-        Utils.ShowLayout(bus_layout, true);
+        bus_text.setText(String.format("%d", time));
+        bus_layout.setVisibility(View.VISIBLE);
     }
 
-    public void HideBusInfo() { Utils.HideLayout(bus_layout, true); }
+    public void HideBusInfo() { bus_layout.setVisibility(View.GONE); }
 
     public void AddToChatInput(String msg){
         activity.runOnUiThread(() -> {

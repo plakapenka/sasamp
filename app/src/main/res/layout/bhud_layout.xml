@@ -642,36 +642,43 @@
         android:layout_width="@dimen/_380sdp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_180sdp"
-        android:layout_marginTop="@dimen/_5sdp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.factor.bouncy.BouncyRecyclerView
-            android:id="@+id/chat"
+        <com.bosphere.fadingedgelayout.FadingEdgeLayout
+            android:id="@+id/chat_fade_box"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_71sdp"
-
-            android:scrollbarSize="@dimen/_6sdp"
-            android:scrollbarStyle="insideInset"
-            android:scrollbarThumbVertical="@drawable/chat_scroll_front"
-            android:scrollbarTrackVertical="@drawable/chat_scroll_back"
-            android:scrollbars="none"
+            android:layout_height="@dimen/_73sdp"
+            app:fel_edge="top"
+            app:fel_size_top="40dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:recyclerview_fling_animation_size="0.1"
-            app:recyclerview_overscroll_animation_size="0.1"
-            app:stackFromEnd="true">
+            app:layout_constraintTop_toTopOf="parent">
 
-        </com.factor.bouncy.BouncyRecyclerView>
+            <com.factor.bouncy.BouncyRecyclerView
+                android:id="@+id/chat"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbarSize="@dimen/_6sdp"
+                android:scrollbarStyle="insideInset"
+                android:scrollbarThumbVertical="@drawable/chat_scroll_front"
+                android:scrollbarTrackVertical="@drawable/chat_scroll_back"
+                android:scrollbars="none"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:recyclerview_fling_animation_size="0.1"
+                app:recyclerview_overscroll_animation_size="0.1"
+                app:stackFromEnd="true">
 
+            </com.factor.bouncy.BouncyRecyclerView>
+        </com.bosphere.fadingedgelayout.FadingEdgeLayout>
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/chat_input_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_3sdp"
-            app:layout_constraintEnd_toEndOf="@+id/chat"
-            app:layout_constraintStart_toStartOf="@+id/chat"
-            app:layout_constraintTop_toBottomOf="@+id/chat">
+            app:layout_constraintEnd_toEndOf="@+id/chat_fade_box"
+            app:layout_constraintStart_toStartOf="@+id/chat_fade_box"
+            app:layout_constraintTop_toBottomOf="@+id/chat_fade_box">
 
             <AutoCompleteTextView
                 android:id="@+id/chat_input"
@@ -752,5 +759,6 @@
         android:clickable="true"
         android:foreground="?android:attr/selectableItemBackgroundBorderless"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="TouchTargetSizeCheck" />
 </androidx.constraintlayout.widget.ConstraintLayout>
