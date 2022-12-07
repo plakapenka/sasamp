@@ -91,6 +91,8 @@ public class CacheChecker implements Listener<FileInfo[]> {
         activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
+        activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         dialogProgress = new DialogProgress();
         dialogProgress.show(activity.getSupportFragmentManager(), "progressDialog");
     }
@@ -273,6 +275,7 @@ public class CacheChecker implements Listener<FileInfo[]> {
     @Override
     public void onAsyncFinished(AsyncTaskResult<FileInfo[]> result) {
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         dialogProgress.dismiss();
 
         if (result.getException() != null) {

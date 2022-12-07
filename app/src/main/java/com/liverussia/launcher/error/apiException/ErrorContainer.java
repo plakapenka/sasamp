@@ -26,6 +26,7 @@ public enum ErrorContainer {
     TOKEN_EXPIRED(218, "Срок действия токена истек", HttpStatus.UNAUTHORIZED),
     CAPTCHA_ERROR(219, "Попробуйте заново пройти google captcha", HttpStatus.UNAUTHORIZED),
     NOT_ENOUGH_MONEY(220, "Недостаточно денег", HttpStatus.BAD_REQUEST),
+    NETWORK_ERROR(221, "Не удалось загрузить данные. Попробуйте еще раз", HttpStatus.NOT_FOUND),
 
     //TODO мб вынести это в отдельный enum (подумать как на досуге) либо ошибки не содержащие код писать под кодом > 1000
     SERVER_CONNECT_ERROR(1000, "Отсуствует интернет соединение. Для решения: попробуйте переподключить роутер, либо сменить интернет, либо воспользоваться VPN", HttpStatus.NOT_FOUND),
