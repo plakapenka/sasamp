@@ -49,7 +49,6 @@ public class CacheChecker implements Listener<FileInfo[]> {
     private final UiThreadPoster uiThreadPoster;
     private final BackgroundThreadPoster backgroundThreadPoster;
 
-//    private ProgressDialog progressDialog;
     private DialogProgress dialogProgress;
     private OnAsyncSuccessListenerWithResponse<FileInfo[]> onAsyncSuccessListener;
     private OnAsyncCriticalErrorListener onAsyncCriticalErrorListener;
@@ -71,7 +70,7 @@ public class CacheChecker implements Listener<FileInfo[]> {
 
         NOT_CHECK_BY_HASH_FILES.add("files/gta_sa.set");
         NOT_CHECK_BY_HASH_FILES.add("files/GTASAMP10.b");
-        NOT_CHECK_BY_HASH_FILES.add("files/samp/settings.ini");
+        NOT_CHECK_BY_HASH_FILES.add("files/SAMP/settings.ini");
         NOT_CHECK_BY_HASH_FILES.add("files/gtasatelem.set");
         NOT_CHECK_BY_HASH_FILES.add("files/SAMP/samp_log.txt");
         NOT_CHECK_BY_HASH_FILES.add("files/SAMP/crash_log.log");
@@ -196,7 +195,7 @@ public class CacheChecker implements Listener<FileInfo[]> {
         return hash.equalsIgnoreCase(fileInfo.getHash());
     }
 
-    public String calculateHash(String filename) {
+    private String calculateHash(String filename) {
 
 //        try {
 //            MessageDigest md = MessageDigest.getInstance("MD5");

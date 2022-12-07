@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum ErrorMessages {
+public enum ErrorMessage {
     NICKNAME_IS_EMPTY("Введите никнейм"),
     EMAIL_IS_EMPTY("Введите E-mail"),
     DONATE_SUM_IS_EMPTY("Введите сумму доната"),

@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.liverussia.launcher.domain.messages.InfoMessage;
 import com.liverussia.launcher.utils.MainUtils;
 import com.liverussia.cr.core.GTASA;
 import com.liverussia.launcher.async.task.DownloadTask;
@@ -40,7 +41,7 @@ import com.liverussia.launcher.domain.LoaderSliderItemData;
 import com.liverussia.launcher.async.dto.response.LoaderSliderInfoResponseDto;
 import com.liverussia.launcher.domain.enums.DownloadType;
 import com.liverussia.launcher.domain.enums.NativeStorageElements;
-import com.liverussia.launcher.domain.messages.ErrorMessages;
+import com.liverussia.launcher.domain.messages.ErrorMessage;
 import com.liverussia.launcher.async.service.NetworkService;
 import com.liverussia.launcher.service.ActivityService;
 import com.liverussia.launcher.service.impl.ActivityServiceImpl;
@@ -167,11 +168,18 @@ public class LoaderActivity extends AppCompatActivity {
         finish();
     }
 
+    private void redirectToMonitoring() {
+        Intent intent = new Intent(this, com.liverussia.launcher.ui.activity.SplashActivity.class);
+        intent.putExtras(getIntent());
+        startActivity(intent);
+        finish();
+    }
+
     private void installGame(DownloadType type) {
         switch (type) {
             case LOAD_ALL_CACHE: {
                 downloadTask = new DownloadTask(this, progressBar);
-                downloadTask.setOnAsyncSuccessListener(this::performAfterLoadCacheFailed);
+                downloadTask.setOnAsyncSuccessListener(this::performAfterLoadCacheSuccess);
                 downloadTask.setOnAsyncCriticalErrorListener(this::performAfterDownloadFailed);
                 downloadTask.download();
                 break;
@@ -179,7 +187,7 @@ public class LoaderActivity extends AppCompatActivity {
 
             case RELOAD_OR_ADD_PART_OF_CACHE: {
                 downloadTask = new DownloadTask(this, progressBar);
-                downloadTask.setOnAsyncSuccessListener(this::performAfterReloadCacheFailed);
+                downloadTask.setOnAsyncSuccessListener(this::performAfterReloadCacheSuccess);
                 downloadTask.setOnAsyncCriticalErrorListener(this::performAfterDownloadFailed);
                 downloadTask.reloadCache();
                 break;
@@ -198,20 +206,28 @@ public class LoaderActivity extends AppCompatActivity {
         startActivity(new Intent(this, com.liverussia.launcher.ui.activity.SplashActivity.class));
     }
 
-    private void performAfterLoadCacheFailed() {
+    private void performAfterLoadCacheSuccess() {
         redirectToSettings();
     }
 
-    private void performAfterReloadCacheFailed() {
+    private void performAfterReloadCacheSuccess() {
         String nickname = NativeStorage.getClientProperty(NativeStorageElements.NICKNAME, this);
+        String selectedServer = NativeStorage.getClientProperty(NativeStorageElements.SERVER, this);
 
-        if (StringUtils.isNotBlank(nickname)) {
-            startActivity(new Intent(this, GTASA.class));
-            this.finish();
+        if (StringUtils.isBlank(nickname)) {
+            activityService.showMessage(InfoMessage.DOWNLOAD_SUCCESS_INPUT_YOUR_NICKNAME.getText(), this);
+            redirectToSettings();
             return;
         }
 
-        redirectToSettings();
+        if (StringUtils.isBlank(selectedServer)) {
+            activityService.showMessage(InfoMessage.DOWNLOAD_SUCCESS_SELECT_SERVER.getText(), this);
+            redirectToMonitoring();
+            return;
+        }
+
+        startActivity(new Intent(this, GTASA.class));
+        this.finish();
     }
 
     private void performAfterUpdateApkFailed() {
@@ -286,7 +302,7 @@ public class LoaderActivity extends AppCompatActivity {
         List<LoaderSliderItemData> sliderDataArrayList = new ArrayList<>();
 
         LoaderSliderItemData sliderItemData = new LoaderSliderItemData();
-        sliderItemData.setText(ErrorMessages.FAILED_LOAD_LOADER_SLIDER_DATA.getText());
+        sliderItemData.setText(ErrorMessage.FAILED_LOAD_LOADER_SLIDER_DATA.getText());
 
         sliderDataArrayList.add(sliderItemData);
 
@@ -374,7 +390,7 @@ public class LoaderActivity extends AppCompatActivity {
                 finish();
             }
             else {
-                activityService.showMessage(ErrorMessages.APK_UPDATE_FILE_NOT_FOUND.getText(), this);
+                activityService.showMessage(ErrorMessage.APK_UPDATE_FILE_NOT_FOUND.getText(), this);
                 finish();
                 System.exit(EXIT_SUCCESS_STATUS);
             }

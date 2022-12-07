@@ -18,7 +18,7 @@ import com.liverussia.launcher.ui.fragment.SettingsFragment;
 import com.liverussia.launcher.storage.NativeStorage;
 import com.liverussia.launcher.utils.Validator;
 
-public class EnterNicknameDialogBuilder extends MaterialAlertDialogBuilder implements View.OnClickListener {
+public class EnterNicknameDialog extends MaterialAlertDialogBuilder implements View.OnClickListener {
 
     private final SettingsFragment settingsFragment;
 
@@ -26,7 +26,7 @@ public class EnterNicknameDialogBuilder extends MaterialAlertDialogBuilder imple
     private EditText nicknameInput;
     private Animation animation;
 
-    public EnterNicknameDialogBuilder(SettingsFragment settingsFragment) {
+    public EnterNicknameDialog(SettingsFragment settingsFragment) {
         super(settingsFragment.getActivity());
         this.settingsFragment = settingsFragment;
         createDialog();
