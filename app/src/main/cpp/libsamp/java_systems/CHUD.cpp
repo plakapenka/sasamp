@@ -2,7 +2,7 @@
 // Created by plaka on 28.10.2022.
 //
 
-#include "hud.h"
+#include "CHUD.h"
 #include <jni.h>
 
 #include "main.h"
@@ -111,6 +111,7 @@ void CHUD::ToggleAll(bool toggle, bool withchat)
 
     *(uint8_t*)(g_libGTASA+0x7165E8) = 0;//дефолт худ офф
     ScriptCommand(&toggle_radar_blank, (int)toggle); // радар офф
+    Log("HudToggle = %d", toggle);
 }
 //
 void CHUD::ToggleEnterPassengerButton(bool toggle)

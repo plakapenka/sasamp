@@ -1,5 +1,6 @@
 APP_ABI := armeabi-v7a
 APP_DEBUG := true
+APP_OPTIM := debug
 APP_MODULES := samp
-APP_STL := c++_shared
+APP_STL := c++_static
 LOCAL_CPP_FEATURES := exceptions
