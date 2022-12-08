@@ -589,7 +589,9 @@ void CPlayerPed::SetInterior(uint8_t byteID)
 void CPlayerPed::PutDirectlyInVehicle(int iVehicleID, int iSeat)
 {
 	if(!m_pPed) return;
-	if(!GamePool_Vehicle_GetAt(iVehicleID)) return;
+	VEHICLE_TYPE *pVehicle = GamePool_Vehicle_GetAt(iVehicleID);
+
+	if(!pVehicle) return;
 	if(!GamePool_Ped_GetAt(m_dwGTAId)) return;
 
 	/*
@@ -597,8 +599,6 @@ void CPlayerPed::PutDirectlyInVehicle(int iVehicleID, int iSeat)
 		SetArmedWeapon(0);
 	}*/
 	MATRIX4X4 mat;
-
-	VEHICLE_TYPE *pVehicle = GamePool_Vehicle_GetAt(iVehicleID);
 
 	// check seatid
 	if(IsInVehicle()) {
@@ -608,19 +608,16 @@ void CPlayerPed::PutDirectlyInVehicle(int iVehicleID, int iSeat)
 
 	if(iSeat == 0)
 	{
-		if(pVehicle->pDriver && IN_VEHICLE(pVehicle->pDriver)) return;
+		if(pVehicle->pDriver) return;
 		ScriptCommand(&TASK_WARP_CHAR_INTO_CAR_AS_DRIVER, m_dwGTAId, iVehicleID);
-        pGame->GetCamera()->SetBehindPlayer();
 	}
 	else
 	{
 		iSeat--;
 		ScriptCommand(&put_actor_in_car2, m_dwGTAId, iVehicleID, iSeat);
-        pGame->GetCamera()->SetBehindPlayer();
 	}
 
-//	if(m_pPed == GamePool_FindPlayerPed() && IN_VEHICLE(m_pPed))
-//		pGame->GetCamera()->SetBehindPlayer();
+	pGame->GetCamera()->SetBehindPlayer();
 }
 
 void CPlayerPed::EnterVehicle(int iVehicleID, bool bPassenger)
@@ -786,7 +783,7 @@ void CPlayerPed::ClearAllWeapons()
 
 void CPlayerPed::ResetDamageEntity()
 {
-
+	m_pPed->pdwDamageEntity = 0;
 }
 
 // 0.3.7
@@ -1348,51 +1345,6 @@ void CPlayerPed::ApplyAnimation(char* szAnimName, char* szAnimFile, float fDelta
 	animFlagLoop = bLoop;
 
 	ScriptCommand(&apply_animation, m_dwGTAId, szAnimName, szAnimFile, fDelta, bLoop, bLockX, bLockY, bFreeze, uiTime);
-}
-
-
-PLAYERID CPlayerPed::FindDeathResponsiblePlayer()
-{
-	CPlayerPool *pPlayerPool;
-	CVehiclePool *pVehiclePool;
-	PLAYERID PlayerIDWhoKilled = INVALID_PLAYER_ID;
-	
-	if(pNetGame) 
-	{
-		pVehiclePool = pNetGame->GetVehiclePool();
-		pPlayerPool = pNetGame->GetPlayerPool();
-	}
-	else 
-	{ // just leave if there's no netgame.
-		return INVALID_PLAYER_ID;
-	}
-
-	if(m_pPed)
-	{
-		if(m_pPed->pdwDamageEntity)
-		{
-			PlayerIDWhoKilled = pPlayerPool->FindRemotePlayerIDFromGtaPtr((PED_TYPE *)m_pPed->pdwDamageEntity);
-			if(PlayerIDWhoKilled != INVALID_PLAYER_ID) 
-			{
-					// killed by another player with a weapon, this is all easy.
-					return PlayerIDWhoKilled;
-			}
-			else
-			{
-				if(pVehiclePool->FindIDFromGtaPtr((VEHICLE_TYPE *)m_pPed->pdwDamageEntity) != INVALID_VEHICLE_ID) 
-				{
-					VEHICLE_TYPE *pGtaVehicle = (VEHICLE_TYPE *)m_pPed->pdwDamageEntity;
-					PlayerIDWhoKilled = pPlayerPool->FindRemotePlayerIDFromGtaPtr((PED_TYPE *)pGtaVehicle->pDriver);
-						
-					if(PlayerIDWhoKilled != INVALID_PLAYER_ID) 
-					{
-						return PlayerIDWhoKilled;
-					}
-				}
-			}
-		}
-	}
-	return INVALID_PLAYER_ID;
 }
 
 BYTE CPlayerPed::FindDeathReasonAndResponsiblePlayer(PLAYERID * nPlayer)

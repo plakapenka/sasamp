@@ -82,6 +82,8 @@ void ANDRunThread_hook(void* a1);
 
 void ApplyPatches_level0()
 {
+	Log("ApplyPatches_level0");
+
 	PLAYERS_REALLOC = ((char* (*)(uint32_t))(g_libGTASA + 0x179B40))(404 * 257 * sizeof(char));
 	memset(PLAYERS_REALLOC, 0, 404 * 257);
 	UnFuck(g_libGTASA + 0x5D021C);
@@ -114,8 +116,10 @@ void ApplyPatches_level0()
 	uint8_t fps = 90;
 	if (pSettings)
 	{
+		Log("fps");
 		fps = pSettings->GetReadOnly().iFPS;
 	}
+	Log("posle_fps");
 	WriteMemory(g_libGTASA + 0x463FE8, (uintptr_t)& fps, 1);
 	WriteMemory(g_libGTASA + 0x56C1F6, (uintptr_t)& fps, 1);
 	WriteMemory(g_libGTASA + 0x56C126, (uintptr_t)& fps, 1);

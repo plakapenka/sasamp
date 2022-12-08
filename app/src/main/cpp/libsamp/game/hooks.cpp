@@ -687,20 +687,20 @@ void NvUtilInit_hook(void)
 signed int (*OS_FileOpen)(unsigned int a1, int *a2, const char *a3, int a4);
 signed int OS_FileOpen_hook(unsigned int a1, int *a2, const char *a3, int a4)
 {
-    Log("%s", a3);
+   // Log("%s", a3);
     uintptr_t calledFrom = 0;
     __asm__ volatile("mov %0, lr"
     : "=r"(calledFrom));
     calledFrom -= g_libGTASA;
     signed int retn = OS_FileOpen(a1, a2, a3, a4);
 
-    //if (calledFrom == 0x1BCE9A + 1)
-    //{
+    if (calledFrom == 0x1BCE9A + 1)
+    {
         if (isEncrypted(a3))
         {
             lastOpenedFile = *a2;
         }
-   // }
+    }
     return retn;
 }
 
@@ -757,9 +757,74 @@ size_t OS_FileRead_hook(FILE *a1, void *a2, size_t a3)
     }
 }
 
+void (*CTimer__StartUserPause)();
+void CTimer__StartUserPause_hook()
+{
+	// process pause event
+	if (g_pJavaWrapper)
+	{
+		if (pKeyBoard)
+		{
+			if (pKeyBoard->IsNewKeyboard())
+			{
+				pKeyBoard->Close();
+			}
+		}
+		g_pJavaWrapper->SetPauseState(true);
+	}
+
+	*(uint8_t*)(g_libGTASA + 0x008C9BA3) = 1;
+}
+
+void (*CTimer__EndUserPause)();
+void CTimer__EndUserPause_hook()
+{
+	// process resume event
+	if (g_pJavaWrapper)
+	{
+		g_pJavaWrapper->SetPauseState(false);
+	}
+
+	*(uint8_t*)(g_libGTASA + 0x008C9BA3) = 0;
+}
+
+void (*RQ_Command_rqSetAlphaTest)(char**);
+void RQ_Command_rqSetAlphaTest_hook(char** a1)
+{
+	return;
+}
 
 void InstallSpecialHooks()
 {
+	Log("InstallSpecialHooks");
+
+	// increase render memory buffer
+	SetUpHook(g_libGTASA + 0x003BF784, (uintptr_t)CTimer__StartUserPause_hook, (uintptr_t*)& CTimer__StartUserPause);
+	SetUpHook(g_libGTASA + 0x003BF7A0, (uintptr_t)CTimer__EndUserPause_hook, (uintptr_t*)& CTimer__EndUserPause);
+
+	// yes, just nop-out this fucking shit
+	// this should prevent game from crashing when exiting(R*)
+	NOP(g_libGTASA + 0x0039844E, 2);
+	NOP(g_libGTASA + 0x0039845E, 2);
+	NOP(g_libGTASA + 0x0039840A, 2);
+
+	NOP(g_libGTASA + 0x002E1EDC, 2); // get the fuck up this uninitialised shit!
+	NOP(g_libGTASA + 0x00398972, 2); // get out fucking roadblocks
+	// maybe nop engine terminating ????
+	// terminate all stuff when exiting
+	// nop shit pause
+
+	//спорно
+	if (!*(uintptr_t *)(g_libGTASA + 0x61B298))
+	{
+		uintptr_t test = ((uintptr_t(*)(const char *))(g_libGTASA + 0x00179A20))("glAlphaFuncQCOM");
+		if (!test)
+		{
+			NOP(g_libGTASA + 0x001A6164, 4);
+			SetUpHook(g_libGTASA + 0x001A6164, (uintptr_t)RQ_Command_rqSetAlphaTest_hook, (uintptr_t*)&RQ_Command_rqSetAlphaTest);
+		}
+	}
+
 	//pvr
 	UnFuck(g_libGTASA + 0x00573670);
 	*(char*)(g_libGTASA + 0x00573670 + 12) = 'd';
@@ -803,9 +868,7 @@ void InstallSpecialHooks()
 	SetUpHook(g_libGTASA + 0x0023ACC4, (uintptr_t)NVEventGetNextEvent_hook, (uintptr_t*)& NVEventGetNextEvent_hooked);
 	SetUpHook(g_libGTASA + 0x004042A8, (uintptr_t)CStreaming__Init2_hook, (uintptr_t*)& CStreaming__Init2);	// increase stream memory value
 
-	NOP(g_libGTASA + 0x00341FCC, 2); // nop PauseOpenSLES
 
-	//NOP(g_libGTASA + 0x0046389E, 2); // nop saving
 }
 
 void ProcessPedDamage(PED_TYPE* pIssuer, PED_TYPE* pPlayer);
@@ -1747,6 +1810,9 @@ bool (*CGame__Shutdown)();
 bool CGame__Shutdown_hook()
 {
 	Log("Exiting game...");
+    NOP(g_libGTASA + 0x00341FCC, 2); // nop PauseOpenSLES
+
+    NOP(g_libGTASA + 0x0046389E, 2); // nop saving
 
 	if (pNetGame)
 	{
@@ -2498,8 +2564,8 @@ void CStreaming__RemoveModel_hook(int model)
 int g_iLastProcessedSkinCollision = 228;
 int g_iLastProcessedEntityCollision = 228;
 
-void (*SaveSlot)(uintptr_t *thiz, uintptr_t *a2, bool a3);
-void SaveSlot_hook(uintptr_t *thiz, uintptr_t *a2, bool a3)
+void (*NopeVoidFunc)(uintptr_t *thiz, uintptr_t *a2, bool a3);
+void NopeVoidFunc_hook(uintptr_t *thiz, uintptr_t *a2, bool a3)
 {
 	return;
 }
@@ -2604,7 +2670,7 @@ void InstallHooks()
 	// GetFrameFromID fix
 	SetUpHook(g_libGTASA + 0x00335CC0, (uintptr_t)CClumpModelInfo_GetFrameFromId_hook, (uintptr_t*)& CClumpModelInfo_GetFrameFromId);
 	// RLEDecompress fix
-	SetUpHook(g_libGTASA + 0x1BC314, (uintptr_t)RLEDecompress_hook, (uintptr_t*)&RLEDecompress);
+	SetUpHook(g_libGTASA + 0x001BC314, (uintptr_t)RLEDecompress_hook, (uintptr_t*)&RLEDecompress);
 
 	//RpMaterialDestroy fix ? не точно
 	SetUpHook(g_libGTASA + 0x001E3C54, (uintptr_t)RpMaterialDestroy_hook, (uintptr_t*)&RpMaterialDestroy);
@@ -2691,7 +2757,17 @@ void InstallHooks()
 	SetUpHook(g_libGTASA + 0x0031B164, (uintptr_t)FxEmitterBP_c__Render_hook, (uintptr_t*)& FxEmitterBP_c__Render);
 	SetUpHook(g_libGTASA + 0x0043A17C, (uintptr_t)CPed__ProcessEntityCollision_hook, (uintptr_t*)&CPed__ProcessEntityCollision);
 
-	SetUpHook(g_libGTASA + 0x00463870, (uintptr_t)SaveSlot_hook, (uintptr_t*)& SaveSlot);
+	// all save omg
+	SetUpHook(g_libGTASA + 0x00463870, (uintptr_t)NopeVoidFunc_hook, (uintptr_t*)&NopeVoidFunc);
+    SetUpHook(g_libGTASA + 0x0041D1C8, (uintptr_t)NopeVoidFunc_hook, (uintptr_t*)&NopeVoidFunc);
+	SetUpHook(g_libGTASA + 0x00267128, (uintptr_t)NopeVoidFunc_hook, (uintptr_t*)&NopeVoidFunc);
+	SetUpHook(g_libGTASA + 0x00266D04, (uintptr_t)NopeVoidFunc_hook, (uintptr_t*)&NopeVoidFunc);
+	SetUpHook(g_libGTASA + 0x0024CDF8, (uintptr_t)NopeVoidFunc_hook, (uintptr_t*)&NopeVoidFunc);
+	SetUpHook(g_libGTASA + 0x0026A670, (uintptr_t)NopeVoidFunc_hook, (uintptr_t*)&NopeVoidFunc);
+	SetUpHook(g_libGTASA + 0x00463A68, (uintptr_t)NopeVoidFunc_hook, (uintptr_t*)&NopeVoidFunc);
+
+    //ProcessEvents crash
+    NOP(g_libGTASA + 0x0023AF8A, 10);
 
 	HookCPad();
 }

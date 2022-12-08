@@ -64,9 +64,8 @@ void CExtendedCarColors::ApplyPatches_level0()
 
 	UnFuck(g_libGTASA + 0x005CF418);
 	*(CRGBA * *)(g_libGTASA + 0x005CF418) = &ms_vehicleColourTable[0];
-#ifdef _CDEBUG
+
 	Log("Applied car cols patch");
-#endif
 }
 
 CRGBA& CExtendedCarColors::GetCarColorByID(uint8_t id)

@@ -21,10 +21,11 @@ public class GTASA extends WarMedia {
         System.out.println("**** Loading SO's");
         try {
             vmVersion = System.getProperty("java.vm.version");
-            Log.d("err", "vmVersion = " + vmVersion);
+            System.out.println("vmVersion " + vmVersion);
             System.loadLibrary("ImmEmulatorJ");
         } catch (ExceptionInInitializerError | UnsatisfiedLinkError e) {
         }
+        System.loadLibrary("SCAnd");
         System.loadLibrary("GTASA");
         System.loadLibrary("samp");
     }

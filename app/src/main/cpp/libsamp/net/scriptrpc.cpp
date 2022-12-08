@@ -317,7 +317,6 @@ void ScrCreateExplosion(RPCParameters *rpcParams)
 
 void ScrSetPlayerHealth(RPCParameters *rpcParams)
 {
-	Log("RPC: ScrSetPlayerHealth");
 
 	unsigned char* Data = reinterpret_cast<unsigned char *>(rpcParams->input);
 	int iBitLength = rpcParams->numberOfBitsOfData;

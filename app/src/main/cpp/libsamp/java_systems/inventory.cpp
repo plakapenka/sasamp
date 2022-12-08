@@ -187,7 +187,6 @@ Java_com_liverussia_cr_gui_Inventory_SendSelectItem(JNIEnv *env, jobject thiz, j
     bsSend.Write((uint8_t)matrindex);
     bsSend.Write((uint16_t)pos);
 
-    Log("matrindex - %d, pos - %d", matrindex, pos);
     pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
 }
 extern "C"

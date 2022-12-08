@@ -556,8 +556,8 @@ void CLocalPlayer::SendBulletSyncData(PLAYERID byteHitID, uint8_t byteHitType, V
 void CLocalPlayer::SendWastedNotification()
 {
 	RakNet::BitStream bsPlayerDeath;
-	BYTE byteDeathReason;
-	PLAYERID WhoWasResponsible;
+	uint8_t byteDeathReason;
+	uint16_t WhoWasResponsible;
 
 	byteDeathReason = m_pPlayerPed->FindDeathReasonAndResponsiblePlayer(&WhoWasResponsible);
 
@@ -565,15 +565,6 @@ void CLocalPlayer::SendWastedNotification()
 	bsPlayerDeath.Write(WhoWasResponsible);
 	pNetGame->GetRakClient()->RPC(&RPC_Death, &bsPlayerDeath, HIGH_PRIORITY, RELIABLE_ORDERED, 0, false, UNASSIGNED_NETWORK_ID, NULL);
 //
-//	RakNet::BitStream bsPlayerDeath;
-//	CPlayerPool *pPlayerPool = pNetGame->GetPlayerPool();
-//	if(pPlayerPool)
-//	{
-//		PLAYERID WhoWasResponsible = m_pPlayerPed->FindDeathResponsiblePlayer();
-//		bsPlayerDeath.Write(FindDeathReasonPlayer);
-//		bsPlayerDeath.Write(WhoWasResponsible);
-//		pNetGame->GetRakClient()->RPC(&RPC_Death, &bsPlayerDeath, HIGH_PRIORITY, RELIABLE_ORDERED, 0, false, UNASSIGNED_NETWORK_ID, nullptr);
-//	}
 }
 
 void CLocalPlayer::GoEnterVehicle(bool passenger)

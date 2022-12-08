@@ -246,37 +246,6 @@ void InitInGame()
 	}
 }
 
-void (*CTimer__StartUserPause)();
-void CTimer__StartUserPause_hook()
-{
-	// process pause event
-	if (g_pJavaWrapper)
-	{
-		if (pKeyBoard)
-		{
-			if (pKeyBoard->IsNewKeyboard())
-			{
-				pKeyBoard->Close();
-			}
-		}
-		g_pJavaWrapper->SetPauseState(true);
-	}
-
-	*(uint8_t*)(g_libGTASA + 0x008C9BA3) = 1;
-}
-
-void (*CTimer__EndUserPause)();
-void CTimer__EndUserPause_hook()
-{
-	// process resume event
-	if (g_pJavaWrapper)
-	{
-		g_pJavaWrapper->SetPauseState(false);
-	}
-
-	*(uint8_t*)(g_libGTASA + 0x008C9BA3) = 0;
-}
-
 #include "CDebugInfo.h"
 void MainLoop()
 {
@@ -566,12 +535,6 @@ extern "C"
 }
 extern "C" AL_API jint AL_APIENTRY JNI_OnLoad_alc(JavaVM* vm, void* reserved);
 
-void (*RQ_Command_rqSetAlphaTest)(char**);
-void RQ_Command_rqSetAlphaTest_hook(char** a1)
-{
-	return;
-}
-
 #include "CFPSFix.h"
 CFPSFix g_fps;
 
@@ -612,49 +575,23 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 	Log("libsamp.so: 0x%x", libsamp);
 	Log("libc.so: 0x%x", libc);
 
-//	char str[100];
-//
-//	sprintf(str, "0x%x", libgtasa);
-//	firebase::crashlytics::SetCustomKey("libGTASA.so", str);
-//
-//	sprintf(str, "0x%x", libsamp);
-//	firebase::crashlytics::SetCustomKey("libsamp.so", str);
-//
-//	sprintf(str, "0x%x", libc);
-//	firebase::crashlytics::SetCustomKey("libc.so", str);
+	char str[100];
+
+	sprintf(str, "0x%x", libgtasa);
+	firebase::crashlytics::SetCustomKey("libGTASA.so", str);
+
+	sprintf(str, "0x%x", libsamp);
+	firebase::crashlytics::SetCustomKey("libsamp.so", str);
+
+	sprintf(str, "0x%x", libc);
+	firebase::crashlytics::SetCustomKey("libc.so", str);
 
 	srand(time(0));
 
 	InitHookStuff();
 
-	InitRenderWareFunctions();
 	InstallSpecialHooks();
-	// increase render memory buffer
-	SetUpHook(g_libGTASA + 0x003BF784, (uintptr_t)CTimer__StartUserPause_hook, (uintptr_t*)& CTimer__StartUserPause);
-	SetUpHook(g_libGTASA + 0x003BF7A0, (uintptr_t)CTimer__EndUserPause_hook, (uintptr_t*)& CTimer__EndUserPause);
-
-	// yes, just nop-out this fucking shit
-	// this should prevent game from crashing when exiting(R*)
-	NOP(g_libGTASA + 0x0039844E, 2);
-	NOP(g_libGTASA + 0x0039845E, 2);
-	NOP(g_libGTASA + 0x0039840A, 2);
-
-	NOP(g_libGTASA + 0x002E1EDC, 2); // get the fuck up this uninitialised shit!
-	NOP(g_libGTASA + 0x00398972, 2); // get out fucking roadblocks
-	// maybe nop engine terminating ????
-	// terminate all stuff when exiting
-	// nop shit pause
-
-	//спорно
-	if (!*(uintptr_t *)(g_libGTASA + 0x61B298))
-	{
-		uintptr_t test = ((uintptr_t(*)(const char *))(g_libGTASA + 0x00179A20))("glAlphaFuncQCOM");
-		if (!test)
-		{
-			NOP(g_libGTASA + 0x001A6164, 4);
-			SetUpHook(g_libGTASA + 0x001A6164, (uintptr_t)RQ_Command_rqSetAlphaTest_hook, (uintptr_t*)&RQ_Command_rqSetAlphaTest);
-		}
-	}
+	InitRenderWareFunctions();
 
 	ApplyPatches_level0();
 

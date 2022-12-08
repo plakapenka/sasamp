@@ -57,7 +57,7 @@ public class Casino {
         casino_chip_get_count = activity.findViewById(R.id.casino_chip_get_count);
         casino_chip_back_button = activity.findViewById(R.id.casino_chip_back_button);
         casino_chip_back_button.setOnClickListener(view -> {
-            ClickChipButton(0, 0, chip_isSell);
+            ClickChipButton(0, 0, !chip_isSell);
             Utils.HideLayout(casino_chip_main_layout, true);
         });
         casino_chip_input = activity.findViewById(R.id.casino_chip_input);
@@ -79,7 +79,7 @@ public class Casino {
         });
         casino_chip_buy_button = activity.findViewById(R.id.casino_chip_buy_button);
         casino_chip_buy_button.setOnClickListener(view -> {
-            ClickChipButton(1, getChipGetCount(), chip_isSell);
+            ClickChipButton(1, getChipGetCount(), !chip_isSell);
             Utils.HideLayout(casino_chip_main_layout, true);
         });
         casino_chip_exit_button = activity.findViewById(R.id.casino_chip_exit_button);
