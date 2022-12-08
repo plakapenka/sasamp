@@ -48,7 +48,9 @@ public class DialogMenuAdapter extends RecyclerView.Adapter<DialogMenuAdapter.Di
             this.nameBlockButton = (TextView) view.findViewById(R.id.item_menu_name_button);
             this.imageViewBlockButton = (ImageView) view.findViewById(R.id.item_menu_image);
             this.bcgFill = (ImageView) view.findViewById(R.id.bcg_color_fill);
-            view.setOnClickListener(view2 -> DialogMenuAdapter.this.onUserClickListener.click(DialogMenuAdapter.this.lDataDialogMenu.get(DialogMenuHolder.this.getLayoutPosition()), view2));
+            view.setOnClickListener(view2 ->
+                    DialogMenuAdapter.this.onUserClickListener.click(DialogMenuAdapter.this.lDataDialogMenu.get(DialogMenuHolder.this.getLayoutPosition()), view2)
+            );
         }
     }
 }

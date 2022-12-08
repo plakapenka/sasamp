@@ -229,35 +229,41 @@ extern "C"
 		switch(type) {
 			case 1:
 				switch(action) {
-					case 398:
-						pNetGame->SendChatCommand("/gps");
-						break;
 					case 1:
 						pNetGame->SendChatCommand("/gps");
 						break;
 					case 2:
-						pNetGame->SendChatCommand("/mn");
+						pNetGame->SendChatCommand("/mm");
 						break;
-					case 4: 
+					case 3:
 						pNetGame->SendChatCommand("/inv");
 						break;
-					case 5: {
+					case 4: {
 						//pNetGame->SendChatCommand("/anim");
 						pNetGame->SendChatCommand("/anim");	
 						break;
 					}
-					case 6:
+					case 5:
 						pNetGame->SendChatCommand("/donate");
 						break;
-					case 7:
+					case 6:
 						pNetGame->SendChatCommand("/car");
 						break;
+					case 7:
+					{
+						pNetGame->SendChatCommand("/report");
+						break;
+					}
 					case 8:
+					{
+						pNetGame->SendChatCommand("/promo");
+						break;
+					}
+					case 9:
 					{
 						ToggleTab();
 						break;
 					}
-
 				}
 			case 2:
 				switch(action) {

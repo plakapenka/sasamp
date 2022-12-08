@@ -105,15 +105,16 @@ public class Menu {
 
     private void setMenu() {
         this.dataDialogMenuArrayList.clear();
-        this.dataDialogMenuArrayList.add(new DataDialogMenu(398, R.drawable.br_menu_compass, "Навигатор"));
-        this.dataDialogMenuArrayList.add(new DataDialogMenu(1, R.drawable.br_menu_taxi, "Вызов такси"));
+        this.dataDialogMenuArrayList.add(new DataDialogMenu(1, R.drawable.br_menu_compass, "Навигатор"));
         this.dataDialogMenuArrayList.add(new DataDialogMenu(2, R.drawable.br_menu_menu, "Меню"));
-        this.dataDialogMenuArrayList.add(new DataDialogMenu(3, R.drawable.br_menu_chat, "Общение"));
-        this.dataDialogMenuArrayList.add(new DataDialogMenu(4, R.drawable.br_menu_bag, "Инвентарь"));
-        this.dataDialogMenuArrayList.add(new DataDialogMenu(5, R.drawable.br_menu_anim, "Анимации"));
-        this.dataDialogMenuArrayList.add(new DataDialogMenu(6, R.drawable.br_menu_ruble, "Донат"));
-        this.dataDialogMenuArrayList.add(new DataDialogMenu(7, R.drawable.br_menu_car, "Автомобили"));
-        this.dataDialogMenuArrayList.add(new DataDialogMenu(8, R.drawable.players_icon, "Игроки"));
+       // this.dataDialogMenuArrayList.add(new DataDialogMenu(3, R.drawable.br_menu_chat, "Общение"));
+        this.dataDialogMenuArrayList.add(new DataDialogMenu(3, R.drawable.br_menu_bag, "Инвентарь"));
+        this.dataDialogMenuArrayList.add(new DataDialogMenu(4, R.drawable.br_menu_anim, "Анимации"));
+        this.dataDialogMenuArrayList.add(new DataDialogMenu(5, R.drawable.br_menu_ruble, "Донат"));
+        this.dataDialogMenuArrayList.add(new DataDialogMenu(6, R.drawable.br_menu_car, "Автомобили"));
+        this.dataDialogMenuArrayList.add(new DataDialogMenu(7, R.drawable.menu_report_icon, "Жалоба"));
+        this.dataDialogMenuArrayList.add(new DataDialogMenu(8, R.drawable.menu_promocode_icon, "Промокод"));
+        this.dataDialogMenuArrayList.add(new DataDialogMenu(9, R.drawable.players_icon, "Игроки"));
     }
 
     private void setDialogMenu() {
