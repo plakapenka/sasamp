@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include "str_obfuscator_no_template.hpp"
 
-#define MAX_SERVERS	3
+#define MAX_SERVERS	5
 
 class CServerInstance
 {
@@ -75,4 +75,3 @@ public:
 	#a1 "." #a2 "." #a3 "." #a4, a1 + a2 + a3 + a4
 
 extern const CServerInstance::CServerInstanceEncrypted g_sEncryptedAddresses[MAX_SERVERS];
-extern const char* g_szServerNames[MAX_SERVERS];
