@@ -51,7 +51,7 @@ unsigned int color_scheme = 0;
 
 void LoadSplashTexture()
 {
-	Log("Loading splash texture..");
+	Log("Loading hud bg texture..");
 	splashTexture = (RwTexture*)LoadTextureFromDB("txd", "hud_bg");
 }
 
@@ -115,19 +115,11 @@ void RenderBackgroundHud()
 
 		if (splashTexture)
 		{//183 55.. 399..33
-			//183+200), pGUI->ScaleY(74+200)), ImVec2(pGUI->ScaleX(399+200), pGUI->ScaleY(336+200)
-////////////////////////////////////////////////////////////////////////////////////////////////////183, 74, 399, 336
-//			ImGui::GetBackgroundDrawList()->AddImage((ImTextureID)splashTexture->raster,
-//													 ImVec2(pGUI->ScaleX(183), pGUI->ScaleY(74)),
-//													 ImVec2(pGUI->ScaleX(399), pGUI->ScaleY(336)),
-//													 ImVec2(0, 0), ImVec2(1, 1));
-
 			ImGui::GetBackgroundDrawList()->AddImage((ImTextureID)splashTexture->raster,
 													 ImVec2(pHud->radarbgx1, pHud->radarbgy1),
 													 ImVec2(pHud->radarbgx2, pHud->radarbgy2),
 													 ImVec2(0, 0), ImVec2(1, 1));
 		}
-		// ImGui::GetBackgroundDrawList()->AddCircleFilled(ImVec2(pGUI->ScaleX(291), pGUI->ScaleY(205)), pGUI->ScaleX(108), 0x75000000, 45);
 	}
 
 	ImGui::EndFrame();
