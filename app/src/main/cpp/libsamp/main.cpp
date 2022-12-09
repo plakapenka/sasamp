@@ -231,9 +231,7 @@ void InitInGame()
 
 	if (!bNetworkInited)
 	{
-		Log("dopustim");
 		CChatWindow::AddDebugMessage("{bbbbbb}Клиент {ff0000}LIVE RUSSIA{bbbbbb} запущен");
-		Log("dopustim2");
 		pNetGame = new CNetGame(
 			g_sEncryptedAddresses[pSettings->GetReadOnly().szServer].decrypt(),
 			g_sEncryptedAddresses[pSettings->GetReadOnly().szServer].getPort(),
@@ -590,8 +588,8 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 
 	InitHookStuff();
 
-	InstallSpecialHooks();
 	InitRenderWareFunctions();
+	InstallSpecialHooks();
 
 	ApplyPatches_level0();
 

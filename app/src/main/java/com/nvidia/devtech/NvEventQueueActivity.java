@@ -693,6 +693,7 @@ public abstract class NvEventQueueActivity
             }
         }
 
+        // пауза при сворачивании
         if (ResumeEventDone && viewIsActive && !paused)
         {
             if (GameIsFocused && !hasFocus)
@@ -701,12 +702,12 @@ public abstract class NvEventQueueActivity
                 {
                     if(!mInputManager.IsShowing())
                     {
-                        pauseEvent();
+                       // pauseEvent();
                     }
                 }
                 else
                 {
-                    pauseEvent();
+                    //pauseEvent();
                 }
             }
             else if (!GameIsFocused && hasFocus)
@@ -861,30 +862,30 @@ public abstract class NvEventQueueActivity
      */
 	public void onSensorChanged(SensorEvent event) {
 		// Auto-generated method stub
-		if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
-        {
-            float roll = 0.0f;
-            float pitch = 0.0f;
-            switch (this.display.getRotation()) {
-                case 0:
-                    roll = -event.values[0];
-                    pitch = event.values[1];
-                    break;
-                case 1:
-                    roll = event.values[1];
-                    pitch = event.values[0];
-                    break;
-                case 2:
-                    roll = event.values[0];
-                    pitch = event.values[1];
-                    break;
-                case 3:
-                    roll = -event.values[1];
-                    pitch = event.values[0];
-                    break;
-            }
-            accelerometerEvent(roll, pitch, event.values[2]);
-        }
+//		if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
+//        {
+//            float roll = 0.0f;
+//            float pitch = 0.0f;
+//            switch (this.display.getRotation()) {
+//                case 0:
+//                    roll = -event.values[0];
+//                    pitch = event.values[1];
+//                    break;
+//                case 1:
+//                    roll = event.values[1];
+//                    pitch = event.values[0];
+//                    break;
+//                case 2:
+//                    roll = event.values[0];
+//                    pitch = event.values[1];
+//                    break;
+//                case 3:
+//                    roll = -event.values[1];
+//                    pitch = event.values[0];
+//                    break;
+//            }
+//            accelerometerEvent(roll, pitch, event.values[2]);
+//        }
 	}
     
     /**

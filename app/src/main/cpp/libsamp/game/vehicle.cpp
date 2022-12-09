@@ -555,6 +555,7 @@ void CVehicle::SetLightsState(int iState)
 {
 	if (GamePool_Vehicle_GetAt(m_dwGTAId))
 	{
+		m_pVehicle->m_nVehicleFlags.bLightsOn = iState;
 		ScriptCommand(&force_car_lights, m_dwGTAId, iState > 0 ? 2 : 1);
 		bLights = iState > 0 ? 2 : 1;
 	}

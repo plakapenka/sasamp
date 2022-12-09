@@ -40,6 +40,7 @@ const cryptor::string_encryptor encrArch[MAX_ENCRYPTED_TXD] = {
 
 bool isEncrypted(const char *szArch)
 {
+    return false;
     for (int i = 0; i < MAX_ENCRYPTED_TXD; i++)
     {
         if (!strcmp(encrArch[i].decrypt(), szArch))
@@ -282,30 +283,30 @@ void InitialiseRenderWare_hook()
 }
 
 /* ====================================================== */
-
 void (*CLoadingScreen_DisplayPCScreen)();
 void CLoadingScreen_DisplayPCScreen_hook()
 {
-	//RwCamera* camera = *(RwCamera**)(g_libGTASA+0x95B064);
-
-	//if(RwCameraBeginUpdate(camera))
-	//{
-		//DefinedState2d();
-		//(( void (*)())(g_libGTASA+0x5519C8+1))(); // CSprite2d::InitPerFrame()
-		//RwRenderStateSet(rwRENDERSTATETEXTUREADDRESS, (void*)rwTEXTUREADDRESSCLAMP);
-		//(( void (*)(bool))(g_libGTASA+0x198010+1))(false); // emu_GammaSet()
-
-		//RwCameraEndUpdate(camera);
-	//	RwCameraShowRaster(camera, 0, 0);
+//	RwCamera *camera = *(RwCamera **)(g_libGTASA + 0x95B064);
+//
+//	if (RwCameraBeginUpdate(camera))
+//	{
+//		DefinedState2d();
+//		((void (*)())(g_libGTASA + 0x5519C8 + 1))(); // CSprite2d::InitPerFrame()
+//		RwRenderStateSet(rwRENDERSTATETEXTUREADDRESS, (void *)rwTEXTUREADDRESSCLAMP);
+//		((void (*)(bool))(g_libGTASA + 0x198010 + 1))(false); // emu_GammaSet()
 
 		const float percent = *(float*)(g_libGTASA + 0x8F08C0)*2;
 		if (percent <= 0.0f) return;
 
 		g_pJavaWrapper->UpdateSplash((int)percent);
-	//}
+
+//		RwCameraEndUpdate(camera);
+//		RwCameraShowRaster(camera, 0, 0);
+//	}
 
 	return;
 }
+
 int bBlockCWidgetRegionLookUpdate = 0;
 
 /* ====================================================== */
@@ -694,13 +695,13 @@ signed int OS_FileOpen_hook(unsigned int a1, int *a2, const char *a3, int a4)
     calledFrom -= g_libGTASA;
     signed int retn = OS_FileOpen(a1, a2, a3, a4);
 
-    if (calledFrom == 0x1BCE9A + 1)
-    {
+    //if (calledFrom == 0x1BCE9A + 1)
+   // {
         if (isEncrypted(a3))
         {
             lastOpenedFile = *a2;
         }
-    }
+   // }
     return retn;
 }
 
@@ -2766,8 +2767,8 @@ void InstallHooks()
 	SetUpHook(g_libGTASA + 0x0026A670, (uintptr_t)NopeVoidFunc_hook, (uintptr_t*)&NopeVoidFunc);
 	SetUpHook(g_libGTASA + 0x00463A68, (uintptr_t)NopeVoidFunc_hook, (uintptr_t*)&NopeVoidFunc);
 
-    //ProcessEvents crash
-    NOP(g_libGTASA + 0x0023AF8A, 10);
+    //ProcessEvents crash спорно
+   // NOP(g_libGTASA + 0x0023AF8A, 10);
 
 	HookCPad();
 }

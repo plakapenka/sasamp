@@ -867,7 +867,12 @@ void CRemotePlayer::StoreInCarFullSyncData(INCAR_SYNC_DATA *picSync, uint32_t dw
 
 		memcpy(&m_icSync, picSync, sizeof(INCAR_SYNC_DATA));
 		m_VehicleID = picSync->VehicleID;
-		if(pVehiclePool) m_pCurrentVehicle = pVehiclePool->GetAt(m_VehicleID);
+		if(!pVehiclePool)return;
+		if(pVehiclePool->GetAt(m_VehicleID) != m_pCurrentVehicle){
+			m_pPlayerPed->PutDirectlyInVehicle(m_VehicleID, 0);
+			m_pCurrentVehicle = pVehiclePool->GetAt(m_VehicleID);
+		}
+		//if(pVehiclePool) m_pCurrentVehicle = pVehiclePool->GetAt(m_VehicleID);
 
 		m_byteSeatID = 0;
 		m_fReportedHealth = (float)picSync->bytePlayerHealth;

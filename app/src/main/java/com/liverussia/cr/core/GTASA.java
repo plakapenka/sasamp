@@ -75,7 +75,6 @@ public class GTASA extends WarMedia {
 
     public void onCreate(Bundle bundle)
     {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         if(!once)
         {
             once = true;

@@ -13,7 +13,7 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 19
+        minSdkVersion 20
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 28
     //    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -50,21 +50,13 @@ android {
     }
     ndkVersion '25.1.8937393'
     buildTypes {
-        release {
-            signingConfig signingConfigs.debug
-        }
         debug {
-            signingConfig signingConfigs.debug
             debuggable true
             jniDebuggable true
         }
         all{
             multiDexEnabled true
         }
-    }
-    dependenciesInfo {
-        includeInApk false
-        includeInBundle false
     }
 }
 
