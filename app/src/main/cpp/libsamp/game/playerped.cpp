@@ -598,19 +598,13 @@ void CPlayerPed::PutDirectlyInVehicle(int iVehicleID, int iSeat)
 	if(GetCurrentWeapon() == WEAPON_PARACHUTE) {
 		SetArmedWeapon(0);
 	}*/
-	MATRIX4X4 mat;
-	mat.pos.X = pVehicle->entity.mat->pos.X;
-	mat.pos.Y = pVehicle->entity.mat->pos.Y;
-	mat.pos.Z = pVehicle->entity.mat->pos.Z;
+
 	// check seatid
-	if(IsInVehicle()) {
-//		//(VEHICLE_TYPE)iVehicleID->
-//	//	mat = ;
-//		RemoveFromVehicleAndPutAt(pVehicle->entity.mat->pos.X, pVehicle->entity.mat->pos.Y, pVehicle->entity.mat->pos.Z);
+
+	//SetMatrix(mat);
+	if(IsInVehicle()){
 		ExitCurrentVehicle();
 	}
-
-	SetMatrix(mat);
 	if(iSeat == 0)
 	{
 		if(pVehicle->pDriver) return;
