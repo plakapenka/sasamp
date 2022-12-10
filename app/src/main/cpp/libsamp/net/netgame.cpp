@@ -443,7 +443,7 @@ void CNetGame::Packet_AuthRPC(Packet *p)
 			bs.Read(ip_match);
 			bs.Read(timepassed);
 			bs.Read(email_acvive);
-            
+
 			if (toggle == 1) {
 				CPlayerPool *pPlayerPool = GetPlayerPool();
 				if (pPlayerPool) {

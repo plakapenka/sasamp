@@ -1622,7 +1622,10 @@ public abstract class NvEventQueueActivity
 
     public void updateSplash(int percent) { runOnUiThread(() -> { mChooseServer.Update(percent); } ); }
 
-    public void ExitGame(){ this.finishAffinity(); }
+    public void ExitGame(){
+        this.finishAndRemoveTask();
+        System.exit(0);
+    }
 
    // public void showSplash() { runOnUiThread(() -> { mChooseServer.Show(); } ); }
 
