@@ -40,7 +40,7 @@ const cryptor::string_encryptor encrArch[MAX_ENCRYPTED_TXD] = {
 
 bool isEncrypted(const char *szArch)
 {
-    return false;
+	//return false;
     for (int i = 0; i < MAX_ENCRYPTED_TXD; i++)
     {
         if (!strcmp(encrArch[i].decrypt(), szArch))
@@ -388,7 +388,7 @@ void CStreaming_InitImageList_hook()
 	*(uint32_t*)&ms_files[380] = 0;
 
 	(( uint32_t (*)(char*, uint32_t))(g_libGTASA+0x28E7B0+1))("TEXDB\\GTA3.IMG", 1); // CStreaming::AddImageToList
-	(( uint32_t (*)(char*, uint32_t))(g_libGTASA+0x28E7B0+1))("TEXDB\\GTA_INT.IMG", 1); // CStreaming::AddImageToList
+	//(( uint32_t (*)(char*, uint32_t))(g_libGTASA+0x28E7B0+1))("TEXDB\\GTA_INT.IMG", 1); // CStreaming::AddImageToList
 	(( uint32_t (*)(char*, uint32_t))(g_libGTASA+0x28E7B0+1))("TEXDB\\SAMP.IMG", 1); // CStreaming::AddImageToList
 	(( uint32_t (*)(char*, uint32_t))(g_libGTASA+0x28E7B0+1))("TEXDB\\SAMPCOL.IMG", 1); // CStreaming::AddImageToList
 
@@ -688,7 +688,9 @@ void NvUtilInit_hook(void)
 signed int (*OS_FileOpen)(unsigned int a1, int *a2, const char *a3, int a4);
 signed int OS_FileOpen_hook(unsigned int a1, int *a2, const char *a3, int a4)
 {
-   // Log("%s", a3);
+	if (strstr(a3, ".unc") ) return 0;
+
+    Log("%s", a3);
     uintptr_t calledFrom = 0;
     __asm__ volatile("mov %0, lr"
     : "=r"(calledFrom));
@@ -696,12 +698,12 @@ signed int OS_FileOpen_hook(unsigned int a1, int *a2, const char *a3, int a4)
     signed int retn = OS_FileOpen(a1, a2, a3, a4);
 
     //if (calledFrom == 0x1BCE9A + 1)
-   // {
+    //{
         if (isEncrypted(a3))
         {
             lastOpenedFile = *a2;
         }
-   // }
+  //  }
     return retn;
 }
 
@@ -2618,7 +2620,7 @@ void InstallHooks()
 	PROTECT_CODE_INSTALLHOOKS;
 
 	//SetUpHook(g_libGTASA+0x291104, (uintptr_t)CStreaming__ConvertBufferToObject_hook, (uintptr_t*)&CStreaming__ConvertBufferToObject);
-	SetUpHook(g_libGTASA+0x3961C8, (uintptr_t)CFileMgr__ReadLine_hook, (uintptr_t*)&CFileMgr__ReadLine);
+	//SetUpHook(g_libGTASA+0x3961C8, (uintptr_t)CFileMgr__ReadLine_hook, (uintptr_t*)&CFileMgr__ReadLine);
 
 	SetUpHook(g_libGTASA + 0x00281398, (uintptr_t)CWidgetRegionLook__Update_hook, (uintptr_t*)& CWidgetRegionLook__Update);
 
@@ -2766,6 +2768,14 @@ void InstallHooks()
 	SetUpHook(g_libGTASA + 0x0024CDF8, (uintptr_t)NopeVoidFunc_hook, (uintptr_t*)&NopeVoidFunc);
 	SetUpHook(g_libGTASA + 0x0026A670, (uintptr_t)NopeVoidFunc_hook, (uintptr_t*)&NopeVoidFunc);
 	SetUpHook(g_libGTASA + 0x00463A68, (uintptr_t)NopeVoidFunc_hook, (uintptr_t*)&NopeVoidFunc);
+
+	//
+	SetUpHook(g_libGTASA + 0x0033FD9C, (uintptr_t)NopeVoidFunc_hook, (uintptr_t*)&NopeVoidFunc); //LoadCutsceneData
+	SetUpHook(g_libGTASA + 0x0033F81C, (uintptr_t)NopeVoidFunc_hook, (uintptr_t*)&NopeVoidFunc);//CCutsceneMgr::Initialise
+    //
+   // SetUpHook(g_libGTASA + 0x002BAF70, (uintptr_t)NopeVoidFunc_hook, (uintptr_t*)&NopeVoidFunc);
+	NOP(g_libGTASA+0x0051018A, 2);// не давать ган при выходе из тачки
+	NOP(g_libGTASA+0x005101A6, 2);// не давать ган при выходе из тачки
 
     //ProcessEvents crash спорно
    // NOP(g_libGTASA + 0x0023AF8A, 10);
