@@ -569,6 +569,10 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			Packet_CasinoChip(p);
 			break;
 		}
+		case RPC_SHOW_CONTEINER_AUC: {
+			Packet_AucContainer(p);
+			break;
+		}
 		case RPC_INVENTAR_SHOWHIDE: {
 			Packet_InventoryToggle(p);
 			break;
@@ -731,19 +735,6 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			{
 				g_pJavaWrapper->HideBusInfo();
 			}
-
-			break;
-		}
-		case RPC_SHOW_CONTEINER_AUC:
-		{
-			uint8_t id;
-			uint8_t type;
-			uint32_t price;
-			bs.Read(id);
-			bs.Read(type);
-			bs.Read(price);
-			
-			g_pJavaWrapper->ShowAuctionManager(id, type, price);
 
 			break;
 		}

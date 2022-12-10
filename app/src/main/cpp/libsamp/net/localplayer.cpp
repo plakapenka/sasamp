@@ -195,6 +195,7 @@ extern bool tabToggle;
 #include "..//game/CWeaponsOutFit.h"
 #include "java_systems/CEditobject.h"
 #include "java_systems/CCasino.h"
+#include "java_systems/CAucContainer.h"
 
 bool CLocalPlayer::Process()
 {
@@ -463,7 +464,8 @@ bool CLocalPlayer::Process()
 	bool needDrawableHud = true;
 	if(pGame->isDialogActive || pGame->isCasinoDiceActive || tabToggle || pGame->isAutoShopActive
 	|| pGame->isCasinoWheelActive || !m_pPlayerPed || pGame->isRegistrationActive || pGame->isShopStoreActive ||
-    pGame->isPreDeathActive || pInventory->isToggle || bFirstSpawn || CEditobject::isToggle || CCasino::isCasinoChipToggle)
+    pGame->isPreDeathActive || pInventory->isToggle || bFirstSpawn || CEditobject::isToggle || CCasino::isCasinoChipToggle
+	|| CAucContainer::isAucContainerShow)
 	{
 		needDrawableHud = false;
 	}

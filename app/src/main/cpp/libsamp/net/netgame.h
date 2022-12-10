@@ -83,7 +83,7 @@
 #define RPC_GUNSTORETOGGLESEND 44
 #define RPC_SHOW_ARMY_GAME 45
 #define RPC_CHECK_CLIENT 46
-#define RPC_SHOW_CONTEINER_AUC 47
+#define RPC_SHOW_CONTEINER_AUC 58
 #define RPC_TURN_SIGNAL	47
 #define RPC_PRE_DEATH 48
 #define RPC_ITEM_MATRIX				49
@@ -228,6 +228,8 @@ public:
 	void Packet_InventoryItemActive(Packet *p);
 
 	void Packet_CasinoChip(Packet *p);
+
+    void Packet_AucContainer(Packet *p);
 };
 
 extern CNetGame *pNetGame;
