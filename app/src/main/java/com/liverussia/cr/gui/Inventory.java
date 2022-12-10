@@ -233,6 +233,7 @@ public class Inventory {
             inv_progress.setMax(maxbrutto);
             inv_progress_text.setText(String.format("%d/%d кг.", brutto, maxbrutto));
 
+            inv_main_layout.invalidate();
         });
     }
     public void ToggleShow(boolean toggle, float satiety, float health)

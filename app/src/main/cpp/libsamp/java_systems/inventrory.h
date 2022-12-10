@@ -16,7 +16,7 @@ public:
 
     void UpdateItem(int matrixindex, int pos, bool active);
 
-    void UpdateCarryng(int matrixindex, int pos, bool active);
+    void UpdateCarryng(int matrixindex, int pos, int active);
 };
 
 #endif //LIVERUSSIA_INVENTRORY_H

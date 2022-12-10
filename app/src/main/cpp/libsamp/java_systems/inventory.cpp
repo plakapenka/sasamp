@@ -42,7 +42,7 @@ void CINVENTORY::InventoryUpdateItem(int matrixindex, int pos, const char sprite
     env->CallVoidMethod(jInventory, InventoryUpdateItem, matrixindex, pos, jsprite, jcaption, active);
 }
 
-void CINVENTORY::UpdateCarryng(int matrixindex, int brutto, bool maxbrutto) {
+void CINVENTORY::UpdateCarryng(int matrixindex, int brutto, int maxbrutto) {
     JNIEnv* env = g_pJavaWrapper->GetEnv();
 
     jclass clazz = env->GetObjectClass(jInventory);
@@ -102,7 +102,6 @@ void CNetGame::Packet_InventoryToggle(Packet* p)
 
     pInventory->ToggleShow(toggle, satiety);
 
-    Log("Packet_InventoryToggle %d", toggle);
 }
 
 void CNetGame::Packet_InventoryUpdateCarryng(Packet* p)
@@ -119,11 +118,6 @@ void CNetGame::Packet_InventoryUpdateCarryng(Packet* p)
     bs.Read(matrixindex);
     bs.Read(brutto);
     bs.Read(maxbrutto);
-
-    CChatWindow::AddDebugMessage("mat = %d, brutto = %d, max = %d",
-                                 matrixindex,
-                                 brutto,
-                                 maxbrutto);
 
     pInventory->UpdateCarryng(matrixindex, brutto, maxbrutto);
 
