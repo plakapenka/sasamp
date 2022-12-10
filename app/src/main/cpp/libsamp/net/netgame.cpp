@@ -443,12 +443,7 @@ void CNetGame::Packet_AuthRPC(Packet *p)
 			bs.Read(ip_match);
 			bs.Read(timepassed);
 			bs.Read(email_acvive);
-
-			CChatWindow::AddDebugMessage("toggle = %d, ip_match = %d, timepassed = %d, email_acvive = %d",
-										 toggle,
-										 ip_match,
-										 timepassed,
-										 email_acvive);
+            
 			if (toggle == 1) {
 				CPlayerPool *pPlayerPool = GetPlayerPool();
 				if (pPlayerPool) {
