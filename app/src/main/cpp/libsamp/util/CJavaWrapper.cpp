@@ -84,36 +84,6 @@ std::string CJavaWrapper::GetClipboardString()
 	return str;
 }
 
-void CJavaWrapper::ShowInputLayout()
-{
-	JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-
-	env->CallVoidMethod(activity, s_ShowInputLayout);
-
-	EXCEPTION_CHECK(env);
-}
-
-void CJavaWrapper::HideInputLayout()
-{
-	JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-
-	env->CallVoidMethod(activity, s_HideInputLayout);
-
-	EXCEPTION_CHECK(env);
-}
-
 void CJavaWrapper::ShowClientSettings()
 {
 	JNIEnv* env = GetEnv();
@@ -175,19 +145,12 @@ void CJavaWrapper::SetUseFullScreen(int b)
 
 	EXCEPTION_CHECK(env);
 }
-extern int g_iStatusDriftChanged;
+
 #include "..//CDebugInfo.h"
 #include "chatwindow.h"
 
 extern "C"
 {
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onInputEnd(JNIEnv* pEnv, jobject thiz, jbyteArray str)
-	{
-		if (pKeyBoard)
-		{
-			pKeyBoard->OnNewKeyboardInput(pEnv, thiz, str);
-		}
-	}
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_sendDialogResponse(JNIEnv* pEnv, jobject thiz, jint i3, jint i, jint i2, jbyteArray str)
 	{
 		jbyte* pMsg = pEnv->GetByteArrayElements(str, nullptr);
@@ -359,7 +322,6 @@ extern "C"
 		if (pSettings)
 		{
 			pSettings->GetWrite().iSkyBox = b;
-			g_iStatusDriftChanged = 1;
 		}
 	}
 
@@ -787,18 +749,6 @@ extern "C"
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onAuctionButtonClick(JNIEnv *pEnv, jobject thiz, jint btnid) {
 		pNetGame->SendCustomPacket(251, 52, btnid);
 	}
-}
-
-void CJavaWrapper::ShowAuctionManager(int itemId, int type, int price)
-{
-    JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-    //env->CallVoidMethod(this->activity, this->s_showAuctionManager, itemId, type, price);
 }
 
 void CJavaWrapper::ShowFuelStation(int type, int price1, int price2, int price3, int price4, int price5, int maxCount)
@@ -1432,9 +1382,6 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 
 	s_GetClipboardText = env->GetMethodID(nvEventClass, "getClipboardText", "()[B");
 
-	s_ShowInputLayout = env->GetMethodID(nvEventClass, "showInputLayout", "()V");
-	s_HideInputLayout = env->GetMethodID(nvEventClass, "hideInputLayout", "()V");
-
 	s_ShowClientSettings = env->GetMethodID(nvEventClass, "showClientSettings", "()V");
 	s_SetUseFullScreen = env->GetMethodID(nvEventClass, "setUseFullscreen", "(I)V");
 
@@ -1450,8 +1397,6 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 	s_hideArmyGame = env->GetMethodID(nvEventClass, "hideArmyGame", "()V");
 
 	s_showFuelStation = env->GetMethodID(nvEventClass, "showFuelStation", "(IIIIIII)V");
-
-	//s_showAuctionManager = env->GetMethodID(nvEventClass, "showAuctionManager", "(III)V");
 
 	s_ToggleShopStoreManager = env->GetMethodID(nvEventClass, "toggleShopStoreManager", "(ZII)V");
 

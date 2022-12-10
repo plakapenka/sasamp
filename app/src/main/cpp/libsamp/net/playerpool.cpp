@@ -31,7 +31,6 @@ extern CGame* pGame;
 extern CVoiceChatClient* pVoice;
 extern CNetGame* pNetGame;
 uint32_t bProcessedfsaf = 0;
-int g_iStatusDriftChanged = 0;
 
 void CPlayerPool::UpdateScore(PLAYERID playerId, int iScore)
 {
@@ -115,16 +114,6 @@ bool CPlayerPool::Process()
 	}
 
 	m_pLocalPlayer->Process();
-
-	if (g_iStatusDriftChanged)
-	{
-		RakNet::BitStream bs;
-		bs.Write((uint8_t)ID_CUSTOM_PACKET_SYSTEM);
-		bs.Write((uint8_t)(pSettings->GetReadOnly().iSkyBox));
-
-		pNetGame->GetRakClient()->Send(&bs, HIGH_PRIORITY, RELIABLE, 0);
-		g_iStatusDriftChanged = 0;
-	}
 
 	CPlayerPed* pPed = m_pLocalPlayer->GetPlayerPed();
 	if (pPed)

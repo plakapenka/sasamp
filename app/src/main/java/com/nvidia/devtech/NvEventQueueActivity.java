@@ -52,10 +52,12 @@ import android.widget.FrameLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.exifinterface.media.ExifInterface;
 
 import com.liverussia.cr.R;
 import com.liverussia.cr.core.DialogClientSettings;
 import com.liverussia.cr.gui.AttachEdit;
+import com.liverussia.cr.gui.AucContainer;
 import com.liverussia.cr.gui.AutoShop;
 import com.liverussia.cr.gui.Casino;
 import com.liverussia.cr.gui.CasinoDice;
@@ -87,6 +89,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.logging.Logger;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
@@ -110,7 +113,7 @@ this class and its paired native library.
 */
 public abstract class NvEventQueueActivity
     extends AppCompatActivity
-        implements SensorEventListener, InputManager.InputListener, View.OnTouchListener, HeightProvider.HeightListener {
+        implements SensorEventListener, View.OnTouchListener, HeightProvider.HeightListener {
 
     private static NvEventQueueActivity instance = null;
     protected Handler handler = null;
@@ -163,7 +166,6 @@ public abstract class NvEventQueueActivity
     private FrameLayout mRootFrame = null;
     private SurfaceView mSurfaceView = null;
 
-    private InputManager mInputManager = null;
     private HeightProvider mHeightProvider = null;
     private DialogClientSettings mDialogClientSettings = null;
 
@@ -392,10 +394,6 @@ public abstract class NvEventQueueActivity
     @Override
     public void onHeightChanged(int orientation, int height)
     {
-        if(mInputManager != null)
-        {
-            mInputManager.onHeightChanged(height);
-        }
         Dialog dialog = mDialog;
         if (dialog != null) {
             dialog.onHeightChanged(height);
@@ -698,17 +696,7 @@ public abstract class NvEventQueueActivity
         {
             if (GameIsFocused && !hasFocus)
             {
-                if(mInputManager != null)
-                {
-                    if(!mInputManager.IsShowing())
-                    {
-                       // pauseEvent();
-                    }
-                }
-                else
-                {
-                    //pauseEvent();
-                }
+
             }
             else if (!GameIsFocused && hasFocus)
             {
@@ -995,23 +983,6 @@ public abstract class NvEventQueueActivity
      * And remaps as needed into the native calls exposed by nv_event.h
      */
 
-    private native void onInputEnd(byte[] str);
-    @Override
-    public void OnInputEnd(String str)
-    {
-        byte[] toReturn = null;
-        try
-        {
-            toReturn = str.getBytes("windows-1251");
-        }
-        catch(UnsupportedEncodingException e)
-        {
-
-        }
-
-        onInputEnd(toReturn);
-    }
-
     public SurfaceView GetSurfaceView()
     {
         return mSurfaceView;
@@ -1031,12 +1002,14 @@ public abstract class NvEventQueueActivity
 
         SurfaceView view = findViewById(R.id.main_sv);
 
+       // view.setAlpha(0);
+
         mSurfaceView = view;
         mRootFrame = findViewById(R.id.main_fl_root);
         mAndroidUI = findViewById(R.id.ui_layout);
 
         SurfaceHolder holder = view.getHolder();
-
+        holder.setType(2);
         holder.setKeepScreenOn(true);
 
         view.setFocusable(true);
@@ -1044,8 +1017,9 @@ public abstract class NvEventQueueActivity
 
         mRootFrame.setOnTouchListener(this);
 
+        mChooseServer = new ChooseServer(this);
         new Furniture_factory(this);
-        mInputManager = new InputManager(this);
+        // mInputManager = new InputManager(this);
         mHeightProvider = new HeightProvider(this).init(mRootFrame).setHeightListener(this);
         mNotification = new Notification(this);
         mAuthorizationManager = new AuthorizationManager(this);
@@ -1069,11 +1043,11 @@ public abstract class NvEventQueueActivity
         mSpeedometer = new Speedometer(this);
         mAutoShop = new AutoShop(this);
         mCasinoDice = new CasinoDice(this);
+        new AucContainer(this);
         mTab = new Tab(this);
         mCasino = new Casino(this);
 
         mMenu = new Menu(this);
-        mChooseServer = new ChooseServer(this);
 
         DoResumeEvent();
 
@@ -1184,124 +1158,150 @@ public abstract class NvEventQueueActivity
      * 
      * @return True if successful
      */
-    protected boolean initEGL()
-    {
-        if (configAttrs == null)
-            configAttrs = new int[] {EGL10.EGL_NONE};
-        int[] oldConf = configAttrs;
-        
-        configAttrs = new int[3 + oldConf.length-1];
-        int i = 0;
-        for (i = 0; i < oldConf.length-1; i++)
-            configAttrs[i] = oldConf[i];
-        configAttrs[i++] = EGL_RENDERABLE_TYPE;
-        configAttrs[i++] = EGL_OPENGL_ES2_BIT;
-        configAttrs[i++] = EGL10.EGL_NONE;
-
-        contextAttrs = new int[]
-        {
-            EGL_CONTEXT_CLIENT_VERSION, 2,
-            EGL10.EGL_NONE
-        };
-        
-        if (configAttrs == null)
-            configAttrs = new int[] {EGL10.EGL_NONE};
-        int[] oldConfES2 = configAttrs;
-        
-        configAttrs = new int[17 + oldConfES2.length-1];
-        for (i = 0; i < oldConfES2.length-1; i++)
-            configAttrs[i] = oldConfES2[i];
-        configAttrs[i++] = EGL10.EGL_RED_SIZE;
-        configAttrs[i++] = redSize;
-        configAttrs[i++] = EGL10.EGL_GREEN_SIZE;
-        configAttrs[i++] = greenSize;
-        configAttrs[i++] = EGL10.EGL_BLUE_SIZE;
-        configAttrs[i++] = blueSize;
-        configAttrs[i++] = EGL10.EGL_ALPHA_SIZE;
-        configAttrs[i++] = alphaSize;
-        configAttrs[i++] = EGL10.EGL_STENCIL_SIZE;
-        configAttrs[i++] = stencilSize;
-        configAttrs[i++] = EGL10.EGL_DEPTH_SIZE;
-        configAttrs[i++] = depthSize;
-
-        configAttrs[i++] = EGL10.EGL_SAMPLE_BUFFERS; // сглаживание
-        configAttrs[i++] = 1;
-        configAttrs[i++] = EGL10.EGL_SAMPLES; // сглаживание
-        configAttrs[i++] = 4;
-
-        configAttrs[i++] = EGL10.EGL_NONE;
-
-        egl = (EGL10) EGLContext.getEGL();
-        egl.eglGetError();
-        eglDisplay = egl.eglGetDisplay(EGL10.EGL_DEFAULT_DISPLAY);
-        System.out.println("eglDisplay: " + eglDisplay + ", errr: " + egl.eglGetError());
-        int[] version = new int[2];
-        boolean ret = egl.eglInitialize(eglDisplay, version);
-        System.out.println("EGLInitialize returned: " + ret);
-        if (!ret)
-        {
+    public boolean initEGL() {
+        int eglGetError;
+        boolean z;
+        int[] iArr;
+        int i = 1;
+        if (this.configAttrs == null) {
+            this.configAttrs = new int[]{12344};
+        }
+        int[] iArr2 = this.configAttrs;
+        this.configAttrs = new int[((iArr2.length + 3) - 1)];
+        int i2 = 0;
+        while (i2 < iArr2.length - 1) {
+            this.configAttrs[i2] = iArr2[i2];
+            i2++;
+        }
+        int[] iArr3 = this.configAttrs;
+        int i3 = i2 + 1;
+        iArr3[i2] = EGL_RENDERABLE_TYPE;
+        iArr3[i3] = 4;
+        iArr3[i3 + 1] = 12344;
+        this.contextAttrs = new int[]{EGL_CONTEXT_CLIENT_VERSION, 2, 12344};
+        if (iArr3 == null) {
+            this.configAttrs = new int[]{12344};
+        }
+        int[] iArr4 = this.configAttrs;
+        this.configAttrs = new int[((iArr4.length + 13) - 1)];
+        int i4 = 0;
+        while (i4 < iArr4.length - 1) {
+            this.configAttrs[i4] = iArr4[i4];
+            i4++;
+        }
+        int[] iArr5 = this.configAttrs;
+        int i5 = i4 + 1;
+        int i6 = 12324;
+        iArr5[i4] = 12324;
+        int i7 = i5 + 1;
+        iArr5[i5] = this.redSize;
+        int i8 = i7 + 1;
+        int i9 = 12323;
+        iArr5[i7] = 12323;
+        int i10 = i8 + 1;
+        iArr5[i8] = this.greenSize;
+        int i11 = i10 + 1;
+        iArr5[i10] = 12322;
+        int i12 = i11 + 1;
+        iArr5[i11] = this.blueSize;
+        int i13 = i12 + 1;
+        iArr5[i12] = 12321;
+        int i14 = i13 + 1;
+        iArr5[i13] = this.alphaSize;
+        int i15 = i14 + 1;
+        iArr5[i14] = 12326;
+        int i16 = i15 + 1;
+        iArr5[i15] = this.stencilSize;
+        int i17 = i16 + 1;
+        iArr5[i16] = 12325;
+        iArr5[i17] = this.depthSize;
+        iArr5[i17 + 1] = 12344;
+        EGL10 egl10 = (EGL10) EGLContext.getEGL();
+        this.egl = egl10;
+        egl10.eglGetError();
+        this.eglDisplay = this.egl.eglGetDisplay(EGL10.EGL_DEFAULT_DISPLAY);
+        Log.d("dfs", "eglDisplay: " + this.eglDisplay + ", errr: " + this.egl.eglGetError());
+        boolean eglInitialize = this.egl.eglInitialize(this.eglDisplay, new int[2]);
+        StringBuilder sb = new StringBuilder();
+        sb.append("EGLInitialize returned: ");
+        sb.append(eglInitialize);
+        Log.d("dfs", sb.toString());
+        if (!eglInitialize || (eglGetError = this.egl.eglGetError()) != 12288) {
             return false;
         }
-        int eglErr = egl.eglGetError();
-        if (eglErr != EGL10.EGL_SUCCESS)
-            return false;
-        System.out.println("eglInitialize err: " + eglErr);
-
-        final EGLConfig[] config = new EGLConfig[20];
-        int num_configs[] = new int[1];
-        egl.eglChooseConfig(eglDisplay, configAttrs, config, config.length, num_configs);
-        System.out.println("eglChooseConfig err: " + egl.eglGetError());
-
-        int score = 1<<24; // to make sure even worst score is better than this, like 8888 when request 565...
-        int val[] = new int[1];
-        for (i = 0; i < num_configs[0]; i++)
-        {
-            boolean cont = true;
-            int currScore = 0;
-            int r, g, b, a, d, s;
-            for (int j = 0; j < (oldConf.length-1)>>1; j++)
-            {
-                egl.eglGetConfigAttrib(eglDisplay, config[i], configAttrs[j*2], val);
-                if ((val[0] & configAttrs[j*2+1]) != configAttrs[j*2+1])
-                {
-                    cont = false; // Doesn't match the "must have" configs
+       // Logger.m21i("eglInitialize err: " + eglGetError);
+        EGLConfig[] eGLConfigArr = new EGLConfig[30];
+        int[] iArr6 = new int[1];
+        this.egl.eglChooseConfig(this.eglDisplay, this.configAttrs, eGLConfigArr, 30, iArr6);
+        Log.d("dfs", "eglChooseConfig err: " + this.egl.eglGetError());
+        int i18 = 16777216;
+        int[] iArr7 = new int[1];
+        int i19 = 0;
+        while (i19 < iArr6[0]) {
+            int i20 = 0;
+            while (true) {
+                if (i20 >= ((iArr2.length - i) >> i)) {
+                    z = true;
                     break;
                 }
-            }
-            if (!cont)
-                continue;
-            egl.eglGetConfigAttrib(eglDisplay, config[i], EGL10.EGL_RED_SIZE, val); r = val[0];
-            egl.eglGetConfigAttrib(eglDisplay, config[i], EGL10.EGL_GREEN_SIZE, val); g = val[0];
-            egl.eglGetConfigAttrib(eglDisplay, config[i], EGL10.EGL_BLUE_SIZE, val); b = val[0];
-            egl.eglGetConfigAttrib(eglDisplay, config[i], EGL10.EGL_ALPHA_SIZE, val); a = val[0];
-            egl.eglGetConfigAttrib(eglDisplay, config[i], EGL10.EGL_DEPTH_SIZE, val); d = val[0];
-            egl.eglGetConfigAttrib(eglDisplay, config[i], EGL10.EGL_STENCIL_SIZE, val); s = val[0];
-
-            System.out.println(">>> EGL Config ["+i+"] R"+r+"G"+g+"B"+b+"A"+a+" D"+d+"S"+s);
-
-            currScore = (Math.abs(r - redSize) + Math.abs(g - greenSize) + Math.abs(b - blueSize) + Math.abs(a - alphaSize)) << 16;
-            currScore += Math.abs(d - depthSize) << 8;
-            currScore += Math.abs(s - stencilSize);
-            
-            if (currScore < score)
-            {
-                System.out.println("--------------------------");
-                System.out.println("New config chosen: " + i);
-                for (int j = 0; j < (configAttrs.length-1)>>1; j++)
-                {
-                    egl.eglGetConfigAttrib(eglDisplay, config[i], configAttrs[j*2], val);
-                    if (val[0] >= configAttrs[j*2+1])
-                        System.out.println("setting " + j + ", matches: " + val[0]);
+                int i21 = i20 * 2;
+                this.egl.eglGetConfigAttrib(this.eglDisplay, eGLConfigArr[i19], this.configAttrs[i21], iArr7);
+                int i22 = iArr7[0];
+                int[] iArr8 = this.configAttrs;
+                int i23 = i21 + 1;
+                if ((i22 & iArr8[i23]) != iArr8[i23]) {
+                    z = false;
+                    break;
                 }
-
-                score = currScore;
-                eglConfig = config[i];
+                i20++;
             }
+            if (!z) {
+                iArr = iArr2;
+            } else {
+                this.egl.eglGetConfigAttrib(this.eglDisplay, eGLConfigArr[i19], i6, iArr7);
+                int i24 = iArr7[0];
+                this.egl.eglGetConfigAttrib(this.eglDisplay, eGLConfigArr[i19], i9, iArr7);
+                int i25 = iArr7[0];
+                this.egl.eglGetConfigAttrib(this.eglDisplay, eGLConfigArr[i19], 12322, iArr7);
+                int i26 = iArr7[0];
+                this.egl.eglGetConfigAttrib(this.eglDisplay, eGLConfigArr[i19], 12321, iArr7);
+                int i27 = iArr7[0];
+                this.egl.eglGetConfigAttrib(this.eglDisplay, eGLConfigArr[i19], 12325, iArr7);
+                int i28 = iArr7[0];
+                iArr = iArr2;
+                this.egl.eglGetConfigAttrib(this.eglDisplay, eGLConfigArr[i19], 12326, iArr7);
+                int i29 = iArr7[0];
+                Log.d("dfs", ">>> EGL Config [" + i19 + "] R" + i24 + "G" + i25 + "B" + i26 + ExifInterface.GPS_MEASUREMENT_IN_PROGRESS + i27 + " D" + i28 + ExifInterface.LATITUDE_SOUTH + i29);
+                int abs = ((((Math.abs(i24 - this.redSize) + Math.abs(i25 - this.greenSize)) + Math.abs(i26 - this.blueSize)) + Math.abs(i27 - this.alphaSize)) << 16) + (Math.abs(i28 - this.depthSize) << 8) + Math.abs(i29 - this.stencilSize);
+                if (abs < i18) {
+                    Log.d("dfs", "--------------------------");
+                    Log.d("dfs", "New config chosen: " + i19);
+                    int i30 = 0;
+                    while (true) {
+                        int[] iArr9 = this.configAttrs;
+                        if (i30 >= ((iArr9.length - 1) >> 1)) {
+                            break;
+                        }
+                        int i31 = i30 * 2;
+                        this.egl.eglGetConfigAttrib(this.eglDisplay, eGLConfigArr[i19], iArr9[i31], iArr7);
+                        if (iArr7[0] >= this.configAttrs[i31 + 1]) {
+                            Log.d("dfs", "setting " + i30 + ", matches: " + iArr7[0]);
+                        }
+                        i30++;
+                    }
+                    this.eglConfig = eGLConfigArr[i19];
+                    i18 = abs;
+                }
+            }
+            i19++;
+            iArr2 = iArr;
+            i = 1;
+            i6 = 12324;
+            i9 = 12323;
         }
-        eglContext = egl.eglCreateContext(eglDisplay, eglConfig, EGL10.EGL_NO_CONTEXT, contextAttrs);
-        System.out.println("eglCreateContext: " + egl.eglGetError());
-
-        gl = (GL11) eglContext.getGL();
+        this.eglContext = this.egl.eglCreateContext(this.eglDisplay, this.eglConfig, EGL10.EGL_NO_CONTEXT, this.contextAttrs);
+        Log.d("dfs", "eglCreateContext: " + this.egl.eglGetError());
+        this.gl = (GL11) this.eglContext.getGL();
         return true;
     }
 
@@ -1312,27 +1312,21 @@ public abstract class NvEventQueueActivity
      * @param surface The SurfaceHolder that holds the surface that we are going to render to.
      * @return True if successful
      */
-    protected boolean createEGLSurface(SurfaceHolder surface)
-    {
-        eglSurface = egl.eglCreateWindowSurface(eglDisplay, eglConfig, surface, null);
-
-        System.out.println("eglSurface: " + eglSurface + ", err: " + egl.eglGetError());
-        int sizes[] = new int[1];
-        
-        egl.eglQuerySurface(eglDisplay, eglSurface, EGL10.EGL_WIDTH, sizes);
-        surfaceWidth = sizes[0];
-        egl.eglQuerySurface(eglDisplay, eglSurface, EGL10.EGL_HEIGHT, sizes);
-        surfaceHeight = sizes[0];
-
-        System.out.println("checking glVendor == null?");
+    public boolean createEGLSurface(SurfaceHolder surfaceHolder) {
+        this.eglSurface = this.egl.eglCreateWindowSurface(this.eglDisplay, this.eglConfig, surfaceHolder, (int[]) null);
+        Log.d("dfs","eglCreateWindowSurface err: " + this.egl.eglGetError());
+        int[] iArr = new int[1];
+        this.egl.eglQuerySurface(this.eglDisplay, this.eglSurface, 12375, iArr);
+        this.surfaceWidth = iArr[0];
+        this.egl.eglQuerySurface(this.eglDisplay, this.eglSurface, 12374, iArr);
+        this.surfaceHeight = iArr[0];
+        Log.d("dfs","checking glVendor == null?");
         if (this.glVendor == null) {
-            System.out.println("Making current and back");
+            Log.d("dfs","Making current and back");
             makeCurrent();
             unMakeCurrent();
         }
-
-        System.out.println("Done create EGL surface");
-
+        Log.d("dfs","Done create EGL surface");
         return true;
     }
 
@@ -1518,26 +1512,6 @@ public abstract class NvEventQueueActivity
         cleanupEGL();
 
         //postCleanup();
-    }
-
-    public void showInputLayout()
-    {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mInputManager.ShowInputLayout();
-            }
-        });
-    }
-
-    public void hideInputLayout()
-    {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mInputManager.HideInputLayout();
-            }
-        });
     }
 
     public void hideDialogWithoutReset() { runOnUiThread(() -> { this.mDialog.hideWithoutReset(); }); }

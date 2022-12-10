@@ -272,13 +272,6 @@ void CKeyBoard::Open()
 		g_pJavaWrapper->HideGPS();
 	}
 
-	if (m_bNewKeyboard)
-	{
-		if (g_pJavaWrapper)
-		{
-			g_pJavaWrapper->ShowInputLayout();
-		}
-	}
 }
 
 void CKeyBoard::Close()
@@ -301,14 +294,6 @@ void CKeyBoard::Close()
 	if(pGame->isCasinoDiceActive)g_pJavaWrapper->TempToggleCasinoDice(true);
 	if(pNetGame->m_GreenZoneState)g_pJavaWrapper->ShowGreenZone();
 	//g_pJavaWrapper->ShowVoice();
-
-	if (m_bNewKeyboard)
-	{
-		if (g_pJavaWrapper)
-		{
-			g_pJavaWrapper->HideInputLayout();
-		}
-	}
 
 	return;
 }

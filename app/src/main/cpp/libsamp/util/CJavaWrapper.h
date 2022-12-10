@@ -19,9 +19,6 @@ class CJavaWrapper
 
 	jmethodID s_GetClipboardText;
 
-	jmethodID s_ShowInputLayout;
-	jmethodID s_HideInputLayout;
-
 	jmethodID s_ShowClientSettings;
 	jmethodID s_SetUseFullScreen;
 
@@ -91,9 +88,6 @@ public:
 
 	std::string GetClipboardString();
 
-	void ShowInputLayout();
-	void HideInputLayout();
-
 	void ShowClientSettings();
 
 	void SetUseFullScreen(int b);
@@ -117,8 +111,6 @@ public:
 	void HideArmyGame();
 
 	void ShowFuelStation(int type, int price1, int price2, int price3, int price4, int price5, int maxCount);
-
-	void ShowAuctionManager(int itemId, int type, int price);
 
 	void ToggleShopStoreManager(bool toggle, int type = 0, int price = 0);
 

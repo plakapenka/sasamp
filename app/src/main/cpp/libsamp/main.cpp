@@ -251,22 +251,22 @@ void MainLoop()
 
 	if(pNetGame) pNetGame->Process();
 
-	if (pNetGame)
-	{
-		if (pNetGame->GetPlayerPool())
-		{
-			if (pNetGame->GetPlayerPool()->GetLocalPlayer())
-			{
-				CVehicle* pVeh = pNetGame->GetVehiclePool()->GetAt(pNetGame->GetPlayerPool()->GetLocalPlayer()->m_CurrentVehicle);
-				if (pVeh)
-				{
-					VECTOR vec;
-					pVeh->GetMoveSpeedVector(&vec);
-					CDebugInfo::ProcessSpeedMode(&vec);
-				}
-			}
-		}
-	}
+//	if (pNetGame)
+//	{
+//		if (pNetGame->GetPlayerPool())
+//		{
+//			if (pNetGame->GetPlayerPool()->GetLocalPlayer())
+//			{
+//				CVehicle* pVeh = pNetGame->GetVehiclePool()->GetAt(pNetGame->GetPlayerPool()->GetLocalPlayer()->m_CurrentVehicle);
+//				if (pVeh)
+//				{
+//					VECTOR vec;
+//					pVeh->GetMoveSpeedVector(&vec);
+//					CDebugInfo::ProcessSpeedMode(&vec);
+//				}
+//			}
+//		}
+//	}
 }
 extern int g_iLastRenderedObject;
 
