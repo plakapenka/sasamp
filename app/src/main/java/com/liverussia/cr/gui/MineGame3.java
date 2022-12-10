@@ -107,20 +107,22 @@ public class MineGame3 {
 
     public void Toggle(boolean toggle)
     {
-        if(!toggle){
-            Utils.HideLayout(mine_3_main_layout, true);
-        }else {
-            activity.runOnUiThread(() -> {
+        activity.runOnUiThread(() -> {
+            if (!toggle) {
+                Utils.HideLayout(mine_3_main_layout, true);
+            } else {
+
                 ReShuffle();
                 this.score = 0;
                 mine_3_progress.setProgress(0);
                 Utils.ShowLayout(mine_3_main_layout, true);
 
-                mine_3_main_layout.post(()-> {
+                mine_3_main_layout.post(() -> {
                     UpdateSizes();
                 });
-            });
-        }
+
+            }
+        });
     }
 
     public void UpdateSizes()

@@ -121,16 +121,18 @@ public class MineGame1 {
     }
     public void Toggle(boolean toggle)
     {
-        if(!toggle){
-            Utils.HideLayout(mine_1_main_layout, true);
-        }else {
-            activity.runOnUiThread(() -> {
+        activity.runOnUiThread(() -> {
+            if (!toggle) {
+                Utils.HideLayout(mine_1_main_layout, true);
+            } else {
+
                 this.score = 0;
                 mine_1_progress.setProgress(0);
                 ReShuffle();
                 Utils.ShowLayout(mine_1_main_layout, true);
-            });
-        }
+
+            }
+        });
     }
 
     public void ReShuffle()

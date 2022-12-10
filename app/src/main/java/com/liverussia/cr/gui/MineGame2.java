@@ -109,16 +109,18 @@ public class MineGame2 {
 
     public void Toggle(boolean toggle)
     {
-        if(!toggle){
-            Utils.HideLayout(mine_2_main_layout, true);
-        }else {
-            activity.runOnUiThread(() -> {
-                ReShuffle();
-                mine_2_progress.setProgress(0);
-                this.score = 0;
-                Utils.ShowLayout(mine_2_main_layout, true);
-            });
-        }
+        activity.runOnUiThread(() -> {
+                    if (!toggle) {
+                        Utils.HideLayout(mine_2_main_layout, true);
+                    } else {
+
+                        ReShuffle();
+                        mine_2_progress.setProgress(0);
+                        this.score = 0;
+                        Utils.ShowLayout(mine_2_main_layout, true);
+
+                    }
+                });
 
 //        Thread myThready = new Thread(new Runnable()
 //        {
