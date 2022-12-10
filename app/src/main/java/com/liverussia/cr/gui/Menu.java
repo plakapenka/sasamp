@@ -61,7 +61,7 @@ public class Menu {
                 index = dataDialogMenu.getId();
                 view.startAnimation(anim);
                 new Handler().postDelayed(() -> {
-                    if (index == 3) {
+                    if (false == true) {
                         Update(true);
                     } else {
                         try {
@@ -119,12 +119,12 @@ public class Menu {
 
     private void setDialogMenu() {
         this.dataDialogMenuArrayList.clear();
-        this.dataDialogMenuArrayList.add(new DataDialogMenu(8, R.drawable.menu_passport, "Передать паспорт"));
-        this.dataDialogMenuArrayList.add(new DataDialogMenu(9, R.drawable.menu_med, "Передать мед.карту"));
-        this.dataDialogMenuArrayList.add(new DataDialogMenu(10, R.drawable.menu_paper, "Передать лицензии"));
-        this.dataDialogMenuArrayList.add(new DataDialogMenu(11, R.drawable.menu_lic, "Передать ПТС"));
-        this.dataDialogMenuArrayList.add(new DataDialogMenu(12, R.drawable.menu_exchange, "Совершить обмен"));
-        this.dataDialogMenuArrayList.add(new DataDialogMenu(13, R.drawable.menu_back, "Назад"));
+        this.dataDialogMenuArrayList.add(new DataDialogMenu(10, R.drawable.menu_passport, "Передать паспорт"));
+        this.dataDialogMenuArrayList.add(new DataDialogMenu(11, R.drawable.menu_med, "Передать мед.карту"));
+        this.dataDialogMenuArrayList.add(new DataDialogMenu(12, R.drawable.menu_paper, "Передать лицензии"));
+        this.dataDialogMenuArrayList.add(new DataDialogMenu(13, R.drawable.menu_lic, "Передать ПТС"));
+        this.dataDialogMenuArrayList.add(new DataDialogMenu(14, R.drawable.menu_exchange, "Совершить обмен"));
+        this.dataDialogMenuArrayList.add(new DataDialogMenu(15, R.drawable.menu_back, "Назад"));
     }
 
     private void setDataInRecyclerView(DialogMenuAdapter.OnUserClickListener onUserClickListener, ArrayList<DataDialogMenu> arrayList, RecyclerView recyclerView, final View view, int i) {
