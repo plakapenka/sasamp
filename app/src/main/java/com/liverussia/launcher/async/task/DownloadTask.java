@@ -3,6 +3,7 @@ package com.liverussia.launcher.async.task;
 import android.content.Context;
 import android.os.PowerManager;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ProgressBar;
 
 import androidx.annotation.UiThread;
@@ -360,6 +361,7 @@ public class DownloadTask implements Listener<TaskStatus> {
             return;
         }
 
+        loaderActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mWakeLock.release();
         loaderActivity.getLoading().setVisibility(View.INVISIBLE);
         loaderActivity.getLoadingPercent().setVisibility(View.INVISIBLE);
@@ -438,6 +440,8 @@ public class DownloadTask implements Listener<TaskStatus> {
     }
 
     private void configureProgressBar() {
+        loaderActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         PowerManager pm = (PowerManager) loaderActivity.getSystemService(Context.POWER_SERVICE);
         mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, getClass().getName());
         mWakeLock.acquire();

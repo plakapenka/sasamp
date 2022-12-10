@@ -285,8 +285,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             CacheChecker cacheChecker = new CacheChecker(this);
             cacheChecker.setOnAsyncSuccessListener(this::doAfterCacheChecked);
             //TODO вернуть перед релизом
-//            cacheChecker.checkIsAllCacheFilesExist();
-            cacheChecker.validateCache();
+            cacheChecker.checkIsAllCacheFilesExist();
+//            cacheChecker.validateCache();
         } else {
             MainUtils.setType(DownloadType.LOAD_ALL_CACHE);
             startActivity(new Intent(this, LoaderActivity.class));
