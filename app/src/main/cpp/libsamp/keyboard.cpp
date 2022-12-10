@@ -2309,6 +2309,7 @@ void CKeyBoard::OnNewKeyboardInput(JNIEnv *pEnv, jobject thiz, jbyteArray str)
 	pEnv->ReleaseByteArrayElements(str, pMsg, JNI_ABORT);
 }
 
+extern bool CGame__Shutdown_hook();
 extern void ToggleTab();
 bool ProcessLocalCommands(const char str[])
 {
@@ -2337,11 +2338,12 @@ bool ProcessLocalCommands(const char str[])
 
 	if (strcmp(str, "/q") == 0)
 	{
-		// Update this flag so DoGameRestart finishes the game.
-		*(uint8_t *)(g_libGTASA + 0x63E094) = 0;
-
-		// DoGameRestart
-		((void (*)())(g_libGTASA + 0x261C8C + 1))();
+		CGame__Shutdown_hook();
+//		// Update this flag so DoGameRestart finishes the game.
+//		*(uint8_t *)(g_libGTASA + 0x63E094) = 0;
+//
+//		// DoGameRestart
+//		((void (*)())(g_libGTASA + 0x261C8C + 1))();
 		return true;
 	}
 
