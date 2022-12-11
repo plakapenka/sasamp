@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatDelegate;
 public class GTASA extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState){
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState);
     }
 }
