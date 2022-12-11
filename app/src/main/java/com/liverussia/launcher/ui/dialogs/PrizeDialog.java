@@ -46,6 +46,7 @@ public class PrizeDialog extends DialogFragment implements View.OnClickListener 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.prize_dialog, container, false);
+        getDialog().getWindow().setBackgroundDrawable(getResources().getDrawable(R.drawable.prize_dialog_bg));
 
         btnGoBack = view.findViewById(R.id.btnGoBack);
         btnGoBack.setOnClickListener(this);
