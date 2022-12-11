@@ -388,7 +388,7 @@ void CStreaming_InitImageList_hook()
 	*(uint32_t*)&ms_files[380] = 0;
 
 	(( uint32_t (*)(char*, uint32_t))(g_libGTASA+0x28E7B0+1))("TEXDB\\GTA3.IMG", 1); // CStreaming::AddImageToList
-	//(( uint32_t (*)(char*, uint32_t))(g_libGTASA+0x28E7B0+1))("TEXDB\\GTA_INT.IMG", 1); // CStreaming::AddImageToList
+//	(( uint32_t (*)(char*, uint32_t))(g_libGTASA+0x28E7B0+1))("TEXDB\\GTA_INT.IMG", 1); // CStreaming::AddImageToList
 	(( uint32_t (*)(char*, uint32_t))(g_libGTASA+0x28E7B0+1))("TEXDB\\SAMP.IMG", 1); // CStreaming::AddImageToList
 	(( uint32_t (*)(char*, uint32_t))(g_libGTASA+0x28E7B0+1))("TEXDB\\SAMPCOL.IMG", 1); // CStreaming::AddImageToList
 
@@ -664,11 +664,16 @@ int32_t NVEventGetNextEvent_hook(NVEvent* ev, int waitMSecs)
 	return ret;
 }
 
-void(*TextureDatabaseRuntime)(uintptr_t thiz, bool a2);
-void TextureDatabaseRuntime_hook(uintptr_t thiz, bool a2)
+char g_iLastBlock[512];
+
+void (*AssignBlockToPixels)(char* a1, size_t* a2, int a3, size_t* a4);
+void AssignBlockToPixels_hook(char* a1, size_t* a2, int a3, size_t* a4)
 {
-	//Log("TextureDatabaseRuntime_hook %d", a2);
-	return TextureDatabaseRuntime(thiz, true);
+	Log("%s", a1);
+//	strcpy(g_iLastBlock, a1);
+//	strcat(g_iLastBlock, a1);
+
+	return AssignBlockToPixels(a1, a2, a3, a4);
 }
 
 void(*CStreaming__Init2)();
@@ -688,7 +693,7 @@ void NvUtilInit_hook(void)
 signed int (*OS_FileOpen)(unsigned int a1, int *a2, const char *a3, int a4);
 signed int OS_FileOpen_hook(unsigned int a1, int *a2, const char *a3, int a4)
 {
-	if (strstr(a3, ".unc") ) return 0;
+	//if (strstr(a3, ".unc") ) return 0;
 
     Log("%s", a3);
     uintptr_t calledFrom = 0;
@@ -870,8 +875,6 @@ void InstallSpecialHooks()
 	SetUpHook(g_libGTASA + 0x004FBCF4, (uintptr_t)cHandlingDataMgr__ConvertDataToGameUnits_hook, (uintptr_t*)& cHandlingDataMgr__ConvertDataToGameUnits);
 	SetUpHook(g_libGTASA + 0x0023ACC4, (uintptr_t)NVEventGetNextEvent_hook, (uintptr_t*)& NVEventGetNextEvent_hooked);
 	SetUpHook(g_libGTASA + 0x004042A8, (uintptr_t)CStreaming__Init2_hook, (uintptr_t*)& CStreaming__Init2);	// increase stream memory value
-
-
 }
 
 void ProcessPedDamage(PED_TYPE* pIssuer, PED_TYPE* pPlayer);
@@ -2629,7 +2632,11 @@ void InstallHooks()
 	SetUpHook(g_libGTASA+0x39AEF4, (uintptr_t)Render2dStuff_hook, (uintptr_t*)&Render2dStuff);
 	SetUpHook(g_libGTASA+0x39B098, (uintptr_t)Render2dStuffAfterFade_hook, (uintptr_t*)&Render2dStuffAfterFade);
 	SetUpHook(g_libGTASA+0x239D5C, (uintptr_t)TouchEvent_hook, (uintptr_t*)&TouchEvent);
+
+    //IMG
 	SetUpHook(g_libGTASA+0x28E83C, (uintptr_t)CStreaming_InitImageList_hook, (uintptr_t*)&CStreaming_InitImageList);
+    //
+
 	SetUpHook(g_libGTASA+0x336690, (uintptr_t)CModelInfo_AddPedModel_hook, (uintptr_t*)&CModelInfo_AddPedModel); // hook is dangerous
 	SetUpHook(g_libGTASA+0x3DBA88, (uintptr_t)CRadar__GetRadarTraceColor_hook, (uintptr_t*)&CRadar__GetRadarTraceColor); // dangerous
 	SetUpHook(g_libGTASA+0x3DAF84, (uintptr_t)CRadar__SetCoordBlip_hook, (uintptr_t *)&CRadar__SetCoordBlip);
@@ -2773,7 +2780,14 @@ void InstallHooks()
 	SetUpHook(g_libGTASA + 0x0033FD9C, (uintptr_t)NopeVoidFunc_hook, (uintptr_t*)&NopeVoidFunc); //LoadCutsceneData
 	SetUpHook(g_libGTASA + 0x0033F81C, (uintptr_t)NopeVoidFunc_hook, (uintptr_t*)&NopeVoidFunc);//CCutsceneMgr::Initialise
     //
-   // SetUpHook(g_libGTASA + 0x002BAF70, (uintptr_t)NopeVoidFunc_hook, (uintptr_t*)&NopeVoidFunc);
+    SetUpHook(g_libGTASA + 0x0026A2D4, (uintptr_t)NopeVoidFunc_hook, (uintptr_t*)&NopeVoidFunc); // ProcessShaderCache
+    NOP(g_libGTASA + 0x0028E88C, 10);
+    NOP(g_libGTASA + 0x0028E8AC, 2);
+
+	//CCoronas::RenderSunReflection
+	SetUpHook(g_libGTASA + 0x0052E264, (uintptr_t)NopeVoidFunc_hook, (uintptr_t*)&NopeVoidFunc);
+
+    // SetUpHook(g_libGTASA + 0x002BAF70, (uintptr_t)NopeVoidFunc_hook, (uintptr_t*)&NopeVoidFunc);
 	NOP(g_libGTASA+0x0051018A, 2);// не давать ган при выходе из тачки
 	NOP(g_libGTASA+0x005101A6, 2);// не давать ган при выходе из тачки
 

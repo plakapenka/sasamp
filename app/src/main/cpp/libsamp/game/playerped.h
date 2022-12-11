@@ -61,7 +61,7 @@ public:
 	// 0.3.7
 	void ExitCurrentVehicle();
 	// 0.3.7
-	int GetCurrentVehicleID();
+	VEHICLE_TYPE * GetCurrentVehicleID();
 	int GetVehicleSeatID();
 
 	ENTITY_TYPE* GetEntityUnderPlayer();

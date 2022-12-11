@@ -512,21 +512,19 @@ void CRemotePlayer::Remove()
 
 void CRemotePlayer::HandleVehicleEntryExit()
 {
+//	Log("HandleVehicleEntryExit");
 	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
 	MATRIX4X4 mat;
 
 	if(!m_pPlayerPed) return;
-	{
-		if(m_pPlayerPed->IsInVehicle() || m_pPlayerPed->GetGtaVehicle() != m_pCurrentVehicle->m_pVehicle) {
-//		//(VEHICLE_TYPE)iVehicleID->
-//	//	mat = ;
-//		RemoveFromVehicleAndPutAt(pVehicle->entity.mat->pos.X, pVehicle->entity.mat->pos.Y, pVehicle->entity.mat->pos.Z);
-			CVehicle *pVehicle = pVehiclePool->GetAt(m_VehicleID);
-			if(pVehicle) {
-				int iCarID = pVehiclePool->FindGtaIDFromID(m_VehicleID);
 
-				m_pPlayerPed->PutDirectlyInVehicle(iCarID, m_byteSeatID);
-			}
+	if(m_pPlayerPed->IsInVehicle() && m_pCurrentVehicle &&  m_pPlayerPed->GetCurrentVehicleID() != m_pCurrentVehicle->m_pVehicle) {
+		//Log("da");
+		CVehicle *pVehicle = pVehiclePool->GetAt(m_VehicleID);
+		if (pVehicle) {
+			int iCarID = pVehiclePool->FindGtaIDFromID(m_VehicleID);
+
+			m_pPlayerPed->PutDirectlyInVehicle(iCarID, m_byteSeatID);
 		}
 	}
 	if(GetState() == PLAYER_STATE_ONFOOT) {

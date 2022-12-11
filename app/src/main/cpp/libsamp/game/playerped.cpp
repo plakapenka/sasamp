@@ -601,10 +601,18 @@ void CPlayerPed::PutDirectlyInVehicle(int iVehicleID, int iSeat)
 
 	// check seatid
 
-	//SetMatrix(mat);
+
 	if(IsInVehicle()){
 		ExitCurrentVehicle();
 	}
+
+	MATRIX4X4 mat;
+	GetMatrix(&mat);
+	mat.pos.X = pVehicle->entity.mat->pos.X;
+	mat.pos.Y = pVehicle->entity.mat->pos.Y;
+	mat.pos.Z = pVehicle->entity.mat->pos.Z;
+	SetMatrix(mat);
+
 	if(iSeat == 0)
 	{
 		if(pVehicle->pDriver) return;
@@ -665,12 +673,12 @@ void CPlayerPed::ExitCurrentVehicle()
 }
 
 // 0.3.7
-int CPlayerPed::GetCurrentVehicleID()
+VEHICLE_TYPE* CPlayerPed::GetCurrentVehicleID()
 {
 	if(!m_pPed) return 0;
 
-	VEHICLE_TYPE *pVehicle = (VEHICLE_TYPE *)m_pPed->pVehicle;
-	return GamePool_Vehicle_GetIndex(pVehicle);
+	return (VEHICLE_TYPE *)m_pPed->pVehicle;
+	//return GamePool_Vehicle_GetIndex(pVehicle);
 }
 
 int CPlayerPed::GetVehicleSeatID()

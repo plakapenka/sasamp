@@ -6,7 +6,7 @@ extern CSettings* pSettings;
 
 uint16_t CClientInfo::usSAMPMajorVersion = SAMP_MAJOR_VERSION;
 uint16_t CClientInfo::usSAMPMinorVersion = SAMP_MINOR_VERSION;
-bool		CClientInfo::bSAMPModified = false;
+//bool		CClientInfo::bSAMPModified = false;
 bool		CClientInfo::bJoinedFromLauncher = false;
 
 char CClientInfo::szSerial[0x7F];
@@ -60,7 +60,7 @@ void CClientInfo::WriteClientInfoToBitStream(RakNet::BitStream& bs)
 	bs.Write(usChecksum);
 	bs.Write(usSAMPMajorVersion);
 	bs.Write(usSAMPMinorVersion);
-	bs.Write(bSAMPModified);
+	bs.Write(0);
 
 	bs.Write(usLauncherVersion);
 	bs.Write(usModpackVersion);

@@ -13,14 +13,14 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 20
+        minSdkVersion 22
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 28
     //    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         applicationId "com.liverussia.cr"
-        versionName "34"
-        versionCode 34
+        versionName "36"
+        versionCode 36
         vectorDrawables.useSupportLibrary = true
 
         multiDexEnabled = true

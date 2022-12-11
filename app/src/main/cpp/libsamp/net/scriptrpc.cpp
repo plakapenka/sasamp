@@ -347,7 +347,6 @@ void ScrSetPlayerArmour(RPCParameters *rpcParams)
 
 void ScrSetPlayerColor(RPCParameters *rpcParams)
 {
-	Log("RPC: ScrSetPlayerColor");
 
 	unsigned char* Data = reinterpret_cast<unsigned char *>(rpcParams->input);
 	int iBitLength = rpcParams->numberOfBitsOfData;

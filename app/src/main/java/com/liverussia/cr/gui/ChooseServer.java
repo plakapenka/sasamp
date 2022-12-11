@@ -8,6 +8,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.text.Html;
 import android.view.LayoutInflater;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
@@ -35,14 +36,16 @@ public class ChooseServer {
     private ProgressBar loadscreen_progressBar;
     private TextView loadscreen_loadtext;
     private ConstraintLayout loadscreen_main_layout;
+    private SurfaceView main_sv;
 
     public ChooseServer(Activity activity){
-        //aactivity = activity;
+//        this.activity = activity;
 
+        main_sv = activity.findViewById(R.id.main_sv);
         loadscreen_main_layout = activity.findViewById(R.id.loadscreen_main_layout);
         loadscreen_progressBar = activity.findViewById(R.id.loadscreen_progressBar);
         loadscreen_loadtext = activity.findViewById(R.id.loadscreen_loadtext);
-
+       // main_sv.setAlpha(0);
       //  Utils.HideLayout(serverLayout, false);
     }
 
@@ -54,6 +57,7 @@ public class ChooseServer {
         }
         else {
             loadscreen_main_layout.setVisibility(View.GONE);
+          //  Utils.ShowLayout(main_sv, true);
 //
         }
     }

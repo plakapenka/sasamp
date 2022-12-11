@@ -19,7 +19,7 @@ class CClientInfo
 public:
 	static uint16_t usSAMPMajorVersion;
 	static uint16_t usSAMPMinorVersion;
-	static bool		bSAMPModified;
+	//static bool		bSAMPModified;
 	static bool		bJoinedFromLauncher;
 
 	// filled from game.info
