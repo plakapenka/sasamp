@@ -34,6 +34,7 @@ public enum ErrorContainer {
     DOWNLOAD_WAS_INTERRUPTED(1002, "Загрузка была прервана", HttpStatus.NOT_FOUND),
     FILE_NOT_FOUND(1003, "Файл не найден", HttpStatus.NOT_FOUND),
     INTERNET_WAS_DISABLE(1004, "Возникли проблемы с подключением, попробуйте еще раз", HttpStatus.FORBIDDEN),
+    NO_SPACE_LEFT_ON_DEVICE(1005, "Недостаточно памяти на телефоне", HttpStatus.NOT_FOUND),
 
     OTHER(999, "Неизвестная ошибка", HttpStatus.INTERNAL_SERVER_ERROR);
 

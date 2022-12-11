@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.ProtocolException;
 import java.net.SocketException;
 import java.net.URI;
 import java.net.URL;
@@ -271,11 +272,6 @@ public class DownloadTask implements Listener<TaskStatus> {
             int count;
 
             while ((count = input.read(data)) != -1) {
-//                if (isCancelledDownload()) {
-//                    input.close();
-//                    throw new ApiException(ErrorContainer.DOWNLOAD_WAS_INTERRUPTED);
-//                }
-
                 total += count;
                 fileLoadedSize += count;
 
@@ -295,43 +291,69 @@ public class DownloadTask implements Listener<TaskStatus> {
 
             files.remove(fileInfo);
         } catch (ApiException e) {
-            if (file != null && file.exists()) {
-                file.delete();
-            }
-
-            throw new ApiException(e);
-        } catch (UnknownHostException | SocketException | SSLException e) {
-            boolean isDeleted = false;
-
-            if (file != null && file.exists()) {
-                isDeleted = file.delete();
-            }
-
-            if (isDeleted) {
-                total -= fileLoadedSize;
-            }
-
-            throw new ApiException(ErrorContainer.INTERNET_WAS_DISABLE);
+           apiExceptionAction(file, e);
+        } catch (UnknownHostException | SocketException | SSLException | ProtocolException e) {
+            internetDisableAction(file, fileLoadedSize);
+        } catch (IOException e) {
+            noSpaceLeftOnDeviceAction(file);
         } catch (Exception e) {
-            if (file != null && file.exists()) {
-                file.delete();
-            }
-
-            FirebaseCrashlytics.getInstance().recordException(e);
-            //TODO исправить
-            throw new ApiException(ErrorContainer.DOWNLOAD_FILES_ERROR, e.toString());
+            unknownErrorAction(file, e);
         } finally {
-            try {
-                if (output != null)
-                    output.close();
-                if (input != null)
-                    input.close();
-            } catch (IOException ignored) {
-            }
-
-            if (connection != null)
-                connection.disconnect();
+            afterLoadingFileCompleteAction(output, input, connection);
         }
+    }
+
+    private void afterLoadingFileCompleteAction(OutputStream output, InputStream input, HttpURLConnection connection) {
+        try {
+            if (output != null)
+                output.close();
+            if (input != null)
+                input.close();
+        } catch (IOException ignored) {
+        }
+
+        if (connection != null){
+            connection.disconnect();
+        }
+    }
+
+    private void apiExceptionAction(File file, ApiException e) {
+        if (file != null && file.exists()) {
+            file.delete();
+        }
+
+        throw new ApiException(e);
+    }
+
+    private void unknownErrorAction(File file, Exception e) {
+        if (file != null && file.exists()) {
+            file.delete();
+        }
+
+        FirebaseCrashlytics.getInstance().recordException(e);
+        throw new ApiException(ErrorContainer.DOWNLOAD_FILES_ERROR);
+    }
+
+    private void noSpaceLeftOnDeviceAction(File file) {
+        if (file != null && file.exists()) {
+            file.delete();
+        }
+
+        throw new ApiException(ErrorContainer.NO_SPACE_LEFT_ON_DEVICE);
+    }
+
+    private void internetDisableAction(File file, long fileLoadedSize) {
+        boolean isDeleted = false;
+
+        if (file != null && file.exists()) {
+            isDeleted = file.delete();
+        }
+
+        if (isDeleted) {
+            total -= fileLoadedSize;
+        }
+
+        throw new ApiException(ErrorContainer.INTERNET_WAS_DISABLE);
     }
 
     @UiThread
@@ -369,13 +391,8 @@ public class DownloadTask implements Listener<TaskStatus> {
 
         if (result.getException() != null) {
             ApiException apiException = result.getException();
-
-            //TODO вернуть как было см чекер или коммиты
-            activityService.showBigMessage(apiException.getMessage(), loaderActivity);
-//            showErrorMessage(apiException);
+            showErrorMessage(apiException);
             onAsyncErrorDo();
-//        } else if (isCancelled()) {
-//            showErrorMessage(new ApiException(ErrorContainer.DOWNLOAD_WAS_INTERRUPTED));
         } else if (onAsyncSuccessListener != null) {
             onAsyncSuccessListener.onSuccess();
         }
