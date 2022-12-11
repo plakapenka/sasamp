@@ -623,8 +623,6 @@ void CPlayerPed::PutDirectlyInVehicle(int iVehicleID, int iSeat)
 		iSeat--;
 		ScriptCommand(&put_actor_in_car2, m_dwGTAId, iVehicleID, iSeat);
 	}
-
-	pGame->GetCamera()->SetBehindPlayer();
 }
 
 void CPlayerPed::EnterVehicle(int iVehicleID, bool bPassenger)
