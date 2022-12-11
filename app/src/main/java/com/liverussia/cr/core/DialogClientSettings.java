@@ -41,10 +41,7 @@ public class DialogClientSettings extends DialogFragment {
         viewPager = (ViewPager) rootview.findViewById(R.id.masterViewPager);
         final DialogClientSettingsAdapter adapter = new DialogClientSettingsAdapter(getChildFragmentManager(), 0);
         adapter.addFragment("Основное",DialogClientSettingsCommonFragment.createInstance("common"));
-        adapter.addFragment("Цвета", DialogClientSettingsColorFragment.createInstance("colors"));
-        adapter.addFragment("Первое лицо", DialogClientSettingsFPSFragment.createInstance("fps").setRoot((ViewGroup)rootview.findViewById(R.id.ll_settings_root)));
-        adapter.addFragment("HUD", DialogClientSettingsHUDFragment.createInstance("hud").setRoot((ViewGroup)rootview.findViewById(R.id.ll_settings_root)));
-        adapter.addFragment("Оружие", DialogClientSettingsWeaponsFragment.createInstance("weapons").setRoot((ViewGroup)rootview.findViewById(R.id.ll_settings_root)));
+
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
 
