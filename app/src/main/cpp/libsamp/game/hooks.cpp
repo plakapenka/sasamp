@@ -1286,6 +1286,7 @@ uintptr_t GetTexture_hook(const char* a1)
 	}
 	else
 	{
+		Log("Texture %s", a1);
 		++* (uintptr_t*)(tex + 84);
 		return tex;
 	}
@@ -1343,6 +1344,15 @@ void CWidgetRegionLook__Update_hook(uintptr_t thiz)
 	{
 		return CWidgetRegionLook__Update(thiz);
 	}
+}
+
+void (*ProcessCommands300To399)(uintptr_t* thiz, int a2);
+void ProcessCommands300To399_hook(uintptr_t* thiz, int a2)
+{
+	//Log("pedHandle = %d, local = %d", pedHandle, pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->m_dwGTAId);
+	if(!a2)return;
+
+	return ProcessCommands300To399(thiz, a2);
 }
 
 void (*ProcessCommands1400To1499)(uintptr_t* thiz, int a2);
@@ -2689,6 +2699,7 @@ void InstallHooks()
 	SetUpHook(g_libGTASA + 0x002E5400, (uintptr_t)GivePedScriptedTask_hook, (uintptr_t*)&GivePedScriptedTask);
 
 	SetUpHook(g_libGTASA + 0x00308640, (uintptr_t)ProcessCommands1400To1499_hook, (uintptr_t*)&ProcessCommands1400To1499);
+	SetUpHook(g_libGTASA + 0x002F7910, (uintptr_t)ProcessCommands300To399_hook, (uintptr_t*)&ProcessCommands300To399);
 
 	// todo: 3 pools fix crash
 
