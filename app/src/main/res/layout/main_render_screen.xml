@@ -46,6 +46,7 @@
         <include layout="@layout/casino_chip" />
         <include layout="@layout/auc_container" />
 
-        <include layout="@layout/br_serverselect" />
     </FrameLayout>
+
+    <include layout="@layout/br_serverselect" />
 </FrameLayout>
