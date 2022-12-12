@@ -16,11 +16,9 @@ extern "C"
 #include "..///..//santrope-tea-gtasa/CGameResourcesDecryptor.cpp"
 #include "..///..//santrope-tea-gtasa/CGameResourcesDecryptor.h"
 
-#include "..//voice/CVoiceChatClient.h"
 extern CGame* pGame;
 #include "..//CSettings.h"
 extern CSettings* pSettings;
-extern CVoiceChatClient* pVoice;
 extern CHUD *pHud;
 
 static uint32_t dwRLEDecompressSourceSize = 0;
@@ -664,18 +662,6 @@ int32_t NVEventGetNextEvent_hook(NVEvent* ev, int waitMSecs)
 	return ret;
 }
 
-char g_iLastBlock[512];
-
-void (*AssignBlockToPixels)(char* a1, size_t* a2, int a3, size_t* a4);
-void AssignBlockToPixels_hook(char* a1, size_t* a2, int a3, size_t* a4)
-{
-	Log("%s", a1);
-//	strcpy(g_iLastBlock, a1);
-//	strcat(g_iLastBlock, a1);
-
-	return AssignBlockToPixels(a1, a2, a3, a4);
-}
-
 void(*CStreaming__Init2)();
 void CStreaming__Init2_hook()
 {
@@ -802,9 +788,110 @@ void RQ_Command_rqSetAlphaTest_hook(char** a1)
 	return;
 }
 
+void (*TextureDatabase__LoadThumbs)(int a1, int a2);
+void TextureDatabase__LoadThumbs_hook(int a1, int a2)
+{// only dxt.tmb
+//	char v5[256]; // [sp+Ch] [bp+4h] BYREF
+//
+//	snprintf(v5, 0x100u, "texdb/%s/%s.dxt.tmb", *(const char **)(a1 + 4), *(const char **)(a1 + 4));
+//
+//	return ((void(*)(int, int, uint*))(g_libGTASA + 0x001BD128 + 1))(a1, (int)v5, (unsigned int *)(a1 + 0xC * a2 + 0x20));
+	return TextureDatabase__LoadThumbs(a1, a2);
+}
+
+void (*TextureDatabase__LoadDataOffsets)(int a1, int a2, unsigned int *a3, void **a4, char a5);
+void TextureDatabase__LoadDataOffsets_hook(int a1, int a2, unsigned int *a3, void **a4, char a5)
+{
+	return TextureDatabase__LoadDataOffsets(a1, 1, a3, a4, a5); // only dxt.toc
+	//return;
+}
+
+uint8_t *(*RLEDecompress)(uint8_t *pDest, size_t uiDestSize, uint8_t const *pSrc, size_t uiSegSize, uint32_t uiEscape);
+uint8_t *RLEDecompress_hook(uint8_t *pDest, size_t uiDestSize, uint8_t const *pSrc, size_t uiSegSize, uint32_t uiEscape)
+{
+	if (!pDest)
+	{
+		return pDest;
+	}
+
+	if (!pSrc)
+	{
+		return pDest;
+	}
+
+	uint8_t *pTempDest = pDest;
+	const uint8_t *pTempSrc = pSrc;
+	uint8_t *pEndOfDest = &pDest[uiDestSize];
+
+	uint8_t *pEndOfSrc = (uint8_t *)&pSrc[dwRLEDecompressSourceSize];
+
+	if (pDest < pEndOfDest)
+	{
+		do
+		{
+			if (*pTempSrc == uiEscape)
+			{
+				uint8_t ucCurSeg = pTempSrc[1];
+				if (ucCurSeg)
+				{
+					uint8_t *ucCurDest = pTempDest;
+					uint8_t ucCount = 0;
+					do
+					{
+						++ucCount;
+						// Log("WRITE111 TO 0x%x FROM 0x%x SIZE %d", ucCurDest, pTempSrc + 2, uiSegSize);
+						pDest = (uint8_t *)memcpy(ucCurDest, pTempSrc + 2, uiSegSize);
+
+						ucCurDest += uiSegSize;
+					} while (ucCurSeg != ucCount);
+
+					pTempDest += uiSegSize * ucCurSeg;
+				}
+				pTempSrc += 2 + uiSegSize;
+			}
+
+			else
+			{
+				if (pTempSrc + uiSegSize >= pEndOfSrc)
+				{
+					Log("AVOID CRASH TO 0x%x FROM 0x%x SIZE %d END OF SRC 0x%x", pTempDest, pTempSrc, pEndOfSrc - pTempSrc - 1, pEndOfSrc);
+					return pDest;
+				}
+				else
+				{
+					// Log("WRITE222 TO 0x%x FROM 0x%x SIZE %d END OF SRC 0x%x", pTempDest, pTempSrc, uiSegSize, pEndOfSrc);
+					pDest = (uint8_t *)memcpy(pTempDest, pTempSrc, uiSegSize);
+					pTempDest += uiSegSize;
+					pTempSrc += uiSegSize;
+				}
+			}
+		} while (pEndOfDest > pTempDest);
+	}
+
+	dwRLEDecompressSourceSize = 0;
+
+	return pDest;
+}
+
 void InstallSpecialHooks()
 {
 	Log("InstallSpecialHooks");
+
+	// RLEDecompress fix
+	//NOP(g_libGTASA + 0x001BDD92, 2); // RLEDecompress
+	SetUpHook(g_libGTASA + 0x001BC314, (uintptr_t)RLEDecompress_hook, (uintptr_t*)&RLEDecompress);
+
+	SetUpHook(g_libGTASA + 0x001BD374, (uintptr_t)TextureDatabase__LoadThumbs_hook, (uintptr_t*)&TextureDatabase__LoadThumbs);
+	SetUpHook(g_libGTASA + 0x001BD478, (uintptr_t)TextureDatabase__LoadDataOffsets_hook, (uintptr_t*)&TextureDatabase__LoadDataOffsets);
+
+	NOP(g_libGTASA + 0x00185DE8, 2);//_rwOpenGLNativeTextureReadXBOXPvS_
+	NOP(g_libGTASA + 0x005DDD70, 2); // BankLoadingThread
+	//
+	NOP(g_libGTASA + 0x002F9E5C, 10); 	//LoadCutsceneData
+	NOP(g_libGTASA + 0x0040E50C, 2); 	//CStuntJumpManager::Init
+	NOP(g_libGTASA + 0x0040E536, 2);		//CCutsceneMgr::Initialise
+	//
+	NOP(g_libGTASA + 0x0039B01C, 2);// shaders
 
 	// increase render memory buffer
 	SetUpHook(g_libGTASA + 0x003BF784, (uintptr_t)CTimer__StartUserPause_hook, (uintptr_t*)& CTimer__StartUserPause);
@@ -822,16 +909,21 @@ void InstallSpecialHooks()
 	// terminate all stuff when exiting
 	// nop shit pause
 
-	//спорно
-	if (!*(uintptr_t *)(g_libGTASA + 0x61B298))
-	{
-		uintptr_t test = ((uintptr_t(*)(const char *))(g_libGTASA + 0x00179A20))("glAlphaFuncQCOM");
-		if (!test)
-		{
-			NOP(g_libGTASA + 0x001A6164, 4);
-			SetUpHook(g_libGTASA + 0x001A6164, (uintptr_t)RQ_Command_rqSetAlphaTest_hook, (uintptr_t*)&RQ_Command_rqSetAlphaTest);
-		}
-	}
+	//crash
+//	if (!*(uintptr_t *)(g_libGTASA + 0x61B298))
+//		*(uintptr_t *)(g_libGTASA + 0x61B298) = ((uintptr_t(*)(const char *))(g_libGTASA + 0x179A20))("glAlphaFuncQCOM");
+//
+//	if (!*(uintptr_t *)(g_libGTASA + 0x61B298))
+//		*(uintptr_t *)(g_libGTASA + 0x61B298) = ((uintptr_t(*)(const char *))(g_libGTASA + 0x179A20))("glAlphaFunc");
+    if (!*(uintptr_t *)(g_libGTASA + 0x61B298))
+    {
+        uintptr_t test = ((uintptr_t(*)(const char *))(g_libGTASA + 0x00179A20))("glAlphaFuncQCOM");
+        if (!test)
+        {
+            NOP(g_libGTASA + 0x001A6164, 4);
+            SetUpHook(g_libGTASA + 0x001A6164, (uintptr_t)RQ_Command_rqSetAlphaTest_hook, (uintptr_t*)&RQ_Command_rqSetAlphaTest);
+        }
+    }
 
 	//pvr
 	UnFuck(g_libGTASA + 0x00573670);
@@ -990,62 +1082,6 @@ VEHICLE_MODEL* CModelInfo_AddVehicleModel_hook(int id)
 
 	VehicleModelsCount++;
 	return model;
-}
-/* ====================================================== */
-void(*CHud__DrawScriptText)(uintptr_t, uint8_t);
-
-float g_fMicrophoneButtonPosX;
-float g_fMicrophoneButtonPosY;
-bool g_IsVoiceServer();
-void CHud__DrawScriptText_hook(uintptr_t thiz, uint8_t unk)
-{
-	CHud__DrawScriptText(thiz, unk);
-	if (pGame && pNetGame)
-	{
-	
-		/*
-		if (g_pWidgetManager)
-		{
-			ImGuiIO& io = ImGui::GetIO();
-
-			if (!g_pWidgetManager->GetSlotState(WIDGET_CHATHISTORY_UP))
-			{
-				g_pWidgetManager->New(WIDGET_CHATHISTORY_UP, 1700.0f, (io.DisplaySize.y * 0.3) - 180.0f, 130.0f, 130.0f, "menu_up");
-				g_pWidgetManager->GetWidget(WIDGET_CHATHISTORY_UP)->SetPosWithoutScale(pGUI->ScaleX(1325.0f), io.DisplaySize.y * 0.3);
-			}
-			if (!g_pWidgetManager->GetSlotState(WIDGET_CHATHISTORY_DOWN))
-			{
-				g_pWidgetManager->New(WIDGET_CHATHISTORY_DOWN, 1700.0f, (io.DisplaySize.y * 0.3) - 30, 130.0f, 130.0f, "menu_down");
-				g_pWidgetManager->GetWidget(WIDGET_CHATHISTORY_DOWN)->SetPosWithoutScale(pGUI->ScaleX(1515.0f), io.DisplaySize.y * 0.3);
-			}
-			if (!g_pWidgetManager->GetSlotState(WIDGET_MICROPHONE))
-			{
-				if (g_IsVoiceServer())
-				{
-					// pVoice
-					g_fMicrophoneButtonPosX = pSettings->GetReadOnly().fButtonMicrophoneX;
-					g_fMicrophoneButtonPosY = pSettings->GetReadOnly().fButtonMicrophoneY;
-					g_pWidgetManager->New(WIDGET_MICROPHONE, 
-						pSettings->GetReadOnly().fButtonMicrophoneX, 
-						pSettings->GetReadOnly().fButtonMicrophoneY,
-						pSettings->GetReadOnly().fButtonMicrophoneSize,
-						pSettings->GetReadOnly().fButtonMicrophoneSize, "hud_dance");
-					g_pWidgetManager->GetWidget(WIDGET_MICROPHONE)->SetTexture("samp", "voice_button");
-				}
-			}
-
-			if (!g_pWidgetManager->GetSlotState(WIDGET_CAMERA_CYCLE))
-			{
-				g_pWidgetManager->New(WIDGET_CAMERA_CYCLE,
-					pSettings->GetReadOnly().fButtonCameraCycleX,
-					pSettings->GetReadOnly().fButtonCameraCycleY,
-					pSettings->GetReadOnly().fButtonCameraCycleSize,
-					pSettings->GetReadOnly().fButtonCameraCycleSize, "cam-toggle");
-				// cam-toggle
-			}
-		}
-		*/
-	}
 }
 
 #include "..//keyboard.h"
@@ -1373,78 +1409,12 @@ void GivePedScriptedTask_hook(uintptr_t* thiz, int pedHandle, uintptr_t* a3, int
 	return GivePedScriptedTask(thiz, pedHandle, a3, commandID);
 }
 
-void (*RpMaterialDestroy)(RpMaterial* mat);
-void RpMaterialDestroy_hook(RpMaterial* mat)
+int (*RpMaterialDestroy)(int a1, int a2, int a3, int a4);
+int RpMaterialDestroy_hook(int a1, int a2, int a3, int a4)
 {
-	if(!mat->texture )return;
+	if(!a1 || !a2 || !a3 || !a4)return 1;
 
-	return RpMaterialDestroy(mat);
-}
-uint8_t *(*RLEDecompress)(uint8_t *pDest, size_t uiDestSize, uint8_t const *pSrc, size_t uiSegSize, uint32_t uiEscape);
-uint8_t *RLEDecompress_hook(uint8_t *pDest, size_t uiDestSize, uint8_t const *pSrc, size_t uiSegSize, uint32_t uiEscape)
-{
-	if (!pDest)
-	{
-		return pDest;
-	}
-
-	if (!pSrc)
-	{
-		return pDest;
-	}
-
-	uint8_t *pTempDest = pDest;
-	const uint8_t *pTempSrc = pSrc;
-	uint8_t *pEndOfDest = &pDest[uiDestSize];
-
-	uint8_t *pEndOfSrc = (uint8_t *)&pSrc[dwRLEDecompressSourceSize];
-
-	if (pDest < pEndOfDest)
-	{
-		do
-		{
-			if (*pTempSrc == uiEscape)
-			{
-				uint8_t ucCurSeg = pTempSrc[1];
-				if (ucCurSeg)
-				{
-					uint8_t *ucCurDest = pTempDest;
-					uint8_t ucCount = 0;
-					do
-					{
-						++ucCount;
-						// Log("WRITE111 TO 0x%x FROM 0x%x SIZE %d", ucCurDest, pTempSrc + 2, uiSegSize);
-						pDest = (uint8_t *)memcpy(ucCurDest, pTempSrc + 2, uiSegSize);
-
-						ucCurDest += uiSegSize;
-					} while (ucCurSeg != ucCount);
-
-					pTempDest += uiSegSize * ucCurSeg;
-				}
-				pTempSrc += 2 + uiSegSize;
-			}
-
-			else
-			{
-				if (pTempSrc + uiSegSize >= pEndOfSrc)
-				{
-					// Log("AVOID CRASH TO 0x%x FROM 0x%x SIZE %d END OF SRC 0x%x", pTempDest, pTempSrc, pEndOfSrc - pTempSrc - 1, pEndOfSrc);
-					return pDest;
-				}
-				else
-				{
-					// Log("WRITE222 TO 0x%x FROM 0x%x SIZE %d END OF SRC 0x%x", pTempDest, pTempSrc, uiSegSize, pEndOfSrc);
-					pDest = (uint8_t *)memcpy(pTempDest, pTempSrc, uiSegSize);
-					pTempDest += uiSegSize;
-					pTempSrc += uiSegSize;
-				}
-			}
-		} while (pEndOfDest > pTempDest);
-	}
-
-	dwRLEDecompressSourceSize = 0;
-
-	return pDest;
+	return RpMaterialDestroy(a1, a2, a3, a4);
 }
 
 #include "..//crashlytics.h"
@@ -2580,8 +2550,7 @@ void CStreaming__RemoveModel_hook(int model)
 int g_iLastProcessedSkinCollision = 228;
 int g_iLastProcessedEntityCollision = 228;
 
-void (*NopeVoidFunc)(uintptr_t *thiz, uintptr_t *a2, bool a3);
-void NopeVoidFunc_hook(uintptr_t *thiz, uintptr_t *a2, bool a3)
+void NopeVoidFunc(uintptr_t thiz)
 {
 	return;
 }
@@ -2593,6 +2562,22 @@ void CPed__ProcessEntityCollision_hook(PED_TYPE* thiz, ENTITY_TYPE* ent, void* c
 	g_iLastProcessedEntityCollision = ent->nModelIndex;
 
 	CPed__ProcessEntityCollision(thiz, ent, colPoint);
+}
+
+int (*CTaskSimpleGetUp__ProcessPed)(uintptr_t* thiz, PED_TYPE* ped);
+int CTaskSimpleGetUp__ProcessPed_hook(uintptr_t* thiz, PED_TYPE* ped)
+{
+	if(!ped)return 0;
+
+	return CTaskSimpleGetUp__ProcessPed(thiz, ped);
+}
+
+int (*emu_ArraysDelete)(unsigned int a1, int a2, int a3, int a4);
+int emu_ArraysDelete_hook(unsigned int a1, int a2, int a3, int a4)
+{
+	if (a1 > g_libGTASA)
+		return emu_ArraysDelete(a1, a2, a3, a4);
+	return 0;
 }
 
 char (*CFileMgr__ReadLine)(int a1, char*, int);
@@ -2627,9 +2612,70 @@ char CFileMgr__ReadLine_hook(int a1, char *a2, int a3)
 	}
 	return retv;
 }
+int (*_RwTextureDestroy)(RwTexture *);
+int _RwTextureDestroy_hook(RwTexture *texture)
+{
+	if (!texture)
+		return 1;
+	return _RwTextureDestroy(texture);
+}
+
+int (*RwResourcesFreeResEntry)(int);
+int RwResourcesFreeResEntry_hook(int a1)
+{
+	int result; // r0
+
+	if (a1)
+		result = RwResourcesFreeResEntry(a1);
+	else
+		result = 0;
+	return result;
+}
+
+int (*emu_ArraysGetID)(unsigned int);
+int emu_ArraysGetID_hook(unsigned int a1)
+{
+	bool v1;	// zf
+	int result; // r0
+
+	v1 = a1 == 0;
+	if (a1)
+		v1 = *(uint32_t *)(a1 + 36) == 0;
+	if (v1)
+		result = 0;
+	else
+		result = emu_ArraysGetID(a1);
+	return result;
+}
+
+int (*SetCompAlphaCB)(int, int);
+int SetCompAlphaCB_hook(int a1, char a2)
+{
+	int result; // r0
+
+	if (a1)
+		result = SetCompAlphaCB(a1, a2);
+	else
+		result = 0;
+	return result;
+}
+
+int (*CTextureDatabaseRuntime__GetEntry)(unsigned int a1, const char *a2, bool *a3, int a4);
+int CTextureDatabaseRuntime__GetEntry_hook(unsigned int a1, const char *a2, bool *a3, int a4)
+{
+	int result; // r0
+
+	if (a1)
+		result = CTextureDatabaseRuntime__GetEntry(a1, a2, a3, a4);
+	else
+		result = -1;
+	return result;
+}
 
 void InstallHooks()
 {
+	Log("InstallHooks");
+
 	PROTECT_CODE_INSTALLHOOKS;
 
 	//SetUpHook(g_libGTASA+0x291104, (uintptr_t)CStreaming__ConvertBufferToObject_hook, (uintptr_t*)&CStreaming__ConvertBufferToObject);
@@ -2667,7 +2713,7 @@ void InstallHooks()
 	SetUpHook(g_libGTASA + 0x0033AD78, (uintptr_t)CAnimBlendNode__FindKeyFrame_hook, (uintptr_t*)& CAnimBlendNode__FindKeyFrame);
 
 	// TextDraw render
-	SetUpHook(g_libGTASA + 0x003D5894, (uintptr_t)CHud__DrawScriptText_hook, (uintptr_t*)& CHud__DrawScriptText);
+	//SetUpHook(g_libGTASA + 0x003D5894, (uintptr_t)CHud__DrawScriptText_hook, (uintptr_t*)& CHud__DrawScriptText);
 
 	//widgets
 	//SetUpHook(g_libGTASA + 0x0039DB30, (uintptr_t)CWidgetButtonAttackUpdate_hook, (uintptr_t*)& CWidgetButtonAttackUpdate);
@@ -2689,11 +2735,10 @@ void InstallHooks()
 
 	// GetFrameFromID fix
 	SetUpHook(g_libGTASA + 0x00335CC0, (uintptr_t)CClumpModelInfo_GetFrameFromId_hook, (uintptr_t*)& CClumpModelInfo_GetFrameFromId);
-	// RLEDecompress fix
-	SetUpHook(g_libGTASA + 0x001BC314, (uintptr_t)RLEDecompress_hook, (uintptr_t*)&RLEDecompress);
 
 	//RpMaterialDestroy fix ? не точно
 	SetUpHook(g_libGTASA + 0x001E3C54, (uintptr_t)RpMaterialDestroy_hook, (uintptr_t*)&RpMaterialDestroy);
+	SetUpHook(g_libGTASA + 0x1B1808, (uintptr_t)_RwTextureDestroy_hook, (uintptr_t*)&_RwTextureDestroy);
 
 	//CRunningScript fix ? не точно
 	SetUpHook(g_libGTASA + 0x002E5400, (uintptr_t)GivePedScriptedTask_hook, (uintptr_t*)&GivePedScriptedTask);
@@ -2733,7 +2778,7 @@ void InstallHooks()
 	SetUpHook(g_libGTASA + 0x3986CC, (uintptr_t)CGame__Process_hook, (uintptr_t*)& CGame__Process);
 
 	SetUpHook(g_libGTASA + 0x004D4A6C, (uintptr_t)CAutomobile__ProcessEntityCollision_hook, (uintptr_t*)& CAutomobile__ProcessEntityCollision);
-	
+
 	SetUpHook(g_libGTASA + 0x00398334, (uintptr_t)CGame__Shutdown_hook, (uintptr_t*)& CGame__Shutdown);
 
 //	//CWidget::DrawHelpIcon
@@ -2778,32 +2823,29 @@ void InstallHooks()
 	SetUpHook(g_libGTASA + 0x0031B164, (uintptr_t)FxEmitterBP_c__Render_hook, (uintptr_t*)& FxEmitterBP_c__Render);
 	SetUpHook(g_libGTASA + 0x0043A17C, (uintptr_t)CPed__ProcessEntityCollision_hook, (uintptr_t*)&CPed__ProcessEntityCollision);
 
-	// all save omg
-	SetUpHook(g_libGTASA + 0x00463870, (uintptr_t)NopeVoidFunc_hook, (uintptr_t*)&NopeVoidFunc);
-    SetUpHook(g_libGTASA + 0x0041D1C8, (uintptr_t)NopeVoidFunc_hook, (uintptr_t*)&NopeVoidFunc);
-	SetUpHook(g_libGTASA + 0x00267128, (uintptr_t)NopeVoidFunc_hook, (uintptr_t*)&NopeVoidFunc);
-	SetUpHook(g_libGTASA + 0x00266D04, (uintptr_t)NopeVoidFunc_hook, (uintptr_t*)&NopeVoidFunc);
-	SetUpHook(g_libGTASA + 0x0024CDF8, (uintptr_t)NopeVoidFunc_hook, (uintptr_t*)&NopeVoidFunc);
-	SetUpHook(g_libGTASA + 0x0026A670, (uintptr_t)NopeVoidFunc_hook, (uintptr_t*)&NopeVoidFunc);
-	SetUpHook(g_libGTASA + 0x00463A68, (uintptr_t)NopeVoidFunc_hook, (uintptr_t*)&NopeVoidFunc);
+	NOP(g_libGTASA + 0x0039ADE6, 2);//CCoronas::RenderSunReflection crash
 
-	//
-	SetUpHook(g_libGTASA + 0x0033FD9C, (uintptr_t)NopeVoidFunc_hook, (uintptr_t*)&NopeVoidFunc); //LoadCutsceneData
-	SetUpHook(g_libGTASA + 0x0033F81C, (uintptr_t)NopeVoidFunc_hook, (uintptr_t*)&NopeVoidFunc);//CCutsceneMgr::Initialise
-    //
-    SetUpHook(g_libGTASA + 0x0026A2D4, (uintptr_t)NopeVoidFunc_hook, (uintptr_t*)&NopeVoidFunc); // ProcessShaderCache
-    NOP(g_libGTASA + 0x0028E88C, 10);
-    NOP(g_libGTASA + 0x0028E8AC, 2);
-
-	//CCoronas::RenderSunReflection
-	SetUpHook(g_libGTASA + 0x0052E264, (uintptr_t)NopeVoidFunc_hook, (uintptr_t*)&NopeVoidFunc);
-
-    // SetUpHook(g_libGTASA + 0x002BAF70, (uintptr_t)NopeVoidFunc_hook, (uintptr_t*)&NopeVoidFunc);
 	NOP(g_libGTASA+0x0051018A, 2);// не давать ган при выходе из тачки
 	NOP(g_libGTASA+0x005101A6, 2);// не давать ган при выходе из тачки
 
-    //ProcessEvents crash спорно
-   // NOP(g_libGTASA + 0x0023AF8A, 10);
+	NOP(g_libGTASA + 0x00261A10, 29); // убрать выбор языка в настройках
+	SetUpHook(g_libGTASA + 0x004B97FC, (uintptr_t)CTaskSimpleGetUp__ProcessPed_hook, (uintptr_t*)&CTaskSimpleGetUp__ProcessPed); // CTaskSimpleGetUp::ProcessPed
+
+	//==================
+	SetUpHook(g_libGTASA + 0x194B04, (uintptr_t)emu_ArraysDelete_hook, (uintptr_t*)&emu_ArraysDelete);
+	SetUpHook(g_libGTASA + 0x1BA580, (uintptr_t)RwResourcesFreeResEntry_hook, (uintptr_t*)&RwResourcesFreeResEntry);
+	SetUpHook(g_libGTASA + 0x194B20, (uintptr_t)emu_ArraysGetID_hook, (uintptr_t*)&emu_ArraysGetID);
+	SetUpHook(g_libGTASA + 0x50C5F8, (uintptr_t)SetCompAlphaCB_hook, (uintptr_t*)&SetCompAlphaCB);
+	SetUpHook(g_libGTASA + 0x1bdc3c, (uintptr_t)CTextureDatabaseRuntime__GetEntry_hook, (uintptr_t*)&CTextureDatabaseRuntime__GetEntry);
+
+	//== save
+	NOP(g_libGTASA + 0x0056C4D6, 2);
+	NOP(g_libGTASA + 0x00266D28, 2);
+	NOP(g_libGTASA + 0x0026714C, 2);
+	NOP(g_libGTASA + 0x003CE54E, 2);
+	NOP(g_libGTASA + 0x003CE684, 2);
+
+
 
 	HookCPad();
 }
