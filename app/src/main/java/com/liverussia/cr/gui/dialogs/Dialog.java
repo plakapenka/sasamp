@@ -228,6 +228,8 @@ public class Dialog {
         this.mCurrentDialogTypeId = -1;
         this.mCurrentListItem = -1;
         this.mRowsList.clear();
+        this.mCustomRecyclerView.setAdapter(null);
+
         for (int i = 0; i < this.mHeadersList.size(); i++) {
             this.mHeadersList.get(i).setVisibility(View.GONE);
         }
