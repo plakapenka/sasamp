@@ -25,23 +25,6 @@ struct stSettings
 
 	int iFPS;
 
-	float fButtonMicrophoneX;
-	float fButtonMicrophoneY;
-	float fButtonMicrophoneSize;
-
-	float fButtonEnterPassengerX;
-	float fButtonEnterPassengerY;
-	float fButtonEnterPassengerSize;
-
-	float fButtonCameraCycleX;
-	float fButtonCameraCycleY;
-	float fButtonCameraCycleSize;
-
-	float fScoreBoardSizeX;
-	float fScoreBoardSizeY;
-
-	int iVoiceList;
-
 	int iAndroidKeyboard;
 	int iCutout;
 	int iOutfitGuns;

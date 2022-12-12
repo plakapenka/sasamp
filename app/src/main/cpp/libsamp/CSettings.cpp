@@ -76,22 +76,6 @@ void CSettings::Save(int iIgnoreCategory)
 	ini_table_create_entry_as_float(config, "gui", "FontSize", m_Settings.fFontSize);
 	ini_table_create_entry_as_int(config, "gui", "FontOutline", m_Settings.iFontOutline);
 
-	if (iIgnoreCategory != 2)
-	{
-
-		ini_table_create_entry_as_float(config, "gui", "MicrophoneSize", m_Settings.fButtonMicrophoneSize);
-		ini_table_create_entry_as_float(config, "gui", "MicrophoneX", m_Settings.fButtonMicrophoneX);
-		ini_table_create_entry_as_float(config, "gui", "MicrophoneY", m_Settings.fButtonMicrophoneY);
-
-		ini_table_create_entry_as_float(config, "gui", "ButtonEnterPassengerSize", m_Settings.fButtonEnterPassengerSize);
-		ini_table_create_entry_as_float(config, "gui", "ButtonEnterPassengerX", m_Settings.fButtonEnterPassengerX);
-		ini_table_create_entry_as_float(config, "gui", "ButtonEnterPassengerY", m_Settings.fButtonEnterPassengerY);
-
-		ini_table_create_entry_as_float(config, "gui", "CameraCycleSize", m_Settings.fButtonCameraCycleSize);
-		ini_table_create_entry_as_float(config, "gui", "CameraCycleX", m_Settings.fButtonCameraCycleX);
-		ini_table_create_entry_as_float(config, "gui", "CameraCycleY", m_Settings.fButtonCameraCycleY);
-	}
-
 	ini_table_create_entry_as_int(config, "gui", "fps", m_Settings.iFPS);
 
 	if (iIgnoreCategory != 1)
@@ -256,21 +240,6 @@ void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 	m_Settings.iFontOutline = ini_table_get_entry_as_int(config, "gui", "FontOutline", 2);
 
 	m_Settings.iChatMaxMessages = ini_table_get_entry_as_int(config, "gui", "ChatMaxMessages", -1);
-
-	m_Settings.fButtonMicrophoneSize = ini_table_get_entry_as_float(config, "gui", "MicrophoneSize", 130.0f);
-	m_Settings.fButtonMicrophoneX = ini_table_get_entry_as_float(config, "gui", "MicrophoneX", 1650.0f);
-	m_Settings.fButtonMicrophoneY = ini_table_get_entry_as_float(config, "gui", "MicrophoneY", 620.0f);
-
-	m_Settings.fButtonEnterPassengerSize = ini_table_get_entry_as_float(config, "gui", "fButtonEnterPassengerSize", 130.0f);
-	m_Settings.fButtonEnterPassengerX = ini_table_get_entry_as_float(config, "gui", "ButtonEnterPassengerX", 1650.0f);
-	m_Settings.fButtonEnterPassengerY = ini_table_get_entry_as_float(config, "gui", "ButtonEnterPassengerY", 620.0f);
-
-	m_Settings.fButtonCameraCycleX = ini_table_get_entry_as_float(config, "gui", "CameraCycleX", 360.0f);
-	m_Settings.fButtonCameraCycleY = ini_table_get_entry_as_float(config, "gui", "CameraCycleY", 960.0f);
-	m_Settings.fButtonCameraCycleSize = ini_table_get_entry_as_float(config, "gui", "CameraCycleSize", 90.0f);
-
-	m_Settings.fScoreBoardSizeX = ini_table_get_entry_as_float(config, "gui", "ScoreBoardSizeX", 1024.0f);
-	m_Settings.fScoreBoardSizeY = ini_table_get_entry_as_float(config, "gui", "ScoreBoardSizeY", 768.0f);
 
 	m_Settings.iFPS = ini_table_get_entry_as_int(config, "gui", "fps", 60);
 

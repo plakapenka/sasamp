@@ -1,5 +1,6 @@
 package com.liverussia.cr.gui;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Build;
@@ -39,7 +40,7 @@ public class Casino {
     private ImageView casino_chip_back_button;
 
     public native void Init();
-    public native void ClickChipButton(int buttonID, int input, boolean sell_or_buy);
+    public native void ClickChipButton(int buttonID, long input, boolean sell_or_buy);
 
     public Casino(Activity activity){
         Init();
@@ -91,6 +92,7 @@ public class Casino {
         Utils.HideLayout(casino_chip_main_layout, false);
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     void OpenChipBuySell(boolean isBuy, int balance){
         chip_isSell = isBuy;
 
@@ -99,18 +101,14 @@ public class Casino {
                 casino_chip_action_caption.setText("Купить фишки");
                 casino_chip_balance_text.setText(String.format("%d руб.", balance));
                 casino_chip_currency_text.setText("1 = 1.000 руб.");
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    casino_chip_bg_2.setBackground(activity.getDrawable(R.drawable.casino_chip_bg_2_buy));
-                }
+                casino_chip_bg_2.setBackground(activity.getDrawable(R.drawable.casino_chip_bg_2_buy));
                 casino_chip_buy_button.setText("купить");
                 casino_chip_buy_button.setTextColor(Color.parseColor("#017088"));
             } else{
                 casino_chip_action_caption.setText("Продать фишки");
                 casino_chip_balance_text.setText(String.format("%d фишек", balance));
                 casino_chip_currency_text.setText("1 = 950 руб.");
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    casino_chip_bg_2.setBackground(activity.getDrawable(R.drawable.casino_chip_bg_2_sell));
-                }
+                casino_chip_bg_2.setBackground(activity.getDrawable(R.drawable.casino_chip_bg_2_sell));
                 casino_chip_buy_button.setText("продать");
                 casino_chip_buy_button.setTextColor(Color.parseColor("#A01618"));
             }
@@ -119,9 +117,9 @@ public class Casino {
         });
         ChipUpdateGetting();
     }
-    int getChipGetCount(){
-        if(casino_chip_input.getText().toString().isEmpty()) return 0;
-        return Integer.parseInt(casino_chip_input.getText().toString());
+    Long getChipGetCount(){
+        if(casino_chip_input.getText().toString().isEmpty()) return 0L;
+        return Long.parseLong(casino_chip_input.getText().toString());
     }
     void ChipUpdateGetting(){
         activity.runOnUiThread(() -> {

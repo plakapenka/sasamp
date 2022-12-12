@@ -58,13 +58,13 @@ Java_com_liverussia_cr_gui_Casino_Init(JNIEnv *env, jobject thiz) {
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_Casino_ClickChipButton(JNIEnv *env, jobject thiz, jint button_id,
-                                                  jint input, jboolean isSell) {
+                                                  jlong input, jboolean sell_or_buy) {
     CCasino::isCasinoChipToggle = false;
 
     RakNet::BitStream bsSend;
     bsSend.Write((uint8_t)ID_CUSTOM_RPC);
     bsSend.Write((uint8_t)RPC_SHOW_CASINO_BUY_CHIP);
-    bsSend.Write((uint8_t)isSell);
+    bsSend.Write((uint8_t)sell_or_buy);
     bsSend.Write((uint8_t)button_id);
     bsSend.Write((uint32_t)input);
 

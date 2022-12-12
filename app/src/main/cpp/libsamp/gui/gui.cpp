@@ -117,12 +117,6 @@ bool g_IsVoiceServer()
 	return true;
 }
 
-extern float g_fMicrophoneButtonPosX;
-extern float g_fMicrophoneButtonPosY;
-extern uint32_t g_uiLastTickVoice;
-#include "..//voice/CVoiceChatClient.h"
-extern CVoiceChatClient* pVoice;
-
 void CGUI::PreProcessInput()
 {
 	ImGuiIO& io = ImGui::GetIO();

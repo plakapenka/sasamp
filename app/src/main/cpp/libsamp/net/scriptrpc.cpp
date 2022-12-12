@@ -158,7 +158,6 @@ void ScrSetPlayerSkin(RPCParameters *rpcParams)
 
 void ScrApplyPlayerAnimation(RPCParameters *rpcParams)
 {
-	Log("RPC: ScrApplyPlayerAnimation");
 	unsigned char * Data = reinterpret_cast<unsigned char *>(rpcParams->input);
 	int iBitLength = rpcParams->numberOfBitsOfData;
 
@@ -1509,6 +1508,8 @@ void ScrSetPlayerAttachedObject(RPCParameters* rpcParams)
 
 uintptr_t GetTextureFromTXDStore(const char* szTxd, const char* szTexture)
 {
+	Log("GetTextureFromTXDStore %s, %s", szTxd, szTexture);
+
 	int iTXD = ((int(*)(const char*))(g_libGTASA + 0x0055BB84 + 1))(szTxd); //FindTxDSlot
 	if (iTXD == -1)
 	{

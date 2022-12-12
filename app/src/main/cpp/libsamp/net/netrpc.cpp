@@ -5,12 +5,9 @@
 #include "../chatwindow.h"
 #include "../CSettings.h"
 #include "../util/CJavaWrapper.h"
-#include "../voice/CVoiceChatClient.h"
 #include "java_systems/CHUD.h"
 #include "java_systems/CEditobject.h"
 
-extern CVoiceChatClient* pVoice;
-bool g_IsVoiceServer();
 extern CGame *pGame;
 extern CNetGame *pNetGame;
 extern CSettings *pSettings;
@@ -103,16 +100,6 @@ void InitGame(RPCParameters *rpcParams)
 
 	pGame->SetWorldWeather(pNetGame->m_byteWeather);
 	pGame->ToggleCJWalk(pNetGame->m_bUseCJWalk);
-
-	if (!pVoice)
-			{
-				pVoice = new CVoiceChatClient();
-				if (g_IsVoiceServer())
-				{
-					pVoice->Connect(pNetGame->m_szHostOrIp, pNetGame->m_iPort + 2);
-				}
-				//Log("Created voice");
-			}
 
 	CChatWindow::AddDebugMessage("Присоединено к {B9C9BF}%.64s", pNetGame->m_szHostName);
 
@@ -610,6 +597,7 @@ void DialogBox(RPCParameters *rpcParams)
 		if(wDialogID < 0) return;
 		if(strlen(info) < 3) return;
 
+		Log("DIalog = %s", title);
 		g_pJavaWrapper->MakeDialog(wDialogID, byteDialogStyle, title, info, button1, button2);
 }
 

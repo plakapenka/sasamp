@@ -34,12 +34,7 @@ CPlayerTags::CPlayerTags()
 }
 
 CPlayerTags::~CPlayerTags() {}
-#include "voice/CVoiceChatClient.h"
-extern CVoiceChatClient* pVoice;
-// допилить
-extern bool g_bShowVoiceList;
 
-static stVoiceSort aVoiceSortTime[MAX_PLAYERS];
 #include <algorithm>
 void CPlayerTags::Render()
 {
@@ -54,27 +49,19 @@ void CPlayerTags::Render()
 		CPlayerPool* pPlayerPool = pNetGame->GetPlayerPool();
 		pGame->FindPlayerPed()->GetMatrix(&matLocal);
 
-		for(PLAYERID playerId = 0; playerId < MAX_PLAYERS; playerId++)
-		{
-			aVoiceSortTime[playerId].m_iPlayerID = playerId;
-			aVoiceSortTime[playerId].m_iVoiceTime = 999999;
-			if(pPlayerPool->GetSlotState(playerId) == true)
-			{
-				CRemotePlayer* pPlayer = pPlayerPool->GetAt(playerId);
+		for(PLAYERID playerId = 0; playerId < MAX_PLAYERS; playerId++) {
+			if (pPlayerPool->GetSlotState(playerId) == true) {
+				CRemotePlayer *pPlayer = pPlayerPool->GetAt(playerId);
 
-				if(pPlayer && pPlayer->IsActive() && pPlayer->m_bShowNameTag)
-				{
-					CPlayerPed* pPlayerPed = pPlayer->GetPlayerPed();
-					
-					if (m_bChatBubbleStatus[playerId])
-					{
-						if (!pPlayerPed)
-						{
+				if (pPlayer && pPlayer->IsActive() && pPlayer->m_bShowNameTag) {
+					CPlayerPed *pPlayerPed = pPlayer->GetPlayerPed();
+
+					if (m_bChatBubbleStatus[playerId]) {
+						if (!pPlayerPed) {
 							ResetChatBubble(playerId);
 							continue;
 						}
-						if (pPlayerPed->GetDistanceFromCamera() <= m_fDistance[playerId])
-						{
+						if (pPlayerPed->GetDistanceFromCamera() <= m_fDistance[playerId]) {
 							if (!pPlayerPed->IsAdded()) continue;
 							VecPos.X = 0.0f;
 							VecPos.Y = 0.0f;
@@ -82,17 +69,15 @@ void CPlayerTags::Render()
 							pPlayerPed->GetBonePosition(8, &VecPos);
 							DrawChatBubble(playerId, &VecPos, pPlayerPed->GetDistanceFromCamera());
 						}
-						if (GetTickCount() - m_dwStartTime[playerId] >= m_dwTime[playerId])
-						{
+						if (GetTickCount() - m_dwStartTime[playerId] >= m_dwTime[playerId]) {
 							ResetChatBubble(playerId);
 						}
 					}
-					
-					if(pPlayerPed->GetDistanceFromCamera() <= pNetGame->m_fNameTagDrawDistance)
-					{
+
+					if (pPlayerPed->GetDistanceFromCamera() <= pNetGame->m_fNameTagDrawDistance) {
 
 						{
-							if(!pPlayerPed->IsAdded()) continue;
+							if (!pPlayerPed->IsAdded()) continue;
 							VecPos.X = 0.0f;
 							VecPos.Y = 0.0f;
 							VecPos.Z = 0.0f;
@@ -102,97 +87,27 @@ void CPlayerTags::Render()
 						CAMERA_AIM *pCam = GameGetInternalAim();
 						dwHitEntity = 0;
 
-						if(pNetGame->m_bNameTagLOS)
-						{
-							dwHitEntity = ScriptCommand(&get_line_of_sight, 
-								VecPos.X, VecPos.Y, VecPos.Z,
-								pCam->pos1x, pCam->pos1y, pCam->pos1z,
-								1, 0, 0, 1, 0);
+						if (pNetGame->m_bNameTagLOS) {
+							dwHitEntity = ScriptCommand(&get_line_of_sight,
+														VecPos.X, VecPos.Y, VecPos.Z,
+														pCam->pos1x, pCam->pos1y, pCam->pos1z,
+														1, 0, 0, 1, 0);
 						}
 
-						if (!pNetGame->m_bNameTagLOS || dwHitEntity)
-						{
-							if (pVoice)
-							{
-								bool bVoice = (GetTickCount() - pVoice->m_aLastPushTime[playerId] <= 500);
+						if (!pNetGame->m_bNameTagLOS || dwHitEntity) {
 
-								sprintf(szNickBuf, "%s (%d)", pPlayerPool->GetPlayerName(playerId), playerId);
-								Draw(&VecPos, szNickBuf,
-									pPlayer->GetPlayerColor(),
-									pPlayerPed->GetDistanceFromCamera(),
-									pPlayer->m_fReportedHealth,
-									pPlayer->m_fReportedArmour,
-									pPlayer->IsAFK(), bVoice, pPlayer->m_bKeyboardOpened);
-
-								if (bVoice)
-								{
-									if (m_iVoiceTime[playerId] == 0 || m_iVoiceTime[playerId] == 999999)
-									{
-										m_iVoiceTime[playerId] = 1000 + (rand() % 20);
-										m_iLastVoiceTimeUpdated[playerId] = GetTickCount();
-										aVoiceSortTime[playerId].m_iVoiceTime = m_iVoiceTime[playerId];
-									}
-									else
-									{
-										m_iVoiceTime[playerId] += GetTickCount() - m_iLastVoiceTimeUpdated[playerId];
-										aVoiceSortTime[playerId].m_iVoiceTime = m_iVoiceTime[playerId];
-										m_iLastVoiceTimeUpdated[playerId] = GetTickCount();
-									}
-								}
-								else
-								{
-									m_iVoiceTime[playerId] = 999999;
-									aVoiceSortTime[playerId].m_iVoiceTime = m_iVoiceTime[playerId];
-									m_iLastVoiceTimeUpdated[playerId] = 0;
-								}
-							}
-							else
-							{
-								sprintf(szNickBuf, "%s (%d)", pPlayerPool->GetPlayerName(playerId), playerId);
-								Draw(&VecPos, szNickBuf,
-									pPlayer->GetPlayerColor(),
-									pPlayerPed->GetDistanceFromCamera(),
-									pPlayer->m_fReportedHealth,
-									pPlayer->m_fReportedArmour,
-									pPlayer->IsAFK(), 0, pPlayer->m_bKeyboardOpened);
-
-							}
-
+							sprintf(szNickBuf, "%s (%d)", pPlayerPool->GetPlayerName(playerId),
+									playerId);
+							Draw(&VecPos, szNickBuf,
+								 pPlayer->GetPlayerColor(),
+								 pPlayerPed->GetDistanceFromCamera(),
+								 pPlayer->m_fReportedHealth,
+								 pPlayer->m_fReportedArmour,
+								 pPlayer->IsAFK(), 0, pPlayer->m_bKeyboardOpened);
 						}
 					}
 				}
 			}
-		}
-		int n = sizeof(aVoiceSortTime) / sizeof(aVoiceSortTime[0]);
-
-		struct {
-			bool operator()(stVoiceSort a, stVoiceSort b)
-			{
-				return a.m_iVoiceTime < b.m_iVoiceTime;
-			}
-		} customLess;
-
-		std::sort(aVoiceSortTime, aVoiceSortTime + n, customLess);
-		for (int i = 0; i <= 6; i++)
-		{
-			if (!pGame->IsToggledHUDElement(HUD_ELEMENT_VOICE)) continue;
-			if (!g_bShowVoiceList) continue;
-			if (aVoiceSortTime[i].m_iVoiceTime >= 999990) break;
-			if (pPlayerPool->GetSlotState(aVoiceSortTime[i].m_iPlayerID) == false) continue;
-			sprintf(szNickBuf, "%s (%d)", pPlayerPool->GetPlayerName(aVoiceSortTime[i].m_iPlayerID), aVoiceSortTime[i].m_iPlayerID);
-			basePos.y += pGUI->GetFontSize() * 1.1f;
-			ImVec2 iconPos = basePos;
-			iconPos.x += ImGui::CalcTextSize(szNickBuf).x + (pGUI->GetFontSize() * 0.6f);
-			if (m_pVoice_icon)
-			{
-				ImVec2 a = ImVec2(iconPos.x, iconPos.y);
-				ImVec2 b = ImVec2(iconPos.x + pGUI->GetFontSize(), iconPos.y + pGUI->GetFontSize());
-				ImGui::GetOverlayDrawList()->AddImage((ImTextureID)m_pVoice_icon->raster, a, b);
-			}
-
-			pGUI->RenderText(basePos, 0xFFFFFFFF, true, szNickBuf);
-
-			iVoiceCounter++;
 		}
 	}
 }

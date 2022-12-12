@@ -128,7 +128,7 @@ void CJavaWrapper::MakeDialog(int dialogId, int dialogTypeId, char caption[], ch
 	env->DeleteLocalRef(j_button1);
 	env->DeleteLocalRef(j_button2);
 
-    EXCEPTION_CHECK(env);
+   // EXCEPTION_CHECK(env);
 }
 
 void CJavaWrapper::SetUseFullScreen(int b)
@@ -473,46 +473,7 @@ extern "C"
 
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_setNativeWidgetPositionAndScale(JNIEnv* pEnv, jobject thiz, jint id, jint x, jint y, jint scale)
 	{
-		if (id == 0)
-		{
-			if (pSettings)
-			{
-				pSettings->GetWrite().fButtonMicrophoneX = x;
-				pSettings->GetWrite().fButtonMicrophoneY = y;
-				pSettings->GetWrite().fButtonMicrophoneSize = scale;
-			}
 
-			if (g_pWidgetManager)
-			{
-				if (g_pWidgetManager->GetSlotState(WIDGET_MICROPHONE))
-				{
-					g_pWidgetManager->GetWidget(WIDGET_MICROPHONE)->SetPos(x, y);
-					g_pWidgetManager->GetWidget(WIDGET_MICROPHONE)->SetHeight(scale);
-					g_pWidgetManager->GetWidget(WIDGET_MICROPHONE)->SetWidth(scale);
-				}
-			}
-		}
-		
-
-		if (id == 2)
-		{
-			if (pSettings)
-			{
-				pSettings->GetWrite().fButtonCameraCycleX = x;
-				pSettings->GetWrite().fButtonCameraCycleY = y;
-				pSettings->GetWrite().fButtonCameraCycleSize = scale;
-			}
-
-			if (g_pWidgetManager)
-			{
-				if (g_pWidgetManager->GetSlotState(WIDGET_CAMERA_CYCLE))
-				{
-					g_pWidgetManager->GetWidget(WIDGET_CAMERA_CYCLE)->SetPos(x, y);
-					g_pWidgetManager->GetWidget(WIDGET_CAMERA_CYCLE)->SetHeight(scale);
-					g_pWidgetManager->GetWidget(WIDGET_CAMERA_CYCLE)->SetWidth(scale);
-				}
-			}
-		}
 	}
 
 	JNIEXPORT jintArray JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_getNativeHudElementPosition(JNIEnv* pEnv, jobject thiz, jint id)
@@ -550,30 +511,6 @@ extern "C"
 			return nullptr;
 		}
 		int arr[3] = { -1, -1, -1 };
-		
-
-		if (pSettings)
-		{
-			if (id == 0)
-			{
-				arr[0] = pSettings->GetWrite().fButtonMicrophoneX;
-				arr[1] = pSettings->GetWrite().fButtonMicrophoneY;
-				arr[2] = pSettings->GetWrite().fButtonMicrophoneSize;
-			}
-			if (id == 1)
-			{
-				arr[0] = pSettings->GetWrite().fButtonEnterPassengerX;
-				arr[1] = pSettings->GetWrite().fButtonEnterPassengerY;
-				arr[2] = pSettings->GetWrite().fButtonEnterPassengerSize;
-			}
-			if (id == 2)
-			{
-				arr[0] = pSettings->GetWrite().fButtonCameraCycleX;
-				arr[1] = pSettings->GetWrite().fButtonCameraCycleY;
-				arr[2] = pSettings->GetWrite().fButtonCameraCycleSize;
-			}
-		}
-		
 
 		pEnv->SetIntArrayRegion(color, 0, 3, (const jint*)& arr[0]);
 

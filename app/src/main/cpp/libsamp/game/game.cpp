@@ -276,8 +276,6 @@ void CGame::CreateCheckPoint()
 // 0.3.7
 uint32_t CGame::CreateRadarMarkerIcon(int iMarkerType, float fX, float fY, float fZ, int iColor, int iStyle)
 {
-	Log("CreateRadarMarkerIcon");
-
 	uint32_t dwMarkerID = 0;
 
 	if(iStyle == 1) 

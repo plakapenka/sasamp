@@ -95,8 +95,7 @@ CNetGame::CNetGame(const char* szHostOrIp, int iPort, const char* szPlayerName, 
 
 	Log("CNetGame createt obj");
 }
-#include "..//voice/CVoiceChatClient.h"
-extern CVoiceChatClient* pVoice;
+
 CNetGame::~CNetGame()
 {
 	m_pRakClient->Disconnect(0);
@@ -290,15 +289,7 @@ void CNetGame::Process()
 		m_dwLastConnectAttempt = GetTickCount();
 		SetGameState(GAMESTATE_CONNECTING);
 	}
-	static bool once = false;
-	if (pVoice && !once)
-	{
-		if (g_IsVoiceServer())
-		{
-			pVoice->StartProcessing();
-		}
-		once = true;
-	}
+
 }
 
 void CNetGame::UpdateNetwork()
@@ -1740,7 +1731,6 @@ void CNetGame::Packet_DisconnectionNotification(Packet* pkt)
 {
 	CChatWindow::AddDebugMessageNonFormatted(CLocalisation::GetMessage(E_MSG::SERVER_CLOSED_CONNECTION));
 	m_pRakClient->Disconnect(2000);
-	if(pVoice) pVoice->FullDisconnect();
 	g_pJavaWrapper->ClearScreen();
 
 	//pNetGame->ShutDownForGameRestart();
@@ -1751,7 +1741,6 @@ void CNetGame::Packet_ConnectionLost(Packet* pkt)
 	if(m_pRakClient) m_pRakClient->Disconnect(0);
 
 	CChatWindow::AddDebugMessageNonFormatted(CLocalisation::GetMessage(E_MSG::CONNECTION_LOST));
-	if(pVoice) pVoice->Disconnect();
 	ShutDownForGameRestart();
 
 	for(PLAYERID playerId = 0; playerId < MAX_PLAYERS; playerId++)

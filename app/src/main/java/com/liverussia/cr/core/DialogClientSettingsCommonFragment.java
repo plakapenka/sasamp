@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -18,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.factor.bouncy.BouncyRecyclerView;
+import com.liverussia.cr.gui.util.FadingEdgeLayout;
 import com.nvidia.devtech.NvEventQueueActivity;
 import com.liverussia.cr.R;
 
@@ -117,7 +119,7 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                // ChatLineChanged(progress);
-                BouncyRecyclerView chat = mContext.findViewById(R.id.chat);
+                FadingEdgeLayout chat = mContext.findViewById(R.id.chat_fade_box);
                 ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) chat.getLayoutParams();
                 layoutParams.height = progress;
                 chat.setLayoutParams(layoutParams);

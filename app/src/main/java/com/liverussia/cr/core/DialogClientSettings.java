@@ -20,13 +20,6 @@ public class DialogClientSettings extends DialogFragment {
     TabLayout tabLayout;
     ViewPager viewPager;
 
-    static final int mSettingsHudCount = 10;
-    static final int mSettingsHudFPSStart = 10;
-    static final int mSettingsHudFPSEnd = 12;
-
-    static final int mSettingsWeaponsStart = 12;
-    static final int mSettingsWeaponsEnd = 14;
-
     static final int mSettingsComonStart = 14;
     static final int mSettingsComonEnd = 15;
     NvEventQueueActivity mContext = null;

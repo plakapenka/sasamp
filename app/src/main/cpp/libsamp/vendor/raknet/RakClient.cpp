@@ -129,9 +129,7 @@ void WriteUnVerified1();
 void WriteUnVerified0();
 
 void CheckForProtected0();
-#include "..//..//voice/CVoiceChatClient.h"
-extern CVoiceChatClient* pVoice;
-bool g_IsVoiceServer();
+
 Packet* RakClient::Receive( void )
 {
 	Packet * packet = RakPeer::Receive();

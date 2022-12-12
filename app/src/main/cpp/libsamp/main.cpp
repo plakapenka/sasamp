@@ -21,7 +21,6 @@
 #include "CCheckFileHash.h"
 #include "str_obfuscator_no_template.hpp"
 
-#include "voice/CVoiceChatClient.h"
 #include "crashlytics.h"
 
 #include <netdb.h>
@@ -41,7 +40,6 @@ void CrashLog(const char* fmt, ...);
 CGame *pGame = nullptr;
 CNetGame *pNetGame = nullptr;
 CPlayerTags *pPlayerTags = nullptr;
-CVoiceChatClient* pVoice = nullptr;
 CSnapShotHelper* pSnapShotHelper = nullptr;
 
 CGUI *pGUI = nullptr;
@@ -270,7 +268,7 @@ void MainLoop()
 //	}
 }
 extern int g_iLastRenderedObject;
-extern char g_iLastBlock[512];
+char g_iLastBlock[512];
 
 void PrintSymbols(void* pc, void* lr)
 {
@@ -537,7 +535,6 @@ extern "C"
 		return javaVM;
 	}
 }
-extern "C" AL_API jint AL_APIENTRY JNI_OnLoad_alc(JavaVM* vm, void* reserved);
 
 #include "CFPSFix.h"
 CFPSFix g_fps;
@@ -552,7 +549,6 @@ void ANDRunThread_hook(void* a1)
 
 jint JNI_OnLoad(JavaVM *vm, void *reserved)
 {
-	JNI_OnLoad_alc(vm, reserved);
 	javaVM = vm;
 
 	Log("SAMP library loaded! Build time: " __DATE__ " " __TIME__);
