@@ -7,7 +7,6 @@
 #include "net/netgame.h"
 #include "vendor/bass/bass.h"
 #include <dlfcn.h>
-#include "voice/CVoiceChatClient.h"
 #include "java_systems/scoreboard.h"
 #include "java_systems/CHUD.h"
 
@@ -18,7 +17,6 @@ extern CSettings *pSettings;
 extern CNetGame *pNetGame;
 extern CAMERA_AIM * pcaInternalAim;
 extern CGame * pGame;
-extern CVoiceChatClient* pVoice;
 
 bool g_bShowVoiceList = false;
 

@@ -16,7 +16,7 @@ import android.widget.FrameLayout;
 
 import com.liverussia.cr.R;
 
-class FadingEdgeLayout extends FrameLayout {
+public class FadingEdgeLayout extends FrameLayout {
 
     private static final int DEFAULT_GRADIENT_SIZE_DP = 80;
 
