@@ -35,7 +35,7 @@ public:
 	CStream* AddStream(int iID, VECTOR* pPos, int iVirtualWorld, int iInterior, float fDistance, const char* szUrl);
 	void DeleteStreamByID(int iID);
 
-	void PlayIndividualStream(const char* szUrl);
+	void PlayIndividualStream(const char* szUrl, int type = BASS_SAMPLE_LOOP);
 	void StopIndividualStream();
 
 	void PostListenerMatrix(MATRIX4X4* pMat);

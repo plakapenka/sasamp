@@ -114,13 +114,13 @@ void CStreamPool::DeleteStreamByID(int iID) // ready
 	bufferedCommands.WriteUnlock();
 }
 
-void CStreamPool::PlayIndividualStream(const char* szUrl) // ready
+void CStreamPool::PlayIndividualStream(const char* szUrl, int type) // ready
 {
 	if (m_hIndividualStream)
 	{
 		StopIndividualStream();
 	}
-	m_hIndividualStream = BASS_StreamCreateURL(szUrl, 0, BASS_SAMPLE_LOOP, NULL, 0);
+	m_hIndividualStream = BASS_StreamCreateURL(szUrl, 0, type, NULL, 0);
 
 	strcpy(&m_szIndividualLastLink[0], szUrl);
 
@@ -159,6 +159,8 @@ void CStreamPool::SetStreamVolume(int iID, float fVolume)
 	bufferedCommands.WriteUnlock();
 }
 #include "netgame.h"
+#include <jni.h>
+
 extern CNetGame* pNetGame;
 extern uint32_t bProcessedRender2dstuff;
 void CStreamPool::Process() // ready
@@ -302,4 +304,16 @@ void CStreamPool::Process() // ready
 	BASS_Set3DPosition(&pos, &vel, &front, &top);
 
 	BASS_Apply3D();
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_nvidia_devtech_NvEventQueueActivity_PlaySound(JNIEnv *env, jobject thiz, jstring url) {
+	const char *_url = env->GetStringUTFChars(url, nullptr);
+
+	pNetGame->GetStreamPool()->PlayIndividualStream(_url, BASS_STREAM_AUTOFREE);
+
+	env->ReleaseStringUTFChars(url, _url);
+
+
 }
