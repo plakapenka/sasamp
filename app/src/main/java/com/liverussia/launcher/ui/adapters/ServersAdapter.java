@@ -2,6 +2,7 @@ package com.liverussia.launcher.ui.adapters;
 
 import android.graphics.PorterDuff;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.animation.AnimationUtils;
 import android.content.Context;
@@ -32,6 +33,8 @@ import org.ini4j.Wini;
 public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersViewHolder> {
 	private Context context;
 	private List<Servers> servers;
+	private int selectedItem;
+//	private Boolean isselect[10];
 	private final ActivityService activityService;
 
 	{
@@ -41,6 +44,7 @@ public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersV
 	public ServersAdapter(Context context, List<Servers> servers){
 		 this.context = context;
 		 this.servers = servers;
+		 selectedItem = Integer.parseInt(NativeStorage.getClientProperty(NativeStorageElements.SERVER, context));
 	}
 
 	@NonNull
@@ -51,7 +55,7 @@ public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersV
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ServersViewHolder holder, int position) {
+    public void onBindViewHolder(ServersViewHolder holder, int position) {
 		Servers servers = this.servers.get(position);
 		int MainColor = Color.parseColor(servers.getColor());
 		int LightColor = Color.parseColor(servers.getColorl());
@@ -69,14 +73,29 @@ public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersV
 		holder.progressBar.setProgress(servers.getOnline());
 		holder.progressBar.setMax(servers.getmaxOnline());
 
-		holder.container.setOnClickListener(view -> {
-			view.startAnimation(AnimationUtils.loadAnimation(context, R.anim.button_click));
-			NativeStorage.addClientProperty(NativeStorageElements.SERVER, servers.getServerID(), context);
-			String selectedServer = NativeStorage.getClientProperty(NativeStorageElements.SERVER, context);
+		if(selectedItem == position){
 
-			if (StringUtils.isNotBlank(selectedServer)) {
-				activityService.showMessage(InfoMessage.SERVER_SELECTED.getText(), context);
-			}
+			holder.container.setScaleX(1.05f);
+			holder.container.setScaleY(1.05f);
+			holder.backColor.setAlpha(0.55f);
+		}else{
+			holder.container.setScaleX(1.0f);
+			holder.container.setScaleY(1.0f);
+			holder.backColor.setAlpha(0.40f);
+		}
+
+		holder.container.setOnClickListener(view -> {
+			selectedItem = position;
+			this.notifyDataSetChanged();
+
+			//view.startAnimation(AnimationUtils.loadAnimation(context, R.anim.button_click));
+			NativeStorage.addClientProperty(NativeStorageElements.SERVER, servers.getServerID(), context);
+
+			//String selectedServer = NativeStorage.getClientProperty(NativeStorageElements.SERVER, context);
+
+			//if (StringUtils.isNotBlank(selectedServer)) {
+			activityService.showMessage(InfoMessage.SERVER_SELECTED.getText(), context);
+			//}
 		});
     }
 

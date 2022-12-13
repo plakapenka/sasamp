@@ -33,6 +33,8 @@ public class Servers {
 	@Expose
 	private int maxonline;
 
+	public boolean isSelected;
+
 	public Servers(String color, String serverID, String dopname, String name, int online, int maxonline, String colorl) {
 		this.color = color;
 		this.colorl = colorl;
@@ -41,6 +43,7 @@ public class Servers {
 		this.name = name;
 		this.online = online;
 		this.maxonline = maxonline;
+		this.isSelected = false;
 	}
 	 
 	public String getname() {

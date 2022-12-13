@@ -4,7 +4,8 @@
     android:id="@+id/container"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/_10sdp"
+
+    android:layout_marginTop="@dimen/_10sdp"
     android:layout_marginLeft="@dimen/_14sdp"
     android:layout_marginRight="@dimen/_14sdp"
     android:orientation="horizontal" >
@@ -12,7 +13,7 @@
     <LinearLayout
         android:id="@+id/backColor"
 
-        android:alpha="0.50"
+        android:alpha="0.40"
         android:backgroundTint="#2196f3"
         android:background="@drawable/server_rectangle"
         android:orientation="horizontal"
