@@ -34,6 +34,9 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -51,7 +54,6 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.exifinterface.media.ExifInterface;
 
 import com.liverussia.cr.R;
@@ -89,7 +91,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.logging.Logger;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
@@ -195,6 +196,7 @@ public abstract class NvEventQueueActivity
     private ChooseServer mChooseServer = null;
     private Tab mTab = null;
     private Casino mCasino = null;
+    private SoundPool soundPool = null;
 
     /* *
      * Helper function to select fixed window size.
@@ -251,6 +253,7 @@ public abstract class NvEventQueueActivity
     public native void onLoginClick(String password);
     public native void onChooseSpawnClick(int spawnid);
 
+    public native void PlaySound(String url);
     public native void onSamwillHideGame(int samwillpacket);
 
     public native void onTargetNotifyClose();
@@ -1039,7 +1042,18 @@ public abstract class NvEventQueueActivity
         mine_3 = new MineGame3(this);
         mHudManager = new HudManager(this);
         mCasinoLuckyWheel = new Casino_LuckyWheel(this);
-        mSamwillManager = new SamwillManager(this);
+
+        AudioAttributes attributes = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_GAME)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build();
+
+        soundPool = new SoundPool.Builder()
+                .setAudioAttributes(attributes)
+                .build();
+
+
+        mSamwillManager = new SamwillManager(this, soundPool);
         mSpeedometer = new Speedometer(this);
         mAutoShop = new AutoShop(this);
         mCasinoDice = new CasinoDice(this);
@@ -1665,4 +1679,28 @@ public abstract class NvEventQueueActivity
 
     public void showFuelStation(int type, int price1, int price2, int price3, int price4, int price5, int maxCount) { runOnUiThread(() -> { mFuelStationManager.Show(type, price1, price2, price3, price4, price5, maxCount); } ); }
 
+    public void playLocalSound(int soundID, float speed){
+        soundPool.load(this, soundID, 0);
+
+        soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+            @Override
+            public void onLoadComplete(SoundPool soundPool, int i, int i1) {
+                AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
+               // int sound = soundPool.load(this, soundID, 0);
+                float curVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                float maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+                float leftVolume = curVolume / maxVolume;
+                float rightVolume = curVolume / maxVolume;
+                //int priority = 1;
+               // int no_loop = 0;
+               // float normal_playback_rate = 1f;
+
+                soundPool.play(i, leftVolume, rightVolume, 1, 0, speed);
+
+                soundPool.unload(i);
+            }
+        });
+
+    }
 }

@@ -1,9 +1,8 @@
 package com.liverussia.cr.gui;
 
 import android.app.Activity;
+import android.media.SoundPool;
 import android.os.CountDownTimer;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -14,13 +13,9 @@ import com.liverussia.cr.R;
 import com.liverussia.cr.gui.util.Utils;
 import com.nvidia.devtech.NvEventQueueActivity;
 
-import org.w3c.dom.Text;
-
-import java.util.Arrays;
-import java.util.Collections;
-
 public class SamwillManager {
 
+    private final SoundPool soundPool;
     private FrameLayout br_samwill_layout;
     private ImageView samwill_1;
     private ImageView samwill_2;
@@ -41,9 +36,13 @@ public class SamwillManager {
     int samwill5;
     int samwillpacket;
 
+    int sawSound = 0;
+
     private long tick;
 
-    public SamwillManager(Activity activity){
+    public SamwillManager(Activity activity, SoundPool soundPool){
+        this.soundPool = soundPool;
+
         br_samwill_layout = activity.findViewById(R.id.br_samwill_layout);
         samwill_1 = activity.findViewById(R.id.samwill_1);
         samwill_2 = activity.findViewById(R.id.samwill_2);
@@ -55,6 +54,8 @@ public class SamwillManager {
         samwill_progress = activity.findViewById(R.id.samwill_progress);
 
         samwill_btn.setOnClickListener(view -> {
+            soundPool.play(sawSound, 0.5f, 0.5f, 1, 0, 1.2f);
+
             view.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.button_click));
             if (samwill_progress.getProgress() > 2500 && samwill_progress.getProgress() < 4050 && samwill1!=0)
             {
@@ -131,6 +132,8 @@ public class SamwillManager {
 
 
     public void Show() {
+        sawSound = soundPool.load(NvEventQueueActivity.getInstance(), R.raw.saw, 0);
+        //sawSound = soundPool.load(this, soundID, 0);
         samwillpacket = 0;
         samwill1 = -1;
         samwill2 = -1;
@@ -150,6 +153,8 @@ public class SamwillManager {
     public void Hide() {
         NvEventQueueActivity.getInstance().onSamwillHideGame(samwillpacket);
         Utils.HideLayout(br_samwill_layout, true);
+
+        soundPool.unload(sawSound);
     }
 
     public void startCountdown() {
@@ -158,14 +163,13 @@ public class SamwillManager {
             countDownTimer = null;
             tick = 0;
         }
-        countDownTimer = new CountDownTimer(999999999, 1) {
+        countDownTimer = new CountDownTimer(999999999, 16) {
             @Override
             public void onTick(long j) {
-                tick+=27;
+                tick+=90;
                 samwill_progress.setProgress((int)tick);
                 int progresstext = samwill_progress.getProgress() / 25 / 10;
-                String str = String.format("%d", progresstext);
-                samwill_procent.setText(String.valueOf(str) + "%");
+                samwill_procent.setText(progresstext + "%");
                 if (samwill_progress.getProgress() > 4050 && samwill1 != 1)
                 {
                     samwill1 = 0;
