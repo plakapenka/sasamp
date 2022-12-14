@@ -44,7 +44,12 @@ public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersV
 	public ServersAdapter(Context context, List<Servers> servers){
 		 this.context = context;
 		 this.servers = servers;
-		 selectedItem = Integer.parseInt(NativeStorage.getClientProperty(NativeStorageElements.SERVER, context));
+		 try {
+			 selectedItem = Integer.parseInt(NativeStorage.getClientProperty(NativeStorageElements.SERVER, context));
+		 } catch (NumberFormatException e) {
+			// e.printStackTrace();
+		 }
+
 	}
 
 	@NonNull

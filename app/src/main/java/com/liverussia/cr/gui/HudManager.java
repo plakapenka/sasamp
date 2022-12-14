@@ -8,10 +8,14 @@ import android.graphics.Color;
 import android.text.Html;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -36,6 +40,8 @@ import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class HudManager {
     private Activity activity;
@@ -72,7 +78,7 @@ public class HudManager {
     private TextView opg_defender_score;
     private TextView opg_time_text;
     private ImageView hud_bg;
-    private AutoCompleteTextView chat_input;
+    private EditText chat_input;
     private ConstraintLayout chat_input_layout;
     private TextView armour_text;
     private TextView hp_text;
@@ -82,6 +88,7 @@ public class HudManager {
     private View hide_chat;
     private ConstraintLayout chat_box;
 
+    private int cursorPos = 0;
     private final int INVALID = -1;
     private final int ME_BUTTON = 0;
     private final int DO_BUTTON = 1;
@@ -107,6 +114,7 @@ public class HudManager {
     public native void ToggleKeyBoard(boolean toggle);
     public native void SendChatMessage(byte str[]);
     public native void SendChatButton(int buttonID);
+    public native void ChatSetCursor(int start, int end);
     ChatAdapter adapter;
 
     ArrayList<String> chat_lines = new ArrayList<>();
@@ -182,8 +190,9 @@ public class HudManager {
         String[] cities = {"Москва", "Самара", "Вологда", "Волгоград", "Саратов", "Воронеж"};
        // AutoCompleteTextView autoCompleteTextView = findViewById(R.id.autocomplete);
         // Создаем адаптер для автозаполнения элемента AutoCompleteTextView
-        ArrayAdapter<String> autocompleete = new ArrayAdapter (activity, R.layout.chat_autocompleete_line, cities);
-        chat_input.setAdapter(autocompleete);
+      //  ArrayAdapter<String> autocompleete = new ArrayAdapter (activity, R.layout.chat_autocompleete_line, cities);
+      //  chat_input.setAdapter(autocompleete);
+
 //        chat_input.setOnEditorActionListener(new EditText.OnEditorActionListener() {
 //            @Override
 //            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -605,16 +614,23 @@ public class HudManager {
         levelinfo.setText(String.valueOf(strlevelinfo));
     }
 
-    public void ShowYernMoney() { Utils.ShowLayout(yearn_money, true); }
-
-    public void HideYernMoney() { Utils.HideLayout(yearn_money, true); }
-
     public void UpdateYearnMoney(int money) {
-        if (money != -1)
-        {
-            String str = String.format("%d", money);
-            yearn_moneytext.setText(str + " P");
-        }
+        String str = String.format("%d", money);
+        yearn_moneytext.setText(str + " P");
+
+        Utils.ShowLayout(yearn_money, true);
+
+        TimerTask task = new TimerTask() {
+            public void run() {
+                activity.runOnUiThread(() -> {
+                    yearn_money.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.popup_hide_notif_to_right));
+                    yearn_money.setVisibility(View.GONE);
+                });
+            }
+        };
+        Timer timer = new Timer("Timer");
+
+        timer.schedule(task, 5000L);
     }
 
     public void ShowUpdateTargetNotify(int type, String text) {
@@ -653,7 +669,17 @@ public class HudManager {
     public void AddToChatInput(String msg){
         activity.runOnUiThread(() -> {
             chat_input.setText(msg);
-           // chat_input.setSelection(msg.length());
+            // Log.d("af", "start = "+chat_input.getSelectionStart()+" size = "+chat_input.getText().length());
+           // if(!msg.isEmpty()) {
+             //   if (cursorPos == chat_input.getText().length()-1) {
+                    chat_input.setSelection(chat_input.getText().length());
+              //      cursorPos = chat_input.getSelectionStart();
+              //  }
+          //  }
+          //  else{
+           //     cursorPos = 0;
+           // }
+           //
         });
 
     }
@@ -663,12 +689,14 @@ public class HudManager {
             if (chat_input_layout.getVisibility() == View.VISIBLE) {
                 chat_input_layout.setVisibility(View.GONE);
                 ToggleKeyBoard(false);
+                cursorPos = 0;
                 //   imm.hideSoftInputFromWindow(chat_input.getWindowToken(), 0);
 
             } else {
                 chat_input_layout.setVisibility(View.VISIBLE);
-             //   chat_input.requestFocus();
+                chat_input.requestFocus();
                 ToggleKeyBoard(true);
+                cursorPos = chat_input.getText().length();
                //  imm.showSoftInput(chat_input, InputMethodManager.SHOW_IMPLICIT);
             }
         });

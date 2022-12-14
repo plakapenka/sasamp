@@ -1,8 +1,10 @@
 package com.liverussia.launcher.ui.activity;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Build;
 
+import android.os.Handler;
 import android.widget.*;
 import android.graphics.PorterDuff;
 
@@ -61,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private final static int GAME_DIRECTORY_EMPTY_SIZE = 0;
     private final static int LAST_VERSION_WITHOUT_NEED_PERMS = 23;
 
+    private Handler handler;
     private Animation animation;
 	public LinearLayout donateButton;
     public ImageView donateImage;
@@ -80,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private DonateFragment donateFragment;
     public ImageView settingsImage;
     public TextView settingsTV;
+    public FrameLayout container_layout;
 
     private final ActivityService activityService;
 
@@ -117,7 +121,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         | View.SYSTEM_UI_FLAG_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
-		animation = AnimationUtils.loadAnimation(this, R.anim.button_click);
+        container_layout = findViewById(R.id.container);
+        animation = AnimationUtils.loadAnimation(this, R.anim.button_click);
 
 		monitoringTV = (TextView) findViewById(R.id.monitoringTV);
         settingsTV = (TextView) findViewById(R.id.settingsTV);
@@ -136,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         donateButton = (LinearLayout) findViewById(R.id.donateButton);
         playButton = (LinearLayout) findViewById(R.id.playButton);
 
+        this.handler = new Handler();
 		monitoringFragment = new MonitoringFragment();
         settingsFragment = new SettingsFragment();
 
@@ -260,7 +266,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.playButton:
                 v.startAnimation(animation);
-                onClickPlay();
+                this.handler.postDelayed(new Runnable() {
+                    public final void run() {
+                        onClickPlay();
+                    }
+                }, 200);
+
                 break;
             default:
                 break;
@@ -279,20 +290,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void onClickPlay() {
-      //  startGame();
+        startGame();
 
-        File gameDirectory = new File(this.getExternalFilesDir(null).toString());
-
-        if (gameDirectory.list() != null && gameDirectory.list().length > GAME_DIRECTORY_EMPTY_SIZE) {
-            CacheChecker cacheChecker = new CacheChecker(this);
-            cacheChecker.setOnAsyncSuccessListener(this::doAfterCacheChecked);
-            //TODO вернуть перед релизом
-          //  cacheChecker.checkIsAllCacheFilesExist();
-            cacheChecker.validateCache();
-        } else {
-            MainUtils.setType(DownloadType.LOAD_ALL_CACHE);
-            startActivity(new Intent(this, LoaderActivity.class));
-        }
+//        File gameDirectory = new File(this.getExternalFilesDir(null).toString());
+//
+//        if (gameDirectory.list() != null && gameDirectory.list().length > GAME_DIRECTORY_EMPTY_SIZE) {
+//            CacheChecker cacheChecker = new CacheChecker(this);
+//            cacheChecker.setOnAsyncSuccessListener(this::doAfterCacheChecked);
+//            //TODO вернуть перед релизом
+//          //  cacheChecker.checkIsAllCacheFilesExist();
+//            cacheChecker.validateCache();
+//        } else {
+//            MainUtils.setType(DownloadType.LOAD_ALL_CACHE);
+//            startActivity(new Intent(this, LoaderActivity.class));
+//        }
     }
 
     private void doAfterCacheChecked(FileInfo[] fileToReloadArray) {
@@ -372,7 +383,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 	
 	public boolean isRecordAudioPermissionGranted() {
-        if (Build.VERSION.SDK_INT < LAST_VERSION_WITHOUT_NEED_PERMS || checkSelfPermission("android.permission.RECORD_AUDIO") == 0) {
+        if (Build.VERSION.SDK_INT < LAST_VERSION_WITHOUT_NEED_PERMS || checkSelfPermission("android.permission.RECORD_AUDIO") == PackageManager.PERMISSION_GRANTED) {
             return true;
         }
         ActivityCompat.requestPermissions(this, new String[]{"android.permission.RECORD_AUDIO"}, 2);
