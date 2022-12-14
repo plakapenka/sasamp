@@ -21,7 +21,7 @@ extern CGame* pGame;
 extern CSettings* pSettings;
 extern CHUD *pHud;
 
-static uint32_t dwRLEDecompressSourceSize = 0;
+//static uint32_t dwRLEDecompressSourceSize = 0;
 
 char(*CStreaming__ConvertBufferToObject)(int, int, int);
 int __attribute__((noinline)) g_unobfuscate(int a)
@@ -735,20 +735,20 @@ size_t OS_FileRead_hook(FILE *a1, void *a2, size_t a3)
         }
         return retv;
     }
-    if (calledFrom == 0x1BDD34 + 1)
-    {
-        size_t retn = OS_FileRead(a1, a2, a3);
+   // if (calledFrom == 0x1BDD34 + 1)
+   // {
+      //  size_t retn = OS_FileRead(a1, a2, a3);
 
-        dwRLEDecompressSourceSize = *(uint32_t *)a2;
+       // dwRLEDecompressSourceSize = *(uint32_t *)a2;
 
-        return retn;
-    }
-    else
-    {
-        size_t retn = OS_FileRead(a1, a2, a3);
+     //   return retn;
+   // }
+   // else
+   // {
+        //size_t retn = ;
 
-        return retn;
-    }
+   // }
+	return OS_FileRead(a1, a2, a3);
 }
 
 void (*CTimer__StartUserPause)();
@@ -805,73 +805,78 @@ void TextureDatabase__LoadDataOffsets_hook(int a1, int a2, unsigned int *a3, voi
 	return TextureDatabase__LoadDataOffsets(a1, 1, a3, a4, a5); // only dxt.toc
 	//return;
 }
-
+//
 uint8_t *(*RLEDecompress)(uint8_t *pDest, size_t uiDestSize, uint8_t const *pSrc, size_t uiSegSize, uint32_t uiEscape);
 uint8_t *RLEDecompress_hook(uint8_t *pDest, size_t uiDestSize, uint8_t const *pSrc, size_t uiSegSize, uint32_t uiEscape)
 {
-	if (!pDest)
-	{
-		return pDest;
-	}
-
-	if (!pSrc)
-	{
-		return pDest;
-	}
-
-	uint8_t *pTempDest = pDest;
-	const uint8_t *pTempSrc = pSrc;
-	uint8_t *pEndOfDest = &pDest[uiDestSize];
-
-	uint8_t *pEndOfSrc = (uint8_t *)&pSrc[dwRLEDecompressSourceSize];
-
-	if (pDest < pEndOfDest)
-	{
-		do
-		{
-			if (*pTempSrc == uiEscape)
-			{
-				uint8_t ucCurSeg = pTempSrc[1];
-				if (ucCurSeg)
-				{
-					uint8_t *ucCurDest = pTempDest;
-					uint8_t ucCount = 0;
-					do
-					{
-						++ucCount;
-						// Log("WRITE111 TO 0x%x FROM 0x%x SIZE %d", ucCurDest, pTempSrc + 2, uiSegSize);
-						pDest = (uint8_t *)memcpy(ucCurDest, pTempSrc + 2, uiSegSize);
-
-						ucCurDest += uiSegSize;
-					} while (ucCurSeg != ucCount);
-
-					pTempDest += uiSegSize * ucCurSeg;
-				}
-				pTempSrc += 2 + uiSegSize;
-			}
-
-			else
-			{
-				if (pTempSrc + uiSegSize >= pEndOfSrc)
-				{
-					Log("AVOID CRASH TO 0x%x FROM 0x%x SIZE %d END OF SRC 0x%x", pTempDest, pTempSrc, pEndOfSrc - pTempSrc - 1, pEndOfSrc);
-					return pDest;
-				}
-				else
-				{
-					// Log("WRITE222 TO 0x%x FROM 0x%x SIZE %d END OF SRC 0x%x", pTempDest, pTempSrc, uiSegSize, pEndOfSrc);
-					pDest = (uint8_t *)memcpy(pTempDest, pTempSrc, uiSegSize);
-					pTempDest += uiSegSize;
-					pTempSrc += uiSegSize;
-				}
-			}
-		} while (pEndOfDest > pTempDest);
-	}
-
-	dwRLEDecompressSourceSize = 0;
-
-	return pDest;
+	Log("AHTUNG, RLE!!! OFF PLS");
+    return 0;
 }
+//{
+//	return 0;
+//	if (!pDest)
+//	{
+//		return pDest;
+//	}
+//
+//	if (!pSrc)
+//	{
+//		return pDest;
+//	}
+//
+//	uint8_t *pTempDest = pDest;
+//	const uint8_t *pTempSrc = pSrc;
+//	uint8_t *pEndOfDest = &pDest[uiDestSize];
+//
+//	uint8_t *pEndOfSrc = (uint8_t *)&pSrc[dwRLEDecompressSourceSize];
+//
+//	if (pDest < pEndOfDest)
+//	{
+//		do
+//		{
+//			if (*pTempSrc == uiEscape)
+//			{
+//				uint8_t ucCurSeg = pTempSrc[1];
+//				if (ucCurSeg)
+//				{
+//					uint8_t *ucCurDest = pTempDest;
+//					uint8_t ucCount = 0;
+//					do
+//					{
+//						++ucCount;
+//						// Log("WRITE111 TO 0x%x FROM 0x%x SIZE %d", ucCurDest, pTempSrc + 2, uiSegSize);
+//						pDest = (uint8_t *)memcpy(ucCurDest, pTempSrc + 2, uiSegSize);
+//
+//						ucCurDest += uiSegSize;
+//					} while (ucCurSeg != ucCount);
+//
+//					pTempDest += uiSegSize * ucCurSeg;
+//				}
+//				pTempSrc += 2 + uiSegSize;
+//			}
+//
+//			else
+//			{
+//				if (pTempSrc + uiSegSize >= pEndOfSrc)
+//				{
+//					Log("AVOID CRASH TO 0x%x FROM 0x%x SIZE %d END OF SRC 0x%x", pTempDest, pTempSrc, pEndOfSrc - pTempSrc - 1, pEndOfSrc);
+//					return pDest;
+//				}
+//				else
+//				{
+//					// Log("WRITE222 TO 0x%x FROM 0x%x SIZE %d END OF SRC 0x%x", pTempDest, pTempSrc, uiSegSize, pEndOfSrc);
+//					pDest = (uint8_t *)memcpy(pTempDest, pTempSrc, uiSegSize);
+//					pTempDest += uiSegSize;
+//					pTempSrc += uiSegSize;
+//				}
+//			}
+//		} while (pEndOfDest > pTempDest);
+//	}
+//
+//	dwRLEDecompressSourceSize = 0;
+//
+//	return pDest;
+//}
 
 void InstallSpecialHooks()
 {
