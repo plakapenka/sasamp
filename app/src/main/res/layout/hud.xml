@@ -680,7 +680,7 @@
             app:layout_constraintStart_toStartOf="@+id/chat_fade_box"
             app:layout_constraintTop_toBottomOf="@+id/chat_fade_box">
 
-            <AutoCompleteTextView
+            <EditText
                 android:id="@+id/chat_input"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_20sdp"
@@ -688,7 +688,7 @@
                 android:completionThreshold="2"
                 android:fontFamily="@font/visby_round_cf_extra_bold"
                 android:imeOptions="flagNoExtractUi|actionSend"
-                android:inputType="none"
+                android:inputType="textNoSuggestions"
                 android:paddingLeft="@dimen/_3sdp"
                 android:singleLine="true"
                 android:textColor="@color/white"

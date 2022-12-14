@@ -18,7 +18,7 @@
         android:layout_height="fill_parent">
 
         <View android:id="@+id/dark_screen" android:background="#ff000000" android:visibility="visible" android:layout_width="fill_parent" android:layout_height="fill_parent" android:alpha="0.0" />
-        <include layout="@layout/bhud_layout" />
+        <include layout="@layout/hud" />
         <include layout="@layout/casino_dice" />
         <include layout="@layout/bspeed_layout"/>
         <include layout="@layout/menu_action_dialog" />
@@ -27,7 +27,7 @@
         <include layout="@layout/br_choosespawn" />
         <include layout="@layout/br_sawmill" />
         <include layout="@layout/br_oilfactory" />
-        <include layout="@layout/br_armygame" />
+        <include layout="@layout/armygame" />
         <include layout="@layout/br_fuelstation" />
         <include layout="@layout/br_shopstoreselect" />
         <include layout="@layout/br_gunshop" />
