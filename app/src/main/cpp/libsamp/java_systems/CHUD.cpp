@@ -326,7 +326,7 @@ void CHUD::UpdateOpgWarLayout(int time, int attack_score, int def_score)
     else isMafia_war_layout_active = true;
 }
 
-void CHUD::AddToChatInput(const char ch[])
+void CHUD::SetChatInput(const char ch[])
 {
     char msg_utf[255];
     cp1251_to_utf8(msg_utf, ch);

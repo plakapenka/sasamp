@@ -280,7 +280,7 @@ void CKeyBoard::Close()
 	m_bEnable = false;
 
 	m_sInput.clear();
-	pHud->AddToChatInput(m_sInput.c_str());
+	pHud->SetChatInput(m_sInput.c_str());
 	m_iInputOffset = 0;
 	m_utf8Input[0] = 0;
 	m_iCase = LOWER_CASE;
@@ -513,7 +513,7 @@ void CKeyBoard::AddCharToInput(char sym)
 		m_sInput.push_back(sym);
 		cp1251_to_utf8(m_utf8Input, &m_sInput.c_str()[m_iInputOffset]);
 
-		pHud->AddToChatInput(m_sInput.c_str());
+		pHud->SetChatInput(m_sInput.c_str());
 
 	}
 }
@@ -523,9 +523,17 @@ void CKeyBoard::DeleteCharFromInput()
 	if (!m_sInput.length())
 		return;
 
-	m_sInput.pop_back();
+	if(CChatWindow::cursorStart != CChatWindow::cursorEnd){
+	//	for(int i = CChatWindow::cursorStart; i < CChatWindow::cursorEnd; i++){
+			m_sInput.erase(CChatWindow::cursorStart, CChatWindow::cursorEnd-CChatWindow::cursorStart);
+		//}
+	} else{
+		m_sInput.erase(CChatWindow::cursorEnd, 1);
+	}
 
-	pHud->AddToChatInput(m_sInput.c_str());
+	//m_sInput.pop_back();
+
+	pHud->SetChatInput(m_sInput.c_str());
 
 }
 extern bool ProcessLocalCommands(const char str[]);
@@ -2267,8 +2275,10 @@ void CKeyBoard::Flush()
 		return;
 
 	m_sInput.clear();
-	pHud->AddToChatInput(m_sInput.c_str());
+	pHud->SetChatInput(m_sInput.c_str());
 	m_iInputOffset = 0;
+	CChatWindow::cursorStart = 0;
+	CChatWindow::cursorEnd = 0;
 	memset(m_utf8Input, 0, sizeof(m_utf8Input) - 1);
 }
 
@@ -2391,4 +2401,11 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_HudManager_SendChatButton(JNIEnv *env, jobject thiz, jint button_id) {
 	pKeyBoard->dop_butt = button_id;
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_HudManager_ChatSetCursor(JNIEnv *env, jobject thiz, jint start,
+                                                    jint end) {
+    CChatWindow::cursorStart = start;
+	CChatWindow::cursorEnd = end;
 }

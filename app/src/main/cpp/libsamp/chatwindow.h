@@ -54,6 +54,9 @@ public:
 	void SetChatDissappearTimeout(uint32_t uiTimeoutStart, uint32_t uiTimeoutEnd);
 
 	static void ProcessPushedCommands();
+
+	static int cursorStart;
+	static int cursorEnd;
 private:
 	void ReInit();
 

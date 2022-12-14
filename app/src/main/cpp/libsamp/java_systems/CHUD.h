@@ -51,7 +51,7 @@ public:
 
     void AddChatMessage(const char msg[]);
 
-    void AddToChatInput(const char ch[]);
+    void SetChatInput(const char ch[]);
 
     void ToggleChatInput(bool toggle);
 
