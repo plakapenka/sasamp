@@ -76,8 +76,6 @@ class CJavaWrapper
 	jmethodID s_showBusInfo;
 	jmethodID s_hideBusInfo;
 
-	jmethodID s_showYernMoney;
-	jmethodID s_hideYernMoney;
 	jmethodID s_updateYearnMoney;
 	jmethodID s_showUpdateTargetNotify;
 	jmethodID s_hideTargetNotify;
@@ -127,8 +125,6 @@ public:
 	void ShowBusInfo(int time);
 	void HideBusInfo();
 
-	void ShowYernMoney();
-    void HideYernMoney();
     void UpdateYearnMoney(int money);
     void ShowUpdateTargetNotify(int type, char *text);
     void HideTargetNotify();

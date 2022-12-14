@@ -1651,9 +1651,6 @@ public abstract class NvEventQueueActivity
     {
         { runOnUiThread(() -> { mHudManager.ShowServerLogo(); } ); }
     }
-    public void showYernMoney() { runOnUiThread(() -> { mHudManager.ShowYernMoney(); } ); }
-
-    public void hideYernMoney() { runOnUiThread(() -> { mHudManager.HideYernMoney(); } ); }
 
     public void updateYearnMoney(int money) { runOnUiThread(() -> { mHudManager.UpdateYearnMoney(money); } ); }
 

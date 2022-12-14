@@ -797,30 +797,6 @@ void CJavaWrapper::HideBusInfo()
     env->CallVoidMethod(this->activity, this->s_hideBusInfo);
 }
 
-void CJavaWrapper::ShowYernMoney()
-{
-    JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-    env->CallVoidMethod(this->activity, this->s_showYernMoney);
-}
-
-void CJavaWrapper::HideYernMoney()
-{
-    JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-    env->CallVoidMethod(this->activity, this->s_hideYernMoney);
-}
-
 void CJavaWrapper::UpdateYearnMoney(int money)
 {
     JNIEnv* env = GetEnv();
@@ -1278,7 +1254,6 @@ void CJavaWrapper::ClearScreen()
 	HideBusInfo();
 	HideGPS();
 	HideGreenZone();
-	HideYernMoney();
 	HideSamwill();
 	ShowCasinoDice(false, 0, 0, 0, 0, "--", 0, "--", 0, "--", 0, "--", 0, "--", 0);
 }
@@ -1343,8 +1318,6 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 	s_showBusInfo = env->GetMethodID(nvEventClass, "showBusInfo", "(I)V");
 	s_hideBusInfo = env->GetMethodID(nvEventClass, "hideBusInfo", "()V");
 
-	s_showYernMoney = env->GetMethodID(nvEventClass, "showYernMoney", "()V");
-	s_hideYernMoney = env->GetMethodID(nvEventClass, "hideYernMoney", "()V");
 	s_updateYearnMoney = env->GetMethodID(nvEventClass, "updateYearnMoney", "(I)V");
 	s_showUpdateTargetNotify = env->GetMethodID(nvEventClass, "showUpdateTargetNotify", "(ILjava/lang/String;)V");
 	s_hideTargetNotify = env->GetMethodID(nvEventClass, "hideTargetNotify", "()V");

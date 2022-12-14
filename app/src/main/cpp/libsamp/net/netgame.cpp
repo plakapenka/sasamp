@@ -659,15 +659,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			bs.Read(toggle);
 			if (hud == 7)
 			{
-				if (toggle == -1)
-				{
-					g_pJavaWrapper->HideYernMoney();
-				}
-				else
-				{
-					g_pJavaWrapper->ShowYernMoney();
-					g_pJavaWrapper->UpdateYearnMoney(toggle);
-				}
+				g_pJavaWrapper->UpdateYearnMoney(toggle);
 			}
 			// CChatWindow::AddDebugMessage("hud %d toggle %d", hud, toggle);
 			pGame->ToggleHUDElement(hud, toggle);
@@ -870,6 +862,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_TOGGLE_SAMWILL_GAME:
 		{
+			Log("RPC_TOGGLE_SAMWILL_GAME");
 			uint8_t value;
 			bs.Read(value);
 

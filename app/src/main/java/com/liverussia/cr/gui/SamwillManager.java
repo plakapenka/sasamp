@@ -1,8 +1,10 @@
 package com.liverussia.cr.gui;
 
 import android.app.Activity;
+import android.content.Context;
 import android.media.SoundPool;
 import android.os.CountDownTimer;
+import android.os.Vibrator;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -29,6 +31,8 @@ public class SamwillManager {
 
     public CountDownTimer countDownTimer;
 
+    private Vibrator vibrator;
+
     int samwill1;
     int samwill2;
     int samwill3;
@@ -43,6 +47,7 @@ public class SamwillManager {
     public SamwillManager(Activity activity, SoundPool soundPool){
         this.soundPool = soundPool;
 
+        Vibrator vibrator = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
         br_samwill_layout = activity.findViewById(R.id.br_samwill_layout);
         samwill_1 = activity.findViewById(R.id.samwill_1);
         samwill_2 = activity.findViewById(R.id.samwill_2);
@@ -66,6 +71,9 @@ public class SamwillManager {
                 return;
             }
             else if (samwill_progress.getProgress() < 4050){
+                if (vibrator.hasVibrator()) {
+                    vibrator.vibrate(200);
+                }
                 tick = 4050;
                 samwill1 = 0;
                 samwill_1.setImageResource(R.drawable.samwill_red);
@@ -80,6 +88,9 @@ public class SamwillManager {
                 return;
             }
             else if (samwill_progress.getProgress() < 8650 ){
+                if (vibrator.hasVibrator()) {
+                    vibrator.vibrate(200);
+                }
                 tick = 8650;
                 samwill2 = 0;
                 samwill_2.setImageResource(R.drawable.samwill_red);
@@ -93,6 +104,9 @@ public class SamwillManager {
                 tick = 13250;
                 return;
             }else if (samwill_progress.getProgress() < 13250) {
+                if (vibrator.hasVibrator()) {
+                    vibrator.vibrate(200);
+                }
                 tick = 13250;
                 samwill3 = 0;
                 samwill_3.setImageResource(R.drawable.samwill_red);
@@ -106,6 +120,9 @@ public class SamwillManager {
                 tick = 17870;
                 return;
             }else if (samwill_progress.getProgress() < 17870) {
+                if (vibrator.hasVibrator()) {
+                    vibrator.vibrate(200);
+                }
                 tick = 17870;
                 samwill4 = 0;
                 samwill_4.setImageResource(R.drawable.samwill_red);
@@ -119,6 +136,9 @@ public class SamwillManager {
                 tick = 22480;
                 return;
             }else if (samwill_progress.getProgress() < 22480) {
+                if (vibrator.hasVibrator()) {
+                    vibrator.vibrate(200);
+                }
                 tick = 22480;
                 samwill5 = 0;
                 samwill_5.setImageResource(R.drawable.samwill_red);
@@ -163,10 +183,10 @@ public class SamwillManager {
             countDownTimer = null;
             tick = 0;
         }
-        countDownTimer = new CountDownTimer(999999999, 16) {
+        countDownTimer = new CountDownTimer(999999999, 17) {
             @Override
             public void onTick(long j) {
-                tick+=90;
+                tick+=40;
                 samwill_progress.setProgress((int)tick);
                 int progresstext = samwill_progress.getProgress() / 25 / 10;
                 samwill_procent.setText(progresstext + "%");
