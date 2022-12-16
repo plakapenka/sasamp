@@ -63,18 +63,18 @@ public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersV
     public void onBindViewHolder(ServersViewHolder holder, int position) {
 		Servers servers = this.servers.get(position);
 		int MainColor = Color.parseColor(servers.getColor());
-		int LightColor = Color.parseColor(servers.getColorl());
+	//	int LightColor = Color.parseColor(servers.getColor());
 
-		holder.bearPaw.setColorFilter(LightColor, PorterDuff.Mode.SRC_ATOP);
-		holder.people.setColorFilter(LightColor, PorterDuff.Mode.SRC_ATOP);
+		holder.bearPaw.setColorFilter(MainColor, PorterDuff.Mode.SRC_ATOP);
+		holder.people.setColorFilter(MainColor, PorterDuff.Mode.SRC_ATOP);
 		holder.backColor.getBackground().setColorFilter(MainColor, PorterDuff.Mode.SRC_ATOP);
 		holder.name.setText(servers.getname());
-		holder.name.setTextColor(LightColor);
+		holder.name.setTextColor(MainColor);
 		holder.dopname.setText(servers.getDopname());
 		holder.textonline.setText(Integer.toString(servers.getOnline()));
 		holder.textmaxonline.setText(new String("/" + Integer.toString(servers.getmaxOnline())));
 	    holder.progressBar.setProgressStartColor(MainColor);
-		holder.progressBar.setProgressEndColor(LightColor);
+		holder.progressBar.setProgressEndColor(MainColor);
 		holder.progressBar.setProgress(servers.getOnline());
 		holder.progressBar.setMax(servers.getmaxOnline());
 
@@ -82,11 +82,11 @@ public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersV
 
 			holder.container.setScaleX(1.05f);
 			holder.container.setScaleY(1.05f);
-			holder.backColor.setAlpha(0.55f);
+			holder.backColor.setAlpha(0.60f);
 		}else{
 			holder.container.setScaleX(1.0f);
 			holder.container.setScaleY(1.0f);
-			holder.backColor.setAlpha(0.40f);
+			holder.backColor.setAlpha(0.35f);
 		}
 
 		holder.container.setOnClickListener(view -> {
@@ -99,6 +99,7 @@ public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersV
 			//String selectedServer = NativeStorage.getClientProperty(NativeStorageElements.SERVER, context);
 
 			//if (StringUtils.isNotBlank(selectedServer)) {
+
 			activityService.showMessage(InfoMessage.SERVER_SELECTED.getText(), context);
 			//}
 		});

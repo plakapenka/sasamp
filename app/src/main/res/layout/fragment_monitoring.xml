@@ -56,7 +56,7 @@
         android:textColor="@color/white"
         android:textSize="@dimen/_16sdp" />
 
-    <androidx.recyclerview.widget.RecyclerView
+    <com.factor.bouncy.BouncyRecyclerView
         android:id="@+id/ourServersRV"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -64,6 +64,8 @@
         android:layout_marginRight="@dimen/_minus14sdp"
         android:layout_marginTop="@dimen/_10sdp"
         android:clipToPadding="false"
+        app:recyclerview_overscroll_animation_size="0.1"
+        app:recyclerview_fling_animation_size="0.3"
         android:paddingBottom="@dimen/_40sdp"
         android:scrollbarThumbVertical="@drawable/scrollbar_rv"
         android:scrollbars="vertical" />

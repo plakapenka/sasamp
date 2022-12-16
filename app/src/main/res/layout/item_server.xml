@@ -11,9 +11,19 @@
     android:orientation="horizontal" >
 
     <LinearLayout
+
+        android:alpha="0.35"
+        android:background="@drawable/server_rectangle"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:padding="@dimen/_10sdp"/>
+    <LinearLayout
         android:id="@+id/backColor"
 
-        android:alpha="0.40"
+        android:alpha="0.35"
         android:backgroundTint="#2196f3"
         android:background="@drawable/server_rectangle"
         android:orientation="horizontal"
