@@ -18,6 +18,7 @@ class CJavaWrapper
 	jobject activity;
 
 	jmethodID s_GetClipboardText;
+	jmethodID j_Vibrate;
 
 	jmethodID s_ShowClientSettings;
 	jmethodID s_SetUseFullScreen;
@@ -181,6 +182,8 @@ public:
     void ShowMiningGame3(bool toggle);
 
 	void ExitGame();
+
+	void Vibrate(int milliseconds);
 };
 
 extern CJavaWrapper* g_pJavaWrapper;

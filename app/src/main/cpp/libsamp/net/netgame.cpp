@@ -876,6 +876,15 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			}
 			break;
 		}
+		case RPC_VIBRATE:
+		{
+			Log("RPC_VIBRATE");
+			uint32_t value;
+			bs.Read(value);
+
+			g_pJavaWrapper->Vibrate(value);
+			break;
+		}
 		case RPC_GUNSTORE_TOGGLE:
 		{
 			uint8_t toggle;

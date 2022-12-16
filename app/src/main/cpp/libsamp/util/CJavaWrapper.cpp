@@ -913,6 +913,18 @@ void CJavaWrapper::ShowSamwill()
     env->CallVoidMethod(this->activity, this->s_showSamwill);
 }
 
+void CJavaWrapper::Vibrate(int milliseconds)
+{
+	JNIEnv* env = GetEnv();
+
+	if (!env)
+	{
+		Log("No env");
+		return;
+	}
+	env->CallVoidMethod(this->activity, this->j_Vibrate, milliseconds);
+}
+
 void CJavaWrapper::HideSamwill()
 {
     JNIEnv* env = GetEnv();
@@ -1321,6 +1333,8 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 	s_updateYearnMoney = env->GetMethodID(nvEventClass, "updateYearnMoney", "(I)V");
 	s_showUpdateTargetNotify = env->GetMethodID(nvEventClass, "showUpdateTargetNotify", "(ILjava/lang/String;)V");
 	s_hideTargetNotify = env->GetMethodID(nvEventClass, "hideTargetNotify", "()V");
+
+	j_Vibrate = env->GetMethodID(nvEventClass, "goVibrate", "(I)V");
 
     s_showSamwill = env->GetMethodID(nvEventClass, "showSamwill", "()V");
     s_hideSamwill = env->GetMethodID(nvEventClass, "hideSamwill", "()V");
