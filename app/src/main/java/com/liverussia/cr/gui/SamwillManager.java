@@ -59,11 +59,10 @@ public class SamwillManager {
         samwill_progress = activity.findViewById(R.id.samwill_progress);
 
         samwill_btn.setOnClickListener(view -> {
-            soundPool.play(sawSound, 0.5f, 0.5f, 1, 0, 1.2f);
-
             view.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.button_click));
             if (samwill_progress.getProgress() > 2500 && samwill_progress.getProgress() < 4050 && samwill1!=0)
             {
+                soundPool.play(sawSound, 0.3f, 0.3f, 1, 0, 1.2f);
                 samwillpacket++;
                 samwill1 = 1;
                 samwill_1.setImageResource(R.drawable.samwill_green);
@@ -81,6 +80,7 @@ public class SamwillManager {
             }
             if (samwill_progress.getProgress() > 7100 && samwill_progress.getProgress() < 8650 && samwill2!=0)
             {
+                soundPool.play(sawSound, 0.3f, 0.3f, 1, 0, 1.2f);
                 samwillpacket++;
                 samwill2 = 1;
                 samwill_2.setImageResource(R.drawable.samwill_green);
@@ -98,6 +98,7 @@ public class SamwillManager {
             }
             if (samwill_progress.getProgress() > 11720 && samwill_progress.getProgress() < 13250 && samwill3!=0)
             {
+                soundPool.play(sawSound, 0.3f, 0.3f, 1, 0, 1.2f);
                 samwillpacket++;
                 samwill3 = 1;
                 samwill_3.setImageResource(R.drawable.samwill_green);
@@ -114,6 +115,7 @@ public class SamwillManager {
             }
             if (samwill_progress.getProgress() > 16330 && samwill_progress.getProgress() < 17870 && samwill4!=0)
             {
+                soundPool.play(sawSound, 0.3f, 0.3f, 1, 0, 1.2f);
                 samwillpacket++;
                 samwill4 = 1;
                 samwill_4.setImageResource(R.drawable.samwill_green);
