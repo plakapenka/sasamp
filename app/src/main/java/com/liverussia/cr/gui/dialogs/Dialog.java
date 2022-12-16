@@ -3,6 +3,7 @@ package com.liverussia.cr.gui.dialogs;
 import android.app.Activity;
 import android.content.Context;
 import android.text.Editable;
+import android.text.InputType;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -31,6 +32,9 @@ public class Dialog {
     private static final int DIALOG_STYLE_PASSWORD = 3;
     private static final int DIALOG_STYLE_TABLIST = 4;
     private static final int DIALOG_STYLE_TABLIST_HEADER = 5;
+    private static final int DIALOG_STYLE_INPUT_NUMBER = 6;
+
+
     private final TextView mCaption;
     private final TextView mContent;
     private int mCurrentDialogId = -1;
@@ -77,24 +81,38 @@ public class Dialog {
         for (int i = 0; i < mHeadersLayout.getChildCount(); i++) {
             this.mHeadersList.add((TextView) mHeadersLayout.getChildAt(i));
         }
-        this.mInput.setOnEditorActionListener((textView, i, keyEvent) -> {
-            Editable editableText;
-            if ((i != 6 && i != 5) || (editableText = this.mInput.getText()) == null) {
-                return false;
-            }
-            this.mCurrentInputText = editableText.toString();
-            return false;
-        });
-        this.mInput.setOnClickListener(view ->
-        {
-            this.mInput.requestFocus();
-            ((InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(this.mInput, 1);
-        });
+//        this.mInput.setOnEditorActionListener((textView, i, keyEvent) -> {
+//            Editable editableText;
+//            if ((i != 6 && i != 5) || (editableText = this.mInput.getText()) == null) {
+//                return false;
+//            }
+//            this.mCurrentInputText = editableText.toString();
+//            return false;
+//        });
+//        this.mInput.setOnClickListener(view ->
+//        {
+//            this.mInput.requestFocus();
+//            ((InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(this.mInput, 1);
+//        });
         Utils.HideLayout(this.mMainLayout, false);
     }
 
     public void show(int dialogId, int dialogTypeId, String caption, String content, String leftBtnText, String rightBtnText) {
-
+        switch (dialogTypeId)
+        {
+            case DIALOG_STYLE_INPUT:{
+                mInput.setInputType(InputType.TYPE_CLASS_TEXT);
+                break;
+            }
+            case DIALOG_STYLE_PASSWORD:{
+                mInput.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                break;
+            }
+            case DIALOG_STYLE_INPUT_NUMBER:{
+                mInput.setInputType(InputType.TYPE_CLASS_NUMBER);
+                break;
+            }
+        }
 //        if(content.length() < 3)
 //        {
 //            activity.runOnUiThread(() -> mMainLayout.setVisibility(View.GONE) );
@@ -118,7 +136,6 @@ public class Dialog {
                 this.mInputLayout.setVisibility(View.VISIBLE); // РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ РёРЅРїСѓС‚
                 this.mMsgBoxLayout.setVisibility(View.VISIBLE);
                 this.mListLayout.setVisibility(View.GONE);
-                this.mInputPasswordStyle = true;
             } else {
                 this.mInputLayout.setVisibility(View.GONE);
                 this.mMsgBoxLayout.setVisibility(View.GONE); // LIST, TABLIST, TABLIST_HEADER
@@ -174,17 +191,21 @@ public class Dialog {
 
     public void sendDialogResponse(int btnId)
     {
+        String text = "";
         if(old_casino_layout_state)
         {
             old_casino_layout_state = false;
             casino_dice_main_layout.setVisibility(View.VISIBLE);
         }
-        if (this.mInputPasswordStyle) {
+        if (mCurrentDialogTypeId == DIALOG_STYLE_INPUT || mCurrentDialogTypeId == DIALOG_STYLE_PASSWORD||
+        mCurrentDialogTypeId == DIALOG_STYLE_INPUT_NUMBER) {
             this.mCurrentInputText = this.mInput.getText().toString();
+        } else if(mCurrentDialogTypeId == DIALOG_STYLE_MSGBOX) {
+            this.mCurrentInputText = "";
         }
         try {
 
-            ((InputMethodManager) NvEventQueueActivity.getInstance().getSystemService("input_method")).hideSoftInputFromWindow(this.mInput.getWindowToken(), 0);
+            ((InputMethodManager) NvEventQueueActivity.getInstance().getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(this.mInput.getWindowToken(), 0);
 
             NvEventQueueActivity.getInstance().sendDialogResponse(btnId, this.mCurrentDialogId, this.mCurrentListItem, this.mCurrentInputText.getBytes("windows-1251"));
 
@@ -208,7 +229,7 @@ public class Dialog {
     private void loadTabList(String content) {
         String[] strings = content.split("\n");
         for (int i = 0; i < strings.length; i++) {
-            if (this.mCurrentDialogTypeId == 5 && i == 0) {
+            if (this.mCurrentDialogTypeId == DIALOG_STYLE_TABLIST_HEADER && i == 0) {
                 String[] headers = strings[i].split("\t");
                 for (int j = 0; j < headers.length; j++) {
                     this.mHeadersList.get(j).setText(Utils.transfromColors(headers[j]));
@@ -223,7 +244,7 @@ public class Dialog {
 
     private void clearDialogData() {
         mCustomRecyclerView.setMinimumWidth(300);
-        this.mInput.setText("");
+      //  this.mInput.setText("");
         this.mCurrentDialogId = -1;
         this.mCurrentDialogTypeId = -1;
         this.mCurrentListItem = -1;
@@ -235,9 +256,9 @@ public class Dialog {
         }
     }
 
-    public void onHeightChanged(int height) {
-        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) this.mMainLayout.getLayoutParams();
-        params.setMargins(0, 0, 0, height);
-        this.mMainLayout.setLayoutParams(params);
-    }
+//    public void onHeightChanged(int height) {
+//        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) this.mMainLayout.getLayoutParams();
+//        params.setMargins(0, 0, 0, height);
+//        this.mMainLayout.setLayoutParams(params);
+//    }
 }
