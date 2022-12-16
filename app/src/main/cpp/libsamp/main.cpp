@@ -302,7 +302,7 @@ void handler3(int signum, siginfo_t* info, void* contextPtr)
 	{
 		PrintBuildCrashInfo();
 		CrashLog("Last rendered object: %d", g_iLastRenderedObject);
-		CrashLog("Last rendered block: %s", g_iLastBlock);
+		CrashLog("Last texture: %s", g_iLastBlock);
 		CrashLog("SIGBUS | Fault address: 0x%X", info->si_addr);
 		CrashLog("libGTASA base address: 0x%X", g_libGTASA);
 		CrashLog("libsamp base address: 0x%X", FindLibrary("libsamp.so"));
@@ -362,7 +362,7 @@ void handler(int signum, siginfo_t *info, void* contextPtr)
 		CrashLog(" ");
 		PrintBuildCrashInfo();
 		CrashLog("Last rendered object: %d", g_iLastRenderedObject);
-		CrashLog("Last rendered block: %s", g_iLastBlock);
+		CrashLog("Last texture: %s", g_iLastBlock);
 		CrashLog("SIGSEGV | Fault address: 0x%X", info->si_addr);
 		CrashLog("libGTASA base address: 0x%X", g_libGTASA);
 		CrashLog("libsamp base address: 0x%X", FindLibrary("libsamp.so"));
@@ -420,7 +420,7 @@ void handler2(int signum, siginfo_t* info, void* contextPtr)
 	{
 		PrintBuildCrashInfo();
 		CrashLog("Last rendered object: %d", g_iLastRenderedObject);
-		CrashLog("Last rendered block: %s", g_iLastBlock);
+		CrashLog("Last texture: %s", g_iLastBlock);
 		CrashLog("SIGFPE | Fault address: 0x%X", info->si_addr);
 		CrashLog("libGTASA base address: 0x%X", g_libGTASA);
 		CrashLog("libsamp base address: 0x%X", FindLibrary("libsamp.so"));
@@ -481,7 +481,7 @@ void handler1(int signum, siginfo_t* info, void* contextPtr)
 		PrintBuildCrashInfo();
 
 		CrashLog("Last rendered object: %d", g_iLastRenderedObject);
-		CrashLog("Last rendered block: %s", g_iLastBlock);
+		CrashLog("Last texture: %s", g_iLastBlock);
 		CrashLog("SIGABRT | Fault address: 0x%X", info->si_addr);
 		CrashLog("libGTASA base address: 0x%X", g_libGTASA);
 		CrashLog("libsamp base address: 0x%X", FindLibrary("libsamp.so"));
@@ -590,8 +590,8 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 
 	InitHookStuff();
 
-	InitRenderWareFunctions();
 	InstallSpecialHooks();
+	InitRenderWareFunctions();
 
 	ApplyPatches_level0();
 

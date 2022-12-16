@@ -523,15 +523,15 @@ void CKeyBoard::DeleteCharFromInput()
 	if (!m_sInput.length())
 		return;
 
-	if(CChatWindow::cursorStart != CChatWindow::cursorEnd){
-	//	for(int i = CChatWindow::cursorStart; i < CChatWindow::cursorEnd; i++){
-			m_sInput.erase(CChatWindow::cursorStart, CChatWindow::cursorEnd-CChatWindow::cursorStart);
-		//}
-	} else{
-		m_sInput.erase(CChatWindow::cursorEnd, 1);
-	}
+//	if(CChatWindow::cursorStart != CChatWindow::cursorEnd){
+//	//	for(int i = CChatWindow::cursorStart; i < CChatWindow::cursorEnd; i++){
+//			m_sInput.erase(CChatWindow::cursorStart, CChatWindow::cursorEnd-CChatWindow::cursorStart);
+//		//}
+//	} else{
+//		m_sInput.erase(CChatWindow::cursorEnd, 1);
+//	}
 
-	//m_sInput.pop_back();
+	m_sInput.pop_back();
 
 	pHud->SetChatInput(m_sInput.c_str());
 
