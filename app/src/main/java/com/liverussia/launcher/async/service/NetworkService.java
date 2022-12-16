@@ -25,8 +25,8 @@ public interface NetworkService {
     @GET("https://files.liverussia.online/launcher/data.php")
     Call<MonitoringData> getMonitoringData();
 
-    @GET("https://files.liverussia.online/servers1.php")
-    Call<List<Servers>> getServers();
+    //  @GET("https://files.liverussia.online/servers1.php")
+    //Call<List<Servers>> getServers();
 
     @GET("https://files.liverussia.online/historyforlauncher/history.json")
     Call<List<News>> getNews();
