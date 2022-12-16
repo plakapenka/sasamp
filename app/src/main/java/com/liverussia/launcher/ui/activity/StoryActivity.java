@@ -64,8 +64,10 @@ public class StoryActivity extends AppCompatActivity {
     }
 
     public void closeStory() {
-        countDownTimer.cancel();
-        countDownTimer = null;
+        if(countDownTimer != null) {
+            countDownTimer.cancel();
+            countDownTimer = null;
+        }
         progress = 0;
         startActivity(new Intent(getApplicationContext(), MainActivity.class));
     }
