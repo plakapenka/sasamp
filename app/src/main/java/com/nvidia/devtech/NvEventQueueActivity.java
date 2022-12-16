@@ -40,6 +40,7 @@ import android.media.SoundPool;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Vibrator;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
@@ -183,6 +184,7 @@ public abstract class NvEventQueueActivity
     private RegistrationManager mRegistrationManager = null;
     private FuelStationManager mFuelStationManager = null;
     private OilFactoryManager mOilFactoryManager = null;
+    private Vibrator vibrator;
     private ArmyGameManager mArmyGameManager = null;
     private AttachEdit mAttachEdit = null;
     private ShopStoreManager mShopStoreManager = null;
@@ -397,10 +399,10 @@ public abstract class NvEventQueueActivity
     @Override
     public void onHeightChanged(int orientation, int height)
     {
-        Dialog dialog = mDialog;
-        if (dialog != null) {
-            dialog.onHeightChanged(height);
-        }
+//        Dialog dialog = mDialog;
+//        if (dialog != null) {
+//            dialog.onHeightChanged(height);
+//        }
     }
 
     public native void onSpeedEngineClick();
@@ -694,7 +696,6 @@ public abstract class NvEventQueueActivity
             }
         }
 
-        // пауза при сворачивании
         if (ResumeEventDone && viewIsActive && !paused)
         {
             if (GameIsFocused && !hasFocus)
@@ -805,13 +806,13 @@ public abstract class NvEventQueueActivity
     public void onDestroy()
     {
         System.out.println("**** onDestroy");
-		if(supportPauseResume)
-		{
-			quitAndWait();
-			finish();
-		}
+//		if(supportPauseResume)
+//		{
+//			quitAndWait();
+//			finish();
+//		}
         super.onDestroy();
-		systemCleanup();
+	//	systemCleanup();
     }
 
     /**
@@ -1029,6 +1030,7 @@ public abstract class NvEventQueueActivity
         mRegistrationManager = new RegistrationManager(this);
         mFuelStationManager = new FuelStationManager(this);
         mOilFactoryManager = new OilFactoryManager(this);
+        vibrator = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
         mArmyGameManager = new ArmyGameManager(this);
         mAttachEdit = new AttachEdit(this);
         mShopStoreManager = new ShopStoreManager(this);
@@ -1650,6 +1652,12 @@ public abstract class NvEventQueueActivity
     public void showServerLogo()
     {
         { runOnUiThread(() -> { mHudManager.ShowServerLogo(); } ); }
+    }
+
+    public void goVibrate(int milliseconds){
+        if (vibrator.hasVibrator()) {
+            vibrator.vibrate(milliseconds);
+        }
     }
 
     public void updateYearnMoney(int money) { runOnUiThread(() -> { mHudManager.UpdateYearnMoney(money); } ); }
