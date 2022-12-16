@@ -21,7 +21,7 @@ extern CGame* pGame;
 extern CSettings* pSettings;
 extern CHUD *pHud;
 
-//static uint32_t dwRLEDecompressSourceSize = 0;
+static uint32_t dwRLEDecompressSourceSize = 0;
 
 char(*CStreaming__ConvertBufferToObject)(int, int, int);
 int __attribute__((noinline)) g_unobfuscate(int a)
@@ -735,20 +735,20 @@ size_t OS_FileRead_hook(FILE *a1, void *a2, size_t a3)
         }
         return retv;
     }
-   // if (calledFrom == 0x1BDD34 + 1)
-   // {
-      //  size_t retn = OS_FileRead(a1, a2, a3);
+    if (calledFrom == 0x001BDD34 + 1)
+    {
+        int retn = OS_FileRead(a1, a2, a3);
 
-       // dwRLEDecompressSourceSize = *(uint32_t *)a2;
+        dwRLEDecompressSourceSize = *(uint32_t*)a2;
 
-     //   return retn;
-   // }
-   // else
-   // {
-        //size_t retn = ;
+        return retn;
+    }
+    else
+    {
+        int retn = OS_FileRead(a1, a2, a3);
 
-   // }
-	return OS_FileRead(a1, a2, a3);
+        return retn;
+    }
 }
 
 void (*CTimer__StartUserPause)();
@@ -805,78 +805,88 @@ void TextureDatabase__LoadDataOffsets_hook(int a1, int a2, unsigned int *a3, voi
 	return TextureDatabase__LoadDataOffsets(a1, 1, a3, a4, a5); // only dxt.toc
 	//return;
 }
-//
-uint8_t *(*RLEDecompress)(uint8_t *pDest, size_t uiDestSize, uint8_t const *pSrc, size_t uiSegSize, uint32_t uiEscape);
-uint8_t *RLEDecompress_hook(uint8_t *pDest, size_t uiDestSize, uint8_t const *pSrc, size_t uiSegSize, uint32_t uiEscape)
+
+extern char g_iLastBlock[512];
+int *(*LoadFullTexture)(uintptr_t *thiz, unsigned int a2);
+int *LoadFullTexture_hook(uintptr_t *thiz, unsigned int a2)
 {
-	Log("AHTUNG, RLE!!! OFF PLS");
-    return 0;
+	//strcpy(g_iLastBlock, *(const char **)(*((DWORD *)thiz + 7) + 0x17 * a2));
+    //*((DWORD *)thiz + 0x1A) = 0;
+    Log("LoadFullTexture_hook %s", *(const char **)(*((DWORD *)thiz + 7) + 0x17 * a2));
+//	Log("%d", *((DWORD *)thiz + 0x1A));
+//	Log("%d", *((DWORD *)thiz + 0x1B));
+//    if(strcmp(*(const char **)(*((DWORD *)thiz + 7) + 0x17 * a2), "hud_bg") == 0){
+//
+//    }
+    return LoadFullTexture(thiz, a2);
 }
-//{
-//	return 0;
-//	if (!pDest)
-//	{
-//		return pDest;
-//	}
 //
-//	if (!pSrc)
-//	{
-//		return pDest;
-//	}
-//
-//	uint8_t *pTempDest = pDest;
-//	const uint8_t *pTempSrc = pSrc;
-//	uint8_t *pEndOfDest = &pDest[uiDestSize];
-//
-//	uint8_t *pEndOfSrc = (uint8_t *)&pSrc[dwRLEDecompressSourceSize];
-//
-//	if (pDest < pEndOfDest)
-//	{
-//		do
-//		{
-//			if (*pTempSrc == uiEscape)
-//			{
-//				uint8_t ucCurSeg = pTempSrc[1];
-//				if (ucCurSeg)
-//				{
-//					uint8_t *ucCurDest = pTempDest;
-//					uint8_t ucCount = 0;
-//					do
-//					{
-//						++ucCount;
-//						// Log("WRITE111 TO 0x%x FROM 0x%x SIZE %d", ucCurDest, pTempSrc + 2, uiSegSize);
-//						pDest = (uint8_t *)memcpy(ucCurDest, pTempSrc + 2, uiSegSize);
-//
-//						ucCurDest += uiSegSize;
-//					} while (ucCurSeg != ucCount);
-//
-//					pTempDest += uiSegSize * ucCurSeg;
-//				}
-//				pTempSrc += 2 + uiSegSize;
-//			}
-//
-//			else
-//			{
-//				if (pTempSrc + uiSegSize >= pEndOfSrc)
-//				{
-//					Log("AVOID CRASH TO 0x%x FROM 0x%x SIZE %d END OF SRC 0x%x", pTempDest, pTempSrc, pEndOfSrc - pTempSrc - 1, pEndOfSrc);
-//					return pDest;
-//				}
-//				else
-//				{
-//					// Log("WRITE222 TO 0x%x FROM 0x%x SIZE %d END OF SRC 0x%x", pTempDest, pTempSrc, uiSegSize, pEndOfSrc);
-//					pDest = (uint8_t *)memcpy(pTempDest, pTempSrc, uiSegSize);
-//					pTempDest += uiSegSize;
-//					pTempSrc += uiSegSize;
-//				}
-//			}
-//		} while (pEndOfDest > pTempDest);
-//	}
-//
-//	dwRLEDecompressSourceSize = 0;
-//
-//	return pDest;
-//}
+uint8_t* (*RLEDecompress)(uint8_t* pDest, size_t uiDestSize, uint8_t const* pSrc, size_t uiSegSize, uint32_t uiEscape);
+uint8_t* RLEDecompress_hook(uint8_t* pDest, size_t uiDestSize, uint8_t const* pSrc, size_t uiSegSize, uint32_t uiEscape) {
+    if (!pDest)
+    {
+        return 0;
+    }
+
+    if (!pSrc)
+    {
+        return pDest;
+    }
+
+    uint8_t* pTempDest = pDest;
+    const uint8_t* pTempSrc = pSrc;
+    uint8_t* pEndOfDest = &pDest[uiDestSize];
+
+    uint8_t* pEndOfSrc = (uint8_t*)&pSrc[dwRLEDecompressSourceSize];
+
+    if (pDest < pEndOfDest)
+    {
+        do
+        {
+            if (*pTempSrc == uiEscape)
+            {
+                uint8_t ucCurSeg = pTempSrc[1];
+                if (ucCurSeg)
+                {
+                    uint8_t* ucCurDest = pTempDest;
+                    uint8_t ucCount = 0;
+                    do
+                    {
+                        ++ucCount;
+                        //Log("WRITE111 TO 0x%x FROM 0x%x SIZE %d", ucCurDest, pTempSrc + 2, uiSegSize);
+                        pDest = (uint8_t*)memcpy(ucCurDest, pTempSrc + 2, uiSegSize);
+
+                        ucCurDest += uiSegSize;
+                    } while (ucCurSeg != ucCount);
+
+
+                    pTempDest += uiSegSize * ucCurSeg;
+                }
+                pTempSrc += 2 + uiSegSize;
+            }
+
+            else
+            {
+                if (pTempSrc + uiSegSize >= pEndOfSrc)
+                {
+                    //Log("AVOID CRASH TO 0x%x FROM 0x%x SIZE %d END OF SRC 0x%x", pTempDest, pTempSrc, pEndOfSrc - pTempSrc - 1, pEndOfSrc);
+                    return pDest;
+                }
+                else
+                {
+                    //Log("WRITE222 TO 0x%x FROM 0x%x SIZE %d END OF SRC 0x%x", pTempDest, pTempSrc, uiSegSize, pEndOfSrc);
+                    pDest = (uint8_t*)memcpy(pTempDest, pTempSrc, uiSegSize);
+                    pTempDest += uiSegSize;
+                    pTempSrc += uiSegSize;
+                }
+            }
+        } while (pEndOfDest > pTempDest);
+    }
+
+    dwRLEDecompressSourceSize = 0;
+
+    return pDest;
+}
 
 void InstallSpecialHooks()
 {
@@ -884,7 +894,9 @@ void InstallSpecialHooks()
 
 	// RLEDecompress fix
 	//NOP(g_libGTASA + 0x001BDD92, 2); // RLEDecompress
-	SetUpHook(g_libGTASA + 0x001BC314, (uintptr_t)RLEDecompress_hook, (uintptr_t*)&RLEDecompress);
+    SetUpHook(g_libGTASA + 0x001BC314, (uintptr_t)RLEDecompress_hook, (uintptr_t*)&RLEDecompress);
+
+	SetUpHook(g_libGTASA + 0x001BDCC4, (uintptr_t)LoadFullTexture_hook, (uintptr_t*)&LoadFullTexture);
 
 	SetUpHook(g_libGTASA + 0x001BD374, (uintptr_t)TextureDatabase__LoadThumbs_hook, (uintptr_t*)&TextureDatabase__LoadThumbs);
 	SetUpHook(g_libGTASA + 0x001BD478, (uintptr_t)TextureDatabase__LoadDataOffsets_hook, (uintptr_t*)&TextureDatabase__LoadDataOffsets);
@@ -895,8 +907,11 @@ void InstallSpecialHooks()
 	NOP(g_libGTASA + 0x002F9E5C, 10); 	//LoadCutsceneData
 	NOP(g_libGTASA + 0x0040E50C, 2); 	//CStuntJumpManager::Init
 	NOP(g_libGTASA + 0x0040E536, 2);		//CCutsceneMgr::Initialise
-	//
+
+	//фикс максимальной графики в настройках crash
 	NOP(g_libGTASA + 0x0039B01C, 2);// shaders
+	NOP(g_libGTASA + 0x00198E76, 4); // shaders max
+	NOP(g_libGTASA + 0x001996F6, 2);// BL              _Z22InitializeShaderClosetv ; InitializeShaderCloset
 
 	// increase render memory buffer
 	SetUpHook(g_libGTASA + 0x003BF784, (uintptr_t)CTimer__StartUserPause_hook, (uintptr_t*)& CTimer__StartUserPause);
@@ -1374,6 +1389,16 @@ RwFrame* CClumpModelInfo_GetFrameFromId_hook(RpClump* a1, int a2)
 {
 	return CClumpModelInfo_GetFrameFromId_Post(CClumpModelInfo_GetFrameFromId(a1, a2), a1, a2);
 }
+
+int (*CEventHandler__HandleEvents)(uintptr_t *thiz);
+int CEventHandler__HandleEvents_hook(uintptr_t *thiz)
+{
+	if(*((DWORD *)thiz + 1)){
+		return CEventHandler__HandleEvents(thiz);
+	}
+	return 0;
+}
+
 void (*CWidgetRegionLook__Update)(uintptr_t thiz);
 void CWidgetRegionLook__Update_hook(uintptr_t thiz)
 {
@@ -2665,6 +2690,13 @@ int SetCompAlphaCB_hook(int a1, char a2)
 	return result;
 }
 
+int (*MobileSettings__GetMaxResWidth)();
+int MobileSettings__GetMaxResWidth_hook()
+{
+	//Log("res = %d", ((int(*)())(g_libGTASA + 0x0023816C + 1))());
+	return ((int(*)())(g_libGTASA + 0x0023816C + 1))();
+}
+
 int (*CTextureDatabaseRuntime__GetEntry)(unsigned int a1, const char *a2, bool *a3, int a4);
 int CTextureDatabaseRuntime__GetEntry_hook(unsigned int a1, const char *a2, bool *a3, int a4)
 {
@@ -2686,6 +2718,7 @@ void InstallHooks()
 	//SetUpHook(g_libGTASA+0x291104, (uintptr_t)CStreaming__ConvertBufferToObject_hook, (uintptr_t*)&CStreaming__ConvertBufferToObject);
 	//SetUpHook(g_libGTASA+0x3961C8, (uintptr_t)CFileMgr__ReadLine_hook, (uintptr_t*)&CFileMgr__ReadLine);
 
+    SetUpHook(g_libGTASA + 0x0032217C, (uintptr_t)CEventHandler__HandleEvents_hook, (uintptr_t*)& CEventHandler__HandleEvents);
 	SetUpHook(g_libGTASA + 0x00281398, (uintptr_t)CWidgetRegionLook__Update_hook, (uintptr_t*)& CWidgetRegionLook__Update);
 
 	SetUpHook(g_libGTASA+0x3D7CA8, (uintptr_t)CLoadingScreen_DisplayPCScreen_hook, (uintptr_t*)&CLoadingScreen_DisplayPCScreen);
@@ -2850,7 +2883,8 @@ void InstallHooks()
 	NOP(g_libGTASA + 0x003CE54E, 2);
 	NOP(g_libGTASA + 0x003CE684, 2);
 
-
+	// fix разрешения экрана
+	SetUpHook(g_libGTASA + 0x0026CE30, (uintptr_t)MobileSettings__GetMaxResWidth_hook, (uintptr_t*)&MobileSettings__GetMaxResWidth);
 
 	HookCPad();
 }
