@@ -4,6 +4,8 @@ import android.view.WindowManager;
 
 import androidx.annotation.UiThread;
 import androidx.annotation.WorkerThread;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.liverussia.launcher.ui.dialogs.DialogProgress;
@@ -276,7 +278,13 @@ public class CacheChecker implements Listener<FileInfo[]> {
     public void onAsyncFinished(AsyncTaskResult<FileInfo[]> result) {
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        dialogProgress.dismiss();
+       // dialogProgress.dismiss();
+        // test ы
+        Fragment prev = activity.getSupportFragmentManager().findFragmentByTag("fragment_dialog");
+        if (prev != null) {
+            DialogFragment df = (DialogFragment) prev;
+            df.dismiss();
+        }
 
         if (result.getException() != null) {
             ApiException apiException = result.getException();

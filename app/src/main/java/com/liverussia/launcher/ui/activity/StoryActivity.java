@@ -97,7 +97,9 @@ public class StoryActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        countDownTimer.cancel();
+        if(countDownTimer != null) {
+            countDownTimer.cancel();
+        }
         progress = 0;
         countDownTimer = null;
     }
