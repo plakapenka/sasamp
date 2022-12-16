@@ -23,9 +23,9 @@
         <include layout="@layout/bspeed_layout"/>
         <include layout="@layout/menu_action_dialog" />
         <include layout="@layout/br_registration" />
-        <include layout="@layout/br_authorization" />
+        <include layout="@layout/authorization" />
         <include layout="@layout/br_choosespawn" />
-        <include layout="@layout/br_sawmill" />
+        <include layout="@layout/sawmill" />
         <include layout="@layout/br_oilfactory" />
         <include layout="@layout/armygame" />
         <include layout="@layout/br_fuelstation" />
