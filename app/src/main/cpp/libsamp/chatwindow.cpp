@@ -34,6 +34,7 @@ BOOL(*BASS_ChannelPlay_func)(DWORD handlee, BOOL restart);
 int (*BASS_ErrorGetCode_func)();
 BOOL(*BASS_ChannelSet3DPosition_func)(DWORD handlee, const BASS_3DVECTOR* pos, const BASS_3DVECTOR* orient, const BASS_3DVECTOR* vel);
 BOOL(*BASS_StreamFree_func)(HSTREAM handlee);
+BOOL(*BASS_Set3DFactors_func)(float distf, float rollf, float doppf);
 void (*BASS_Apply3D_func)();
 BOOL(*BASS_Set3DPosition_func)(const BASS_3DVECTOR* pos, const BASS_3DVECTOR* vel, const BASS_3DVECTOR* front, const BASS_3DVECTOR* top);
 BOOL(*BASS_ChannelSet3DAttributes_func)(DWORD handlee, int mode, float min, float max, int iangle, int oangle, float outvol);
@@ -81,6 +82,11 @@ void BASS_Apply3D()
 	return BASS_Apply3D_func();
 }
 
+BOOL BASS_Set3DFactors(float distf, float rollf, float doppf)
+{
+	return BASS_Set3DFactors_func(distf, rollf, doppf);
+}
+
 BOOL BASS_Set3DPosition(const BASS_3DVECTOR* pos, const BASS_3DVECTOR* vel, const BASS_3DVECTOR* front, const BASS_3DVECTOR* top)
 {
 	return BASS_Set3DPosition_func(pos, vel, front, top);
@@ -124,6 +130,8 @@ void InitBASSFuncs()
 	BASS_StreamFree_func = GetBASSFunc<BOOL(*)(HSTREAM handlee)>(handle, "BASS_StreamFree");
 
 	BASS_Apply3D_func = GetBASSFunc<void (*)()>(handle, "BASS_Apply3D");
+
+	BASS_Set3DFactors_func = GetBASSFunc<BOOL(*)(float distf, float rollf, float doppf) >(handle, "BASS_Set3DFactors");
 
 	BASS_Set3DPosition_func = GetBASSFunc<BOOL(*)(const BASS_3DVECTOR * pos, const BASS_3DVECTOR * vel, const BASS_3DVECTOR * front, const BASS_3DVECTOR * top)>(handle, "BASS_Set3DPosition");
 

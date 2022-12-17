@@ -21,7 +21,7 @@ CStreamPool::CStreamPool() // ready
 			while (!bShutdownThread)
 			{
 				Process();
-				std::this_thread::sleep_for(std::chrono::milliseconds(5));
+				std::this_thread::sleep_for(std::chrono::milliseconds(100));
 			}
 		}
 	);
@@ -137,10 +137,10 @@ void CStreamPool::StopIndividualStream() // ready
 	m_hIndividualStream = NULL;
 }
 
-void CStreamPool::PostListenerMatrix(MATRIX4X4* pMat)
-{
-	memcpy(&m_matListener, pMat, sizeof(MATRIX4X4));
-}
+//void CStreamPool::PostListenerMatrix(MATRIX4X4* pMat)
+//{
+//	memcpy(&m_matListener, pMat, sizeof(MATRIX4X4));
+//}
 void CStreamPool::SetStreamVolume(int iID, float fVolume)
 {
 	BUFFERED_COMMAND_STREAMPOOL* bc;
@@ -162,19 +162,10 @@ void CStreamPool::SetStreamVolume(int iID, float fVolume)
 #include <jni.h>
 
 extern CNetGame* pNetGame;
-extern uint32_t bProcessedRender2dstuff;
+
 void CStreamPool::Process() // ready
 {
-	int state1 = *(int*)(g_libGTASA + 0x0063E06C); // gMobileMenu
-	int state3 = 0;
-
-	if (GetTickCount() - bProcessedRender2dstuff >= 500)
-	{
-		state3 = 1;
-	}
-
-
-	if (state1 || state3)
+	if (*(int*)(g_libGTASA + 0x0063E06C))// gMobileMenu
 	{
 		for (int i = 0; i < MAX_STREAMS; i++)
 		{
@@ -281,27 +272,24 @@ void CStreamPool::Process() // ready
 		}
 	}
 
+	MATRIX4X4 matLocal;
+	pGame->FindPlayerPed()->GetMatrix(&matLocal);
+
 	for (int i = 0; i < MAX_STREAMS; i++)
 	{
 		if (m_bSlotState[i] && m_pStreams[i])
 		{
-			m_pStreams[i]->Process(&m_matListener);
+			m_pStreams[i]->Process(&matLocal);
 		}
 	}
 
-	BASS_3DVECTOR pos, vel, front, top;
+	BASS_3DVECTOR pos;
 
-	pos.x = m_matListener.pos.X;
-	pos.y = m_matListener.pos.Y;
-	pos.z = m_matListener.pos.Z;
-	vel.x = vel.y = vel.z = 0.0f;
-	front.x = m_matListener.at.X;
-	front.y = m_matListener.at.Y;
-	front.z = m_matListener.at.Z;
-	top.x = m_matListener.up.X;
-	top.y = m_matListener.up.X;
-	top.z = m_matListener.up.X;
-	BASS_Set3DPosition(&pos, &vel, &front, &top);
+	pos.x = matLocal.pos.X;
+	pos.y = matLocal.pos.Y;
+	pos.z = matLocal.pos.Z;
+
+	BASS_Set3DPosition(&pos, NULL, NULL, NULL);
 
 	BASS_Apply3D();
 }

@@ -15,7 +15,7 @@ class CStreamPool
 	CStream* m_pStreams[MAX_STREAMS];
 	bool	m_bSlotState[MAX_STREAMS];
 	HSTREAM m_hIndividualStream;
-	MATRIX4X4 m_matListener;
+	//MATRIX4X4 m_matListener;
 	bool bShutdownThread;
 	std::thread* pThread;
 	DataStructures::SingleProducerConsumer<BUFFERED_COMMAND_STREAMPOOL> bufferedCommands;
