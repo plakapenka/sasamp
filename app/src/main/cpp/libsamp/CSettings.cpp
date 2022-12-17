@@ -83,10 +83,8 @@ void CSettings::Save(int iIgnoreCategory)
 		ini_table_create_entry_as_int(config, "gui", "ChatFontSize", m_Settings.iChatFontSize);
 		ini_table_create_entry_as_int(config, "gui", "ChatMaxMessages", m_Settings.iChatMaxMessages);
 
-		ini_table_create_entry_as_int(config, "gui", "cutout", m_Settings.iCutout);
 		ini_table_create_entry_as_int(config, "gui", "androidKeyboard", m_Settings.iAndroidKeyboard);
 		ini_table_create_entry_as_int(config, "gui", "outfit", m_Settings.iOutfitGuns);
-		ini_table_create_entry_as_int(config, "gui", "radarrect", m_Settings.iRadarRect);
 
 		// ini_table_create_entry_as_int(config, "gui", "hparmourtext", m_Settings.iHPArmourText);
 		// ini_table_create_entry_as_int(config, "gui", "pcmoney", m_Settings.iPCMoney);
@@ -243,11 +241,9 @@ void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 
 	m_Settings.iFPS = ini_table_get_entry_as_int(config, "gui", "fps", 60);
 
-	m_Settings.iCutout = ini_table_get_entry_as_int(config, "gui", "cutout", 0);
 	m_Settings.iAndroidKeyboard = ini_table_get_entry_as_int(config, "gui", "androidKeyboard", 0);
 
 	m_Settings.iOutfitGuns = ini_table_get_entry_as_int(config, "gui", "outfit", 1);
-	m_Settings.iRadarRect = ini_table_get_entry_as_int(config, "gui", "radarrect", 0);
 	m_Settings.iHPArmourText = ini_table_get_entry_as_int(config, "gui", "hparmourtext", 0);
 	m_Settings.iSkyBox = ini_table_get_entry_as_int(config, "gui", "ctimecyc", 1);
 	m_Settings.iSnow = ini_table_get_entry_as_int(config, "gui", "snow", 1);

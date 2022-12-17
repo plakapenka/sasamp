@@ -36,10 +36,10 @@ void CSnow::Process(CPlayerPed* pPed, int iInterior)
 	}
 	if (!m_dwParticeHandle1 && !m_dwParticeHandle2)
 	{
-		if (m_iCurrentSnow == 0)
-		{
-			return;
-		}
+//		if (m_iCurrentSnow == 0)
+//		{
+//			return;
+//		}
 		if (m_iCurrentSnow < 0 || m_iCurrentSnow >= 4)
 		{
 			m_iCurrentSnow = 1;

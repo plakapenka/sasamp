@@ -132,7 +132,8 @@ public class Dialog {
                 this.mInputLayout.setVisibility(View.GONE);
                 this.mListLayout.setVisibility(View.GONE);
                 this.mMsgBoxLayout.setVisibility(View.VISIBLE);
-            } else if (dialogTypeId == 1 || dialogTypeId == 3) {
+            } else if (dialogTypeId == DIALOG_STYLE_INPUT || dialogTypeId == DIALOG_STYLE_PASSWORD ||
+                    dialogTypeId == DIALOG_STYLE_INPUT_NUMBER) {
                 this.mInputLayout.setVisibility(View.VISIBLE); // РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ РёРЅРїСѓС‚
                 this.mMsgBoxLayout.setVisibility(View.VISIBLE);
                 this.mListLayout.setVisibility(View.GONE);
@@ -244,7 +245,7 @@ public class Dialog {
 
     private void clearDialogData() {
         mCustomRecyclerView.setMinimumWidth(300);
-      //  this.mInput.setText("");
+        this.mInput.setText("");
         this.mCurrentDialogId = -1;
         this.mCurrentDialogTypeId = -1;
         this.mCurrentListItem = -1;

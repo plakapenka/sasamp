@@ -168,7 +168,7 @@ open:
 
 /* ====================================================== */
 bool bGameStarted = false;
-uint32_t bProcessedRender2dstuff = 0;
+
 void RenderBackgroundHud();
 void (*Render2dStuff)();
 void Render2dStuff_hook()
@@ -180,7 +180,6 @@ void Render2dStuff_hook()
 	MainLoop();
 	RenderBackgroundHud();
 	LOG_PROFILE(test, test_time);
-	bProcessedRender2dstuff = GetTickCount();
 	Render2dStuff();
 
 
@@ -1715,13 +1714,13 @@ void CGame__Process_hook()
 		CSnow::Process(pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed(), pGame->GetActiveInterior());
 	}
 
-	if (pNetGame)
-	{
-		CTextDrawPool* pTextDrawPool = pNetGame->GetTextDrawPool();
-		if (pTextDrawPool) {
-			pTextDrawPool->SnapshotProcess();
-		}
-	}
+//	if (pNetGame)
+//	{
+//		CTextDrawPool* pTextDrawPool = pNetGame->GetTextDrawPool();
+//		if (pTextDrawPool) {
+//			pTextDrawPool->SnapshotProcess();
+//		}
+//	}
 
 	if (g_pWidgetManager)
 	{
@@ -1827,7 +1826,7 @@ bool CGame__Shutdown_hook()
 {
 	Log("Exiting game...");
     NOP(g_libGTASA + 0x00341FCC, 2); // nop PauseOpenSLES
-
+	NOP(g_libGTASA + 0x0039B262, 2); // CGame::Process(void)
     NOP(g_libGTASA + 0x0046389E, 2); // nop saving
 
 	if (pNetGame)
@@ -1837,8 +1836,10 @@ bool CGame__Shutdown_hook()
 			pNetGame->GetRakClient()->Disconnect(500, 0);
 		}
 	}
+
 	g_pJavaWrapper->ExitGame();
-	//std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	exit(EXIT_SUCCESS);
+	//std::this_thread::sleep_for(std::chrono::milliseconds(3000));
 
 	return 0;
 	//return CGame__Shutdown();
@@ -2715,6 +2716,8 @@ void InstallHooks()
 
 	PROTECT_CODE_INSTALLHOOKS;
 
+	NOP(g_libGTASA + 0x0027E21A, 2); //CWidgetPlayerInfo::DrawWeaponIcon
+	NOP(g_libGTASA + 0x0027E24E, 2); // CWidgetPlayerInfo::DrawWanted
 	//SetUpHook(g_libGTASA+0x291104, (uintptr_t)CStreaming__ConvertBufferToObject_hook, (uintptr_t*)&CStreaming__ConvertBufferToObject);
 	//SetUpHook(g_libGTASA+0x3961C8, (uintptr_t)CFileMgr__ReadLine_hook, (uintptr_t*)&CFileMgr__ReadLine);
 
@@ -2877,7 +2880,8 @@ void InstallHooks()
 	SetUpHook(g_libGTASA + 0x1bdc3c, (uintptr_t)CTextureDatabaseRuntime__GetEntry_hook, (uintptr_t*)&CTextureDatabaseRuntime__GetEntry);
 
 	//== save
-	NOP(g_libGTASA + 0x0056C4D6, 2);
+//	NOP(g_libGTASA + 0x0056C4D6, 2);
+	NOP(g_libGTASA + 0x0056CD4A, 2);
 	NOP(g_libGTASA + 0x00266D28, 2);
 	NOP(g_libGTASA + 0x0026714C, 2);
 	NOP(g_libGTASA + 0x003CE54E, 2);

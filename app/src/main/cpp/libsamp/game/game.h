@@ -41,14 +41,11 @@ public:
 
 	int GetScreenWidth() { return RsGlobal->maximumWidth; };
 	int GetScreenHeight() { return RsGlobal->maximumHeight; };
-	float GetHudVertScale() { return 0.002232143; };
-	float GetHudHorizScale() { return 0.0015625; };
 
 	void InitInMenu();
 	void InitInGame();
 
 	void RemoveModel(int iModel, bool bFromStreaming);
-
 
 	void HandleChangedHUDStatus();
 	bool IsToggledHUDElement(int iID);
@@ -163,6 +160,7 @@ public:
 	int wantedLvl = 0;
 	bool isHornActive = false;
 	bool isBanJump = false;
+	bool GameExiting = false;
 
 	bool isPreDeathActive = false;
 	bool 			isDlinfocar = false;

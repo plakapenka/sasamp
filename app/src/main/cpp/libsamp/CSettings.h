@@ -26,9 +26,7 @@ struct stSettings
 	int iFPS;
 
 	int iAndroidKeyboard;
-	int iCutout;
 	int iOutfitGuns;
-	int iRadarRect;
 	int iHPArmourText;
 	int iSkyBox;
 	int iSnow;

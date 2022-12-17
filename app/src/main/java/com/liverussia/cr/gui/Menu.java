@@ -146,6 +146,6 @@ public class Menu {
 
     public void close() {
         Utils.HideLayout(menu_layout, true);
-        NvEventQueueActivity.getInstance().togglePlayer(0);
+      //  NvEventQueueActivity.getInstance().togglePlayer(0);
     }
 }

@@ -131,21 +131,6 @@ void CJavaWrapper::MakeDialog(int dialogId, int dialogTypeId, char caption[], ch
    // EXCEPTION_CHECK(env);
 }
 
-void CJavaWrapper::SetUseFullScreen(int b)
-{
-	JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-
-	env->CallVoidMethod(activity, s_SetUseFullScreen, b);
-
-	EXCEPTION_CHECK(env);
-}
-
 #include "..//CDebugInfo.h"
 #include "chatwindow.h"
 
@@ -262,14 +247,6 @@ extern "C"
 		}
 	}
 
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_setNativeCutoutSettings(JNIEnv* pEnv, jobject thiz, jboolean b)
-	{
-		if (pSettings)
-		{
-			pSettings->GetWrite().iCutout = b;
-		}
-	}
-
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_setNativeKeyboardSettings(JNIEnv* pEnv, jobject thiz, jboolean b)
 	{
 		if (pSettings)
@@ -307,41 +284,6 @@ extern "C"
 		}
 	}
 
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_setNativeRadarrect(JNIEnv* pEnv, jobject thiz, jboolean b)
-	{
-		if (pSettings)
-		{
-			pSettings->GetWrite().iRadarRect = b;
-
-			CRadarRect::SetEnabled(b);
-		}
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_setNativeSkyBox(JNIEnv* pEnv, jobject thiz, jboolean b)
-	{
-		if (pSettings)
-		{
-			pSettings->GetWrite().iSkyBox = b;
-		}
-	}
-
-	JNIEXPORT jboolean JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_getNativeCutoutSettings(JNIEnv* pEnv, jobject thiz)
-	{
-		if (pSettings)
-		{
-			return pSettings->GetReadOnly().iCutout;
-		}
-		return 0;
-	}
-
-	JNIEXPORT jboolean JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_getNativeKeyboardSettings(JNIEnv* pEnv, jobject thiz)
-	{
-		if (pSettings)
-		{
-			return pSettings->GetReadOnly().iAndroidKeyboard;
-		}
-		return 0;
-	}
 
 	JNIEXPORT jboolean JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_getNativeFpsCounterSettings(JNIEnv* pEnv, jobject thiz)
 	{
@@ -366,24 +308,6 @@ extern "C"
 		if (pSettings)
 		{
 			return pSettings->GetReadOnly().iOutfitGuns;
-		}
-		return 0;
-	}
-
-	JNIEXPORT jboolean JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_getNativeRadarrect(JNIEnv* pEnv, jobject thiz)
-	{
-		if (pSettings)
-		{
-			return pSettings->GetReadOnly().iRadarRect;
-		}
-		return 0;
-	}
-
-	JNIEXPORT jboolean JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_getNativeSkyBox(JNIEnv* pEnv, jobject thiz)
-	{
-		if (pSettings)
-		{
-			return pSettings->GetReadOnly().iSkyBox;
 		}
 		return 0;
 	}
@@ -1307,7 +1231,6 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 	s_GetClipboardText = env->GetMethodID(nvEventClass, "getClipboardText", "()[B");
 
 	s_ShowClientSettings = env->GetMethodID(nvEventClass, "showClientSettings", "()V");
-	s_SetUseFullScreen = env->GetMethodID(nvEventClass, "setUseFullscreen", "(I)V");
 
 	s_updateLevelInfo = env->GetMethodID(nvEventClass, "updateLevelInfo", "(III)V");
 

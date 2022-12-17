@@ -98,6 +98,7 @@ void InitSAMP(JNIEnv* pEnv, jobject thiz, const char* path)
 
 	InitBASSFuncs();
 	BASS_Init(-1, 44100, BASS_DEVICE_3D, 0, NULL);
+	BASS_Set3DFactors(1.0, 0.1, 0);
 
 	//g_pszStorage = path;
 	strcpy(g_pszStorage, path);
@@ -121,13 +122,11 @@ void InitSAMP(JNIEnv* pEnv, jobject thiz, const char* path)
 
 	//ÒÓÒ ÌÎÆÍÎ ÇÀÃÐÓÇÈÒÜ
 	CWeaponsOutFit::SetEnabled(pSettings->GetReadOnly().iOutfitGuns);
-	CRadarRect::SetEnabled(pSettings->GetReadOnly().iRadarRect);
 	CDebugInfo::SetDrawFPS(pSettings->GetReadOnly().szDebug);
-	CSnow::SetCurrentSnow(pSettings->GetReadOnly().iSnow);
+	//CSnow::SetCurrentSnow(pSettings->GetReadOnly().iSnow);
+	//CSnow::SetCurrentSnow(3);
 
 	g_pJavaWrapper = new CJavaWrapper(pEnv, thiz);
-
-	g_pJavaWrapper->SetUseFullScreen(pSettings->GetReadOnly().iCutout);
 
 	//CLocalisation::Initialise("ru.lc");
 

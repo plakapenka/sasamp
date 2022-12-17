@@ -339,7 +339,7 @@ public class HudManager {
 
         hud_menu.setOnClickListener( view -> {
             NvEventQueueActivity.getInstance().showMenu();
-            NvEventQueueActivity.getInstance().togglePlayer(1);
+         //   NvEventQueueActivity.getInstance().togglePlayer(1);
         });
         hud_weapon.setOnClickListener(v -> NvEventQueueActivity.getInstance().onWeaponChanged());
 
@@ -511,7 +511,7 @@ public class HudManager {
             armour_text.setText(String.format("%d", armour));
             hp_text.setText(String.format("%d", health));
 
-            int id = activity.getResources().getIdentifier(new Formatter().format("weapon_%d", Integer.valueOf(weaponid)).toString(), "drawable", activity.getPackageName());
+            int id = activity.getResources().getIdentifier(String.format("weapon_%d", weaponid), "drawable", activity.getPackageName());
             hud_weapon.setImageResource(id);
 
             if (weaponid > 15 & weaponid < 44 & weaponid != 21) {
@@ -532,7 +532,7 @@ public class HudManager {
     {
         activity.runOnUiThread(() -> {
             hud_money.setText(formatter.format(money));
-            hud_money.invalidate();
+           // hud_money.invalidate();
         });
     }
     public void UpdateWanted(int wantedLVL)
@@ -611,7 +611,7 @@ public class HudManager {
 
     public void UpdateLevelInfo(int level, int currentexp, int maxexp) {
         String strlevelinfo = String.format("LVL %d [EXP %d/%d]", level, currentexp, maxexp);
-        levelinfo.setText(String.valueOf(strlevelinfo));
+        levelinfo.setText(strlevelinfo);
     }
 
     public void UpdateYearnMoney(int money) {
@@ -769,8 +769,9 @@ public class HudManager {
                 this.chat_lines.add(" "+item+" ");
                 notifyItemInserted(this.chat_lines.size()-1);
 
-                chat.scrollToPosition(this.chat_lines.size()-1);
-
+                if(chat.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
+                    chat.scrollToPosition(this.chat_lines.size()-1);
+                }
             });
 
         }

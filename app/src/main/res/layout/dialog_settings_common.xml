@@ -41,30 +41,6 @@
                     android:orientation="vertical">
 
                     <androidx.appcompat.widget.SwitchCompat
-                        android:id="@+id/switch_radar_rect"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
-                        android:fontFamily="@font/roboto_regular"
-                        android:text="Квадратный радар"
-                        android:textColor="@android:color/white"
-                        android:textSize="12sp" />
-
-                    <androidx.appcompat.widget.SwitchCompat
-                        android:id="@+id/switch_cutout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
-                        android:fontFamily="@font/roboto_regular"
-                        android:text="Безграничный экран"
-                        android:textColor="@android:color/white"
-                        android:textSize="12sp" />
-
-                    <androidx.appcompat.widget.SwitchCompat
                         android:id="@+id/switch_outfit_weapons"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -73,18 +49,6 @@
                         android:layout_marginRight="10dp"
                         android:fontFamily="@font/roboto_regular"
                         android:text="Оружие за спиной"
-                        android:textColor="@android:color/white"
-                        android:textSize="12sp" />
-
-                    <androidx.appcompat.widget.SwitchCompat
-                        android:id="@+id/switch_skybox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
-                        android:fontFamily="@font/roboto_regular"
-                        android:text="Улучшенное небо"
                         android:textColor="@android:color/white"
                         android:textSize="12sp" />
 
@@ -105,18 +69,6 @@
                         android:layout_marginRight="10dp"
                         android:fontFamily="@font/roboto_regular"
                         android:text="Цифры HP и брони"
-                        android:textColor="@android:color/white"
-                        android:textSize="12sp" />
-
-                    <androidx.appcompat.widget.SwitchCompat
-                        android:id="@+id/switch_android_keyboard"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
-                        android:fontFamily="@font/roboto_regular"
-                        android:text="Android клавиатура"
                         android:textColor="@android:color/white"
                         android:textSize="12sp" />
 

@@ -168,7 +168,7 @@ public abstract class NvEventQueueActivity
     private FrameLayout mRootFrame = null;
     private SurfaceView mSurfaceView = null;
 
-    private HeightProvider mHeightProvider = null;
+    //private HeightProvider mHeightProvider = null;
     private DialogClientSettings mDialogClientSettings = null;
 
     private Dialog mDialog = null;
@@ -214,21 +214,14 @@ public abstract class NvEventQueueActivity
     public native void onSettingsWindowSave();
     public native void onSettingsWindowDefaults(int category);
 
-    public native void setNativeCutoutSettings(boolean b);
     public native void setNativeKeyboardSettings(boolean b);
     public native void setNativeFpsCounterSettings(boolean b);
     public native void setNativeOutfitGunsSettings(boolean b);
     public native void setNativeHpArmourText(boolean b);
-    public native void setNativeRadarrect(boolean b);
-    public native void setNativeSkyBox(boolean b);
 
-    public native boolean getNativeCutoutSettings();
-    public native boolean getNativeKeyboardSettings();
     public native boolean getNativeFpsCounterSettings();
     public native boolean getNativeOutfitGunsSettings();
     public native boolean getNativeHpArmourText();
-    public native boolean getNativeRadarrect();
-    public native boolean getNativeSkyBox();
 
     public native void setNativeHudElementColor(int id, int a, int r, int g, int b);
     public native byte[] getNativeHudElementColor(int id);
@@ -306,12 +299,6 @@ public abstract class NvEventQueueActivity
             }
         }
     }
-
-    public void setUseFullscreen(int b)
-    {
-        mUseFullscreen = b;
-    }
-
     public void showClientSettings()
     {
         runOnUiThread(new Runnable() {
@@ -732,10 +719,10 @@ public abstract class NvEventQueueActivity
                 mSensorDelay);
         paused = false;
 
-        if(mHeightProvider != null)
-        {
-            mHeightProvider.init(mRootFrame);
-        }
+//        if(mHeightProvider != null)
+//        {
+//            mHeightProvider.init(mRootFrame);
+//        }
 
         if (viewIsActive && ResumeEventDone)
         {
@@ -1024,7 +1011,7 @@ public abstract class NvEventQueueActivity
         mChooseServer = new ChooseServer(this);
         new Furniture_factory(this);
         // mInputManager = new InputManager(this);
-        mHeightProvider = new HeightProvider(this).init(mRootFrame).setHeightListener(this);
+        //mHeightProvider = new HeightProvider(this).init(mRootFrame).setHeightListener(this);
         mNotification = new Notification(this);
         mAuthorizationManager = new AuthorizationManager(this);
         mRegistrationManager = new RegistrationManager(this);
@@ -1639,6 +1626,7 @@ public abstract class NvEventQueueActivity
     public void updateSplash(int percent) { runOnUiThread(() -> { mChooseServer.Update(percent); } ); }
 
     public void ExitGame(){
+        //
         this.finishAndRemoveTask();
         System.exit(0);
     }

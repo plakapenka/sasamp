@@ -22,13 +22,9 @@ import com.nvidia.devtech.NvEventQueueActivity;
 import java.util.HashMap;
 
 public class DialogClientSettingsCommonFragment extends Fragment implements ISaveableFragment {
-    private SwitchCompat mSwitchKeyboard;
-    private SwitchCompat mSwitchCutout;
     private SwitchCompat mSwitchFPSCounter;
     private SwitchCompat mSwitchOutfit;
     private SwitchCompat mSwitchHpArmour;
-    private SwitchCompat mSwitchRadarrect;
-    private SwitchCompat mSwitchSkyBox;
     private SeekBar chat_line_count;
     private SeekBar chat_font_size;
 
@@ -80,13 +76,9 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
 
         mRootView = inflater.inflate(R.layout.dialog_settings_common,container,false);
 
-        mSwitchKeyboard = mRootView.findViewById(R.id.switch_android_keyboard);
-        mSwitchCutout = mRootView.findViewById(R.id.switch_cutout);
         mSwitchFPSCounter = mRootView.findViewById(R.id.switch_fps_counter);
         mSwitchHpArmour = mRootView.findViewById(R.id.switch_info_bar);
         mSwitchOutfit = mRootView.findViewById(R.id.switch_outfit_weapons);
-        mSwitchRadarrect = mRootView.findViewById(R.id.switch_radar_rect);
-        mSwitchSkyBox = mRootView.findViewById(R.id.switch_skybox);
         chat_line_count = mRootView.findViewById(R.id.chat_line_count);
         chat_line_count.setProgress(mContext.findViewById(R.id.chat).getLayoutParams().height);
         chat_font_size = mRootView.findViewById(R.id.chat_font_size);
@@ -133,38 +125,6 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
 
         getValues();
         setSeekBarListeners();
-
-        mSwitchCutout.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                mContext.setNativeCutoutSettings(b);
-
-                DialogFragment newFragment = new NotificationDialogFragment();
-                newFragment.show(mContext.getSupportFragmentManager(), "missiles");
-
-            }
-        });
-
-        mSwitchSkyBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                mContext.setNativeSkyBox(b);
-            }
-        });
-
-        mSwitchKeyboard.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                mContext.setNativeKeyboardSettings(b);
-            }
-        });
-
-        mSwitchRadarrect.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                mContext.setNativeRadarrect(b);
-            }
-        });
 
         mSwitchOutfit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -262,13 +222,9 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
 
     @Override
     public void getValues() {
-        mSwitchKeyboard.setChecked(mContext.getNativeKeyboardSettings());
-        mSwitchCutout.setChecked(mContext.getNativeCutoutSettings());
         mSwitchFPSCounter.setChecked(mContext.getNativeFpsCounterSettings());
         mSwitchHpArmour.setChecked(mContext.getNativeHpArmourText());
         mSwitchOutfit.setChecked(mContext.getNativeOutfitGunsSettings());
-        mSwitchRadarrect.setChecked(mContext.getNativeRadarrect());
-        mSwitchSkyBox.setChecked(mContext.getNativeSkyBox());
 
         bChangeAllowed = false;
         for(int i = DialogClientSettings.mSettingsComonStart; i < DialogClientSettings.mSettingsComonEnd; i++)

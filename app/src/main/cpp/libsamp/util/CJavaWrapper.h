@@ -21,7 +21,6 @@ class CJavaWrapper
 	jmethodID j_Vibrate;
 
 	jmethodID s_ShowClientSettings;
-	jmethodID s_SetUseFullScreen;
 
 	jmethodID s_showOilFactoryGame;
 	jmethodID s_showArmyGame;
@@ -88,8 +87,6 @@ public:
 	std::string GetClipboardString();
 
 	void ShowClientSettings();
-
-	void SetUseFullScreen(int b);
 
 	void UpdateLevelInfo(int level, int currentexp, int maxexp);
 
