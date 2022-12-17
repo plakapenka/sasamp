@@ -603,15 +603,17 @@ void CPlayerPed::PutDirectlyInVehicle(int iVehicleID, int iSeat)
 
 
 	if(IsInVehicle()){
-		ExitCurrentVehicle();
+		MATRIX4X4 mat;
+		GetMatrix(&mat);
+		RemoveFromVehicleAndPutAt(mat.pos.X, mat.pos.Y, mat.pos.Z);
 	}
 
-	MATRIX4X4 mat;
-	GetMatrix(&mat);
-	mat.pos.X = pVehicle->entity.mat->pos.X;
-	mat.pos.Y = pVehicle->entity.mat->pos.Y;
-	mat.pos.Z = pVehicle->entity.mat->pos.Z;
-	SetMatrix(mat);
+//	MATRIX4X4 mat;
+//	GetMatrix(&mat);
+//	mat.pos.X = pVehicle->entity.mat->pos.X;
+//	mat.pos.Y = pVehicle->entity.mat->pos.Y;
+//	mat.pos.Z = pVehicle->entity.mat->pos.Z;
+//	SetMatrix(mat);
 
 	if(iSeat == 0)
 	{
