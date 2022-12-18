@@ -71,6 +71,11 @@ public class PolicyActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.N)
+        {
+            System.exit(0);
+            return;
+        }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 1000) {
             checkVersionAndStartLauncher();
