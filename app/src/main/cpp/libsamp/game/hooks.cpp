@@ -2691,6 +2691,15 @@ int SetCompAlphaCB_hook(int a1, char a2)
 	return result;
 }
 
+float (*CDraw__SetFOV)(float thiz, float a2);
+float CDraw__SetFOV_hook(float thiz, float a2)
+{
+	float tmp = (float)((float)((float)(*(float *)&*(float *)(g_libGTASA + 0x0098525C) - 1.3333) * 11.0) / 0.44444) + thiz;
+	if(tmp > 100) tmp = 100.0;
+	*(float *)(g_libGTASA + 0x00610968) = tmp;
+	return thiz;
+}
+
 int (*MobileSettings__GetMaxResWidth)();
 int MobileSettings__GetMaxResWidth_hook()
 {
@@ -2889,6 +2898,9 @@ void InstallHooks()
 
 	// fix разрешения экрана
 	SetUpHook(g_libGTASA + 0x0026CE30, (uintptr_t)MobileSettings__GetMaxResWidth_hook, (uintptr_t*)&MobileSettings__GetMaxResWidth);
+
+	//размытие на скорости
+	SetUpHook(g_libGTASA + 0x005311D0, (uintptr_t)CDraw__SetFOV_hook, (uintptr_t*)&CDraw__SetFOV);
 
 	HookCPad();
 }
