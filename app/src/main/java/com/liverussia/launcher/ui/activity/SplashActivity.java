@@ -65,6 +65,8 @@ public class SplashActivity extends AppCompatActivity {
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
+		checkAndroidVersion();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
@@ -76,6 +78,12 @@ public class SplashActivity extends AppCompatActivity {
 						| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
 		loadMonitoringData();
+	}
+
+	private void checkAndroidVersion() {
+		if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+			System.exit(EXIT_SUCCESS_STATUS);
+		}
 	}
 
 	private void loadMonitoringData() {
