@@ -119,7 +119,15 @@ public class Casino {
     }
     Long getChipGetCount(){
         if(casino_chip_input.getText().toString().isEmpty()) return 0L;
-        return Long.parseLong(casino_chip_input.getText().toString());
+        Long tmp;
+        try {
+            tmp = Long.parseLong(casino_chip_input.getText().toString());
+        } catch (Exception e) {
+            return 0L;
+        }
+
+        if(tmp < 0 || tmp > 2000000000) return 0L;
+        return tmp;
     }
     void ChipUpdateGetting(){
         activity.runOnUiThread(() -> {
