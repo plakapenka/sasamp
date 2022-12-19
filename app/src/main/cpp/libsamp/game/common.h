@@ -337,8 +337,8 @@ typedef struct _PED_TYPE
 	float fArmour;				// 1352-1356	;Armour
 	float fAim;
 	PADDING(_pad104, 8);		// 1356-1368
-	float fRotation1;			// 1368-1372	;Rotation1
-	float fRotation2;			// 1372-1376	;Rotation2
+	float m_fCurrentRotation;			// 1368-1372	;Rotation1
+	float m_fAimingRotation;			// 1372-1376	;Rotation2
 	PADDING(_pad105, 44);		// 1376-1420
 	uint32_t pVehicle;			// 1420-1424	;pVehicle
 	PADDING(_pad108, 8);		// 1424-1432
