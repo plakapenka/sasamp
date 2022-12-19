@@ -174,6 +174,7 @@ public class RouletteFragment extends Fragment implements View.OnClickListener, 
         if (authenticationService.isRefreshTokenHealth()) {
             UpdateTokensAsyncRestCall updateTokensAsyncRestCall = new UpdateTokensAsyncRestCall(getActivity());
             updateTokensAsyncRestCall.setOnAsyncSuccessListener(this::performSpinButtonAction);
+            updateTokensAsyncRestCall.setOnAsyncCriticalErrorListener(this::performLogoutButtonAction);
             updateTokensAsyncRestCall.refreshTokens(true);
             return;
         }
