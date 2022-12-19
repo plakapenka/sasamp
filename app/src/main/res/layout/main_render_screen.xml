@@ -24,7 +24,7 @@
         <include layout="@layout/menu_action_dialog" />
         <include layout="@layout/br_registration" />
         <include layout="@layout/authorization" />
-        <include layout="@layout/br_choosespawn" />
+        <include layout="@layout/choosespawn" />
         <include layout="@layout/sawmill" />
         <include layout="@layout/br_oilfactory" />
         <include layout="@layout/armygame" />
