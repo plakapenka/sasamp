@@ -1435,3 +1435,17 @@ Java_com_liverussia_cr_gui_PreDeath_OnClickPreDeathButton(JNIEnv *env, jobject t
 	bsSend.Write(button);
 	pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
 }
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_AuthorizationManager_ClickRecoveryPass(JNIEnv *env, jobject thiz) {
+
+	uint8_t packet = ID_CUSTOM_RPC;
+	uint8_t RPC = RPC_RESTORE_PASS;
+
+	RakNet::BitStream bsSend;
+	bsSend.Write(packet);
+	bsSend.Write(RPC);
+
+	pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
+}
