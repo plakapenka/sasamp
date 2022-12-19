@@ -1,6 +1,7 @@
 #include "../main.h"
 #include "game.h"
 
+
 CAMERA_AIM* GameGetInternalAim()
 {
 	return (CAMERA_AIM*)(g_libGTASA + 0x008B0808 + 528 * *((unsigned char*)(g_libGTASA + 0x008B085F)) + 728);
@@ -13,9 +14,13 @@ uint16_t* wCameraMode2 = nullptr;
 
 CAMERA_AIM * pcaInternalAim = nullptr;
 float * pfCameraExtZoom = nullptr;
+float* pfAspectRatio = nullptr;
 
 float fCameraExtZoom[MAX_PLAYERS];
 float fLocalCameraExtZoom;
+
+float fCameraAspectRatio[MAX_PLAYERS];
+float fLocalAspectRatio;
 
 uint16_t byteCameraMode[MAX_PLAYERS];
 
@@ -24,6 +29,7 @@ uint16_t byteCameraMode[MAX_PLAYERS];
 void GameStoreLocalPlayerCameraExtZoom()
 {
 	fLocalCameraExtZoom = *pfCameraExtZoom;
+	fLocalAspectRatio = *pfAspectRatio;
 }
 
 //----------------------------------------------------------
@@ -31,6 +37,7 @@ void GameStoreLocalPlayerCameraExtZoom()
 void GameSetLocalPlayerCameraExtZoom()
 {
 	*pfCameraExtZoom = fLocalCameraExtZoom;
+	*pfAspectRatio = fLocalAspectRatio;
 }
 
 //----------------------------------------------------------
@@ -38,6 +45,12 @@ void GameSetLocalPlayerCameraExtZoom()
 void GameSetPlayerCameraExtZoom(int bytePlayerID, float fZoom)
 {
 	fCameraExtZoom[bytePlayerID] = fZoom;
+}
+
+void GameSetPlayerCameraExtZoom(int bytePlayerID, float fZoom, float fAspectRatio)
+{
+	fCameraExtZoom[bytePlayerID] = fZoom;
+	fCameraAspectRatio[bytePlayerID] = fAspectRatio;
 }
 
 //----------------------------------------------------------
@@ -99,6 +112,7 @@ void GameAimSyncInit()
 	pbyteCameraMode = (uint16_t*)(g_libGTASA + 0x008B0808 + 528 * *((unsigned char*)(g_libGTASA + 0x008B085F)) + 382);
 	pcaInternalAim = GameGetInternalAim();
 	pfCameraExtZoom = (float*)(g_libGTASA + 0x008B0808 + 528 * *((unsigned char*)(g_libGTASA + 0x008B085F)) + 508);
+	pfAspectRatio = (float*)(g_libGTASA + 0x0098525C);
 	wCameraMode2 = (uint16_t*)(g_libGTASA + 0x008B0808 + 0x7B4);
 
 	memset(&caLocalPlayerAim, 0, sizeof(CAMERA_AIM));
@@ -147,4 +161,9 @@ void GameSetRemotePlayerAim(int iPlayer)
 CAMERA_AIM * GameGetRemotePlayerAim(int iPlayer)
 {
 	return &caRemotePlayerAim[iPlayer];
+}
+
+float GameGetAspectRatio()
+{
+	return *pfAspectRatio;
 }

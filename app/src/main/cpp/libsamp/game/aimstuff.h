@@ -27,5 +27,6 @@ void GameSetLocalPlayerCameraMode(uint16_t mode);
 void GameStoreLocalPlayerCameraExtZoom();
 void GameSetLocalPlayerCameraExtZoom();
 void GameSetPlayerCameraExtZoom(int bytePlayerID, float fZoom);
+void GameSetPlayerCameraExtZoom(int bytePlayerID, float fZoom, float fAspectRatio);
 void GameSetRemotePlayerCameraExtZoom(int bytePlayerID);
 float GameGetLocalPlayerCameraExtZoom();
