@@ -28,6 +28,7 @@ public:
 	bool IsCrouching();
 
 	void SetCameraExtendedZoom(float fZoom);
+
 	void SetDead();
 	// 0.3.7
 	bool IsInVehicle();
@@ -153,4 +154,6 @@ public:
 	DWORD m_dwPissParticlesHandle = 0;
 
     bool IsValidAttach(int iSlot);
+
+	void SetCameraExtendedZoom(float fZoom, float fAspectRatio);
 };

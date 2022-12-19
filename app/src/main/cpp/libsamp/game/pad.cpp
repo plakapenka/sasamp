@@ -15,17 +15,19 @@ uintptr_t dwCurPlayerActor = 0;
 uint8_t byteCurPlayer = 0;
 uint8_t byteCurDriver = 0;
 
-uint16_t (*CPad__GetPedWalkLeftRight)(uintptr_t thiz);
+uint16_t(*CPad__GetPedWalkLeftRight)(uintptr_t thiz);
 uint16_t CPad__GetPedWalkLeftRight_hook(uintptr_t thiz)
 {
-	if(dwCurPlayerActor && (byteCurPlayer != 0))
+
+	if (dwCurPlayerActor && (byteCurPlayer != 0))
 	{
 		// Remote player
 		uint16_t dwResult = RemotePlayerKeys[byteCurPlayer].wKeyLR;
-//		if(RemotePlayerKeys[byteCurPlayer].bKeys[ePadKeys::KEY_WALK])
-//		{
-//			dwResult = 0x40;
-//		}
+		if ((dwResult == 0xFF80 || dwResult == 0x80) &&
+			RemotePlayerKeys[byteCurPlayer].bKeys[ePadKeys::KEY_WALK])
+		{
+			dwResult = 0x20;
+		}
 		return dwResult;
 	}
 	else
@@ -36,17 +38,19 @@ uint16_t CPad__GetPedWalkLeftRight_hook(uintptr_t thiz)
 	}
 }
 
-uint16_t (*CPad__GetPedWalkUpDown)(uintptr_t thiz);
+uint16_t(*CPad__GetPedWalkUpDown)(uintptr_t thiz);
 uint16_t CPad__GetPedWalkUpDown_hook(uintptr_t thiz)
 {
-	if(dwCurPlayerActor && (byteCurPlayer != 0))
+
+	if (dwCurPlayerActor && (byteCurPlayer != 0))
 	{
 		// Remote player
 		uint16_t dwResult = RemotePlayerKeys[byteCurPlayer].wKeyUD;
-//		if(RemotePlayerKeys[byteCurPlayer].bKeys[ePadKeys::KEY_WALK])
-//		{
-//			dwResult = 0x40;
-//		}
+		if ((dwResult == 0xFF80 || dwResult == 0x80) &&
+			RemotePlayerKeys[byteCurPlayer].bKeys[ePadKeys::KEY_WALK])
+		{
+			dwResult = 0x20;
+		}
 		return dwResult;
 	}
 	else
@@ -582,6 +586,7 @@ uint32_t CPad__GetEnterTargeting_hook(uintptr_t thiz)
 		return result;
 	}
 }
+
 uint32_t TaskUseGun(uintptr_t thiz, uintptr_t ped)
 {
 	dwCurPlayerActor = ped;
@@ -594,7 +599,7 @@ uint32_t TaskUseGun(uintptr_t thiz, uintptr_t ped)
 	{
 		uint16_t byteSavedCameraMode = *pbyteCameraMode;
 		*pbyteCameraMode = GameGetPlayerCameraMode(byteCurPlayer);
-		
+
 		uint16_t wSavedCameraMode2 = *wCameraMode2;
 		*wCameraMode2 = GameGetPlayerCameraMode(byteCurPlayer);
 		if (*wCameraMode2 == 4)* wCameraMode2 = 0;

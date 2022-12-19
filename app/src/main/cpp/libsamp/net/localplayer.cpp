@@ -70,8 +70,6 @@ CLocalPlayer::CLocalPlayer()
 	m_dwLastUpdatePassengerData = GetTickCount();
 	m_dwPassengerEnterExit = GetTickCount();
 
-	FindDeathReasonPlayer = 0;
-
 	m_CurrentVehicle = INVALID_VEHICLE_ID;
 	ResetAllSyncAttributes();
 
@@ -234,8 +232,6 @@ bool CLocalPlayer::Process()
 		}
 
 		if ((dwThisTick - m_dwLastStatsUpdateTick) > STATS_UPDATE_TICKS) {
-
-
 			SendStatsUpdate();
 			m_dwLastStatsUpdateTick = dwThisTick;
 		}
@@ -501,49 +497,50 @@ extern float                    m_fWeaponDamages[43 + 1];
 void CLocalPlayer::SendBulletSyncData(PLAYERID byteHitID, uint8_t byteHitType, VECTOR vecHitPos)
 {
 	if (!m_pPlayerPed) return;
-	switch (byteHitType)
-	{
-	case ENTITY_TYPE_UNKNOWN:
-		break;
-	case ENTITY_TYPE_PED: //player
-		if (!pNetGame->GetPlayerPool()->GetSlotState((PLAYERID)byteHitID)) return;
-		break;
-	default: return; //unknown type
+	switch (byteHitType) {
+		case ENTITY_TYPE_UNKNOWN:
+			break;
+		case ENTITY_TYPE_PED: //player
+			if (!pNetGame->GetPlayerPool()->GetSlotState((PLAYERID) byteHitID)) return;
+			break;
+		default:
+			return; //unknown type
 	}
 	uint8_t byteCurrWeapon = m_pPlayerPed->GetCurrentWeapon(), byteShotWeapon;
 
 	BULLET_SYNC blSync;
 
-	blSync.hitId = byteHitID;
-	blSync.hitType = byteHitType;
+		blSync.hitId = byteHitID;
+		blSync.hitType = byteHitType;
 
-	if (byteHitType == ENTITY_TYPE_PED)
-	{
-		float fDistance = pNetGame->GetPlayerPool()->GetAt((PLAYERID)byteHitID)->GetPlayerPed()->GetDistanceFromLocalPlayerPed();
-		if (byteCurrWeapon != 0 && fDistance < 1.0f)
-			byteShotWeapon = 0;
-		else
-			byteShotWeapon = byteCurrWeapon;
+		if (byteHitType == ENTITY_TYPE_PED) {
+			float fDistance = pNetGame->GetPlayerPool()->GetAt(
+					(PLAYERID) byteHitID)->GetPlayerPed()->GetDistanceFromLocalPlayerPed();
+			if (byteCurrWeapon != 0 && fDistance < 1.0f)
+				byteShotWeapon = 0;
+			else
+				byteShotWeapon = byteCurrWeapon;
+		}
+		blSync.weapId = byteShotWeapon;
+
+		blSync.hitPos[0] = vecHitPos.X;
+		blSync.hitPos[1] = vecHitPos.Y;
+		blSync.hitPos[2] = vecHitPos.Z;
+		blSync.offsets[0] = 0.0f;
+		blSync.offsets[1] = 0.0f;
+		blSync.offsets[2] = 0.0f;
+		MATRIX4X4 mat;
+		m_pPlayerPed->GetMatrix(&mat);
+		blSync.origin[0] = mat.pos.X;
+		blSync.origin[1] = mat.pos.Y;
+		blSync.origin[2] = mat.pos.Z;
+
+	if(0 <= byteCurrWeapon <= 18 || 22 <= byteCurrWeapon <= 46) {
+		RakNet::BitStream bsBulletSync;
+		bsBulletSync.Write((uint8_t) ID_BULLET_SYNC);
+		bsBulletSync.Write((const char *) &blSync, sizeof(BULLET_SYNC));
+		pNetGame->GetRakClient()->Send(&bsBulletSync, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0);
 	}
-	blSync.weapId = byteShotWeapon;
-
-	FindDeathReasonPlayer = byteShotWeapon;
-
-	blSync.hitPos[0] = vecHitPos.X;
-	blSync.hitPos[1] = vecHitPos.Y;
-	blSync.hitPos[2] = vecHitPos.Z;
-	blSync.offsets[0] = 0.0f;
-	blSync.offsets[1] = 0.0f;
-	blSync.offsets[2] = 0.0f;
-	MATRIX4X4 mat;
-	m_pPlayerPed->GetMatrix(&mat);
-	blSync.origin[0] = mat.pos.X;
-	blSync.origin[1] = mat.pos.Y;
-	blSync.origin[2] = mat.pos.Z;
-	RakNet::BitStream bsBulletSync;
-	bsBulletSync.Write((uint8_t)ID_BULLET_SYNC);
-	bsBulletSync.Write((const char*)& blSync, sizeof(BULLET_SYNC));
-	pNetGame->GetRakClient()->Send(&bsBulletSync, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0);
 
 	RakNet::BitStream bsRPC;
 	bsRPC.Write((bool)false);
@@ -552,7 +549,7 @@ void CLocalPlayer::SendBulletSyncData(PLAYERID byteHitID, uint8_t byteHitType, V
 	bsRPC.Write((uint32_t)blSync.weapId);
 	bsRPC.Write((uint32_t)1);
 	pNetGame->GetRakClient()->RPC(&RPC_PlayerGiveTakeDamage, &bsRPC, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0, false, UNASSIGNED_NETWORK_ID, nullptr);
-
+	//Log("[BULLET_SYNC] sent.");
 }
 
 void CLocalPlayer::SendWastedNotification()
@@ -1065,36 +1062,33 @@ void CLocalPlayer::SendPassengerFullSyncData()
 
 void CLocalPlayer::SendAimSyncData()
 {
-	RakNet::BitStream bsAimSync;
-	AIM_SYNC_DATA aimSync;
-	CAMERA_AIM * caAim = m_pPlayerPed->GetCurrentAim();
+    AIM_SYNC_DATA aimSync;
 
-	aimSync.byteCamMode = m_pPlayerPed->GetCameraMode();
+    CAMERA_AIM* caAim = m_pPlayerPed->GetCurrentAim();
 
-	aimSync.vecAimf1.X = caAim->f1x;
-	aimSync.vecAimf1.Y = caAim->f1y;
-	aimSync.vecAimf1.Z = caAim->f1z;
-	aimSync.vecAimf2.X = caAim->f2x;
-	aimSync.vecAimf2.Y = caAim->f2y;
-	aimSync.vecAimf2.Z = caAim->f2z;
-	aimSync.vecAimPos.X = caAim->pos1x;
-	aimSync.vecAimPos.Y = caAim->pos1y;
-	aimSync.vecAimPos.Z = caAim->pos1z;
+    aimSync.byteCamMode = m_pPlayerPed->GetCameraMode();
+    aimSync.vecAimf.X = caAim->f1x;
+    aimSync.vecAimf.Y = caAim->f1y;
+    aimSync.vecAimf.Z = caAim->f1z;
+    aimSync.vecAimPos.X = caAim->pos1x;
+    aimSync.vecAimPos.Y = caAim->pos1y;
+    aimSync.vecAimPos.Z = caAim->pos1z;
+    aimSync.fAimZ = m_pPlayerPed->GetAimZ();
+    aimSync.aspect_ratio = /*GameGetAspectRatio() * */ 255.0f;
+    aimSync.byteCamExtZoom = (uint8_t)(m_pPlayerPed->GetCameraExtendedZoom() * 63.0f);
 
-	aimSync.fAimZ = m_pPlayerPed->GetAimZ();
+    WEAPON_SLOT_TYPE* pwstWeapon = m_pPlayerPed->GetCurrentWeaponSlot();
+    if (pwstWeapon->dwState == 2) {
+        aimSync.byteWeaponState = WS_RELOADING;
+    }
+    else {
+        aimSync.byteWeaponState = (pwstWeapon->dwAmmoInClip > 1) ? WS_MORE_BULLETS : pwstWeapon->dwAmmoInClip;
+    }
 
-	aimSync.byteCamExtZoom = (BYTE)(m_pPlayerPed->GetCameraExtendedZoom() * 63.0f);
-
-	WEAPON_SLOT_TYPE* pwstWeapon = m_pPlayerPed->GetCurrentWeaponSlot();
-	if (pwstWeapon->dwState == 2)
-		aimSync.byteWeaponState = WS_RELOADING;
-	else
-		aimSync.byteWeaponState = (pwstWeapon->dwAmmoInClip > 1) ? WS_MORE_BULLETS : pwstWeapon->dwAmmoInClip;
-
-	bsAimSync.Write((BYTE)ID_AIM_SYNC);
-	bsAimSync.Write((char*)&aimSync,sizeof(AIM_SYNC_DATA));
-	pNetGame->GetRakClient()->Send(&bsAimSync,HIGH_PRIORITY,UNRELIABLE_SEQUENCED,0);
-
+    RakNet::BitStream bsAimSync;
+    bsAimSync.Write((char)ID_AIM_SYNC);
+    bsAimSync.Write((char*)&aimSync, sizeof(AIM_SYNC_DATA));
+    pNetGame->GetRakClient()->Send(&bsAimSync, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0);
 }
 
 void CLocalPlayer::ProcessSpectating()
@@ -1235,3 +1229,4 @@ void CLocalPlayer::SpectateVehicle(VEHICLEID VehicleID)
 		m_bSpectateProcessed = false;
 	}
 }
+

@@ -213,8 +213,6 @@ public:
 	uint32_t			m_SpectateID; // Vehicle or player id
 	bool				m_bSpectateProcessed;
 
-	uint8_t 			FindDeathReasonPlayer;
-
 	VEHICLEID			m_CurrentVehicle;
 	VEHICLEID 			m_LastVehicle;
 	bool				m_bIsActive;

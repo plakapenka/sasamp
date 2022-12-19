@@ -72,7 +72,7 @@ void CRemotePlayer::ProcessSpecialActions(BYTE byteSpecialAction)
 		}
 	}
 }
-extern uint32_t bProcessedfsaf;
+
 #define OUTCOMING_KEY 0x87
 #define OUTCOMING_NUM 0x80
 void CRemotePlayer::Process()
@@ -87,7 +87,6 @@ void CRemotePlayer::Process()
 		if(GetTickCount() > m_dwWaitForEntryExitAnims) {
 			HandleVehicleEntryExit();
 		}
-		bProcessedfsaf++;
 		// ---- ONFOOT NETWORK PROCESSING ----
 		if(GetState() == PLAYER_STATE_ONFOOT && 
 			m_byteUpdateFromNetwork == UPDATE_TYPE_ONFOOT && !m_pPlayerPed->IsInVehicle())
@@ -188,10 +187,21 @@ void CRemotePlayer::Process()
 		// ------ PROCESSED FOR ALL FRAMES ----- 
 		if(GetState() == PLAYER_STATE_ONFOOT && !m_pPlayerPed->IsInVehicle())
 		{
-			ProcessSpecialActions(m_ofSync.byteSpecialAction);
-			SlerpRotation();
-			
-			HandleAnimations();
+			if ((GetTickCount() - m_dwLastHeadUpdate) > 500 /*&& pSettings->GetReadOnly().szHeadMove*/)
+			{
+				VECTOR LookAt;
+				CAMERA_AIM* Aim = GameGetRemotePlayerAim(m_pPlayerPed->m_bytePlayerNumber);
+				LookAt.X = Aim->pos1x + (Aim->f1x * 20.0f);
+				LookAt.Y = Aim->pos1y + (Aim->f1y * 20.0f);
+				LookAt.Z = Aim->pos1z + (Aim->f1z * 20.0f);
+				m_pPlayerPed->ApplyCommandTask("FollowPedSA", 0, 2000, -1, &LookAt, 0, 0.1f, 500, 3, 0);
+				m_dwLastHeadUpdate = GetTickCount();
+			}
+			if(GetTickCount() > m_dwWaitForEntryExitAnims) {
+				ProcessSpecialActions(m_ofSync.byteSpecialAction);
+				SlerpRotation();
+				HandleAnimations();
+			}
 
 			if (m_byteWeaponShotID != 0xFF)
 			{
@@ -563,11 +573,11 @@ void CRemotePlayer::EnterVehicle(VEHICLEID VehicleID, bool bPassenger)
 		if(m_pPlayerPed->GetDistanceFromLocalPlayerPed() < 120.0f) {
 			int iGtaVehicleID = pVehiclePool->FindGtaIDFromID(VehicleID);
 			if(iGtaVehicleID && iGtaVehicleID != INVALID_VEHICLE_ID) {
-				m_pPlayerPed->EnterVehicle(iGtaVehicleID,bPassenger);
+				m_pPlayerPed->EnterVehicle(iGtaVehicleID, bPassenger);
 			}
 		}
 	}
-	m_dwWaitForEntryExitAnims = GetTickCount() + 1500;
+	m_dwWaitForEntryExitAnims = GetTickCount() + 2000;
 }
 
 void CRemotePlayer::ExitVehicle()
@@ -755,8 +765,6 @@ void CRemotePlayer::StoreBulletSyncData(BULLET_SYNC* blSync)
 		}
 	}
 
-
-
 	if (fHealth > 0.0f && fArmour > 0.0f)//health & armour
 	{
 		fAmount = fArmour - fDamage;
@@ -780,6 +788,12 @@ void CRemotePlayer::StoreBulletSyncData(BULLET_SYNC* blSync)
 	//set health & armour
 	pLocalPed->SetArmour(fArmour);
 	pLocalPed->SetHealth(fHealth);
+	PLAYERID playerid = blSync->hitId;
+
+	if(pPlayerPool->GetSlotState(playerid)) {
+		CPlayerPed *pPlayerPed = pPlayerPool->GetAt(playerid)->GetPlayerPed();
+		pLocalPed->m_pPed->pdwDamageEntity = pPlayerPed->m_dwGTAId;
+	}
 
 	if (fHealth <= 0.0f) {
 		//death moment
@@ -808,43 +822,70 @@ void CRemotePlayer::Say(unsigned char* szText)
 	}
 }
 
-void CRemotePlayer::UpdateAimFromSyncData(AIM_SYNC_DATA *paimSync)
+void calculateAimVector(VECTOR* vec1, VECTOR* vec2)
 {
-	if(!m_pPlayerPed) return;
-	m_pPlayerPed->SetCameraMode(paimSync->byteCamMode);
+	float f1;
+	float f2;
+	float f3;
+
+	f1 = atan2(vec1->X, vec1->Y) - 1.570796370506287;
+	f2 = sin(f1);
+	f3 = cos(f1);
+	vec2->X = vec1->Y * 0.0 - f3 * vec1->Z;
+	vec2->Y = f2 * vec1->Z - vec1->X * 0.0;
+	vec2->Z = f3 * vec1->X - f2 * vec1->Y;
+}
+
+void CRemotePlayer::UpdateAimFromSyncData(AIM_SYNC_DATA * pAimSync)
+{
+	if (!m_pPlayerPed) return;
+	m_pPlayerPed->SetCameraMode(pAimSync->byteCamMode);
 
 	CAMERA_AIM Aim;
 
-	Aim.f1x = paimSync->vecAimf1.X;
-	Aim.f1y = paimSync->vecAimf1.Y;
-	Aim.f1z = paimSync->vecAimf1.Z;
-	Aim.f2x = paimSync->vecAimf2.X;
-	Aim.f2y = paimSync->vecAimf2.Y;
-	Aim.f2z = paimSync->vecAimf2.Z;
-	Aim.pos1x = paimSync->vecAimPos.X;
-	Aim.pos1y = paimSync->vecAimPos.Y;
-	Aim.pos1z = paimSync->vecAimPos.Z;
-	Aim.pos2x = paimSync->vecAimPos.X;
-	Aim.pos2y = paimSync->vecAimPos.Y;
-	Aim.pos2z = paimSync->vecAimPos.Z;
+	Aim.f1x = pAimSync->vecAimf.X;
+	Aim.f1y = pAimSync->vecAimf.Y;
+	Aim.f1z = pAimSync->vecAimf.Z;
+	Aim.pos1x = pAimSync->vecAimPos.X;
+	Aim.pos1y = pAimSync->vecAimPos.Y;
+	Aim.pos1z = pAimSync->vecAimPos.Z;
+	Aim.pos2x = pAimSync->vecAimPos.X;
+	Aim.pos2y = pAimSync->vecAimPos.Y;
+	Aim.pos2z = pAimSync->vecAimPos.Z;
+
+	VECTOR vec1;
+	vec1.X = Aim.f1x;
+	vec1.Y = Aim.f1y;
+	vec1.Z = Aim.f1z;
+
+	VECTOR vec2;
+	vec2.X = 0.0f;
+	vec2.Y = 0.0f;
+	vec2.Z = 0.0f;
+
+	calculateAimVector(&vec1, &vec2);
+
+	Aim.f2x = vec2.X;
+	Aim.f2y = vec2.Y;
+	Aim.f2z = vec2.Z;
 
 	m_pPlayerPed->SetCurrentAim(&Aim);
-	m_pPlayerPed->SetAimZ(paimSync->fAimZ);
+	m_pPlayerPed->SetAimZ(pAimSync->fAimZ);
 
-	float fExtZoom = (float)(paimSync->byteCamExtZoom)/63.0f;
-	m_pPlayerPed->SetCameraExtendedZoom(fExtZoom); // TODO: this whole thing
+	float fAspect = pAimSync->aspect_ratio * 0.0039215689f;
+	float fExtZoom = (pAimSync->byteCamExtZoom) * 0.015873017f;
+
+	m_pPlayerPed->SetCameraExtendedZoom(fExtZoom, fAspect);
 
 	WEAPON_SLOT_TYPE* pwstWeapon = m_pPlayerPed->GetCurrentWeaponSlot();
-	if (paimSync->byteWeaponState == WS_RELOADING)
+	if (pAimSync->byteWeaponState == WS_RELOADING)
 		pwstWeapon->dwState = 2;		// Reloading
 	else
-	if (paimSync->byteWeaponState != WS_MORE_BULLETS)
-		pwstWeapon->dwAmmoInClip = (DWORD)paimSync->byteWeaponState;
+	if (pAimSync->byteWeaponState != WS_MORE_BULLETS)
+		pwstWeapon->dwAmmoInClip = (uint32_t)pAimSync->byteWeaponState;
 	else
 	if (pwstWeapon->dwAmmoInClip < 2)
 		pwstWeapon->dwAmmoInClip = 2;
-
-
 }
 
 void CRemotePlayer::StoreOnFootFullSyncData(ONFOOT_SYNC_DATA *pofSync, uint32_t dwTime, uint8_t key)

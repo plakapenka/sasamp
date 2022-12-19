@@ -2581,9 +2581,11 @@ void CStreaming__RemoveModel_hook(int model)
 int g_iLastProcessedSkinCollision = 228;
 int g_iLastProcessedEntityCollision = 228;
 
-void NopeVoidFunc(uintptr_t thiz)
+int (*CVehicle__GetVehicleLightsStatus)(VEHICLE_TYPE* thiz, int a2, int a3, int a4);
+int CVehicle__GetVehicleLightsStatus_hook(VEHICLE_TYPE* thiz, int a2, int a3, int a4)
 {
-	return;
+	return 1;
+	//return CVehicle__GetVehicleLightsStatus(thiz, a2, a3, a4);
 }
 
 void (*CPed__ProcessEntityCollision)(PED_TYPE* thiz, ENTITY_TYPE* ent, void* colPoint);
@@ -2901,6 +2903,8 @@ void InstallHooks()
 
 	//размытие на скорости
 	SetUpHook(g_libGTASA + 0x005311D0, (uintptr_t)CDraw__SetFOV_hook, (uintptr_t*)&CDraw__SetFOV);
+
+	SetUpHook(g_libGTASA + 0x005189C4, (uintptr_t)CVehicle__GetVehicleLightsStatus_hook, (uintptr_t*)&CVehicle__GetVehicleLightsStatus);
 
 	HookCPad();
 }

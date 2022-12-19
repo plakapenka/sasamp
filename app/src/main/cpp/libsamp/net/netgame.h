@@ -94,6 +94,7 @@
 #define RPC_INVENTAR_CARRYNG 55
 #define RPC_ITEM_ACTIVETOGGLE   56
 #define RPC_VIBRATE   59
+#define RPC_RESTORE_PASS   60
 
 // Packet 252
 #define RPC_TOGGLE_LOGIN (1)

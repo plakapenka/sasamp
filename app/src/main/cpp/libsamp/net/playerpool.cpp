@@ -29,7 +29,6 @@ CPlayerPool::~CPlayerPool()
 extern CSettings* pSettings;
 extern CGame* pGame;
 extern CNetGame* pNetGame;
-uint32_t bProcessedfsaf = 0;
 
 void CPlayerPool::UpdateScore(PLAYERID playerId, int iScore)
 {
