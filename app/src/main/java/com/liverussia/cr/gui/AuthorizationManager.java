@@ -41,6 +41,7 @@ public class AuthorizationManager {
     private ImageView autologin_open_help;
 
     public native void ToggleAutoLogin(boolean toggle);
+    public native void ClickRecoveryPass();
 
     public AuthorizationManager(Activity activity){
         autologin_open_help = activity.findViewById(R.id.autologin_open_help);
@@ -72,7 +73,7 @@ public class AuthorizationManager {
             }
         });
         recovery_password.setOnClickListener(view -> {
-            //
+            ClickRecoveryPass();
         });
 
         auth_play.setOnClickListener(view -> {
