@@ -27,6 +27,8 @@ struct SCRIPT_COMMAND
 
 int ScriptCommand(const SCRIPT_COMMAND* pScriptCommand, ...);
 
+const SCRIPT_COMMAND LIMIT_ANGLE = { 0x0656, "ff" };
+const SCRIPT_COMMAND GET_ANGLE_BETWEEN_2D_VECTORS = { 0x05A4, "fffff" };
 const SCRIPT_COMMAND lock_camera_position = { 0x092F, "i" };
 const SCRIPT_COMMAND lock_camera_position1 = { 0x0930, "i" };
 const SCRIPT_COMMAND is_player_targetting_char = { 0x0457, "ii" };
@@ -47,7 +49,7 @@ const SCRIPT_COMMAND set_object_visible = { 0x0750, "ii" };
 const SCRIPT_COMMAND attach_object_to_object = { 0x069A, "iiffffff" };
 const SCRIPT_COMMAND set_car_visible = { 0x0338, "ii" };
 const SCRIPT_COMMAND set_car_engine_on = { 0x0918, "ii" };
-const SCRIPT_COMMAND set_car_lights_on = { 0x0919, "ii" };
+const SCRIPT_COMMAND SET_CAR_LIGHTS_ON = { 0x0919, "ii" };
 const SCRIPT_COMMAND open_car_door = { 0x0657, "ii" };
 const SCRIPT_COMMAND get_camera_fov = { 0x0801, "f" };
 const SCRIPT_COMMAND open_car_door_a_bit = { 0x08A6, "iif" };
@@ -362,7 +364,7 @@ const SCRIPT_COMMAND SET_PLAYER_DRUNKENNESS = { 0x052C, "ii" }; // player, sever
 const SCRIPT_COMMAND handling_responsiveness = { 0x03fd, "ii" }; // player, severity (0-255)
 const SCRIPT_COMMAND load_shop_menu = { 0x075E, "s" };
 
-const SCRIPT_COMMAND force_car_lights = { 0x067F, "ii" };
+const SCRIPT_COMMAND FORCE_CAR_LIGHTS = { 0x067F, "ii" };
 
 const SCRIPT_COMMAND BURST_CAR_TYRE = { 0x04FE, "ii" };
 const SCRIPT_COMMAND FIX_CAR_TYRE = { 0x0699, "ii" };

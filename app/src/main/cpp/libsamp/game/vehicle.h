@@ -109,7 +109,7 @@ public:
 	void SetEngineState(int iState);
 	int GetEngineState();
 	void SetLightsState(int iState);
-	int GetLightsState();
+	bool GetLightsState();
 	void SetBootAndBonnetState(int iBoot, int iBonnet);
 
 	void RemoveComponent(uint16_t uiComponent);
@@ -205,4 +205,10 @@ public:
 	int bLights;
 
 	bool IsTrailer();
+};
+
+enum eVehicleOverrideLightsState {
+	NO_CAR_LIGHT_OVERRIDE = 0,
+	FORCE_CAR_LIGHTS_OFF = 1,
+	FORCE_CAR_LIGHTS_ON = 2
 };
