@@ -3,13 +3,10 @@ package com.liverussia.launcher.service.impl;
 import android.app.Activity;
 
 import com.liverussia.launcher.domain.Token;
-import com.liverussia.launcher.async.dto.request.LoginRequestDto;
 import com.liverussia.launcher.async.dto.request.RefreshTokenRequestDto;
 import com.liverussia.launcher.async.dto.response.AuthenticationResponseDto;
 import com.liverussia.launcher.async.dto.response.UserInfoDto;
 import com.liverussia.launcher.domain.enums.StorageElements;
-import com.liverussia.launcher.async.rest.V3RestService;
-import com.liverussia.launcher.async.rest.impl.V3RestServiceImpl;
 import com.liverussia.launcher.service.AuthenticationService;
 import com.liverussia.launcher.storage.Storage;
 import com.liverussia.launcher.utils.DateTimeUtils;
@@ -23,21 +20,11 @@ import java.util.Optional;
 
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-    private final V3RestService v3RestService;
     private final Activity activity;
     private static final String BEARER_TOKEN_STARTS_STRING = "Bearer ";
 
     public AuthenticationServiceImpl(Activity activity) {
         this.activity = activity;
-        this.v3RestService = new V3RestServiceImpl(activity);
-    }
-
-    @Override
-    public AuthenticationResponseDto loginUser(LoginRequestDto loginRequestDto) {
-        AuthenticationResponseDto authenticationResponseDto = v3RestService.sendLoginRequest(loginRequestDto);
-        saveUserInfoIntoStorage(authenticationResponseDto);
-
-        return authenticationResponseDto;
     }
 
     @Override

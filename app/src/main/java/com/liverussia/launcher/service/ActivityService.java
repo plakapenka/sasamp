@@ -9,12 +9,6 @@ public interface ActivityService {
 
     void showMessage(String message, Context context);
 
-    void performYouTubeButtonAction(AppCompatActivity activity);
-
-    void performVkButtonAction(AppCompatActivity activity);
-
-    void performDiscordButtonAction(AppCompatActivity activity);
-
     boolean isGameFileInstall(Activity activity, String filePath);
 
     void showBigMessage(String message, Activity activity);

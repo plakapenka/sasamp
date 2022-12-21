@@ -33,6 +33,14 @@ public class Servers {
 	@Expose
 	private int maxonline;
 
+	@SerializedName("rIP")
+	@Expose
+	private String rouletteIp;
+
+	@SerializedName("rPort")
+	@Expose
+	private String roulettePort;
+
 	public boolean isSelected;
 
 	public Servers(String color, String serverID, String dopname, String name, int online, int maxonline, String colorl) {
@@ -45,7 +53,7 @@ public class Servers {
 		this.maxonline = maxonline;
 		this.isSelected = false;
 	}
-	 
+
 	public String getname() {
 		return name;
 	}
@@ -70,5 +78,21 @@ public class Servers {
 
 	public int getmaxOnline(){
 		return maxonline;
+	}
+
+	public String getRouletteIp() {
+		return rouletteIp;
+	}
+
+	public void setRouletteIp(String rouletteIp) {
+		this.rouletteIp = rouletteIp;
+	}
+
+	public String getRoulettePort() {
+		return roulettePort;
+	}
+
+	public void setRoulettePort(String roulettePort) {
+		this.roulettePort = roulettePort;
 	}
 }

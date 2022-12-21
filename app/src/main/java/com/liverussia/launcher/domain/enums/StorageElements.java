@@ -16,6 +16,8 @@ public enum StorageElements {
     ACCESS_TOKEN("access_token"),
     REFRESH_TOKEN("refresh_token"),
 
+    ROULETTE_SERVER_HOST("roulette_server"),
+
     TOKENS_RECEIVE_TIME("token_receive_time");
 
     private final String value;

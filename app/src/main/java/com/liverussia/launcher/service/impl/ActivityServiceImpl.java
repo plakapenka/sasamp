@@ -18,24 +18,6 @@ import static com.liverussia.launcher.config.Config.SETTINGS_FILE_PATH;
 public class ActivityServiceImpl implements ActivityService {
 
     @Override
-    public void performYouTubeButtonAction(AppCompatActivity activity) {
-        Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(Config.YOU_TUBE_URI));
-        activity.startActivity(intent);
-    }
-
-    @Override
-    public void performVkButtonAction(AppCompatActivity activity) {
-        Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(Config.VK_URI));
-        activity.startActivity(intent);
-    }
-
-    @Override
-    public void performDiscordButtonAction(AppCompatActivity activity) {
-        Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(Config.DISCORD_URI));
-        activity.startActivity(intent);
-    }
-
-    @Override
     public void showMessage(String message, Context context) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT)
                 .show();

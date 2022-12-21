@@ -58,12 +58,11 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.liverussia.launcher.config.Config.DOWNLOAD_DIRECTORY_NAME;
-import static com.liverussia.launcher.config.Config.LAUNCHER_SERVER_URI;
+import static com.liverussia.launcher.config.Config.LIVE_RUSSIA_RESOURCE_SERVER_URL;
 import static com.liverussia.launcher.config.Config.UPDATED_APK_PATH;
 
 public class LoaderActivity extends AppCompatActivity {
 
-    private final static String APK_NAME = "launcher";
     private final static String IS_AFTER_LOADING_KEY = "isAfterLoading";
     private final static String APK_DATA_TYPE = "application/vnd.android.package-archive";
     private final static String FILE_PROVIDER_EXTENSION = ".provider";
@@ -273,7 +272,7 @@ public class LoaderActivity extends AppCompatActivity {
 
     private void loadResources() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(LAUNCHER_SERVER_URI)
+                .baseUrl(LIVE_RUSSIA_RESOURCE_SERVER_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -366,6 +365,12 @@ public class LoaderActivity extends AppCompatActivity {
 
     public void showMessage(String _s) {
         Toast.makeText(getApplicationContext(), _s, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+        System.exit(EXIT_SUCCESS_STATUS);
     }
 
     private void installApk() {

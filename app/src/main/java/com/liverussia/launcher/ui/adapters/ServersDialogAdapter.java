@@ -1,5 +1,7 @@
 package com.liverussia.launcher.ui.adapters;
 
+import static com.liverussia.launcher.config.Config.ROULETTE_SERVER_PROTOCOL;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -17,12 +19,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dinuscxj.progressbar.CircleProgressBar;
 import com.liverussia.cr.R;
+import com.liverussia.launcher.domain.enums.StorageElements;
+import com.liverussia.launcher.storage.Storage;
 import com.liverussia.launcher.ui.dialogs.SelectServerDialog;
 import com.liverussia.launcher.async.dto.response.Servers;
 
 import java.util.List;
 
 public class ServersDialogAdapter extends RecyclerView.Adapter<ServersAdapter.ServersViewHolder> {
+    private final static String HOST_PORT_DELIMITER = ":";
+
     private Context context;
     private List<Servers> servers;
     private SelectServerDialog selectServerDialog;
@@ -62,6 +68,13 @@ public class ServersDialogAdapter extends RecyclerView.Adapter<ServersAdapter.Se
             public void onClick(View view) {
                 view.startAnimation(AnimationUtils.loadAnimation(context, R.anim.button_click));
                 selectServerDialog.setSelectedServer(servers);
+
+                String rouletteUrl = ROULETTE_SERVER_PROTOCOL
+                        .concat(servers.getRouletteIp())
+                        .concat(HOST_PORT_DELIMITER)
+                        .concat(servers.getRoulettePort());
+
+                Storage.addProperty(StorageElements.ROULETTE_SERVER_HOST.getValue(), rouletteUrl, context);
             }
         });
     }

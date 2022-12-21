@@ -16,14 +16,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.liverussia.cr.R;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import com.liverussia.launcher.utils.MainUtils;
 import com.liverussia.launcher.async.dto.response.LatestVersionInfoDto;
 import com.liverussia.launcher.async.dto.response.MonitoringData;
 import com.liverussia.launcher.domain.enums.DownloadType;
 import com.liverussia.launcher.error.apiException.ErrorContainer;
-import com.liverussia.launcher.async.dto.response.News;
 
 import com.liverussia.launcher.async.dto.response.Servers;
 import com.liverussia.launcher.async.service.NetworkService;
@@ -36,7 +34,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.liverussia.launcher.config.Config.LIVE_RUSSIA_RESOURCE_SERVER_URI;
+import static com.liverussia.launcher.config.Config.LIVE_RUSSIA_RESOURCE_SERVER_URL;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -51,7 +49,7 @@ public class SplashActivity extends AppCompatActivity {
 
 	{
 		Retrofit retrofit = new Retrofit.Builder()
-				.baseUrl(LIVE_RUSSIA_RESOURCE_SERVER_URI)
+				.baseUrl(LIVE_RUSSIA_RESOURCE_SERVER_URL)
 				.addConverterFactory(GsonConverterFactory.create())
 				.build();
 
@@ -109,17 +107,8 @@ public class SplashActivity extends AppCompatActivity {
 	}
 
 	private void saveData(MonitoringData monitoringData) {
-		List<News> news = monitoringData.getNews();
-
-		for (News story : news) {
-			MainUtils.NEWS.add(new News(story.getImageUrl(), story.getTitle(), story.getUrl()));
-		}
-
-		List<Servers> servers = monitoringData.getServers();
-
-		for (Servers server : servers) {
-			MainUtils.SERVERS.add(new Servers(server.getColor(), server.getServerID(), server.getDopname(), server.getname(), server.getOnline(), server.getmaxOnline(), server.getColorl()));
-		}
+		MainUtils.NEWS = monitoringData.getNews();
+		MainUtils.SERVERS = monitoringData.getServers();
 	}
 
 	private void startApp() {

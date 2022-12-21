@@ -30,13 +30,11 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.liverussia.launcher.config.Config.LAUNCHER_SERVER_URI;
-
 public class UpdateUserInfoAsyncRestCall {
 
     private final static Set<ErrorContainer> CRITICAL_ERRORS = new HashSet<>();
 
-    private final Activity mainActivity;
+    private final Activity activity;
     private final UserService userService;
     private final ActivityService activityService;
     private final Retrofit retrofit;
@@ -45,18 +43,19 @@ public class UpdateUserInfoAsyncRestCall {
     private OnAsyncCriticalErrorListener onAsyncCriticalErrorListener;
     private OnAsyncNotCriticalErrorListener onAsyncNotCriticalErrorListener;
 
-    public UpdateUserInfoAsyncRestCall(Activity mainActivity) {
-        this.mainActivity = mainActivity;
-        this.userService = new UserServiceImpl(mainActivity);
+    public UpdateUserInfoAsyncRestCall(Activity activity) {
+        this.activity = activity;
+        this.userService = new UserServiceImpl(activity);
+
+        String url = Storage.getProperty(StorageElements.ROULETTE_SERVER_HOST.getValue(), activity);
+        this.retrofit = new Retrofit.Builder()
+                .baseUrl(url)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
     }
 
     {
         activityService = new ActivityServiceImpl();
-
-        retrofit = new Retrofit.Builder()
-                .baseUrl(LAUNCHER_SERVER_URI)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
     }
 
     static {
@@ -67,7 +66,7 @@ public class UpdateUserInfoAsyncRestCall {
     public void updateUserInfo() {
         NetworkService networkService = retrofit.create(NetworkService.class);
 
-        String token = Storage.getProperty(StorageElements.ACCESS_TOKEN.getValue(), mainActivity);
+        String token = Storage.getProperty(StorageElements.ACCESS_TOKEN.getValue(), activity);
         Call<UserInfoDto> call = networkService.updateUserInfo(token);
 
 
@@ -115,7 +114,7 @@ public class UpdateUserInfoAsyncRestCall {
                 .map(ErrorContainer::getMessage)
                 .orElse(StringUtils.EMPTY);
 
-        activityService.showMessage(errorMessage, mainActivity);
+        activityService.showMessage(errorMessage, activity);
     }
 
     public void setOnAsyncSuccessListener(OnAsyncSuccessListener onClickListener) {

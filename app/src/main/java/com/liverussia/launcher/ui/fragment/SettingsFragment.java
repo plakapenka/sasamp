@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import com.liverussia.cr.R;
 import com.liverussia.launcher.async.dto.response.FileInfo;
 import com.liverussia.launcher.async.task.CacheChecker;
+import com.liverussia.launcher.config.Config;
 import com.liverussia.launcher.ui.activity.LoaderActivity;
 import com.liverussia.launcher.ui.dialogs.ConfirmDialog;
 import com.liverussia.launcher.utils.MainUtils;
@@ -38,6 +39,7 @@ import static com.liverussia.launcher.config.Config.SETTINGS_FILE_PATH;
 public class SettingsFragment extends Fragment implements View.OnClickListener {
 
     private final static int GAME_DIRECTORY_EMPTY_SIZE = 0;
+    private final static String CONTACTS_VIEW_ACTION = "android.intent.action.VIEW";
 
     private Animation animation;
     private TextView nicknameField;
@@ -184,19 +186,19 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     }
 
     private void performDiscordButtonAction() {
-        startActivity(new Intent("android.intent.action.VIEW", Uri.parse("https://discord.com")));
+        startActivity(new Intent(CONTACTS_VIEW_ACTION, Uri.parse(Config.DISCORD_URI)));
     }
 
     private void performVkButtonAction() {
-        startActivity(new Intent("android.intent.action.VIEW", Uri.parse("https://vk.com")));
+        startActivity(new Intent(CONTACTS_VIEW_ACTION, Uri.parse(Config.VK_URI)));
     }
 
     private void performYouTubeButtonAction() {
-        startActivity(new Intent("android.intent.action.VIEW", Uri.parse("https://youtube.com")));
+        startActivity(new Intent(CONTACTS_VIEW_ACTION, Uri.parse(Config.YOU_TUBE_URI)));
     }
 
     private void performTelegramButtonAction() {
-        startActivity(new Intent("android.intent.action.VIEW", Uri.parse("https://telegram.org")));
+        startActivity(new Intent(CONTACTS_VIEW_ACTION, Uri.parse(Config.TELEGRAM_URI)));
     }
 
     private void initUserData() {
