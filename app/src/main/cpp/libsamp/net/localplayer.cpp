@@ -118,37 +118,22 @@ void CLocalPlayer::CheckWeapons()
 
 	RakNet::BitStream bsWeapons;
 	bsWeapons.Write((BYTE)ID_WEAPONS_UPDATE);
-	bsWeapons.Write((uint16_t)INVALID_PLAYER_ID);
-	bsWeapons.Write((uint16_t)INVALID_PLAYER_ID);
-	for (i = 0; i < 13; i++)
-	{
-		if (m_byteLastWeapon[i] != byteCurWep)
+	//bsWeapons.Write((uint16_t)INVALID_PLAYER_ID);
+	//bsWeapons.Write((uint16_t)INVALID_PLAYER_ID);
+	for (i = 0; i < 13; i++) {
+
+		if (m_byteLastWeapon[i] != m_pPlayerPed->m_pPed->WeaponSlots[i].dwType ||
+                m_dwLastAmmo[i] != m_pPlayerPed->m_pPed->WeaponSlots[i].dwAmmo)
 		{
-			//bsWeapons.Write(i);
-			bool bSend = false;
-			if (m_byteLastWeapon[i] != m_pPlayerPed->m_pPed->WeaponSlots[i].dwType)
-			{
-				// non-current weapon has changed
-				m_byteLastWeapon[i] = (BYTE)m_pPlayerPed->m_pPed->WeaponSlots[i].dwType;
-				bSend = true;
-			}
-			//bsWeapons.Write(m_byteLastWeapon[i]);
-			if (m_dwLastAmmo[i] != m_pPlayerPed->m_pPed->WeaponSlots[i].dwAmmo)
-			{
-				// non-current ammo has changed
-				m_dwLastAmmo[i] = m_pPlayerPed->m_pPed->WeaponSlots[i].dwAmmo;
-				bSend = true;
-			}
-			//bsWeapons.Write(m_dwLastAmmo[i]);
-			if (bSend)
-			{
-				//CChatWindow::AddDebugMessage("Id: %u, Weapon: %u, Ammo: %d\n", i, m_byteLastWeapon[i], m_dwLastAmmo[i]);
-				bsWeapons.Write((uint8_t)i);
-				bsWeapons.Write((uint8_t)m_byteLastWeapon[i]);
-				bsWeapons.Write((uint16_t)m_dwLastAmmo[i]);
-				bMSend = true;
-			}
+			m_byteLastWeapon[i] = m_pPlayerPed->m_pPed->WeaponSlots[i].dwType;
+			m_dwLastAmmo[i] = m_pPlayerPed->m_pPed->WeaponSlots[i].dwAmmo;
+            bsWeapons.Write((uint8_t) i);
+            bsWeapons.Write((uint8_t) m_byteLastWeapon[i]);
+            bsWeapons.Write((uint16_t) m_dwLastAmmo[i]);
+
+            bMSend = true;
 		}
+
 	}
 	if (bMSend)
 	{
