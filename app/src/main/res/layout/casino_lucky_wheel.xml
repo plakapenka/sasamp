@@ -129,7 +129,7 @@
         android:layout_height="35dp"
         android:fontFamily="@font/sfprodisplaymedium"
         android:letterSpacing="-0.03"
-        android:text="Крутить за 50 руб."
+        android:text="Крутить за 50 LC"
         android:textColor="@color/white"
         android:textFontWeight="500"
         android:textSize="12sp"
