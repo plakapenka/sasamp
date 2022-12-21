@@ -668,7 +668,7 @@ typedef struct _VEHICLE_TYPE
 	PADDING(_pad204, 40);		// 1078-1120
 	PED_TYPE* pDriver;			// 1120-1124	;driver
 	PED_TYPE* pPassengers[7];	// 1124-1152	;pPassengers
-	PADDING(_pad202, 46);		// 1152-1224
+	PADDING(_pad202, 53);		// 1152-1224
 	unsigned char m_nOverrideLights : 2; // uses enum NO_CAR_LIGHT_OVERRIDE, FORCE_CAR_LIGHTS_OFF, FORCE_CAR_LIGHTS_ON
 	unsigned char m_nWinchType : 2; // Does this vehicle use a winch?
 	unsigned char m_nGunsCycleIndex : 2; // Cycle through alternate gun hardpoints on planes/helis
@@ -681,7 +681,7 @@ typedef struct _VEHICLE_TYPE
 	float   m_fDirtLevel; // Dirt level of vehicle body texture: 0.0f=fully clean, 15.0f=maximum dirt visible
 	unsigned char m_nCurrentGear;
 	float   m_fGearChangeCount; // used as parameter for cTransmission::CalculateDriveAcceleration, but doesn't change
-	float   m_fWheelSpinForAudio;
+	float  m_fWheelSpinForAudio;
 	float fHealth;				// 1224-1228	;fHealth
 	uint32_t unk;				// 1228 - 1232 - unk
 	uint32_t dwTrailer;			// 1232 - 1236 - trailer
