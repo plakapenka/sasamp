@@ -3,6 +3,7 @@ package com.liverussia.launcher.ui.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.TextView;
@@ -16,9 +17,13 @@ import android.view.animation.Animation;
 import android.view.LayoutInflater;
 
 import com.liverussia.cr.R;
+import com.liverussia.launcher.domain.messages.ErrorMessage;
+import com.liverussia.launcher.service.ActivityService;
+import com.liverussia.launcher.service.impl.ActivityServiceImpl;
 import com.liverussia.launcher.ui.activity.ActivitySupportedServerSelection;
-import com.liverussia.launcher.ui.activity.ForumActivity;
+import com.liverussia.launcher.ui.activity.BillingActivity;
 import com.liverussia.launcher.ui.activity.MainActivity;
+import com.liverussia.launcher.ui.dialogs.ReCaptchaDialog;
 import com.liverussia.launcher.ui.dialogs.SelectServerDialog;
 import com.liverussia.launcher.async.dto.response.ServerImagesResponseDto;
 import com.liverussia.launcher.domain.enums.BillingParameters;
@@ -38,8 +43,11 @@ public class DonateFragment extends Fragment implements View.OnClickListener, Ac
     private EditText donateSumField;
     private TextView selectServerButton;
     private GridView donateServicesPanel;
+    private CheckBox iAmNotRobotCheckBox;
 
+    private ActivityService activityService;
     private Servers selectedServer;
+    private String captchaToken;
 
     public DonateFragment(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
@@ -48,6 +56,8 @@ public class DonateFragment extends Fragment implements View.OnClickListener, Ac
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View inflate = inflater.inflate(R.layout.fragment_donate, container, false);
+
+        activityService = new ActivityServiceImpl();
 		
 		nicknameField = inflate.findViewById(R.id.nick_input);
         emailField = inflate.findViewById(R.id.email_input);
@@ -59,6 +69,9 @@ public class DonateFragment extends Fragment implements View.OnClickListener, Ac
         TextView rechargeButton = inflate.findViewById(R.id.rechargeButton);
         rechargeButton.setOnClickListener(this);
 
+        iAmNotRobotCheckBox = inflate.findViewById(R.id.i_am_not_robot_checkbox);
+        iAmNotRobotCheckBox.setOnClickListener(this);
+
         selectServerButton = inflate.findViewById(R.id.btnSelectServer);
         selectServerButton.setOnClickListener(this);
 
@@ -66,6 +79,22 @@ public class DonateFragment extends Fragment implements View.OnClickListener, Ac
         addDonateServices();
 		
         return inflate;
+    }
+
+    private void performIAmNotRobotCheckBoxAction() {
+        if (iAmNotRobotCheckBox.isChecked()) {
+            iAmNotRobotCheckBox.setChecked(false);
+            ReCaptchaDialog reCaptchaDialog = new ReCaptchaDialog(this.getActivity());
+            reCaptchaDialog.setOnDialogCloseListener(this::performCaptchaSuccessAction);
+            reCaptchaDialog.createDialog();
+        } else {
+            activityService.showMessage(ErrorMessage.CAPTCHA_NOT_PASSED.getText(), this.getActivity());
+        }
+    }
+
+    public void performCaptchaSuccessAction(String token) {
+        captchaToken = token;
+        iAmNotRobotCheckBox.setChecked(true);
     }
 
 
@@ -79,6 +108,14 @@ public class DonateFragment extends Fragment implements View.OnClickListener, Ac
             case R.id.btnSelectServer:
                 v.startAnimation(animation);
                 performSelectServerButtonAction();
+                break;
+            case R.id.i_am_not_robot_checkbox:
+
+                try {
+                    performIAmNotRobotCheckBoxAction();
+                } catch (Exception exception) {
+                    activityService.showBigMessage(exception.getMessage(), this.getActivity());
+                }
                 break;
             default:
                 break;
@@ -97,11 +134,13 @@ public class DonateFragment extends Fragment implements View.OnClickListener, Ac
         Storage.addProperty(StorageElements.EMAIL.getValue(), email, this.getActivity());
         Storage.addProperty(StorageElements.NICKNAME.getValue(), nickname, this.getActivity());
 
-        Intent billingIntent = new Intent(this.getContext(), ForumActivity.class);
+        Intent billingIntent = new Intent(this.getContext(), BillingActivity.class);
         billingIntent.putExtra(BillingParameters.NICKNAME.getName(), nickname);
         billingIntent.putExtra(BillingParameters.EMAIL.getName(), email);
         billingIntent.putExtra(BillingParameters.DONATE_SUM.getName(), donateSum);
-        billingIntent.putExtra(BillingParameters.SERVER_SELECTED.getName(), selectedServer.getServerID());
+        billingIntent.putExtra(BillingParameters.SERVER_SELECTED_ID.getName(), selectedServer.getServerID());
+        billingIntent.putExtra(BillingParameters.SERVER_SELECTED_NAME.getName(), selectedServer.getname());
+        billingIntent.putExtra(BillingParameters.CAPTCHA.getName(), captchaToken);
 
         startActivity(billingIntent);
     }
@@ -110,7 +149,8 @@ public class DonateFragment extends Fragment implements View.OnClickListener, Ac
         return Validator.isValidNickname(nicknameField.getText().toString(), this.getActivity())
                 && Validator.isValidEmail(emailField.getText().toString(), this.getActivity())
                 && Validator.isValidDonateSum(donateSumField.getText().toString(), this.getActivity())
-                && Validator.isValidSelectedServer(selectedServer, this.getActivity());
+                && Validator.isValidSelectedServer(selectedServer, this.getActivity())
+                && Validator.isValidCaptchaToken(captchaToken, this.getActivity());
     }
 
     //TODO FragmentManager

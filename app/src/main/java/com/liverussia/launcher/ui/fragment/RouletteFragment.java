@@ -95,8 +95,6 @@ public class RouletteFragment extends Fragment implements View.OnClickListener, 
 
         View inflate = inflater.inflate(R.layout.roulette_activity, container, false);
 
-        this.getActivity().setTheme(R.style.AppBaseTheme);
-
         super.onCreate(savedInstanceState);
 
         rouletteUIPanel = inflate.findViewById(R.id.viewPager);

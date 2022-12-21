@@ -106,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+        setTheme(R.style.AppBaseTheme);
 
 //        setContentView(R.layout.mine_3);
 //        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);

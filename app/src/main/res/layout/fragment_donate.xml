@@ -123,6 +123,17 @@
                     android:fontFamily="@font/pt_root_ui_regular" />
             </LinearLayout>
 
+            <CheckBox
+                android:id="@+id/i_am_not_robot_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:fontFamily="@font/pt_root_ui_regular"
+                android:text="Я не робот"
+                android:buttonTint="#004362" />
+
             <TextView
                 android:textSize="@dimen/_12sdp"
                 android:textColor="@color/white"
