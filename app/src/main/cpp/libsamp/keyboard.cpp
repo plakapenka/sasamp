@@ -2378,7 +2378,7 @@ bool ProcessLocalCommands(const char str[])
 	}
 	if (strstr(str, "/dl"))
 	{
-		pGame->isDlinfocar = !pGame->isDlinfocar;
+		pGame->m_bDl_enabled = !pGame->m_bDl_enabled;
 		return true;
 	}
 

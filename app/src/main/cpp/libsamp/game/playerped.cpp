@@ -397,6 +397,7 @@ void CPlayerPed::SetWeaponAmmo(int iWeaponID, int iAmmo)
 	if (iModelID == -1) return;
 
 	ScriptCommand(&SET_CHAR_AMMO, m_dwGTAId, iWeaponID, iAmmo);
+	SetArmedWeapon(iWeaponID);
 }
 void CPlayerPed::GiveWeapon(int iWeaponID, int iAmmo)
 {

@@ -164,10 +164,6 @@ void CGUI::SetDoor(int door){
 	bDoor = door;
 }
 
-void CGUI::SetEngine(int engine){
-	bEngine = engine;
-}
-
 void CGUI::SetLights(int lights){
 	bLights = lights;
 }
@@ -196,7 +192,6 @@ void CGUI::ShowSpeed()
 	speedUpdateTick=0;
 	int i_speed = 0;
 	bDoor =0;
-	bEngine = 0;
 	bLights = 0;
 	float fHealth = 0;
 	CVehicle *pVehicle = nullptr;
@@ -214,10 +209,10 @@ void CGUI::ShowSpeed()
             i_speed = sqrt((vecMoveSpeed.X * vecMoveSpeed.X) + (vecMoveSpeed.Y * vecMoveSpeed.Y) + (vecMoveSpeed.Z * vecMoveSpeed.Z)) * 180;
             bHealth = pVehicle->GetHealth();
             bDoor = pVehicle->GetDoorState();
-            bEngine = pVehicle->GetEngineState();
         }
     }
-	g_pJavaWrapper->UpdateSpeedInfo(i_speed, m_fuel, bHealth, bMeliage, bEngine,
+	g_pJavaWrapper->UpdateSpeedInfo(i_speed, m_fuel, bHealth, bMeliage,
+									pVehicle->m_bEngineOn,
 									pVehicle->GetLightsState(),
 									0,
 									bDoor);

@@ -200,11 +200,14 @@ public:
 
 	SCustomCarShadow m_Shadow;
 	bool m_bShadow;
-	int bEngine;
+	//int bEngine;
 	int fDoorState;
-	int bLights;
+	//int bLights;
 
 	bool IsTrailer();
+
+	bool m_bLightsOn;
+	bool m_bEngineOn;
 };
 
 enum eVehicleOverrideLightsState {

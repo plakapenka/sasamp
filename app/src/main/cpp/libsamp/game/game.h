@@ -163,7 +163,7 @@ public:
 	bool GameExiting = false;
 
 	bool isPreDeathActive = false;
-	bool 			isDlinfocar = false;
+	bool 			m_bDl_enabled = false;
 private:
 	bool aToggleStatusHUD[HUD_MAX];
 	CCamera* 		m_pGameCamera;

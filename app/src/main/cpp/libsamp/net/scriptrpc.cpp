@@ -660,7 +660,7 @@ void ScrVehicleParamsEx(RPCParameters* rpcParams)
 			pGUI->SetDoor(doors);
 			// engine
 			pNetGame->GetVehiclePool()->GetAt(VehicleId)->SetEngineState(engine);
-			pGUI->SetEngine(engine);
+			//pGUI->SetEngine(engine);
 			// lights
 			pNetGame->GetVehiclePool()->GetAt(VehicleId)->SetLightsState(lights);
 			//pGUI->SetLights(lights);
@@ -1224,7 +1224,7 @@ void ScrSetWeaponAmmo(RPCParameters* rpcParams)
 
 	RakNet::BitStream bsData(Data, (iBitLength / 8) + 1, false);
 
-	PLAYERID wPlayerID;
+	//PLAYERID wPlayerID;
 	uint8_t iWeaponID;
 	int16_t iAmmo;
 	bsData.Read(iWeaponID);
@@ -1233,8 +1233,7 @@ void ScrSetWeaponAmmo(RPCParameters* rpcParams)
 	//CChatWindow::AddDebugMessage("setweaponammo | weaponid: %d ammo: %d", iWeaponID, iAmmo);
 
 
-	CLocalPlayer* pPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer();
-	pPlayer->GetPlayerPed()->SetWeaponAmmo(iWeaponID, iAmmo);
+	pGame->FindPlayerPed()->SetWeaponAmmo(iWeaponID, iAmmo);
 }
 
 void ScrTogglePlayerControllable(RPCParameters *rpcParams)

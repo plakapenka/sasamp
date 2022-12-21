@@ -556,25 +556,15 @@ void CVehicle::SetLightsState(int iState)
 {
 	if (GamePool_Vehicle_GetAt(m_dwGTAId))
 	{
-		if(iState){
-			ScriptCommand(&FORCE_CAR_LIGHTS, m_dwGTAId, eVehicleOverrideLightsState::FORCE_CAR_LIGHTS_ON);
-			ScriptCommand(&SET_CAR_LIGHTS_ON, m_dwGTAId, 1);
-
-			m_pVehicle->m_nOverrideLights = eVehicleOverrideLightsState::FORCE_CAR_LIGHTS_ON;
-			m_pVehicle->m_nVehicleFlags.bLightsOn = true;
-		}else {
-//			ScriptCommand(&FORCE_CAR_LIGHTS, m_dwGTAId, eVehicleOverrideLightsState::FORCE_CAR_LIGHTS_OFF);
-//			ScriptCommand(&SET_CAR_LIGHTS_ON, m_dwGTAId, 0);
-			m_pVehicle->m_nOverrideLights = eVehicleOverrideLightsState::FORCE_CAR_LIGHTS_OFF;
-			m_pVehicle->m_nVehicleFlags.bLightsOn = false;
-		}
+		ScriptCommand(&FORCE_CAR_LIGHTS, m_dwGTAId, iState > 0 ? 2 : 1);
+		m_bLightsOn = iState;
 	}
 }
 
 bool CVehicle::GetLightsState(){
 	if (GamePool_Vehicle_GetAt(m_dwGTAId))
 	{
-		return m_pVehicle->m_nVehicleFlags.bLightsOn;
+		return m_bLightsOn;
 	}
 }
 
@@ -1427,23 +1417,22 @@ void CVehicle::SetEngineState(int iState)
 	if (!GamePool_Vehicle_GetAt(m_dwGTAId)) {
 		return;
 	}
-	m_pVehicle->m_nVehicleFlags.bEngineOn = 1;
 	if (iState)
 	{
 		m_pVehicle->m_nVehicleFlags.bEngineOn = 1;
-		bEngine = 1;
-	//	m_pVehicle->m_nVehicleFlags.bEngineBroken = 0;
+		m_bEngineOn = true;
+		m_pVehicle->m_nVehicleFlags.bEngineBroken = 0;
 	}
 	else
 	{
 		m_pVehicle->m_nVehicleFlags.bEngineOn = 0;
-		bEngine = 0;
-		//m_pVehicle->m_nVehicleFlags.bEngineBroken = 1;
+		m_bEngineOn = false;
+		m_pVehicle->m_nVehicleFlags.bEngineBroken = 1;
 	}
 }
 
 int CVehicle::GetEngineState(){
-	return bEngine;
+	return m_bEngineOn;
 }
 
 void CVehicle::UpdateDamageStatus(uint32_t dwPanelDamage, uint32_t dwDoorDamage, uint8_t byteLightDamage)

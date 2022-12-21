@@ -582,7 +582,7 @@ void CText3DLabelsPool::Draw()
 	{
 		return;
 	}
-	if(pGame->isDlinfocar) DrawVehiclesInfo();
+	if(pGame->m_bDl_enabled) DrawVehiclesInfo();
 	for (int i = 0; i < TEXT_LABEL_POOL_SIZE; i++)
 	{
 		if (!m_pTextLabels[i] || !m_bSlotState[i])

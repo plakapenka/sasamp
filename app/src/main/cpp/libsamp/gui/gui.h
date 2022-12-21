@@ -25,8 +25,6 @@ public:
 	void SetHealth(float fHealth);
 	int GetHealth();
 	int bHealth;
-	void SetEngine(int engine);
-	int bEngine;
 	void SetLights(int lights);
 	int bLights;
 	void SetDoor(int door);
