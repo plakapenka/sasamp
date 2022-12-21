@@ -52,8 +52,6 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
 
         animation = AnimationUtils.loadAnimation(getContext(), R.anim.button_click);
 
-        this.getActivity().setTheme(R.style.AppBaseTheme);
-
         nicknameField = inflate.findViewById(R.id.nick_edit);
         nicknameField.setOnClickListener(this);
 

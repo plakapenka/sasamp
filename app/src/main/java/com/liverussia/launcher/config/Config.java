@@ -1,11 +1,6 @@
 package com.liverussia.launcher.config;
 
 public class Config {
-    public static final String URL_FILES = "https://vl4sov.com/Download/game.zip";
-    public static final String URL_FILES_UPDATE = "https://vl4sov.com/Download/upd.zip";
-    public static final String URL_CLIENT = "https://vl4sov.com/Download/launcher.apk";
-    public static final String URL_DONATE = "https://vl4sov.com/liverussia.online/Donate";
-
     //todo   тоооо
     public static final String FILE_INFO_URL = "https://files.liverussia.online/downloads/files/files.json";
 
@@ -31,4 +26,21 @@ public class Config {
     public static final String UPDATED_APK_PATH = "/liverussia.apk";
 
     public static final String URL_RE_CAPTCHA = "https://files.liverussia.online/reCaptcha.html";
+
+    public static final String URL_FILES = "https://vl4sov.com/Download/game.zip";
+    public static final String URL_FILES_UPDATE = "https://vl4sov.com/Download/upd.zip";
+    public static final String URL_CLIENT = "https://vl4sov.com/Download/launcher.apk";
+    private static final String URL_DONATE = "https://liverussia.online/donate/confirm.php?server=%s&serverName=%s&sum=%s&account=%s&mail=%s&g-recaptcha-response=%s";
+
+    public static String createBillingUri(String serverId, String serverName, String sum, String nickname, String mail, String captcha) {
+        return String.format(
+                URL_DONATE,
+                serverId,
+                serverName,
+                sum,
+                nickname,
+                mail,
+                captcha
+        );
+    }
 }
