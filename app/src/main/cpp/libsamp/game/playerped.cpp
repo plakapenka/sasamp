@@ -593,13 +593,11 @@ void CPlayerPed::SetInterior(uint8_t byteID)
 	ScriptCommand(&refresh_streaming_at, mat.pos.X, mat.pos.Y);
 }
 
-void CPlayerPed::PutDirectlyInVehicle(int iVehicleID, int iSeat)
+void CPlayerPed::PutDirectlyInVehicle(CVehicle *pVehicle, int iSeat)
 {
 	if(!m_pPed) return;
-	VEHICLE_TYPE *pVehicle = GamePool_Vehicle_GetAt(iVehicleID);
-
-	if(!pVehicle) return;
 	if(!GamePool_Ped_GetAt(m_dwGTAId)) return;
+	if(!pVehicle) return;
 
 	/*
 	if(GetCurrentWeapon() == WEAPON_PARACHUTE) {
@@ -614,23 +612,24 @@ void CPlayerPed::PutDirectlyInVehicle(int iVehicleID, int iSeat)
 		GetMatrix(&mat);
 		RemoveFromVehicleAndPutAt(mat.pos.X, mat.pos.Y, mat.pos.Z);
 	}
+	MATRIX4X4 mat;
+	pVehicle->GetMatrix(&mat);
 
-//	MATRIX4X4 mat;
 //	GetMatrix(&mat);
 //	mat.pos.X = pVehicle->entity.mat->pos.X;
 //	mat.pos.Y = pVehicle->entity.mat->pos.Y;
 //	mat.pos.Z = pVehicle->entity.mat->pos.Z;
-//	SetMatrix(mat);
+	SetMatrix(mat);
 
 	if(iSeat == 0)
 	{
-		if(pVehicle->pDriver) return;
-		ScriptCommand(&TASK_WARP_CHAR_INTO_CAR_AS_DRIVER, m_dwGTAId, iVehicleID);
+		if(pVehicle->m_pVehicle->pDriver) return;
+		ScriptCommand(&TASK_WARP_CHAR_INTO_CAR_AS_DRIVER, m_dwGTAId, pVehicle->m_dwGTAId);
 	}
 	else
 	{
 		iSeat--;
-		ScriptCommand(&put_actor_in_car2, m_dwGTAId, iVehicleID, iSeat);
+		ScriptCommand(&put_actor_in_car2, m_dwGTAId, pVehicle->m_dwGTAId, iSeat);
 	}
 }
 

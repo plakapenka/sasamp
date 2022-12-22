@@ -600,12 +600,11 @@ void ScrPutPlayerInVehicle(RPCParameters *rpcParams)
 	bsData.Read(vehicleid);
 	bsData.Read(seatid);
 
-	CPlayerPool *pPlayerPool = pNetGame->GetPlayerPool();
-	int iVehicleIndex = pNetGame->GetVehiclePool()->FindGtaIDFromID(vehicleid);
+
 	CVehicle *pVehicle = pNetGame->GetVehiclePool()->GetAt(vehicleid);
 
-	if(iVehicleIndex && pVehicle)
-		 pGame->FindPlayerPed()->PutDirectlyInVehicle(iVehicleIndex, seatid);
+	if(pVehicle)
+		 pGame->FindPlayerPed()->PutDirectlyInVehicle(pVehicle, seatid);
 }
 
 void ScrVehicleParams(RPCParameters *rpcParams)

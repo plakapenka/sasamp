@@ -532,9 +532,7 @@ void CRemotePlayer::HandleVehicleEntryExit()
 		//Log("da");
 		CVehicle *pVehicle = pVehiclePool->GetAt(m_VehicleID);
 		if (pVehicle) {
-			int iCarID = pVehiclePool->FindGtaIDFromID(m_VehicleID);
-
-			m_pPlayerPed->PutDirectlyInVehicle(iCarID, m_byteSeatID);
+			m_pPlayerPed->PutDirectlyInVehicle(pVehicle, m_byteSeatID);
 		}
 	}
 	if(GetState() == PLAYER_STATE_ONFOOT) {
@@ -550,8 +548,7 @@ void CRemotePlayer::HandleVehicleEntryExit()
 		if(!m_pPlayerPed->IsInVehicle()) {
 			CVehicle *pVehicle = pVehiclePool->GetAt(m_VehicleID);
 			if(pVehicle) {
-				int iCarID = pVehiclePool->FindGtaIDFromID(m_VehicleID);
-				m_pPlayerPed->PutDirectlyInVehicle(iCarID,m_byteSeatID);
+				m_pPlayerPed->PutDirectlyInVehicle(pVehicle, m_byteSeatID);
 			}
 		}
 	}
@@ -918,10 +915,11 @@ void CRemotePlayer::StoreInCarFullSyncData(INCAR_SYNC_DATA *picSync, uint32_t dw
 
 		memcpy(&m_icSync, picSync, sizeof(INCAR_SYNC_DATA));
 		m_VehicleID = picSync->VehicleID;
+		CVehicle *pVehicle = pVehiclePool->GetAt(m_VehicleID);
 		if(!pVehiclePool)return;
-		if(pVehiclePool->GetAt(m_VehicleID) != m_pCurrentVehicle){
-			m_pPlayerPed->PutDirectlyInVehicle(m_VehicleID, 0);
-			m_pCurrentVehicle = pVehiclePool->GetAt(m_VehicleID);
+		if(pVehicle != m_pCurrentVehicle){
+			m_pPlayerPed->PutDirectlyInVehicle(pVehicle, 0);
+			m_pCurrentVehicle = pVehicle;
 		}
 		//if(pVehiclePool) m_pCurrentVehicle = pVehiclePool->GetAt(m_VehicleID);
 

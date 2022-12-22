@@ -1,6 +1,7 @@
 #pragma once
 #include "aimstuff.h"
 #include "bass.h"
+#include "vehicle.h"
 
 class CPlayerPed
 	: public CEntity
@@ -57,7 +58,7 @@ public:
 
 	void SetInterior(uint8_t byteID);
 
-	void PutDirectlyInVehicle(int iVehicleID, int iSeat);
+	void PutDirectlyInVehicle(CVehicle *pVehicle, int iSeat);
 	void EnterVehicle(int iVehicleID, bool bPassenger);
 	// 0.3.7
 	void ExitCurrentVehicle();
