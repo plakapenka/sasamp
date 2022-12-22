@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.google.android.material.button.MaterialButton;
 import com.liverussia.cr.R;
 import com.liverussia.cr.gui.util.Utils;
 import com.nvidia.devtech.NvEventQueueActivity;
@@ -20,8 +21,8 @@ public class ShopStoreManager {
     private TextView shopstore_buyinfo;
     private ImageView shopstore_left;
     private ImageView shopstore_right;
-    private ImageView shopstore_buy;
-    private ImageView shopstore_exit;
+    private MaterialButton shopstore_buy;
+    private MaterialButton shopstore_exit;
     private ImageView shopstore_camera;
 
     public ShopStoreManager(Activity activity){
@@ -49,12 +50,10 @@ public class ShopStoreManager {
         });
 
         shopstore_exit.setOnClickListener(view -> {
-            view.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.button_click));
             NvEventQueueActivity.getInstance().onShopStoreClick(2);
         });
 
         shopstore_camera.setOnClickListener(view -> {
-            view.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.button_click));
             NvEventQueueActivity.getInstance().onShopStoreClick(4);
         });
 

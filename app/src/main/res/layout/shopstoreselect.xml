@@ -3,6 +3,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/br_shopstroreselect_layout"
+        android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
         android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -30,6 +31,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/din_pro_bold"
             android:paddingEnd="10dp"
+            android:includeFontPadding="false"
             android:text="ЦЕНА: 0"
             android:textColor="#FFFFFF"
             android:textSize="10dp"
@@ -60,25 +62,30 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/shop_btn" />
 
-    <ImageView
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/shopstore_buy"
-        android:layout_width="150dp"
-        android:layout_height="35dp"
+        android:backgroundTint="@color/yellow"
+        android:layout_width="110dp"
+        android:layout_height="41dp"
+        android:text="Купить"
+        android:textColor="@color/white"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/constraintLayout6"
-        app:srcCompat="@drawable/shop_buy" />
+        app:layout_constraintEnd_toStartOf="@+id/constraintLayout6" />
 
-    <ImageView
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/shopstore_exit"
-        android:layout_width="150dp"
-        android:layout_height="35dp"
+        android:backgroundTint="@color/blue_"
+        android:text="Выход"
+        android:textColor="@color/white"
+        android:layout_width="110dp"
+        android:layout_height="42dp"
         android:layout_marginStart="24dp"
         android:layout_marginBottom="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/constraintLayout6"
-        app:srcCompat="@drawable/shop_exit" />
+        />
 
         <ImageView
             android:id="@+id/shopstore_camera"
