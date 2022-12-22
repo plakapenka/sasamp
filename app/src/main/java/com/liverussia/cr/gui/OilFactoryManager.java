@@ -1,6 +1,9 @@
 package com.liverussia.cr.gui;
 
 import android.app.Activity;
+import android.os.CountDownTimer;
+import android.util.Log;
+import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -22,40 +25,61 @@ public class OilFactoryManager {
     private ImageView oil_oil_btn;
     private TextView oil_water_procent;
     private TextView oil_oil_procent;
+    private View oil_factory_exit_button;
+    public CountDownTimer countDownTimer;
 
-    float olistate, oliwaterstate, oiloilstate;
+    int oliwaterstate, oiloilstate;
 
-    Runnable runnableoilgame = new Runnable() {
-        @Override
-        public void run() {
-            while(olistate<2000) {
-                oliwaterstate -= 0.0001;
-                oiloilstate -= 0.0001;
-                if (oliwaterstate < 0)
-                {
-                    oliwaterstate = 0;
-                }
-                if (oliwaterstate > 1000)
-                {
-                    oliwaterstate = 1000;
-                }
-                if (oiloilstate < 0)
-                {
-                    oiloilstate = 0;
-                }
-                if (oiloilstate > 1000)
-                {
-                    oiloilstate = 1000;
-                }
-                oil_water_progress.setProgress((int)oliwaterstate);
-                oil_oil_progress.setProgress((int)oiloilstate);
-                olistate = oliwaterstate + oiloilstate;
-            }
-            Hide();
+    public void startCountdown() {
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+            countDownTimer = null;
         }
-    };
+        countDownTimer = new CountDownTimer(999999999, 10) {
+            @Override
+            public void onTick(long j) {
+                if(oiloilstate >= 998 && oliwaterstate >= 998){
+                    countDownTimer.cancel();
+                    countDownTimer.onFinish(); // сам не срабатывает при cancel :c
+                    return;
+                }
+                oliwaterstate --;
+                oiloilstate --;
 
+                if (oliwaterstate < 0)      oliwaterstate = 0;
+                if (oliwaterstate > 1000)    oliwaterstate = 1000;
+                if (oiloilstate < 0)        oiloilstate = 0;
+                if (oiloilstate > 1000)      oiloilstate = 1000;
+
+                UpdateWater(oliwaterstate);
+                UpdateOil(oiloilstate);
+            }
+            @Override
+            public void onFinish() {
+                if(oiloilstate >= 998 && oliwaterstate >= 998){
+                    Hide(true);
+                }else{
+                    Hide(false);
+                }
+            }
+        }.start();
+    }
+    public void UpdateWater(int percent){
+        String stroilwaterproc = String.format("%d%%", percent / 10);
+        oil_water_procent.setText(stroilwaterproc);
+        oil_water_progress.setProgress(percent);
+    }
+    public void UpdateOil(int percent) {
+        String stroiloilproc = String.format("%d%%", percent / 10);
+        oil_oil_procent.setText(stroiloilproc);
+        oil_oil_progress.setProgress(percent);
+    }
     public OilFactoryManager(Activity activity){
+        oil_factory_exit_button = activity.findViewById(R.id.oil_factory_exit_button);
+        oil_factory_exit_button.setOnClickListener(view -> {
+            countDownTimer.cancel();
+            countDownTimer.onFinish();
+        });
         br_oilfactory_layout = activity.findViewById(R.id.br_oilfactory_layout);
         oil_water_progress = activity.findViewById(R.id.oil_water_progress);
         oil_oil_progress = activity.findViewById(R.id.oil_oil_progress);
@@ -67,33 +91,27 @@ public class OilFactoryManager {
         oil_water_btn.setOnClickListener(view -> {
             view.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.button_click));
             oliwaterstate += 100;
-            oil_water_progress.setProgress((int)oliwaterstate);
-            String stroilwaterprocent = String.format("%d%%", (int)oliwaterstate/10);
-            oil_water_procent.setText(String.valueOf(stroilwaterprocent));
+            UpdateWater(oliwaterstate);
         });
 
         oil_oil_btn.setOnClickListener(view -> {
             view.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.button_click));
             oiloilstate += 100;
-            oil_oil_progress.setProgress((int)oiloilstate);
-            String stroiloilprocent = String.format("%d%%", (int)oiloilstate/10);
-            oil_oil_procent.setText(String.valueOf(stroiloilprocent));
+            UpdateOil(oiloilstate);
         });
 
         Utils.HideLayout(br_oilfactory_layout, false);
     }
 
     public void Show() {
-        olistate = 0;
         oliwaterstate = 0;
         oiloilstate = 0;
         Utils.ShowLayout(br_oilfactory_layout, true);
-        Thread thread = new Thread(runnableoilgame);
-        thread.start();
+        startCountdown();
     }
 
-    public void Hide() {
-        NvEventQueueActivity.getInstance().onOilFactoryGameClose();
+    public void Hide(boolean succes) {
+        NvEventQueueActivity.getInstance().onOilFactoryGameClose(succes);
         Utils.HideLayout(br_oilfactory_layout, true);
     }
 }

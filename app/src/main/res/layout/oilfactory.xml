@@ -7,6 +7,18 @@
     android:layout_height="match_parent"
     android:background="@drawable/oil_bg">
 
+    <View
+        android:id="@+id/oil_factory_exit_button"
+        android:layout_width="@dimen/_30sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/cross"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/imageView23"
             android:layout_width="wrap_content"

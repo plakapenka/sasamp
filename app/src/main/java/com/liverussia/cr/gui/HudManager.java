@@ -69,10 +69,7 @@ public class HudManager {
     private ArrayList<ImageView> hud_wanted;
     private ProgressBar progressHP;
     private ProgressBar progressArmor;
-    private ProgressBar oil_water_progress;
-    private ProgressBar oil_oil_progress;
-    private TextView oil_water_procent;
-    private TextView oil_oil_procent;
+
     private ImageView enter_passenger;
     private ImageView enterexit_driver;
     private ImageView lock_vehicle;
@@ -347,11 +344,6 @@ public class HudManager {
         });
         hud_weapon.setOnClickListener(v -> NvEventQueueActivity.getInstance().onWeaponChanged());
 
-        oil_water_progress = aactivity.findViewById(R.id.oil_water_progress);
-        oil_oil_progress = aactivity.findViewById(R.id.oil_oil_progress);
-        oil_water_procent = aactivity.findViewById(R.id.oil_water_procent);
-        oil_oil_procent = aactivity.findViewById(R.id.oil_oil_procent);
-
         hud_bg.post(() -> {
             if(isHudSetPos)return;
 
@@ -525,11 +517,6 @@ public class HudManager {
             } else {
                 hud_ammo.setVisibility(View.GONE);
             }
-
-            String stroilwaterproc = String.format("%d%%", oil_water_progress.getProgress() / 10);
-            oil_water_procent.setText(stroilwaterproc);
-            String stroiloilproc = String.format("%d%%", oil_oil_progress.getProgress() / 10);
-            oil_oil_procent.setText(stroiloilproc);
         });
     }
     public void UpdateMoney(int money)
@@ -591,11 +578,12 @@ public class HudManager {
             img.setColorFilter(MainColor, PorterDuff.Mode.SRC_ATOP);
 
             text.setTextColor(MainColor);
+//            text.setShadowLayer(1.0f, 1, 1, MainColor);
 
             hud_serverlogo.setVisibility(View.VISIBLE);
 
             hud_serverlogo.post(() ->{
-                text.setText(servers.getname());
+                text.setText(servers.getname()+" ");
             });
         });
 

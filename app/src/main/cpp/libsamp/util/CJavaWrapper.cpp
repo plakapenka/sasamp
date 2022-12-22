@@ -562,10 +562,6 @@ extern "C"
 		g_pJavaWrapper->HideTargetNotify();
 	}
 
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onOilFactoryGameClose(JNIEnv *pEnv, jobject thiz) {
-		pNetGame->SendCustomPacket(251, 33, 1);
-	}
-
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onArmyGameClose(JNIEnv *pEnv, jobject thiz) {
 		pNetGame->SendCustomPacket(251, 45, 1);
 	}
@@ -1448,4 +1444,10 @@ Java_com_liverussia_cr_gui_AuthorizationManager_ClickRecoveryPass(JNIEnv *env, j
 	bsSend.Write(RPC);
 
 	pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_nvidia_devtech_NvEventQueueActivity_onOilFactoryGameClose(JNIEnv *env, jobject thiz,
+																   jboolean success) {
+	pNetGame->SendCustomPacket(251, 33, success);
 }

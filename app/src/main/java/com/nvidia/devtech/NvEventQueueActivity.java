@@ -252,7 +252,7 @@ public abstract class NvEventQueueActivity
     public native void onSamwillHideGame(int samwillpacket);
 
     public native void onTargetNotifyClose();
-    public native void onOilFactoryGameClose();
+    public native void onOilFactoryGameClose(boolean success);
     public native void onArmyGameClose();
     public native void onFuelStationClick(int fueltype, int fuelliters);
     public native void onShopStoreClick(int buttonid);
