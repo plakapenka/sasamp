@@ -22,7 +22,7 @@ void CNetGame::Packet_AucContainer(Packet* p)
     RakNet::BitStream bs((unsigned char*)p->data, p->length, false);
     uint8_t packetID;
     uint32_t rpcID;
-    uint8_t id;
+    uint16_t id;
     uint8_t type;
     uint32_t price;
 

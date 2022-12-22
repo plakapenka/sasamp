@@ -1,6 +1,7 @@
 package com.liverussia.cr.gui;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -63,7 +64,6 @@ public class AucContainer {
     public void Show(int id, int type, int price){
         activity.runOnUiThread(() -> {
             auc_price.setText(price_format.format(price)+" руб.");
-
             int imgres = 0;
 
             if(type == 0){
