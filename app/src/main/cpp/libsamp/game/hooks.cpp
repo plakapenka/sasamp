@@ -2720,6 +2720,7 @@ void InstallHooks()
 
 	PROTECT_CODE_INSTALLHOOKS;
 
+	//
 	NOP(g_libGTASA + 0x0027E21A, 2); //CWidgetPlayerInfo::DrawWeaponIcon
 	NOP(g_libGTASA + 0x0027E24E, 2); // CWidgetPlayerInfo::DrawWanted
 	//SetUpHook(g_libGTASA+0x291104, (uintptr_t)CStreaming__ConvertBufferToObject_hook, (uintptr_t*)&CStreaming__ConvertBufferToObject);

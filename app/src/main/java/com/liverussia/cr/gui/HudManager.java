@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.media.Image;
 import android.text.Html;
 import android.util.Log;
 import android.util.TypedValue;
@@ -31,6 +33,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.factor.bouncy.BouncyRecyclerView;
 import com.liverussia.cr.gui.util.Utils;
+import com.liverussia.launcher.async.dto.response.Servers;
+import com.liverussia.launcher.utils.MainUtils;
 import com.nvidia.devtech.NvEventQueueActivity;
 import com.liverussia.cr.R;
 
@@ -61,7 +65,7 @@ public class HudManager {
     private TextView levelinfo;
     private ImageView hud_greenzone;
     private ImageView hud_gpsactive;
-    private ImageView hud_serverlogo;
+    private ConstraintLayout hud_serverlogo;
     private ArrayList<ImageView> hud_wanted;
     private ProgressBar progressHP;
     private ProgressBar progressArmor;
@@ -574,30 +578,27 @@ public class HudManager {
     }
 
     public void InitServerLogo(int serverid) {
-        if (serverid == 0)
-        {
-            hud_serverlogo.setImageResource(R.drawable.moscow);
-        }
-        else if (serverid == 1)
-        {
-            hud_serverlogo.setImageResource(R.drawable.peterburg);
-        }
-//        else if (serverid == 2)
-//        {
-//            hud_serverlogo.setImageResource(R.drawable.novosibirsk);
-//        }
-//        else if (serverid == 2)
-//        {
-//            hud_serverlogo.setImageResource(R.drawable.samara);
-//        }
-//        else if (serverid == 2)
-//        {
-//            hud_serverlogo.setImageResource(R.drawable.sochi);
-//        }
-        else if (serverid == 2)
-        {
-            hud_serverlogo.setImageResource(R.drawable.testserver);
-        }
+        activity.runOnUiThread(() -> {
+
+            List<Servers> list = MainUtils.SERVERS;
+            Servers servers = list.get(serverid);
+
+            ImageView img = activity.findViewById(R.id.hud_logo_img);
+            TextView text = activity.findViewById(R.id.hud_logo_text);
+
+            int MainColor = Color.parseColor(servers.getColor());
+
+            img.setColorFilter(MainColor, PorterDuff.Mode.SRC_ATOP);
+
+            text.setTextColor(MainColor);
+
+            hud_serverlogo.setVisibility(View.VISIBLE);
+
+            hud_serverlogo.post(() ->{
+                text.setText(servers.getname());
+            });
+        });
+
     }
     public void HideServerLogo()
     {
