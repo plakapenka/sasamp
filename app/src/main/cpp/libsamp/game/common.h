@@ -20,6 +20,7 @@
 #define MAX_REMOVE_MODELS	1200
 #define MAX_ATTACHED_OBJECTS	25
 #define MAX_WEAPON_MODELS 47
+#define MAX_WEAPONS_SLOT 13
 
 typedef unsigned short VEHICLEID;
 typedef unsigned short PLAYERID;

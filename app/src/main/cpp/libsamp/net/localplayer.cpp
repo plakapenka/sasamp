@@ -112,31 +112,33 @@ void CLocalPlayer::SendStatsUpdate()
 void CLocalPlayer::CheckWeapons()
 {
 	if (m_pPlayerPed->IsInVehicle()) return;
-	uint8_t i;
-	uint8_t byteCurWep = m_pPlayerPed->GetCurrentWeapon();
+
+	//uint8_t byteCurWep = m_pPlayerPed->GetCurrentWeapon();
 	bool bMSend = false;
 
-	RakNet::BitStream bsWeapons;
-	bsWeapons.Write((BYTE)ID_WEAPONS_UPDATE);
-	//bsWeapons.Write((uint16_t)INVALID_PLAYER_ID);
-	//bsWeapons.Write((uint16_t)INVALID_PLAYER_ID);
-	for (i = 0; i < 13; i++) {
+	for (int i = 0; i < MAX_WEAPONS_SLOT; i++) {
 
 		if (m_byteLastWeapon[i] != m_pPlayerPed->m_pPed->WeaponSlots[i].dwType ||
                 m_dwLastAmmo[i] != m_pPlayerPed->m_pPed->WeaponSlots[i].dwAmmo)
 		{
 			m_byteLastWeapon[i] = m_pPlayerPed->m_pPed->WeaponSlots[i].dwType;
 			m_dwLastAmmo[i] = m_pPlayerPed->m_pPed->WeaponSlots[i].dwAmmo;
-            bsWeapons.Write((uint8_t) i);
-            bsWeapons.Write((uint8_t) m_byteLastWeapon[i]);
-            bsWeapons.Write((uint16_t) m_dwLastAmmo[i]);
 
             bMSend = true;
+			break;
 		}
 
 	}
-	if (bMSend)
-	{
+	if (bMSend) {
+		RakNet::BitStream bsWeapons;
+		bsWeapons.Write((BYTE) ID_WEAPONS_UPDATE);
+
+		for (int i = 0; i < MAX_WEAPONS_SLOT; i++) {
+
+			bsWeapons.Write((uint8_t) i);
+			bsWeapons.Write((uint8_t) m_byteLastWeapon[i]);
+			bsWeapons.Write((uint16_t) m_dwLastAmmo[i]);
+		}
 		pNetGame->GetRakClient()->Send(&bsWeapons, HIGH_PRIORITY, UNRELIABLE, 0);
 	}
 }
