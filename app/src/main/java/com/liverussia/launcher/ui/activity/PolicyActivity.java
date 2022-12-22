@@ -25,7 +25,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.liverussia.launcher.config.Config.LIVE_RUSSIA_RESOURCE_SERVER_URI;
+import static com.liverussia.launcher.config.Config.LIVE_RUSSIA_RESOURCE_SERVER_URL;
 
 public class PolicyActivity extends AppCompatActivity {
 
@@ -47,7 +47,7 @@ public class PolicyActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(LIVE_RUSSIA_RESOURCE_SERVER_URI)
+                .baseUrl(LIVE_RUSSIA_RESOURCE_SERVER_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

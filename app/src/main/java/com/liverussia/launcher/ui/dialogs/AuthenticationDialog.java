@@ -148,7 +148,9 @@ public class AuthenticationDialog extends DialogFragment implements View.OnClick
     private void performIAmNotRobotCheckBoxAction() {
         if (iAmNotRobotCheckBox.isChecked()) {
             iAmNotRobotCheckBox.setChecked(false);
-            new ReCaptchaDialog(this);
+            ReCaptchaDialog reCaptchaDialog = new ReCaptchaDialog(this.getActivity());
+            reCaptchaDialog.setOnDialogCloseListener(this::performCaptchaSuccessAction);
+            reCaptchaDialog.createDialog();
         } else {
             activityService.showMessage(ErrorMessage.CAPTCHA_NOT_PASSED.getText(), fragment.getActivity());
         }

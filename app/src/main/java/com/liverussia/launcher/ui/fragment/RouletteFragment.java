@@ -95,8 +95,6 @@ public class RouletteFragment extends Fragment implements View.OnClickListener, 
 
         View inflate = inflater.inflate(R.layout.roulette_activity, container, false);
 
-        this.getActivity().setTheme(R.style.AppBaseTheme);
-
         super.onCreate(savedInstanceState);
 
         rouletteUIPanel = inflate.findViewById(R.id.viewPager);
@@ -323,7 +321,16 @@ public class RouletteFragment extends Fragment implements View.OnClickListener, 
         }
 
         if (!authenticationService.isAccessTokenHealth()) {
-            UpdateTokensAsyncRestCall updateTokensAsyncRestCall = new UpdateTokensAsyncRestCall(this.getActivity());
+            //TODO выпилить это через пару тройку дней как все зологиняться по новому
+            UpdateTokensAsyncRestCall updateTokensAsyncRestCall;
+
+            try {
+                updateTokensAsyncRestCall = new UpdateTokensAsyncRestCall(getActivity());
+            } catch (Exception e) {
+                authenticationService.logout();
+                return;
+            }
+
             updateTokensAsyncRestCall.setOnAsyncSuccessListener(this::fillAuthenticationPanelFields);
             updateTokensAsyncRestCall.setOnAsyncNotCriticalErrorListener(this::fillAuthenticationPanelFields);
             updateTokensAsyncRestCall.setOnAsyncCriticalErrorListener(this::performLogoutButtonAction);

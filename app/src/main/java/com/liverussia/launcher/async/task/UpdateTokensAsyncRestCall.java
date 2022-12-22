@@ -4,6 +4,7 @@ import android.app.Activity;
 
 import com.liverussia.launcher.async.dto.request.RefreshTokenRequestDto;
 import com.liverussia.launcher.async.dto.response.AuthenticationResponseDto;
+import com.liverussia.launcher.domain.enums.StorageElements;
 import com.liverussia.launcher.error.ErrorUtils;
 import com.liverussia.launcher.error.apiException.ErrorContainer;
 import com.liverussia.launcher.async.listener.OnAsyncCriticalErrorListener;
@@ -14,6 +15,7 @@ import com.liverussia.launcher.service.ActivityService;
 import com.liverussia.launcher.service.AuthenticationService;
 import com.liverussia.launcher.service.impl.ActivityServiceImpl;
 import com.liverussia.launcher.service.impl.AuthenticationServiceImpl;
+import com.liverussia.launcher.storage.Storage;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.client.ResourceAccessException;
@@ -28,8 +30,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
-import static com.liverussia.launcher.config.Config.LAUNCHER_SERVER_URI;
 
 public class UpdateTokensAsyncRestCall {
     private final static Set<ErrorContainer> CRITICAL_ERRORS = new HashSet<>();
@@ -46,15 +46,16 @@ public class UpdateTokensAsyncRestCall {
     public UpdateTokensAsyncRestCall(Activity activity) {
         this.activity = activity;
         this.authenticationService = new AuthenticationServiceImpl(activity);
+
+        String url = Storage.getProperty(StorageElements.ROULETTE_SERVER_HOST.getValue(), activity);
+        this.retrofit = new Retrofit.Builder()
+                .baseUrl(url)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
     }
 
     {
         activityService = new ActivityServiceImpl();
-
-        retrofit = new Retrofit.Builder()
-                .baseUrl(LAUNCHER_SERVER_URI)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
     }
 
     static {

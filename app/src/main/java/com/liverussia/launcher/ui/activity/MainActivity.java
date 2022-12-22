@@ -33,7 +33,6 @@ import com.liverussia.launcher.ui.fragment.DonateFragment;
 import com.liverussia.launcher.ui.fragment.RouletteFragment;
 import com.liverussia.launcher.ui.fragment.SettingsFragment;
 import com.liverussia.launcher.domain.messages.ErrorMessage;
-import com.liverussia.launcher.domain.messages.InfoMessage;
 import com.liverussia.launcher.async.dto.response.Servers;
 import com.liverussia.launcher.async.service.NetworkService;
 import com.liverussia.launcher.service.ActivityService;
@@ -55,7 +54,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.liverussia.launcher.config.Config.LIVE_RUSSIA_RESOURCE_SERVER_URI;
+import static com.liverussia.launcher.config.Config.LIVE_RUSSIA_RESOURCE_SERVER_URL;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -106,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+        setTheme(R.style.AppBaseTheme);
 
 //        setContentView(R.layout.mine_3);
 //        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //TODO сделать это как в сплеше с монтрингом и выпилить отсюда
     private void getPossiblePrizes() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(LIVE_RUSSIA_RESOURCE_SERVER_URI)
+                .baseUrl(LIVE_RUSSIA_RESOURCE_SERVER_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -195,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void getDonateServices() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(LIVE_RUSSIA_RESOURCE_SERVER_URI)
+                .baseUrl(LIVE_RUSSIA_RESOURCE_SERVER_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

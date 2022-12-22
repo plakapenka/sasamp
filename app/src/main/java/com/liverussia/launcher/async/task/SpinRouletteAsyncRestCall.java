@@ -25,33 +25,32 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.liverussia.launcher.config.Config.LAUNCHER_SERVER_URI;
-
 public class SpinRouletteAsyncRestCall {
-    private final Activity mainActivity;
+    private final Activity activity;
     private final ActivityService activityService;
     private final Retrofit retrofit;
 
     private OnAsyncSuccessListenerWithResponse<SpinRouletteResponseDto> onAsyncSuccessListener;
     private OnAsyncCriticalErrorListener onAsyncCriticalErrorListener;
 
-    public SpinRouletteAsyncRestCall(Activity mainActivity) {
-        this.mainActivity = mainActivity;
+    public SpinRouletteAsyncRestCall(Activity activity) {
+        this.activity = activity;
+
+        String url = Storage.getProperty(StorageElements.ROULETTE_SERVER_HOST.getValue(), activity);
+        this.retrofit = new Retrofit.Builder()
+                .baseUrl(url)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
     }
 
     {
         activityService = new ActivityServiceImpl();
-
-        retrofit = new Retrofit.Builder()
-                .baseUrl(LAUNCHER_SERVER_URI)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
     }
 
     public void spinRoulette() {
         NetworkService networkService = retrofit.create(NetworkService.class);
 
-        String token = Storage.getProperty(StorageElements.ACCESS_TOKEN.getValue(), mainActivity);
+        String token = Storage.getProperty(StorageElements.ACCESS_TOKEN.getValue(), activity);
         Call<SpinRouletteResponseDto> call = networkService.spinRoulette(token);
 
 
@@ -89,7 +88,7 @@ public class SpinRouletteAsyncRestCall {
                 .map(ErrorContainer::getMessage)
                 .orElse(StringUtils.EMPTY);
 
-        activityService.showMessage(errorMessage, mainActivity);
+        activityService.showMessage(errorMessage, activity);
     }
 
     public void setOnAsyncSuccessListener(OnAsyncSuccessListenerWithResponse<SpinRouletteResponseDto> onClickListener) {
