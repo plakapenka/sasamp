@@ -14,7 +14,6 @@
 #include "objectpool.h"
 #include "pickuppool.h"
 #include "textlabelpool.h"
-#include "textdrawpool.h"
 #include "streampool.h"
 #include "CActorPool.h"
 
@@ -122,7 +121,6 @@ public:
 	CPickupPool* GetPickupPool() { return m_pPickupPool; }
 	CGangZonePool* GetGangZonePool() { return m_pGangZonePool; }
 	CText3DLabelsPool* GetLabelPool() { return m_pLabelPool; }
-	CTextDrawPool* GetTextDrawPool() { return m_pTextDrawPool; }
 	CStreamPool* GetStreamPool() { return m_pStreamPool; }
 	CActorPool* GetActorPool() { return m_pActorPool; }
 	RakClientInterface* GetRakClient() { return m_pRakClient; };
@@ -137,7 +135,6 @@ public:
 	void ResetLabelPool();
 	void ResetActorPool();
 	void ShutDownForGameRestart();
-	void ResetTextDrawPool();
 
 	void SendChatMessage(const char* szMsg);
 	void SendChatCommand(const char* szMsg);
@@ -164,7 +161,6 @@ private:
 	CPickupPool* 		m_pPickupPool;
 	CGangZonePool*		m_pGangZonePool;
 	CText3DLabelsPool*	m_pLabelPool;
-	CTextDrawPool*		m_pTextDrawPool;
 	CStreamPool*		m_pStreamPool;
 	CActorPool*			m_pActorPool;
 	int					m_iGameState;

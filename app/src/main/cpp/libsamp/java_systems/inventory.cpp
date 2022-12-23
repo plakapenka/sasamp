@@ -121,6 +121,7 @@ void CNetGame::Packet_InventoryUpdateCarryng(Packet* p)
 
     pInventory->UpdateCarryng(matrixindex, brutto, maxbrutto);
 
+    Log("%d, %d, %d", matrixindex, brutto, maxbrutto);
 }
 
 void CNetGame::Packet_InventoryUpdateItem(Packet* p)

@@ -355,16 +355,6 @@ bool CGUI::OnTouchEvent(int type, bool multi, int x, int y)
 	if(!pKeyBoard->OnTouchEvent(type, multi, x, y)) return false;
 
 	bool bFalse = true;
-	if (pNetGame)
-	{
-		if (pNetGame->GetTextDrawPool()->OnTouchEvent(type, multi, x, y))
-		{
-		}
-		else
-		{
-			bFalse = false;
-		}
-	}
 
 	switch(type)
 	{

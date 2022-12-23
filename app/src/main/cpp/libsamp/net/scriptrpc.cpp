@@ -1344,66 +1344,6 @@ void ScrResetPlayerWeapons(RPCParameters* rpcParams)
 	pPlayerPed->ClearAllWeapons();
 }
 
-void ScrShowTextDraw(RPCParameters* rpcParams)
-{
-	unsigned char* Data = reinterpret_cast<unsigned char*>(rpcParams->input);
-	int iBitLength = rpcParams->numberOfBitsOfData;
-	RakNet::BitStream bsData(Data, (iBitLength / 8) + 1, false);
-
-	CTextDrawPool* pTextDrawPool = pNetGame->GetTextDrawPool();
-	if (pTextDrawPool)
-	{
-		uint16_t wTextID;
-		uint16_t wTextSize;
-		TEXT_DRAW_TRANSMIT TextDrawTransmit;
-		char cText[MAX_TEXT_DRAW_LINE];
-
-		bsData.Read(wTextID);
-		bsData.Read((char*)& TextDrawTransmit, sizeof(TEXT_DRAW_TRANSMIT));
-		bsData.Read(wTextSize);
-		bsData.Read(cText, wTextSize);
-		cText[wTextSize] = 0;
-		pTextDrawPool->New(wTextID, &TextDrawTransmit, cText);
-	}
-}
-
-void ScrHideTextDraw(RPCParameters* rpcParams)
-{
-	unsigned char* Data = reinterpret_cast<unsigned char*>(rpcParams->input);
-	int iBitLength = rpcParams->numberOfBitsOfData;
-	PlayerID sender = rpcParams->sender;
-
-	RakNet::BitStream bsData(Data, (iBitLength / 8) + 1, false);
-	CTextDrawPool* pTextDrawPool = pNetGame->GetTextDrawPool();
-	if (pTextDrawPool)
-	{
-		uint16_t wTextID;
-		bsData.Read(wTextID);
-		pTextDrawPool->Delete(wTextID);
-	}
-}
-
-void ScrEditTextDraw(RPCParameters* rpcParams)
-{
-	unsigned char* Data = reinterpret_cast<unsigned char*>(rpcParams->input);
-	int iBitLength = rpcParams->numberOfBitsOfData;
-	RakNet::BitStream bsData(Data, (iBitLength / 8) + 1, false);
-	uint16_t wTextID;
-	uint16_t wLen;
-	bsData.Read(wTextID);
-	bsData.Read(wLen);
-	uint8_t pStr[256];
-	if (wLen >= 255) return;
-
-	bsData.Read((char*)pStr, wLen);
-	pStr[wLen] = 0;
-	CTextDraw* pTextDraw = pNetGame->GetTextDrawPool()->GetAt(wTextID);
-	if (pTextDraw)
-	{
-		pTextDraw->SetText((const char*)pStr);
-	}
-}
-
 #define ATTACH_BONE_SPINE	1
 #define ATTACH_BONE_HEAD	2
 #define ATTACH_BONE_LUPPER	3
@@ -1751,20 +1691,6 @@ void ScrSetObjectRotation(RPCParameters* rpcParams)
 	}
 }
 
-void ScrSelectTextDraw(RPCParameters* rpcParams)
-{
-	unsigned char* Data = reinterpret_cast<unsigned char*>(rpcParams->input);
-	int iBitLength = rpcParams->numberOfBitsOfData;
-
-	bool bEnable = false;
-	uint32_t dwColor = 0;
-	RakNet::BitStream bsData(Data, (iBitLength / 8) + 1, false);
-	bsData.Read(bEnable);
-	bsData.Read(dwColor);
-
-	pNetGame->GetTextDrawPool()->SetSelectState(bEnable ? true : false, dwColor);
-}
-
 void RegisterScriptRPCs(RakClientInterface* pRakClient)
 {
 	Log("Registering ScriptRPC's..");
@@ -1824,10 +1750,6 @@ void RegisterScriptRPCs(RakClientInterface* pRakClient)
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrResetPlayerWeapons, ScrResetPlayerWeapons);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrSetPlayerSkillLevel, ScrSetPlayerSkillLevel);
 
-	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrShowTextDraw, ScrShowTextDraw);
-	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrHideTextDraw, ScrHideTextDraw);
-	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrEditTextDraw, ScrEditTextDraw);
-
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrSetPlayerAttachedObject, ScrSetPlayerAttachedObject);
 
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrSetPlayerObjectMaterial, ScrSetPlayerObjectMaterial);
@@ -1838,7 +1760,6 @@ void RegisterScriptRPCs(RakClientInterface* pRakClient)
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrDetachTrailerFromVehicle, ScrDetachTrailerFromVehicle);
 
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrRemoveComponent, ScrRemoveComponent);
-	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ClickTextDraw, ScrSelectTextDraw);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrMoveObject, ScrMoveObject);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrSetObjectRotation, ScrSetObjectRotation);
 

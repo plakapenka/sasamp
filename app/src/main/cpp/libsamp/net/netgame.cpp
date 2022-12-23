@@ -59,7 +59,7 @@ CNetGame::CNetGame(const char* szHostOrIp, int iPort, const char* szPlayerName, 
 	m_pGangZonePool = new CGangZonePool();
 	m_pLabelPool = new CText3DLabelsPool();
 
-	m_pTextDrawPool = new CTextDrawPool();
+	//m_pTextDrawPool = new CTextDrawPool();
 	g_pWidgetManager = new CWidgetManager();
 	m_pStreamPool = new CStreamPool();
 	m_pActorPool = new CActorPool();
@@ -131,12 +131,6 @@ CNetGame::~CNetGame()
 	{
 		delete m_pLabelPool;
 		m_pLabelPool = nullptr;
-	}
-
-	if (m_pTextDrawPool)
-	{
-		delete m_pTextDrawPool;
-		m_pTextDrawPool = nullptr;
 	}
 
 	if (g_pWidgetManager)
@@ -1438,15 +1432,6 @@ void CNetGame::ResetActorPool()
 	m_pActorPool = new CActorPool();
 }
 
-void CNetGame::ResetTextDrawPool()
-{
-	Log("ResetTextDrawPool");
-	if (m_pTextDrawPool)
-	{
-		delete m_pTextDrawPool;
-	}
-	m_pTextDrawPool = new CTextDrawPool();
-}
 
 extern int RemoveModelIDs[1200];
 extern VECTOR RemovePos[1200];
@@ -1488,7 +1473,6 @@ void CNetGame::ShutDownForGameRestart()
 	ResetPickupPool();
 	ResetGangZonePool();
 	ResetLabelPool();
-	ResetTextDrawPool();
 	ResetActorPool();
 	g_pJavaWrapper->ClearScreen();
 
