@@ -354,10 +354,10 @@
                     android:layout_height="@dimen/_17sdp"
                     android:layout_marginStart="@dimen/_27sdp"
                     android:background="@drawable/logo_bg"
-                    app:layout_constraintBottom_toBottomOf="@+id/hud_logo_img"
-                    app:layout_constraintStart_toEndOf="@+id/hud_logo_img"
-                    app:layout_constraintStart_toStartOf="@+id/hud_logo_img"
-                    app:layout_constraintTop_toTopOf="@+id/hud_logo_img">
+                    app:layout_constraintBottom_toBottomOf="@+id/hud_logo_img_layout"
+                    app:layout_constraintStart_toEndOf="@+id/hud_logo_img_layout"
+                    app:layout_constraintStart_toStartOf="@+id/hud_logo_img_layout"
+                    app:layout_constraintTop_toTopOf="@+id/hud_logo_img_layout">
 
                     <TextView
                         android:id="@+id/hud_logo_text"
@@ -368,6 +368,8 @@
                         android:autoSizeStepGranularity="@dimen/_20sdp"
                         android:autoSizeTextType="uniform"
                         android:fontFamily="@font/din_pro_bold"
+                        android:shadowColor="@color/black"
+                        android:shadowRadius="2"
                         android:includeFontPadding="false"
                         android:paddingLeft="@dimen/_7sdp"
                         android:singleLine="true"
@@ -382,24 +384,36 @@
                         app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <ImageView
-                    android:id="@+id/hud_logo_img_bg"
-                    android:layout_width="@dimen/_30sdp"
-                    android:layout_height="@dimen/_28sdp"
-                    android:adjustViewBounds="true"
-                    android:background="@drawable/hud_logo_img_bg"
-                    app:layout_constraintBottom_toBottomOf="@+id/hud_logo_img"
-                    app:layout_constraintStart_toStartOf="@+id/hud_logo_img"
-                    app:layout_constraintTop_toTopOf="@+id/hud_logo_img" />
-
-                <ImageView
-                    android:id="@+id/hud_logo_img"
-                    android:layout_width="@dimen/_35sdp"
-                    android:layout_height="@dimen/_32sdp"
-                    android:adjustViewBounds="true"
-                    android:src="@drawable/hud_logo_img"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/hud_logo_img_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ImageView
+                        android:id="@+id/hud_logo_img_bg"
+                        android:layout_width="39dp"
+                        android:layout_height="39dp"
+                        android:background="@drawable/hud_logo_img_bg"
+                        app:layout_constraintBottom_toBottomOf="@+id/hud_logo_img"
+                        app:layout_constraintEnd_toEndOf="@+id/hud_logo_img"
+                        app:layout_constraintStart_toStartOf="@+id/hud_logo_img"
+                        app:layout_constraintTop_toTopOf="@+id/hud_logo_img" />
+
+                    <ImageView
+                        android:id="@+id/hud_logo_img"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/hud_logo_img"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
