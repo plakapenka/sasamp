@@ -15,7 +15,6 @@
 #include "scripting.h"
 #include "radarcolors.h"
 #include "util.h"
-#include "textdraw.h"
 #include "sprite2d.h"
 #include "RW/RenderWare.h"
 #include "widget.h"
