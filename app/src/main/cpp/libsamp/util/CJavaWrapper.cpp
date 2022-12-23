@@ -1449,5 +1449,13 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_com_nvidia_devtech_NvEventQueueActivity_onOilFactoryGameClose(JNIEnv *env, jobject thiz,
 																   jboolean success) {
-	pNetGame->SendCustomPacket(251, 33, success);
+	uint8_t packet = ID_CUSTOM_RPC;
+	uint8_t RPC = RPC_SHOW_OILGAME;
+
+	RakNet::BitStream bsSend;
+	bsSend.Write(packet);
+	bsSend.Write(RPC);
+	bsSend.Write((uint8_t)success);
+
+	pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
 }
