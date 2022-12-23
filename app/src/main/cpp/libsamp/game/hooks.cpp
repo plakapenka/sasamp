@@ -170,6 +170,20 @@ open:
 bool bGameStarted = false;
 
 void RenderBackgroundHud();
+
+int (*CVehicle__CVehicle)(uintptr_t a1, uintptr_t a2, unsigned char a3);
+int CVehicle__CVehicle_hook(uintptr_t a1, uintptr_t a2, unsigned char a3) {
+
+	Log("DOLBOEB");
+	uintptr_t calledFrom = 0;
+	__asm__ volatile("mov %0, lr"
+	: "=r"(calledFrom));
+	calledFrom -= g_libGTASA;
+
+	Log("%x", calledFrom);
+	return CVehicle__CVehicle(a1, a2, a3);
+}
+
 void (*Render2dStuff)();
 void Render2dStuff_hook()
 {
@@ -2720,9 +2734,20 @@ void InstallHooks()
 
 	PROTECT_CODE_INSTALLHOOKS;
 
-	//
-	NOP(g_libGTASA + 0x0027E21A, 2); //CWidgetPlayerInfo::DrawWeaponIcon
+	//NOP(g_libGTASA + 0x002A475E, 2);
+//	NOP(g_libGTASA + 0x002B351E, 2);
+//	NOP(g_libGTASA + 0x002B4402, 2);
+	//NOP(g_libGTASA + 0x002E2DD0, 2);
+//
+
+	//SetUpHook(g_libGTASA+0x002AFF64, (uintptr_t)CVehicle__CVehicle_hook, (uintptr_t*)&CVehicle__CVehicle);
+	// дефолтный худ
+	NOP(g_libGTASA + 0x0027E21A, 2); // CWidgetPlayerInfo::DrawWeaponIcon
 	NOP(g_libGTASA + 0x0027E24E, 2); // CWidgetPlayerInfo::DrawWanted
+	NOP(g_libGTASA + 0x0027E1E8, 2); // CWidgetPlayerInfo::RenderBreathBar
+	NOP(g_libGTASA + 0x0027E1AE, 2); // CWidgetPlayerInfo::RenderArmorBar
+	NOP(g_libGTASA + 0x0027E188, 2); // CWidgetPlayerInfo::RenderHealthBar
+
 	//SetUpHook(g_libGTASA+0x291104, (uintptr_t)CStreaming__ConvertBufferToObject_hook, (uintptr_t*)&CStreaming__ConvertBufferToObject);
 	//SetUpHook(g_libGTASA+0x3961C8, (uintptr_t)CFileMgr__ReadLine_hook, (uintptr_t*)&CFileMgr__ReadLine);
 

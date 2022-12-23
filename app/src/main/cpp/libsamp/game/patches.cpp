@@ -411,7 +411,7 @@ void ApplyInGamePatches()
 	*(uint8_t*)(g_libGTASA + 0x4EE200) = 0x9B;
 
 	// CWidgetPlayerInfo::DrawWanted
-	WriteMemory(g_libGTASA + 0x27D8D0, (uintptr_t)"\x4F\xF0\x00\x08", 4);
+	//WriteMemory(g_libGTASA + 0x27D8D0, (uintptr_t)"\x4F\xF0\x00\x08", 4);
 
 	// no vehicle audio processing
 	UnFuck(g_libGTASA + 0x4E31A6);
