@@ -35,6 +35,8 @@ void CVehiclePool::Process()
 
 			if(m_bIsActive[x])
 			{
+				pVehicle->ProcessDamage();
+
 				if(pVehicle->IsOccupied())
 				{
 					if(pVehicle->m_bIsInvulnerable)
@@ -175,17 +177,15 @@ bool CVehiclePool::New(NEW_VEHICLE *pNewVehicle)
 			LinkToInterior(pNewVehicle->VehicleID, pNewVehicle->byteInterior);
 
 		// damage status
-		if(pNewVehicle->dwPanelDamageStatus || 
-			pNewVehicle->dwDoorDamageStatus || 
-			pNewVehicle->byteLightDamageStatus)
+		if(pNewVehicle->dwPanelDamageStatus ||
+		   pNewVehicle->dwDoorDamageStatus ||
+		   pNewVehicle->byteLightDamageStatus)
 		{
 			m_pVehicles[pNewVehicle->VehicleID]->UpdateDamageStatus(
-				pNewVehicle->dwPanelDamageStatus, 
-				pNewVehicle->dwDoorDamageStatus,
-				pNewVehicle->byteLightDamageStatus);
+					pNewVehicle->dwPanelDamageStatus,
+					pNewVehicle->dwDoorDamageStatus,
+					pNewVehicle->byteLightDamageStatus, pNewVehicle->byteTireDamageStatus);
 		}
-
-		m_pVehicles[pNewVehicle->VehicleID]->SetWheelPopped(pNewVehicle->byteTireDamageStatus);
 
 		m_bIsActive[pNewVehicle->VehicleID] = true;
 		m_bIsWasted[pNewVehicle->VehicleID] = false;

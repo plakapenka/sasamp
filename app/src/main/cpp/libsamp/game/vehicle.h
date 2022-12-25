@@ -93,11 +93,10 @@ public:
 
 	void RemoveEveryoneFromVehicle();
 
-	void SetWheelPopped(uint8_t bytePopped);
 	void SetDoorState(int iState);
 	int GetDoorState();
 
-	void UpdateDamageStatus(uint32_t dwPanelDamage, uint32_t dwDoorDamage, uint8_t byteLightDamage);
+	void UpdateDamageStatus(uint32_t dwPanelDamage, uint32_t dwDoorDamage, uint8_t byteLightDamage, uint8_t byteTireDamage);
 
 	void AttachTrailer();
 	void DetachTrailer();
@@ -208,6 +207,46 @@ public:
 
 	bool m_bLightsOn;
 	bool m_bEngineOn;
+
+	// Damage status
+	uint8_t			m_byteTyreStatus;
+	uint8_t			m_byteLightStatus;
+	uint32_t		m_dwDoorStatus;
+	uint32_t		m_dwPanelStatus;
+
+	bool HasDamageModel();
+
+	void SetPanelStatus(uint8_t bPanel, uint8_t bPanelStatus);
+
+	uint8_t GetPanelStatus(uint8_t bPanel);
+
+	void SetDoorStatus(uint32_t dwDoorStatus, bool spawnFlyingComponen);
+
+	void SetPanelStatus(uint32_t ulPanelStatus);
+
+	void SetLightStatus(uint8_t bLight, uint8_t bLightStatus);
+
+	uint8_t GetLightStatus(uint8_t bLight);
+
+	void SetLightStatus(uint8_t ucStatus);
+
+	void SetBikeWheelStatus(uint8_t bWheel, uint8_t bTireStatus);
+
+	void SetWheelStatus(eWheelPosition bWheel, uint8_t bTireStatus);
+
+	uint8_t GetBikeWheelStatus(uint8_t bWheel);
+
+	void SetDoorStatus(eDoors bDoor, uint8_t bDoorStatus, bool spawnFlyingComponen);
+
+	uint8_t GetDoorStatus(eDoors bDoor);
+
+	void ProcessDamage();
+
+	void
+	GetDamageStatusEncoded(uint8_t *byteTyreFlags, uint8_t *byteLightFlags, uint32_t *dwDoorFlags,
+						   uint32_t *dwPanelFlags);
+
+	uint8_t GetWheelStatus(eWheelPosition bWheel);
 };
 
 enum eVehicleOverrideLightsState {

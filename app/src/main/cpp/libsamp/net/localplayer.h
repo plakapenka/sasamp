@@ -204,6 +204,11 @@ public:
 	void CheckWeapons();
 
 	CPlayerPed			*m_pPlayerPed;
+
+	void
+	GiveTakeDamage(bool bGiveOrTake, uint16_t wPlayerID, float damage_amount, uint32_t weapon_id,
+				   uint32_t bodypart);
+
 public:
 	bool				m_bWaitingForSpawnRequestReply;
 
@@ -216,7 +221,8 @@ public:
 	VEHICLEID			m_CurrentVehicle;
 	VEHICLEID 			m_LastVehicle;
 	bool				m_bIsActive;
-	bool lToggle;
+	bool 				lToggle;
+	uint8_t 			FindDeathReasonPlayer;
 
 private:
 	uint32_t			GetCurrentAnimationIndexFlag();
@@ -250,4 +256,5 @@ private:
 	uint8_t					m_byteLastWeapon[MAX_WEAPONS_SLOT];
 	uint32_t					m_dwLastAmmo[MAX_WEAPONS_SLOT];
 	uint32_t m_dwLastUpdateHudButtons;
+
 };

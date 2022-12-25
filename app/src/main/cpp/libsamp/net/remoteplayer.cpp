@@ -713,93 +713,99 @@ float                    m_fWeaponDamages[43 + 1]
 5.0f, /* Fire Extinguisher */
 0.0f /* Camera */
 };
-void CRemotePlayer::StoreBulletSyncData(BULLET_SYNC* blSync)
+void CRemotePlayer::StoreBulletSyncData(BULLET_SYNC* pBulletSync)
 {
-	CPlayerPool* pPlayerPool = pNetGame->GetPlayerPool();
-	CPlayerPed* pLocalPed = pPlayerPool->GetLocalPlayer()->GetPlayerPed();
-	PLAYERID byteLocalID = pPlayerPool->GetLocalPlayerID();
+	if (!m_pPlayerPed || !m_pPlayerPed->IsAdded()) return;
 
-	if (!pLocalPed || !m_pPlayerPed) return;
-	if (blSync->hitId == INVALID_PLAYER_ID) return;
-	if (blSync->hitType == ENTITY_TYPE_PED && blSync->hitId != byteLocalID) return;
-	if (pLocalPed->GetActionTrigger() == ACTION_DEATH || pLocalPed->IsDead()) return;
+	BULLET_DATA btData;
+	memset(&btData, 0, sizeof(BULLET_DATA));
 
-	uint8_t byteWeaponID = blSync->weapId;
-	float
-		fDamage = 0.0f, //damage amount
-		fAmount = 0.0f, //amount
-		fHealth = pLocalPed->GetHealth(), //health
-		fArmour = pLocalPed->GetArmour(); //armour
+	btData.vecOrigin.X = pBulletSync->vecOrigin.X;
+	btData.vecOrigin.Y = pBulletSync->vecOrigin.Y;
+	btData.vecOrigin.Z = pBulletSync->vecOrigin.Z;
 
-	if (byteWeaponID < 0 || byteWeaponID > 43) return; //invalid weapon id
+	btData.vecPos.X = pBulletSync->vecPos.X;
+	btData.vecPos.Y = pBulletSync->vecPos.Y;
+	btData.vecPos.Z = pBulletSync->vecPos.Z;
 
-	fDamage = m_fWeaponDamages[byteWeaponID];
+	btData.vecOffset.X = pBulletSync->vecOffset.X;
+	btData.vecOffset.Y = pBulletSync->vecOffset.Y;
+	btData.vecOffset.Z = pBulletSync->vecOffset.Z;
 
-	if (byteWeaponID == 25)
+	/*Log("Receiving button data..");
+	Log("vecOrigin: %f, %f, %f", btData.vecOrigin.X, btData.vecOrigin.Y, btData.vecOrigin.Z);
+	Log("vecPos: %f, %f, %f", btData.vecPos.X, btData.vecPos.Y, btData.vecPos.Z);
+	Log("vecOffset: %f, %f, %f", btData.vecOffset.X, btData.vecOffset.Y, btData.vecOffset.Z);
+	Log("hit: %d, ID: %d", pBulletSync->byteHitType, pBulletSync->PlayerID);*/
+
+	if (pBulletSync->byteHitType != 0)
 	{
-		const float fMaxShotgunDistance = 30.0f;
-		MATRIX4X4 mat;
-		pLocalPed->GetMatrix(&mat);
-		VECTOR vOrigin;
-		vOrigin.X = blSync->origin[0];
-		vOrigin.Y = blSync->origin[1];
-		vOrigin.Z = blSync->origin[2];
-		float dist = GetDistanceBetween3DPoints(&mat.pos, &vOrigin);
+		if (btData.vecOffset.X > 300.0f ||
+			btData.vecOffset.X < -300.0f ||
+			btData.vecOffset.Y > 300.0f ||
+			btData.vecOffset.Y < -300.0f ||
+			btData.vecOffset.Z > 300.0f ||
+			btData.vecOffset.Z < -300.0f
+				)
+		{
+			return;
+		}
 
-		float multiplier = dist / fMaxShotgunDistance;
-		if (multiplier >= 1.0f)
+		if (pBulletSync->byteHitType == 1)
 		{
-			fDamage = 0.0f;
+			CPlayerPool* pPlayerPool = pNetGame->GetPlayerPool();
+			if (pPlayerPool)
+			{
+				if (pBulletSync->PlayerID == pPlayerPool->GetLocalPlayerID())
+				{
+					btData.pEntity = &pGame->FindPlayerPed()->m_pPed->entity;
+				}
+				else if (pBulletSync->PlayerID == m_PlayerID)
+				{
+					return;
+				}
+				else
+				{
+					CRemotePlayer* pRemotePlayer = pPlayerPool->GetAt(pBulletSync->PlayerID);
+					if (pRemotePlayer)
+					{
+						CPlayerPed* pPlayerPed = pRemotePlayer->GetPlayerPed();
+
+						if (pPlayerPed)
+							btData.pEntity = &pPlayerPed->m_pPed->entity;
+					}
+				}
+			}
 		}
-		else if (multiplier <= 0.0f)
+		else if (pBulletSync->byteHitType == 2)
 		{
-			fDamage = 0.0f;
+			CVehiclePool* pVehiclePool = pNetGame->GetVehiclePool();
+			if (pVehiclePool)
+			{
+				CVehicle* pVehicle = pVehiclePool->GetAt(pBulletSync->PlayerID);
+				if (pVehicle)
+				{
+					btData.pEntity = &pVehicle->m_pVehicle->entity;
+				}
+			}
 		}
-		else
-		{
-			float inversed = 1.0f - multiplier;
-			fDamage *= inversed;
-		}
+
+		m_pPlayerPed->ProcessBulletData(&btData);
+		m_pPlayerPed->FireInstant();
 	}
 
-	if (fHealth > 0.0f && fArmour > 0.0f)//health & armour
+	if (m_pPlayerPed->IsAdded())
 	{
-		fAmount = fArmour - fDamage;
-		fArmour = fAmount < 0.0f ? 0.0f : fAmount;
-
-		if (fArmour <= 0.0f)
-			fHealth += fAmount;
-	}
-	else if (fHealth > 0.0f && fArmour <= 0.0f) //only health
-	{
-		fArmour = 0.0f;
-
-		fAmount = fHealth - fDamage;
-		fHealth = fAmount;
-	}
-
-	//remoteplayer shot
-	m_byteWeaponShotID = byteWeaponID;
-	m_ofSync.byteCurrentWeapon = byteWeaponID;
-
-	//set health & armour
-	pLocalPed->SetArmour(fArmour);
-	pLocalPed->SetHealth(fHealth);
-	PLAYERID playerid = blSync->hitId;
-
-	if(pPlayerPool->GetSlotState(playerid)) {
-		CPlayerPed *pPlayerPed = pPlayerPool->GetAt(playerid)->GetPlayerPed();
-		pLocalPed->m_pPed->pdwDamageEntity = pPlayerPed->m_dwGTAId;
-	}
-
-	if (fHealth <= 0.0f) {
-		//death moment
-		//pLocalPed->SetDead();
-
-		pLocalPed->SetHealth(0.0f);
-
-		//CChatWindow::AddDebugMessage("sendWasted from sync");
-		//pPlayerPool->GetLocalPlayer()->SendWastedNotification();
+		uint8_t byteWeapon = pBulletSync->byteWeaponID;
+		if (m_pPlayerPed->GetCurrentWeapon() != byteWeapon)
+		{
+			m_pPlayerPed->SetArmedWeapon(byteWeapon);
+			if (m_pPlayerPed->GetCurrentWeapon() != byteWeapon)
+			{
+				m_pPlayerPed->GiveWeapon(byteWeapon, 9999);
+				m_pPlayerPed->SetArmedWeapon(byteWeapon);
+			}
+		}
 	}
 }
 

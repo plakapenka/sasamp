@@ -17,7 +17,7 @@ extern int RPC_Spawn;
 extern int RPC_Chat;
 extern int RPC_EnterVehicle;
 extern int RPC_ExitVehicle;
-extern int RPC_DamageVehicle;
+extern int RPC_VehicleDamage;
 extern int RPC_MenuSelect;
 extern int RPC_MenuQuit;
 extern int RPC_ScmEvent;

@@ -108,7 +108,7 @@ public:
 	// 0.3.7
 	void GetBonePosition(int iBoneID, VECTOR* vecOut);
 	// roflan
-	BYTE FindDeathReasonAndResponsiblePlayer(PLAYERID *nPlayer);
+	//BYTE FindDeathReasonAndResponsiblePlayer(PLAYERID *nPlayer);
 	PLAYERID FindDeathResponsiblePlayer();
 	void SetActionTrigger(uint8_t action);
 	PED_TYPE * GetGtaActor() { return m_pPed; };
@@ -157,4 +157,15 @@ public:
     bool IsValidAttach(int iSlot);
 
 	void SetCameraExtendedZoom(float fZoom, float fAspectRatio);
+
+    void FireInstant();
+
+    void ProcessBulletData(BULLET_DATA *btData);
+
+    bool m_bHaveBulletData;
+	BULLET_DATA 		m_bulletData;
+
+	void GetWeaponInfoForFire(int bLeft, VECTOR *vecBone, VECTOR *vecOut);
+
+	VECTOR *GetCurrentWeaponFireOffset();
 };

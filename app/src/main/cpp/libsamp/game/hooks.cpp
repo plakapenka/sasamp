@@ -20,6 +20,8 @@ extern CGame* pGame;
 #include "..//CSettings.h"
 extern CSettings* pSettings;
 extern CHUD *pHud;
+extern CPlayerPed *g_pCurrentFiredPed;
+extern BULLET_DATA *g_pCurrentBulletData;
 
 static uint32_t dwRLEDecompressSourceSize = 0;
 
@@ -544,12 +546,37 @@ __attribute__((naked)) void PickupPickUp_hook()
 //    return true;
 //}
 
+
+uint32_t (*CWeapon__FireInstantHit)(WEAPON_SLOT_TYPE *_this, PED_TYPE *pFiringEntity, VECTOR *vecOrigin, VECTOR *muzzlePosn, ENTITY_TYPE *targetEntity,
+									VECTOR *target, VECTOR *originForDriveBy, int arg6, int muzzle);
+uint32_t CWeapon__FireInstantHit_hook(WEAPON_SLOT_TYPE *_this, PED_TYPE *pFiringEntity, VECTOR *vecOrigin, VECTOR *muzzlePosn, ENTITY_TYPE *targetEntity,
+									  VECTOR *target, VECTOR *originForDriveBy, int arg6, int muzzle)
+{
+	uintptr_t dwRetAddr = 0;
+	__asm__ volatile("mov %0, lr"
+	: "=r"(dwRetAddr));
+
+	dwRetAddr -= g_libGTASA;
+
+	if (dwRetAddr == 0x569A84 + 1 ||
+		dwRetAddr == 0x569616 + 1 ||
+		dwRetAddr == 0x56978A + 1 ||
+		dwRetAddr == 0x569C06 + 1)
+	{
+		// if (GamePool_FindPlayerPed() != pFiringEntity) return 0;
+
+		g_pCurrentFiredPed = pGame->FindPlayerPed();
+	}
+
+	return CWeapon__FireInstantHit(_this, pFiringEntity, vecOrigin, muzzlePosn, targetEntity, target, originForDriveBy, arg6, muzzle);
+}
+
 void ProcessPedDamage(PED_TYPE* pIssuer, PED_TYPE* pDamaged)
 {
 	if (!pNetGame) return;
 
-	PED_TYPE* pPedPlayer = GamePool_FindPlayerPed();
-	if (pDamaged && (pPedPlayer == pIssuer))
+	//PED_TYPE* pPedPlayer = GamePool_FindPlayerPed();
+	if (pDamaged && (pGame->FindPlayerPed()->m_pPed == pIssuer))
 	{
 		if (pNetGame->GetPlayerPool()->FindRemotePlayerIDFromGtaPtr((PED_TYPE*)pDamaged) != INVALID_PLAYER_ID)
 		{
@@ -1004,11 +1031,125 @@ void InstallSpecialHooks()
 
 void ProcessPedDamage(PED_TYPE* pIssuer, PED_TYPE* pPlayer);
 
-uintptr_t (*ComputeDamageResponse)(uintptr_t, uintptr_t, int, int);
-uintptr_t ComputeDamageResponse_hooked(uintptr_t issuer, uintptr_t ped, int a3, int a4)
+/* =========================================== Ped damage handler =========================================== */
+enum ePedPieceTypes
 {
-	ProcessPedDamage((PED_TYPE*)*(uintptr_t*)issuer, (PED_TYPE*)ped );
-	return ComputeDamageResponse(issuer, ped, a3, a4);
+	PED_PIECE_UNKNOWN = 0,
+
+	PED_PIECE_TORSO = 3,
+	PED_PIECE_ASS,
+	PED_PIECE_LEFT_ARM,
+	PED_PIECE_RIGHT_ARM,
+	PED_PIECE_LEFT_LEG,
+	PED_PIECE_RIGHT_LEG,
+	PED_PIECE_HEAD
+};
+
+struct CPedDamageResponseInterface
+{
+	float fDamageHealth;
+	float fDamageArmor;
+	bool bUnk;
+	bool bForceDeath;
+	bool bDamageCalculated;
+	bool bUnk3;
+};
+
+struct CPedDamageResponseCalculatorInterface
+{
+	ENTITY_TYPE *pEntity;
+	float fDamage;
+	ePedPieceTypes bodyPart;
+	unsigned int weaponType;
+	bool bSpeak; // refers to a CPed::Say call (the dying scream?)
+};
+
+uintptr_t (*ComputeDamageResponse)(CPedDamageResponseCalculatorInterface *pPedDamageResponseCalculator, PED_TYPE *pDamagedPed, CPedDamageResponseInterface *pPedDamageResponse, bool bSpeak);
+uintptr_t ComputeDamageResponse_hooked(CPedDamageResponseCalculatorInterface *pPedDamageResponseCalculator, PED_TYPE *pDamagedPed, CPedDamageResponseInterface *pPedDamageResponse, bool bSpeak)
+{
+	// Make sure that everything is not null
+	if (!pNetGame || !pPedDamageResponseCalculator || !pDamagedPed || !pPedDamageResponse || !pPedDamageResponseCalculator->pEntity)
+		return ComputeDamageResponse(pPedDamageResponseCalculator, pDamagedPed, pPedDamageResponse, bSpeak);
+
+	CPlayerPool *pPlayerPool = pNetGame->GetPlayerPool();
+	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
+	if (!pPlayerPool || !pVehiclePool)
+		return ComputeDamageResponse(pPedDamageResponseCalculator, pDamagedPed, pPedDamageResponse, bSpeak);
+
+	CLocalPlayer *pLocalPlayer = pPlayerPool->GetLocalPlayer();
+	if (!pLocalPlayer)
+		return ComputeDamageResponse(pPedDamageResponseCalculator, pDamagedPed, pPedDamageResponse, bSpeak);
+
+	PED_TYPE *pInflictor = (PED_TYPE *)pPedDamageResponseCalculator->pEntity;
+	PED_TYPE *pLocalPed = GamePool_FindPlayerPed();
+	if (!pLocalPed)
+		return ComputeDamageResponse(pPedDamageResponseCalculator, pDamagedPed, pPedDamageResponse, bSpeak);
+
+	// Damage reason (or weapon)
+	uint32_t damageReason = 54; // 54 in case if we couldn't get the reason
+
+	// Convert damage to Multiplayer values (approximately)
+	float fDamage = (pPedDamageResponseCalculator->fDamage / 3.0303030303);
+
+	// To get ID in the future.
+	CRemotePlayer *pRemotePlayer = nullptr;
+
+	// Change status during the damage processing...
+	bool bGiveOrTake = false;
+
+	// Did we damage ourselves?
+	if ((pInflictor == pLocalPed) && (pInflictor == pDamagedPed))
+	{
+		// Check if the inflictor is a vehicle
+		// Actually, there are more cases, but I'm too lazy to detect them.
+		VEHICLEID vehicleId = pVehiclePool->FindIDFromGtaPtr((VEHICLE_TYPE *)pPedDamageResponseCalculator->pEntity);
+		if (vehicleId != INVALID_VEHICLE_ID)
+		{
+			// Set the reason that we got damaged by a vehicle
+			damageReason = 49;
+		}
+
+		// Send that we took damage.
+		pLocalPlayer->GiveTakeDamage(true, INVALID_PLAYER_ID, fDamage, damageReason, pPedDamageResponseCalculator->bodyPart);
+		return ComputeDamageResponse(pPedDamageResponseCalculator, pDamagedPed, pPedDamageResponse, bSpeak);
+	}
+	else if (pInflictor == pLocalPed)
+	{
+		// Did we damage someone?
+		// Let's try to get this person
+		PLAYERID remotePlayerId = pPlayerPool->FindRemotePlayerIDFromGtaPtr(pDamagedPed);
+		if (remotePlayerId != INVALID_PLAYER_ID)
+		{
+			pRemotePlayer = pPlayerPool->GetAt(remotePlayerId);
+		}
+
+		bGiveOrTake = false;
+	}
+	else if (pDamagedPed == pLocalPed)
+	{
+		// Or did we get damaged by someone?
+		// Then let's try to get inflictor
+		PLAYERID remotePlayerId = pPlayerPool->FindRemotePlayerIDFromGtaPtr(pInflictor);
+		if (remotePlayerId != INVALID_PLAYER_ID)
+		{
+			pRemotePlayer = pPlayerPool->GetAt(remotePlayerId);
+		}
+
+		bGiveOrTake = true;
+	}
+	else
+	{
+		// Oh, seems like not our case, sorry. Keep processing...
+		return ComputeDamageResponse(pPedDamageResponseCalculator, pDamagedPed, pPedDamageResponse, bSpeak);
+	}
+
+	if (!pRemotePlayer)
+		return ComputeDamageResponse(pPedDamageResponseCalculator, pDamagedPed, pPedDamageResponse, bSpeak);
+
+	// Send damage response now
+	pLocalPlayer->GiveTakeDamage(bGiveOrTake, pRemotePlayer->GetID(), fDamage, pPedDamageResponseCalculator->weaponType, pPedDamageResponseCalculator->bodyPart);
+
+	return ComputeDamageResponse(pPedDamageResponseCalculator, pDamagedPed, pPedDamageResponse, bSpeak);
 }
 
 int(*RwFrameAddChild)(int, int);
@@ -1361,10 +1502,15 @@ uintptr_t GetTexture_hook(const char* a1)
 	}
 }
 
-uintptr_t(*CPlayerInfo__FindObjectToSteal)(uintptr_t, uintptr_t);
-uintptr_t CPlayerInfo__FindObjectToSteal_hook(uintptr_t a1, uintptr_t a2)
+int(*CPlayerInfo__Process)(uintptr_t *thiz, uintptr_t *a2);
+int CPlayerInfo__Process_hook(uintptr_t *thiz, uintptr_t *a2)
 {
-	return 0;
+	float *v23; // r3
+	v23 = *(float **)thiz;
+	if ( !*((BYTE *)thiz + 0xD5)  || (*((BYTE *)v23 + 0x481) & 1) == 0){
+		return 0;
+	}
+	return CPlayerInfo__Process(thiz, a2);
 }
 typedef uintptr_t RpClump;
 RwFrame* CClumpModelInfo_GetFrameFromId_Post(RwFrame* pFrameResult, RpClump* pClump, int id)
@@ -1450,6 +1596,15 @@ void GivePedScriptedTask_hook(uintptr_t* thiz, int pedHandle, uintptr_t* a3, int
 	if(!pedHandle || !commandID || !a3)return;
 
 	return GivePedScriptedTask(thiz, pedHandle, a3, commandID);
+}
+
+int (*CObject__ProcessGarageDoorBehaviour)(uintptr_t, int);
+int CObject__ProcessGarageDoorBehaviour_hook(uintptr_t thiz, int a2)
+{
+	if (thiz)
+		if (!*(uintptr_t *)(thiz + 372))
+			return 0;
+	return CObject__ProcessGarageDoorBehaviour(thiz, a2);
 }
 
 int (*RpMaterialDestroy)(int a1, int a2, int a3, int a4);
@@ -2728,19 +2883,86 @@ int CTextureDatabaseRuntime__GetEntry_hook(unsigned int a1, const char *a2, bool
 	return result;
 }
 
+int (*CustomPipeRenderCB)(uintptr_t resEntry, uintptr_t object, uint8_t type, uint32_t flags);
+int CustomPipeRenderCB_hook(uintptr_t resEntry, uintptr_t object, uint8_t type, uint32_t flags)
+{
+	if (!resEntry)
+		return 0;
+	uint16_t size = *(uint16_t *)(resEntry + 26);
+	if (size)
+	{
+		RES_ENTRY_OBJ *arr = (RES_ENTRY_OBJ *)(resEntry + 28);
+		if (!arr)
+			return 0;
+		uint32_t validFlag = flags & 0x84;
+		for (int i = 0; i < size; i++)
+		{
+			if (!arr[i].validate)
+				break;
+			if (validFlag)
+			{
+				uintptr_t *v4 = *(uintptr_t **)(arr[i].validate);
+				if (!v4)
+					;
+				else
+				{
+					if ((uintptr_t)v4 > (uintptr_t)0xFFFFFF00)
+						return 0;
+					else
+					{
+						if (!*(uintptr_t **)v4)
+							return 0;
+					}
+				}
+			}
+		}
+	}
+	return CustomPipeRenderCB(resEntry, object, type, flags);
+}
+
+int (*rxOpenGLDefaultAllInOneRenderCB)(uintptr_t resEntry, uintptr_t object, uint8_t type, uint32_t flags);
+int rxOpenGLDefaultAllInOneRenderCB_hook(uintptr_t resEntry, uintptr_t object, uint8_t type, uint32_t flags)
+{
+	if (!resEntry)
+		return 0;
+	uint16_t size = *(uint16_t *)(resEntry + 26);
+	if (size)
+	{
+		RES_ENTRY_OBJ *arr = (RES_ENTRY_OBJ *)(resEntry + 28);
+		if (!arr)
+			return 0;
+		uint32_t validFlag = flags & 0x84;
+		for (int i = 0; i < size; i++)
+		{
+			if (!arr[i].validate)
+				break;
+			if (validFlag)
+			{
+				uintptr_t *v4 = *(uintptr_t **)(arr[i].validate);
+				if (!v4)
+					;
+				else
+				{
+					if ((uintptr_t)v4 > (uintptr_t)0xFFFFFF00)
+						return 0;
+					else
+					{
+						if (!*(uintptr_t **)v4)
+							return 0;
+					}
+				}
+			}
+		}
+	}
+	return rxOpenGLDefaultAllInOneRenderCB(resEntry, object, type, flags);
+}
+
 void InstallHooks()
 {
 	Log("InstallHooks");
 
 	PROTECT_CODE_INSTALLHOOKS;
 
-	//NOP(g_libGTASA + 0x002A475E, 2);
-//	NOP(g_libGTASA + 0x002B351E, 2);
-//	NOP(g_libGTASA + 0x002B4402, 2);
-	//NOP(g_libGTASA + 0x002E2DD0, 2);
-//
-
-	//SetUpHook(g_libGTASA+0x002AFF64, (uintptr_t)CVehicle__CVehicle_hook, (uintptr_t*)&CVehicle__CVehicle);
 	// дефолтный худ
 	NOP(g_libGTASA + 0x0027E21A, 2); // CWidgetPlayerInfo::DrawWeaponIcon
 	NOP(g_libGTASA + 0x0027E24E, 2); // CWidgetPlayerInfo::DrawWanted
@@ -2772,6 +2994,7 @@ void InstallHooks()
 	//SetUpHook(g_libGTASA + 0x0044A4CC, (uintptr_t)PointGunInDirection_hook, (uintptr_t*)&PointGunInDirection);
 	CodeInject(g_libGTASA+0x2D99F4, (uintptr_t)PickupPickUp_hook, 1);
 	SetUpHook(g_libGTASA + 0x00327528, (uintptr_t)ComputeDamageResponse_hooked, (uintptr_t*)(&ComputeDamageResponse));
+	SetUpHook(g_libGTASA + 0x567964, (uintptr_t)CWeapon__FireInstantHit_hook, (uintptr_t*)(&CWeapon__FireInstantHit));
 
 	SetUpHook(g_libGTASA + 0x00336268, (uintptr_t)CModelInfo_AddAtomicModel_hook, (uintptr_t*)& CModelInfo_AddAtomicModel);
 
@@ -2802,10 +3025,14 @@ void InstallHooks()
 	SetUpHook(g_libGTASA + 0x00258910, (uintptr_t)GetTexture_hook, (uintptr_t*)& GetTexture_orig);
 
 	// steal objects fix
-	SetUpHook(g_libGTASA + 0x003AC114, (uintptr_t)CPlayerInfo__FindObjectToSteal_hook, (uintptr_t*)& CPlayerInfo__FindObjectToSteal);
+	SetUpHook(g_libGTASA + 0x003AD8E0, (uintptr_t)CPlayerInfo__Process_hook, (uintptr_t*)& CPlayerInfo__Process);
 
 	// GetFrameFromID fix
 	SetUpHook(g_libGTASA + 0x00335CC0, (uintptr_t)CClumpModelInfo_GetFrameFromId_hook, (uintptr_t*)& CClumpModelInfo_GetFrameFromId);
+
+	//new fix
+	SetUpHook(g_libGTASA + 0x1EEC90, (uintptr_t)rxOpenGLDefaultAllInOneRenderCB_hook, (uintptr_t*)& rxOpenGLDefaultAllInOneRenderCB);
+	SetUpHook(g_libGTASA + 0x28AAAC, (uintptr_t)CustomPipeRenderCB_hook, (uintptr_t*)& CustomPipeRenderCB);
 
 	//RpMaterialDestroy fix ? не точно
 	SetUpHook(g_libGTASA + 0x001E3C54, (uintptr_t)RpMaterialDestroy_hook, (uintptr_t*)&RpMaterialDestroy);

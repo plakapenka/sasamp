@@ -14,50 +14,67 @@ PAD_KEYS RemotePlayerKeys[PLAYER_PED_SLOTS];
 uintptr_t dwCurPlayerActor = 0;
 uint8_t byteCurPlayer = 0;
 uint8_t byteCurDriver = 0;
-
-uint16_t(*CPad__GetPedWalkLeftRight)(uintptr_t thiz);
-uint16_t CPad__GetPedWalkLeftRight_hook(uintptr_t thiz)
+int16_t(*CPad__GetPedWalkLeftRight)(uintptr_t thiz);
+int16_t CPad__GetPedWalkLeftRight_hook(uintptr_t thiz)
 {
-
 	if (dwCurPlayerActor && (byteCurPlayer != 0))
 	{
-		// Remote player
-		uint16_t dwResult = RemotePlayerKeys[byteCurPlayer].wKeyLR;
-		if ((dwResult == 0xFF80 || dwResult == 0x80) &&
-			RemotePlayerKeys[byteCurPlayer].bKeys[ePadKeys::KEY_WALK])
-		{
-			dwResult = 0x20;
-		}
-		return dwResult;
+		return (int16_t)RemotePlayerKeys[byteCurPlayer].wKeyLR;;
 	}
 	else
 	{
-		// Local player
-		LocalPlayerKeys.wKeyLR = CPad__GetPedWalkLeftRight(thiz);
-		return LocalPlayerKeys.wKeyLR;
+		int16_t dwResult = CPad__GetPedWalkLeftRight(thiz);
+		LocalPlayerKeys.wKeyLR = (uint16_t)dwResult;
+		return dwResult;
 	}
 }
 
-uint16_t(*CPad__GetPedWalkUpDown)(uintptr_t thiz);
-uint16_t CPad__GetPedWalkUpDown_hook(uintptr_t thiz)
+int16_t(*CPad__GetPedWalkUpDown)(uintptr_t thiz);
+int16_t CPad__GetPedWalkUpDown_hook(uintptr_t thiz)
 {
-
 	if (dwCurPlayerActor && (byteCurPlayer != 0))
 	{
-		// Remote player
-		uint16_t dwResult = RemotePlayerKeys[byteCurPlayer].wKeyUD;
-		if ((dwResult == 0xFF80 || dwResult == 0x80) &&
-			RemotePlayerKeys[byteCurPlayer].bKeys[ePadKeys::KEY_WALK])
-		{
-			dwResult = 0x20;
-		}
-		return dwResult;
+		return (int16_t)RemotePlayerKeys[byteCurPlayer].wKeyUD;;
 	}
 	else
 	{
 		// Local player
-		LocalPlayerKeys.wKeyUD = CPad__GetPedWalkUpDown(thiz);
-		return LocalPlayerKeys.wKeyUD;
+		int16_t dwResult = CPad__GetPedWalkUpDown(thiz);
+		LocalPlayerKeys.wKeyUD = (uint16_t)dwResult;
+		return dwResult;
+	}
+}
+
+int16_t (*CPad__GetSteeringLeftRight)(uintptr_t thiz);
+int16_t CPad__GetSteeringLeftRight_hook(uintptr_t thiz)
+{
+	if(byteCurDriver != 0)
+	{
+		// remote player
+		return (int16_t)RemotePlayerKeys[byteCurDriver].wKeyLR;
+	}
+	else
+	{
+		int16_t dwResult = CPad__GetSteeringLeftRight(thiz);
+		LocalPlayerKeys.wKeyLR = (uint16_t)dwResult;
+		return dwResult;
+	}
+}
+
+int16_t (*CPad__GetSteeringUpDown)(uintptr_t thiz);
+int16_t CPad__GetSteeringUpDown_hook(uintptr_t thiz)
+{
+	if(byteCurDriver != 0)
+	{
+		// remote player
+		return (int16_t)RemotePlayerKeys[byteCurDriver].wKeyUD;
+	}
+	else
+	{
+		// local player
+		int16_t dwResult = CPad__GetSteeringUpDown(thiz);
+		LocalPlayerKeys.wKeyUD = (uint16_t)dwResult;
+		return dwResult;
 	}
 }
 
@@ -242,38 +259,6 @@ uint32_t CPad__GetBlock_hook(uintptr_t thiz)
 	else
 	{
 		return CPad__GetBlock(thiz);
-	}
-}
-
-int16_t (*CPad__GetSteeringLeftRight)(uintptr_t thiz);
-int16_t CPad__GetSteeringLeftRight_hook(uintptr_t thiz)
-{
-	if(byteCurDriver != 0)
-	{
-		// remote player
-		return (int16_t)RemotePlayerKeys[byteCurDriver].wKeyLR;
-	}
-	else
-	{
-		// local player
-		LocalPlayerKeys.wKeyLR = CPad__GetSteeringLeftRight(thiz);
-		return LocalPlayerKeys.wKeyLR;
-	}
-}
-
-uint16_t (*CPad__GetSteeringUpDown)(uintptr_t thiz);
-uint16_t CPad__GetSteeringUpDown_hook(uintptr_t thiz)
-{
-	if(byteCurDriver != 0)
-	{
-		// remote player
-		return RemotePlayerKeys[byteCurDriver].wKeyUD;
-	}
-	else
-	{
-		// local player
-		LocalPlayerKeys.wKeyUD = CPad__GetSteeringUpDown(thiz);
-		return LocalPlayerKeys.wKeyUD;
 	}
 }
 
@@ -680,6 +665,32 @@ uint32_t CPad__CycleWeaponRightJustDown_hook(uintptr_t thiz)
 	return CPad__CycleWeaponRightJustDown(thiz);
 }
 
+
+uint32_t (*CCamera_IsTargetingActive)(uintptr_t thiz);
+uint32_t CCamera_IsTargetingActive_hook(uintptr_t thiz)
+{
+	return 1;
+//	uintptr_t dwRetAddr = 0;
+//	__asm__ volatile ("mov %0, lr" : "=r" (dwRetAddr));
+//	dwRetAddr -= g_libGTASA;
+//
+//	if(dwRetAddr == 0x003ADAD7) {
+//		return CCamera_IsTargetingActive(thiz);
+//	}
+//
+//	if(dwRetAddr == 0x00387455) {
+//		return CCamera_IsTargetingActive(thiz);
+//	}
+//
+//	if(dwCurPlayerActor && (byteCurPlayer != 0)) {
+//		return RemotePlayerKeys[byteCurPlayer].bKeys[ePadKeys::KEY_HANDBRAKE] ? 1 : 0;
+//	} else {
+//		*(uint8_t*)(g_libGTASA + 0x008E864C) = 0;
+//		LocalPlayerKeys.bKeys[ePadKeys::KEY_HANDBRAKE] = CCamera_IsTargetingActive(thiz);
+//		return LocalPlayerKeys.bKeys[ePadKeys::KEY_HANDBRAKE];
+//	}
+}
+
 void HookCPad()
 {
 	memset(&LocalPlayerKeys, 0, sizeof(PAD_KEYS));
@@ -717,6 +728,7 @@ void HookCPad()
 	SetUpHook(g_libGTASA+0x39E96C, (uintptr_t)CPad__GetJump_hook, (uintptr_t*)&CPad__GetJump);
 	SetUpHook(g_libGTASA+0x39E824, (uintptr_t)CPad__GetAutoClimb_hook, (uintptr_t*)&CPad__GetAutoClimb);
 	SetUpHook(g_libGTASA+0x39E8C0, (uintptr_t)CPad__GetAbortClimb_hook, (uintptr_t*)&CPad__GetAbortClimb);
+	//SetUpHook(g_libGTASA+0x0037440C, (uintptr_t)CCamera_IsTargetingActive_hook, (uintptr_t*)&CCamera_IsTargetingActive);
 
 	// swimm
 	SetUpHook(g_libGTASA+0x39EA0C, (uintptr_t)CPad__DiveJustDown_hook, (uintptr_t*)&CPad__DiveJustDown);

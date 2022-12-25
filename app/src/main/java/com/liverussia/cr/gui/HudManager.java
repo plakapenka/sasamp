@@ -1,5 +1,7 @@
 package com.liverussia.cr.gui;
 
+import static java.lang.Thread.sleep;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -34,9 +36,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.factor.bouncy.BouncyRecyclerView;
 import com.liverussia.cr.gui.util.Utils;
 import com.liverussia.launcher.async.dto.response.Servers;
+import com.liverussia.launcher.domain.enums.NativeStorageElements;
+import com.liverussia.launcher.storage.NativeStorage;
 import com.liverussia.launcher.utils.MainUtils;
 import com.nvidia.devtech.NvEventQueueActivity;
 import com.liverussia.cr.R;
+import com.skydoves.progressview.ProgressView;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -51,10 +56,8 @@ public class HudManager {
     private Activity activity;
     private ConstraintLayout hud_main;
     private ConstraintLayout target_notify;
-    private ConstraintLayout yearn_money;
     private ConstraintLayout bus_layout;
     private TextView bus_text;
-    private TextView yearn_moneytext;
     private ImageView target_notify_exit;
     private ImageView target_notify_status;
     private TextView target_notify_text;
@@ -89,6 +92,13 @@ public class HudManager {
     private View hide_chat;
     private ConstraintLayout chat_box;
 
+    // заработано
+    private ConstraintLayout salary_job_layout;
+    private TextView salary_job_salary_text;
+    private TextView salary_job_lvl_text;
+    private ProgressView salary_job_progress;
+    private TextView salary_job_exp_text;
+
     private int cursorPos = 0;
     private final int INVALID = -1;
     private final int ME_BUTTON = 0;
@@ -98,6 +108,15 @@ public class HudManager {
     long buttonLockCD;
     private boolean isHudSetPos = false;
     private int chatFontSize;
+    private int old_salary_exp;
+
+    private int current_real_salary;
+    private int current_visual_salary;
+    Thread thread_update_salary;
+
+    private int current_real_money;
+    private int current_visual_money;
+    Thread thread_update_money;
 
     private RecyclerView chat;
     int defaultChatHeight;
@@ -123,6 +142,17 @@ public class HudManager {
     @SuppressLint("ClickableViewAccessibility")
     public HudManager(Activity aactivity) {
         activity = aactivity;
+
+        salary_job_layout = activity.findViewById(R.id.salary_job_layout);
+        salary_job_layout.setVisibility(View.GONE);
+        salary_job_salary_text = activity.findViewById(R.id.salary_job_salary_text);
+        salary_job_lvl_text = activity.findViewById(R.id.salary_job_lvl_text);
+        salary_job_progress = activity.findViewById(R.id.salary_job_progress);
+        salary_job_exp_text = activity.findViewById(R.id.salary_job_exp_text);
+
+        // TODO hueta
+        String selectedServer = NativeStorage.getClientProperty(NativeStorageElements.SERVER, activity);
+        InitServerLogo(Integer.parseInt(selectedServer));
 
         armour_text = activity.findViewById(R.id.armour_text);
         hp_text = activity.findViewById(R.id.hp_text);
@@ -188,7 +218,7 @@ public class HudManager {
         chat_input = activity.findViewById(R.id.chat_input);
         chat_input.setShowSoftInputOnFocus(false);
 
-        String[] cities = {"Москва", "Самара", "Вологда", "Волгоград", "Саратов", "Воронеж"};
+       // String[] cities = {"Москва", "Самара", "Вологда", "Волгоград", "Саратов", "Воронеж"};
        // AutoCompleteTextView autoCompleteTextView = findViewById(R.id.autocomplete);
         // Создаем адаптер для автозаполнения элемента AutoCompleteTextView
       //  ArrayAdapter<String> autocompleete = new ArrayAdapter (activity, R.layout.chat_autocompleete_line, cities);
@@ -301,10 +331,6 @@ public class HudManager {
         target_notify = aactivity.findViewById(R.id.target_notify);
         target_notify.setVisibility(View.GONE);
 
-        yearn_money = aactivity.findViewById(R.id.yearn_money);
-        yearn_money.setVisibility(View.GONE);
-
-        yearn_moneytext = aactivity.findViewById(R.id.yearn_moneytext);
         target_notify_exit = aactivity.findViewById(R.id.target_notify_exit);
         target_notify_status = aactivity.findViewById(R.id.target_notify_status);
         target_notify_text = aactivity.findViewById(R.id.target_notify_text);
@@ -523,9 +549,50 @@ public class HudManager {
     {
         activity.runOnUiThread(() -> {
             hud_money.setText(formatter.format(money));
-           // hud_money.invalidate();
         });
+        ////current_real_money = money;
+//        if(thread_update_money!= null && thread_update_money.isAlive()){
+//            thread_update_money.interrupt();
+//        }
+
+//            thread_update_money = new Thread(runnable_update_money);
+//            thread_update_money.start();
+
     }
+    Runnable runnable_update_money = new Runnable() { // так вот такая вот хуйня ради маленького эффекта денег )
+        @Override
+        public void run() {
+            while (current_visual_money < current_real_money){
+                current_visual_money += 1150;
+                if(current_visual_money > current_real_money) {
+                    current_visual_money = current_real_money;
+                }
+                activity.runOnUiThread(() -> {
+                    hud_money.setText(formatter.format(current_visual_money));
+                });
+                try {
+                    sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            while (current_visual_money > current_real_money) {
+                current_visual_money -= 1150;
+                if(current_visual_money < current_real_money) {
+                    current_visual_money = current_real_money;
+                }
+                activity.runOnUiThread(() -> {
+                    hud_money.setText(formatter.format(current_visual_money));
+                });
+
+                try {
+                    sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
     public void UpdateWanted(int wantedLVL)
     {
         activity.runOnUiThread(() -> {
@@ -565,27 +632,27 @@ public class HudManager {
     }
 
     public void InitServerLogo(int serverid) {
-        activity.runOnUiThread(() -> {
 
-            List<Servers> list = MainUtils.SERVERS;
-            Servers servers = list.get(serverid);
-
-            ImageView img = activity.findViewById(R.id.hud_logo_img);
-            TextView text = activity.findViewById(R.id.hud_logo_text);
-
-            int MainColor = Color.parseColor(servers.getColor());
-
-            img.setColorFilter(MainColor, PorterDuff.Mode.SRC_ATOP);
-
-            text.setTextColor(MainColor);
-//            text.setShadowLayer(1.0f, 1, 1, MainColor);
-
-            hud_serverlogo.setVisibility(View.VISIBLE);
-
-            hud_serverlogo.post(() ->{
-                text.setText(servers.getname()+" ");
-            });
-        });
+//        activity.runOnUiThread(() -> {
+//            MainUtils global = (MainUtils)activity.getApplication();
+//            List<Servers> list = global.SERVERS;
+//            Servers servers = list.get(serverid);
+//
+//            ImageView img = activity.findViewById(R.id.hud_logo_img);
+//            TextView text = activity.findViewById(R.id.hud_logo_text);
+//
+//            int MainColor = Color.parseColor(servers.getColor());
+//
+//            img.setColorFilter(MainColor, PorterDuff.Mode.SRC_ATOP);
+//
+//            text.setTextColor(MainColor);
+////            text.setShadowLayer(1.0f, 1, 1, MainColor);
+//
+////            hud_serverlogo.setVisibility(View.VISIBLE);
+//
+//           // hud_serverlogo.post(() ->{
+//            text.setText(servers.getname()+" ");
+//            });
 
     }
     public void HideServerLogo()
@@ -603,17 +670,42 @@ public class HudManager {
         levelinfo.setText(strlevelinfo);
     }
 
-    public void UpdateYearnMoney(int money) {
-        String str = String.format("%d", money);
-        yearn_moneytext.setText(str + " P");
+    @SuppressLint("DefaultLocale")
+    public void UpdateSalary(int salary, int lvl, float exp) {
+        if(current_visual_salary > salary)
+        {
+            current_visual_salary = 0;
+        }
+        //current_visual_salary = 0;
+       // current_visual_salary = current_real_salary;
+        current_real_salary = salary;
 
-        Utils.ShowLayout(yearn_money, true);
+        salary_job_exp_text.setText(String.format("%.2f / 100", exp));
+        salary_job_lvl_text.setText(String.format("Ваш уровень работника: %d", lvl));
 
+        if(old_salary_exp > salary) {
+            salary_job_progress.setProgress(0);
+        }
+        salary_job_progress.setProgress(exp);
+
+        activity.runOnUiThread(() -> salary_job_layout.setVisibility(View.VISIBLE) );
+
+        if(thread_update_salary != null && thread_update_salary.isAlive()){
+            thread_update_salary.interrupt();
+        }
+        if(salary == 0) {
+            current_visual_salary = 0;
+            activity.runOnUiThread(() -> salary_job_salary_text.setText("Заработано: 0 рублей"));
+
+        } else {
+            thread_update_salary = new Thread(runnable_update_salary_money);
+            thread_update_salary.start();
+        }
         TimerTask task = new TimerTask() {
             public void run() {
                 activity.runOnUiThread(() -> {
-                    yearn_money.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.popup_hide_notif_to_right));
-                    yearn_money.setVisibility(View.GONE);
+                    salary_job_layout.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.popup_hide_to_top));
+                    salary_job_layout.setVisibility(View.GONE);
                 });
             }
         };
@@ -621,6 +713,25 @@ public class HudManager {
 
         timer.schedule(task, 5000L);
     }
+
+    Runnable runnable_update_salary_money = new Runnable() { // так вот такая вот хуйня ради маленького эффекта денег )
+        @Override
+        public void run() {
+            while (current_visual_salary < current_real_salary){
+                current_visual_salary ++;
+                activity.runOnUiThread(() -> {
+                    salary_job_salary_text.setText(String.format("Заработано: %s рублей", formatter.format(current_visual_salary)));
+                });
+
+                try {
+                    sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
+
 
     public void ShowUpdateTargetNotify(int type, String text) {
         Utils.ShowLayout(target_notify, true);

@@ -9,12 +9,15 @@
 
 extern CGame* pGame;
 extern CNetGame *pNetGame;
+CPlayerPed* g_pCurrentFiredPed;
+BULLET_DATA* g_pCurrentBulletData;
 
 CPlayerPed::CPlayerPed()
 {
 	m_dwGTAId = 1;
 	m_pPed = (PED_TYPE*)GamePool_FindPlayerPed();
 	m_pEntity = (ENTITY_TYPE*)GamePool_FindPlayerPed();
+	m_bHaveBulletData = false;
 
 	m_bytePlayerNumber = 0;
 	SetPlayerPedPtrRecord(m_bytePlayerNumber,(uintptr_t)m_pPed);
@@ -39,6 +42,7 @@ CPlayerPed::CPlayerPed(uint8_t bytePlayerNumber, int iSkin, float fX, float fY, 
 	m_pPed = nullptr;
 	m_dwGTAId = 0;
 	m_dwArrow = 0;
+	m_bHaveBulletData = false;
 
 	ScriptCommand(&create_player, &iPlayerNum, fX, fY, fZ, &dwPlayerActorID);
 	ScriptCommand(&create_actor_from_player, &iPlayerNum, &dwPlayerActorID);
@@ -612,14 +616,14 @@ void CPlayerPed::PutDirectlyInVehicle(CVehicle *pVehicle, int iSeat)
 		GetMatrix(&mat);
 		RemoveFromVehicleAndPutAt(mat.pos.X, mat.pos.Y, mat.pos.Z);
 	}
-	MATRIX4X4 mat;
-	pVehicle->GetMatrix(&mat);
-
-//	GetMatrix(&mat);
-//	mat.pos.X = pVehicle->entity.mat->pos.X;
-//	mat.pos.Y = pVehicle->entity.mat->pos.Y;
-//	mat.pos.Z = pVehicle->entity.mat->pos.Z;
-	SetMatrix(mat);
+//	MATRIX4X4 mat;
+//	pVehicle->GetMatrix(&mat);
+//
+////	GetMatrix(&mat);
+////	mat.pos.X = pVehicle->entity.mat->pos.X;
+////	mat.pos.Y = pVehicle->entity.mat->pos.Y;
+////	mat.pos.Z = pVehicle->entity.mat->pos.Z;
+//	SetMatrix(mat);
 
 	if(iSeat == 0)
 	{
@@ -783,6 +787,11 @@ void CPlayerPed::DestroyFollowPedTask()
 
 }
 
+int Weapon_FireSniper(WEAPON_SLOT_TYPE* pWeaponSlot, PED_TYPE* pPed)
+{
+	return ((int (*)(WEAPON_SLOT_TYPE*, PED_TYPE*))(g_libGTASA + 0x0056668C + 1))(pWeaponSlot, pPed);
+}
+
 void CPlayerPed::ClearAllWeapons()
 {
 	uintptr_t dwPedPtr = (uintptr_t)m_pPed;
@@ -794,8 +803,134 @@ void CPlayerPed::ClearAllWeapons()
 	*(uint8_t*)(g_libGTASA + 0x008E864C) = old;
 }
 
+bool IsValidGamePed(PED_TYPE* pPed);
+
+bool IsGameEntityArePlaceable(ENTITY_TYPE* pEntity) {
+	if (pEntity) {
+		if (pEntity->vtable == g_libGTASA + 0x005C7358) {
+			return true;
+		}
+	}
+	return false;
+}
+
+uintptr_t GetWeaponInfo(int iWeapon, int iSkill)
+{
+	// CWeaponInfo::GetWeaponInfo
+	return ((uintptr_t(*)(int, int))(g_libGTASA + 0x0056BD60 + 1))(iWeapon, iSkill);
+}
+
+VECTOR* CPlayerPed::GetCurrentWeaponFireOffset() {
+	if (!IsValidGamePed(m_pPed) || !GamePool_Ped_GetAt(m_dwGTAId)) {
+		return nullptr;
+	}
+
+	WEAPON_SLOT_TYPE* pSlot = GetCurrentWeaponSlot();
+	if (pSlot) {
+		return (VECTOR*)(GetWeaponInfo(pSlot->dwType, 1) + 0x24);
+	}
+	return nullptr;
+}
+
+void CPlayerPed::GetWeaponInfoForFire(int bLeft, VECTOR* vecBone, VECTOR* vecOut) {
+	if (!IsValidGamePed(m_pPed) || !GamePool_Ped_GetAt(m_dwGTAId)) {
+		return;
+	}
+
+	if (IsGameEntityArePlaceable(&m_pPed->entity)) {
+		return;
+	}
+
+	VECTOR* pFireOffset = GetCurrentWeaponFireOffset();
+	if (pFireOffset && vecBone && vecOut) {
+		vecOut->X = pFireOffset->X;
+		vecOut->Y = pFireOffset->Y;
+		vecOut->Z = pFireOffset->Z;
+
+		int bone_id = 24;
+		if (bLeft) {
+			bone_id = 34;
+		}
+
+		// CPed::GetBonePosition
+		((void (*)(PED_TYPE*, VECTOR*, int, bool))(g_libGTASA + 0x00436590 + 1))(m_pPed, vecBone, bone_id, false);
+
+		vecBone->Z += pFireOffset->Z + 0.15f;
+
+		// CPed::GetTransformedBonePosition
+		((void (*)(PED_TYPE*, VECTOR*, int, bool))(g_libGTASA + 0x004383C0 + 1))(m_pPed, vecOut, bone_id, false);
+	}
+}
+extern uint32_t(*CWeapon__FireInstantHit)(WEAPON_SLOT_TYPE* thiz, PED_TYPE* pFiringEntity, VECTOR* vecOrigin, VECTOR* muzzlePosn, ENTITY_TYPE* targetEntity, VECTOR* target, VECTOR* originForDriveBy, int arg6, int muzzle);
+void CPlayerPed::FireInstant() {
+	if(!m_pPed) return;
+
+	uint8_t byteSavedCameraMode = 0;
+	uint16_t wSavedCameraMode2 = 0;
+	if(m_bytePlayerNumber != 0)
+	{
+		byteSavedCameraMode = *pbyteCameraMode;
+		*pbyteCameraMode = GameGetPlayerCameraMode(m_bytePlayerNumber);
+
+		wSavedCameraMode2 = *wCameraMode2;
+		*wCameraMode2 = GameGetPlayerCameraMode(m_bytePlayerNumber);
+		if(*wCameraMode2 == 4) *wCameraMode2 = 0;
+
+		GameStoreLocalPlayerCameraExtZoom();
+		GameSetRemotePlayerCameraExtZoom(m_bytePlayerNumber);
+
+		GameStoreLocalPlayerAim();
+		GameSetRemotePlayerAim(m_bytePlayerNumber);
+
+	}
+
+	g_pCurrentFiredPed = this;
+
+	if(m_bHaveBulletData)
+	{
+		g_pCurrentBulletData = &m_bulletData;
+	}
+	else
+	{
+		g_pCurrentBulletData = nullptr;
+	}
+
+	WEAPON_SLOT_TYPE *pSlot = GetCurrentWeaponSlot();
+	if(pSlot)
+	{
+		if(GetCurrentWeapon() == WEAPON_SNIPER)
+		{
+			if(pSlot)
+				Weapon_FireSniper(pSlot, m_pPed);
+			else
+				Weapon_FireSniper(nullptr, nullptr);
+		}
+		else
+		{
+			VECTOR vecBonePos;
+			VECTOR vecOut;
+
+			GetWeaponInfoForFire(false, &vecBonePos, &vecOut);
+			CWeapon__FireInstantHit(pSlot, m_pPed, &vecBonePos, &vecOut, nullptr, nullptr, nullptr, 0, 1);
+		}
+	}
+
+	g_pCurrentFiredPed = nullptr;
+	g_pCurrentBulletData = nullptr;
+
+	if(m_bytePlayerNumber)
+	{
+		*pbyteCameraMode = byteSavedCameraMode;
+		*wCameraMode2 = wSavedCameraMode2;
+
+		GameSetLocalPlayerCameraExtZoom();
+		GameSetLocalPlayerAim();
+	}
+}
+
 void CPlayerPed::ResetDamageEntity()
 {
+	Log("ResetDamageEntity");
 	m_pPed->pdwDamageEntity = 0;
 }
 
@@ -1291,6 +1426,7 @@ void CPlayerPed::SetMoveAnim(int iAnimGroup)
 }
 
 
+
 // 0.3.7
 bool CPlayerPed::IsDead()
 {
@@ -1360,105 +1496,48 @@ void CPlayerPed::ApplyAnimation(char* szAnimName, char* szAnimFile, float fDelta
 	ScriptCommand(&apply_animation, m_dwGTAId, szAnimName, szAnimFile, fDelta, bLoop, bLockX, bLockY, bFreeze, uiTime);
 }
 
-BYTE CPlayerPed::FindDeathReasonAndResponsiblePlayer(PLAYERID * nPlayer)
+PLAYERID CPlayerPed::FindDeathResponsiblePlayer()
 {
-	BYTE byteDeathReason;
-	PLAYERID PlayerIDWhoKilled;
-	CVehiclePool *pVehiclePool;
 	CPlayerPool *pPlayerPool;
+	CVehiclePool *pVehiclePool;
+	PLAYERID PlayerIDWhoKilled = INVALID_PLAYER_ID;
 
-	// grab the vehicle/player pool now anyway, even though we may not need it.
-	if(pNetGame) {
+	if(pNetGame)
+	{
 		pVehiclePool = pNetGame->GetVehiclePool();
 		pPlayerPool = pNetGame->GetPlayerPool();
 	}
-	else { // just leave if there's no netgame.
-		*nPlayer = INVALID_PLAYER_ID;
-		return 0xFF;
+	else
+	{ // just leave if there's no netgame.
+		return INVALID_PLAYER_ID;
 	}
 
 	if(m_pPed)
 	{
-		byteDeathReason = (BYTE)m_pPed->dwWeaponUsed;
-		if(byteDeathReason < WEAPON_CAMERA || byteDeathReason == WEAPON_HELIBLADES || byteDeathReason == WEAPON_EXPLOSION) { // It's a weapon of some sort.
-
-			if(m_pPed->pdwDamageEntity) { // check for a player pointer.
-
-				PlayerIDWhoKilled = pPlayerPool->
-						FindRemotePlayerIDFromGtaPtr((PED_TYPE *)m_pPed->pdwDamageEntity);
-
-				if(PlayerIDWhoKilled != INVALID_PLAYER_ID) {
-					// killed by another player with a weapon, this is all easy.
-					*nPlayer = PlayerIDWhoKilled;
-					return byteDeathReason;
-				} else { // could be a vehicle
-					if(pVehiclePool->FindIDFromGtaPtr((VEHICLE_TYPE *)m_pPed->pdwDamageEntity) != INVALID_VEHICLE_ID) {
-						VEHICLE_TYPE *pGtaVehicle = (VEHICLE_TYPE *)m_pPed->pdwDamageEntity;
-						PlayerIDWhoKilled = pPlayerPool->
-								FindRemotePlayerIDFromGtaPtr((PED_TYPE *)pGtaVehicle->pDriver);
-
-						if(PlayerIDWhoKilled != INVALID_PLAYER_ID) {
-							*nPlayer = PlayerIDWhoKilled;
-							return byteDeathReason;
-						}
-					}
-				}
+		if(m_pPed->pdwDamageEntity)
+		{
+			PlayerIDWhoKilled = pPlayerPool->FindRemotePlayerIDFromGtaPtr((PED_TYPE *)m_pPed->pdwDamageEntity);
+			if(PlayerIDWhoKilled != INVALID_PLAYER_ID)
+			{
+				// killed by another player with a weapon, this is all easy.
+				return PlayerIDWhoKilled;
 			}
-			//else { // weapon was used but who_killed is 0 (?)
-			*nPlayer = INVALID_PLAYER_ID;
-			return 0xFF;
-			//}
-		}
-		else if(byteDeathReason == WEAPON_DROWN) {
-			*nPlayer = INVALID_PLAYER_ID;
-			return WEAPON_DROWN;
-		}
-		else if(byteDeathReason == WEAPON_VEHICLE) {
-
-			if(m_pPed->pdwDamageEntity) {
-				// now, if we can find the vehicle
-				// we can probably derive the responsible player.
-				// Look in the vehicle pool for this vehicle.
+			else
+			{
 				if(pVehiclePool->FindIDFromGtaPtr((VEHICLE_TYPE *)m_pPed->pdwDamageEntity) != INVALID_VEHICLE_ID)
 				{
 					VEHICLE_TYPE *pGtaVehicle = (VEHICLE_TYPE *)m_pPed->pdwDamageEntity;
+					PlayerIDWhoKilled = pPlayerPool->FindRemotePlayerIDFromGtaPtr((PED_TYPE *)pGtaVehicle->pDriver);
 
-					PlayerIDWhoKilled = pPlayerPool->
-							FindRemotePlayerIDFromGtaPtr((PED_TYPE *)pGtaVehicle->pDriver);
-
-					if(PlayerIDWhoKilled != INVALID_PLAYER_ID) {
-						*nPlayer = PlayerIDWhoKilled;
-						return WEAPON_VEHICLE;
+					if(PlayerIDWhoKilled != INVALID_PLAYER_ID)
+					{
+						return PlayerIDWhoKilled;
 					}
-				}
-			}
-		}
-		else if(byteDeathReason == WEAPON_COLLISION) {
-
-			if(m_pPed->pdwDamageEntity) {
-				if(pVehiclePool->FindIDFromGtaPtr((VEHICLE_TYPE *)m_pPed->pdwDamageEntity) != INVALID_VEHICLE_ID)
-				{
-					VEHICLE_TYPE *pGtaVehicle = (VEHICLE_TYPE *)m_pPed->pdwDamageEntity;
-
-					PlayerIDWhoKilled = pPlayerPool->
-							FindRemotePlayerIDFromGtaPtr((PED_TYPE *)pGtaVehicle->pDriver);
-
-					if(PlayerIDWhoKilled != INVALID_PLAYER_ID) {
-						*nPlayer = PlayerIDWhoKilled;
-						return WEAPON_COLLISION;
-					}
-				}
-				else {
-					*nPlayer = INVALID_PLAYER_ID;
-					return WEAPON_COLLISION;
 				}
 			}
 		}
 	}
-
-	// Unhandled death type.
-	*nPlayer = INVALID_PLAYER_ID;
-	return 0xFF;
+	return INVALID_PLAYER_ID;
 }
 
 // 0.3.7
@@ -1720,3 +1799,138 @@ void CPlayerPed::ProcessSpecialAction(BYTE byteSpecialAction) {
         m_iPissingState = 0;
     }
 }
+
+void CPlayerPed::ProcessBulletData(BULLET_DATA* btData)
+{
+	if (!m_pPed || !GamePool_Ped_GetAt(m_dwGTAId)) {
+		return;
+	}
+
+	BULLET_SYNC bulletSyncData;
+
+	if (btData) {
+		m_bHaveBulletData = true;
+		m_bulletData.pEntity = btData->pEntity;
+		m_bulletData.vecOrigin.X = btData->vecOrigin.X;
+		m_bulletData.vecOrigin.Y = btData->vecOrigin.Y;
+		m_bulletData.vecOrigin.Z = btData->vecOrigin.Z;
+
+		m_bulletData.vecPos.X = btData->vecPos.X;
+		m_bulletData.vecPos.Y = btData->vecPos.Y;
+		m_bulletData.vecPos.Z = btData->vecPos.Z;
+
+		m_bulletData.vecOffset.X = btData->vecOffset.X;
+		m_bulletData.vecOffset.Y = btData->vecOffset.Y;
+		m_bulletData.vecOffset.Z = btData->vecOffset.Z;
+
+		uint8_t byteHitType = 0;
+		unsigned short InstanceID = 0xFFFF;
+
+		if (m_bytePlayerNumber == 0)
+		{
+			if (pNetGame)
+			{
+				CPlayerPool* pPlayerPool = pNetGame->GetPlayerPool();
+				if (pPlayerPool)
+				{
+					CPlayerPed* pPlayerPed = pPlayerPool->GetLocalPlayer()->GetPlayerPed();
+					if (pPlayerPed)
+					{
+						memset(&bulletSyncData, 0, sizeof(BULLET_SYNC));
+						if (pPlayerPed->GetCurrentWeapon() != WEAPON_SNIPER || btData->pEntity)
+						{
+							if (btData->pEntity)
+							{
+								CVehiclePool* pVehiclePool = pNetGame->GetVehiclePool();
+								CObjectPool* pObjectPool = pNetGame->GetObjectPool();
+
+								uint16_t PlayerID;
+								uint16_t VehicleID;
+								uint16_t ObjectID;
+
+								if (pVehiclePool && pObjectPool)
+								{
+									PlayerID = pPlayerPool->FindRemotePlayerIDFromGtaPtr((PED_TYPE*)btData->pEntity);
+									if (PlayerID == INVALID_PLAYER_ID)
+									{
+										VehicleID = pVehiclePool->FindIDFromGtaPtr((VEHICLE_TYPE*)btData->pEntity);
+										if (VehicleID == INVALID_VEHICLE_ID)
+										{
+											ObjectID = pObjectPool->FindIDFromGtaPtr(btData->pEntity);
+											if (ObjectID == INVALID_OBJECT_ID)
+											{
+												VECTOR vecOut;
+												vecOut.X = 0.0f;
+												vecOut.Y = 0.0f;
+												vecOut.Z = 0.0f;
+
+												if (btData->pEntity->mat)
+												{
+													ProjectMatrix(&vecOut, btData->pEntity->mat, &btData->vecOffset);
+													btData->vecOffset.X = vecOut.X;
+													btData->vecOffset.Y = vecOut.Y;
+													btData->vecOffset.Z = vecOut.Z;
+												}
+												else
+												{
+													btData->vecOffset.X = btData->pEntity->mat->pos.X + btData->vecOffset.X;
+													btData->vecOffset.Y = btData->pEntity->mat->pos.Y + btData->vecOffset.Y;
+													btData->vecOffset.Z = btData->pEntity->mat->pos.Z + btData->vecOffset.Z;
+												}
+											}
+											else
+											{
+												// object
+												byteHitType = 3;
+												InstanceID = ObjectID;
+											}
+										}
+										else
+										{
+											// vehicle
+											byteHitType = 2;
+											InstanceID = VehicleID;
+										}
+									}
+									else
+									{
+										// player
+										byteHitType = 1;
+										InstanceID = PlayerID;
+									}
+								}
+							}
+
+							bulletSyncData.vecOrigin.X = btData->vecOrigin.X;
+							bulletSyncData.vecOrigin.Y = btData->vecOrigin.Y;
+							bulletSyncData.vecOrigin.Z = btData->vecOrigin.Z;
+
+							bulletSyncData.vecPos.X = btData->vecPos.X;
+							bulletSyncData.vecPos.Y = btData->vecPos.Y;
+							bulletSyncData.vecPos.Z = btData->vecPos.Z;
+
+							bulletSyncData.vecOffset.X = btData->vecOffset.X;
+							bulletSyncData.vecOffset.Y = btData->vecOffset.Y;
+							bulletSyncData.vecOffset.Z = btData->vecOffset.Z;
+
+							bulletSyncData.byteHitType = byteHitType;
+							bulletSyncData.PlayerID = InstanceID;
+							bulletSyncData.byteWeaponID = pPlayerPed->GetCurrentWeapon();
+
+							RakNet::BitStream bsBullet;
+							bsBullet.Write((char)ID_BULLET_SYNC);
+							bsBullet.Write((char*)&bulletSyncData, sizeof(BULLET_SYNC));
+							pNetGame->GetRakClient()->Send(&bsBullet, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0);
+						}
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		m_bHaveBulletData = false;
+		memset(&m_bulletData, 0, sizeof(BULLET_DATA));
+	}
+}
+

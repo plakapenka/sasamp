@@ -467,70 +467,6 @@ void CVehicle::ProcessMarkers()
 	}
 }
 
-void CVehicle::SetWheelPopped(uint8_t bytePopped)
-{
-
-	if (!m_pVehicle || !m_dwGTAId)
-	{
-		return;
-	}
-
-	if (!GamePool_Vehicle_GetAt(m_dwGTAId))
-	{
-		return;
-	}
-
-	if (m_pVehicle)
-	{
-		if (!bytePopped)
-		{
-			if (GetVehicleSubtype() == VEHICLE_SUBTYPE_CAR)
-			{
-				((void(*)(VEHICLE_TYPE*))(g_libGTASA + 0x004D5CA4 + 1))(m_pVehicle); // CAutomobile::Fix
-			}
-
-			if (GetVehicleSubtype() == VEHICLE_SUBTYPE_BIKE)
-			{
-				((void(*)(VEHICLE_TYPE*))(g_libGTASA + 0x004E9234 + 1))(m_pVehicle); // CBike::Fix
-			}
-
-			return;
-		}
-	}
-	if(bytePopped | 0b0001)
-	{
-		ScriptCommand(&BURST_CAR_TYRE, m_dwGTAId, 5);
-	}
-	else
-	{
-		ScriptCommand(&FIX_CAR_TYRE, m_dwGTAId, 5);
-	}
-	if(bytePopped | 0b0010)
-	{
-		ScriptCommand(&BURST_CAR_TYRE, m_dwGTAId, 1);
-	}
-	else
-	{
-		ScriptCommand(&FIX_CAR_TYRE, m_dwGTAId, 1);
-	}
-	if(bytePopped | 0b0100)
-	{
-		ScriptCommand(&BURST_CAR_TYRE, m_dwGTAId, 4);
-	}
-	else
-	{
-		ScriptCommand(&FIX_CAR_TYRE, m_dwGTAId, 4);
-	}
-	if(bytePopped | 0b1000)
-	{
-		ScriptCommand(&BURST_CAR_TYRE, m_dwGTAId, 0);
-	}
-	else
-	{
-		ScriptCommand(&FIX_CAR_TYRE, m_dwGTAId, 0);
-	}
-}
-
 void CVehicle::SetDoorState(int iState)
 {
 	if (!m_pVehicle) return;
@@ -1435,36 +1371,212 @@ int CVehicle::GetEngineState(){
 	return m_bEngineOn;
 }
 
-void CVehicle::UpdateDamageStatus(uint32_t dwPanelDamage, uint32_t dwDoorDamage, uint8_t byteLightDamage)
+bool CVehicle::HasDamageModel()
 {
-	
+	if (GetVehicleSubtype() == VEHICLE_SUBTYPE_CAR)
+		return true;
+	return false;
+}
 
-	if (!m_pVehicle || !m_dwGTAId)
+uint8_t CVehicle::GetPanelStatus(uint8_t bPanel)
+{
+	if (m_pVehicle && bPanel < MAX_PANELS)
 	{
-		return;
+		uintptr_t* pDamageManager = (uintptr_t*)((uintptr_t)m_pVehicle + 1456);
+		return ((uint8_t(*)(uintptr_t, uint8_t))(g_libGTASA + 0x4F93D8 + 1))(((uintptr_t)m_pVehicle + 1456), bPanel);
 	}
+	return 0;
+}
 
-	if (!GamePool_Vehicle_GetAt(m_dwGTAId))
+void CVehicle::SetPanelStatus(uint8_t bPanel, uint8_t bPanelStatus)
+{
+	if (m_pVehicle && bPanel < MAX_PANELS && bPanelStatus <= 3)
 	{
-		return;
-	}
-//	SetLightStatus(eLights::LEFT_HEADLIGHT, byteLightDamage & 1);
-//	SetLightStatus(eLights::RIGHT_HEADLIGHT, (byteLightDamage >> 2) & 1);
-//	if ((byteLightDamage >> 6) & 1)
-//	{
-//		SetLightStatus(eLights::LEFT_TAIL_LIGHT, 1);
-//		SetLightStatus(eLights::RIGHT_TAIL_LIGHT, 1);
-//	}
+		if (GetPanelStatus(bPanel) != bPanelStatus)
+		{
+			uintptr_t* pDamageManager = (uintptr_t*)((uintptr_t)m_pVehicle + 1456);
+			((uint8_t(*)(uintptr_t, uint8_t, uint8_t))(g_libGTASA + 0x4F93B8 + 1))(((uintptr_t)m_pVehicle + 1456), bPanel, bPanelStatus);
 
-	// handle only fix, not damaging
-//	if (m_pVehicle && GetVehicleSubtype() == VEHICLE_SUBTYPE_CAR)
-//	{
-//		if (!dwPanelDamage && !dwDoorDamage && !byteLightDamage)
-//		{
-//			((void(*)(VEHICLE_TYPE*))(g_libGTASA + 0x004D5CA4 + 1))(m_pVehicle); // CAutomobile::Fix
-//			return;
-//		}
-//	}
+			if (bPanelStatus == DT_PANEL_INTACT)
+			{
+				// Grab the car node index for the given panel
+				static int s_iCarNodeIndexes[7] = { 0x0F, 0x0E, 0x00 /*?*/, 0x00 /*?*/, 0x12, 0x0C, 0x0D };
+				int iCarNodeIndex = s_iCarNodeIndexes[bPanel];
+
+				// CAutomobile::FixPanel
+				((uint8_t(*)(uintptr_t, uint32_t, uint32_t))(g_libGTASA + 0x4DD238 + 1))((uintptr_t)m_pVehicle, iCarNodeIndex, static_cast<uint32_t>(bPanel));
+			}
+			else
+			{
+				((uint8_t(*)(uintptr_t, uint32_t, bool))(g_libGTASA + 0x4DB024 + 1))((uintptr_t)m_pVehicle, static_cast<uint32_t>(bPanel), false);
+			}
+		}
+	}
+}
+
+uint8_t CVehicle::GetDoorStatus(eDoors bDoor)
+{
+	if (m_pVehicle && bDoor < MAX_DOORS)
+	{
+		DAMAGE_MANAGER_INTERFACE* pDamageManager = (DAMAGE_MANAGER_INTERFACE*)((uintptr_t)m_pVehicle + 1456);
+		if (pDamageManager) return pDamageManager->Door[bDoor];
+	}
+	return 0;
+}
+
+void CVehicle::SetDoorStatus(eDoors bDoor, uint8_t bDoorStatus, bool spawnFlyingComponen)
+{
+	if (m_pVehicle && bDoor < MAX_DOORS)
+	{
+		if (GetDoorStatus(bDoor) != bDoorStatus)
+		{
+			uintptr_t* pDamageManager = (uintptr_t*)((uintptr_t)m_pVehicle + 1456);
+			((uint8_t(*)(uintptr_t, uint8_t, uint8_t, bool))(g_libGTASA + 0x4F9410 + 1))(((uintptr_t)m_pVehicle + 1456), bDoor, bDoorStatus, spawnFlyingComponen);
+
+			if (bDoorStatus == DT_DOOR_INTACT || bDoorStatus == DT_DOOR_SWINGING_FREE)
+			{
+				// Grab the car node index for the given door id
+				static int s_iCarNodeIndexes[6] = { 0x10, 0x11, 0x0A, 0x08, 0x0B, 0x09 };
+				int iCarNodeIndex = s_iCarNodeIndexes[bDoor];
+
+				// CAutomobile::FixDoor
+				((uint8_t(*)(uintptr_t, uint32_t, uint32_t))(g_libGTASA + 0x4DD13C + 1))((uintptr_t)m_pVehicle, iCarNodeIndex, static_cast<uint32_t>(bDoor));
+			}
+			else
+			{
+				bool bQuiet = !spawnFlyingComponen;
+				((uint8_t(*)(uintptr_t, uint32_t, bool))(g_libGTASA + 0x4DB174 + 1))((uintptr_t)m_pVehicle, static_cast<uint32_t>(bDoor), bQuiet);
+			}
+		}
+	}
+}
+
+void CVehicle::SetDoorStatus(uint32_t dwDoorStatus, bool spawnFlyingComponen)
+{
+	if (m_pVehicle)
+	{
+		for (uint8_t uiIndex = 0; uiIndex < MAX_DOORS; uiIndex++)
+		{
+			SetDoorStatus(static_cast<eDoors>(uiIndex), static_cast<uint8_t>(dwDoorStatus), spawnFlyingComponen);
+			dwDoorStatus >>= 8;
+		}
+	}
+}
+
+void CVehicle::SetPanelStatus(uint32_t ulPanelStatus)
+{
+	if (m_pVehicle)
+	{
+		for (uint8_t uiIndex = 0; uiIndex < MAX_PANELS; uiIndex++)
+		{
+			SetPanelStatus(uiIndex, static_cast<uint8_t>(ulPanelStatus));
+			ulPanelStatus >>= 4;
+		}
+	}
+}
+
+void CVehicle::SetLightStatus(uint8_t bLight, uint8_t bLightStatus)
+{
+	if (m_pVehicle && bLight < MAX_LIGHTS)
+	{
+		uintptr_t* pDamageManager = (uintptr_t*)((uintptr_t)m_pVehicle + 1456);
+		((uint8_t(*)(uintptr_t, uint8_t, uint8_t))(g_libGTASA + 0x4F9380 + 1))(((uintptr_t)m_pVehicle + 1456), bLight, bLightStatus);
+	}
+}
+
+void CVehicle::SetLightStatus(uint8_t ucStatus)
+{
+	if (m_pVehicle)
+	{
+		DAMAGE_MANAGER_INTERFACE* pDamageManager = (DAMAGE_MANAGER_INTERFACE*)((uintptr_t)m_pVehicle + 1456);
+		if (pDamageManager) pDamageManager->Lights = static_cast<uint32_t>(ucStatus);
+	}
+}
+
+uint8_t CVehicle::GetLightStatus(uint8_t bLight)
+{
+	if (m_pVehicle && bLight < MAX_LIGHTS)
+	{
+		uintptr_t* pDamageManager = (uintptr_t*)((uintptr_t)m_pVehicle + 1456);
+		return ((uint8_t(*)(uintptr_t, uint8_t))(g_libGTASA + 0x4F93A0 + 1))(((uintptr_t)m_pVehicle + 1456), bLight);
+	}
+	return 0;
+}
+
+uint8_t CVehicle::GetWheelStatus(eWheelPosition bWheel)
+{
+	if (m_pVehicle && bWheel < MAX_WHEELS)
+	{
+		return ((uint8_t(*)(uintptr_t, uint8_t))(g_libGTASA + 0x4F9400 + 1))(((uintptr_t)m_pVehicle + 1456), bWheel);
+	}
+	return 0;
+}
+
+void CVehicle::SetWheelStatus(eWheelPosition bWheel, uint8_t bTireStatus)
+{
+	if (m_pVehicle && bWheel < MAX_WHEELS)
+	{
+		uintptr_t* pDamageManager = (uintptr_t*)((uintptr_t)m_pVehicle + 1456);
+		((uint8_t(*)(uintptr_t, uint8_t, uint8_t))(g_libGTASA + 0x4F93F0 + 1))(((uintptr_t)m_pVehicle + 1456), bWheel, bTireStatus);
+	}
+}
+
+void CVehicle::SetBikeWheelStatus(uint8_t bWheel, uint8_t bTireStatus)
+{
+	if (m_pVehicle && bWheel < 2)
+	{
+		if (bWheel == 0)
+		{
+			*(uint8_t*)((uintptr_t)m_pVehicle + 1644) = bTireStatus;
+		}
+		else
+		{
+			*(uint8_t*)((uintptr_t)m_pVehicle + 1645) = bTireStatus;
+		}
+	}
+}
+
+uint8_t CVehicle::GetBikeWheelStatus(uint8_t bWheel)
+{
+	if (m_pVehicle && bWheel < 2)
+	{
+		if (bWheel == 0)
+		{
+			return *(uint8_t*)((uintptr_t)m_pVehicle + 1644);
+		}
+		else
+		{
+			return *(uint8_t*)((uintptr_t)m_pVehicle + 1645);
+		}
+	}
+	return 0;
+}
+
+void CVehicle::UpdateDamageStatus(uint32_t dwPanelDamage, uint32_t dwDoorDamage, uint8_t byteLightDamage, uint8_t byteTireDamage)
+{
+	if (HasDamageModel())
+	{
+		SetPanelStatus(dwPanelDamage);
+		SetDoorStatus(dwDoorDamage, false);
+
+		SetLightStatus(eLights::LEFT_HEADLIGHT, byteLightDamage & 1);
+		SetLightStatus(eLights::RIGHT_HEADLIGHT, (byteLightDamage >> 2) & 1);
+		if ((byteLightDamage >> 6) & 1)
+		{
+			SetLightStatus(eLights::LEFT_TAIL_LIGHT, 1);
+			SetLightStatus(eLights::RIGHT_TAIL_LIGHT, 1);
+		}
+
+		SetWheelStatus(eWheelPosition::REAR_RIGHT_WHEEL, byteTireDamage & 1);
+		SetWheelStatus(eWheelPosition::FRONT_RIGHT_WHEEL, (byteTireDamage >> 1) & 1);
+		SetWheelStatus(eWheelPosition::REAR_LEFT_WHEEL, (byteTireDamage >> 2) & 1);
+		SetWheelStatus(eWheelPosition::FRONT_LEFT_WHEEL, (byteTireDamage >> 3) & 1);
+	}
+	else if (GetVehicleSubtype() == VEHICLE_SUBTYPE_BIKE)
+	{
+		SetBikeWheelStatus(1, byteTireDamage & 1);
+		SetBikeWheelStatus(0, (byteTireDamage >> 1) & 1);
+	}
 }
 
 unsigned int CVehicle::GetVehicleSubtype()
@@ -1508,4 +1620,75 @@ bool CVehicle::IsTrailer()
 {
 
 	return ((bool (*)(int)) (g_libGTASA + 0x00336940 + 1))(m_pVehicle->entity.nModelIndex);
+}
+
+void CVehicle::GetDamageStatusEncoded(uint8_t* byteTyreFlags, uint8_t* byteLightFlags, uint32_t* dwDoorFlags, uint32_t* dwPanelFlags)
+{
+	if (byteTyreFlags) *byteTyreFlags = GetWheelStatus(eWheelPosition::REAR_RIGHT_WHEEL) | (GetWheelStatus(eWheelPosition::FRONT_RIGHT_WHEEL) << 1)
+										| (GetWheelStatus(eWheelPosition::REAR_LEFT_WHEEL) << 2) | (GetWheelStatus(eWheelPosition::FRONT_LEFT_WHEEL) << 3);
+
+	if (byteLightFlags) *byteLightFlags = GetLightStatus(eLights::LEFT_HEADLIGHT) | (GetLightStatus(eLights::RIGHT_HEADLIGHT) << 2);
+	if (GetLightStatus(eLights::LEFT_TAIL_LIGHT) && GetLightStatus(eLights::RIGHT_TAIL_LIGHT))
+		*byteLightFlags |= (1 << 6);
+
+	if (dwDoorFlags) *dwDoorFlags = GetDoorStatus(eDoors::BONNET) | (GetDoorStatus(eDoors::BOOT) << 8) |
+									(GetDoorStatus(eDoors::FRONT_LEFT_DOOR) << 16) | (GetDoorStatus(eDoors::FRONT_RIGHT_DOOR) << 24);
+
+	if (dwPanelFlags) *dwPanelFlags = GetPanelStatus(ePanels::FRONT_LEFT_PANEL) | (GetPanelStatus(ePanels::FRONT_RIGHT_PANEL) << 4)
+									  | (GetPanelStatus(ePanels::REAR_LEFT_PANEL) << 8) | (GetPanelStatus(ePanels::REAR_RIGHT_PANEL) << 12)
+									  | (GetPanelStatus(ePanels::WINDSCREEN_PANEL) << 16) | (GetPanelStatus(ePanels::FRONT_BUMPER) << 20)
+									  | (GetPanelStatus(ePanels::REAR_BUMPER) << 24);
+}
+
+void CVehicle::ProcessDamage()
+{
+	if (pNetGame)
+	{
+		VEHICLEID vehId = pNetGame->GetVehiclePool()->FindIDFromGtaPtr(m_pVehicle);
+		if (vehId != INVALID_VEHICLE_ID)
+		{
+			if (HasDamageModel())
+			{
+				uint8_t byteTyreFlags, byteLightFlags;
+				uint32_t dwDoorFlags, dwPanelFlags;
+
+				GetDamageStatusEncoded(&byteTyreFlags, &byteLightFlags, &dwDoorFlags, &dwPanelFlags);
+				if (byteTyreFlags != m_byteTyreStatus || byteLightFlags != m_byteLightStatus ||
+					dwDoorFlags != m_dwDoorStatus || dwPanelFlags != m_dwPanelStatus)
+				{
+					m_byteLightStatus = byteLightFlags;
+					m_byteTyreStatus = byteTyreFlags;
+					m_dwDoorStatus = dwDoorFlags;
+					m_dwPanelStatus = dwPanelFlags;
+
+					RakNet::BitStream bsDamage;
+
+					bsDamage.Write(vehId);
+					bsDamage.Write(dwPanelFlags);
+					bsDamage.Write(dwDoorFlags);
+					bsDamage.Write(byteLightFlags);
+					bsDamage.Write(byteTyreFlags);
+
+					pNetGame->GetRakClient()->RPC(&RPC_VehicleDamage, &bsDamage, HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, false, UNASSIGNED_NETWORK_ID, nullptr);
+				}
+			}
+			else if (GetVehicleSubtype() == VEHICLE_SUBTYPE_BIKE)
+			{
+				uint8_t byteTyreFlags = GetBikeWheelStatus(1) | (GetBikeWheelStatus(0) << 1);
+				if (m_byteTyreStatus != byteTyreFlags)
+				{
+					m_byteTyreStatus = byteTyreFlags;
+
+					RakNet::BitStream bsDamage;
+					bsDamage.Write(vehId);
+					bsDamage.Write((uint32_t)0);
+					bsDamage.Write((uint32_t)0);
+					bsDamage.Write((uint8_t)0);
+					bsDamage.Write(byteTyreFlags);
+
+					pNetGame->GetRakClient()->RPC(&RPC_VehicleDamage, &bsDamage, HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, false, UNASSIGNED_NETWORK_ID, nullptr);
+				}
+			}
+		}
+	}
 }

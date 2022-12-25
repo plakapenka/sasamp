@@ -1117,29 +1117,24 @@ void WorldPlayerDeath(RPCParameters* rpcParams)
 
 void DamageVehicle(RPCParameters* rpcParams)
 {
-	
-	uint8_t* Data = reinterpret_cast<uint8_t*>(rpcParams->input);
-	int iBitLength = rpcParams->numberOfBitsOfData;
+	RakNet::BitStream bsData(rpcParams->input, (rpcParams->numberOfBitsOfData / 8) + 1, false);
 
-	RakNet::BitStream bsData(Data, (iBitLength / 8) + 1, false);
+	VEHICLEID vehId;
+	bsData.Read(vehId);
 
-	VEHICLEID VehicleID;
-	uint32_t	dwPanels;
-	uint32_t	dwDoors;
-	uint8_t		byteLights;
-	uint8_t		byteTires;
-
-	bsData.Read(VehicleID);
-	bsData.Read(dwPanels);
-	bsData.Read(dwDoors);
-	bsData.Read(byteLights);
-	bsData.Read(byteTires);
-
-	CVehicle* pVehicle = pNetGame->GetVehiclePool()->GetAt(VehicleID);
-	if (pVehicle) 
+	if (pNetGame->GetVehiclePool()->GetSlotState(vehId))
 	{
-		pVehicle->UpdateDamageStatus(dwPanels, dwDoors, byteLights);
-		pVehicle->SetWheelPopped(byteTires);
+		uint32_t dwPanelStatus, dwDoorStatus;
+		uint8_t byteLightStatus, byteTireStatus;
+
+		bsData.Read(dwPanelStatus);
+		bsData.Read(dwDoorStatus);
+		bsData.Read(byteLightStatus);
+		bsData.Read(byteTireStatus);
+
+		CVehicle* pVehicle = pNetGame->GetVehiclePool()->GetAt(vehId);
+		if (pVehicle)
+			pVehicle->UpdateDamageStatus(dwPanelStatus, dwDoorStatus, byteLightStatus, byteTireStatus);
 	}
 }
 
@@ -1399,7 +1394,7 @@ void RegisterRPCs(RakClientInterface* pRakClient)
 
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_WorldPlayerDeath, WorldPlayerDeath);
 
-	pRakClient->RegisterAsRemoteProcedureCall(&RPC_DamageVehicle, DamageVehicle);
+	pRakClient->RegisterAsRemoteProcedureCall(&RPC_VehicleDamage, DamageVehicle);
 
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ShowActor, WorldActorAdd);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_HideActor, WorldActorRemove);
@@ -1452,7 +1447,7 @@ void UnRegisterRPCs(RakClientInterface* pRakClient)
 
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_WorldPlayerDeath);
 
-	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_DamageVehicle);
+	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_VehicleDamage);
 
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_ShowActor);
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_HideActor);

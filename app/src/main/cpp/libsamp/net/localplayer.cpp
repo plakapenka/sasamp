@@ -76,6 +76,7 @@ CLocalPlayer::CLocalPlayer()
 	m_bIsSpectating = false;
 	m_byteSpectateType = SPECTATE_TYPE_NONE;
 	m_SpectateID = 0xFFFFFFFF;
+	FindDeathReasonPlayer = 0;
 
 	uint8_t i;
 	for (i = 0; i < 13; i++)
@@ -481,75 +482,35 @@ bool CLocalPlayer::Process()
 }
 extern float                    m_fWeaponDamages[43 + 1];
 
-void CLocalPlayer::SendBulletSyncData(PLAYERID byteHitID, uint8_t byteHitType, VECTOR vecHitPos)
+void CLocalPlayer::GiveTakeDamage(bool bGiveOrTake, uint16_t wPlayerID, float damage_amount, uint32_t weapon_id, uint32_t bodypart)
 {
-	if (!m_pPlayerPed) return;
-	switch (byteHitType) {
-		case ENTITY_TYPE_UNKNOWN:
-			break;
-		case ENTITY_TYPE_PED: //player
-			if (!pNetGame->GetPlayerPool()->GetSlotState((PLAYERID) byteHitID)) return;
-			break;
-		default:
-			return; //unknown type
-	}
-	uint8_t byteCurrWeapon = m_pPlayerPed->GetCurrentWeapon(), byteShotWeapon;
+	RakNet::BitStream bitStream;
 
-	BULLET_SYNC blSync;
+	bitStream.Write((bool)bGiveOrTake);
+	bitStream.Write((uint16_t)wPlayerID);
+	bitStream.Write((float)damage_amount);
+	bitStream.Write((uint32_t)weapon_id);
+	bitStream.Write((uint32_t)bodypart);
 
-		blSync.hitId = byteHitID;
-		blSync.hitType = byteHitType;
+	FindDeathReasonPlayer = weapon_id;
 
-		if (byteHitType == ENTITY_TYPE_PED) {
-			float fDistance = pNetGame->GetPlayerPool()->GetAt(
-					(PLAYERID) byteHitID)->GetPlayerPed()->GetDistanceFromLocalPlayerPed();
-			if (byteCurrWeapon != 0 && fDistance < 1.0f)
-				byteShotWeapon = 0;
-			else
-				byteShotWeapon = byteCurrWeapon;
-		}
-		blSync.weapId = byteShotWeapon;
+	// pChatWindow->AddDebugMessage("Id: %d, Weapon: %d, Damage: %d", wPlayerID, weapon_id, damage_amount);
 
-		blSync.hitPos[0] = vecHitPos.X;
-		blSync.hitPos[1] = vecHitPos.Y;
-		blSync.hitPos[2] = vecHitPos.Z;
-		blSync.offsets[0] = 0.0f;
-		blSync.offsets[1] = 0.0f;
-		blSync.offsets[2] = 0.0f;
-		MATRIX4X4 mat;
-		m_pPlayerPed->GetMatrix(&mat);
-		blSync.origin[0] = mat.pos.X;
-		blSync.origin[1] = mat.pos.Y;
-		blSync.origin[2] = mat.pos.Z;
-
-	if(0 <= byteCurrWeapon <= 18 || 22 <= byteCurrWeapon <= 46) {
-		RakNet::BitStream bsBulletSync;
-		bsBulletSync.Write((uint8_t) ID_BULLET_SYNC);
-		bsBulletSync.Write((const char *) &blSync, sizeof(BULLET_SYNC));
-		pNetGame->GetRakClient()->Send(&bsBulletSync, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0);
-	}
-
-	RakNet::BitStream bsRPC;
-	bsRPC.Write((bool)false);
-	bsRPC.Write((PLAYERID)blSync.hitId);
-	bsRPC.Write((float)m_fWeaponDamages[blSync.weapId]);
-	bsRPC.Write((uint32_t)blSync.weapId);
-	bsRPC.Write((uint32_t)1);
-	pNetGame->GetRakClient()->RPC(&RPC_PlayerGiveTakeDamage, &bsRPC, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0, false, UNASSIGNED_NETWORK_ID, nullptr);
-	//Log("[BULLET_SYNC] sent.");
+	pNetGame->GetRakClient()->RPC(&RPC_PlayerGiveTakeDamage, &bitStream, HIGH_PRIORITY, RELIABLE_ORDERED, 0, false, UNASSIGNED_NETWORK_ID, nullptr);
 }
 
 void CLocalPlayer::SendWastedNotification()
 {
 	RakNet::BitStream bsPlayerDeath;
-	uint8_t byteDeathReason;
-	uint16_t WhoWasResponsible;
-
-	byteDeathReason = m_pPlayerPed->FindDeathReasonAndResponsiblePlayer(&WhoWasResponsible);
-
-	bsPlayerDeath.Write(byteDeathReason);
-	bsPlayerDeath.Write(WhoWasResponsible);
-	pNetGame->GetRakClient()->RPC(&RPC_Death, &bsPlayerDeath, HIGH_PRIORITY, RELIABLE_ORDERED, 0, false, UNASSIGNED_NETWORK_ID, NULL);
+	CPlayerPool *pPlayerPool = pNetGame->GetPlayerPool();
+	if(pPlayerPool)
+	{
+		PLAYERID WhoWasResponsible = m_pPlayerPed->FindDeathResponsiblePlayer();
+		bsPlayerDeath.Write(FindDeathReasonPlayer);
+		bsPlayerDeath.Write(WhoWasResponsible);
+		pNetGame->GetRakClient()->RPC(&RPC_Death, &bsPlayerDeath, HIGH_PRIORITY, RELIABLE_ORDERED, 0, false, UNASSIGNED_NETWORK_ID, nullptr);
+		Log("SendWastedNotification");
+	}
 //
 }
 
