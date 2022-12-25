@@ -62,6 +62,8 @@ public:
     void ToggleChat(bool toggle);
 
     void ChangeChatTextSize(int size);
+
+    void UpdateSalary(int salary, int lvl, float exp);
 };
 
 

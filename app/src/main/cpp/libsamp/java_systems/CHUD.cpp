@@ -288,6 +288,25 @@ Java_com_liverussia_cr_gui_Speedometer_ClickSpedometr(JNIEnv *env, jobject thiz,
     pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
 }
 
+void CNetGame::Packet_Salary(Packet* p)
+{
+    RakNet::BitStream bs((unsigned char*)p->data, p->length, false);
+    uint8_t packetID;
+    uint32_t rpcID;
+    uint32_t salary;
+    uint32_t lvl;
+    float exp;
+
+    bs.Read(packetID);
+    bs.Read(rpcID);
+    bs.Read(salary);
+    bs.Read(lvl);
+    bs.Read(exp);
+
+
+    pHud->UpdateSalary(salary, lvl, exp);
+}
+
 void CNetGame::Packet_MAFIA_WAR(Packet* p)
 {
     RakNet::BitStream bs((unsigned char*)p->data, p->length, false);
@@ -324,6 +343,16 @@ void CHUD::UpdateOpgWarLayout(int time, int attack_score, int def_score)
         isMafia_war_layout_active = false;
     }
     else isMafia_war_layout_active = true;
+}
+
+void CHUD::UpdateSalary(int salary, int lvl, float exp)
+{
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+
+    jclass clazz = env->GetObjectClass(jHudManager);
+    jmethodID UpdateSalary = env->GetMethodID(clazz, "UpdateSalary", "(IIF)V");
+
+    env->CallVoidMethod(jHudManager, UpdateSalary, salary, lvl, exp);
 }
 
 void CHUD::SetChatInput(const char ch[])

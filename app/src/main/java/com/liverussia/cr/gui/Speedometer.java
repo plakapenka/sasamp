@@ -80,17 +80,16 @@ public class Speedometer {
 
     public void UpdateSpeedInfo(int speed, int fuel, int hp, int mileage, int engine, int light, int belt, int lock){
         hp= (int) hp/10;
-        mFuel.setText(new Formatter().format("%03d", Integer.valueOf(fuel)).toString());
-        mMileage.setText(new Formatter().format("%06d", Integer.valueOf(mileage)).toString());
-        mCarHP.setText(new Formatter().format("%d%s", Integer.valueOf(hp), "%").toString());
+        mFuel.setText(new Formatter().format("%03d", fuel).toString());
+        mMileage.setText(new Formatter().format("%06d", mileage).toString());
+        mCarHP.setText(new Formatter().format("%d%%", hp).toString());
         mSpeedLine.setProgress(speed);
         mSpeed.setText(String.valueOf(speed));
 
         mEngine.setImageResource(engine == 1 ? R.drawable.speedometr_engine_on : R.drawable.speedometr_engine_off);
-        mLight.setImageResource(light == 2 ? R.drawable.speedometr_light_on : R.drawable.speedometr_light_off);
+        mLight.setImageResource(light == 1 ? R.drawable.speedometr_light_on : R.drawable.speedometr_light_off);
         mBelt.setColorFilter(belt == 1 ? Color.parseColor("#FF0000") : Color.parseColor("#00FF00"), PorterDuff.Mode.SRC_IN);
         mLock.setColorFilter(lock == 1 ? Color.parseColor("#FF0000") : Color.parseColor("#00FF00"), PorterDuff.Mode.SRC_IN);
-
 
     }
 

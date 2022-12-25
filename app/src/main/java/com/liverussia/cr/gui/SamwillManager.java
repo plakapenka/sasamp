@@ -62,7 +62,7 @@ public class SamwillManager {
             view.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.button_click));
             if (samwill_progress.getProgress() > 2500 && samwill_progress.getProgress() < 4050 && samwill1!=0)
             {
-                soundPool.play(sawSound, 0.3f, 0.3f, 1, 0, 1.2f);
+                soundPool.play(sawSound, 0.1f, 0.1f, 1, 0, 1.2f);
                 samwillpacket++;
                 samwill1 = 1;
                 samwill_1.setImageResource(R.drawable.samwill_green);
@@ -80,7 +80,7 @@ public class SamwillManager {
             }
             if (samwill_progress.getProgress() > 7100 && samwill_progress.getProgress() < 8650 && samwill2!=0)
             {
-                soundPool.play(sawSound, 0.3f, 0.3f, 1, 0, 1.2f);
+                soundPool.play(sawSound, 0.1f, 0.1f, 1, 0, 1.2f);
                 samwillpacket++;
                 samwill2 = 1;
                 samwill_2.setImageResource(R.drawable.samwill_green);
@@ -98,7 +98,7 @@ public class SamwillManager {
             }
             if (samwill_progress.getProgress() > 11720 && samwill_progress.getProgress() < 13250 && samwill3!=0)
             {
-                soundPool.play(sawSound, 0.3f, 0.3f, 1, 0, 1.2f);
+                soundPool.play(sawSound, 0.1f, 0.1f, 1, 0, 1.2f);
                 samwillpacket++;
                 samwill3 = 1;
                 samwill_3.setImageResource(R.drawable.samwill_green);
@@ -115,7 +115,7 @@ public class SamwillManager {
             }
             if (samwill_progress.getProgress() > 16330 && samwill_progress.getProgress() < 17870 && samwill4!=0)
             {
-                soundPool.play(sawSound, 0.3f, 0.3f, 1, 0, 1.2f);
+                soundPool.play(sawSound, 0.1f, 0.1f, 1, 0, 1.2f);
                 samwillpacket++;
                 samwill4 = 1;
                 samwill_4.setImageResource(R.drawable.samwill_green);
@@ -132,10 +132,14 @@ public class SamwillManager {
             }
             else if (samwill_progress.getProgress() > 20920 && samwill_progress.getProgress() < 22480 && samwill5!=0)
             {
+                soundPool.play(sawSound, 0.1f, 0.1f, 1, 0, 1.2f);
                 samwillpacket++;
                 samwill5 = 1;
                 samwill_5.setImageResource(R.drawable.samwill_green);
                 tick = 22480;
+
+                Hide();
+                countDownTimer.cancel();
                 return;
             }else if (samwill_progress.getProgress() < 22480) {
                 if (vibrator.hasVibrator()) {

@@ -348,16 +348,16 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <View
                     android:id="@+id/hud_logo_text_layout"
                     android:layout_width="@dimen/_80sdp"
                     android:layout_height="@dimen/_17sdp"
-                    android:layout_marginStart="@dimen/_27sdp"
+                    android:layout_marginStart="@dimen/_28sdp"
                     android:background="@drawable/logo_bg"
                     app:layout_constraintBottom_toBottomOf="@+id/hud_logo_img_layout"
                     app:layout_constraintStart_toEndOf="@+id/hud_logo_img_layout"
                     app:layout_constraintStart_toStartOf="@+id/hud_logo_img_layout"
-                    app:layout_constraintTop_toTopOf="@+id/hud_logo_img_layout">
+                    app:layout_constraintTop_toTopOf="@+id/hud_logo_img_layout"/>
 
                     <TextView
                         android:id="@+id/hud_logo_text"
@@ -379,10 +379,9 @@
                         android:textFontWeight="900"
                         android:textSize="@dimen/_10sdp"
                         android:textStyle="italic"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                        app:layout_constraintBottom_toBottomOf="@+id/hud_logo_text_layout"
+                        app:layout_constraintStart_toStartOf="@+id/hud_logo_text_layout"
+                        app:layout_constraintTop_toTopOf="@+id/hud_logo_text_layout" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/hud_logo_img_layout"
@@ -467,32 +466,6 @@
             android:src="@drawable/enter_car_butt_type_car"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/yearn_money"
-            android:layout_width="100dp"
-            android:layout_height="45dp"
-            android:layout_marginTop="150dp"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/work_money"
-            app:layout_constraintEnd_toStartOf="@+id/vehicle_lock_butt"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <TextView
-                android:id="@+id/yearn_moneytext"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:fontFamily="@font/din_pro_bold"
-                android:text="0 Р"
-                android:textColor="#5DDD28"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/target_notify"
@@ -710,7 +683,7 @@
             app:srcCompat="@drawable/bus_text" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!--        <ImageView-->
+<!--            <ImageView-->
 <!--            android:id="@+id/hud_logo_image"-->
 <!--            android:layout_width="@dimen/_40sdp"-->
 <!--            android:layout_height="@dimen/_40sdp"-->
@@ -838,6 +811,84 @@
                 app:layout_constraintStart_toEndOf="@+id/try_button"
                 app:layout_constraintTop_toBottomOf="@+id/chat_input" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/salary_job_layout"
+        android:layout_width="@dimen/_200sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:background="@drawable/job_exp_bot_rounded"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/salary_job_salary_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:fontFamily="@font/visby_round_cf_extra_bold"
+            android:includeFontPadding="false"
+            android:shadowColor="@color/black"
+            android:shadowRadius="2"
+            android:text="Заработано: 5.550 рублей"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_7sdp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/salary_job_lvl_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_7sdp"
+            android:fontFamily="@font/visby_round_cf_extra_bold"
+            android:includeFontPadding="false"
+            android:shadowColor="@color/black"
+            android:shadowRadius="2"
+            android:text="Ваш уровень работника: 5"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_6sdp"
+            app:layout_constraintStart_toStartOf="@+id/salary_job_salary_text"
+            app:layout_constraintTop_toBottomOf="@+id/salary_job_salary_text" />
+
+        <com.skydoves.progressview.ProgressView
+            android:id="@+id/salary_job_progress"
+            android:layout_width="@dimen/_185sdp"
+            android:layout_height="@dimen/_6sdp"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/salary_job_lvl_text"
+            app:layout_constraintTop_toBottomOf="@+id/salary_job_lvl_text"
+            app:progressView_animation="accelerateDecelerate"
+            app:progressView_autoAnimate="true"
+            app:progressView_colorBackground="@color/black20"
+            app:progressView_colorProgress="@color/yellow"
+
+            app:progressView_max="100"
+            app:progressView_padding="1dp"
+            app:progressView_progress="50"
+            app:progressView_progressFromPrevious="true"
+            app:progressView_radius="5dp" />
+
+        <TextView
+            android:id="@+id/salary_job_exp_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/visby_round_cf_extra_bold"
+            android:includeFontPadding="false"
+            android:text="45.5/100"
+            android:textColor="@color/white"
+            android:shadowColor="@color/black"
+            android:shadowRadius="3"
+            android:textSize="@dimen/_4sdp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/salary_job_progress"
+            app:layout_constraintEnd_toEndOf="@+id/salary_job_progress"
+            app:layout_constraintStart_toStartOf="@+id/salary_job_progress"
+            app:layout_constraintTop_toTopOf="@+id/salary_job_progress" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ImageView

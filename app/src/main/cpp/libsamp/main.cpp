@@ -98,7 +98,7 @@ void InitSAMP(JNIEnv* pEnv, jobject thiz, const char* path)
 
 	InitBASSFuncs();
 	BASS_Init(-1, 44100, BASS_DEVICE_3D, 0, NULL);
-	BASS_Set3DFactors(1.0, 0.1, 0);
+	BASS_Set3DFactors(0.2, 0.1, 0);
 
 	//g_pszStorage = path;
 	strcpy(g_pszStorage, path);
@@ -220,7 +220,7 @@ void InitInGame()
 		pGame->SetMaxStats();
 
 		g_pJavaWrapper->UpdateSplash(101);
-		pHud->InitServerLogo(pSettings->GetReadOnly().szServer);
+
 		g_pJavaWrapper->ShowServerLogo();
 		bGameInited = true;
 
