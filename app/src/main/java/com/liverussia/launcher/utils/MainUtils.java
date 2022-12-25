@@ -1,5 +1,6 @@
 package com.liverussia.launcher.utils;
 
+import android.app.Application;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,17 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainUtils extends AppCompatActivity {
+public class MainUtils extends Application {
     public static AppCompatActivity currentContext;
     public static DownloadType TYPE = DownloadType.LOAD_ALL_CACHE;
     public static List<FileInfo> FILES_TO_RELOAD;
     public static LatestVersionInfoDto LATEST_APK_INFO;
     public static List<News> NEWS = new ArrayList<>();
     public static List<Servers> SERVERS = new ArrayList<>();
-
-    protected void onCreate(Bundle bundle) {
-        super.onCreate(bundle);
-    }
 
     public static DownloadType getType() {
         return TYPE;

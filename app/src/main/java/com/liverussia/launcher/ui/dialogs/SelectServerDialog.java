@@ -59,7 +59,8 @@ public class SelectServerDialog extends DialogFragment implements View.OnClickLi
         LinearLayoutManager layoutManagerr = new LinearLayoutManager(getActivity());
         recyclerServers.setLayoutManager(layoutManagerr);
 
-        serversAdapter = new ServersDialogAdapter(getContext(), MainUtils.SERVERS, this);
+        MainUtils global = (MainUtils)getActivity().getApplication();
+        serversAdapter = new ServersDialogAdapter(getContext(), global.SERVERS, this);
         recyclerServers.setAdapter(serversAdapter);
 
         return view;

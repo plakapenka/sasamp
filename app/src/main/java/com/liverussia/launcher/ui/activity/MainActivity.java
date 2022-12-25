@@ -1,6 +1,7 @@
 package com.liverussia.launcher.ui.activity;
 
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Build;
 

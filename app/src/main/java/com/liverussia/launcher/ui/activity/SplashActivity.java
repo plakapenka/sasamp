@@ -60,7 +60,6 @@ public class SplashActivity extends AppCompatActivity {
 		MainUtils.SERVERS = new ArrayList<>();
 		MainUtils.NEWS = new ArrayList<>();
 	}
-
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
 		checkAndroidVersion();

@@ -50,18 +50,18 @@ public class ServersDialogAdapter extends RecyclerView.Adapter<ServersAdapter.Se
     public void onBindViewHolder(@NonNull ServersAdapter.ServersViewHolder holder, int position) {
         Servers servers = this.servers.get(position);
         int MainColor = Color.parseColor(servers.getColor());
-        int LightColor = Color.parseColor(servers.getColorl());
+//        int LightColor = Color.parseColor(servers.getColorl());
 
-        holder.bearPaw.setColorFilter(LightColor, PorterDuff.Mode.SRC_ATOP);
-        holder.people.setColorFilter(LightColor, PorterDuff.Mode.SRC_ATOP);
+        holder.bearPaw.setColorFilter(MainColor, PorterDuff.Mode.SRC_ATOP);
+        holder.people.setColorFilter(MainColor, PorterDuff.Mode.SRC_ATOP);
         holder.backColor.getBackground().setColorFilter(MainColor, PorterDuff.Mode.SRC_ATOP);
         holder.name.setText(servers.getname());
-        holder.name.setTextColor(LightColor);
+        holder.name.setTextColor(MainColor);
         holder.dopname.setText(servers.getDopname());
         holder.textonline.setText(Integer.toString(servers.getOnline()));
         holder.textmaxonline.setText(new String("/" + Integer.toString(servers.getmaxOnline())));
         holder.progressBar.setProgressStartColor(MainColor);
-        holder.progressBar.setProgressEndColor(LightColor);
+        holder.progressBar.setProgressEndColor(MainColor);
         holder.progressBar.setProgress(servers.getOnline());
         holder.progressBar.setMax(servers.getmaxOnline());
         holder.container.setOnClickListener(new View.OnClickListener() {

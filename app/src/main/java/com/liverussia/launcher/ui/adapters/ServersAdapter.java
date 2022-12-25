@@ -63,6 +63,11 @@ public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersV
     public void onBindViewHolder(ServersViewHolder holder, int position) {
 		Servers servers = this.servers.get(position);
 		int MainColor = Color.parseColor(servers.getColor());
+		if(servers.getLock() == 1){
+			holder.bearPaw.setImageResource(R.drawable.server_lock_icon);
+		} else {
+			holder.bearPaw.setImageResource(R.drawable.bear_paw);
+		}
 	//	int LightColor = Color.parseColor(servers.getColor());
 
 		holder.bearPaw.setColorFilter(MainColor, PorterDuff.Mode.SRC_ATOP);
