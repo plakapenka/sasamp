@@ -165,7 +165,8 @@ extern CNetGame* pNetGame;
 
 void CStreamPool::Process() // ready
 {
-	if (*(int*)(g_libGTASA + 0x0063E06C))// gMobileMenu
+	//if (*(uint8_t*)(g_libGTASA + 0x0063E06C) == 1)
+	if (*(uint8_t*)(g_libGTASA + 0x008C9BA3) == 1)// pause
 	{
 		for (int i = 0; i < MAX_STREAMS; i++)
 		{

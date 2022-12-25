@@ -124,6 +124,7 @@ public abstract class NvEventQueueActivity
     private int SwapBufferSkip = 0;
 
     protected boolean paused = false;
+   // private boolean inputPaused = false;
 
     protected boolean wantsMultitouch = false;
 
@@ -163,7 +164,7 @@ public abstract class NvEventQueueActivity
     private String glExtensions = null;
     private String glRenderer = null;
     private String glVersion = null;
-    private boolean GameIsFocused = false;
+    //private boolean GameIsFocused = false;
     private boolean viewIsActive = false;
 
     private FrameLayout mRootFrame = null;
@@ -604,6 +605,8 @@ public abstract class NvEventQueueActivity
      */
     public native void nvAcquireTimeExtension();
     public native long nvGetSystemTime();
+    public native void startPause();
+    public native void endPause();
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -670,80 +673,55 @@ public abstract class NvEventQueueActivity
         super.onConfigurationChanged(newConfig);
     }
 
-    public void onWindowFocusChanged(boolean hasFocus)
-    {
-        if(mDialogClientSettings != null)
-        {
-            if(mDialogClientSettings.getDialog() != null) {
-                if(mDialogClientSettings.getDialog().isShowing())
-                {
-                    hideSystemUI();
-                    super.onWindowFocusChanged(hasFocus);
-                    return;
-                }
-            }
-        }
-
-        if (ResumeEventDone && viewIsActive && !paused)
-        {
-            if (GameIsFocused && !hasFocus)
-            {
-
-            }
-            else if (!GameIsFocused && hasFocus)
-            {
-                resumeEvent();
-            }
-            GameIsFocused = hasFocus;
-        }
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus)
-        {
-            hideSystemUI();
-        }
-    }
-
-    /**
-     * Implementation function: defined in libnvevent.a
-     * The application does not and should not overide this; nv_event handles this internally
-     * And remaps as needed into the native calls exposed by nv_event.h
-     */
-    @Override
-    protected void onResume()
-    {
-        System.out.println("**** onResume");
-        super.onResume();
-        if(mSensorManager != null)
-        	mSensorManager.registerListener(
-                this, 
-                mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), 
-                mSensorDelay);
-        paused = false;
-
-//        if(mHeightProvider != null)
-//        {
-//            mHeightProvider.init(mRootFrame);
+    public void onWindowFocusChanged(boolean z) {
+//        if (getSupportFragmentManager().findFragmentByTag("dialog") != null) {
+//            super.onWindowFocusChanged(z);
+//            return;
+//        }
+//        if (this.ResumeEventDone && this.viewIsActive && !this.paused) {
+//
+//            if (GameIsFocused && !z) {
+//                System.out.println("*** onWindowFocusChanged pauseEvent entering");
+//                pauseEvent();
+//                System.out.println("*** onWindowFocusChanged pauseEvent executed");
+//            } else if (!GameIsFocused && z) {
+//                System.out.println("*** onWindowFocusChanged resumeEvent entering");
+//                resumeEvent();
+//                System.out.println("*** onWindowFocusChanged resumeEvent executed");
+//            }
+//            this.GameIsFocused = z;
+//        }
+//        super.onWindowFocusChanged(z);
+//        if (z) {
+//            hideSystemUI();
+//            return;
 //        }
 
-        if (viewIsActive && ResumeEventDone)
-        {
-            resumeEvent();
-            if (cachedSurfaceHolder != null)
-            {
-                cachedSurfaceHolder.setKeepScreenOn(true);
-            }
-        }
+        super.onWindowFocusChanged(z);
     }
-    
+
     /**
      * Implementation function: defined in libnvevent.a
      * The application does not and should not overide this; nv_event handles this internally
      * And remaps as needed into the native calls exposed by nv_event.h
      */
     @Override
-    protected void onRestart()
-    {
-        System.out.println("**** onRestart");
+    public void onResume() {
+        super.onResume();
+        if (this.mSensorManager != null) {
+            this.mSensorManager.registerListener(this, this.mSensorManager.getDefaultSensor(1), this.mSensorDelay);
+        }
+        this.paused = false;
+       // this.inputPaused = false;
+    }
+
+    /**
+     * Implementation function: defined in libnvevent.a
+     * The application does not and should not overide this; nv_event handles this internally
+     * And remaps as needed into the native calls exposed by nv_event.h
+     */
+    @Override
+    public void onRestart() {
         super.onRestart();
     }
     
@@ -752,18 +730,13 @@ public abstract class NvEventQueueActivity
      * The application does not and should not overide this; nv_event handles this internally
      * And remaps as needed into the native calls exposed by nv_event.h
      */
-    protected void onPause()
-    {
-        System.out.println("**** onPause");
+    public void onPause() {
         super.onPause();
-        paused = true;
-
-		if (ResumeEventDone)
-		{
-			System.out.println("java is invoking pauseEvent(), this will block until\nthe client calls NVEventPauseProcessed");
-			pauseEvent();
-			System.out.println("pauseEvent() returned");
-		}
+        if (this.ResumeEventDone) {
+            pauseEvent();
+        }
+        this.paused = true;
+       // this.inputPaused = true;
     }
     
     /**
@@ -772,13 +745,12 @@ public abstract class NvEventQueueActivity
      * And remaps as needed into the native calls exposed by nv_event.h
      */
 	@Override
-	protected void onStop()
-	{
-        System.out.println("**** onStop");
-        if(mSensorManager != null)
-        	mSensorManager.unregisterListener(this);
-	    super.onStop(); 
-	}
+    public void onStop() {
+        if (this.mSensorManager != null) {
+            this.mSensorManager.unregisterListener(this);
+        }
+        super.onStop();
+    }
 
     /**
      * Implementation function: defined in libnvevent.a
@@ -791,16 +763,13 @@ public abstract class NvEventQueueActivity
 	 *       if(supportPauseResume) clause when it is time to exit.
      */
     @Override
-    public void onDestroy()
-    {
-        System.out.println("**** onDestroy");
-//		if(supportPauseResume)
-//		{
-//			quitAndWait();
-//			finish();
-//		}
+    public void onDestroy() {
+        if (this.supportPauseResume) {
+            quitAndWait();
+            finish();
+        }
         super.onDestroy();
-	//	systemCleanup();
+        systemCleanup();
     }
 
     /**
@@ -934,40 +903,49 @@ public abstract class NvEventQueueActivity
         return keyEvent(event.getAction(), keyCode, event.getUnicodeChar(), event.getMetaState(), event);
     }
 
-	public boolean InitEGLAndGLES2(int i)
-	{
-        System.out.println("lnitEGLAndGLES2");
-		if (cachedSurfaceHolder == null)
-		{
-			System.out.println("InitEGLAndGLES2 failed, cachedSurfaceHoIder is null");
-			return false;
-		}
-			
-		boolean eglInitialized = true;
-		if (eglContext == null)
-		{
-			eglInitialized = initEGL();
-		}
-		if (eglInitialized)
-		{
+    public boolean InitEGLAndGLES2(int EGLVersion) {
+        System.out.println("InitEGLAndGLES2");
+        if (this.cachedSurfaceHolder == null) {
+            System.out.println("InitEGLAndGLES2 failed, cachedSurfaceHolder is null");
+            return false;
+        }
+        boolean eglInitialized = true;
+        if (this.eglContext == null) {
+            eglInitialized = false;
+            if (EGLVersion >= 3) {
+                try {
+                    eglInitialized = initEGL(3, 24);
+                } catch (Exception e) {
+                }
+                System.out.println("initEGL 3 " + eglInitialized);
+            }
+            if (!eglInitialized) {
+                this.configAttrs = null;
+                try {
+                    eglInitialized = initEGL(2, 16);
+                } catch (Exception e2) {
+                }
+                System.out.println("initEGL 2 " + eglInitialized);
+                if (!eglInitialized) {
+                    eglInitialized = initEGL(2, 16);
+                    System.out.println("initEGL 2 " + eglInitialized);
+                }
+            }
+        }
+        if (eglInitialized) {
             System.out.println("Should we create a surface?");
-            if (!viewIsActive)
-            {
+            if (!this.viewIsActive) {
                 System.out.println("Yes! Calling create surface");
                 createEGLSurface(this.cachedSurfaceHolder);
                 System.out.println("Done creating surface");
             }
-            viewIsActive = true;
-            SwapBufferSkip = 1;
-		}
-		else
-		{
-			System.out.println("initEGlAndGLES2 failed, core EGL init failure");
-			return false;
-		}
-		
-		return true;
-	}
+            this.viewIsActive = true;
+            this.SwapBufferSkip = 1;
+            return true;
+        }
+        System.out.println("initEGLAndGLES2 failed, core EGL init failure");
+        return false;
+    }
 		
     /**
      * Implementation function: defined in libnvevent.a
@@ -1162,149 +1140,129 @@ public abstract class NvEventQueueActivity
      * 
      * @return True if successful
      */
-    public boolean initEGL() {
-        int eglGetError;
-        boolean z;
-        int[] iArr;
-        int i = 1;
+    public boolean initEGL(int esVersion, int depthBits) {
+        int i;
+        int eglErr;
+        if (esVersion > 2 && Build.VERSION.SDK_INT < 21) {
+            return false;
+        }
         if (this.configAttrs == null) {
             this.configAttrs = new int[]{12344};
         }
-        int[] iArr2 = this.configAttrs;
-        this.configAttrs = new int[((iArr2.length + 3) - 1)];
+        int[] oldConf = this.configAttrs;
+        this.configAttrs = new int[((oldConf.length + 3) - 1)];
         int i2 = 0;
-        while (i2 < iArr2.length - 1) {
-            this.configAttrs[i2] = iArr2[i2];
+        while (i2 < oldConf.length - 1) {
+            this.configAttrs[i2] = oldConf[i2];
             i2++;
         }
-        int[] iArr3 = this.configAttrs;
         int i3 = i2 + 1;
-        iArr3[i2] = EGL_RENDERABLE_TYPE;
-        iArr3[i3] = 4;
-        iArr3[i3 + 1] = 12344;
-        this.contextAttrs = new int[]{EGL_CONTEXT_CLIENT_VERSION, 2, 12344};
-        if (iArr3 == null) {
+        this.configAttrs[i2] = EGL_RENDERABLE_TYPE;
+        if (esVersion == 3) {
+            i = i3 + 1;
+            this.configAttrs[i3] = EGL_OPENGL_ES3_BIT;
+        } else {
+            i = i3 + 1;
+            this.configAttrs[i3] = 4;
+        }
+        int i4 = i + 1;
+        this.configAttrs[i] = 12344;
+        this.contextAttrs = new int[]{EGL_CONTEXT_CLIENT_VERSION, esVersion, 12344};
+        if (this.configAttrs == null) {
             this.configAttrs = new int[]{12344};
         }
-        int[] iArr4 = this.configAttrs;
-        this.configAttrs = new int[((iArr4.length + 13) - 1)];
-        int i4 = 0;
-        while (i4 < iArr4.length - 1) {
-            this.configAttrs[i4] = iArr4[i4];
-            i4++;
+        int[] oldConfES2 = this.configAttrs;
+        this.configAttrs = new int[((oldConfES2.length + 13) - 1)];
+        int i5 = 0;
+        while (i5 < oldConfES2.length - 1) {
+            this.configAttrs[i5] = oldConfES2[i5];
+            i5++;
         }
-        int[] iArr5 = this.configAttrs;
-        int i5 = i4 + 1;
-        int i6 = 12324;
-        iArr5[i4] = 12324;
-        int i7 = i5 + 1;
-        iArr5[i5] = this.redSize;
+        int i6 = i5 + 1;
+        this.configAttrs[i5] = 12324;
+        int i7 = i6 + 1;
+        this.configAttrs[i6] = this.redSize;
         int i8 = i7 + 1;
-        int i9 = 12323;
-        iArr5[i7] = 12323;
-        int i10 = i8 + 1;
-        iArr5[i8] = this.greenSize;
+        this.configAttrs[i7] = 12323;
+        int i9 = i8 + 1;
+        this.configAttrs[i8] = this.greenSize;
+        int i10 = i9 + 1;
+        this.configAttrs[i9] = 12322;
         int i11 = i10 + 1;
-        iArr5[i10] = 12322;
+        this.configAttrs[i10] = this.blueSize;
         int i12 = i11 + 1;
-        iArr5[i11] = this.blueSize;
+        this.configAttrs[i11] = 12321;
         int i13 = i12 + 1;
-        iArr5[i12] = 12321;
+        this.configAttrs[i12] = this.alphaSize;
         int i14 = i13 + 1;
-        iArr5[i13] = this.alphaSize;
+        this.configAttrs[i13] = 12326;
         int i15 = i14 + 1;
-        iArr5[i14] = 12326;
+        this.configAttrs[i14] = this.stencilSize;
         int i16 = i15 + 1;
-        iArr5[i15] = this.stencilSize;
+        this.configAttrs[i15] = 12325;
         int i17 = i16 + 1;
-        iArr5[i16] = 12325;
-        iArr5[i17] = this.depthSize;
-        iArr5[i17 + 1] = 12344;
-        EGL10 egl10 = (EGL10) EGLContext.getEGL();
-        this.egl = egl10;
-        egl10.eglGetError();
+        this.configAttrs[i16] = depthBits;
+        int i18 = i17 + 1;
+        this.configAttrs[i17] = 12344;
+        this.egl = (EGL10) EGLContext.getEGL();
+        this.egl.eglGetError();
         this.eglDisplay = this.egl.eglGetDisplay(EGL10.EGL_DEFAULT_DISPLAY);
-        Log.d("dfs", "eglDisplay: " + this.eglDisplay + ", errr: " + this.egl.eglGetError());
-        boolean eglInitialize = this.egl.eglInitialize(this.eglDisplay, new int[2]);
-        StringBuilder sb = new StringBuilder();
-        sb.append("EGLInitialize returned: ");
-        sb.append(eglInitialize);
-        Log.d("dfs", sb.toString());
-        if (!eglInitialize || (eglGetError = this.egl.eglGetError()) != 12288) {
+        System.out.println("eglDisplay: " + this.eglDisplay + ", err: " + this.egl.eglGetError());
+        boolean ret = this.egl.eglInitialize(this.eglDisplay, new int[2]);
+        System.out.println("EglInitialize returned: " + ret);
+        if (!ret || (eglErr = this.egl.eglGetError()) != 12288) {
             return false;
         }
-       // Logger.m21i("eglInitialize err: " + eglGetError);
-        EGLConfig[] eGLConfigArr = new EGLConfig[30];
-        int[] iArr6 = new int[1];
-        this.egl.eglChooseConfig(this.eglDisplay, this.configAttrs, eGLConfigArr, 30, iArr6);
-        Log.d("dfs", "eglChooseConfig err: " + this.egl.eglGetError());
-        int i18 = 16777216;
-        int[] iArr7 = new int[1];
-        int i19 = 0;
-        while (i19 < iArr6[0]) {
-            int i20 = 0;
+        System.out.println("eglInitialize err: " + eglErr);
+        EGLConfig[] config = new EGLConfig[20];
+        int[] num_configs = new int[1];
+        this.egl.eglChooseConfig(this.eglDisplay, this.configAttrs, config, config.length, num_configs);
+        System.out.println("eglChooseConfig err: " + this.egl.eglGetError());
+        System.out.println("num_configs " + num_configs[0]);
+        int score = 16777216;
+        int[] val = new int[1];
+        for (int i19 = 0; i19 < num_configs[0]; i19++) {
+            boolean cont = true;
+            int j = 0;
             while (true) {
-                if (i20 >= ((iArr2.length - i) >> i)) {
-                    z = true;
+                if (j >= ((oldConfES2.length - 1) >> 1)) {
                     break;
                 }
-                int i21 = i20 * 2;
-                this.egl.eglGetConfigAttrib(this.eglDisplay, eGLConfigArr[i19], this.configAttrs[i21], iArr7);
-                int i22 = iArr7[0];
-                int[] iArr8 = this.configAttrs;
-                int i23 = i21 + 1;
-                if ((i22 & iArr8[i23]) != iArr8[i23]) {
-                    z = false;
+                this.egl.eglGetConfigAttrib(this.eglDisplay, config[i19], this.configAttrs[j * 2], val);
+                if ((val[0] & this.configAttrs[(j * 2) + 1]) != this.configAttrs[(j * 2) + 1]) {
+                    cont = false;
                     break;
                 }
-                i20++;
+                j++;
             }
-            if (!z) {
-                iArr = iArr2;
-            } else {
-                this.egl.eglGetConfigAttrib(this.eglDisplay, eGLConfigArr[i19], i6, iArr7);
-                int i24 = iArr7[0];
-                this.egl.eglGetConfigAttrib(this.eglDisplay, eGLConfigArr[i19], i9, iArr7);
-                int i25 = iArr7[0];
-                this.egl.eglGetConfigAttrib(this.eglDisplay, eGLConfigArr[i19], 12322, iArr7);
-                int i26 = iArr7[0];
-                this.egl.eglGetConfigAttrib(this.eglDisplay, eGLConfigArr[i19], 12321, iArr7);
-                int i27 = iArr7[0];
-                this.egl.eglGetConfigAttrib(this.eglDisplay, eGLConfigArr[i19], 12325, iArr7);
-                int i28 = iArr7[0];
-                iArr = iArr2;
-                this.egl.eglGetConfigAttrib(this.eglDisplay, eGLConfigArr[i19], 12326, iArr7);
-                int i29 = iArr7[0];
-                Log.d("dfs", ">>> EGL Config [" + i19 + "] R" + i24 + "G" + i25 + "B" + i26 + ExifInterface.GPS_MEASUREMENT_IN_PROGRESS + i27 + " D" + i28 + ExifInterface.LATITUDE_SOUTH + i29);
-                int abs = ((((Math.abs(i24 - this.redSize) + Math.abs(i25 - this.greenSize)) + Math.abs(i26 - this.blueSize)) + Math.abs(i27 - this.alphaSize)) << 16) + (Math.abs(i28 - this.depthSize) << 8) + Math.abs(i29 - this.stencilSize);
-                if (abs < i18) {
-                    Log.d("dfs", "--------------------------");
-                    Log.d("dfs", "New config chosen: " + i19);
-                    int i30 = 0;
-                    while (true) {
-                        int[] iArr9 = this.configAttrs;
-                        if (i30 >= ((iArr9.length - 1) >> 1)) {
-                            break;
-                        }
-                        int i31 = i30 * 2;
-                        this.egl.eglGetConfigAttrib(this.eglDisplay, eGLConfigArr[i19], iArr9[i31], iArr7);
-                        if (iArr7[0] >= this.configAttrs[i31 + 1]) {
-                            Log.d("dfs", "setting " + i30 + ", matches: " + iArr7[0]);
-                        }
-                        i30++;
+            if (cont) {
+                this.egl.eglGetConfigAttrib(this.eglDisplay, config[i19], 12324, val);
+                int r = val[0];
+                this.egl.eglGetConfigAttrib(this.eglDisplay, config[i19], 12323, val);
+                int g = val[0];
+                this.egl.eglGetConfigAttrib(this.eglDisplay, config[i19], 12322, val);
+                int b = val[0];
+                this.egl.eglGetConfigAttrib(this.eglDisplay, config[i19], 12321, val);
+                int a = val[0];
+                this.egl.eglGetConfigAttrib(this.eglDisplay, config[i19], 12325, val);
+                int d = val[0];
+                this.egl.eglGetConfigAttrib(this.eglDisplay, config[i19], 12326, val);
+                int currScore = ((((Math.abs(r - this.redSize) + Math.abs(g - this.greenSize)) + Math.abs(b - this.blueSize)) + Math.abs(a - this.alphaSize)) << 16) + (Math.abs(d - depthBits) << 8) + Math.abs(val[0] - this.stencilSize);
+                if (currScore < score) {
+                    for (int j2 = 0; j2 < ((this.configAttrs.length - 1) >> 1); j2++) {
+                        this.egl.eglGetConfigAttrib(this.eglDisplay, config[i19], this.configAttrs[j2 * 2], val);
                     }
-                    this.eglConfig = eGLConfigArr[i19];
-                    i18 = abs;
+                    score = currScore;
+                    this.eglConfig = config[i19];
                 }
             }
-            i19++;
-            iArr2 = iArr;
-            i = 1;
-            i6 = 12324;
-            i9 = 12323;
+        }
+        if (this.eglConfig == null) {
+            this.configAttrs = null;
+            return false;
         }
         this.eglContext = this.egl.eglCreateContext(this.eglDisplay, this.eglConfig, EGL10.EGL_NO_CONTEXT, this.contextAttrs);
-        Log.d("dfs", "eglCreateContext: " + this.egl.eglGetError());
+        System.out.println("eglCreateContext: " + this.egl.eglGetError());
         this.gl = (GL11) this.eglContext.getGL();
         return true;
     }
@@ -1628,7 +1586,8 @@ public abstract class NvEventQueueActivity
 
     public void ExitGame(){
         //
-        this.finishAndRemoveTask();
+        finishAndRemoveTask();
+       // finishAffinity();
         System.exit(0);
     }
 

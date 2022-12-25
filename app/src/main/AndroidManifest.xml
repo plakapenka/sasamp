@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:noHistory= "true"
     package="com.liverussia.cr">
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -57,6 +59,7 @@
 
         <activity
             android:name="com.liverussia.cr.core.GTASA"
+            android:excludeFromRecents="true"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="adjustPan"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"/>

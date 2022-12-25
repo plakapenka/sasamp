@@ -339,8 +339,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             onClickMonitoring();
             return;
         }
-
         startActivity(new Intent(this, GTASA.class));
+
+        this.finish();
     }
 
     public void onClickSettings() {

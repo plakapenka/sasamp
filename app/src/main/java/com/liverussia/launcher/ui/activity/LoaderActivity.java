@@ -226,6 +226,7 @@ public class LoaderActivity extends AppCompatActivity {
         }
 
         startActivity(new Intent(this, GTASA.class));
+
         this.finish();
     }
 

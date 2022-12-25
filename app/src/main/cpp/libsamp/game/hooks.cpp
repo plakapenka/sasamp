@@ -794,6 +794,7 @@ size_t OS_FileRead_hook(FILE *a1, void *a2, size_t a3)
 void (*CTimer__StartUserPause)();
 void CTimer__StartUserPause_hook()
 {
+	Log("CTimer__StartUserPause_hook");
 	// process pause event
 	if (g_pJavaWrapper)
 	{
@@ -2007,7 +2008,7 @@ bool CGame__Shutdown_hook()
 	}
 
 	g_pJavaWrapper->ExitGame();
-	exit(EXIT_SUCCESS);
+
 	//std::this_thread::sleep_for(std::chrono::milliseconds(3000));
 
 	return 0;
@@ -3151,4 +3152,15 @@ void InstallHooks()
 	SetUpHook(g_libGTASA + 0x005311D0, (uintptr_t)CDraw__SetFOV_hook, (uintptr_t*)&CDraw__SetFOV);
 
 	HookCPad();
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_nvidia_devtech_NvEventQueueActivity_startPause(JNIEnv *env, jobject thiz) {
+	CTimer__StartUserPause_hook();
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_nvidia_devtech_NvEventQueueActivity_endPause(JNIEnv *env, jobject thiz) {
+	CTimer__EndUserPause_hook();
 }
