@@ -53,6 +53,7 @@ import android.view.View;
 import android.view.ViewParent;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.exifinterface.media.ExifInterface;
@@ -1648,7 +1649,15 @@ public abstract class NvEventQueueActivity
         }
     }
 
-    public void updateYearnMoney(int money) { runOnUiThread(() -> { mHudManager.UpdateYearnMoney(money); } ); }
+    public void CopyTextToBuffer(String string){
+       // String text = edtCopy.getText().toString();
+        ClipboardManager clipboardManager = (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);;
+        ClipData clipData;
+        clipData = ClipData.newPlainText("text", string);
+        clipboardManager.setPrimaryClip(clipData);
+
+       // Toast.makeText(this,"Скопированно в буфер обмена ",Toast.LENGTH_SHORT).show();
+    }
 
     public void showUpdateTargetNotify(int type, String text) { runOnUiThread(() -> { mHudManager.ShowUpdateTargetNotify(type, text); } ); }
 

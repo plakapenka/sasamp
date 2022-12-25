@@ -94,6 +94,8 @@
 #define RPC_ITEM_ACTIVETOGGLE   56
 #define RPC_VIBRATE   59
 #define RPC_RESTORE_PASS   60
+#define RPC_SEND_BUFFER 	61
+#define RPC_SHOW_SALARY 	62
 
 // Packet 252
 #define RPC_TOGGLE_LOGIN (1)
@@ -228,6 +230,8 @@ public:
 	void Packet_CasinoChip(Packet *p);
 
     void Packet_AucContainer(Packet *p);
+
+	void Packet_Salary(Packet *p);
 };
 
 extern CNetGame *pNetGame;

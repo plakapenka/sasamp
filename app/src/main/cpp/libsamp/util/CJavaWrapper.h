@@ -76,7 +76,6 @@ class CJavaWrapper
 	jmethodID s_showBusInfo;
 	jmethodID s_hideBusInfo;
 
-	jmethodID s_updateYearnMoney;
 	jmethodID s_showUpdateTargetNotify;
 	jmethodID s_hideTargetNotify;
 
@@ -123,7 +122,6 @@ public:
 	void ShowBusInfo(int time);
 	void HideBusInfo();
 
-    void UpdateYearnMoney(int money);
     void ShowUpdateTargetNotify(int type, char *text);
     void HideTargetNotify();
 
@@ -181,6 +179,8 @@ public:
 	void ExitGame();
 
 	void Vibrate(int milliseconds);
+
+    void SendBuffer(const char string[]);
 };
 
 extern CJavaWrapper* g_pJavaWrapper;

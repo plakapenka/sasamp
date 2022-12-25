@@ -557,6 +557,11 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			Packet_InventoryToggle(p);
 			break;
 		}
+		case RPC_SHOW_SALARY:
+		{
+			Packet_Salary(p);
+			break;
+		}
 		case RPC_MAFIA_WAR:
 		{
 			Packet_MAFIA_WAR(p);
@@ -576,6 +581,17 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		case RPC_SHOW_FACTORY_GAME:
 		{
 			Packet_FurnitureFactory(p);
+			break;
+		}
+		case RPC_SEND_BUFFER:
+		{
+			uint16_t len;
+			bs.Read(len);
+			char text[len+1];
+			bs.Read(text, len);
+			text[len] = '\0';
+
+			g_pJavaWrapper->SendBuffer(text);
 			break;
 		}
 		case RPC_SHOW_DICE_TABLE:
@@ -651,10 +667,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			uint32_t hud, toggle;
 			bs.Read(hud);
 			bs.Read(toggle);
-			if (hud == 7)
-			{
-				g_pJavaWrapper->UpdateYearnMoney(toggle);
-			}
+
 			// CChatWindow::AddDebugMessage("hud %d toggle %d", hud, toggle);
 			pGame->ToggleHUDElement(hud, toggle);
 			//pGame->HandleChangedHUDStatus();
@@ -1496,7 +1509,6 @@ void CNetGame::ShutDownForGameRestart()
 		pPlayerPed->SetArmour(0.0f);
 	}
 
-	pGame->ToggleCJWalk(false);
 	pHud->localMoney = 0;
 	pGame->EnableZoneNames(false);
 	m_bZoneNames = false;
@@ -2074,24 +2086,24 @@ void CNetGame::Packet_MarkersSync(Packet *pkt)
 
 void CNetGame::Packet_BulletSync(Packet* p)
 {
-	CRemotePlayer* pPlayer;
-	RakNet::BitStream bsBulletSync((unsigned char*)p->data, p->length, false);
+	Log("Packet_BulletSync");
+	uint8_t bytePacketID;
+	uint16_t PlayerID;
+	BULLET_SYNC btSync;
+	RakNet::BitStream bsBulletSync((unsigned char *)p->data, p->length, false);
 
-	if (GetGameState() != GAMESTATE_CONNECTED) return;
-	
-	uint8_t bytePacketID = 0;
-	PLAYERID bytePlayerID;
-	BULLET_SYNC blSync;
-	
+	if (GetGameState() != GAMESTATE_CONNECTED)
+		return;
+
 	bsBulletSync.Read(bytePacketID);
-	bsBulletSync.Read(bytePlayerID);
-	bsBulletSync.Read((char*)& blSync, sizeof(BULLET_SYNC));
-	if (bytePlayerID == INVALID_PLAYER_ID) return;
-	if (blSync.hitType != ENTITY_TYPE_PED) return;
-	pPlayer = GetPlayerPool()->GetAt(bytePlayerID);
-	
-	if (pPlayer && m_pPlayerPool->GetLocalPlayerID() != bytePlayerID)
-		pPlayer->StoreBulletSyncData(&blSync);
+	bsBulletSync.Read(PlayerID);
+	bsBulletSync.Read((char *)&btSync, sizeof(BULLET_SYNC));
+
+	CRemotePlayer *pRemotePlayer = m_pPlayerPool->GetAt(PlayerID);
+	if (pRemotePlayer)
+	{
+		pRemotePlayer->StoreBulletSyncData(&btSync);
+	}
 }
 
 void CNetGame::Packet_AimSync(Packet * p)

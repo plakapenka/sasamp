@@ -463,7 +463,7 @@ extern "C"
 		{
 			if (g_pJavaWrapper->RegisterSkinValue < 1)
 			{
-				g_pJavaWrapper->RegisterSkinValue = 10;
+				g_pJavaWrapper->RegisterSkinValue = 9;
 			}
 		}
 		else if (g_pJavaWrapper->RegisterSexMale == 2) // woman
@@ -481,7 +481,7 @@ extern "C"
 		g_pJavaWrapper->RegisterSkinValue++;
 		if (g_pJavaWrapper->RegisterSexMale == 1) // man
 		{
-			if (g_pJavaWrapper->RegisterSkinValue > 10)
+			if (g_pJavaWrapper->RegisterSkinValue > 9)
 			{
 				g_pJavaWrapper->RegisterSkinValue = 1;
 			}
@@ -715,18 +715,6 @@ void CJavaWrapper::HideBusInfo()
 		return;
 	}
     env->CallVoidMethod(this->activity, this->s_hideBusInfo);
-}
-
-void CJavaWrapper::UpdateYearnMoney(int money)
-{
-    JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-    env->CallVoidMethod(this->activity, this->s_updateYearnMoney, money);
 }
 
 void CJavaWrapper::ShowUpdateTargetNotify(int type, char *text)
@@ -1192,14 +1180,14 @@ void CJavaWrapper::ClearScreen()
 
 const uint32_t cRegisterSkin[2][10] = {
 	{ 9, 195, 231, 232, 1, 1, 1, 1, 1, 1 }, // female
-	{ 16, 79, 134, 135, 136, 200, 234, 235, 236, 239 } // male
+	{ 16, 79, 134, 135, 200, 234, 235, 236, 239 } // male
 };
 
 uint32_t CJavaWrapper::ChangeRegisterSkin(int skin)
 {
 	uint32_t uiSkin = 16;
 	bool bIsMan = g_pJavaWrapper->RegisterSexMale == 1 ? true : false;
-	uint32_t uiMaxSkins = bIsMan ? 10 : 4;
+	uint32_t uiMaxSkins = bIsMan ? 9 : 4;
 
 	if (!(0 < skin <= uiMaxSkins)) {
 		g_pJavaWrapper->RegisterSkinId = uiSkin;
@@ -1249,7 +1237,6 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 	s_showBusInfo = env->GetMethodID(nvEventClass, "showBusInfo", "(I)V");
 	s_hideBusInfo = env->GetMethodID(nvEventClass, "hideBusInfo", "()V");
 
-	s_updateYearnMoney = env->GetMethodID(nvEventClass, "updateYearnMoney", "(I)V");
 	s_showUpdateTargetNotify = env->GetMethodID(nvEventClass, "showUpdateTargetNotify", "(ILjava/lang/String;)V");
 	s_hideTargetNotify = env->GetMethodID(nvEventClass, "hideTargetNotify", "()V");
 
@@ -1352,6 +1339,17 @@ void CJavaWrapper::ShowCasinoLuckyWheel(int count, int time) {
 	jmethodID Show = env->GetMethodID(clazz, "Show", "(II)V");
 
 	env->CallVoidMethod(jCasino_LuckyWheel, Show, count, time);
+}
+
+void CJavaWrapper::SendBuffer(const char string[]) {
+	JNIEnv* env = GetEnv();
+
+	jstring jstring = env->NewStringUTF( string );
+	//jclass clazz = env->GetObjectClass(jCasino_LuckyWheel);
+	jclass nvEventClass = env->GetObjectClass(activity);
+	jmethodID CopyTextToBuffer = env->GetMethodID(nvEventClass, "CopyTextToBuffer", "(Ljava/lang/String;)V");
+
+	env->CallVoidMethod(activity, CopyTextToBuffer, jstring);
 }
 
 CJavaWrapper* g_pJavaWrapper = nullptr;
