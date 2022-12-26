@@ -77,11 +77,10 @@ public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersV
 		holder.name.setTextColor(MainColor);
 		holder.dopname.setText(servers.getDopname());
 		holder.textonline.setText(Integer.toString(servers.getOnline()));
-		holder.textmaxonline.setText(new String("/" + Integer.toString(servers.getmaxOnline())));
+		holder.textmaxonline.setText("/1000");
 	    holder.progressBar.setProgressStartColor(MainColor);
 		holder.progressBar.setProgressEndColor(MainColor);
 		holder.progressBar.setProgress(servers.getOnline());
-		holder.progressBar.setMax(servers.getmaxOnline());
 
 		if(selectedItem == position){
 

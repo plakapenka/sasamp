@@ -54,6 +54,8 @@
                 android:layout_centerInParent="true"
                 app:drawBackgroundOutsideProgress="true"
                 app:progress_background_color="@color/white6"
+                android:progress="50"
+                android:max="1000"
                 app:progress_end_color="#6ec6ff"
                 app:progress_shader="linear"
                 app:progress_start_color="@color/blue"

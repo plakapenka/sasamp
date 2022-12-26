@@ -76,10 +76,6 @@ public class Servers {
 		return online;
 	}
 
-	public int getmaxOnline(){
-		return maxonline;
-	}
-
 	public String getRouletteIp() {
 		return rouletteIp;
 	}

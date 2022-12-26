@@ -132,8 +132,8 @@ public abstract class NvEventQueueActivity
     protected boolean ResumeEventDone = false;
 
     //accelerometer related
-    protected boolean wantsAccelerometer = false;
-    protected SensorManager mSensorManager = null;
+  //  protected boolean wantsAccelerometer = false;
+ //   protected SensorManager mSensorManager = null;
     protected ClipboardManager mClipboardManager = null;
     protected int mSensorDelay = SensorManager.SENSOR_DELAY_GAME; //other options: SensorManager.SENSOR_DELAY_FASTEST, SensorManager.SENSOR_DELAY_NORMAL and SensorManager.SENSOR_DELAY_UI
 	protected Display display = null;
@@ -625,9 +625,9 @@ public abstract class NvEventQueueActivity
             System.out.println("Called");
         }
         handler = new Handler();
-        if(wantsAccelerometer && (mSensorManager == null)) {
-            mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        }
+//        if(wantsAccelerometer && (mSensorManager == null)) {
+//            mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+//        }
 
         mClipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 
@@ -673,7 +673,7 @@ public abstract class NvEventQueueActivity
         super.onConfigurationChanged(newConfig);
     }
 
-    public void onWindowFocusChanged(boolean z) {
+    public void onWindowFocusChanged(boolean hasFocus) {
 //        if (getSupportFragmentManager().findFragmentByTag("dialog") != null) {
 //            super.onWindowFocusChanged(z);
 //            return;
@@ -697,7 +697,12 @@ public abstract class NvEventQueueActivity
 //            return;
 //        }
 
-        super.onWindowFocusChanged(z);
+        if (hasFocus) {
+            hideSystemUI();
+            this.paused = false;
+            resumeEvent();
+        }
+        super.onWindowFocusChanged(hasFocus);
     }
 
     /**
@@ -707,11 +712,12 @@ public abstract class NvEventQueueActivity
      */
     @Override
     public void onResume() {
-        super.onResume();
-        if (this.mSensorManager != null) {
-            this.mSensorManager.registerListener(this, this.mSensorManager.getDefaultSensor(1), this.mSensorDelay);
-        }
+//        if (this.mSensorManager != null) {
+//            this.mSensorManager.registerListener(this, this.mSensorManager.getDefaultSensor(1), this.mSensorDelay);
+//        }
         this.paused = false;
+
+        super.onResume();
        // this.inputPaused = false;
     }
 
@@ -731,11 +737,11 @@ public abstract class NvEventQueueActivity
      * And remaps as needed into the native calls exposed by nv_event.h
      */
     public void onPause() {
-        super.onPause();
-        if (this.ResumeEventDone) {
+       // if (this.ResumeEventDone) {
             pauseEvent();
-        }
+       // }
         this.paused = true;
+        super.onPause();
        // this.inputPaused = true;
     }
     
@@ -746,9 +752,14 @@ public abstract class NvEventQueueActivity
      */
 	@Override
     public void onStop() {
-        if (this.mSensorManager != null) {
-            this.mSensorManager.unregisterListener(this);
+//        if (this.mSensorManager != null) {
+//            this.mSensorManager.unregisterListener(this);
+//        }
+        if(!paused){
+            pauseEvent();
+            this.paused = true;
         }
+
         super.onStop();
     }
 
@@ -764,12 +775,13 @@ public abstract class NvEventQueueActivity
      */
     @Override
     public void onDestroy() {
-        if (this.supportPauseResume) {
-            quitAndWait();
-            finish();
-        }
+//        if (this.supportPauseResume) {
+//            quitAndWait();
+//            finish();
+//        }
+        finishAndRemoveTask();
         super.onDestroy();
-        systemCleanup();
+        //systemCleanup();
     }
 
     /**
@@ -785,20 +797,20 @@ public abstract class NvEventQueueActivity
         }
     }
 
-    public void DoResumeEvent()
-    {
-        new Thread(new Runnable() {
-            public void run() {
-                while (NvEventQueueActivity.this.cachedSurfaceHolder == null)
-                {
-                    NvEventQueueActivity.this.mSleep(1000);
-                }
-                System.out.println("Call from DoResumeEvent");
-                NvEventQueueActivity.this.resumeEvent();
-                NvEventQueueActivity.this.ResumeEventDone = true;
-            }
-        }).start();
-    }
+//    public void DoResumeEvent()
+//    {
+//        new Thread(new Runnable() {
+//            public void run() {
+//                while (NvEventQueueActivity.this.cachedSurfaceHolder == null)
+//                {
+//                    NvEventQueueActivity.this.mSleep(1000);
+//                }
+//                System.out.println("Call from DoResumeEvent");
+//                NvEventQueueActivity.this.resumeEvent();
+//                NvEventQueueActivity.this.ResumeEventDone = true;
+//            }
+//        }).start();
+//    }
 
 	public void onAccuracyChanged(Sensor sensor, int accuracy) {
 		// Auto-generated method stub
@@ -958,10 +970,6 @@ public abstract class NvEventQueueActivity
         return mSurfaceView;
     }
 
-    public void sukaaaaa(View view)
-    {
-        setContentView(view);
-    }
     protected boolean systemInit()
     {
         final NvEventQueueActivity act = this;
@@ -1031,7 +1039,7 @@ public abstract class NvEventQueueActivity
 
         mMenu = new Menu(this);
 
-        DoResumeEvent();
+     //   DoResumeEvent();
 
         holder.addCallback(new Callback()
         {
@@ -1074,12 +1082,12 @@ public abstract class NvEventQueueActivity
                     );
                 }
 
-                if (!firstRun && ResumeEventDone)
-                {
+               // if (!firstRun && ResumeEventDone)
+                //{
                     System.out.println("entering resumeEvent");
                     resumeEvent();
                     System.out.println("returned from resumeEvent");
-                }
+               // }
                 setWindowSize(surfaceWidth, surfaceHeight);
             }
 
