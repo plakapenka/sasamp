@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include "str_obfuscator_no_template.hpp"
 
-#define MAX_SERVERS	5
+#define MAX_SERVERS	2
 
 class CServerInstance
 {
