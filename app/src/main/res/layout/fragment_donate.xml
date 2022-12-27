@@ -58,6 +58,8 @@
                     android:layout_height="fill_parent"
                     android:layout_marginRight="@dimen/_10sdp"
                     android:hint="Имя_Фамилия"
+                    android:autofillHints="username"
+                    android:importantForAutofill="yes"
                     android:singleLine="true"
                     android:maxLength="20"
                     android:digits="abcdefghijklmnopqrstuvwxyz_ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -77,6 +79,8 @@
                     android:layout_height="@dimen/_40sdp"
                     android:src="@drawable/email" />
                 <EditText
+                    android:autofillHints="emailAddress"
+                    android:importantForAutofill="no"
                     android:textSize="@dimen/_12sdp"
                     android:textColor="@color/white"
                     android:textCursorDrawable="@drawable/text_cursor"
@@ -114,6 +118,8 @@
                     android:layout_width="0.0dip"
                     android:layout_height="fill_parent"
                     android:layout_marginRight="@dimen/_10sdp"
+                    android:autofillHints="no"
+                    android:importantForAutofill="no"
                     android:hint="Введите сумму"
                     android:singleLine="true"
                     android:maxLength="100"

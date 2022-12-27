@@ -30,6 +30,8 @@
 			android:textCursorDrawable="@drawable/text_cursor"
 			android:textColorHint="@color/menuTextDisable"
 			android:gravity="center_vertical"
+			android:autofillHints="no"
+			android:importantForAutofill="no"
 			android:id="@+id/nick_input"
 			android:background="@color/transparent"
 			android:paddingRight="@dimen/_10sdp"

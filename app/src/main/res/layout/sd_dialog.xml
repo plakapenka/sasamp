@@ -89,6 +89,8 @@
                 app:layout_constraintTop_toBottomOf="@+id/sd_dialog_text_layout">
 
                 <EditText
+                    android:autofillHints="no"
+                    android:importantForAutofill="no"
                     android:id="@+id/sd_dialog_input"
                     android:layout_width="0.0dip"
                     android:layout_height="wrap_content"

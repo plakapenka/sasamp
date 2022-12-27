@@ -44,6 +44,7 @@
                 android:layout_height="fill_parent"
                 android:layout_marginRight="@dimen/_10sdp"
                 android:hint="Введите игровой никнейм"
+                android:autofillHints="username"
                 android:singleLine="true"
                 android:maxLength="20"
                 android:digits="abcdefghijklmnopqrstuvwxyz_ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -64,6 +65,7 @@
                 android:layout_height="@dimen/_40sdp"
                 android:src="@drawable/auth_key"/>
             <EditText
+                android:autofillHints="password"
                 android:id="@+id/password_input"
                 android:textSize="@dimen/_12sdp"
                 android:textColor="@color/white"

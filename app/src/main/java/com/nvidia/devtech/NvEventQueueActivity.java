@@ -738,9 +738,9 @@ public abstract class NvEventQueueActivity
      */
     public void onPause() {
        // if (this.ResumeEventDone) {
-            pauseEvent();
+           // pauseEvent();
        // }
-        this.paused = true;
+        //this.paused = true;
         super.onPause();
        // this.inputPaused = true;
     }

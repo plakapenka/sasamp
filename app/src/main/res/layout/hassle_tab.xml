@@ -42,6 +42,8 @@
                 android:fontFamily="@font/din_pro_medium"
                 android:hint="@string/players_list_search_hint"
                 android:imeOptions="actionGo|actionSend|actionDone|flagNoFullscreen|flagNoExtractUi"
+                android:autofillHints="no"
+                android:importantForAutofill="no"
                 android:inputType="text"
                 android:paddingStart="@dimen/_10sdp"
                 android:paddingBottom="@dimen/_2sdp"

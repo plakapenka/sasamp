@@ -187,6 +187,8 @@
                 android:background="@drawable/rounded_rectangle_black"
                 android:fontFamily="@font/roboto_bold"
                 android:gravity="center"
+                android:autofillHints="no"
+                android:importantForAutofill="no"
                 android:hint="Введите кол-во фишек"
                 android:imeOptions="flagNoFullscreen|actionSend"
                 android:inputType="number"
