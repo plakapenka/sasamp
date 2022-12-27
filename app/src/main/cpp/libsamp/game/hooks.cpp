@@ -939,8 +939,8 @@ void InstallSpecialHooks()
 
 	SetUpHook(g_libGTASA + 0x001BDCC4, (uintptr_t)LoadFullTexture_hook, (uintptr_t*)&LoadFullTexture);
 
-	SetUpHook(g_libGTASA + 0x001BD374, (uintptr_t)TextureDatabase__LoadThumbs_hook, (uintptr_t*)&TextureDatabase__LoadThumbs);
-	SetUpHook(g_libGTASA + 0x001BD478, (uintptr_t)TextureDatabase__LoadDataOffsets_hook, (uintptr_t*)&TextureDatabase__LoadDataOffsets);
+	//SetUpHook(g_libGTASA + 0x001BD374, (uintptr_t)TextureDatabase__LoadThumbs_hook, (uintptr_t*)&TextureDatabase__LoadThumbs);
+	//SetUpHook(g_libGTASA + 0x001BD478, (uintptr_t)TextureDatabase__LoadDataOffsets_hook, (uintptr_t*)&TextureDatabase__LoadDataOffsets);
 
 	NOP(g_libGTASA + 0x00185DE8, 2);//_rwOpenGLNativeTextureReadXBOXPvS_
 	NOP(g_libGTASA + 0x005DDD70, 2); // BankLoadingThread
@@ -2958,11 +2958,54 @@ int rxOpenGLDefaultAllInOneRenderCB_hook(uintptr_t resEntry, uintptr_t object, u
 	return rxOpenGLDefaultAllInOneRenderCB(resEntry, object, type, flags);
 }
 
+#define GREEN_TEXTURE_ID 14
+int *detailTexturesStorage;
+int *RasterExtOffset;
+inline void* GetDetailTexturePtr(int texId)
+{
+	return *(void**)(**(int**)(*detailTexturesStorage + 4 * (texId-1)) + *RasterExtOffset);
+}
+
+void (*TextureSetDetailTexture)(void* texture, uint_t tilingScale);
+void TextureSetDetailTexture_hook(void* texture, uint_t tilingScale)
+{
+	if(texture == NULL)
+	{
+		*(uint_t*)(g_libGTASA + 0x0061572C) &= 0xFFFEFFFF;
+		return;
+	}
+	if(texture == GetDetailTexturePtr(GREEN_TEXTURE_ID))
+	{
+
+		*(int*)(g_libGTASA + 0x006118D0) = 0; // textureDetail
+		*(uint_t*)(g_libGTASA + 0x0061572C) &= 0xFFFEFFFF;
+
+		return;
+	}
+	*(uint_t*)(g_libGTASA + 0x0061572C) |= 0x10000u;
+	(*(void (__fastcall **)(void *, int))(*(DWORD *)texture + 0x18))(texture, 1);
+	(*(void (__fastcall **)(void *, DWORD, DWORD))(*(DWORD *)texture + 0xC))(texture, 0, 0);
+	*(float*)(g_libGTASA + 0x0067A178) = (float)tilingScale / 10.0;
+	//return TextureSetDetailTexture(texture, tilingScale);
+	*(int*)(g_libGTASA + 0x006118D0) = 1;
+}
+
 void InstallHooks()
 {
 	Log("InstallHooks");
 
+	// == зелень текстур
+	NOP(g_libGTASA + 0x001878E2, 4);
+	detailTexturesStorage  = (int*)(g_libGTASA + 0x0061B878);
+	RasterExtOffset = (int*)(g_libGTASA + 0x00611844);
+	SetUpHook(g_libGTASA+0x00194400, (uintptr_t)TextureSetDetailTexture_hook, (uintptr_t*)&TextureSetDetailTexture);
+
 	PROTECT_CODE_INSTALLHOOKS;
+
+	NOP(g_libGTASA + 0x0039881E, 2); // CPopulation::Update
+	NOP(g_libGTASA + 0x00398832, 2);
+	NOP(g_libGTASA + 0x003989E8, 2); // CPopulation::Update
+	NOP(g_libGTASA + 0x003989C8, 2);//живность в воде WaterCreatureManager_c::Update
 
 	// дефолтный худ
 	NOP(g_libGTASA + 0x0027E21A, 2); // CWidgetPlayerInfo::DrawWeaponIcon

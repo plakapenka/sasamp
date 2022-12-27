@@ -116,10 +116,9 @@ void ApplyPatches_level0()
 	uint8_t fps = 90;
 	if (pSettings)
 	{
-		Log("fps");
 		fps = pSettings->GetReadOnly().iFPS;
 	}
-	Log("posle_fps");
+
 	WriteMemory(g_libGTASA + 0x463FE8, (uintptr_t)& fps, 1);
 	WriteMemory(g_libGTASA + 0x56C1F6, (uintptr_t)& fps, 1);
 	WriteMemory(g_libGTASA + 0x56C126, (uintptr_t)& fps, 1);
@@ -336,13 +335,6 @@ void ApplyPatches()
 	NOP(g_libGTASA + 0x005191DC, 2);
 
 
-	//map
-	NOP(g_libGTASA+0x0026B504, 2); // убирает текст легенды карты
-	NOP(g_libGTASA+0x0026B514, 2); // убирает значки легенды
-	NOP(g_libGTASA+0x0026B49C, 2); // fix crash GetNextSpace
-
-    NOP(g_libGTASA+0x00276512, 32); //CWidgetButtonEnterCar::Draw
-
 }
 void ApplyInGamePatches()
 {
@@ -359,11 +351,9 @@ void ApplyInGamePatches()
 	WriteMemory(g_libGTASA + 0x4BDB18, (uintptr_t)"\x70\x47", 2);
 
 	// CarCtl::GenerateRandomCars nulled from CGame::Process
-	UnFuck(g_libGTASA + 0x398A3A);
 	NOP(g_libGTASA + 0x398A3A, 2);
 
 	// CTheCarGenerators::Process nulled from CGame::Process
-	UnFuck(g_libGTASA + 0x398A34);
 	NOP(g_libGTASA + 0x398A34, 2);
 
 	// множитель для MaxHealth
@@ -374,7 +364,6 @@ void ApplyInGamePatches()
 	*(float*)(g_libGTASA + 0x27D884) = 176.0;
 
 	// CEntryExit::GenerateAmbientPeds nulled from CEntryExit::TransitionFinished
-	UnFuck(g_libGTASA + 0x2C2C22);
 	NOP(g_libGTASA + 0x2C2C22, 4);
 
 	NOP(g_libGTASA + 0x003D6FDC, 2);
@@ -390,9 +379,7 @@ void ApplyInGamePatches()
 	NOP(g_libGTASA + 0x45477E, 5);
 
 	// radar draw blips
-	UnFuck(g_libGTASA + 0x3DCA90);
 	NOP(g_libGTASA + 0x3DCA90, 2);
-	UnFuck(g_libGTASA + 0x3DD4A4);
 	NOP(g_libGTASA + 0x3DD4A4, 2);
 	// CCamera::CamShake from CExplosion::AddExplosion
 	NOP(g_libGTASA + 0x55EFB8, 2);
@@ -414,13 +401,9 @@ void ApplyInGamePatches()
 	//WriteMemory(g_libGTASA + 0x27D8D0, (uintptr_t)"\x4F\xF0\x00\x08", 4);
 
 	// no vehicle audio processing
-	UnFuck(g_libGTASA + 0x4E31A6);
 	NOP(g_libGTASA + 0x4E31A6, 2);
-	UnFuck(g_libGTASA + 0x4EE7D2);
 	NOP(g_libGTASA + 0x4EE7D2, 2);
-	UnFuck(g_libGTASA + 0x4F741E);
 	NOP(g_libGTASA + 0x4F741E, 2);
-	UnFuck(g_libGTASA + 0x50AB4A);
 	NOP(g_libGTASA + 0x50AB4A, 2);
 
 	NOP(g_libGTASA + 0x00398768, 2); // nop police helis
@@ -443,6 +426,14 @@ void ApplyInGamePatches()
 
     // Prevent cheats processing
     NOP(g_libGTASA + 0x3987BA, 2);
+
+	// мини-карта в меню
+	NOP(g_libGTASA+0x0026B504, 2); // убирает текст легенды карты
+	NOP(g_libGTASA+0x0026B514, 2); // убирает значки легенды
+	NOP(g_libGTASA+0x0026B49C, 2); // fix crash GetNextSpace
+
+	// дефолт кнопка сесть в авто
+	NOP(g_libGTASA+0x00276512, 32); //CWidgetButtonEnterCar::Draw
 
 	//todo CPlayerPed::ProcessAnimGroups in the end
 }
