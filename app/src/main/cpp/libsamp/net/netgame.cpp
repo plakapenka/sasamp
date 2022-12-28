@@ -209,7 +209,7 @@ void CNetGame::Process()
 		CPlayerPed *pPlayer = pGame->FindPlayerPed();
 		CCamera *pCamera = pGame->GetCamera();
 
-		// пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+		// ?????? ??? ???????????
 
 		if(pPlayer && pCamera)
 		{
@@ -334,7 +334,7 @@ void CNetGame::UpdateNetwork()
 				break;
 
 			case ID_INVALID_PASSWORD:
-				CChatWindow::AddDebugMessage("РќРµРІРµСЂРЅС‹Р№ РїР°СЂРѕР»СЊ");
+				CChatWindow::AddDebugMessage("Куда мы лезим? Дождись открытия");
 				m_pRakClient->Disconnect(0);
 				break;
 
@@ -877,10 +877,6 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			{
 				g_pJavaWrapper->ShowSamwill();
 			}
-			else if (value == 0)
-			{
-				g_pJavaWrapper->HideSamwill();
-			}
 			break;
 		}
 		case RPC_VIBRATE:
@@ -1352,7 +1348,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			int type;
 			bs.Read(type);
 
-			//С‚РµРєСЃС‚
+			//текст
 			uint16_t lenText;
 			bs.Read(lenText);
 
@@ -1720,7 +1716,7 @@ void CNetGame::Packet_AuthKey(Packet* pkt)
 	bsKey.Write((uint8_t)ID_AUTH_KEY);
 	bsKey.Write((uint8_t)byteAuthKeyLen);
 	bsKey.Write(szAuthKey, byteAuthKeyLen);
-	m_pRakClient->Send(&bsKey, SYSTEM_PRIORITY, RELIABLE, 0);
+	m_pRakClient->Send(&bsKey, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
 
 	Log("[AUTH] %s -> %s", szAuth, szAuthKey);
 }
