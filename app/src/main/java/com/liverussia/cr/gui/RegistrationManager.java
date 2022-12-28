@@ -31,7 +31,7 @@ public class RegistrationManager {
     private ImageView choose_skin_notf;
     private ImageView choose_skin_left;
     private ImageView choose_skin_right;
-    private ImageView choose_skin_btn;
+    private MaterialButton choose_skin_btn;
     private ImageView choose_skin_notf_close;
     private ImageView choosesex_male;
     private ImageView choosesex_female;
@@ -95,7 +95,6 @@ public class RegistrationManager {
         });
 
         choose_skin_btn.setOnClickListener(view -> {
-            view.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.button_click));
             NvEventQueueActivity.getInstance().onRegisterClick(reg_password.getText().toString(), MailString, choosesex);
         });
 

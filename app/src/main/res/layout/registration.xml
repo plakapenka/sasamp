@@ -40,15 +40,18 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/register_choose_skin" />
 
-        <ImageView
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/choose_skin_btn"
-            android:layout_width="250dp"
-            android:layout_height="60dp"
-            android:layout_marginBottom="25dp"
+            android:backgroundTint="@color/blue_"
+            android:text="Начать игру"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_15sdp"
+            android:layout_width="@dimen/_150sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@drawable/register_choose_skin_btn" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <ImageView
             android:id="@+id/choose_skin_notf_close"
