@@ -45,6 +45,92 @@ int16_t CPad__GetPedWalkUpDown_hook(uintptr_t thiz)
 	}
 }
 
+int (*CPad__GetLookLeft)(uintptr_t *thiz, bool a2);
+int CPad__GetLookLeft_hook(uintptr_t *thiz, bool a2)
+{
+	if(byteCurDriver != 0)
+	{
+		return RemotePlayerKeys[byteCurPlayer].bKeys[ePadKeys::KEY_LOOK_LEFT];
+	}
+	else
+	{
+		LocalPlayerKeys.bKeys[ePadKeys::KEY_LOOK_LEFT] = CPad__GetLookLeft(thiz, a2);
+		return LocalPlayerKeys.bKeys[ePadKeys::KEY_LOOK_LEFT];
+	}
+}
+
+int (*CPad__GetLookRight)(uintptr_t *thiz, bool a2);
+int CPad__GetLookRight_hook(uintptr_t *thiz, bool a2)
+{
+	if(byteCurDriver != 0)
+	{
+		return RemotePlayerKeys[byteCurPlayer].bKeys[ePadKeys::KEY_LOOK_RIGHT];
+	}
+	else
+	{
+		LocalPlayerKeys.bKeys[ePadKeys::KEY_LOOK_RIGHT] = CPad__GetLookRight(thiz, a2);
+		return LocalPlayerKeys.bKeys[ePadKeys::KEY_LOOK_RIGHT];
+	}
+}
+
+bool (*CPad__GetTurretRight)(uintptr_t *thiz);
+bool CPad__GetTurretRight_hook(uintptr_t *thiz)
+{
+	if(byteCurDriver != 0)
+	{
+		return RemotePlayerKeys[byteCurPlayer].bKeys[ePadKeys::KEY_LOOK_RIGHT];
+	}
+	else
+	{
+		LocalPlayerKeys.bKeys[ePadKeys::KEY_LOOK_RIGHT] = CPad__GetTurretRight(thiz);
+		return LocalPlayerKeys.bKeys[ePadKeys::KEY_LOOK_RIGHT];
+	}
+}
+
+bool (*CPad__GetTurretLeft)(uintptr_t *thiz);
+bool CPad__GetTurretLeft_hook(uintptr_t *thiz)
+{
+	if(byteCurDriver != 0)
+	{
+		return RemotePlayerKeys[byteCurPlayer].bKeys[ePadKeys::KEY_LOOK_LEFT];
+	}
+	else
+	{
+		LocalPlayerKeys.bKeys[ePadKeys::KEY_LOOK_LEFT] = CPad__GetTurretLeft(thiz);
+		return LocalPlayerKeys.bKeys[ePadKeys::KEY_LOOK_LEFT];
+	}
+}
+
+//int (*CPad__ShiftTargetLeftJustDown)(uintptr_t *thiz);
+//int CPad__ShiftTargetLeftJustDown_hook(uintptr_t *thiz)
+//{
+//	Log("shitft L = %d", CPad__ShiftTargetLeftJustDown(thiz));
+//	if(dwCurPlayerActor && (byteCurPlayer != 0))
+//	{
+//		return RemotePlayerKeys[byteCurPlayer].bKeys[ePadKeys::KEY_LOOK_LEFT];
+//	}
+//	else
+//	{
+//		LocalPlayerKeys.bKeys[ePadKeys::KEY_LOOK_LEFT] = CPad__ShiftTargetLeftJustDown(thiz);
+//		return LocalPlayerKeys.bKeys[ePadKeys::KEY_LOOK_LEFT];
+//	}
+//}
+//
+//int (*CPad__ShiftTargetRightJustDown)(uintptr_t *thiz);
+//int CPad__ShiftTargetRightJustDown_hook(uintptr_t *thiz)
+//{
+//	Log("shitft R = %d", CPad__ShiftTargetRightJustDown(thiz));
+//	if(dwCurPlayerActor && (byteCurPlayer != 0))
+//	{
+//		return RemotePlayerKeys[byteCurPlayer].bKeys[ePadKeys::KEY_LOOK_RIGHT];
+//	}
+//	else
+//	{
+//		LocalPlayerKeys.bKeys[ePadKeys::KEY_LOOK_RIGHT] = CPad__ShiftTargetRightJustDown(thiz);
+//		return LocalPlayerKeys.bKeys[ePadKeys::KEY_LOOK_RIGHT];
+//	}
+//}
+
 int16_t (*CPad__GetSteeringLeftRight)(uintptr_t thiz);
 int16_t CPad__GetSteeringLeftRight_hook(uintptr_t thiz)
 {
@@ -500,6 +586,24 @@ void AllVehicles__ProcessControl_hook(uintptr_t thiz)
 		(( void (*)(uintptr_t))(g_libGTASA+0x364B64+1))(thiz+0x138);
 	}
 
+	// Tyre burst fix
+	if (pVehicle->pDriver)
+	{
+		if (pVehicle->m_nVehicleFlags.bTyresDontBurst)
+		{
+			pVehicle->m_nVehicleFlags.bTyresDontBurst = 0;
+		}
+		if(!pVehicle->m_nVehicleFlags.bCanBeDamaged) pVehicle->m_nVehicleFlags.bCanBeDamaged = true;
+	}
+	else
+	{
+		if (!pVehicle->m_nVehicleFlags.bTyresDontBurst)
+		{
+			pVehicle->m_nVehicleFlags.bTyresDontBurst = 1;
+		}
+		if (pVehicle->m_nVehicleFlags.bCanBeDamaged) pVehicle->m_nVehicleFlags.bCanBeDamaged = false;
+	}
+
 	// VEHTYPE::ProcessControl()
     (( void (*)(VEHICLE_TYPE*))(g_libGTASA+call_addr+1))(pVehicle);
 }
@@ -717,6 +821,16 @@ void HookCPad()
 	SetUpHook(g_libGTASA+0x39D08C, (uintptr_t)CPad__GetPedWalkLeftRight_hook, (uintptr_t*)&CPad__GetPedWalkLeftRight);
 	SetUpHook(g_libGTASA+0x39D110, (uintptr_t)CPad__GetPedWalkUpDown_hook, (uintptr_t*)&CPad__GetPedWalkUpDown);
 
+	// look
+	SetUpHook(g_libGTASA+0x0039D194, (uintptr_t)CPad__GetLookLeft_hook, (uintptr_t*)&CPad__GetLookLeft);
+	SetUpHook(g_libGTASA+0x0039D26C, (uintptr_t)CPad__GetLookRight_hook, (uintptr_t*)&CPad__GetLookRight);
+
+	SetUpHook(g_libGTASA+0x0039D344, (uintptr_t)CPad__GetTurretLeft_hook, (uintptr_t*)&CPad__GetTurretLeft);
+	SetUpHook(g_libGTASA+0x0039D368, (uintptr_t)CPad__GetTurretRight_hook, (uintptr_t*)&CPad__GetTurretRight);
+
+//	SetUpHook(g_libGTASA+0x0039E64C, (uintptr_t)CPad__ShiftTargetLeftJustDown_hook, (uintptr_t*)&CPad__ShiftTargetLeftJustDown);
+//	SetUpHook(g_libGTASA+0x0039E6CC, (uintptr_t)CPad__ShiftTargetRightJustDown_hook, (uintptr_t*)&CPad__ShiftTargetRightJustDown);
+	//SetUpHook(g_libGTASA+0x39D110, (uintptr_t)CPad__GetPedWalkUpDown_hook, (uintptr_t*)&CPad__GetPedWalkUpDown);
 	//SetUpHook(g_libGTASA + 0x)
 
 	// sprint/jump stuff
