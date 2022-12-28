@@ -4,6 +4,7 @@
     <file url="file://$PROJECT_DIR$/app/src/main/cpp" charset="windows-1251" />
     <file url="file://$PROJECT_DIR$/app/src/main/cpp/libsamp/chatwindow.cpp" charset="windows-1251" />
     <file url="file://$PROJECT_DIR$/app/src/main/cpp/libsamp/game/hooks.cpp" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/cpp/libsamp/net/netgame.cpp" charset="windows-1251" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>
