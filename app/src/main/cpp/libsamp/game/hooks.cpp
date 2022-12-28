@@ -173,19 +173,6 @@ bool bGameStarted = false;
 
 void RenderBackgroundHud();
 
-int (*CVehicle__CVehicle)(uintptr_t a1, uintptr_t a2, unsigned char a3);
-int CVehicle__CVehicle_hook(uintptr_t a1, uintptr_t a2, unsigned char a3) {
-
-	Log("DOLBOEB");
-	uintptr_t calledFrom = 0;
-	__asm__ volatile("mov %0, lr"
-	: "=r"(calledFrom));
-	calledFrom -= g_libGTASA;
-
-	Log("%x", calledFrom);
-	return CVehicle__CVehicle(a1, a2, a3);
-}
-
 void (*Render2dStuff)();
 void Render2dStuff_hook()
 {
@@ -721,7 +708,7 @@ signed int OS_FileOpen_hook(unsigned int a1, int *a2, const char *a3, int a4)
 {
 	//if (strstr(a3, ".unc") ) return 0;
 
-    Log("%s", a3);
+  //  Log("%s", a3);
     uintptr_t calledFrom = 0;
     __asm__ volatile("mov %0, lr"
     : "=r"(calledFrom));
@@ -851,9 +838,9 @@ extern char g_iLastBlock[512];
 int *(*LoadFullTexture)(uintptr_t *thiz, unsigned int a2);
 int *LoadFullTexture_hook(uintptr_t *thiz, unsigned int a2)
 {
-	//strcpy(g_iLastBlock, *(const char **)(*((DWORD *)thiz + 7) + 0x17 * a2));
+	strcpy(g_iLastBlock, *(const char **)(*((DWORD *)thiz + 7) + 0x17 * a2));
     //*((DWORD *)thiz + 0x1A) = 0;
-    Log("LoadFullTexture_hook %s", *(const char **)(*((DWORD *)thiz + 7) + 0x17 * a2));
+    //Log("LoadFullTexture_hook %s", *(const char **)(*((DWORD *)thiz + 7) + 0x17 * a2));
 //	Log("%d", *((DWORD *)thiz + 0x1A));
 //	Log("%d", *((DWORD *)thiz + 0x1B));
 //    if(strcmp(*(const char **)(*((DWORD *)thiz + 7) + 0x17 * a2), "hud_bg") == 0){
@@ -971,11 +958,6 @@ void InstallSpecialHooks()
 	// nop shit pause
 
 	//crash
-//	if (!*(uintptr_t *)(g_libGTASA + 0x61B298))
-//		*(uintptr_t *)(g_libGTASA + 0x61B298) = ((uintptr_t(*)(const char *))(g_libGTASA + 0x179A20))("glAlphaFuncQCOM");
-//
-//	if (!*(uintptr_t *)(g_libGTASA + 0x61B298))
-//		*(uintptr_t *)(g_libGTASA + 0x61B298) = ((uintptr_t(*)(const char *))(g_libGTASA + 0x179A20))("glAlphaFunc");
     if (!*(uintptr_t *)(g_libGTASA + 0x61B298))
     {
         uintptr_t test = ((uintptr_t(*)(const char *))(g_libGTASA + 0x00179A20))("glAlphaFuncQCOM");
