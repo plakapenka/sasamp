@@ -2994,17 +2994,14 @@ void InstallHooks()
 {
 	Log("InstallHooks");
 
-	// == зелень текстур
-	NOP(g_libGTASA + 0x001878E2, 4);
-	detailTexturesStorage  = (int*)(g_libGTASA + 0x0061B878);
-	RasterExtOffset = (int*)(g_libGTASA + 0x00611844);
-	SetUpHook(g_libGTASA+0x00194400, (uintptr_t)TextureSetDetailTexture_hook, (uintptr_t*)&TextureSetDetailTexture);
+//	// == зелень текстур
+//	NOP(g_libGTASA + 0x001878E2, 4);
+//	detailTexturesStorage  = (int*)(g_libGTASA + 0x0061B878);
+//	RasterExtOffset = (int*)(g_libGTASA + 0x00611844);
+//	SetUpHook(g_libGTASA+0x00194400, (uintptr_t)TextureSetDetailTexture_hook, (uintptr_t*)&TextureSetDetailTexture);
 
 	PROTECT_CODE_INSTALLHOOKS;
 
-	NOP(g_libGTASA + 0x0039881E, 2); // CPopulation::Update
-	NOP(g_libGTASA + 0x00398832, 2);
-	NOP(g_libGTASA + 0x003989E8, 2); // CPopulation::Update
 	NOP(g_libGTASA + 0x003989C8, 2);//живность в воде WaterCreatureManager_c::Update
 
 	// дефолтный худ

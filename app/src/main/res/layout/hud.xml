@@ -359,29 +359,29 @@
                     app:layout_constraintStart_toStartOf="@+id/hud_logo_img_layout"
                     app:layout_constraintTop_toTopOf="@+id/hud_logo_img_layout"/>
 
-                    <TextView
-                        android:id="@+id/hud_logo_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:autoSizeMaxTextSize="@dimen/_75sdp"
-                        android:autoSizeMinTextSize="@dimen/_9sdp"
-                        android:autoSizeStepGranularity="@dimen/_20sdp"
-                        android:autoSizeTextType="uniform"
-                        android:fontFamily="@font/din_pro_bold"
-                        android:shadowColor="@color/black"
-                        android:shadowRadius="2"
-                        android:includeFontPadding="false"
-                        android:paddingLeft="@dimen/_7sdp"
-                        android:singleLine="true"
-                        android:text="Artom abcqe"
-                        android:textAllCaps="true"
-                        android:textColor="@color/yellow"
-                        android:textFontWeight="900"
-                        android:textSize="@dimen/_10sdp"
-                        android:textStyle="italic"
-                        app:layout_constraintBottom_toBottomOf="@+id/hud_logo_text_layout"
-                        app:layout_constraintStart_toStartOf="@+id/hud_logo_text_layout"
-                        app:layout_constraintTop_toTopOf="@+id/hud_logo_text_layout" />
+                <TextView
+                    android:id="@+id/hud_logo_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:autoSizeMaxTextSize="@dimen/_75sdp"
+                    android:autoSizeMinTextSize="@dimen/_9sdp"
+                    android:autoSizeStepGranularity="@dimen/_20sdp"
+                    android:autoSizeTextType="uniform"
+                    android:fontFamily="@font/din_pro_bold"
+                    android:includeFontPadding="false"
+
+                    android:shadowColor="@color/black"
+                    android:shadowRadius="2"
+                    android:singleLine="true"
+                    android:text="Москва"
+                    android:textAllCaps="true"
+                    android:textColor="@color/yellow"
+                    android:textFontWeight="900"
+                    android:textSize="@dimen/_10sdp"
+                    android:textStyle="italic"
+                    app:layout_constraintBottom_toBottomOf="@+id/hud_logo_text_layout"
+                    app:layout_constraintStart_toEndOf="@+id/hud_logo_img_layout"
+                    app:layout_constraintTop_toTopOf="@+id/hud_logo_text_layout" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/hud_logo_img_layout"
