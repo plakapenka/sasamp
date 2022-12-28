@@ -833,18 +833,6 @@ void CJavaWrapper::Vibrate(int milliseconds)
 	env->CallVoidMethod(this->activity, this->j_Vibrate, milliseconds);
 }
 
-void CJavaWrapper::HideSamwill()
-{
-    JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-    env->CallVoidMethod(this->activity, this->s_hideSamwill);
-}
-
 void CJavaWrapper::SetPauseState(bool a1)
 {
     JNIEnv* env = GetEnv();
@@ -1174,7 +1162,7 @@ void CJavaWrapper::ClearScreen()
 	HideBusInfo();
 	HideGPS();
 	HideGreenZone();
-	HideSamwill();
+
 	ShowCasinoDice(false, 0, 0, 0, 0, "--", 0, "--", 0, "--", 0, "--", 0, "--", 0);
 }
 
@@ -1243,7 +1231,6 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 	j_Vibrate = env->GetMethodID(nvEventClass, "goVibrate", "(I)V");
 
     s_showSamwill = env->GetMethodID(nvEventClass, "showSamwill", "()V");
-    s_hideSamwill = env->GetMethodID(nvEventClass, "hideSamwill", "()V");
 
 	s_updateSpeedInfo = env->GetMethodID(nvEventClass, "updateSpeedInfo", "(IIIIIIII)V");
     s_showSpeed = env->GetMethodID(nvEventClass, "showSpeed", "()V");

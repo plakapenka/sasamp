@@ -200,7 +200,7 @@ public abstract class NvEventQueueActivity
     private ChooseServer mChooseServer = null;
     private Tab mTab = null;
     private Casino mCasino = null;
-    private SoundPool soundPool = null;
+    public SoundPool soundPool = null;
 
     /* *
      * Helper function to select fixed window size.
@@ -1029,7 +1029,7 @@ public abstract class NvEventQueueActivity
                 .build();
 
 
-        mSamwillManager = new SamwillManager(this, soundPool);
+        mSamwillManager = new SamwillManager(this);
         mSpeedometer = new Speedometer(this);
         mAutoShop = new AutoShop(this);
         mCasinoDice = new CasinoDice(this);
@@ -1587,8 +1587,6 @@ public abstract class NvEventQueueActivity
     public void showMenu() { runOnUiThread(() -> { mMenu.ShowMenu(); }); }
 
     public void showSamwill() { runOnUiThread(() -> { mSamwillManager.Show(); }); }
-
-    public void hideSamwill() { runOnUiThread(() -> { mSamwillManager.Hide(); }); }
 
     public void updateSplash(int percent) { runOnUiThread(() -> { mChooseServer.Update(percent); } ); }
 

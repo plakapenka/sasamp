@@ -40,7 +40,6 @@ class CJavaWrapper
 	jmethodID s_updateLevelInfo;
 
 	jmethodID s_showSamwill;
-	jmethodID s_hideSamwill;
 
 	jmethodID s_showSpeed;
     jmethodID s_hideSpeed;
@@ -113,7 +112,6 @@ public:
 	void HideGunShopManager();
 
 	void ShowSamwill();
-	void HideSamwill();
 
 	void UpdateSpeedInfo(int speed, int fuel, int hp, int mileage, int engine, int light, int belt, int lock);
 	void ShowSpeed();
