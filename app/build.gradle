@@ -11,6 +11,9 @@ android {
         targetCompatibility JavaVersion.VERSION_11
         sourceCompatibility JavaVersion.VERSION_11
     }
+    aaptOptions {
+        noCompress 'mp3'
+    }
 
     defaultConfig {
         minSdkVersion 22
@@ -19,8 +22,8 @@ android {
     //    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         applicationId "com.liverussia.cr"
-        versionName "76"
-        versionCode 76
+        versionName "79"
+        versionCode 79
         vectorDrawables.useSupportLibrary = true
 
         multiDexEnabled = true
