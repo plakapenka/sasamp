@@ -148,7 +148,7 @@
                     android:layout_marginTop="40dp"
                     android:background="@drawable/button_red_stroke_rectangle"
                     android:drawingCacheQuality="auto"
-                    android:text="Купить 50 руб"
+                    android:text="Купить 50 LC"
                     android:fontFamily="@font/pt_root_ui_medium"
                     android:gravity="center"
                     android:textAllCaps="false"

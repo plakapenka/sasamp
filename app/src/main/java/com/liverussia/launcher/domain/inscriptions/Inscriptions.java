@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum Inscriptions {
-    BALANCE("Баланс: %s руб.");
+    BALANCE("Баланс: %s LC");
 
     private final String text;
 
