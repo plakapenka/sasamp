@@ -9,13 +9,15 @@ import com.liverussia.launcher.domain.enums.BillingParameters;
 import android.annotation.SuppressLint;
 import android.view.View;
 import android.webkit.CookieManager;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+@SuppressLint("SetJavaScriptEnabled")
 public class BillingActivity extends AppCompatActivity {
 
 
-    @SuppressLint("ResourceAsColor")
+//    @SuppressLint("ResourceAsColor")
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -36,15 +38,17 @@ public class BillingActivity extends AppCompatActivity {
         } else {
             String uri = createUri();
 
-            webView.loadUrl(uri);
             webView.getSettings().setJavaScriptEnabled(true);
-            webView.getSettings().setSupportZoom(true);
+//            webView.getSettings().setSupportZoom(true);
             //webView.getSettings().setBuiltInZoomControls(true);
-            webView.getSettings().setLoadWithOverviewMode(true);
-            webView.getSettings().setUseWideViewPort(true);
+//            webView.getSettings().setLoadWithOverviewMode(true);
+//            webView.getSettings().setUseWideViewPort(true);
             webView.setWebViewClient(new MyWebViewClient());
+            webView.setWebChromeClient(new WebChromeClient());
             webView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-            webView.setBackgroundColor(0xFFFFFFFF);
+
+            webView.loadUrl(uri);
+//            webView.setBackgroundColor(0xFFFFFFFF);
         }
     }
 

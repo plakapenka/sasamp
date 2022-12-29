@@ -17,7 +17,7 @@ public enum ErrorContainer {
 
     AUTHENTICATION_ERROR(210, "Ошибка авторизации", HttpStatus.UNAUTHORIZED),
     BAD_REQUEST(211, "Неккоретный запрос", HttpStatus.BAD_REQUEST),
-    USER_NOT_FOUND(212, "Пользователь не найден", HttpStatus.NOT_FOUND),
+    USER_NOT_FOUND(212, "Имя пользователя или пароль не верный", HttpStatus.NOT_FOUND),
     USER_WITH_THIS_LOGIN_EXIST(213, "Пользователь с таким логином уже зарегистрирован", HttpStatus.BAD_REQUEST),
     PAGE_NOT_FOUND(214, "Старница не найдена", HttpStatus.NOT_FOUND),
     ACCESS_DENIED(215, "Доступ запрещен", HttpStatus.FORBIDDEN),
