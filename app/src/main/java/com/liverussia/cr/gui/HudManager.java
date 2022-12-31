@@ -534,7 +534,7 @@ public class HudManager {
             hp_text.setText(String.format("%d", health));
 
             int id = activity.getResources().getIdentifier(String.format("weapon_%d", weaponid), "drawable", activity.getPackageName());
-            hud_weapon.setImageResource(id);
+            if(id > 0)hud_weapon.setImageResource(id);
 
             if (weaponid > 15 & weaponid < 44 & weaponid != 21) {
                 Utils.ShowLayout(hud_ammo, false);
