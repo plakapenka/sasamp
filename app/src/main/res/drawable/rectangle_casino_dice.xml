@@ -42,12 +42,12 @@
                             />
 
                         <item
-                            android:color="#A6002639"
+                            android:color="#BA002639"
                             android:offset="0.234"
                             />
 
                         <item
-                            android:color="#A6000000"
+                            android:color="#BA000000"
                             android:offset="0.5"
                             />
 

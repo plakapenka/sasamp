@@ -37,6 +37,7 @@ public class CasinoDice {
     Button dice_butt_exit;
     DecimalFormat num_format;
     ConstraintLayout dialog_layout;
+    private boolean isTempHiden;
 
     private final int CASINO_DICE_BUTTON_BET = 0;
     private final int CASINO_DICE_BUTTON_DICE = 1;
@@ -92,6 +93,7 @@ public class CasinoDice {
 
     public void TempToggle(boolean toggle)
     {
+        isTempHiden = !toggle;
         if(toggle)
         {
             activity.runOnUiThread(() -> casino_dice_main_layout.setVisibility(View.VISIBLE) );
@@ -154,13 +156,11 @@ public class CasinoDice {
             } else {
                 dice_text_player_ready5.setText(String.format("%d", player5stat));
             }
-            casino_dice_main_layout.setVisibility(View.VISIBLE);
+            if(!isTempHiden){
+                casino_dice_main_layout.setVisibility(View.VISIBLE);
+            }
         });
 
-    }
-    public void HelloWorld()
-    {
-        Log.d("sadf", "Hello from cpp");
     }
 }
 
