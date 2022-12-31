@@ -96,6 +96,7 @@ bool CPlayerPool::New(PLAYERID playerId, char *szPlayerName, bool IsNPC)
 
 bool CPlayerPool::Delete(PLAYERID playerId, uint8_t byteReason)
 {
+	Log("CPlayerPool::Delete %d", playerId);
 	if(!GetSlotState(playerId) || !m_pPlayers[playerId])
 		return false;
 

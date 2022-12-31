@@ -56,11 +56,10 @@ CPlayerPed::CPlayerPed(uint8_t bytePlayerNumber, int iSkin, float fX, float fY, 
 	SetPlayerPedPtrRecord(m_bytePlayerNumber, (uintptr_t)m_pPed);
 	ScriptCommand(&set_actor_weapon_droppable, m_dwGTAId, 1);
 	ScriptCommand(&set_actor_immunities, m_dwGTAId, 0, 0, 0, 0, 0);
-	ScriptCommand(&set_actor_can_be_decapitated, m_dwGTAId, 0);
+	ScriptCommand(&set_actor_can_be_decapitated, m_dwGTAId, 0); // отрыв бошки
 	ScriptCommand(&set_char_never_targeted, m_dwGTAId, 1);
 
-	if(pNetGame)
-		SetMoney(pNetGame->m_iDeathDropMoney);
+	ScriptCommand(&set_actor_money, m_dwGTAId, 0); // деньги падают при смерти
 
 	SetModelIndex(iSkin);
 	ForceTargetRotation(fRotation);
@@ -68,7 +67,7 @@ CPlayerPed::CPlayerPed(uint8_t bytePlayerNumber, int iSkin, float fX, float fY, 
 	GetMatrix(&mat);
 	mat.pos.X = fX;
 	mat.pos.Y = fY;
-	mat.pos.Z = fZ + 0.15f;
+	mat.pos.Z = fZ+ 0.15f;
 	SetMatrix(mat);
 	
 	for (int i = 0; i < MAX_ATTACHED_OBJECTS; i++)
@@ -80,11 +79,6 @@ CPlayerPed::CPlayerPed(uint8_t bytePlayerNumber, int iSkin, float fX, float fY, 
 }
 
 CPlayerPed::~CPlayerPed()
-{
-	Destroy();
-}
-
-void CPlayerPed::Destroy()
 {
 	CDebugInfo::uiStreamedPeds--;
 	FlushAttach();
@@ -100,9 +94,13 @@ void CPlayerPed::Destroy()
 		return;
 	}
 
-	Log("Removing from vehicle..");
+
 	if(IN_VEHICLE(m_pPed))
-		RemoveFromVehicleAndPutAt(100.0f, 100.0f, 10.0f);
+	{
+		Log("Removing from vehicle..");
+		ExitCurrentVehicle();
+		//  RemoveFromVehicleAndPutAt(100.0f, 100.0f, 10.0f);
+	}
 
 	Log("Setting flag state..");
 	uintptr_t dwPedPtr = (uintptr_t)m_pPed;
@@ -111,7 +109,7 @@ void CPlayerPed::Destroy()
 	Log("Calling destructor..");
 	(( void (*)(PED_TYPE*))(*(void**)(m_pPed->entity.vtable+0x4)))(m_pPed);
 
-	ScriptCommand(&destroy_actor, m_dwGTAId);
+	ScriptCommand(&DELETE_CHAR, m_dwGTAId);
 
 	m_pPed = nullptr;
 	m_pEntity = nullptr;
@@ -580,7 +578,7 @@ float CPlayerPed::GetArmour()
 	return m_pPed->fArmour;
 }
 
-void CPlayerPed::SetInterior(uint8_t byteID)
+void CPlayerPed::SetInterior(uint8_t byteID, bool refresh)
 {
 	if(!m_pPed) return;
 
@@ -589,12 +587,19 @@ void CPlayerPed::SetInterior(uint8_t byteID)
 		return;
 	}
 
-	ScriptCommand(&select_interior, byteID);
-	ScriptCommand(&link_actor_to_interior, m_dwGTAId, byteID);
+	if(m_pPed && m_bytePlayerNumber != 0) {
+		ScriptCommand(&link_actor_to_interior, m_dwGTAId, byteID);
+	}
+	else {
+		ScriptCommand(&select_interior, byteID);
+		ScriptCommand(&link_actor_to_interior, m_dwGTAId, byteID);
 
-	MATRIX4X4 mat;
-	GetMatrix(&mat);
-	ScriptCommand(&refresh_streaming_at, mat.pos.X, mat.pos.Y);
+		if(refresh) {
+			MATRIX4X4 mat;
+			this->GetMatrix(&mat);
+			ScriptCommand(&refresh_streaming_at, mat.pos.X, mat.pos.Y);
+		}
+	}
 }
 
 void CPlayerPed::PutDirectlyInVehicle(CVehicle *pVehicle, int iSeat)
@@ -1049,6 +1054,7 @@ void RwMatrixRotate(MATRIX4X4* pMat, VECTOR* axis, float angle)
 void CPlayerPed::ProcessAttach()
 {
 	if (!m_pPed) return;
+	if(!m_dwGTAId)return;
 	if (m_pPed->entity.vtable == (g_libGTASA + 0x5C7358)) return;
 
 	((int(*)(PED_TYPE*))(g_libGTASA + 0x00391968 + 1))(m_pPed); // UpdateRPHAnim
@@ -1334,9 +1340,6 @@ bool IsBlendAssocGroupLoaded(int iGroup)
 
 void CPlayerPed::SetMoveAnim(int iAnimGroup)
 {
-	
-
-
 	Log("SetMoveAnim %d", iAnimGroup);
 	if (iAnimGroup == 0)
 	{
@@ -1434,12 +1437,6 @@ bool CPlayerPed::IsDead()
 	if(!m_pPed) return true;
 	if(m_pPed->fHealth > 0.0f) return false;
 	return true;
-}
-
-void CPlayerPed::SetMoney(int iAmount)
-{
-	ScriptCommand(&set_actor_money, m_dwGTAId, 0);
-	ScriptCommand(&set_actor_money, m_dwGTAId, iAmount);
 }
 
 // 0.3.7

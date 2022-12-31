@@ -37,10 +37,10 @@ char g_pszStorage[255];
 
 const cryptor::string_encryptor encLib = cryptor::create("libsamp.so", 11);
 void CrashLog(const char* fmt, ...);
+bool isTestMode = false;
 CGame *pGame = nullptr;
 CNetGame *pNetGame = nullptr;
 CPlayerTags *pPlayerTags = nullptr;
-CSnapShotHelper* pSnapShotHelper = nullptr;
 
 CGUI *pGUI = nullptr;
 CKeyBoard *pKeyBoard = nullptr;
@@ -121,6 +121,7 @@ void InitSAMP(JNIEnv* pEnv, jobject thiz, const char* path)
 	pInventory = new CINVENTORY();
 
 	//ÒÓÒ ÌÎÆÍÎ ÇÀÃÐÓÇÈÒÜ
+	isTestMode = (bool)pSettings->GetReadOnly().isTestMode;
 	CWeaponsOutFit::SetEnabled(pSettings->GetReadOnly().iOutfitGuns);
 	CDebugInfo::SetDrawFPS(pSettings->GetReadOnly().szDebug);
 	//CSnow::SetCurrentSnow(pSettings->GetReadOnly().iSnow);
@@ -141,7 +142,6 @@ void InitSAMP(JNIEnv* pEnv, jobject thiz, const char* path)
 //		return;
 //	}
 }
-extern CSnapShotHelper* pSnapShotHelper;
 void ProcessCheckForKeyboard();
 
 void InitInMenu()
@@ -153,7 +153,6 @@ void InitInMenu()
 	pGUI = new CGUI();
 	pKeyBoard = new CKeyBoard();
 	pPlayerTags = new CPlayerTags();
-	pSnapShotHelper = new CSnapShotHelper();
 
 	ProcessCheckForKeyboard();
 
@@ -248,23 +247,6 @@ void MainLoop()
 	InitInGame();
 
 	if(pNetGame) pNetGame->Process();
-
-//	if (pNetGame)
-//	{
-//		if (pNetGame->GetPlayerPool())
-//		{
-//			if (pNetGame->GetPlayerPool()->GetLocalPlayer())
-//			{
-//				CVehicle* pVeh = pNetGame->GetVehiclePool()->GetAt(pNetGame->GetPlayerPool()->GetLocalPlayer()->m_CurrentVehicle);
-//				if (pVeh)
-//				{
-//					VECTOR vec;
-//					pVeh->GetMoveSpeedVector(&vec);
-//					CDebugInfo::ProcessSpeedMode(&vec);
-//				}
-//			}
-//		}
-//	}
 }
 extern int g_iLastRenderedObject;
 char g_iLastBlock[512];

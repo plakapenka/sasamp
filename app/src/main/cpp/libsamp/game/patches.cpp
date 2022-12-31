@@ -169,6 +169,8 @@ void ApplyPatches()
 
 	CDebugInfo::ApplyDebugPatches();
 
+//	NOP(g_libGTASA + 0x0049052A, 42); // братки залазят в тачку с тобой
+
 	// nop check CWorld::FindPlayerSlotWithPedPointer (fuck*** R*)
 	// just left mov r4, r0 and ldr r1 [pc, shit]
 	NOP(g_libGTASA + 0x0045A4C8, 11);

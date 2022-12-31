@@ -21,6 +21,27 @@ CVehiclePool::~CVehiclePool()
 		Delete(VehicleID);
 }
 
+CVehicle* CVehiclePool::GetVehicleFromTrailer(CVehicle *pTrailer) {
+	CVehicle *pVehicle;
+	CPlayerPool *pPlayerPool = pNetGame->GetPlayerPool();
+	CLocalPlayer *pLocalPlayer = pPlayerPool->GetLocalPlayer();
+
+	for (VEHICLEID x = 0; x < MAX_VEHICLES; x++) {
+		if (GetSlotState(x)) {
+			pVehicle = m_pVehicles[x];
+
+			if (m_bIsActive[x]) {
+				//Log("veh = %d, trailer = %d, needt = %d", pVehicle, pVehicle->m_pTrailer, pTrailer);
+				if(reinterpret_cast<VEHICLE_TYPE *>(pVehicle->m_pVehicle->dwTrailer) == pTrailer->m_pVehicle)
+				{
+					return pVehicle;
+				}
+			}
+		}
+	}
+	return nullptr;
+}
+
 void CVehiclePool::Process()
 {
 	CVehicle *pVehicle;

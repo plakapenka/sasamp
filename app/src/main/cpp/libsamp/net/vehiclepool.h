@@ -60,9 +60,13 @@ public:
 
 	bool			m_bIsActive[MAX_VEHICLES];
 	CVehicle*		m_pVehicles[MAX_VEHICLES];
+
+	CVehicle *GetVehicleFromTrailer(CVehicle *pTrailer);
+
 private:
 	VEHICLE_TYPE*	m_pGTAVehicles[MAX_VEHICLES];
 	bool			m_bVehicleSlotState[MAX_VEHICLES];
 
 	bool			m_bIsWasted[MAX_VEHICLES];
+
 };

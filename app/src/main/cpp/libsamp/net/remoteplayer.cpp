@@ -36,7 +36,23 @@ CRemotePlayer::CRemotePlayer()
 
 CRemotePlayer::~CRemotePlayer()
 {
-	Remove();
+	if(m_dwMarkerID)
+	{
+		pGame->DisableMarker(m_dwMarkerID);
+		m_dwMarkerID = 0;
+	}
+
+	if(m_dwGlobalMarkerID)
+	{
+		pGame->DisableMarker(m_dwGlobalMarkerID);
+		m_dwGlobalMarkerID = 0;
+	}
+
+	if(m_pPlayerPed)
+	{
+		pGame->RemovePlayer(m_pPlayerPed);
+		m_pPlayerPed = nullptr;
+	}
 }
 extern bool g_uiHeadMoveEnabled;
 void CRemotePlayer::ProcessSpecialActions(BYTE byteSpecialAction)
@@ -92,10 +108,10 @@ void CRemotePlayer::Process()
 			m_byteUpdateFromNetwork == UPDATE_TYPE_ONFOOT && !m_pPlayerPed->IsInVehicle())
 		{
 			// UPDATE CURRENT WEAPON
-			if (m_iKey0 ^ OUTCOMING_KEY != OUTCOMING_NUM)
-			{
-				
-			}
+//			if (m_iKey0 ^ OUTCOMING_KEY != OUTCOMING_NUM)
+//			{
+//
+//			}
 			if (GetPlayerPed()->GetCurrentWeapon() != m_ofSync.byteCurrentWeapon)
 			{
 				GetPlayerPed()->GiveWeapon(m_ofSync.byteCurrentWeapon, 9999);
@@ -499,27 +515,6 @@ bool CRemotePlayer::Spawn(uint8_t byteTeam, unsigned int iSkin, VECTOR *vecPos, 
 	return false;
 }
 
-void CRemotePlayer::Remove()
-{
-	if(m_dwMarkerID)
-	{
-		pGame->DisableMarker(m_dwMarkerID);
-		m_dwMarkerID = 0;
-	}
-
-	if(m_dwGlobalMarkerID)
-	{
-		pGame->DisableMarker(m_dwGlobalMarkerID);
-		m_dwGlobalMarkerID = 0;
-	}
-
-	if(m_pPlayerPed)
-	{
-		pGame->RemovePlayer(m_pPlayerPed);
-		m_pPlayerPed = nullptr;
-	}
-}
-
 void CRemotePlayer::HandleVehicleEntryExit()
 {
 //	Log("HandleVehicleEntryExit");
@@ -891,20 +886,27 @@ void CRemotePlayer::UpdateAimFromSyncData(AIM_SYNC_DATA * pAimSync)
 		pwstWeapon->dwAmmoInClip = 2;
 }
 
-void CRemotePlayer::StoreOnFootFullSyncData(ONFOOT_SYNC_DATA *pofSync, uint32_t dwTime, uint8_t key)
+void CRemotePlayer::StoreOnFootFullSyncData(ONFOOT_SYNC_DATA *pofSync, uint32_t dwTime)
 {
 	if(GetTickCount() < m_dwWaitForEntryExitAnims) return;
 
 	if( !dwTime || (dwTime - m_dwUnkTime) >= 0 )
 	{
 		m_dwUnkTime = dwTime;
-		m_iKey0 = key;
+		//m_iKey0 = key;
 		m_dwLastRecvTick = GetTickCount();
 		memcpy(&m_ofSync, pofSync, sizeof(ONFOOT_SYNC_DATA));
 		m_fReportedHealth = (float)pofSync->byteHealth;
 		m_fReportedArmour = (float)pofSync->byteArmour;
 		m_byteSpecialAction = pofSync->byteSpecialAction;
 		m_byteUpdateFromNetwork = UPDATE_TYPE_ONFOOT;
+
+		if(m_pPlayerPed) {
+			if(m_pPlayerPed->IsInVehicle()) {
+				if(m_byteSpecialAction != SPECIAL_ACTION_ENTER_VEHICLE && m_byteSpecialAction != SPECIAL_ACTION_EXIT_VEHICLE)
+					RemoveFromVehicle();
+			}
+		}
 
 		SetState(PLAYER_STATE_ONFOOT);
 	}
@@ -968,7 +970,7 @@ void CRemotePlayer::RemoveFromVehicle()
 		if(m_pPlayerPed->IsInVehicle())
 		{
 			m_pPlayerPed->GetMatrix(&mat);
-			m_pPlayerPed->RemoveFromVehicleAndPutAt(mat.pos.X, mat.pos.Y, mat.pos.Z);
+			m_pPlayerPed->RemoveFromVehicleAndPutAt(mat.pos.X, mat.pos.Y, mat.pos.Z+1.0);
 		}
 	}
 }

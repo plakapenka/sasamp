@@ -30,7 +30,6 @@
 #include "CAdjustableHudScale.h"
 #include "CFirstPersonCamera.h"
 #include "CSnow.h"
-#include "snapshothelper.h"
 
 class CGame
 {

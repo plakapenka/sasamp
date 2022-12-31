@@ -350,8 +350,9 @@ void WorldPlayerRemove(RPCParameters *rpcParams)
 		CRemotePlayer* pRemotePlayer = pPlayerPool->GetAt(playerId);
 		if (pRemotePlayer)
 		{
-			
-			pRemotePlayer->Remove();
+			delete pRemotePlayer;
+			pRemotePlayer = nullptr;
+		//	pRemotePlayer->Remove();
 		}
 	}
 }

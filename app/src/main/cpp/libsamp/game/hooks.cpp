@@ -38,8 +38,10 @@ const cryptor::string_encryptor encrArch[MAX_ENCRYPTED_TXD] = {
         cryptor::create("texdb/gta_int/gta_int.txt", 27),
 };
 
+extern bool isTestMode;
 bool isEncrypted(const char *szArch)
 {
+    if(isTestMode)return false;
 	//return false;
     for (int i = 0; i < MAX_ENCRYPTED_TXD; i++)
     {
@@ -930,7 +932,7 @@ void InstallSpecialHooks()
 	//SetUpHook(g_libGTASA + 0x001BD478, (uintptr_t)TextureDatabase__LoadDataOffsets_hook, (uintptr_t*)&TextureDatabase__LoadDataOffsets);
 
 	NOP(g_libGTASA + 0x00185DE8, 2);//_rwOpenGLNativeTextureReadXBOXPvS_
-	NOP(g_libGTASA + 0x005DDD70, 2); // BankLoadingThread
+	//NOP(g_libGTASA + 0x005DDD70, 2); // BankLoadingThread
 	//
 	NOP(g_libGTASA + 0x002F9E5C, 10); 	//LoadCutsceneData
 	NOP(g_libGTASA + 0x0040E50C, 2); 	//CStuntJumpManager::Init
@@ -978,7 +980,6 @@ void InstallSpecialHooks()
 	*(char*)(g_libGTASA + 0x005736CC + 12) = 'd';
 	*(char*)(g_libGTASA + 0x005736CC + 13) = 'x';
 	*(char*)(g_libGTASA + 0x005736CC + 14) = 't';
-
 
 	//etc
 	UnFuck(g_libGTASA + 0x00573684);
@@ -2838,6 +2839,27 @@ int SetCompAlphaCB_hook(int a1, char a2)
 	return result;
 }
 
+int (*CEntity__RegisterReference)(ENTITY_TYPE *thiz, ENTITY_TYPE **a1);
+int CEntity__RegisterReference_hook(ENTITY_TYPE *thiz, ENTITY_TYPE **a1)
+{
+	if(! thiz + 0x36)return false;
+
+	if(thiz)
+	{
+		if(thiz->vtable == g_libGTASA+0x5C7358) // CPlaceable
+			return false;
+
+		if(thiz->dwUnkModelRel)
+			return CEntity__RegisterReference(thiz, a1);
+	}
+	if(a1)
+	{
+		return CEntity__RegisterReference(thiz, a1);
+	}
+
+    return false;
+}
+
 float (*CDraw__SetFOV)(float thiz, float a2);
 float CDraw__SetFOV_hook(float thiz, float a2)
 {
@@ -2972,6 +2994,25 @@ void TextureSetDetailTexture_hook(void* texture, uint_t tilingScale)
 	*(int*)(g_libGTASA + 0x006118D0) = 1;
 }
 
+uintptr_t (*RpAnimBlendClumpGetAssociation_int)(uintptr_t *thiz);
+uintptr_t RpAnimBlendClumpGetAssociation_int_hook(uintptr_t *thiz) {
+Log("bike");
+		return RpAnimBlendClumpGetAssociation_int(thiz);
+
+
+//	int *v2; // r0
+//
+//	v2 = *(int **)(&pClump->object.type + ClumpOffset);
+//	do
+//	{
+//		v2 = (int *)*v2;
+//		if ( !v2 )
+//			return 0;
+//	}
+//	while ( *((__int16 *)v2 + 0x14) != id );
+//	return (CAnimBlendAssociation *)(v2 + 0xFFFFFFFF);
+}
+
 void InstallHooks()
 {
 	Log("InstallHooks");
@@ -2983,6 +3024,7 @@ void InstallHooks()
 //	SetUpHook(g_libGTASA+0x00194400, (uintptr_t)TextureSetDetailTexture_hook, (uintptr_t*)&TextureSetDetailTexture);
 
 	PROTECT_CODE_INSTALLHOOKS;
+  //  SetUpHook(g_libGTASA + 0x004EE790, (uintptr_t)RpAnimBlendClumpGetAssociation_int_hook, (uintptr_t*)& RpAnimBlendClumpGetAssociation_int);
 
 	NOP(g_libGTASA + 0x003989C8, 2);//живность в воде WaterCreatureManager_c::Update
 
@@ -3172,6 +3214,8 @@ void InstallHooks()
 
 	//размытие на скорости
 	SetUpHook(g_libGTASA + 0x005311D0, (uintptr_t)CDraw__SetFOV_hook, (uintptr_t*)&CDraw__SetFOV);
+
+    SetUpHook(g_libGTASA + 0x003B0E6C, (uintptr_t)CEntity__RegisterReference_hook, (uintptr_t*)&CEntity__RegisterReference);
 
 	HookCPad();
 }

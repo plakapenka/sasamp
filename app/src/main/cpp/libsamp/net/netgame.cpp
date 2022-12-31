@@ -147,22 +147,23 @@ CNetGame::~CNetGame()
 
 }
 
-bool g_IsVoiceServer();
 #include "CUDPSocket.h"
 #include "..//CServerManager.h"
 extern int g_iServer;
+
+int last_process_cnetgame = 0;
 void CNetGame::Process()
 {
-	
-	// todo: 30 fps fixed rate
-	static uint32_t time = GetTickCount();
-	bool bProcess = false;
-	if (GetTickCount() - time >= 1000 / 30)
-	{
-		UpdateNetwork();
-		time = GetTickCount();
-		bProcess = true;
+	// 30 fps
+	if (GetTickCount() - last_process_cnetgame >= 1000 / 30){
+		last_process_cnetgame = GetTickCount();
+	}else {
+		return;
 	}
+
+	// todo: 30 fps fixed rate
+	UpdateNetwork();
+
 	// server checkpoints update
 	if(pGame->m_bCheckpointsEnabled) {
 		CPlayerPed *pPlayerDed = m_pPlayerPool->GetLocalPlayer()->GetPlayerPed();
@@ -185,24 +186,11 @@ void CNetGame::Process()
 	if(GetGameState() == GAMESTATE_CONNECTED)
 	{
 		// pool process
-		if(m_pPlayerPool && bProcess) m_pPlayerPool->Process();
+		if(m_pPlayerPool) m_pPlayerPool->Process();
 		if (m_pObjectPool) m_pObjectPool->Process();
-		if(m_pVehiclePool && iVehiclePoolProcessFlag > 5)
-		{
-			m_pVehiclePool->Process();
-			iVehiclePoolProcessFlag = 0;
-		}
+		if(m_pVehiclePool) m_pVehiclePool->Process();
+		if(m_pPickupPool) m_pPickupPool->Process();
 
-		if(m_pPickupPool && iPickupPoolProcessFlag > 5) 
-		{
-			m_pPickupPool->Process();
-			iPickupPoolProcessFlag = 0;
-		}
-		else
-		{
-			++iPickupPoolProcessFlag;
-			++iVehiclePoolProcessFlag;
-		}
 	}
 	else
 	{
@@ -228,21 +216,6 @@ void CNetGame::Process()
 	if(GetGameState() == GAMESTATE_WAIT_CONNECT &&
 		(GetTickCount() - m_dwLastConnectAttempt) > 3000)
 	{
-		/*if (CClientInfo::bSAMPModified)
-		{
-			if (pChatWindow) CChatWindow::AddDebugMessageNonFormatted(CLocalisation::GetMessage(E_MSG::MODIFIED_FILES));
-			SetGameState(GAMESTATE_CONNECTING);
-			m_dwLastConnectAttempt = GetTickCount();
-			return;
-		}
-
-		if (!CClientInfo::bJoinedFromLauncher)
-		{
-			if (pChatWindow) CChatWindow::AddDebugMessageNonFormatted(CLocalisation::GetMessage(E_MSG::NOT_FROM_LAUNCHER));
-			SetGameState(GAMESTATE_CONNECTING);
-			m_dwLastConnectAttempt = GetTickCount();
-			return;
-		}*/
 		CChatWindow::AddDebugMessageNonFormatted(CLocalisation::GetMessage(E_MSG::CONNECTING));
 		static bool sent = false;
 		CUDPSocket sock;
@@ -1500,7 +1473,7 @@ void CNetGame::ShutDownForGameRestart()
 	if(pPlayerPed)
 	{
 	//	pGame->RemovePlayer(pPlayerPed);
-		pPlayerPed->SetInterior(0);
+		pPlayerPed->SetInterior(0, true);
 //		//pPlayerPed->SetDead();
 		pPlayerPed->SetArmour(0.0f);
 	}
@@ -1766,15 +1739,15 @@ void CNetGame::Packet_ConnectionSucceeded(Packet* pkt)
 	CChatWindow::AddDebugMessageNonFormatted(CLocalisation::GetMessage(E_MSG::CONNECTED));
 	SetGameState(GAMESTATE_AWAIT_JOIN);
 
-
 	RakNet::BitStream bsSuccAuth((unsigned char *)pkt->data, pkt->length, false);
 	PLAYERID MyPlayerID;
 	unsigned int uiChallenge;
 
+	uint16_t playerid;
 	bsSuccAuth.IgnoreBits(8); // ID_CONNECTION_REQUEST_ACCEPTED
 	bsSuccAuth.IgnoreBits(32); // binaryAddress
 	bsSuccAuth.IgnoreBits(16); // port
-	bsSuccAuth.Read(MyPlayerID);
+	bsSuccAuth.Read(playerid);
 	bsSuccAuth.Read(uiChallenge);
 	char ip[0x7F];
 	strncpy(ip, m_szHostOrIp, sizeof(ip));
@@ -1794,7 +1767,7 @@ void CNetGame::Packet_ConnectionSucceeded(Packet* pkt)
 	{
 		WriteVerified1();
 	}
-	m_pPlayerPool->SetLocalPlayerID(MyPlayerID);
+	m_pPlayerPool->SetLocalPlayerID(playerid);
 
 	int iVersion = NETGAME_VERSION;
 	char byteMod = 0x01;
@@ -1910,13 +1883,13 @@ void CNetGame::Packet_PlayerSync(Packet* pkt)
 		ofSync.dwAnimation = 0b10000000000000000000000000000000;
 	}
 
-	uint8_t key = 0;
+	//uint8_t key = 0;
 
     if(m_pPlayerPool)
     {
     	pPlayer = m_pPlayerPool->GetAt(playerId);
     	if(pPlayer)
-    		pPlayer->StoreOnFootFullSyncData(&ofSync, 0, key);
+    		pPlayer->StoreOnFootFullSyncData(&ofSync, 0);
     }
 }
 

@@ -67,7 +67,7 @@ public:
 	void HandleDeath();
 	void HandleAnimations();
 	void UpdateAimFromSyncData(AIM_SYNC_DATA *paimSync);
-	void StoreOnFootFullSyncData(ONFOOT_SYNC_DATA *pofSync, uint32_t time, uint8_t key);
+	void StoreOnFootFullSyncData(ONFOOT_SYNC_DATA *pofSync, uint32_t time);
 	void StoreInCarFullSyncData(INCAR_SYNC_DATA *picSync, uint32_t time);
 	void StorePassengerFullSyncData(PASSENGER_SYNC_DATA *psSync);
 	void UpdateOnFootPositionAndSpeed(VECTOR *vecPos, VECTOR *vecMoveSpeed);
@@ -113,7 +113,7 @@ private:
 	uint32_t			m_dwLastRecvTick;
 	uint32_t			m_dwLastHeadUpdate;
 	uint32_t			m_dwUnkTime;
-	uint8_t				m_iKey0;
+	//uint8_t				m_iKey0;
 
 	uint32_t			m_dwCurrentAnimation;
 	uint16_t			m_usPlayingAnimIdx;

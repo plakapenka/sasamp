@@ -56,7 +56,7 @@ public:
 	bool IsAnimationPlaying(char* szAnimName);
 	void ClearAllTasks();
 
-	void SetInterior(uint8_t byteID);
+	void SetInterior(uint8_t byteID, bool refresh = true);
 
 	void PutDirectlyInVehicle(CVehicle *pVehicle, int iSeat);
 	void EnterVehicle(int iVehicleID, bool bPassenger);
@@ -93,8 +93,6 @@ public:
 	bool IsDead();
 	uint16_t GetKeys(uint16_t *lrAnalog, uint16_t *udAnalog);
 	void SetKeys(uint16_t wKeys, uint16_t lrAnalog, uint16_t udAnalog);
-	// 0.3.7
-	void SetMoney(int iAmount);
 	// 0.3.7
 	void ShowMarker(uint32_t iMarkerColorID);
 	// 0.3.7
