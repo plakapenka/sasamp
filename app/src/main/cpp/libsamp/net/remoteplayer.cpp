@@ -36,23 +36,7 @@ CRemotePlayer::CRemotePlayer()
 
 CRemotePlayer::~CRemotePlayer()
 {
-	if(m_dwMarkerID)
-	{
-		pGame->DisableMarker(m_dwMarkerID);
-		m_dwMarkerID = 0;
-	}
-
-	if(m_dwGlobalMarkerID)
-	{
-		pGame->DisableMarker(m_dwGlobalMarkerID);
-		m_dwGlobalMarkerID = 0;
-	}
-
-	if(m_pPlayerPed)
-	{
-		pGame->RemovePlayer(m_pPlayerPed);
-		m_pPlayerPed = nullptr;
-	}
+	Remove();
 }
 extern bool g_uiHeadMoveEnabled;
 void CRemotePlayer::ProcessSpecialActions(BYTE byteSpecialAction)
@@ -359,6 +343,28 @@ void CRemotePlayer::SlerpRotation()
 		if(fZ > 360.0f) fZ -= 360.0f;
 		if(fZ < 0.0f) fZ += 360.0f;
 		m_pPlayerPed->SetRotation((float)fZ);
+	}
+}
+
+
+void CRemotePlayer::Remove()
+{
+	if(m_dwMarkerID)
+	{
+		pGame->DisableMarker(m_dwMarkerID);
+		m_dwMarkerID = 0;
+	}
+
+	if(m_dwGlobalMarkerID)
+	{
+		pGame->DisableMarker(m_dwGlobalMarkerID);
+		m_dwGlobalMarkerID = 0;
+	}
+
+	if(m_pPlayerPed)
+	{
+		pGame->RemovePlayer(m_pPlayerPed);
+		m_pPlayerPed = nullptr;
 	}
 }
 

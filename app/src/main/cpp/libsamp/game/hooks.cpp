@@ -2860,6 +2860,17 @@ int CEntity__RegisterReference_hook(ENTITY_TYPE *thiz, ENTITY_TYPE **a1)
     return false;
 }
 
+
+int (*CWorld__Remove)(uintptr_t *thiz, uintptr_t *a2, int a3, int a4);
+int CWorld__Remove_hook(uintptr_t *thiz, uintptr_t *a2, int a3, int a4)
+{
+	if(! thiz + 0x36){
+		Log("Kakayato huyna");
+		return 0;
+	}
+	return CWorld__Remove(thiz, a2, a3, a4);
+}
+
 float (*CDraw__SetFOV)(float thiz, float a2);
 float CDraw__SetFOV_hook(float thiz, float a2)
 {
@@ -3216,6 +3227,8 @@ void InstallHooks()
 	SetUpHook(g_libGTASA + 0x005311D0, (uintptr_t)CDraw__SetFOV_hook, (uintptr_t*)&CDraw__SetFOV);
 
     SetUpHook(g_libGTASA + 0x003B0E6C, (uintptr_t)CEntity__RegisterReference_hook, (uintptr_t*)&CEntity__RegisterReference);
+
+    SetUpHook(g_libGTASA + 0x003C1500, (uintptr_t)CWorld__Remove_hook, (uintptr_t*)&CWorld__Remove);
 
 	HookCPad();
 }

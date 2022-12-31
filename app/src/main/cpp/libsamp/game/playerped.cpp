@@ -81,38 +81,34 @@ CPlayerPed::CPlayerPed(uint8_t bytePlayerNumber, int iSkin, float fX, float fY, 
 CPlayerPed::~CPlayerPed()
 {
 	CDebugInfo::uiStreamedPeds--;
-	FlushAttach();
+
 	memset(&RemotePlayerKeys[m_bytePlayerNumber], 0, sizeof(PAD_KEYS));
+
 	SetPlayerPedPtrRecord(m_bytePlayerNumber, 0);
 
-	if(!m_pPed || !GamePool_Ped_GetAt(m_dwGTAId) || m_pPed->entity.vtable == 0x5C7358)
+	if (m_pPed && (GamePool_Ped_GetAt(m_dwGTAId) != 0) && m_pPed->entity.vtable != (g_libGTASA + 0x5C7358))
 	{
-		Log("CPlayerPed::Destroy: invalid pointer/vtable");
+		FlushAttach();
+
+		if (IN_VEHICLE(m_pPed)) {
+			Log("Removing from vehicle..");
+			RemoveFromVehicleAndPutAt(100.0f, 100.0f, 20.0f);
+		}
+
+		uintptr_t dwPedPtr = (uintptr_t)m_pPed;
+		*(uint32_t*)(*(uintptr_t*)(dwPedPtr + 1088) + 76) = 0;
+		// CPlayerPed::Destructor
+		((void (*)(PED_TYPE*))(*(void**)(m_pPed->entity.vtable + 0x4)))(m_pPed);
+
+		m_pPed = nullptr;
+		m_pEntity = nullptr;
+	}
+	else
+	{
 		m_pPed = nullptr;
 		m_pEntity = nullptr;
 		m_dwGTAId = 0;
-		return;
 	}
-
-
-	if(IN_VEHICLE(m_pPed))
-	{
-		Log("Removing from vehicle..");
-		ExitCurrentVehicle();
-		//  RemoveFromVehicleAndPutAt(100.0f, 100.0f, 10.0f);
-	}
-
-	Log("Setting flag state..");
-	uintptr_t dwPedPtr = (uintptr_t)m_pPed;
-	*(uint32_t*)(*(uintptr_t*)(dwPedPtr + 1088) + 76) = 0;
-	// CPlayerPed::Destructor
-	Log("Calling destructor..");
-	(( void (*)(PED_TYPE*))(*(void**)(m_pPed->entity.vtable+0x4)))(m_pPed);
-
-	ScriptCommand(&DELETE_CHAR, m_dwGTAId);
-
-	m_pPed = nullptr;
-	m_pEntity = nullptr;
 }
 
 CAMERA_AIM * CPlayerPed::GetCurrentAim()
