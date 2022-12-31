@@ -81,6 +81,7 @@ public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersV
 	    holder.progressBar.setProgressStartColor(MainColor);
 		holder.progressBar.setProgressEndColor(MainColor);
 		holder.progressBar.setProgress(servers.getOnline());
+		holder.progressBar.setMax(1000);
 
 		if(selectedItem == position){
 
