@@ -7,7 +7,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum  NativeStorageElements {
     NICKNAME("name"),
-    SERVER("server");
+    SERVER("server"),
+    TEST("test");
 
     private final String value;
 }

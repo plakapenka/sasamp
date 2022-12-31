@@ -70,6 +70,7 @@ void CSettings::Save(int iIgnoreCategory)
 	ini_table_create_entry_as_int(config, "client", "headmove", m_Settings.szHeadMove);
 	ini_table_create_entry_as_int(config, "client", "dl", m_Settings.szDL);
 	ini_table_create_entry_as_int(config, "client", "timestamp", m_Settings.szTimeStamp);
+	ini_table_create_entry_as_int(config, "client", "test", m_Settings.isTestMode);
 
 	ini_table_create_entry(config, "gui", "Font", m_Settings.szFont);
 
@@ -203,6 +204,7 @@ void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 	m_Settings.szHeadMove = ini_table_get_entry_as_int(config, "client", "headmove", 0);
 	m_Settings.szDL = ini_table_get_entry_as_int(config, "client", "dl", 0);
 	m_Settings.szTimeStamp = ini_table_get_entry_as_int(config, "client", "timestamp", 0);
+	m_Settings.isTestMode = ini_table_get_entry_as_int(config, "client", "test", 0);
 
 	const char *szFontName = ini_table_get_entry(config, "gui", "Font");
 
