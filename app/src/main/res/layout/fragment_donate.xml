@@ -166,6 +166,18 @@
                 android:fontFamily="@font/pt_root_ui_medium" />
 
             <TextView
+                android:textSize="@dimen/_12sdp"
+                android:textColor="@color/white"
+                android:gravity="center"
+                android:id="@+id/rechargeQiwiButton"
+                android:background="@drawable/button_red_rectangle"
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_marginTop="@dimen/_14sdp"
+                android:text="Пополнить счёт через Qiwi"
+                android:fontFamily="@font/pt_root_ui_medium" />
+
+            <TextView
                 android:id="@+id/donation_services_title"
                 android:layout_gravity="center"
                 android:layout_width="270dp"

@@ -1,6 +1,7 @@
 package com.liverussia.launcher.ui.fragment;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import android.widget.CheckBox;
@@ -17,6 +18,7 @@ import android.view.animation.Animation;
 import android.view.LayoutInflater;
 
 import com.liverussia.cr.R;
+import com.liverussia.launcher.config.Config;
 import com.liverussia.launcher.domain.messages.ErrorMessage;
 import com.liverussia.launcher.service.ActivityService;
 import com.liverussia.launcher.service.impl.ActivityServiceImpl;
@@ -34,7 +36,9 @@ import com.liverussia.launcher.ui.adapters.DonateServicesItemListAdapter;
 import com.liverussia.launcher.utils.Validator;
 
 public class DonateFragment extends Fragment implements View.OnClickListener, ActivitySupportedServerSelection {
-	
+
+    private final static String CONTACTS_VIEW_ACTION = "android.intent.action.VIEW";
+
 	private Animation animation;
 	private MainActivity mainActivity;
 	
@@ -68,6 +72,9 @@ public class DonateFragment extends Fragment implements View.OnClickListener, Ac
 
         TextView rechargeButton = inflate.findViewById(R.id.rechargeButton);
         rechargeButton.setOnClickListener(this);
+
+        TextView rechargeQiwiButton = inflate.findViewById(R.id.rechargeQiwiButton);
+        rechargeQiwiButton.setOnClickListener(this);
 
         iAmNotRobotCheckBox = inflate.findViewById(R.id.i_am_not_robot_checkbox);
         iAmNotRobotCheckBox.setOnClickListener(this);
@@ -105,6 +112,10 @@ public class DonateFragment extends Fragment implements View.OnClickListener, Ac
                 v.startAnimation(animation);
                 performRechargeButtonAction();
                 break;
+            case R.id.rechargeQiwiButton:
+                v.startAnimation(animation);
+                performRechargeQiwiButtonAction();
+                break;
             case R.id.btnSelectServer:
                 v.startAnimation(animation);
                 performSelectServerButtonAction();
@@ -120,6 +131,26 @@ public class DonateFragment extends Fragment implements View.OnClickListener, Ac
             default:
                 break;
         }
+    }
+
+    private void performRechargeQiwiButtonAction() {
+        if (!isValidInputs()) {
+            return;
+        }
+
+        startActivity(new Intent(CONTACTS_VIEW_ACTION, Uri.parse(createUri())));
+    }
+
+    private String createUri() {
+
+        String nickname = nicknameField.getText().toString();
+        String email = emailField.getText().toString();
+        String serverId = selectedServer.getServerID();
+        String serverName = selectedServer.getname();
+        String sum = donateSumField.getText().toString();
+        String captcha = captchaToken;
+
+        return Config.createBillingUri(serverId, serverName, sum, nickname, email, captcha);
     }
 
     private void performRechargeButtonAction() {
