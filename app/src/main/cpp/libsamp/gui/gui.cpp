@@ -222,7 +222,7 @@ void CGUI::Render()
 {
 	PreProcessInput();
 
-	ProcessPushedTextdraws();
+	//ProcessPushedTextdraws();
 	CChatWindow::ProcessPushedCommands();
 
 	ImGui_ImplRenderWare_NewFrame();
@@ -396,17 +396,17 @@ void CGUI::RenderVersion()
 		ImColor(IM_COL32_BLACK), PORT_VERSION);
 }
 
-void CGUI::ProcessPushedTextdraws()
-{
-	BUFFERED_COMMAND_TEXTDRAW* pCmd = nullptr;
-	while (pCmd = m_BufferedCommandTextdraws.ReadLock())
-	{
-		RakNet::BitStream bs;
-		bs.Write(pCmd->textdrawId);
-		pNetGame->GetRakClient()->RPC(&RPC_ClickTextDraw, &bs, HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, false, UNASSIGNED_NETWORK_ID, 0);
-		m_BufferedCommandTextdraws.ReadUnlock();
-	}
-}
+//void CGUI::ProcessPushedTextdraws()
+//{
+//	BUFFERED_COMMAND_TEXTDRAW* pCmd = nullptr;
+//	while (pCmd = m_BufferedCommandTextdraws.ReadLock())
+//	{
+//		RakNet::BitStream bs;
+//		bs.Write(pCmd->textdrawId);
+//		pNetGame->GetRakClient()->RPC(&RPC_ClickTextDraw, &bs, HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, false, UNASSIGNED_NETWORK_ID, 0);
+//		m_BufferedCommandTextdraws.ReadUnlock();
+//	}
+//}
 
 void CGUI::RenderRakNetStatistics()
 {
@@ -460,15 +460,15 @@ void CGUI::RenderTextForChatWindow(ImVec2& posCur, ImU32 col, bool bOutline, con
 
 	ImGui::GetBackgroundDrawList()->AddText(posCur, col, text_begin, text_end);
 }
-
-void CGUI::PushToBufferedQueueTextDrawPressed(uint16_t textdrawId)
-{
-	BUFFERED_COMMAND_TEXTDRAW* pCmd = m_BufferedCommandTextdraws.WriteLock();
-
-	pCmd->textdrawId = textdrawId;
-
-	m_BufferedCommandTextdraws.WriteUnlock();
-}
+//
+//void CGUI::PushToBufferedQueueTextDrawPressed(uint16_t textdrawId)
+//{
+//	BUFFERED_COMMAND_TEXTDRAW* pCmd = m_BufferedCommandTextdraws.WriteLock();
+//
+//	pCmd->textdrawId = textdrawId;
+//
+//	m_BufferedCommandTextdraws.WriteUnlock();
+//}
 
 void CGUI::RenderText(ImVec2& posCur, ImU32 col, bool bOutline, const char* text_begin, const char* text_end)
 {

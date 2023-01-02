@@ -55,11 +55,11 @@ private:
 	void PostProcessInput();
 	void RenderRakNetStatistics();
 	void RenderVersion();
-	void ProcessPushedTextdraws();
+	//void ProcessPushedTextdraws();
 
 
 private:
-	DataStructures::SingleProducerConsumer<BUFFERED_COMMAND_TEXTDRAW> m_BufferedCommandTextdraws;
+	//DataStructures::SingleProducerConsumer<BUFFERED_COMMAND_TEXTDRAW> m_BufferedCommandTextdraws;
 
 	ImFont* 	m_pFont;
 	ImFont*		m_pSampFont;

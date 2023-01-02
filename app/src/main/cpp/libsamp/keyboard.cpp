@@ -2357,12 +2357,12 @@ bool ProcessLocalCommands(const char str[])
 		return true;
 	}
 
-	if (strstr(str, "/reconnect"))
-	{
-		pNetGame->ShutDownForGameRestart();
-		pNetGame->SetGameState(GAMESTATE_WAIT_CONNECT);
-		return true;
-	}
+//	if (strstr(str, "/reconnect"))
+//	{
+//		pNetGame->ShutDownForGameRestart();
+//		pNetGame->SetGameState(GAMESTATE_WAIT_CONNECT);
+//		return true;
+//	}
 
 //	if (strstr(str, "/chat"))
 //	{
