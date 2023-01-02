@@ -27,6 +27,7 @@ struct SCRIPT_COMMAND
 
 int ScriptCommand(const SCRIPT_COMMAND* pScriptCommand, ...);
 
+const SCRIPT_COMMAND SET_CHAR_HEALTH = { 0x0223, "ii" };
 const SCRIPT_COMMAND LIMIT_ANGLE = { 0x0656, "ff" };
 const SCRIPT_COMMAND GET_ANGLE_BETWEEN_2D_VECTORS = { 0x05A4, "fffff" };
 const SCRIPT_COMMAND lock_camera_position = { 0x092F, "i" };
@@ -199,6 +200,7 @@ const SCRIPT_COMMAND TASK_EVERYONE_LEAVE_CAR = { 0x068B, "i"};
 const SCRIPT_COMMAND TASK_ENTER_CAR_AS_DRIVER = { 0x05CB, "iii" };
 const SCRIPT_COMMAND send_actor_to_car_passenger = { 0x05CA, "iiii" };
 const SCRIPT_COMMAND TASK_LEAVE_ANY_CAR = { 0x0633, "i" };
+const SCRIPT_COMMAND TASK_LEAVE_CAR_IMMEDIATELY = { 0x0622, "ii" };
 const SCRIPT_COMMAND get_car_z_angle = { 0x0174, "iv" };
 const SCRIPT_COMMAND get_player_z_angle = { 0x0170, "iv" };
 const SCRIPT_COMMAND create_train = { 0x06D8, "ifffiv" };

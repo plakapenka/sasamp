@@ -163,6 +163,7 @@ CVehicle::CVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRota
 
 CVehicle::~CVehicle()
 {
+	if(!m_dwGTAId)return;
 	Log("~CVehicle");
 	CDebugInfo::uiStreamedVehicles--;
 	m_pVehicle = GamePool_Vehicle_GetAt(m_dwGTAId);
@@ -240,14 +241,14 @@ CVehicle::~CVehicle()
 			int nModelIndex = m_pVehicle->entity.nModelIndex;
 			ScriptCommand(&destroy_car, m_dwGTAId);
 
-			if (!GetModelReferenceCount(nModelIndex) &&
-				//!m_bKeepModelLoaded &&
-				//(pGame->GetVehicleModelsCount() > 80) &&
-				pGame->IsModelLoaded(nModelIndex))
-			{
-				// CStreaming::RemoveModel
-				((void (*)(int))(g_libGTASA + 0x290C4C + 1))(nModelIndex);
-			}
+//			if (!GetModelReferenceCount(nModelIndex) &&
+//				//!m_bKeepModelLoaded &&
+//				//(pGame->GetVehicleModelsCount() > 80) &&
+//				pGame->IsModelLoaded(nModelIndex))
+//			{
+//				// CStreaming::RemoveModel
+//				((void (*)(int))(g_libGTASA + 0x290C4C + 1))(nModelIndex);
+//			}
 		}
 	}
 }
@@ -383,33 +384,40 @@ bool CVehicle::HasSunk()
 	return ScriptCommand(&has_car_sunk, m_dwGTAId);
 }
 
+bool IsValidGamePed(PED_TYPE* pPed);
+
 void CVehicle::RemoveEveryoneFromVehicle()
 {
 	if (!m_pVehicle) return;
 	if(!m_dwGTAId)return;
 	if (!GamePool_Vehicle_GetAt(m_dwGTAId)) return;
 
-	ScriptCommand(&TASK_EVERYONE_LEAVE_CAR, m_dwGTAId);
-//
-//	float fPosX = m_pVehicle->entity.mat->pos.X;
-//	float fPosY = m_pVehicle->entity.mat->pos.Y;
-//	float fPosZ = m_pVehicle->entity.mat->pos.Z;
-//
-//	int iPlayerID = 0;
-//	if (m_pVehicle->pDriver)
-//	{
-//		iPlayerID = GamePool_Ped_GetIndex(m_pVehicle->pDriver);
-//		ScriptCommand(&remove_actor_from_car_and_put_at, iPlayerID, fPosX, fPosY, fPosZ + 2.0f);
-//	}
-//
-//	for (int i = 0; i < 7; i++)
-//	{
-//		if (m_pVehicle->pPassengers[i] != nullptr)
-//		{
-//			iPlayerID = GamePool_Ped_GetIndex(m_pVehicle->pPassengers[i]);
-//			ScriptCommand(&remove_actor_from_car_and_put_at, iPlayerID, fPosX, fPosY, fPosZ + 2.0f);
-//		}
-//	}
+	float fPosX = m_pVehicle->entity.mat->pos.X;
+	float fPosY = m_pVehicle->entity.mat->pos.Y;
+	float fPosZ = m_pVehicle->entity.mat->pos.Z;
+
+	int iPlayerID = 0;
+	if (m_pVehicle->pDriver)
+	{
+		if(IsValidGamePed(m_pVehicle->pDriver))
+		{
+			iPlayerID = GamePool_Ped_GetIndex(m_pVehicle->pDriver);
+			ScriptCommand(&remove_actor_from_car_and_put_at, iPlayerID, fPosX, fPosY, fPosZ + 2.0f);
+		}
+
+	}
+
+	for (int i = 0; i < 7; i++)
+	{
+		if (m_pVehicle->pPassengers[i] != nullptr)
+		{
+			if(IsValidGamePed(m_pVehicle->pPassengers[i])) {
+				iPlayerID = GamePool_Ped_GetIndex(m_pVehicle->pPassengers[i]);
+				ScriptCommand(&remove_actor_from_car_and_put_at, iPlayerID, fPosX, fPosY,
+							  fPosZ + 2.0f);
+			}
+		}
+	}
 }
 
 // 0.3.7
@@ -507,6 +515,9 @@ int CVehicle::GetDoorState(){
 
 void CVehicle::SetLightsState(int iState)
 {
+    if(!m_dwGTAId)return;
+    if(!m_pVehicle)return;
+
 	if (GamePool_Vehicle_GetAt(m_dwGTAId))
 	{
 		ScriptCommand(&FORCE_CAR_LIGHTS, m_dwGTAId, iState > 0 ? 2 : 1);
@@ -1367,6 +1378,8 @@ void CVehicle::CopyGlobalSuspensionLinesToPrivate()
 
 void CVehicle::SetEngineState(int iState)
 {
+    if(!m_dwGTAId)return;
+    if(!m_pVehicle)return;
 	if (!GamePool_Vehicle_GetAt(m_dwGTAId)) {
 		return;
 	}

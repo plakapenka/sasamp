@@ -172,7 +172,7 @@ open:
 
 /* ====================================================== */
 bool bGameStarted = false;
-
+uint32_t bProcessedCleanStreamPool = 0;
 void RenderBackgroundHud();
 
 void (*Render2dStuff)();
@@ -186,6 +186,37 @@ void Render2dStuff_hook()
 	RenderBackgroundHud();
 	LOG_PROFILE(test, test_time);
 	Render2dStuff();
+
+	if (!bProcessedCleanStreamPool)
+		bProcessedCleanStreamPool = GetTickCount();
+
+	if (bGameStarted)
+	{
+		uintptr_t v1 = *(uintptr_t *)(g_libGTASA + 0x61B8C0); // TextureDatabaseRuntime::storedTexels
+		bool v2 = v1 > 0x45FFFFF;
+		if (v1 <= 0x45FFFFF)
+			v2 = *(uintptr_t *)(g_libGTASA + 0x67067C) > 0x45FFFFFu; // CStreaming::ms_memoryUsed
+		if (!v2)
+			return;
+
+		((void (*) ())(g_libGTASA + 0x293325))();// CStreaming::RemoveAllUnusedModels
+
+	}
+
+	uint32_t result = GetTickCount() - bProcessedCleanStreamPool;
+	if (result >= 5000)
+	{
+		bProcessedCleanStreamPool = GetTickCount();
+		result = 0x5EFFFFF;
+		uint32_t v5 = *(uintptr_t *)(g_libGTASA + 0x61B8C0); // TextureDatabaseRuntime::storedTexels
+		bool v6 = v5 > 0x5EFFFFF;
+		if (v5 <= 0x5EFFFFF)
+			v6 = *(uint32_t *)(g_libGTASA + 0x67067C) > 0x5EFFFFFu; // CStreaming::ms_memoryUsed
+		if (v6)
+
+			((void (*) ())(g_libGTASA + 0x293325))(); // CStreaming::RemoveAllUnusedModels
+
+	}
 
 
 //	if (pNetGame)
@@ -918,6 +949,18 @@ uint8_t* RLEDecompress_hook(uint8_t* pDest, size_t uiDestSize, uint8_t const* pS
     return pDest;
 }
 
+//#include <GLES2/gl2.h>
+//void rqVertexBufferSelect_HOOK(unsigned int **result)
+//{
+//	unsigned int buffer = *(*result)++;
+//
+//	if (!buffer)
+//		return glBindBuffer(0x8892, 0);
+//
+//	glBindBuffer(0x8892, buffer + 8);
+//	*(uint32_t *)(g_libGTASA + 0x617234) = 0;
+//}
+
 void InstallSpecialHooks()
 {
 	Log("InstallSpecialHooks");
@@ -1011,6 +1054,8 @@ void InstallSpecialHooks()
 	SetUpHook(g_libGTASA + 0x004FBCF4, (uintptr_t)cHandlingDataMgr__ConvertDataToGameUnits_hook, (uintptr_t*)& cHandlingDataMgr__ConvertDataToGameUnits);
 	SetUpHook(g_libGTASA + 0x0023ACC4, (uintptr_t)NVEventGetNextEvent_hook, (uintptr_t*)& NVEventGetNextEvent_hooked);
 	SetUpHook(g_libGTASA + 0x004042A8, (uintptr_t)CStreaming__Init2_hook, (uintptr_t*)& CStreaming__Init2);	// increase stream memory value
+
+//	JMPCode(g_libGTASA + 0x1A1ED8, (uintptr_t)rqVertexBufferSelect_HOOK);
 }
 
 void ProcessPedDamage(PED_TYPE* pIssuer, PED_TYPE* pPlayer);
@@ -2861,12 +2906,12 @@ int CEntity__RegisterReference_hook(ENTITY_TYPE *thiz, ENTITY_TYPE **a1)
 }
 
 
-int (*CWorld__Remove)(uintptr_t *thiz, uintptr_t *a2, int a3, int a4);
-int CWorld__Remove_hook(uintptr_t *thiz, uintptr_t *a2, int a3, int a4)
+void (*CWorld__Remove)(uintptr_t *thiz, uintptr_t *a2, int a3, int a4);
+void CWorld__Remove_hook(uintptr_t *thiz, uintptr_t *a2, int a3, int a4)
 {
 	if(! thiz + 0x36){
 		Log("Kakayato huyna");
-		return 0;
+		return;
 	}
 	return CWorld__Remove(thiz, a2, a3, a4);
 }
@@ -3024,6 +3069,20 @@ Log("bike");
 //	return (CAnimBlendAssociation *)(v2 + 0xFFFFFFFF);
 }
 
+
+int (*CCollision__ProcessVerticalLine)(float *a1, float *a2, int a3, int a4, int *a5, int a6, int a7, int a8);
+int CCollision__ProcessVerticalLine_hook(float *a1, float *a2, int a3, int a4, int *a5, int a6, int a7, int a8)
+{
+	int result; // r0
+
+	if (a3)
+		result = CCollision__ProcessVerticalLine(a1, a2, a3, a4, a5, a6, a7, a8);
+	else
+		result = 0;
+	return result;
+}
+
+
 void InstallHooks()
 {
 	Log("InstallHooks");
@@ -3036,6 +3095,8 @@ void InstallHooks()
 
 	PROTECT_CODE_INSTALLHOOKS;
   //  SetUpHook(g_libGTASA + 0x004EE790, (uintptr_t)RpAnimBlendClumpGetAssociation_int_hook, (uintptr_t*)& RpAnimBlendClumpGetAssociation_int);
+
+	SetUpHook(g_libGTASA + 0x29947C, (uintptr_t)CCollision__ProcessVerticalLine_hook, (uintptr_t*)&CCollision__ProcessVerticalLine);
 
 	NOP(g_libGTASA + 0x003989C8, 2);//живность в воде WaterCreatureManager_c::Update
 
@@ -3228,7 +3289,7 @@ void InstallHooks()
 
     SetUpHook(g_libGTASA + 0x003B0E6C, (uintptr_t)CEntity__RegisterReference_hook, (uintptr_t*)&CEntity__RegisterReference);
 
-    SetUpHook(g_libGTASA + 0x003C1500, (uintptr_t)CWorld__Remove_hook, (uintptr_t*)&CWorld__Remove);
+  //  SetUpHook(g_libGTASA + 0x003C1500, (uintptr_t)CWorld__Remove_hook, (uintptr_t*)&CWorld__Remove);
 
 	HookCPad();
 }

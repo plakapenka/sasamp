@@ -87,5 +87,5 @@ private:
 	float m_fOffsetBefore;
 public:
 	bool m_bPendingReInit;
-	static DataStructures::SingleProducerConsumer< BUFFERED_COMMAND_CHAT> bufferedChat;
+	//static DataStructures::SingleProducerConsumer< BUFFERED_COMMAND_CHAT> bufferedChat;
 };

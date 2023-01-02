@@ -78,30 +78,42 @@ CPlayerPed::CPlayerPed(uint8_t bytePlayerNumber, int iSkin, float fX, float fY, 
 	memset(&RemotePlayerKeys[m_bytePlayerNumber], 0, sizeof(PAD_KEYS));
 }
 
+bool IsValidGamePed(PED_TYPE* pPed);
+
 CPlayerPed::~CPlayerPed()
 {
+    Log("~CPlayerPed()");
 	CDebugInfo::uiStreamedPeds--;
 
 	memset(&RemotePlayerKeys[m_bytePlayerNumber], 0, sizeof(PAD_KEYS));
 
 	SetPlayerPedPtrRecord(m_bytePlayerNumber, 0);
 
-	if (m_pPed && (GamePool_Ped_GetAt(m_dwGTAId) != 0) && m_pPed->entity.vtable != (g_libGTASA + 0x5C7358))
+	if(!m_dwGTAId)return;
+	if(!GamePool_Ped_GetAt(m_dwGTAId))return;
+
+	if (m_pPed && IsValidGamePed(m_pPed) && m_pPed->entity.vtable != (g_libGTASA + 0x5C7358))
 	{
 		FlushAttach();
 
 		if (IN_VEHICLE(m_pPed)) {
 			Log("Removing from vehicle..");
 			RemoveFromVehicleAndPutAt(100.0f, 100.0f, 20.0f);
+
+			ClearAllTasks();
 		}
 
-		uintptr_t dwPedPtr = (uintptr_t)m_pPed;
-		*(uint32_t*)(*(uintptr_t*)(dwPedPtr + 1088) + 76) = 0;
-		// CPlayerPed::Destructor
-		((void (*)(PED_TYPE*))(*(void**)(m_pPed->entity.vtable + 0x4)))(m_pPed);
+		ScriptCommand(&DELETE_CHAR, m_dwGTAId);
+
+//		uintptr_t dwPedPtr = (uintptr_t)m_pPed;
+//		*(uint32_t*)(*(uintptr_t*)(dwPedPtr + 1088) + 76) = 0;
+//		// CPlayerPed::Destructor
+//		((void (*)(PED_TYPE*))(*(void**)(m_pPed->entity.vtable + 0x4)))(m_pPed);
+		//ScriptCommand(&DELETE_CHAR, m_dwGTAId);
 
 		m_pPed = nullptr;
 		m_pEntity = nullptr;
+		m_dwGTAId = 0;
 	}
 	else
 	{
@@ -542,7 +554,7 @@ int CPlayerPed::SetInitialState()
 {
 	Log("CPlayerPed::SetInitialState()1");
 	int a1 = (( int (*)(PED_TYPE*, bool))(g_libGTASA+0x458D1C+1))(m_pPed, 0);
-	pGame->RequestModel(18646); // ? типо фикс цветных чекпоинтов
+
 	Log("CPlayerPed::SetInitialState()2");
 	return a1;
 }
@@ -551,7 +563,11 @@ int CPlayerPed::SetInitialState()
 void CPlayerPed::SetHealth(float fHealth)
 {
 	if(!m_pPed) return;
-	m_pPed->fHealth = fHealth;
+	if (IsValidGamePed(m_pPed))
+	{
+		m_pPed->fHealth = fHealth;
+	}
+
 }
 
 // 0.3.7
@@ -603,6 +619,12 @@ void CPlayerPed::PutDirectlyInVehicle(CVehicle *pVehicle, int iSeat)
 	if(!m_pPed) return;
 	if(!GamePool_Ped_GetAt(m_dwGTAId)) return;
 	if(!pVehicle) return;
+
+    VEHICLE_TYPE *gtaVehicle = pVehicle->m_pVehicle;
+    if(!gtaVehicle)return;
+    if(gtaVehicle->fHealth == 0.0f) return;
+    // check is cplaceable
+    if (gtaVehicle->entity.vtable == g_libGTASA+0x5C7358) return;
 
 	/*
 	if(GetCurrentWeapon() == WEAPON_PARACHUTE) {
@@ -803,8 +825,6 @@ void CPlayerPed::ClearAllWeapons()
 
 	*(uint8_t*)(g_libGTASA + 0x008E864C) = old;
 }
-
-bool IsValidGamePed(PED_TYPE* pPed);
 
 bool IsGameEntityArePlaceable(ENTITY_TYPE* pEntity) {
 	if (pEntity) {

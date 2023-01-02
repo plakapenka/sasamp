@@ -74,6 +74,16 @@ void readVehiclesAudioSettings()
 	fclose(pFile);
 }
 
+void DisableAutoAim()
+{
+    // CPlayerPed::FindWeaponLockOnTarget
+    WriteMemory(g_libGTASA + 0x4568B0, (uintptr_t)"\x00\x20\xF7\x46", 4);
+    // CPlayerPed::FindNextWeaponLockOnTarget
+    WriteMemory(g_libGTASA + 0x4590E4, (uintptr_t)"\x00\x20\xF7\x46", 4);
+    WriteMemory(g_libGTASA + 0x438DB4, (uintptr_t)"\x00\x20\xF7\x46", 4);
+
+}
+
 int test_pointsArray[1000];
 int test_pointersLibArray[1000];
 
@@ -125,6 +135,8 @@ void ApplyPatches_level0()
 	WriteMemory(g_libGTASA + 0x95B074, (uintptr_t)& fps, 1);
 
 	SetUpHook(g_libGTASA + 0x0023768C, (uintptr_t)ANDRunThread_hook, (uintptr_t*)& ANDRunThread);
+
+    DisableAutoAim();
 
 	//UnFuck(g_libGTASA + 0x0056CA68);
 	//*(uint8_t*)(g_libGTASA + 0x0056CA68) = 1;
@@ -335,6 +347,19 @@ void ApplyPatches()
 	NOP(g_libGTASA + 0x00519198, 2);
 	NOP(g_libGTASA + 0x005191D0, 4);
 	NOP(g_libGTASA + 0x005191DC, 2);
+
+	// Prevent another ped from answering when collision happens (or damage)
+	NOP(g_libGTASA + 0x327730, 2);
+	NOP(g_libGTASA + 0x32C488, 2);
+	NOP(g_libGTASA + 0x32DF94, 2);
+	NOP(g_libGTASA + 0x32E05E, 2);
+	NOP(g_libGTASA + 0x32E160, 2);
+	NOP(g_libGTASA + 0x32E1F2, 2);
+	NOP(g_libGTASA + 0x32E292, 2);
+	NOP(g_libGTASA + 0x32EFD0, 2);
+
+	// CPed::Say
+	NOP(g_libGTASA + 0x43E288, 2);
 
 
 }
