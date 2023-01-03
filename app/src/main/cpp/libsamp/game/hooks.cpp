@@ -1803,6 +1803,7 @@ RpMaterial* CVehicle__SetupRenderMatCB(RpMaterial* material, void* data)
 		if (material->texture)
 		{
 			CVehicle* pVeh = (CVehicle*)data;
+
 			for (size_t i = 0; i < MAX_REPLACED_TEXTURES; i++)
 			{
 				if (pVeh->m_bReplaceTextureStatus[i])
@@ -1851,8 +1852,13 @@ void CVehicleModelInfo__SetEditableMaterials_hook(uintptr_t clump)
 		{
 			VEHICLEID vehId = pNetGame->GetVehiclePool()->FindIDFromRwObject((RwObject*)clump);
 			CVehicle* pVehicle = pNetGame->GetVehiclePool()->GetAt(vehId);
-			if (pVehicle)
+			if (pVehicle )
 			{
+				VEHICLE_TYPE* ThisVehicleType;
+				if((ThisVehicleType = GamePool_Vehicle_GetAt(pVehicle->m_dwGTAId)) == 0) return;
+				if (ThisVehicleType->fHealth == 0.0f) return;
+				if (ThisVehicleType->entity.vtable == g_libGTASA + 0x5C7358) return;
+
 				if (pVehicle->m_bReplacedTexture)
 				{
 					// RpClump* RpClumpForAllAtomics(RpClump* clump, RpAtomicCallBack callback, void* pData);
@@ -3070,6 +3076,124 @@ Log("bike");
 }
 
 
+char **(*CPhysical__Add)(uintptr_t thiz);
+char **CPhysical__Add_hook(uintptr_t thiz)
+{
+	// char **result = 0;
+
+	if (pNetGame)
+	{
+		CPlayerPed *pPlayerPed = pGame->FindPlayerPed();
+		if (pPlayerPed)
+		{
+			for (size_t i = 0; i < 10; i++)
+			{
+				if (pPlayerPed->m_aAttachedObjects[i].bState)
+				{
+					if (pPlayerPed->m_aAttachedObjects[i].pObject)
+						if ((uintptr_t)pPlayerPed->m_aAttachedObjects[i].pObject->m_pEntity == thiz)
+						{
+							CObject *pObject = pPlayerPed->m_aAttachedObjects[i].pObject;
+							if (pObject->m_pEntity->mat->pos.X > 20000.0f || pObject->m_pEntity->mat->pos.Y > 20000.0f || pObject->m_pEntity->mat->pos.Z > 20000.0f ||
+								pObject->m_pEntity->mat->pos.X < -20000.0f || pObject->m_pEntity->mat->pos.Y < -20000.0f || pObject->m_pEntity->mat->pos.Z < -20000.0f)
+							{
+								/*if(pChatWindow)
+								{
+									pChatWindow->AddDebugMessage("WARNING!!! WARNING!!! WARNING!!! CRASH EXCEPTED!!!");
+								}*/
+								return 0;
+							}
+							// Log("Processing local attached object");
+							// result = CPhysical__Add(thiz);
+						}
+				}
+			}
+		}
+
+		CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
+
+		if (pVehiclePool)
+		{
+			for (size_t i = 0; i < MAX_VEHICLES; i++)
+			{
+				if (pVehiclePool->GetSlotState(i))
+				{
+					CVehicle *pVehicle = pVehiclePool->GetAt(i);
+					if (pVehicle && pVehicle->IsAdded())
+					{
+						/*CObject* pObject = pVehicle->Att((ENTITY_TYPE*)thiz);
+						if (pObject != nullptr)
+						{
+							if (pObject->m_pEntity->mat->pos.X > 20000.0f || pObject->m_pEntity->mat->pos.Y > 20000.0f || pObject->m_pEntity->mat->pos.Z > 20000.0f ||
+								pObject->m_pEntity->mat->pos.X < -20000.0f || pObject->m_pEntity->mat->pos.Y < -20000.0f || pObject->m_pEntity->mat->pos.Z < -20000.0f)
+							{
+								/*if(pChatWindow)
+								{
+									pChatWindow->AddDebugMessage("WARNING!!! WARNING!!! WARNING!!! CRASH EXCEPTED!!!");
+								}
+								return 0;
+							}
+						}*/
+					}
+				}
+			}
+		}
+
+		CPlayerPool *pPlayerPool = pNetGame->GetPlayerPool();
+
+		if (pPlayerPool)
+		{
+			for (size_t i = 0; i < MAX_PLAYERS; i++)
+			{
+				if (pPlayerPool->GetSlotState(i))
+				{
+					CRemotePlayer *pRemotePlayer = pPlayerPool->GetAt(i);
+					if (pRemotePlayer)
+					{
+						if (pRemotePlayer->GetPlayerPed() && pRemotePlayer->GetPlayerPed()->IsAdded())
+						{
+							pPlayerPed = pRemotePlayer->GetPlayerPed();
+							for (size_t i = 0; i < 10; i++)
+							{
+								if (pPlayerPed->m_aAttachedObjects[i].bState)
+								{
+									if ((uintptr_t)pPlayerPed->m_aAttachedObjects[i].pObject->m_pEntity == thiz)
+									{
+										CObject *pObject = pPlayerPed->m_aAttachedObjects[i].pObject;
+										if (pObject->m_pEntity->mat->pos.X > 20000.0f || pObject->m_pEntity->mat->pos.Y > 20000.0f || pObject->m_pEntity->mat->pos.Z > 20000.0f ||
+											pObject->m_pEntity->mat->pos.X < -20000.0f || pObject->m_pEntity->mat->pos.Y < -20000.0f || pObject->m_pEntity->mat->pos.Z < -20000.0f)
+										{
+											/*if(pChatWindow)
+											{
+												pChatWindow->AddDebugMessage("WARNING!!! WARNING!!! WARNING!!! CRASH EXCEPTED!!!");
+											}*/
+											return 0;
+										}
+										// Log("Processing remote attached object. Player: %d", i);
+										// Log("is added: %d | model index: %d | gta id: %d | x: %.2f | y: %.2f | z: %.2f | flags: %d | vtable: %d | unk: %d", pObject->IsAdded(), pObject->GetModelIndex(), pObject->m_dwGTAId, pObject->m_pEntity->mat->pos.X, pObject->m_pEntity->mat->pos.Y, pObject->m_pEntity->mat->pos.Z, pObject->m_pEntity->dwProcessingFlags, pObject->m_pEntity->vtable, pObject->m_pEntity->dwUnkModelRel);
+										// result = CPhysical__Add(thiz);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/*if(result == 0)
+	{
+		Log("Processing unknown object.");
+		result = CPhysical__Add(thiz);
+	}*/
+
+	// Log("Processed.");
+
+	return CPhysical__Add(thiz);
+}
+
+
 int (*CCollision__ProcessVerticalLine)(float *a1, float *a2, int a3, int a4, int *a5, int a6, int a7, int a8);
 int CCollision__ProcessVerticalLine_hook(float *a1, float *a2, int a3, int a4, int *a5, int a6, int a7, int a8)
 {
@@ -3083,6 +3207,57 @@ int CCollision__ProcessVerticalLine_hook(float *a1, float *a2, int a3, int a4, i
 }
 
 
+int (*CWeapon__GenerateDamageEvent)(PED_TYPE *victim, ENTITY_TYPE *creator, unsigned int weaponType, int damageFactor, ePedPieceTypes pedPiece, int direction);
+int CWeapon__GenerateDamageEvent_hook(PED_TYPE *victim, ENTITY_TYPE *creator, unsigned int weaponType, int damageFactor, ePedPieceTypes pedPiece, int direction)
+{
+	if (pedPiece != PED_PIECE_HEAD)
+	{
+		// Disable ComputeDamageAnim when it's not a head!
+		NOP(g_libGTASA + 0x566B30, 2);
+		NOP(g_libGTASA + 0x566B88, 2);
+	}
+	int result = CWeapon__GenerateDamageEvent(victim, creator, weaponType, damageFactor, pedPiece, direction);
+	if (pedPiece != PED_PIECE_HEAD)
+	{
+		// Restore bytes
+		WriteMemory(g_libGTASA + 0x566B30, (uintptr_t) "\xC1\xF5\xD8\xF9", 4);
+		WriteMemory(g_libGTASA + 0x566B88, (uintptr_t) "\xBB\xF5\xFE\xF8", 4);
+	}
+	return result;
+}
+
+
+int (*CTaskSimpleUseGun__SetPedPosition)(uintptr_t thiz, PED_TYPE *pPed);
+int CTaskSimpleUseGun__SetPedPosition_hook(uintptr_t thiz, PED_TYPE *pPed)
+{
+	if (pPed && pPed->WeaponSlots && pPed->byteCurWeaponSlot < 13)
+	{
+		WEAPON_SLOT_TYPE curWeaponSlot = pPed->WeaponSlots[pPed->byteCurWeaponSlot];
+		if ((curWeaponSlot.dwType == 37) || (curWeaponSlot.dwType == 41) || (curWeaponSlot.dwType == 42))
+			*(uint8_t *)(thiz + 13) |= 1;
+	}
+	return CTaskSimpleUseGun__SetPedPosition(thiz, pPed);
+}
+
+
+uintptr_t (*GetMeshPriority)(uintptr_t);
+uintptr_t GetMeshPriority_hook(uintptr_t rpMesh)
+{
+	if (rpMesh)
+	{
+		RpMaterial *rpMeshMat = *(RpMaterial **)(rpMesh + 8);
+		if (rpMeshMat)
+		{
+			if (rpMeshMat->texture)
+			{
+				if (!rpMeshMat->texture->raster)
+					return 0;
+			}
+		}
+	}
+	return GetMeshPriority(rpMesh);
+}
+
 void InstallHooks()
 {
 	Log("InstallHooks");
@@ -3095,8 +3270,12 @@ void InstallHooks()
 
 	PROTECT_CODE_INSTALLHOOKS;
   //  SetUpHook(g_libGTASA + 0x004EE790, (uintptr_t)RpAnimBlendClumpGetAssociation_int_hook, (uintptr_t*)& RpAnimBlendClumpGetAssociation_int);
+	SetUpHook(g_libGTASA + 0x001E4AE4, (uintptr_t)GetMeshPriority_hook, (uintptr_t*)&GetMeshPriority);
 
 	SetUpHook(g_libGTASA + 0x29947C, (uintptr_t)CCollision__ProcessVerticalLine_hook, (uintptr_t*)&CCollision__ProcessVerticalLine);
+	SetUpHook(g_libGTASA + 0x5669D8, (uintptr_t)CWeapon__GenerateDamageEvent_hook, (uintptr_t*)&CWeapon__GenerateDamageEvent);
+	// Fire extingusher fix
+	SetUpHook(g_libGTASA + 0x46D6AC, (uintptr_t)CTaskSimpleUseGun__SetPedPosition_hook, (uintptr_t*)&CTaskSimpleUseGun__SetPedPosition);
 
 	NOP(g_libGTASA + 0x003989C8, 2);//живность в воде WaterCreatureManager_c::Update
 
@@ -3153,7 +3332,7 @@ void InstallHooks()
 	SetUpHook(g_libGTASA + 0x003C1BF8, (uintptr_t)CWorld_ProcessPedsAfterPreRender_hook, (uintptr_t*)& CWorld_ProcessPedsAfterPreRender);
 
 	//remove building
-	SetUpHook(g_libGTASA + 0x00395994, (uintptr_t)CFileLoader__LoadObjectInstance_hook, (uintptr_t*)& CFileLoader__LoadObjectInstance);
+	//SetUpHook(g_libGTASA + 0x00395994, (uintptr_t)CFileLoader__LoadObjectInstance_hook, (uintptr_t*)& CFileLoader__LoadObjectInstance);
 
 	// retexture
 	SetUpHook(g_libGTASA + 0x00391E20, (uintptr_t)CObject__Render_hook, (uintptr_t*)& CObject__Render);
@@ -3257,6 +3436,7 @@ void InstallHooks()
 	SetUpHook(g_libGTASA + 0x00391FE0, (uintptr_t)CEntity__GetIsOnScreen_hook, (uintptr_t*)& CEntity__GetIsOnScreen);
 	SetUpHook(g_libGTASA + 0x0031B164, (uintptr_t)FxEmitterBP_c__Render_hook, (uintptr_t*)& FxEmitterBP_c__Render);
 	SetUpHook(g_libGTASA + 0x0043A17C, (uintptr_t)CPed__ProcessEntityCollision_hook, (uintptr_t*)&CPed__ProcessEntityCollision);
+	SetUpHook(g_libGTASA + 0x3AA3C0, (uintptr_t)CPhysical__Add_hook, (uintptr_t*)&CPhysical__Add);
 
 	NOP(g_libGTASA + 0x0039ADE6, 2);//CCoronas::RenderSunReflection crash
 

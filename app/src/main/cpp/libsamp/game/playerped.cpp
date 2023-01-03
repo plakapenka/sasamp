@@ -541,10 +541,28 @@ VEHICLE_TYPE* CPlayerPed::GetGtaVehicle()
 	return (VEHICLE_TYPE*)m_pPed->pVehicle;
 }
 
+bool IsGameEntityArePlaceable(ENTITY_TYPE* pEntity) {
+	if (pEntity) {
+		if (pEntity->vtable == g_libGTASA + 0x005C7358) {
+			return true;
+		}
+	}
+	return false;
+}
+
 // 0.3.7
 void CPlayerPed::RemoveFromVehicleAndPutAt(float fX, float fY, float fZ)
 {
-	if(!GamePool_Ped_GetAt(m_dwGTAId)) return;
+	if (!m_pPed) return;
+	if(!m_dwGTAId)return;
+	if (!IsValidGamePed(m_pPed) || !GamePool_Ped_GetAt(m_dwGTAId)) {
+		return;
+	}
+
+	if (IsGameEntityArePlaceable(&m_pPed->entity)) {
+		return;
+	}
+	if (m_pPed->entity.vtable == (g_libGTASA + 0x5C7358)) return;
 	if(m_pPed && IN_VEHICLE(m_pPed))
 		ScriptCommand(&remove_actor_from_car_and_put_at, m_dwGTAId, fX, fY, fZ);
 }
@@ -616,9 +634,20 @@ void CPlayerPed::SetInterior(uint8_t byteID, bool refresh)
 
 void CPlayerPed::PutDirectlyInVehicle(CVehicle *pVehicle, int iSeat)
 {
-	if(!m_pPed) return;
-	if(!GamePool_Ped_GetAt(m_dwGTAId)) return;
+    Log("PutDirectlyInVehicle");
 	if(!pVehicle) return;
+	if (!GamePool_Vehicle_GetAt(pVehicle->m_dwGTAId)) return;
+
+	if (!m_pPed) return;
+	if(!m_dwGTAId)return;
+	if (!IsValidGamePed(m_pPed) || !GamePool_Ped_GetAt(m_dwGTAId)) {
+		return;
+	}
+	if (IsGameEntityArePlaceable(&m_pPed->entity)) {
+		return;
+	}
+	if (m_pPed->entity.vtable == (g_libGTASA + 0x5C7358)) return;
+
 
     VEHICLE_TYPE *gtaVehicle = pVehicle->m_pVehicle;
     if(!gtaVehicle)return;
@@ -662,16 +691,21 @@ void CPlayerPed::PutDirectlyInVehicle(CVehicle *pVehicle, int iSeat)
 
 void CPlayerPed::EnterVehicle(int iVehicleID, bool bPassenger)
 {
-	if(!m_pPed) return;
-	if(!GamePool_Ped_GetAt(m_dwGTAId)) {
+	if (!m_pPed) return;
+	if(!m_dwGTAId)return;
+	if (!IsValidGamePed(m_pPed) || !GamePool_Ped_GetAt(m_dwGTAId)) {
 		return;
 	}
+
+	if (IsGameEntityArePlaceable(&m_pPed->entity)) {
+		return;
+	}
+	if (m_pPed->entity.vtable == (g_libGTASA + 0x5C7358)) return;
 
 	VEHICLE_TYPE* ThisVehicleType;
 	if((ThisVehicleType = GamePool_Vehicle_GetAt(iVehicleID)) == 0) return;
 	if (ThisVehicleType->fHealth == 0.0f) return;
 	if (ThisVehicleType->entity.vtable == g_libGTASA + 0x5C7358) return;
-	if(!GamePool_Ped_GetAt(m_dwGTAId)) return;
 
 	if(bPassenger)
 	{
@@ -694,8 +728,17 @@ void CPlayerPed::EnterVehicle(int iVehicleID, bool bPassenger)
 // 0.3.7
 void CPlayerPed::ExitCurrentVehicle()
 {
-	if(!m_pPed) return;
-	if(!GamePool_Ped_GetAt(m_dwGTAId)) return;
+    Log("ExitCurrentVehicle");
+	if (!m_pPed) return;
+	if(!m_dwGTAId)return;
+	if (!IsValidGamePed(m_pPed) || !GamePool_Ped_GetAt(m_dwGTAId)) {
+		return;
+	}
+
+	if (IsGameEntityArePlaceable(&m_pPed->entity)) {
+		return;
+	}
+	if (m_pPed->entity.vtable == (g_libGTASA + 0x5C7358)) return;
 
 	//VEHICLE_TYPE* ThisVehicleType = 0;
 
@@ -738,7 +781,16 @@ void CPlayerPed::TogglePlayerControllable(bool bToggle, bool isTemp)
 {
 	if(!isTemp) lToggle = bToggle;
 
-	if(!GamePool_Ped_GetAt(m_dwGTAId)) return;
+	if (!m_pPed) return;
+	if(!m_dwGTAId)return;
+	if (!IsValidGamePed(m_pPed) || !GamePool_Ped_GetAt(m_dwGTAId)) {
+		return;
+	}
+
+	if (IsGameEntityArePlaceable(&m_pPed->entity)) {
+		return;
+	}
+	if (m_pPed->entity.vtable == (g_libGTASA + 0x5C7358)) return;
 
 	if(!bToggle)
 	{
@@ -824,15 +876,6 @@ void CPlayerPed::ClearAllWeapons()
 	((uint32_t(*)(uintptr_t, int, int, int))(g_libGTASA + 0x004345AC + 1))(dwPedPtr, 1, 1, 1); // CPed::ClearWeapons(void)
 
 	*(uint8_t*)(g_libGTASA + 0x008E864C) = old;
-}
-
-bool IsGameEntityArePlaceable(ENTITY_TYPE* pEntity) {
-	if (pEntity) {
-		if (pEntity->vtable == g_libGTASA + 0x005C7358) {
-			return true;
-		}
-	}
-	return false;
 }
 
 uintptr_t GetWeaponInfo(int iWeapon, int iSkill)
@@ -1071,6 +1114,13 @@ void CPlayerPed::ProcessAttach()
 {
 	if (!m_pPed) return;
 	if(!m_dwGTAId)return;
+	if (!IsValidGamePed(m_pPed) || !GamePool_Ped_GetAt(m_dwGTAId)) {
+		return;
+	}
+
+	if (IsGameEntityArePlaceable(&m_pPed->entity)) {
+		return;
+	}
 	if (m_pPed->entity.vtable == (g_libGTASA + 0x5C7358)) return;
 
 	((int(*)(PED_TYPE*))(g_libGTASA + 0x00391968 + 1))(m_pPed); // UpdateRPHAnim

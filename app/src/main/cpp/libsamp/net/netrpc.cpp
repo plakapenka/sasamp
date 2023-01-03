@@ -467,23 +467,23 @@ void WorldVehicleAdd(RPCParameters *rpcParams)
 			ScriptCommand(&add_car_component, iVehicle, data, &v);
 		}
 
-		if (NewVehicle.bytePaintjob)
-		{
-			{
-				ScriptCommand(&change_car_skin, iVehicle, (NewVehicle.bytePaintjob - 1));
-				VEHICLE_TYPE* pVeh = GamePool_Vehicle_GetAt(iVehicle);
-				if (pVeh)
-				{
-					uintptr_t this_vtable = pVeh->entity.vtable;
-					this_vtable -= g_libGTASA;
-
-					if (this_vtable == 0x5CC9F0)
-					{
-						ScriptCommand(&change_car_skin, iVehicle, (NewVehicle.bytePaintjob - 1));
-					}
-				}
-			}
-		}
+//		if (NewVehicle.bytePaintjob)
+//		{
+//			{
+//				ScriptCommand(&change_car_skin, iVehicle, (NewVehicle.bytePaintjob - 1));
+//				VEHICLE_TYPE* pVeh = GamePool_Vehicle_GetAt(iVehicle);
+//				if (pVeh)
+//				{
+//					uintptr_t this_vtable = pVeh->entity.vtable;
+//					this_vtable -= g_libGTASA;
+//
+//					if (this_vtable == 0x5CC9F0)
+//					{
+//						ScriptCommand(&change_car_skin, iVehicle, (NewVehicle.bytePaintjob - 1));
+//					}
+//				}
+//			}
+//		}
 		if (NewVehicle.cColor1 != -1 || NewVehicle.cColor2 != -1)
 		{
 			pVehiclePool->GetAt(NewVehicle.VehicleID)->SetColor(NewVehicle.cColor1, NewVehicle.cColor2);
