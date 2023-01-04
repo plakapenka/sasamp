@@ -2191,10 +2191,10 @@ void WorldAddEntity(uintptr_t pEnt)
 	((void(*)(uintptr_t))(g_libGTASA + 0x3C14B0 + 1))(pEnt);
 }
 
-void WorldRemoveEntity(uintptr_t pEnt)
-{
-	((void(*)(uintptr_t))(g_libGTASA + 0x3C1500 + 1))(pEnt);
-}
+//void WorldRemoveEntity(uintptr_t pEnt)
+//{
+//	((void(*)(uintptr_t))(g_libGTASA + 0x3C1500 + 1))(pEnt);
+//}
 
 uintptr_t GetModelInfoByID(int iModelID)
 {

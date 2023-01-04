@@ -2911,17 +2911,6 @@ int CEntity__RegisterReference_hook(ENTITY_TYPE *thiz, ENTITY_TYPE **a1)
     return false;
 }
 
-
-void (*CWorld__Remove)(uintptr_t *thiz, uintptr_t *a2, int a3, int a4);
-void CWorld__Remove_hook(uintptr_t *thiz, uintptr_t *a2, int a3, int a4)
-{
-	if(! thiz + 0x36){
-		Log("Kakayato huyna");
-		return;
-	}
-	return CWorld__Remove(thiz, a2, a3, a4);
-}
-
 float (*CDraw__SetFOV)(float thiz, float a2);
 float CDraw__SetFOV_hook(float thiz, float a2)
 {
@@ -3239,6 +3228,27 @@ int CTaskSimpleUseGun__SetPedPosition_hook(uintptr_t thiz, PED_TYPE *pPed)
 	return CTaskSimpleUseGun__SetPedPosition(thiz, pPed);
 }
 
+void (*CWorld__Remove)(uintptr_t *thiz, ENTITY_TYPE *pEntity);
+void CWorld__Remove_hook(uintptr_t *thiz, ENTITY_TYPE *pEntity)
+{
+	int result; // r0
+
+    if (!pEntity || pEntity->vtable == 0x5C7358) {
+		Log("pEntity->vtable");
+		return;
+	}
+    if (!pEntity->dwUnkModelRel){
+		Log("pEntity->dwUnkModelRel");
+		return;
+	}
+
+	(*(int (__fastcall **)(uintptr_t *, ENTITY_TYPE *))(*(DWORD *)thiz + 0x10))(thiz, pEntity);
+
+	if ( ((*((BYTE *)thiz + 0x36) + 6) & 7u) <= 2 ){
+		((void(*)(uintptr_t*))(g_libGTASA + 0x003A03EC + 1))(thiz); // CPhysical::RemoveFromMovingList
+	}
+
+}
 
 uintptr_t (*GetMeshPriority)(uintptr_t);
 uintptr_t GetMeshPriority_hook(uintptr_t rpMesh)
@@ -3270,7 +3280,8 @@ void InstallHooks()
 
 	PROTECT_CODE_INSTALLHOOKS;
   //  SetUpHook(g_libGTASA + 0x004EE790, (uintptr_t)RpAnimBlendClumpGetAssociation_int_hook, (uintptr_t*)& RpAnimBlendClumpGetAssociation_int);
-	SetUpHook(g_libGTASA + 0x001E4AE4, (uintptr_t)GetMeshPriority_hook, (uintptr_t*)&GetMeshPriority);
+	//SetUpHook(g_libGTASA + 0x003C1500, (uintptr_t)CWorld__Remove_hook, (uintptr_t*)&CWorld__Remove);
+  	SetUpHook(g_libGTASA + 0x001E4AE4, (uintptr_t)GetMeshPriority_hook, (uintptr_t*)&GetMeshPriority);
 
 	SetUpHook(g_libGTASA + 0x29947C, (uintptr_t)CCollision__ProcessVerticalLine_hook, (uintptr_t*)&CCollision__ProcessVerticalLine);
 	SetUpHook(g_libGTASA + 0x5669D8, (uintptr_t)CWeapon__GenerateDamageEvent_hook, (uintptr_t*)&CWeapon__GenerateDamageEvent);
@@ -3467,7 +3478,7 @@ void InstallHooks()
 	//размытие на скорости
 	SetUpHook(g_libGTASA + 0x005311D0, (uintptr_t)CDraw__SetFOV_hook, (uintptr_t*)&CDraw__SetFOV);
 
-    SetUpHook(g_libGTASA + 0x003B0E6C, (uintptr_t)CEntity__RegisterReference_hook, (uintptr_t*)&CEntity__RegisterReference);
+   // SetUpHook(g_libGTASA + 0x003B0E6C, (uintptr_t)CEntity__RegisterReference_hook, (uintptr_t*)&CEntity__RegisterReference);
 
   //  SetUpHook(g_libGTASA + 0x003C1500, (uintptr_t)CWorld__Remove_hook, (uintptr_t*)&CWorld__Remove);
 

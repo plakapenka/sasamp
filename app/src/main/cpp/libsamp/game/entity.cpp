@@ -92,17 +92,17 @@ void CEntity::Render()
 	((void (*)(ENTITY_TYPE*))(g_libGTASA + 0x3B1690 + 1))(m_pEntity);
 }
 
-void CEntity::Remove()
-{
-	if (!m_pEntity || m_pEntity->vtable == 0x5C7358)
-	{
-		return;
-	}
-
-	if (m_pEntity->dwUnkModelRel) {
-		WorldRemoveEntity((uintptr_t)m_pEntity);
-	}
-}
+//void CEntity::Remove()
+//{
+//	if (!m_pEntity || m_pEntity->vtable == 0x5C7358)
+//	{
+//		return;
+//	}
+//
+//	if (m_pEntity->dwUnkModelRel) {
+//		WorldRemoveEntity((uintptr_t)m_pEntity);
+//	}
+//}
 
 // 0.3.7
 void CEntity::GetMatrix(PMATRIX4X4 Matrix)

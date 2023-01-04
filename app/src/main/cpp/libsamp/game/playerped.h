@@ -63,7 +63,6 @@ public:
 	// 0.3.7
 	void ExitCurrentVehicle();
 	// 0.3.7
-	VEHICLE_TYPE * GetCurrentVehicleID();
 	int GetVehicleSeatID();
 
 	ENTITY_TYPE* GetEntityUnderPlayer();
@@ -166,4 +165,12 @@ public:
 	void GetWeaponInfoForFire(int bLeft, VECTOR *vecBone, VECTOR *vecOut);
 
 	VECTOR *GetCurrentWeaponFireOffset();
+
+	CVehicle *GetCurrentVehicle();
+
+	VEHICLE_TYPE *GetCurrentGtaVehicle();
+
+	uint32_t GetCurrentGTAVehicleID();
+
+	VEHICLEID GetCurrentSampVehicleID();
 };

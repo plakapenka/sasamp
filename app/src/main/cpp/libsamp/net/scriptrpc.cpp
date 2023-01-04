@@ -600,11 +600,24 @@ void ScrPutPlayerInVehicle(RPCParameters *rpcParams)
 	bsData.Read(vehicleid);
 	bsData.Read(seatid);
 
+	CPlayerPed *pPed = pGame->FindPlayerPed();
+	if(!pPed)return;
 
+	if(vehicleid == pPed->GetCurrentSampVehicleID()) return;
+
+	if(!pNetGame) return;
+	CVehiclePool * pVehiclepool = pNetGame->GetVehiclePool();
+	if(!pVehiclepool)return;
+
+	if(pPed->IsInVehicle()) {
+		MATRIX4X4 mat;
+		pPed->GetMatrix(&mat);
+		pPed->RemoveFromVehicleAndPutAt(mat.pos.X, mat.pos.Y, mat.pos.Z);
+	}
 	CVehicle *pVehicle = pNetGame->GetVehiclePool()->GetAt(vehicleid);
+	if(!pVehicle)return;
 
-	if(pVehicle)
-		 pGame->FindPlayerPed()->PutDirectlyInVehicle(pVehicle, seatid);
+	pPed->PutDirectlyInVehicle(pVehicle, seatid);
 }
 
 void ScrVehicleParams(RPCParameters *rpcParams)

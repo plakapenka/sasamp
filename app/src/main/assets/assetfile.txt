@@ -1,5 +1,8 @@
 120
 assetfile.txt
+scache.txt
+scache_small.txt
+scache_small_low.txt
 audio/audio_data.xml
 audio/android/NAV_DOWN.ogg
 audio/android/NAV_UP.ogg

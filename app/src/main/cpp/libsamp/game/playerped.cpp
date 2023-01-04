@@ -88,35 +88,36 @@ CPlayerPed::~CPlayerPed()
 	memset(&RemotePlayerKeys[m_bytePlayerNumber], 0, sizeof(PAD_KEYS));
 
 	SetPlayerPedPtrRecord(m_bytePlayerNumber, 0);
-
+	Log("~CPlayerPed()1");
 	if(!m_dwGTAId)return;
 	if(!GamePool_Ped_GetAt(m_dwGTAId))return;
-
+	Log("~CPlayerPed()2");
 	if (m_pPed && IsValidGamePed(m_pPed) && m_pPed->entity.vtable != (g_libGTASA + 0x5C7358))
 	{
+		Log("~CPlayerPed()3");
 		FlushAttach();
-
+		Log("~CPlayerPed()4");
 		if (IN_VEHICLE(m_pPed)) {
 			Log("Removing from vehicle..");
 			RemoveFromVehicleAndPutAt(100.0f, 100.0f, 20.0f);
 
 			ClearAllTasks();
 		}
-
-		ScriptCommand(&DELETE_CHAR, m_dwGTAId);
-
-//		uintptr_t dwPedPtr = (uintptr_t)m_pPed;
-//		*(uint32_t*)(*(uintptr_t*)(dwPedPtr + 1088) + 76) = 0;
-//		// CPlayerPed::Destructor
-//		((void (*)(PED_TYPE*))(*(void**)(m_pPed->entity.vtable + 0x4)))(m_pPed);
+		Log("~CPlayerPed()5");
+		uintptr_t dwPedPtr = (uintptr_t)m_pPed;
+		*(uint32_t*)(*(uintptr_t*)(dwPedPtr + 1088) + 76) = 0;
+		// CPlayerPed::Destructor
+		((void (*)(PED_TYPE*))(*(void**)(m_pPed->entity.vtable + 0x4)))(m_pPed);
 		//ScriptCommand(&DELETE_CHAR, m_dwGTAId);
 
 		m_pPed = nullptr;
 		m_pEntity = nullptr;
 		m_dwGTAId = 0;
+		Log("~CPlayerPed()7");
 	}
 	else
 	{
+		Log("~CPlayerPed()6");
 		m_pPed = nullptr;
 		m_pEntity = nullptr;
 		m_dwGTAId = 0;
@@ -634,7 +635,7 @@ void CPlayerPed::SetInterior(uint8_t byteID, bool refresh)
 
 void CPlayerPed::PutDirectlyInVehicle(CVehicle *pVehicle, int iSeat)
 {
-    Log("PutDirectlyInVehicle");
+
 	if(!pVehicle) return;
 	if (!GamePool_Vehicle_GetAt(pVehicle->m_dwGTAId)) return;
 
@@ -662,12 +663,8 @@ void CPlayerPed::PutDirectlyInVehicle(CVehicle *pVehicle, int iSeat)
 
 	// check seatid
 
+	Log("PutDirectlyInVehicle");
 
-	if(IsInVehicle()){
-		MATRIX4X4 mat;
-		GetMatrix(&mat);
-		RemoveFromVehicleAndPutAt(mat.pos.X, mat.pos.Y, mat.pos.Z);
-	}
 //	MATRIX4X4 mat;
 //	pVehicle->GetMatrix(&mat);
 //
@@ -745,16 +742,62 @@ void CPlayerPed::ExitCurrentVehicle()
 	if(IN_VEHICLE(m_pPed))
 	{
 		ScriptCommand(&TASK_LEAVE_ANY_CAR, m_dwGTAId);
+
 	}
 }
 
 // 0.3.7
-VEHICLE_TYPE* CPlayerPed::GetCurrentVehicleID()
+VEHICLEID CPlayerPed::GetCurrentSampVehicleID()
 {
-	if(!m_pPed) return 0;
+	if(!m_pPed) return INVALID_VEHICLE_ID;
+	if(!pNetGame)return INVALID_VEHICLE_ID;
+
+	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
+	if(!pVehiclePool)return 0;
+
+	for (size_t i = 0; i < MAX_VEHICLES; i++) {
+		if (pVehiclePool->GetSlotState(i)) {
+			CVehicle *pVehicle = pVehiclePool->GetAt(i);
+			if (pVehicle && pVehicle->IsAdded()) {
+				if (pVehicle->m_pVehicle == (VEHICLE_TYPE *) m_pPed->pVehicle) {
+					return i;
+				}
+			}
+		}
+	}
+	return INVALID_VEHICLE_ID;
+}
+CVehicle* CPlayerPed::GetCurrentVehicle()
+{
+	if(!m_pPed) return nullptr;
+	if(!pNetGame)return nullptr;
+
+	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
+	if(!pVehiclePool)return nullptr;
+
+	for (size_t i = 0; i < MAX_VEHICLES; i++) {
+		if (pVehiclePool->GetSlotState(i)) {
+			CVehicle *pVehicle = pVehiclePool->GetAt(i);
+			if (pVehicle && pVehicle->IsAdded()) {
+				if (pVehicle->m_pVehicle == (VEHICLE_TYPE *) m_pPed->pVehicle) {
+					return pVehicle;
+				}
+			}
+		}
+	}
+	return nullptr;
+}
+
+VEHICLE_TYPE* CPlayerPed::GetCurrentGtaVehicle()
+{
+	if(!m_pPed) return nullptr;
 
 	return (VEHICLE_TYPE *)m_pPed->pVehicle;
-	//return GamePool_Vehicle_GetIndex(pVehicle);
+}
+
+uint32_t CPlayerPed::GetCurrentGTAVehicleID(){
+	if(!m_pPed) return 0;
+	return GamePool_Vehicle_GetIndex(reinterpret_cast<VEHICLE_TYPE *>(m_pPed->pVehicle));
 }
 
 int CPlayerPed::GetVehicleSeatID()

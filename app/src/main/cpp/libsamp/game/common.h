@@ -741,34 +741,19 @@ typedef struct _VEHICLE_TYPE
 	} m_nVehicleFlags;
 
 	unsigned int m_nCreationTime;
-	unsigned char  m_nPrimaryColor;
-	unsigned char  m_nSecondaryColor;
-	unsigned char  m_nTertiaryColor;
-	unsigned char  m_nQuaternaryColor;
-
-	PADDING(_pad204, 40);		// 1078-1120
+	uint8_t m_nPrimaryColor;			// 1076-1077	;byteColor1
+	uint8_t m_nSecondaryColor;			// 1077-1078	;byteColor2
+	PADDING(_pad204, 42);		// 1078-1120
 	PED_TYPE* pDriver;			// 1120-1124	;driver
 	PED_TYPE* pPassengers[7];	// 1124-1152	;pPassengers
-	PADDING(_pad202, 53);		// 1152-1224
-	unsigned char m_nOverrideLights : 2; // uses enum NO_CAR_LIGHT_OVERRIDE, FORCE_CAR_LIGHTS_OFF, FORCE_CAR_LIGHTS_ON
-	unsigned char m_nWinchType : 2; // Does this vehicle use a winch?
-	unsigned char m_nGunsCycleIndex : 2; // Cycle through alternate gun hardpoints on planes/helis
-	unsigned char m_nOrdnanceCycleIndex : 2; // Cycle through alternate ordnance hardpoints on planes/helis
-	unsigned char m_nUsedForCover; // Has n number of cops hiding/attempting to hid behind it
-	unsigned char m_nAmmoInClip; // Used to make the guns on boat do a reload (20 by default).
-	unsigned char m_nPacMansCollected; // initialised, but not used?
-	unsigned char m_nPedsPositionForRoadBlock; // 0, 1 or 2
-	unsigned char m_nNumCopsForRoadBlock;
-	float   m_fDirtLevel; // Dirt level of vehicle body texture: 0.0f=fully clean, 15.0f=maximum dirt visible
-	unsigned char m_nCurrentGear;
-	float   m_fGearChangeCount; // used as parameter for cTransmission::CalculateDriveAcceleration, but doesn't change
-	float  m_fWheelSpinForAudio;
+	PADDING(_pad202, 72);		// 1152-1224
 	float fHealth;				// 1224-1228	;fHealth
 	uint32_t unk;				// 1228 - 1232 - unk
 	uint32_t dwTrailer;			// 1232 - 1236 - trailer
 	PADDING(_pad203, 48);		// 1236-1284
 	uint32_t dwDoorsLocked;
 } VEHICLE_TYPE;
+
 typedef struct _RECT
 {
 	float fLeft;

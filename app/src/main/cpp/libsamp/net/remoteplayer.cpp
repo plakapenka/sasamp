@@ -520,11 +520,9 @@ void CRemotePlayer::HandleVehicleEntryExit()
 {
 	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
 	if(!pVehiclePool)return;
-	if(!m_pPlayerPed) return;
+	if(!m_pPlayerPed ) return;
 
 	MATRIX4X4 mat;
-
-	if(!m_pPlayerPed) return;
 
 //	if(m_pPlayerPed->IsInVehicle() && m_pCurrentVehicle &&  m_pPlayerPed->GetCurrentVehicleID() != m_pCurrentVehicle->m_pVehicle) {
 //		//Log("da");
@@ -540,20 +538,21 @@ void CRemotePlayer::HandleVehicleEntryExit()
 		if(!m_pPlayerPed->IsInVehicle()) {
 			CVehicle *pVehicle = pVehiclePool->GetAt(m_VehicleID);
 			if(pVehicle) {
+				Log("log from process = %d", this->m_PlayerID);
 				m_pPlayerPed->PutDirectlyInVehicle(pVehicle, m_byteSeatID);
 			}
 		}
 	}
 
-	if(!m_pPlayerPed->IsInVehicle())
-	{
-		if(!m_pPlayerPed->IsInVehicle()) {
-			CVehicle *pVehicle = pVehiclePool->GetAt(m_VehicleID);
-			if(pVehicle) {
-				m_pPlayerPed->PutDirectlyInVehicle(pVehicle, m_byteSeatID);
-			}
-		}
-	}
+//	if(!m_pPlayerPed->IsInVehicle())
+//	{
+//		if(!m_pPlayerPed->IsInVehicle()) {
+//			CVehicle *pVehicle = pVehiclePool->GetAt(m_VehicleID);
+//			if(pVehicle) {
+//				m_pPlayerPed->PutDirectlyInVehicle(pVehicle, m_byteSeatID);
+//			}
+//		}
+//	}
 }
 void CRemotePlayer::EnterVehicle(VEHICLEID VehicleID, bool bPassenger)
 {
@@ -583,6 +582,7 @@ void CRemotePlayer::ExitVehicle()
 
 void CRemotePlayer::UpdateOnFootPositionAndSpeed(VECTOR *vecPos, VECTOR *vecMove)
 {
+	if(!m_pPlayerPed)return;
 	m_vecOnFootTargetPos.X = vecPos->X;
 	m_vecOnFootTargetPos.Y = vecPos->Y;
 	m_vecOnFootTargetPos.Z = vecPos->Z;
@@ -937,10 +937,12 @@ void CRemotePlayer::StoreInCarFullSyncData(INCAR_SYNC_DATA *picSync, uint32_t dw
 					m_byteSpecialAction = 0;
 					//m_pCurrentVehicle->SetSirenState(picSync->byteSirenOn);
 
+					SetState(PLAYER_STATE_DRIVER);
+
 					if (m_pPlayerPed && !m_pPlayerPed->IsInVehicle())
 						HandleVehicleEntryExit();
 
-					SetState(PLAYER_STATE_DRIVER);
+
 				}
 			}
 		}
@@ -960,10 +962,10 @@ void CRemotePlayer::StorePassengerFullSyncData(PASSENGER_SYNC_DATA *ppsSync)
 	m_byteUpdateFromNetwork = UPDATE_TYPE_PASSENGER;
 	m_dwLastRecvTick = GetTickCount();
 
+	SetState(PLAYER_STATE_PASSENGER);
+
 	if(m_pPlayerPed && !m_pPlayerPed->IsInVehicle())
 		HandleVehicleEntryExit();
-
-	SetState(PLAYER_STATE_PASSENGER);
 }
 
 void CRemotePlayer::RemoveFromVehicle()

@@ -842,127 +842,122 @@ void CLocalPlayer::SendOnFootFullSyncData()
 
 void CLocalPlayer::SendInCarFullSyncData()
 {
+
 	RakNet::BitStream bsVehicleSync;
 	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
 	if(!pVehiclePool) return;
+	if(!m_pPlayerPed || !m_pPlayerPed->m_pPed)return;
 
 	MATRIX4X4 matPlayer;
 	VECTOR vecMoveSpeed;
 
 	uint16_t lrAnalog, udAnalog;
 	uint16_t wKeys = m_pPlayerPed->GetKeys(&lrAnalog, &udAnalog);
-	CVehicle *pVehicle;
+
+	CVehicle *pVehicle = m_pPlayerPed->GetCurrentVehicle();
+	if(!pVehicle || !pVehicle->m_pVehicle)return;
 
 	INCAR_SYNC_DATA icSync;
 	memset(&icSync, 0, sizeof(INCAR_SYNC_DATA));
 
-	if(m_pPlayerPed)
+	VEHICLEID vehicleid = m_pPlayerPed->GetCurrentSampVehicleID();
+	if(vehicleid == INVALID_VEHICLE_ID)return;
+
+	icSync.VehicleID = vehicleid;
+
+	icSync.lrAnalog = lrAnalog;
+	icSync.udAnalog = udAnalog;
+	icSync.wKeys = wKeys;
+
+	pVehicle->GetMatrix(&matPlayer);
+	pVehicle->GetMoveSpeedVector(&vecMoveSpeed);
+
+	icSync.quat.SetFromMatrix(matPlayer);
+	icSync.quat.Normalize();
+
+	if(	FloatOffset(icSync.quat.w, m_InCarData.quat.w) < 0.00001 &&
+		FloatOffset(icSync.quat.x, m_InCarData.quat.x) < 0.00001 &&
+		FloatOffset(icSync.quat.y, m_InCarData.quat.y) < 0.00001 &&
+		FloatOffset(icSync.quat.z, m_InCarData.quat.z) < 0.00001) {
+
+		icSync.quat.Set(m_InCarData.quat);
+	}
+
+	// pos
+	icSync.vecPos.X = matPlayer.pos.X;
+	icSync.vecPos.Y = matPlayer.pos.Y;
+	icSync.vecPos.Z = matPlayer.pos.Z;
+	// move speed
+	icSync.vecMoveSpeed.X = vecMoveSpeed.X;
+	icSync.vecMoveSpeed.Y = vecMoveSpeed.Y;
+	icSync.vecMoveSpeed.Z = vecMoveSpeed.Z;
+
+	if (pVehicle->GetHealth() <= 300.0f)
 	{
-		icSync.VehicleID = pVehiclePool->FindIDFromGtaPtr(m_pPlayerPed->GetGtaVehicle());
+		pVehicle->SetHealth(300.0f);
+	}
 
-		if(icSync.VehicleID == INVALID_VEHICLE_ID) return;
+	icSync.fCarHealth = pVehicle->GetHealth();
+	icSync.bytePlayerHealth = (uint8_t)m_pPlayerPed->GetHealth();
+	icSync.bytePlayerArmour = (uint8_t)m_pPlayerPed->GetArmour();
 
-		icSync.lrAnalog = lrAnalog;
-		icSync.udAnalog = udAnalog;
-		icSync.wKeys = wKeys;
+	//icSync.byteSirenOn = pVehicle->IsSirenOn() != 0;
+	//icSync.byteLandingGearState = pVehicle->GetLandingGearState() != 0;
 
-		pVehicle = pVehiclePool->GetAt(icSync.VehicleID);
-		if(!pVehicle) return;
+	uint8_t exKeys = GetPlayerPed()->GetExtendedKeys();
+	icSync.byteCurrentWeapon = (exKeys << 6) | icSync.byteCurrentWeapon & 0x3F;
+	icSync.byteCurrentWeapon ^= (icSync.byteCurrentWeapon ^ GetPlayerPed()->GetCurrentWeapon()) & 0x3F;
 
-		pVehicle->GetMatrix(&matPlayer);
-		pVehicle->GetMoveSpeedVector(&vecMoveSpeed);
-
-		icSync.quat.SetFromMatrix(matPlayer);
-		icSync.quat.Normalize();
-
-		if(	FloatOffset(icSync.quat.w, m_InCarData.quat.w) < 0.00001 &&
-			FloatOffset(icSync.quat.x, m_InCarData.quat.x) < 0.00001 &&
-			FloatOffset(icSync.quat.y, m_InCarData.quat.y) < 0.00001 &&
-			FloatOffset(icSync.quat.z, m_InCarData.quat.z) < 0.00001)
-		{
-			icSync.quat.Set(m_InCarData.quat);
+	icSync.TrailerID = 0;
+	VEHICLE_TYPE* vehTrailer = (VEHICLE_TYPE*)pVehicle->m_pVehicle->dwTrailer;
+	if (vehTrailer != NULL)
+	{
+		uint16_t id = pNetGame->GetVehiclePool()->FindIDFromGtaPtr(vehTrailer);
+		if (id == INVALID_OBJECT_ID) return;
+		if (ScriptCommand(&is_trailer_on_cab, id, pVehicle->m_dwGTAId)) {
+			icSync.TrailerID = pNetGame->GetVehiclePool()->FindIDFromGtaPtr(vehTrailer);
 		}
-
-		// pos
-		icSync.vecPos.X = matPlayer.pos.X;
-		icSync.vecPos.Y = matPlayer.pos.Y;
-		icSync.vecPos.Z = matPlayer.pos.Z;
-		// move speed
-		icSync.vecMoveSpeed.X = vecMoveSpeed.X;
-		icSync.vecMoveSpeed.Y = vecMoveSpeed.Y;
-		icSync.vecMoveSpeed.Z = vecMoveSpeed.Z;
-
-		if (pVehicle->GetHealth() <= 300.0f)
-		{
-			pVehicle->SetHealth(300.0f);
+		else {
+			icSync.TrailerID = 0;
 		}
-
-		icSync.fCarHealth = pVehicle->GetHealth();
-		icSync.bytePlayerHealth = (uint8_t)m_pPlayerPed->GetHealth();
-		icSync.bytePlayerArmour = (uint8_t)m_pPlayerPed->GetArmour();
-
-		//icSync.byteSirenOn = pVehicle->IsSirenOn() != 0;
-		//icSync.byteLandingGearState = pVehicle->GetLandingGearState() != 0;
-		uint8_t exKeys = GetPlayerPed()->GetExtendedKeys();
-		icSync.byteCurrentWeapon = (exKeys << 6) | icSync.byteCurrentWeapon & 0x3F;
-		icSync.byteCurrentWeapon ^= (icSync.byteCurrentWeapon ^ GetPlayerPed()->GetCurrentWeapon()) & 0x3F;
-
-		icSync.TrailerID = 0;
-		VEHICLE_TYPE* vehTrailer = (VEHICLE_TYPE*)pVehicle->m_pVehicle->dwTrailer;
-		if (vehTrailer != NULL)
+	}
+	if (icSync.TrailerID && icSync.TrailerID < MAX_VEHICLES)
+	{
+		MATRIX4X4 matTrailer;
+		TRAILER_SYNC_DATA trSync;
+		CVehicle* pTrailer = pVehiclePool->GetAt(icSync.TrailerID);
+		if (pTrailer && pTrailer->m_pVehicle)
 		{
-			uint16_t id = pNetGame->GetVehiclePool()->FindIDFromGtaPtr(vehTrailer);
-			if (id == INVALID_OBJECT_ID) return;
-			if (ScriptCommand(&is_trailer_on_cab,
-				id,
-				pVehicle->m_dwGTAId))
-			{
-				icSync.TrailerID = pNetGame->GetVehiclePool()->FindIDFromGtaPtr(vehTrailer);
+			pTrailer->GetMatrix(&matTrailer);
+			trSync.trailerID = icSync.TrailerID;
 
-			}
-			else
-			{
-				icSync.TrailerID = 0;
-			}
+			trSync.vecPos.X = matTrailer.pos.X;
+			trSync.vecPos.Y = matTrailer.pos.Y;
+			trSync.vecPos.Z = matTrailer.pos.Z;
+
+			CQuaternion syncQuat;
+			syncQuat.SetFromMatrix(matTrailer);
+			trSync.quat = syncQuat;
+
+			pTrailer->GetMoveSpeedVector(&trSync.vecMoveSpeed);
+			pTrailer->GetTurnSpeedVector(&trSync.vecTurnSpeed);
+			RakNet::BitStream bsTrailerSync;
+			bsTrailerSync.Write((BYTE)ID_TRAILER_SYNC);
+			bsTrailerSync.Write((char*)& trSync, sizeof(TRAILER_SYNC_DATA));
+			pNetGame->GetRakClient()->Send(&bsTrailerSync, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0);
 		}
-		if (icSync.TrailerID && icSync.TrailerID < MAX_VEHICLES)
-		{
-			MATRIX4X4 matTrailer;
-			TRAILER_SYNC_DATA trSync;
-			CVehicle* pTrailer = pVehiclePool->GetAt(icSync.TrailerID);
-			if (pTrailer)
-			{
-				pTrailer->GetMatrix(&matTrailer);
-				trSync.trailerID = icSync.TrailerID;
+	}
 
-				trSync.vecPos.X = matTrailer.pos.X;
-				trSync.vecPos.Y = matTrailer.pos.Y;
-				trSync.vecPos.Z = matTrailer.pos.Z;
+	// send
+	if( (GetTickCount() - m_dwLastUpdateInCarData) > 500 || memcmp(&m_InCarData, &icSync, sizeof(INCAR_SYNC_DATA)))
+	{
+		m_dwLastUpdateInCarData = GetTickCount();
 
-				CQuaternion syncQuat;
-				syncQuat.SetFromMatrix(matTrailer);
-				trSync.quat = syncQuat;
+		bsVehicleSync.Write((uint8_t)ID_VEHICLE_SYNC);
+		bsVehicleSync.Write((char*)&icSync, sizeof(INCAR_SYNC_DATA));
+		pNetGame->GetRakClient()->Send(&bsVehicleSync, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0);
 
-				pTrailer->GetMoveSpeedVector(&trSync.vecMoveSpeed);
-				pTrailer->GetTurnSpeedVector(&trSync.vecTurnSpeed);
-				RakNet::BitStream bsTrailerSync;
-				bsTrailerSync.Write((BYTE)ID_TRAILER_SYNC);
-				bsTrailerSync.Write((char*)& trSync, sizeof(TRAILER_SYNC_DATA));
-				pNetGame->GetRakClient()->Send(&bsTrailerSync, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0);
-			}
-		}
-
-		// send
-		if( (GetTickCount() - m_dwLastUpdateInCarData) > 500 || memcmp(&m_InCarData, &icSync, sizeof(INCAR_SYNC_DATA)))
-		{
-			m_dwLastUpdateInCarData = GetTickCount();
-
-			bsVehicleSync.Write((uint8_t)ID_VEHICLE_SYNC);
-			bsVehicleSync.Write((char*)&icSync, sizeof(INCAR_SYNC_DATA));
-			pNetGame->GetRakClient()->Send(&bsVehicleSync, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0);
-
-			memcpy(&m_InCarData, &icSync, sizeof(INCAR_SYNC_DATA));
-		}
+		memcpy(&m_InCarData, &icSync, sizeof(INCAR_SYNC_DATA));
 	}
 }
 

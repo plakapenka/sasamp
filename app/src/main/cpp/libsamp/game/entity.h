@@ -7,7 +7,7 @@ public:
 	virtual ~CEntity() {};
 
 	virtual void Add();
-	virtual void Remove();
+	//virtual void Remove();
 	void Render();
 	void UpdateMatrix(MATRIX4X4 mat);
 	void SetCollisionChecking(bool bCheck);
