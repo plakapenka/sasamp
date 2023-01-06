@@ -566,8 +566,14 @@ public class HudManager {
                     thread_update_money.interrupt();
                 }
 
-                thread_update_money = new Thread(runnable_update_money);
-                thread_update_money.start();
+                try {
+                    thread_update_money = new Thread(runnable_update_money);
+                    thread_update_money.start();
+                } catch (Exception e) {
+                    activity.runOnUiThread(() -> {
+                        hud_money.setText(formatter.format(current_visual_money));
+                    });
+                }
 
                 timer = null;
             }
@@ -597,9 +603,14 @@ public class HudManager {
             if(thread_update_money!= null && thread_update_money.isAlive()){
                 thread_update_money.interrupt();
             }
-
-            thread_update_money = new Thread(runnable_update_money);
-            thread_update_money.start();
+            try {
+                thread_update_money = new Thread(runnable_update_money);
+                thread_update_money.start();
+            } catch (Exception e) {
+                activity.runOnUiThread(() -> {
+                    hud_money.setText(formatter.format(current_visual_money));
+                });
+            }
         }
 
 
@@ -819,7 +830,8 @@ public class HudManager {
             // Log.d("af", "start = "+chat_input.getSelectionStart()+" size = "+chat_input.getText().length());
            // if(!msg.isEmpty()) {
              //   if (cursorPos == chat_input.getText().length()-1) {
-                    chat_input.setSelection(chat_input.getText().length());
+                    int len = chat_input.getText().length();
+                    if(len >= 0) chat_input.setSelection(len);
               //      cursorPos = chat_input.getSelectionStart();
               //  }
           //  }

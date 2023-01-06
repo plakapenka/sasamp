@@ -1624,6 +1624,14 @@ void GivePedScriptedTask_hook(uintptr_t* thiz, int pedHandle, uintptr_t* a3, int
 	//Log("pedHandle = %d, local = %d", pedHandle, pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->m_dwGTAId);
 	if(!pedHandle || !commandID || !a3)return;
 
+	if ( pedHandle == 0xFFFFFFFF ){
+		return GivePedScriptedTask(thiz, pedHandle, a3, commandID);
+	}
+	//if(!(pedHandle>>8))return;
+	uintptr_t tmp = *(uintptr_t*)(g_libGTASA + 0x008B93D4);
+
+	if(  !(*(const PED_TYPE**) tmp + 0x4 ) ) return; // CPools::ms_pPedPool
+
 	return GivePedScriptedTask(thiz, pedHandle, a3, commandID);
 }
 
@@ -3218,6 +3226,13 @@ int CTaskSimpleUseGun__SetPedPosition_hook(uintptr_t thiz, PED_TYPE *pPed)
 	return CTaskSimpleUseGun__SetPedPosition(thiz, pPed);
 }
 
+int (*CTaskSimpleCarSetPedInAsDriver__ProcessPed)(uintptr_t *thiz, PED_TYPE *a2);
+int CTaskSimpleCarSetPedInAsDriver__ProcessPed_hook(uintptr_t *thiz, PED_TYPE *a2)
+{
+	if(!a2)return false;
+
+	return CTaskSimpleCarSetPedInAsDriver__ProcessPed(thiz, a2);
+}
 
 
 uintptr_t (*GetMeshPriority)(uintptr_t);
@@ -3259,13 +3274,6 @@ void InstallHooks()
 	SetUpHook(g_libGTASA + 0x46D6AC, (uintptr_t)CTaskSimpleUseGun__SetPedPosition_hook, (uintptr_t*)&CTaskSimpleUseGun__SetPedPosition);
 
 	NOP(g_libGTASA + 0x003989C8, 2);//живность в воде WaterCreatureManager_c::Update
-
-	// дефолтный худ
-	NOP(g_libGTASA + 0x0027E21A, 2); // CWidgetPlayerInfo::DrawWeaponIcon
-	NOP(g_libGTASA + 0x0027E24E, 2); // CWidgetPlayerInfo::DrawWanted
-	NOP(g_libGTASA + 0x0027E1E8, 2); // CWidgetPlayerInfo::RenderBreathBar
-	NOP(g_libGTASA + 0x0027E1AE, 2); // CWidgetPlayerInfo::RenderArmorBar
-	NOP(g_libGTASA + 0x0027E188, 2); // CWidgetPlayerInfo::RenderHealthBar
 
 	//SetUpHook(g_libGTASA+0x291104, (uintptr_t)CStreaming__ConvertBufferToObject_hook, (uintptr_t*)&CStreaming__ConvertBufferToObject);
 	//SetUpHook(g_libGTASA+0x3961C8, (uintptr_t)CFileMgr__ReadLine_hook, (uintptr_t*)&CFileMgr__ReadLine);
@@ -3330,16 +3338,6 @@ void InstallHooks()
 	//new fix
 	SetUpHook(g_libGTASA + 0x1EEC90, (uintptr_t)rxOpenGLDefaultAllInOneRenderCB_hook, (uintptr_t*)& rxOpenGLDefaultAllInOneRenderCB);
 	SetUpHook(g_libGTASA + 0x28AAAC, (uintptr_t)CustomPipeRenderCB_hook, (uintptr_t*)& CustomPipeRenderCB);
-
-	//RpMaterialDestroy fix ? не точно
-	SetUpHook(g_libGTASA + 0x001E3C54, (uintptr_t)RpMaterialDestroy_hook, (uintptr_t*)&RpMaterialDestroy);
-	SetUpHook(g_libGTASA + 0x1B1808, (uintptr_t)_RwTextureDestroy_hook, (uintptr_t*)&_RwTextureDestroy);
-
-	//CRunningScript fix ? не точно
-	SetUpHook(g_libGTASA + 0x002E5400, (uintptr_t)GivePedScriptedTask_hook, (uintptr_t*)&GivePedScriptedTask);
-
-	SetUpHook(g_libGTASA + 0x00308640, (uintptr_t)ProcessCommands1400To1499_hook, (uintptr_t*)&ProcessCommands1400To1499);
-	SetUpHook(g_libGTASA + 0x002F7910, (uintptr_t)ProcessCommands300To399_hook, (uintptr_t*)&ProcessCommands300To399);
 
 	// todo: 3 pools fix crash
 
@@ -3419,12 +3417,7 @@ void InstallHooks()
 	SetUpHook(g_libGTASA + 0x0043A17C, (uintptr_t)CPed__ProcessEntityCollision_hook, (uintptr_t*)&CPed__ProcessEntityCollision);
 	SetUpHook(g_libGTASA + 0x3AA3C0, (uintptr_t)CPhysical__Add_hook, (uintptr_t*)&CPhysical__Add);
 
-	NOP(g_libGTASA + 0x0039ADE6, 2);//CCoronas::RenderSunReflection crash
 
-	NOP(g_libGTASA+0x0051018A, 2);// не давать ган при выходе из тачки
-	NOP(g_libGTASA+0x005101A6, 2);// не давать ган при выходе из тачки
-
-	NOP(g_libGTASA + 0x00261A10, 29); // убрать выбор языка в настройках
 	SetUpHook(g_libGTASA + 0x004B97FC, (uintptr_t)CTaskSimpleGetUp__ProcessPed_hook, (uintptr_t*)&CTaskSimpleGetUp__ProcessPed); // CTaskSimpleGetUp::ProcessPed
 
 	//==================
@@ -3434,6 +3427,36 @@ void InstallHooks()
 	SetUpHook(g_libGTASA + 0x50C5F8, (uintptr_t)SetCompAlphaCB_hook, (uintptr_t*)&SetCompAlphaCB);
 	SetUpHook(g_libGTASA + 0x1bdc3c, (uintptr_t)CTextureDatabaseRuntime__GetEntry_hook, (uintptr_t*)&CTextureDatabaseRuntime__GetEntry);
 
+	//================================
+	// ================== plaka ======
+	//================================
+	//
+	// дефолтный худ
+	NOP(g_libGTASA + 0x0027E21A, 2); // CWidgetPlayerInfo::DrawWeaponIcon
+	NOP(g_libGTASA + 0x0027E24E, 2); // CWidgetPlayerInfo::DrawWanted
+	NOP(g_libGTASA + 0x0027E1E8, 2); // CWidgetPlayerInfo::RenderBreathBar
+	NOP(g_libGTASA + 0x0027E1AE, 2); // CWidgetPlayerInfo::RenderArmorBar
+	NOP(g_libGTASA + 0x0027E188, 2); // CWidgetPlayerInfo::RenderHealthBar
+	//RpMaterialDestroy fix ? не точно
+	SetUpHook(g_libGTASA + 0x001E3C54, (uintptr_t)RpMaterialDestroy_hook, (uintptr_t*)&RpMaterialDestroy);
+	SetUpHook(g_libGTASA + 0x1B1808, (uintptr_t)_RwTextureDestroy_hook, (uintptr_t*)&_RwTextureDestroy);
+
+	//CRunningScript fix ? не точно
+	SetUpHook(g_libGTASA + 0x002E5400, (uintptr_t)GivePedScriptedTask_hook, (uintptr_t*)&GivePedScriptedTask);
+
+	SetUpHook(g_libGTASA + 0x00308640, (uintptr_t)ProcessCommands1400To1499_hook, (uintptr_t*)&ProcessCommands1400To1499);
+	SetUpHook(g_libGTASA + 0x002F7910, (uintptr_t)ProcessCommands300To399_hook, (uintptr_t*)&ProcessCommands300To399);
+
+	//
+	NOP(g_libGTASA + 0x0039ADE6, 2);//CCoronas::RenderSunReflection crash
+
+	NOP(g_libGTASA+0x0051018A, 2);// не давать ган при выходе из тачки
+	NOP(g_libGTASA+0x005101A6, 2);// не давать ган при выходе из тачки
+
+	NOP(g_libGTASA + 0x00261A10, 29); // убрать выбор языка в настройках
+	//
+	SetUpHook(g_libGTASA + 0x004904AC, (uintptr_t)CTaskSimpleCarSetPedInAsDriver__ProcessPed_hook, (uintptr_t*)&CTaskSimpleCarSetPedInAsDriver__ProcessPed);
+	SetUpHook(g_libGTASA + 0x001E4AE4, (uintptr_t)GetMeshPriority_hook, (uintptr_t*)&GetMeshPriority);
 	//== save
 //	NOP(g_libGTASA + 0x0056C4D6, 2);
 	NOP(g_libGTASA + 0x0056CD4A, 2);

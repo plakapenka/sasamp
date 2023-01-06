@@ -164,9 +164,12 @@ CVehicle::CVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRota
 CVehicle::~CVehicle()
 {
 	if(!m_dwGTAId)return;
+
 	Log("~CVehicle");
 	CDebugInfo::uiStreamedVehicles--;
 	m_pVehicle = GamePool_Vehicle_GetAt(m_dwGTAId);
+
+	if(!m_pVehicle)return;
 
 	m_bReplacedTexture = false;
 	Log("~CVehicle1");
@@ -1643,6 +1646,8 @@ unsigned int CVehicle::GetVehicleSubtype()
 
 bool CVehicle::IsTrailer()
 {
+	if(!m_pVehicle)return false;
+	if(!m_pVehicle->entity.nModelIndex)return false;
 
 	return ((bool (*)(int)) (g_libGTASA + 0x00336940 + 1))(m_pVehicle->entity.nModelIndex);
 }
