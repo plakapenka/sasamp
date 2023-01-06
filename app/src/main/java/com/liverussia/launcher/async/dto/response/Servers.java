@@ -17,9 +17,9 @@ public class Servers {
 	@Expose
 	private String serverID;
 
-	@SerializedName("dopname")
+	@SerializedName("mult")
 	@Expose
-	private String dopname;
+	private String mult;
 
 	@SerializedName("name")
 	@Expose
@@ -43,11 +43,11 @@ public class Servers {
 
 	public boolean isSelected;
 
-	public Servers(String color, String serverID, String dopname, String name, int online, int maxonline, int locked) {
+	public Servers(String color, String serverID, String mult, String name, int online, int maxonline, int locked) {
 		this.color = color;
 		this.locked = locked;
 		this.serverID = serverID;
-		this.dopname = dopname;
+		this.mult = mult;
 		this.name = name;
 		this.online = online;
 		this.maxonline = maxonline;
@@ -58,8 +58,8 @@ public class Servers {
 		return name;
 	}
 
-    public String getDopname() {
-		 return dopname;
+    public String getMult() {
+		 return mult;
 	}
 
     public String getColor() {

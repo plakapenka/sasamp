@@ -110,6 +110,7 @@
                     android:layout_marginLeft="@dimen/_5sdp"
                     android:fontFamily="@font/montsserat_semibold"
                     android:gravity="center"
+                    android:textStyle="bold"
                     android:paddingTop="@dimen/_1sdp"
                     android:text="(X2)"
                     android:textColor="@color/white"

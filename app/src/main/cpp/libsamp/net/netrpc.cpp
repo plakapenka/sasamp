@@ -101,8 +101,6 @@ void InitGame(RPCParameters *rpcParams)
 	pGame->SetWorldWeather(pNetGame->m_byteWeather);
 	pGame->ToggleCJWalk(pNetGame->m_bUseCJWalk);
 
-	CChatWindow::AddDebugMessage("Присоединено к {B9C9BF}%.64s", pNetGame->m_szHostName);
-
 }
 
 void ServerJoin(RPCParameters *rpcParams)

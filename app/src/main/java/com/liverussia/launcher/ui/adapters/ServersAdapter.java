@@ -75,7 +75,7 @@ public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersV
 		holder.backColor.getBackground().setColorFilter(MainColor, PorterDuff.Mode.SRC_ATOP);
 		holder.name.setText(servers.getname());
 		holder.name.setTextColor(MainColor);
-		holder.dopname.setText(servers.getDopname());
+		holder.mult.setText(servers.getMult());
 		holder.textonline.setText(Integer.toString(servers.getOnline()));
 		holder.textmaxonline.setText("/1000");
 	    holder.progressBar.setProgressStartColor(MainColor);
@@ -120,14 +120,14 @@ public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersV
 		FrameLayout container;
 		CircleProgressBar progressBar;
 		ImageView x2,bearPaw, people;
-		TextView name, dopname, textonline, textmaxonline;
+		TextView name, mult, textonline, textmaxonline;
 		LinearLayout backColor;
 
         public ServersViewHolder(View itemView) {
             super(itemView);
 
 		    name = itemView.findViewById(R.id.firstName);
-			dopname = itemView.findViewById(R.id.secondName);
+			mult = itemView.findViewById(R.id.secondName);
 			progressBar = itemView.findViewById(R.id.progressBar);
 			bearPaw = itemView.findViewById(R.id.bearPaw);
 			x2 = itemView.findViewById(R.id.x2);
