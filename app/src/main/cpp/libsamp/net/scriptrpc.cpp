@@ -703,7 +703,7 @@ void ScrResetMoney(RPCParameters *rpcParams)
 {
 	Log("RPC: ScrResetMoney");
 
-	pGame->ResetLocalMoney();
+	//pGame->ResetLocalMoney();
 }
 
 void ScrLinkVehicle(RPCParameters *rpcParams)

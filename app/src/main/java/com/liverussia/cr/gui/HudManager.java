@@ -53,6 +53,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class HudManager {
+    private Timer timer;
     private Activity activity;
     private ConstraintLayout hud_main;
     private ConstraintLayout target_notify;
@@ -62,6 +63,7 @@ public class HudManager {
     private ImageView target_notify_status;
     private TextView target_notify_text;
     private TextView hud_money;
+    private TextView hud_money_dif;
     private ImageView hud_weapon;
     private ImageView hud_menu;
     private TextView hud_ammo;
@@ -350,6 +352,7 @@ public class HudManager {
         progressHP = aactivity.findViewById(R.id.hud_health_pb);
 
         hud_money = aactivity.findViewById(R.id.hud_money);
+        hud_money_dif = activity.findViewById(R.id.hud_money_dif);
         hud_weapon = aactivity.findViewById(R.id.hud_weapon);
         hud_menu = aactivity.findViewById(R.id.hud_menu);
 
@@ -547,23 +550,66 @@ public class HudManager {
     }
     public void UpdateMoney(int money)
     {
-        activity.runOnUiThread(() -> {
-            hud_money.setText(formatter.format(money));
-        });
-        ////current_real_money = money;
-//        if(thread_update_money!= null && thread_update_money.isAlive()){
-//            thread_update_money.interrupt();
-//        }
+        int old_money = current_real_money;
+        current_real_money = money;
+//        activity.runOnUiThread(() -> {
+//            hud_money.setText(formatter.format(money));
+//        });
+        int reference = ( current_real_money - old_money );
 
-//            thread_update_money = new Thread(runnable_update_money);
-//            thread_update_money.start();
+        TimerTask task = new TimerTask() {
+            public void run() {
+                activity.runOnUiThread(() -> {
+                    hud_money_dif.setVisibility(View.GONE);
+                });
+                if(thread_update_money!= null && thread_update_money.isAlive()){
+                    thread_update_money.interrupt();
+                }
+
+                thread_update_money = new Thread(runnable_update_money);
+                thread_update_money.start();
+
+                timer = null;
+            }
+        };
+
+        if(old_money > 0){
+            if(reference < 0 ) {//потратил
+                activity.runOnUiThread(() -> {
+                    hud_money_dif.setTextColor(Color.parseColor("#f44336"));
+                    hud_money_dif.setText(formatter.format(reference));
+                    hud_money_dif.setVisibility(View.VISIBLE);
+                });
+                if(timer != null) timer.cancel();
+                Timer timer = new Timer("Timer");
+                timer.schedule(task, 4000L);
+            }else {
+                activity.runOnUiThread(() -> {
+                    hud_money_dif.setTextColor(Color.parseColor("#76ff03"));
+                    hud_money_dif.setText("+" + formatter.format(reference));
+                    hud_money_dif.setVisibility(View.VISIBLE);
+                });
+                if(timer != null) timer.cancel();
+                Timer timer = new Timer("Timer");
+                timer.schedule(task, 4000L);
+            }
+        } else {
+            if(thread_update_money!= null && thread_update_money.isAlive()){
+                thread_update_money.interrupt();
+            }
+
+            thread_update_money = new Thread(runnable_update_money);
+            thread_update_money.start();
+        }
+
+
 
     }
     Runnable runnable_update_money = new Runnable() { // так вот такая вот хуйня ради маленького эффекта денег )
         @Override
         public void run() {
             while (current_visual_money < current_real_money){
-                current_visual_money += 1150;
+                current_visual_money += Math.ceil( Math.abs(current_real_money - current_visual_money)*0.005 );
                 if(current_visual_money > current_real_money) {
                     current_visual_money = current_real_money;
                 }
@@ -577,7 +623,7 @@ public class HudManager {
                 }
             }
             while (current_visual_money > current_real_money) {
-                current_visual_money -= 1150;
+                current_visual_money -= Math.ceil(  Math.abs(current_real_money - current_visual_money)*0.005  );
                 if(current_visual_money < current_real_money) {
                     current_visual_money = current_real_money;
                 }
@@ -680,16 +726,17 @@ public class HudManager {
        // current_visual_salary = current_real_salary;
         current_real_salary = salary;
 
-        salary_job_exp_text.setText(String.format("%.2f / 100", exp));
-        salary_job_lvl_text.setText(String.format("Ваш уровень работника: %d", lvl));
+        activity.runOnUiThread(() -> {
+            salary_job_exp_text.setText(String.format("%.2f / 100", exp));
+            salary_job_lvl_text.setText(String.format("Ваш уровень работника: %d", lvl));
 
-        if(old_salary_exp > salary) {
-            salary_job_progress.setProgress(0);
-        }
-        salary_job_progress.setProgress(exp);
+            if (old_salary_exp > salary) {
+                salary_job_progress.setProgress(0);
+            }
+            salary_job_progress.setProgress(exp);
 
-        activity.runOnUiThread(() -> salary_job_layout.setVisibility(View.VISIBLE) );
-
+            salary_job_layout.setVisibility(View.VISIBLE);
+        });
         if(thread_update_salary != null && thread_update_salary.isAlive()){
             thread_update_salary.interrupt();
         }

@@ -480,19 +480,30 @@ void CGame::DisableMarker(uint32_t dwMarkerID)
 }
 
 // 0.3.7
+
 void CGame::AddToLocalMoney(int iAmmount)
 {
-	pHud->localMoney += iAmmount;
+//    Log("old = %d, amm = %d", pHud->localMoney, iAmmount);
+//
+//	int reference = ( pHud->localMoney - iAmmount );
+//
+//	if(pHud->localMoney > 0 && fabs( (int)reference ) > 0) {
+//
+//		char buff[123];
+//		if (reference > 0) {
+//			sprintf(buff, "Вы потратили %d", reference);
+//			g_pJavaWrapper->ShowNotification(2, buff, 5, (char *) "btnClick", (char *) "btn", 0);
+//		} else {
+//			sprintf(buff, "Вы получили %d", reference);
+//			g_pJavaWrapper->ShowNotification(1, buff, 5, (char *) "btnClick", (char *) "btn", 0);
+//		}
+//	}
+	pHud->localMoney = iAmmount;
+
+   // Log("new %d", pHud->localMoney);
 	pHud->UpdateMoney();
 	//pHud->localMoney +=
 //	ScriptCommand(&add_to_player_money, 0, iAmmount);
-}
-
-// 0.3.7
-void CGame::ResetLocalMoney()
-{
-	pHud->localMoney = 0;
-	pHud->UpdateMoney();
 }
 
 // 0.3.7

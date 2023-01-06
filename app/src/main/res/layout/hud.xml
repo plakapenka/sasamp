@@ -195,13 +195,31 @@
                 android:layout_marginLeft="@dimen/_3sdp"
                 android:layout_marginTop="@dimen/_2sdp"
                 android:fontFamily="@font/din_pro_black"
-                android:gravity="center_horizontal|center_vertical"
+                android:includeFontPadding="false"
                 android:text="1234567890"
                 android:textColor="@color/white"
                 android:textFontWeight="900"
                 android:textSize="@dimen/_8sdp"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView2"
                 app:layout_constraintStart_toEndOf="@+id/imageView2"
                 app:layout_constraintTop_toTopOf="@+id/imageView" />
+
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/hud_money_dif"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_1sdp"
+                android:fontFamily="@font/din_pro_bold"
+                android:includeFontPadding="false"
+                android:shadowRadius="2"
+                android:shadowColor="@color/black"
+                android:text="+50000000"
+                android:textColor="#76ff03"
+                android:textSize="@dimen/_6sdp"
+                app:layout_constraintBottom_toBottomOf="@+id/hud_money"
+                app:layout_constraintStart_toEndOf="@+id/hud_money"
+                app:layout_constraintTop_toTopOf="@+id/hud_money" />
 
             <ImageView
                 android:id="@+id/hud_menu"
