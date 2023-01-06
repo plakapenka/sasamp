@@ -2890,25 +2890,14 @@ int SetCompAlphaCB_hook(int a1, char a2)
 	return result;
 }
 
-int (*CEntity__RegisterReference)(ENTITY_TYPE *thiz, ENTITY_TYPE **a1);
-int CEntity__RegisterReference_hook(ENTITY_TYPE *thiz, ENTITY_TYPE **a1)
+int (*CEntity__RegisterReference)(ENTITY_TYPE *thiz, ENTITY_TYPE **a2);
+int CEntity__RegisterReference_hook(ENTITY_TYPE *thiz, ENTITY_TYPE **a2)
 {
-	if(! thiz + 0x36)return false;
+	if(!thiz)return false;
+	if(!a2)return false;
+//	if(! thiz + 0x36)return false;
 
-	if(thiz)
-	{
-		if(thiz->vtable == g_libGTASA+0x5C7358) // CPlaceable
-			return false;
-
-		if(thiz->dwUnkModelRel)
-			return CEntity__RegisterReference(thiz, a1);
-	}
-	if(a1)
-	{
-		return CEntity__RegisterReference(thiz, a1);
-	}
-
-    return false;
+	return CEntity__RegisterReference(thiz, a2);
 }
 
 float (*CDraw__SetFOV)(float thiz, float a2);
@@ -2924,7 +2913,7 @@ int (*MobileSettings__GetMaxResWidth)();
 int MobileSettings__GetMaxResWidth_hook()
 {
 	//Log("res = %d", ((int(*)())(g_libGTASA + 0x0023816C + 1))());
-	return ((int(*)())(g_libGTASA + 0x0023816C + 1))();
+	return (int)( ((int(*)())(g_libGTASA + 0x0023816C + 1))()/1.1 );
 }
 
 int (*CTextureDatabaseRuntime__GetEntry)(unsigned int a1, const char *a2, bool *a3, int a4);
@@ -2973,6 +2962,7 @@ int CustomPipeRenderCB_hook(uintptr_t resEntry, uintptr_t object, uint8_t type, 
 			}
 		}
 	}
+
 	return CustomPipeRenderCB(resEntry, object, type, flags);
 }
 
@@ -3228,27 +3218,7 @@ int CTaskSimpleUseGun__SetPedPosition_hook(uintptr_t thiz, PED_TYPE *pPed)
 	return CTaskSimpleUseGun__SetPedPosition(thiz, pPed);
 }
 
-void (*CWorld__Remove)(uintptr_t *thiz, ENTITY_TYPE *pEntity);
-void CWorld__Remove_hook(uintptr_t *thiz, ENTITY_TYPE *pEntity)
-{
-	int result; // r0
 
-    if (!pEntity || pEntity->vtable == 0x5C7358) {
-		Log("pEntity->vtable");
-		return;
-	}
-    if (!pEntity->dwUnkModelRel){
-		Log("pEntity->dwUnkModelRel");
-		return;
-	}
-
-	(*(int (__fastcall **)(uintptr_t *, ENTITY_TYPE *))(*(DWORD *)thiz + 0x10))(thiz, pEntity);
-
-	if ( ((*((BYTE *)thiz + 0x36) + 6) & 7u) <= 2 ){
-		((void(*)(uintptr_t*))(g_libGTASA + 0x003A03EC + 1))(thiz); // CPhysical::RemoveFromMovingList
-	}
-
-}
 
 uintptr_t (*GetMeshPriority)(uintptr_t);
 uintptr_t GetMeshPriority_hook(uintptr_t rpMesh)
@@ -3478,9 +3448,7 @@ void InstallHooks()
 	//размытие на скорости
 	SetUpHook(g_libGTASA + 0x005311D0, (uintptr_t)CDraw__SetFOV_hook, (uintptr_t*)&CDraw__SetFOV);
 
-   // SetUpHook(g_libGTASA + 0x003B0E6C, (uintptr_t)CEntity__RegisterReference_hook, (uintptr_t*)&CEntity__RegisterReference);
-
-  //  SetUpHook(g_libGTASA + 0x003C1500, (uintptr_t)CWorld__Remove_hook, (uintptr_t*)&CWorld__Remove);
+    SetUpHook(g_libGTASA + 0x003B0E6C, (uintptr_t)CEntity__RegisterReference_hook, (uintptr_t*)&CEntity__RegisterReference);
 
 	HookCPad();
 }
