@@ -31,7 +31,7 @@
 
     <style name="AppTheme.NoActionBar">
         <item name="android:forceDarkAllowed">false</item>
-        <item name="android:windowBackground">@drawable/back_splash</item>
+        <item name="android:windowBackground">@drawable/back_monitoring</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowFullscreen">true</item>
         <item name="windowActionBar">false</item>

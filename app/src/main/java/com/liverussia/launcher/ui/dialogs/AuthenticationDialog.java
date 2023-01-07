@@ -74,7 +74,7 @@ public class AuthenticationDialog extends DialogFragment implements View.OnClick
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.auth_dialog, container, false);
-        getDialog().getWindow().setBackgroundDrawable(getResources().getDrawable(R.drawable.auth_choose_serv_bg));
+        getDialog().getWindow().setBackgroundDrawable(getResources().getDrawable(R.drawable.back_monitoring));
 
         animation = AnimationUtils.loadAnimation(getContext(), R.anim.button_click);
 

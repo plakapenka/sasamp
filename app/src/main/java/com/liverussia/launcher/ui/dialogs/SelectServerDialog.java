@@ -49,7 +49,7 @@ public class SelectServerDialog extends DialogFragment implements View.OnClickLi
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.select_server_dialog_activity, container, false);
-        getDialog().getWindow().setBackgroundDrawable(getResources().getDrawable(R.drawable.auth_choose_serv_bg));
+        getDialog().getWindow().setBackgroundDrawable(getResources().getDrawable(R.drawable.back_monitoring));
 
         btnGoBack = view.findViewById(R.id.btnGoBack);
         btnGoBack.setOnClickListener(this);
