@@ -1275,8 +1275,8 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_CUSTOM_SET_FUEL:
 		{
-			uint8_t fuel;
-			uint8_t mileage;
+			uint32_t fuel;
+			uint32_t mileage;
 			bs.Read(fuel);
 			bs.Read(mileage);
 
