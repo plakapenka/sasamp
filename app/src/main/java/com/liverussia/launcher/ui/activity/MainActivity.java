@@ -284,13 +284,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return rouletteFragment != null && rouletteFragment.isRouletteSpinning();
     }
 
-
-    private void onClickRoulette() {
-        setTextColor(rouletteButton, rouletteTV, rouletteImage);
-        rouletteFragment = new RouletteFragment(this);
-        replaceFragment(rouletteFragment);
-    }
-
     public void onClickPlay() {
         String isTestMode = NativeStorage.getClientProperty(NativeStorageElements.TEST, this);
 
@@ -347,6 +340,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startActivity(new Intent(this, GTASA.class));
 
         this.finish();
+    }
+
+    private void onClickRoulette() {
+        setTextColor(rouletteButton, rouletteTV, rouletteImage);
+        rouletteFragment = new RouletteFragment(this);
+        replaceFragment(rouletteFragment);
     }
 
     public void onClickSettings() {

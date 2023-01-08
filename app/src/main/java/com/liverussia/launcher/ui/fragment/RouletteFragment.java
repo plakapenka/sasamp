@@ -83,6 +83,10 @@ public class RouletteFragment extends Fragment implements View.OnClickListener, 
         this.mainActivity = mainActivity;
     }
 
+    public RouletteFragment() {
+
+    }
+
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
