@@ -238,11 +238,18 @@ Java_com_liverussia_cr_gui_HudManager_ClickEnterPassengerButton(JNIEnv *env, job
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_HudManager_ClickEnterExitVehicleButton(JNIEnv *env, jobject thiz) {
+    if(!pNetGame)return;
+    if(!pNetGame->GetPlayerPool())return;
+
     CLocalPlayer *pPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer();
-    if(pPlayer != nullptr && pPlayer->GetPlayerPed()->IsInVehicle()) {
+
+    if(!pPlayer)return;
+    if(!pPlayer->GetPlayerPed())return;
+
+    if(pPlayer->GetPlayerPed()->IsInVehicle()) {
 
         CVehiclePool *pVehiclePool=pNetGame->GetVehiclePool();
-        VEHICLEID VehicleID=pVehiclePool->FindIDFromGtaPtr((VEHICLE_TYPE *)GamePool_FindPlayerPed()->pVehicle);
+        VEHICLEID VehicleID = pVehiclePool->FindIDFromGtaPtr((VEHICLE_TYPE *)GamePool_FindPlayerPed()->pVehicle);
 
         if(!VehicleID)return;
 

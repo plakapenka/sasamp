@@ -421,6 +421,7 @@ void CStreaming_InitImageList_hook()
 	*(uint32_t*)&ms_files[380] = 0;
 
 	(( uint32_t (*)(char*, uint32_t))(g_libGTASA+0x28E7B0+1))("TEXDB\\GTA3.IMG", 1); // CStreaming::AddImageToList
+
 //	(( uint32_t (*)(char*, uint32_t))(g_libGTASA+0x28E7B0+1))("TEXDB\\GTA_INT.IMG", 1); // CStreaming::AddImageToList
 	(( uint32_t (*)(char*, uint32_t))(g_libGTASA+0x28E7B0+1))("TEXDB\\SAMP.IMG", 1); // CStreaming::AddImageToList
 	(( uint32_t (*)(char*, uint32_t))(g_libGTASA+0x28E7B0+1))("TEXDB\\SAMPCOL.IMG", 1); // CStreaming::AddImageToList
@@ -1644,6 +1645,14 @@ int CObject__ProcessGarageDoorBehaviour_hook(uintptr_t thiz, int a2)
 	return CObject__ProcessGarageDoorBehaviour(thiz, a2);
 }
 
+int (*CTaskSimpleCarOpenDoorFromOutside__ComputeAnimID)(uintptr_t *thiz, int *a2, int *a3, int a4);
+int CTaskSimpleCarOpenDoorFromOutside__ComputeAnimID_hook(uintptr_t *thiz, int *a2, int *a3, int a4)
+{
+	if( !(*((DWORD *)thiz + 4)) )return 0;
+
+	return CTaskSimpleCarOpenDoorFromOutside__ComputeAnimID(thiz, a2, a3, a4);
+}
+
 int (*RpMaterialDestroy)(int a1, int a2, int a3, int a4);
 int RpMaterialDestroy_hook(int a1, int a2, int a3, int a4)
 {
@@ -2858,6 +2867,18 @@ int _RwTextureDestroy_hook(RwTexture *texture)
 	return _RwTextureDestroy(texture);
 }
 
+// баня едет
+//int (*TextureDatabaseRuntime__SortEntries)(uintptr_t *thiz, int a2);
+//int TextureDatabaseRuntime__SortEntries_hook(uintptr_t *thiz, int a2)
+//{
+//
+//	int v84 = *((DWORD *)v4 + 0x2A);
+//	int v68 = v86[2 * v66++];
+//	int v79 = *(DWORD *)(v84 + 4 * v68);
+//
+//	return TextureDatabaseRuntime__SortEntries(thiz, a2);
+//}
+
 int (*RwResourcesFreeResEntry)(int);
 int RwResourcesFreeResEntry_hook(int a1)
 {
@@ -2903,6 +2924,7 @@ int CEntity__RegisterReference_hook(ENTITY_TYPE *thiz, ENTITY_TYPE **a2)
 {
 	if(!thiz)return false;
 	if(!a2)return false;
+//    if( !*((DWORD *)thiz + 4)  )return false;
 //	if(! thiz + 0x36)return false;
 
 	return CEntity__RegisterReference(thiz, a2);
@@ -3230,6 +3252,7 @@ int (*CTaskSimpleCarSetPedInAsDriver__ProcessPed)(uintptr_t *thiz, PED_TYPE *a2)
 int CTaskSimpleCarSetPedInAsDriver__ProcessPed_hook(uintptr_t *thiz, PED_TYPE *a2)
 {
 	if(!a2)return false;
+    if( !*((DWORD *)thiz + 4)  )return false;
 
 	return CTaskSimpleCarSetPedInAsDriver__ProcessPed(thiz, a2);
 }
@@ -3272,8 +3295,6 @@ void InstallHooks()
 	SetUpHook(g_libGTASA + 0x5669D8, (uintptr_t)CWeapon__GenerateDamageEvent_hook, (uintptr_t*)&CWeapon__GenerateDamageEvent);
 	// Fire extingusher fix
 	SetUpHook(g_libGTASA + 0x46D6AC, (uintptr_t)CTaskSimpleUseGun__SetPedPosition_hook, (uintptr_t*)&CTaskSimpleUseGun__SetPedPosition);
-
-	NOP(g_libGTASA + 0x003989C8, 2);//живность в воде WaterCreatureManager_c::Update
 
 	//SetUpHook(g_libGTASA+0x291104, (uintptr_t)CStreaming__ConvertBufferToObject_hook, (uintptr_t*)&CStreaming__ConvertBufferToObject);
 	//SetUpHook(g_libGTASA+0x3961C8, (uintptr_t)CFileMgr__ReadLine_hook, (uintptr_t*)&CFileMgr__ReadLine);
@@ -3430,7 +3451,9 @@ void InstallHooks()
 	//================================
 	// ================== plaka ======
 	//================================
+	//SetUpHook(g_libGTASA + 0x0048CC64, (uintptr_t)CTaskSimpleCarOpenDoorFromOutside__ComputeAnimID_hook, (uintptr_t*)&CTaskSimpleCarOpenDoorFromOutside__ComputeAnimID_hook);
 	//
+	NOP(g_libGTASA + 0x003989C8, 2);//живность в воде WaterCreatureManager_c::Update
 	// дефолтный худ
 	NOP(g_libGTASA + 0x0027E21A, 2); // CWidgetPlayerInfo::DrawWeaponIcon
 	NOP(g_libGTASA + 0x0027E24E, 2); // CWidgetPlayerInfo::DrawWanted
@@ -3440,6 +3463,7 @@ void InstallHooks()
 	//RpMaterialDestroy fix ? не точно
 	SetUpHook(g_libGTASA + 0x001E3C54, (uintptr_t)RpMaterialDestroy_hook, (uintptr_t*)&RpMaterialDestroy);
 	SetUpHook(g_libGTASA + 0x1B1808, (uintptr_t)_RwTextureDestroy_hook, (uintptr_t*)&_RwTextureDestroy);
+	//SetUpHook(g_libGTASA + 0x001BEB9C, (uintptr_t)TextureDatabaseRuntime__SortEntries_hook, (uintptr_t*)&TextureDatabaseRuntime__SortEntries);
 
 	//CRunningScript fix ? не точно
 	SetUpHook(g_libGTASA + 0x002E5400, (uintptr_t)GivePedScriptedTask_hook, (uintptr_t*)&GivePedScriptedTask);

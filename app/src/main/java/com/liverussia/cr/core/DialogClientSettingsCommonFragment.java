@@ -40,7 +40,7 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
     private HashMap<ViewGroup, Drawable> mOldDrawables;
 
     private ViewGroup mParentView = null;
-    public native void ChatLineChanged(int newcount);
+   // public native void ChatLineChanged(int newcount);
 
     public static DialogClientSettingsCommonFragment createInstance(String txt)
     {
@@ -107,10 +107,10 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                // ChatLineChanged(progress);
-                FadingEdgeLayout chat = mContext.findViewById(R.id.chat_fade_box);
-                ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) chat.getLayoutParams();
-                layoutParams.height = progress;
-                chat.setLayoutParams(layoutParams);
+//                FadingEdgeLayout chat = mContext.findViewById(R.id.chat_fade_box);
+//                ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) chat.getLayoutParams();
+//                layoutParams.height = progress;
+//                chat.setLayoutParams(layoutParams);
 
             }
             @Override public void onStartTrackingTouch(SeekBar seekBar) {
@@ -119,7 +119,7 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
 
             @Override public void onStopTrackingTouch(SeekBar seekBar) {
 
-                ChatLineChanged(seekBar.getProgress());
+              //  ChatLineChanged(seekBar.getProgress());
             }
         });
 

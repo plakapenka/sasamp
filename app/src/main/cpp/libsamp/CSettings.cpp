@@ -195,7 +195,7 @@ void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 	snprintf(m_Settings.szFont, sizeof(m_Settings.szFont), "visby-round-cf-extra-bold.ttf");
 
 	const char *szName = ini_table_get_entry(config, "client", "name");
-	const char *szPassword = ini_table_get_entry(config, "client", "password");\
+	const char *szPassword = ini_table_get_entry(config, "client", "password");
 	const char *pPassword = ini_table_get_entry(config, "client", "player_password");
 
 	m_Settings.szAutoLogin = ini_table_get_entry_as_int(config, "client", "autologin", 0);

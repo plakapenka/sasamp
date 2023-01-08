@@ -43,6 +43,8 @@ import com.nvidia.devtech.NvEventQueueActivity;
 import com.liverussia.cr.R;
 import com.skydoves.progressview.ProgressView;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
@@ -121,7 +123,7 @@ public class HudManager {
     Thread thread_update_money;
 
     private RecyclerView chat;
-    int defaultChatHeight;
+    //int defaultChatHeight;
     int defaultChatFontSize;
 
     DecimalFormat formatter;
@@ -165,11 +167,15 @@ public class HudManager {
         hide_chat = activity.findViewById(R.id.hide_chat);
         hide_chat.setOnClickListener(view -> {
             if(chat_box.getVisibility() == View.GONE){
-                Utils.ShowLayout(chat_box, true);
-                hide_chat.setScaleY(1);
+                activity.runOnUiThread(() -> {
+                    Utils.ShowLayout(chat_box, true);
+                    hide_chat.setScaleY(1);
+                });
             } else{
-                Utils.HideLayout(chat_box, true);
-                hide_chat.setScaleY(-1);
+                activity.runOnUiThread(() -> {
+                    Utils.HideLayout(chat_box, true);
+                    hide_chat.setScaleY(-1);
+                });
             }
         });
 
@@ -246,7 +252,7 @@ public class HudManager {
         defaultChatFontSize = 27;
 
         chat = activity.findViewById(R.id.chat);
-        defaultChatHeight = chat.getLayoutParams().height;
+        //defaultChatHeight = chat.getLayoutParams().height;
 
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(activity);
 
@@ -497,18 +503,17 @@ public class HudManager {
     public void ChangeChatHeight(int height)
     {
         activity.runOnUiThread(() -> {
-            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) chat.getLayoutParams();
-            if(height == -1){
-                layoutParams.height = defaultChatHeight;
-            }else{
-                layoutParams.height = height;
-            }
-            chat.setLayoutParams(layoutParams);
+//            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) chat.getLayoutParams();
+//            if(height == -1){
+//                layoutParams.height = defaultChatHeight;
+//            }else{
+//                layoutParams.height = height;
+//            }
+//            chat.setLayoutParams(layoutParams);
         });
     }
     public void ChangeChatFontSize(int size)
     {
-        Log.d("ds", "size == "+size);
         activity.runOnUiThread(() -> {
            // TextView chat_line = activity.findViewById(R.id.chat_line_text);
            // TextView chat_line_shadow = activity.findViewById(R.id.chat_line_shadow);
@@ -552,9 +557,7 @@ public class HudManager {
     {
         int old_money = current_real_money;
         current_real_money = money;
-//        activity.runOnUiThread(() -> {
-//            hud_money.setText(formatter.format(money));
-//        });
+
         int reference = ( current_real_money - old_money );
 
         TimerTask task = new TimerTask() {
@@ -881,8 +884,9 @@ public class HudManager {
             this.chat_lines = chat_lines;
             this.inflater = LayoutInflater.from(context);
         }
+        @NotNull
         @Override
-        public ChatAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ChatAdapter.ViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
 
             View view = inflater.inflate(R.layout.chatline, parent, false);
             view.setOnClickListener(view1 -> {
