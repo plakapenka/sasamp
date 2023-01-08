@@ -375,7 +375,7 @@ uint16_t CPad__GetAccelerate_hook(uintptr_t thiz)
 				VEHICLE_TYPE* pGtaVehicle = pPlayerPed->GetGtaVehicle();
 				if (pGtaVehicle)
 				{
-					if (pGtaVehicle->m_nVehicleFlags.bEngineOn == 0)
+					if (pGtaVehicle->dwFlags.bEngineOn == 0)
 					{
 						wAccelerate = 0;
 					}
@@ -589,19 +589,19 @@ void AllVehicles__ProcessControl_hook(uintptr_t thiz)
 	// Tyre burst fix
 	if (pVehicle->pDriver)
 	{
-		if (pVehicle->m_nVehicleFlags.bTyresDontBurst)
+		if (pVehicle->dwFlags.bTyresDontBurst)
 		{
-			pVehicle->m_nVehicleFlags.bTyresDontBurst = 0;
+			pVehicle->dwFlags.bTyresDontBurst = 0;
 		}
-		if(!pVehicle->m_nVehicleFlags.bCanBeDamaged) pVehicle->m_nVehicleFlags.bCanBeDamaged = true;
+		if(!pVehicle->dwFlags.bCanBeDamaged) pVehicle->dwFlags.bCanBeDamaged = true;
 	}
 	else
 	{
-		if (!pVehicle->m_nVehicleFlags.bTyresDontBurst)
+		if (!pVehicle->dwFlags.bTyresDontBurst)
 		{
-			pVehicle->m_nVehicleFlags.bTyresDontBurst = 1;
+			pVehicle->dwFlags.bTyresDontBurst = 1;
 		}
-		if (pVehicle->m_nVehicleFlags.bCanBeDamaged) pVehicle->m_nVehicleFlags.bCanBeDamaged = false;
+		if (pVehicle->dwFlags.bCanBeDamaged) pVehicle->dwFlags.bCanBeDamaged = false;
 	}
 
 	// VEHTYPE::ProcessControl()

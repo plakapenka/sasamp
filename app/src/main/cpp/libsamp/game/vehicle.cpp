@@ -511,23 +511,35 @@ int CVehicle::GetDoorState(){
 	return CVehicle::fDoorState;
 }
 
-void CVehicle::SetLightsState(int iState)
+bool CVehicle::IsValidGameVehicle()
 {
-    if(!m_dwGTAId)return;
-    if(!m_pVehicle)return;
+	// IsVehiclePointerValid
+	return (((bool (*)(VEHICLE_TYPE *))(g_libGTASA+0x5109E8+1))(m_pVehicle));
+}
 
-	if (GamePool_Vehicle_GetAt(m_dwGTAId))
+void CVehicle::EnableLights(bool bState)
+{
+	if(!IsValidGameVehicle()) return;
+
+	if(bState)
 	{
-		ScriptCommand(&FORCE_CAR_LIGHTS, m_dwGTAId, iState > 0 ? 2 : 1);
-		m_bLightsOn = iState;
+		m_pVehicle->byteMoreFlags &= 0xF7;
+		m_pVehicle->byteFlags |= 0x40;
+	}
+	else
+	{
+		m_pVehicle->byteMoreFlags |= 8;
+		m_pVehicle->byteFlags &= 0xBF;
 	}
 }
 
+void CVehicle::SetLightsState(int iState)
+{
+	m_bLightsOn = iState;
+}
+
 bool CVehicle::GetLightsState(){
-	if (GamePool_Vehicle_GetAt(m_dwGTAId))
-	{
-		return m_bLightsOn;
-	}
+	return m_bLightsOn;
 }
 
 void CVehicle::SetBootAndBonnetState(int iBoot, int iBonnet)
@@ -1376,23 +1388,16 @@ void CVehicle::CopyGlobalSuspensionLinesToPrivate()
 
 void CVehicle::SetEngineState(int iState)
 {
-    if(!m_dwGTAId)return;
-    if(!m_pVehicle)return;
-	if (!GamePool_Vehicle_GetAt(m_dwGTAId)) {
-		return;
-	}
-	if (iState)
-	{
-		m_pVehicle->m_nVehicleFlags.bEngineOn = 1;
-		m_bEngineOn = true;
-		m_pVehicle->m_nVehicleFlags.bEngineBroken = 0;
-	}
-	else
-	{
-		m_pVehicle->m_nVehicleFlags.bEngineOn = 0;
-		m_bEngineOn = false;
-		m_pVehicle->m_nVehicleFlags.bEngineBroken = 1;
-	}
+	m_bEngineOn = iState;
+}
+
+void CVehicle::EnableEngine(bool bEnable)
+{
+	if(!IsValidGameVehicle()) return;
+
+	if(bEnable)
+		m_pVehicle->byteFlags |= 0x10;
+	else m_pVehicle->byteFlags &= 0xEF;
 }
 
 int CVehicle::GetEngineState(){

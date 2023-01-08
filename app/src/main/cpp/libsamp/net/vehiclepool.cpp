@@ -56,6 +56,9 @@ void CVehiclePool::Process()
 
 			if(m_bIsActive[x])
 			{
+				pVehicle->EnableEngine(pVehicle->GetEngineState());
+				pVehicle->EnableLights(pVehicle->GetLightsState());
+
 				pVehicle->ProcessDamage();
 
 				if(pVehicle->IsOccupied())

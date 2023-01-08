@@ -669,89 +669,118 @@ typedef struct _VEHICLE_TYPE
 	ENTITY_TYPE entity;			// 0000-0184	;entity
 	PADDING(_pad201, 716);		// 0184-900
 	tHandlingData* pHandling;	// 900-904
-	PADDING(_pad212, 160);		// 904 - 1076
-	struct {
-		unsigned char bIsLawEnforcer : 1; // Is this guy chasing the player at the moment
-		unsigned char bIsAmbulanceOnDuty : 1; // Ambulance trying to get to an accident
-		unsigned char bIsFireTruckOnDuty : 1; // Firetruck trying to get to a fire
-		unsigned char bIsLocked : 1; // Is this guy locked by the script (cannot be removed)
-		unsigned char bEngineOn : 1; // For sound purposes. Parked cars have their engines switched off (so do destroyed cars)
-		unsigned char bIsHandbrakeOn : 1; // How's the handbrake doing ?
-		unsigned char bLightsOn : 1; // Are the lights switched on ?
-		unsigned char bFreebies : 1; // Any freebies left in this vehicle ?
+	PADDING(_pad212, 160);
 
-		unsigned char bIsVan : 1; // Is this vehicle a van (doors at back of vehicle)
-		unsigned char bIsBus : 1; // Is this vehicle a bus
-		unsigned char bIsBig : 1; // Is this vehicle a bus
-		unsigned char bLowVehicle : 1; // Need this for sporty type cars to use low getting-in/out anims
-		unsigned char bComedyControls : 1; // Will make the car hard to control (hopefully in a funny way)
-		unsigned char bWarnedPeds : 1; // Has scan and warn peds of danger been processed?
-		unsigned char bCraneMessageDone : 1; // A crane message has been printed for this car allready
-		unsigned char bTakeLessDamage : 1; // This vehicle is stronger (takes about 1/4 of damage)
+	union {
+		uint8_t byteFlags;				// 1064-1072	;byteFlags
+		struct {
+			unsigned char bIsLawEnforcer : 1;
+			unsigned char bIsAmbulanceOnDuty : 1;
+			unsigned char bIsFireTruckOnDuty : 1;
+			unsigned char bIsLocked : 1;
+			unsigned char bEngineOn : 1;
+			unsigned char bIsHandbrakeOn : 1;
+			unsigned char bLightsOn : 1;
+			unsigned char bFreebies : 1;
 
-		unsigned char bIsDamaged : 1; // This vehicle has been damaged and is displaying all its components
-		unsigned char bHasBeenOwnedByPlayer : 1;// To work out whether stealing it is a crime
-		unsigned char bFadeOut : 1; // Fade vehicle out
-		unsigned char bIsBeingCarJacked : 1; // Fade vehicle out
-		unsigned char bCreateRoadBlockPeds : 1;// If this vehicle gets close enough we will create peds (coppers or gang members) round it
-		unsigned char bCanBeDamaged : 1; // Set to FALSE during cut scenes to avoid explosions
-		unsigned char bOccupantsHaveBeenGenerated : 1; // Is true if the occupants have already been generated. (Shouldn't happen again)
-		unsigned char bGunSwitchedOff : 1; // Level designers can use this to switch off guns on boats
+			unsigned char bIsVan : 1;
+			unsigned char bIsBus : 1;
+			unsigned char bIsBig : 1;
+			unsigned char bLowVehicle : 1;
+			unsigned char bComedyControls : 1;
+			unsigned char bWarnedPeds : 1;
+			unsigned char bCraneMessageDone : 1;
+			unsigned char bTakeLessDamage : 1;
 
-		unsigned char bVehicleColProcessed : 1;// Has ProcessEntityCollision been processed for this car?
-		unsigned char bIsCarParkVehicle : 1; // Car has been created using the special CAR_PARK script command
-		unsigned char bHasAlreadyBeenRecorded : 1; // Used for replays
-		unsigned char bPartOfConvoy : 1;
-		unsigned char bHeliMinimumTilt : 1; // This heli should have almost no tilt really
-		unsigned char bAudioChangingGear : 1; // sounds like vehicle is changing gear
-		unsigned char bIsDrowning : 1; // is vehicle occupants taking damage in water (i.e. vehicle is dead in water)
-		unsigned char bTyresDontBurst : 1; // If this is set the tyres are invincible
+			unsigned char bIsDamaged : 1;
+			unsigned char bHasBeenOwnedByPlayer : 1;
+			unsigned char bFadeOut : 1;
+			unsigned char bIsBeingCarJacked : 1;
+			unsigned char bCreateRoadBlockPeds : 1;
+			unsigned char bCanBeDamaged : 1;
+			unsigned char bOccupantsHaveBeenGenerated : 1;
+			unsigned char bGunSwitchedOff : 1;
 
-		unsigned char bCreatedAsPoliceVehicle : 1;// True if this guy was created as a police vehicle (enforcer, policecar, miamivice car etc)
-		unsigned char bRestingOnPhysical : 1; // Dont go static cause car is sitting on a physical object that might get removed
-		unsigned char bParking : 1;
-		unsigned char bCanPark : 1;
-		unsigned char bFireGun : 1; // Does the ai of this vehicle want to fire it's gun?
-		unsigned char bDriverLastFrame : 1; // Was there a driver present last frame ?
-		unsigned char bNeverUseSmallerRemovalRange : 1;// Some vehicles (like planes) we don't want to remove just behind the camera.
-		unsigned char bIsRCVehicle : 1; // Is this a remote controlled (small) vehicle. True whether the player or AI controls it.
+			unsigned char bVehicleColProcessed : 1;
+			unsigned char bIsCarParkVehicle : 1;
+			unsigned char bHasAlreadyBeenRecorded : 1;
+			unsigned char bPartOfConvoy : 1;
+			unsigned char bHeliMinimumTilt : 1;
+			unsigned char bAudioChangingGear : 1;
+			unsigned char bIsDrowning : 1;
+			unsigned char bTyresDontBurst : 1;
 
-		unsigned char bAlwaysSkidMarks : 1; // This vehicle leaves skidmarks regardless of the wheels' states.
-		unsigned char bEngineBroken : 1; // Engine doesn't work. Player can get in but the vehicle won't drive
-		unsigned char bVehicleCanBeTargetted : 1;// The ped driving this vehicle can be targetted, (for Torenos plane mission)
-		unsigned char bPartOfAttackWave : 1; // This car is used in an attack during a gang war
-		unsigned char bWinchCanPickMeUp : 1; // This car cannot be picked up by any ropes.
-		unsigned char bImpounded : 1; // Has this vehicle been in a police impounding garage
-		unsigned char bVehicleCanBeTargettedByHS : 1;// Heat seeking missiles will not target this vehicle.
-		unsigned char bSirenOrAlarm : 1; // Set to TRUE if siren or alarm active, else FALSE
+			unsigned char bCreatedAsPoliceVehicle : 1;
+			unsigned char bRestingOnPhysical : 1;
+			unsigned char bParking : 1;
+			unsigned char bCanPark : 1;
+			unsigned char bFireGun : 1;
+			unsigned char bDriverLastFrame : 1;
+			unsigned char bNeverUseSmallerRemovalRange : 1;
+			unsigned char bIsRCVehicle : 1;
 
-		unsigned char bHasGangLeaningOn : 1;
-		unsigned char bGangMembersForRoadBlock : 1;// Will generate gang members if NumPedsForRoadBlock > 0
-		unsigned char bDoesProvideCover : 1; // If this is false this particular vehicle can not be used to take cover behind.
-		unsigned char bMadDriver : 1; // This vehicle is driving like a lunatic
-		unsigned char bUpgradedStereo : 1; // This vehicle has an upgraded stereo
-		unsigned char bConsideredByPlayer : 1; // This vehicle is considered by the player to enter
-		unsigned char bPetrolTankIsWeakPoint : 1;// If false shootong the petrol tank will NOT Blow up the car
-		unsigned char bDisableParticles : 1; // Disable particles from this car. Used in garage.
+			unsigned char bAlwaysSkidMarks : 1;
+			unsigned char bEngineBroken : 1;
+			unsigned char bVehicleCanBeTargetted : 1;
+			unsigned char bPartOfAttackWave : 1;
+			unsigned char bWinchCanPickMeUp : 1;
+			unsigned char bImpounded : 1;
+			unsigned char bVehicleCanBeTargettedByHS : 1;
+			unsigned char bSirenOrAlarm : 1;
 
-		unsigned char bHasBeenResprayed : 1; // Has been resprayed in a respray garage. Reset after it has been checked.
-		unsigned char bUseCarCheats : 1; // If this is true will set the car cheat stuff up in ProcessControl()
-		unsigned char bDontSetColourWhenRemapping : 1;// If the texture gets remapped we don't want to change the colour with it.
-		unsigned char bUsedForReplay : 1; // This car is controlled by replay and should be removed when replay is done.
-	} m_nVehicleFlags;
+			unsigned char bHasGangLeaningOn : 1;
+			unsigned char bGangMembersForRoadBlock : 1;
+			unsigned char bDoesProvideCover : 1;
+			unsigned char bMadDriver : 1;
+			unsigned char bUpgradedStereo : 1;
+			unsigned char bConsideredByPlayer : 1;
+			unsigned char bPetrolTankIsWeakPoint : 1;
+			unsigned char bDisableParticles : 1;
 
-	unsigned int m_nCreationTime;
-	uint8_t m_nPrimaryColor;			// 1076-1077	;byteColor1
-	uint8_t m_nSecondaryColor;			// 1077-1078	;byteColor2
-	PADDING(_pad204, 42);		// 1078-1120
-	PED_TYPE* pDriver;			// 1120-1124	;driver
-	PED_TYPE* pPassengers[7];	// 1124-1152	;pPassengers
-	PADDING(_pad202, 72);		// 1152-1224
-	float fHealth;				// 1224-1228	;fHealth
-	uint32_t unk;				// 1228 - 1232 - unk
-	uint32_t dwTrailer;			// 1232 - 1236 - trailer
-	PADDING(_pad203, 48);		// 1236-1284
-	uint32_t dwDoorsLocked;
+			unsigned char bHasBeenResprayed : 1;
+			unsigned char bUseCarCheats : 1;
+			unsigned char bDontSetColourWhenRemapping : 1;
+			unsigned char bUsedForReplay : 1;
+		} dwFlags;
+	};
+
+	uint32_t dwCreationTime;			// 1072-1076
+	uint8_t m_nPrimaryColor;					// 1076-1077
+	uint8_t m_nSecondaryColor;					// 1077-1078
+	uint8_t byteColor3;					// 1078-1079
+	uint8_t byteColor4;					// 1079-1080
+	PADDING(_pad203, 40);				// 1080-1120
+	PED_TYPE *pDriver;					// 1120-1124
+	PED_TYPE *pPassengers[8];			// 1124-1156
+	PADDING(_pad206, 12);				// 1156-1168
+	uint32_t pFireObject;				// 1168-1172
+	uint8_t byteMoreFlags;				// 1192-1193
+	PADDING(_pad275_, 31); 				// 1193-1224
+	float fHealth;						// 1224-1228
+	PADDING(_pad207, 4);				// 1228-1232
+	uint32_t dwTrailer;					// 1232-1236
+	PADDING(_pad208, 48);				// 1236-1284
+	uint32_t dwDoorsLocked;				// 1284-1288
+	PADDING(_pad209, 172);				// 1288-1460
+	union {
+		struct {
+			PADDING(_pad245, 1);		// 1460-1461
+			uint8_t byteWheelStatus[4]; // 1461-1465
+			uint8_t byteDoorStatus[6];	// 1465-1471
+			uint8_t byteDamageUnk;		// 1471-1472
+			uint32_t dwLightStatus;		// 1471-1475
+			uint32_t dwPanelStatus;		// 1475-1479
+		};
+		struct {
+			float fTrainSpeed;			// 1460-1464
+			PADDING(_pad210, 16);		// 1464-1479
+		};
+	};
+	PADDING(_pad213, 30);				// 1479-1508
+	uint32_t *VehicleAttachedFront;		// 1508-1512
+	uint32_t *VehicleAttachedBottom; 	// 1512-1516
+	PADDING(_pad211, 128);				// 1516-1644
+	uint8_t byteBikeWheelStatus[2];		// 1644-1645
 } VEHICLE_TYPE;
 
 typedef struct _RECT

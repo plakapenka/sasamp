@@ -247,6 +247,12 @@ public:
 						   uint32_t *dwPanelFlags);
 
 	uint8_t GetWheelStatus(eWheelPosition bWheel);
+
+	bool IsValidGameVehicle();
+
+	void EnableLights(bool bState);
+
+	void EnableEngine(bool bEnable);
 };
 
 enum eVehicleOverrideLightsState {

@@ -13,8 +13,10 @@ extern "C"
 {
 #include "..//santrope-tea-gtasa/encryption/aes.h"
 }
+
 #include "..///..//santrope-tea-gtasa/CGameResourcesDecryptor.cpp"
 #include "..///..//santrope-tea-gtasa/CGameResourcesDecryptor.h"
+#include "chatwindow.h"
 
 extern CGame* pGame;
 #include "..//CSettings.h"
@@ -1573,10 +1575,38 @@ RwFrame* CClumpModelInfo_GetFrameFromId_Post(RwFrame* pFrameResult, RpClump* pCl
 
 	return NULL;
 }
-RwFrame* (*CClumpModelInfo_GetFrameFromId)(RpClump*, int);
-RwFrame* CClumpModelInfo_GetFrameFromId_hook(RpClump* a1, int a2)
+
+
+int (*CClumpModelInfo__GetFrameFromId)(int a1, int a2);
+int CClumpModelInfo__GetFrameFromId_hook(int a1, int a2)
 {
-	return CClumpModelInfo_GetFrameFromId_Post(CClumpModelInfo_GetFrameFromId(a1, a2), a1, a2);
+	uintptr_t dwRetAddr = 0;
+	__asm__ volatile ("mov %0, lr" : "=r" (dwRetAddr));
+	dwRetAddr -= g_libGTASA;
+	if(!CClumpModelInfo__GetFrameFromId(a1, a2))
+	{
+		if(dwRetAddr > 0x515707)
+		{
+			if(dwRetAddr == 0x515708 || dwRetAddr == 0x515730)
+				return CClumpModelInfo__GetFrameFromId(a1, a2);
+		}
+		else if ( dwRetAddr == 0x338698 || dwRetAddr == 0x338B2C )
+		{
+			return CClumpModelInfo__GetFrameFromId(a1, a2);
+		}
+
+		uintptr_t adress = ((uintptr_t (*)(int, uintptr_t))(g_libGTASA + 0x335CC1))(a1, 2);
+		if(!adress)
+		{
+			for(int i = 3; i < 39; ++i)
+			{
+				uintptr_t adress = ((uintptr_t (*)(int, uintptr_t))(g_libGTASA + 0x335CC1))(a1, i);
+				if(adress) return adress;
+			}
+		}
+		return 0;
+	}
+	return CClumpModelInfo__GetFrameFromId(a1, a2);
 }
 
 int (*CEventHandler__HandleEvents)(uintptr_t *thiz);
@@ -2958,6 +2988,17 @@ int CTextureDatabaseRuntime__GetEntry_hook(unsigned int a1, const char *a2, bool
 	return result;
 }
 
+int (*CCollision__ProcessLineTriangle)(float *a1, int a2, uint16_t *a3, int16_t *a4, int a5, float *a6, int a7);
+int CCollision__ProcessLineTriangle_hook(float *a1, int a2, uint16_t *a3, int16_t *a4, int a5, float *a6, int a7)
+{
+	if(!a4 || !a3)
+	{
+		CChatWindow::AddDebugMessage("Crash collision %d %d", g_iLastProcessedEntityCollision, g_iLastProcessedModelIndexAutoEnt);
+		return 0;
+	}
+	return CCollision__ProcessLineTriangle(a1, a2, a3, a4, a5, a6, a7);
+}
+
 int (*CustomPipeRenderCB)(uintptr_t resEntry, uintptr_t object, uint8_t type, uint32_t flags);
 int CustomPipeRenderCB_hook(uintptr_t resEntry, uintptr_t object, uint8_t type, uint32_t flags)
 {
@@ -3276,6 +3317,30 @@ uintptr_t GetMeshPriority_hook(uintptr_t rpMesh)
 	return GetMeshPriority(rpMesh);
 }
 
+uint32_t (*CVehicle__GetVehicleLightsStatus)(VEHICLE_TYPE *_pVehicle);
+uint32_t CVehicle__GetVehicleLightsStatus_hook(VEHICLE_TYPE *_pVehicle)
+{
+	if(pNetGame)
+	{
+		CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
+		if(pVehiclePool)
+		{
+			VEHICLEID vehicleId = pVehiclePool->FindIDFromGtaPtr(_pVehicle);
+			if(vehicleId != INVALID_VEHICLE_ID)
+			{
+				CVehicle *pVehicle = pVehiclePool->GetAt(vehicleId);
+				if(pVehicle)
+				{
+					if(pVehicle->GetLightsState() == 0 || pVehicle->GetLightsState() == 1)
+						return pVehicle->GetLightsState();
+				}
+			}
+		}
+	}
+
+	return CVehicle__GetVehicleLightsStatus(_pVehicle);
+}
+
 void InstallHooks()
 {
 	Log("InstallHooks");
@@ -3345,7 +3410,7 @@ void InstallHooks()
 	//SetUpHook(g_libGTASA + 0x00395994, (uintptr_t)CFileLoader__LoadObjectInstance_hook, (uintptr_t*)& CFileLoader__LoadObjectInstance);
 
 	// retexture
-	SetUpHook(g_libGTASA + 0x00391E20, (uintptr_t)CObject__Render_hook, (uintptr_t*)& CObject__Render);
+	//SetUpHook(g_libGTASA + 0x00391E20, (uintptr_t)CObject__Render_hook, (uintptr_t*)& CObject__Render);
 
 	// gettexture fix crash
 	SetUpHook(g_libGTASA + 0x00258910, (uintptr_t)GetTexture_hook, (uintptr_t*)& GetTexture_orig);
@@ -3354,7 +3419,7 @@ void InstallHooks()
 	SetUpHook(g_libGTASA + 0x003AD8E0, (uintptr_t)CPlayerInfo__Process_hook, (uintptr_t*)& CPlayerInfo__Process);
 
 	// GetFrameFromID fix
-	SetUpHook(g_libGTASA + 0x00335CC0, (uintptr_t)CClumpModelInfo_GetFrameFromId_hook, (uintptr_t*)& CClumpModelInfo_GetFrameFromId);
+	SetUpHook(g_libGTASA + 0x00335CC0, (uintptr_t)CClumpModelInfo__GetFrameFromId_hook, (uintptr_t*)& CClumpModelInfo__GetFrameFromId);
 
 	//new fix
 	SetUpHook(g_libGTASA + 0x1EEC90, (uintptr_t)rxOpenGLDefaultAllInOneRenderCB_hook, (uintptr_t*)& rxOpenGLDefaultAllInOneRenderCB);
@@ -3451,7 +3516,10 @@ void InstallHooks()
 	//================================
 	// ================== plaka ======
 	//================================
+	//SetUpHook(g_libGTASA + 0x00298088, (uintptr_t)CCollision__ProcessLineTriangle_hook, (uintptr_t*)&CCollision__ProcessLineTriangle);
 	//SetUpHook(g_libGTASA + 0x0048CC64, (uintptr_t)CTaskSimpleCarOpenDoorFromOutside__ComputeAnimID_hook, (uintptr_t*)&CTaskSimpleCarOpenDoorFromOutside__ComputeAnimID_hook);
+	// vehicle light processing
+	SetUpHook(g_libGTASA + 0x5189C4, (uintptr_t)CVehicle__GetVehicleLightsStatus_hook, (uintptr_t*)&CVehicle__GetVehicleLightsStatus);
 	//
 	NOP(g_libGTASA + 0x003989C8, 2);//живность в воде WaterCreatureManager_c::Update
 	// дефолтный худ
