@@ -2,9 +2,8 @@
 #include "game.h"
 #include "CWeaponsOutFit.h"
 #include "..//chatwindow.h"
-#include "..//util/armhook.h"
+#include "util/patch.h"
 #include <cmath>
-#include <math.h>
 
 RwTexture* CRadarRect::m_pRectTexture = nullptr;
 RwTexture* CRadarRect::m_pDiscTexture = nullptr;
@@ -74,7 +73,7 @@ bool CRadarRect::IsEnabled()
 
 void CRadarRect::SetEnabled(bool bEnabled)
 {
-	UnFuck(g_libGTASA + 0x003DED84);
+	CPatch::UnFuck(g_libGTASA + 0x003DED84);
 	m_bEnabled = bEnabled;
 	if (!m_bEnabled)
 	{

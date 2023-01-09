@@ -1,5 +1,4 @@
 #include <stdint.h>
-#include "../util/armhook.h"
 
 const uint8_t g_Start_GAME_RESOURCES3 [] = { 0x82, 0xB0,
 									0x02, 0xB0,

@@ -55,7 +55,6 @@ bool CCheckFileHash::IsFileValid(SMDFile* pMDFile)
 	return true;
 }
 
-#include "cryptors/CHECK_HASH2_result.h"
 
 bool CCheckFileHash::IsFilesValid()
 {

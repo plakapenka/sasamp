@@ -1,9 +1,9 @@
 #include "../main.h"
 #include "game.h"
-#include "../util/armhook.h"
 #include "util/CJavaWrapper.h"
 #include "net/netgame.h"
 #include "java_systems/CHUD.h"
+#include "util/patch.h"
 
 extern CHUD *pHud;
 void ApplyPatches();
@@ -335,16 +335,16 @@ void CGame::SetWorldWeather(unsigned char byteWeatherID)
 void CGame::ToggleThePassingOfTime(bool bOnOff)
 {
 	if(bOnOff)
-		WriteMemory(g_libGTASA+0x38C154, (uintptr_t)"\x2D\xE9", 2);
+		CPatch::WriteMemory(g_libGTASA+0x38C154, (uintptr_t)"\x2D\xE9", 2);
 	else
-		WriteMemory(g_libGTASA+0x38C154, (uintptr_t)"\xF7\x46", 2);
+		CPatch::WriteMemory(g_libGTASA+0x38C154, (uintptr_t)"\xF7\x46", 2);
 }
 
 // 0.3.7
 void CGame::EnableClock(bool bEnable)
 {
 	char byteClockData[] = { '%', '0', '2', 'd', ':', '%', '0', '2', 'd', 0 };
-	UnFuck(g_libGTASA+0x599504);
+	CPatch::UnFuck(g_libGTASA+0x599504);
 
 	if(bEnable)
 	{
@@ -435,7 +435,7 @@ void CGame::SetMaxStats()
 	(( int (*)())(g_libGTASA+0x2BAE68+1))();
 
 	// CStats::SetStatValue nop
-	WriteMemory(g_libGTASA+0x3B9074, (uintptr_t)"\xF7\x46", 2);
+	CPatch::WriteMemory(g_libGTASA+0x3B9074, (uintptr_t)"\xF7\x46", 2);
 }
 
 void CGame::SetWantedLevel(uint8_t byteLevel)
@@ -462,16 +462,16 @@ void CGame::DisplayGameText(char* szStr, int iTime, int iType)
 // 0.3.7
 void CGame::SetGravity(float fGravity)
 {
-	UnFuck(g_libGTASA+0x3A0B64);
+	CPatch::UnFuck(g_libGTASA+0x3A0B64);
 	*(float*)(g_libGTASA+0x3A0B64) = fGravity;
 }
 
 void CGame::ToggleCJWalk(bool bUseCJWalk)
 {
 	if(bUseCJWalk)
-		WriteMemory(g_libGTASA+0x45477E, (uintptr_t)"\xC4\xF8\xDC\x64", 4);
+		CPatch::WriteMemory(g_libGTASA+0x45477E, (uintptr_t)"\xC4\xF8\xDC\x64", 4);
 	else
-		NOP(g_libGTASA+0x45477E, 2);
+		CPatch::NOP(g_libGTASA+0x45477E, 2);
 }
 
 void CGame::DisableMarker(uint32_t dwMarkerID)

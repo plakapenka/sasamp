@@ -13,7 +13,6 @@
 #include "keyboard.h"
 #include "CSettings.h"
 #include "chatwindow.h"
-#include "util/armhook.h"
 
 extern CSettings* pSettings;
 extern CJavaWrapper *g_pJavaWrapper;

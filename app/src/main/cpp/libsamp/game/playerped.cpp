@@ -1,11 +1,11 @@
 #include "../main.h"
 #include "game.h"
 #include "../net/netgame.h"
-#include "../util/armhook.h"
 #include "common.h"
 #include "vehicle.h"
 
 #include "..//CDebugInfo.h"
+#include "util/patch.h"
 
 extern CGame* pGame;
 extern CNetGame *pNetGame;
@@ -101,13 +101,15 @@ CPlayerPed::~CPlayerPed()
 			Log("Removing from vehicle..");
 			RemoveFromVehicleAndPutAt(100.0f, 100.0f, 20.0f);
 
-			ClearAllTasks();
+		//	ClearAllTasks();
 		}
 		Log("~CPlayerPed()5");
 		uintptr_t dwPedPtr = (uintptr_t)m_pPed;
 		*(uint32_t*)(*(uintptr_t*)(dwPedPtr + 1088) + 76) = 0;
 		// CPlayerPed::Destructor
-		((void (*)(PED_TYPE*))(*(void**)(m_pPed->entity.vtable + 0x4)))(m_pPed);
+		Log("Calling destructor..");
+		//(( void (*)(PED_TYPE*))(*(void**)(m_pPed->entity.vtable+0x4)))(m_pPed);
+		((void (*)(uintptr_t))(g_libGTASA+0x45D82C+1))((uintptr_t)m_pEntity);
 		//ScriptCommand(&DELETE_CHAR, m_dwGTAId);
 
 		m_pPed = nullptr;
@@ -858,7 +860,7 @@ void CPlayerPed::SetModelIndex(unsigned int uiModel)
 	if(m_pPed)
 	{
 		// CClothes::RebuildPlayer nulled
-		WriteMemory(g_libGTASA+0x3F1030, (uintptr_t)"\x70\x47", 2);
+		CPatch::WriteMemory(g_libGTASA+0x3F1030, "\x70\x47", 2);
 		DestroyFollowPedTask();
 		CEntity::SetModelIndex(uiModel);
 

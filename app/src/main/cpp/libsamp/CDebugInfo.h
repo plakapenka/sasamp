@@ -22,7 +22,5 @@ public:
 
 	static void Draw();
 	static void ApplyDebugPatches();
-
-	static void ProcessSpeedMode(VECTOR* pVecSpeed);
 };
 

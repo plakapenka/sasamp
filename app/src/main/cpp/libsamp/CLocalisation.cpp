@@ -9,7 +9,6 @@
 #include "playertags.h"
 #include "keyboard.h"
 #include "CSettings.h"
-#include "util/armhook.h"
 
 extern CGUI* pGUI;
 

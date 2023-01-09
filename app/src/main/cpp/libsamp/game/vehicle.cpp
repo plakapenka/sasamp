@@ -71,13 +71,13 @@ CVehicle::CVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRota
 		}
 	}
 	else if ((iType == TRAIN_PASSENGER_LOCO) ||
-		(iType == TRAIN_FREIGHT_LOCO) ||
-		(iType == TRAIN_TRAM))
+			 (iType == TRAIN_FREIGHT_LOCO) ||
+			 (iType == TRAIN_TRAM))
 	{
 		// train locomotives
 	}
 	else if ((iType == TRAIN_PASSENGER) ||
-		iType == TRAIN_FREIGHT)
+			 iType == TRAIN_FREIGHT)
 	{
 
 	}
@@ -214,7 +214,7 @@ CVehicle::~CVehicle()
 
 	Log("CVehicle9");
 	if (m_pVehicle->entity.nModelIndex == TRAIN_PASSENGER_LOCO ||
-			m_pVehicle->entity.nModelIndex == TRAIN_FREIGHT_LOCO) {
+		m_pVehicle->entity.nModelIndex == TRAIN_FREIGHT_LOCO) {
 		ScriptCommand(&destroy_train, m_dwGTAId);
 	}
 	else {
@@ -511,35 +511,23 @@ int CVehicle::GetDoorState(){
 	return CVehicle::fDoorState;
 }
 
-bool CVehicle::IsValidGameVehicle()
-{
-	// IsVehiclePointerValid
-	return (((bool (*)(VEHICLE_TYPE *))(g_libGTASA+0x5109E8+1))(m_pVehicle));
-}
-
-void CVehicle::EnableLights(bool bState)
-{
-	if(!IsValidGameVehicle()) return;
-
-	if(bState)
-	{
-		m_pVehicle->byteMoreFlags &= 0xF7;
-		m_pVehicle->byteFlags |= 0x40;
-	}
-	else
-	{
-		m_pVehicle->byteMoreFlags |= 8;
-		m_pVehicle->byteFlags &= 0xBF;
-	}
-}
-
 void CVehicle::SetLightsState(int iState)
 {
-	m_bLightsOn = iState;
+	if(!m_dwGTAId)return;
+	if(!m_pVehicle)return;
+
+	if (GamePool_Vehicle_GetAt(m_dwGTAId))
+	{
+		ScriptCommand(&FORCE_CAR_LIGHTS, m_dwGTAId, iState > 0 ? 2 : 1);
+		m_bLightsOn = iState;
+	}
 }
 
 bool CVehicle::GetLightsState(){
-	return m_bLightsOn;
+	if (GamePool_Vehicle_GetAt(m_dwGTAId))
+	{
+		return m_bLightsOn;
+	}
 }
 
 void CVehicle::SetBootAndBonnetState(int iBoot, int iBonnet)
@@ -568,7 +556,7 @@ void CVehicle::SetBootAndBonnetState(int iBoot, int iBonnet)
 
 void CVehicle::RemoveComponent(uint16_t uiComponent)
 {
-	
+
 	int component = (uint16_t)uiComponent;
 
 	if (!m_dwGTAId || !m_pVehicle)
@@ -584,7 +572,7 @@ void CVehicle::RemoveComponent(uint16_t uiComponent)
 
 void CVehicle::SetComponentVisible(uint8_t group, uint16_t components)
 {
-	
+
 	if (group == E_CUSTOM_COMPONENTS::ccExtra)
 	{
 		for (int i = 0; i < 16; i++)
@@ -651,7 +639,7 @@ uint8_t* GetCollisionDataFromModel(int nModelIndex)
 }
 void CVehicle::SetHandlingData(std::vector<SHandlingData>& vHandlingData)
 {
-	
+
 
 	if (!m_pVehicle || !m_dwGTAId)
 	{
@@ -696,78 +684,78 @@ void CVehicle::SetHandlingData(std::vector<SHandlingData>& vHandlingData)
 	{
 		switch (i.flag)
 		{
-		case E_HANDLING_PARAMS::hpMaxSpeed:
-			m_pCustomHandling->m_transmissionData.m_fMaxGearVelocity = i.fValue;
-			break;
-		case E_HANDLING_PARAMS::hpAcceleration:
-			m_pCustomHandling->m_transmissionData.m_fEngineAcceleration = i.fValue * 0.4f;
-			break;
-		case E_HANDLING_PARAMS::hpEngineInertion:
-			m_pCustomHandling->m_transmissionData.m_fEngineInertia = i.fValue;
-			break;
-		case E_HANDLING_PARAMS::hpGear:
+			case E_HANDLING_PARAMS::hpMaxSpeed:
+				m_pCustomHandling->m_transmissionData.m_fMaxGearVelocity = i.fValue;
+				break;
+			case E_HANDLING_PARAMS::hpAcceleration:
+				m_pCustomHandling->m_transmissionData.m_fEngineAcceleration = i.fValue * 0.4f;
+				break;
+			case E_HANDLING_PARAMS::hpEngineInertion:
+				m_pCustomHandling->m_transmissionData.m_fEngineInertia = i.fValue;
+				break;
+			case E_HANDLING_PARAMS::hpGear:
 
-			if (i.fValue >= 0.0f && i.fValue <= 1.1f)
+				if (i.fValue >= 0.0f && i.fValue <= 1.1f)
+				{
+					m_pCustomHandling->m_transmissionData.m_nDriveType = 'R';
+				}
+
+				if (i.fValue >= 1.2f && i.fValue <= 2.1f)
+				{
+					m_pCustomHandling->m_transmissionData.m_nDriveType = 'F';
+				}
+
+				if (i.fValue >= 2.2f && i.fValue <= 3.1f)
+				{
+					m_pCustomHandling->m_transmissionData.m_nDriveType = '4';
+				}
+
+				break;
+			case E_HANDLING_PARAMS::hpMass:
+				m_pCustomHandling->m_fMass = i.fValue;
+				break;
+			case E_HANDLING_PARAMS::hpMassTurn:
+				m_pCustomHandling->m_fTurnMass = i.fValue;
+				break;
+			case E_HANDLING_PARAMS::hpBrakeDeceleration:
 			{
-				m_pCustomHandling->m_transmissionData.m_nDriveType = 'R';
+				m_pCustomHandling->m_fBrakeDeceleration = i.fValue;
+				break;
 			}
-
-			if (i.fValue >= 1.2f && i.fValue <= 2.1f)
+			case E_HANDLING_PARAMS::hpTractionMultiplier:
 			{
-				m_pCustomHandling->m_transmissionData.m_nDriveType = 'F';
+				m_pCustomHandling->m_fTractionMultiplier = i.fValue;
+				break;
 			}
-
-			if (i.fValue >= 2.2f && i.fValue <= 3.1f)
+			case E_HANDLING_PARAMS::hpTractionLoss:
 			{
-				m_pCustomHandling->m_transmissionData.m_nDriveType = '4';
+				m_pCustomHandling->m_fTractionLoss = i.fValue;
+				break;
 			}
-
-			break;
-		case E_HANDLING_PARAMS::hpMass:
-			m_pCustomHandling->m_fMass = i.fValue;
-			break;
-		case E_HANDLING_PARAMS::hpMassTurn:
-			m_pCustomHandling->m_fTurnMass = i.fValue;
-			break;
-		case E_HANDLING_PARAMS::hpBrakeDeceleration:
-		{
-			m_pCustomHandling->m_fBrakeDeceleration = i.fValue;
-			break;
-		}
-		case E_HANDLING_PARAMS::hpTractionMultiplier:
-		{
-			m_pCustomHandling->m_fTractionMultiplier = i.fValue;
-			break;
-		}
-		case E_HANDLING_PARAMS::hpTractionLoss:
-		{
-			m_pCustomHandling->m_fTractionLoss = i.fValue;
-			break;
-		}
-		case E_HANDLING_PARAMS::hpTractionBias:
-		{
-			m_pCustomHandling->m_fTractionBias = i.fValue;
-			break;
-		}
-		case E_HANDLING_PARAMS::hpSuspensionLowerLimit:
-		{
-			m_pCustomHandling->m_fSuspensionLowerLimit = i.fValue;
-			bNeedRecalculate = true;
-			break;
-		}
-		case E_HANDLING_PARAMS::hpSuspensionBias:
-		{
-			m_pCustomHandling->m_fSuspensionBiasBetweenFrontAndRear = i.fValue;
-			bNeedRecalculate = true;
-			break;
-		}
-		case E_HANDLING_PARAMS::hpWheelSize:
-		{
-			m_bWheelSize = true;
-			m_fWheelSize = i.fValue;
-			bNeedRecalculate = true;
-			break;
-		}
+			case E_HANDLING_PARAMS::hpTractionBias:
+			{
+				m_pCustomHandling->m_fTractionBias = i.fValue;
+				break;
+			}
+			case E_HANDLING_PARAMS::hpSuspensionLowerLimit:
+			{
+				m_pCustomHandling->m_fSuspensionLowerLimit = i.fValue;
+				bNeedRecalculate = true;
+				break;
+			}
+			case E_HANDLING_PARAMS::hpSuspensionBias:
+			{
+				m_pCustomHandling->m_fSuspensionBiasBetweenFrontAndRear = i.fValue;
+				bNeedRecalculate = true;
+				break;
+			}
+			case E_HANDLING_PARAMS::hpWheelSize:
+			{
+				m_bWheelSize = true;
+				m_fWheelSize = i.fValue;
+				bNeedRecalculate = true;
+				break;
+			}
 		}
 	}
 	float fOldFrontWheelSize = 0.0f;
@@ -813,7 +801,7 @@ void CVehicle::SetHandlingData(std::vector<SHandlingData>& vHandlingData)
 
 void CVehicle::ResetVehicleHandling()
 {
-	
+
 	if (!m_pVehicle || !m_dwGTAId)
 	{
 		return;
@@ -904,7 +892,7 @@ void CVehicle::ApplyToner(uint8_t bSlot, uint8_t bID)
 
 RwObject* GetAllAtomicObjectCB(RwObject* object, void* data)
 {
-	
+
 	std::vector<RwObject*>& result = *((std::vector<RwObject*>*) data);
 	result.push_back(object);
 	return object;
@@ -913,7 +901,7 @@ RwObject* GetAllAtomicObjectCB(RwObject* object, void* data)
 // Get all atomics for this frame (even if they are invisible)
 void GetAllAtomicObjects(RwFrame* frame, std::vector<RwObject*>& result)
 {
-	
+
 	((uintptr_t(*)(RwFrame*, void*, uintptr_t))(g_libGTASA + 0x001AEE2C + 1))(frame, (void*)GetAllAtomicObjectCB, (uintptr_t)& result);
 }
 
@@ -1213,7 +1201,7 @@ void CVehicle::SetComponentAngle(bool bUnk, int iID, float angle)
 
 void CVehicle::SetComponentVisibleInternal(const char* szComponent, bool bVisible)
 {
-	
+
 	PROTECT_CODE_COMPONENT_VISIBLE_INTERNAL;
 	if (!m_pVehicle || !m_dwGTAId)
 	{
@@ -1288,23 +1276,23 @@ void CVehicle::SetComponentVisibleInternal(const char* szComponent, bool bVisibl
 
 std::string CVehicle::GetComponentNameByIDs(uint8_t group, int subgroup)
 {
-	
+
 	if (group == E_CUSTOM_COMPONENTS::ccExtra && subgroup >= EXTRA_COMPONENT_BOOT)
 	{
 		switch (subgroup)
 		{
-		case EXTRA_COMPONENT_BOOT:
-			return std::string("boot_dummy");
-		case EXTRA_COMPONENT_BONNET:
-			return std::string("bonnet_dummy");
-		case EXTRA_COMPONENT_BUMP_REAR:
-			return std::string("bump_rear_dummy");
-		case EXTRA_COMPONENT_DEFAULT_DOOR:
-			return std::string("door_lf_dummy");
-		case EXTRA_COMPONENT_WHEEL:
-			return std::string("wheel_lf_dummy");
-		case EXTRA_COMPONENT_BUMP_FRONT:
-			return std::string("bump_front_dummy");
+			case EXTRA_COMPONENT_BOOT:
+				return std::string("boot_dummy");
+			case EXTRA_COMPONENT_BONNET:
+				return std::string("bonnet_dummy");
+			case EXTRA_COMPONENT_BUMP_REAR:
+				return std::string("bump_rear_dummy");
+			case EXTRA_COMPONENT_DEFAULT_DOOR:
+				return std::string("door_lf_dummy");
+			case EXTRA_COMPONENT_WHEEL:
+				return std::string("wheel_lf_dummy");
+			case EXTRA_COMPONENT_BUMP_FRONT:
+				return std::string("bump_front_dummy");
 		}
 	}
 
@@ -1312,45 +1300,45 @@ std::string CVehicle::GetComponentNameByIDs(uint8_t group, int subgroup)
 
 	switch (group)
 	{
-	case E_CUSTOM_COMPONENTS::ccBumperF:
-		retn += "bumberF_";
-		break;
-	case E_CUSTOM_COMPONENTS::ccBumperR:
-		retn += "bumberR_";
-		break;
-	case E_CUSTOM_COMPONENTS::ccFenderF:
-		retn += "fenderF_";
-		break;
-	case E_CUSTOM_COMPONENTS::ccFenderR:
-		retn += "fenderR_";
-		break;
-	case E_CUSTOM_COMPONENTS::ccSpoiler:
-		retn += "spoiler_";
-		break;
-	case E_CUSTOM_COMPONENTS::ccExhaust:
-		retn += "exhaust_";
-		break;
-	case E_CUSTOM_COMPONENTS::ccRoof:
-		retn += "roof_";
-		break;
-	case E_CUSTOM_COMPONENTS::ccTaillights:
-		retn += "taillights_";
-		break;
-	case E_CUSTOM_COMPONENTS::ccHeadlights:
-		retn += "headlights_";
-		break;
-	case E_CUSTOM_COMPONENTS::ccDiffuser:
-		retn += "diffuser_";
-		break;
-	case E_CUSTOM_COMPONENTS::ccSplitter:
-		retn += "splitter_";
-		break;
-	case E_CUSTOM_COMPONENTS::ccExtra:
-		retn += "ext_";
-		break;
-	default:
-		retn = std::string("err");
-		break;
+		case E_CUSTOM_COMPONENTS::ccBumperF:
+			retn += "bumberF_";
+			break;
+		case E_CUSTOM_COMPONENTS::ccBumperR:
+			retn += "bumberR_";
+			break;
+		case E_CUSTOM_COMPONENTS::ccFenderF:
+			retn += "fenderF_";
+			break;
+		case E_CUSTOM_COMPONENTS::ccFenderR:
+			retn += "fenderR_";
+			break;
+		case E_CUSTOM_COMPONENTS::ccSpoiler:
+			retn += "spoiler_";
+			break;
+		case E_CUSTOM_COMPONENTS::ccExhaust:
+			retn += "exhaust_";
+			break;
+		case E_CUSTOM_COMPONENTS::ccRoof:
+			retn += "roof_";
+			break;
+		case E_CUSTOM_COMPONENTS::ccTaillights:
+			retn += "taillights_";
+			break;
+		case E_CUSTOM_COMPONENTS::ccHeadlights:
+			retn += "headlights_";
+			break;
+		case E_CUSTOM_COMPONENTS::ccDiffuser:
+			retn += "diffuser_";
+			break;
+		case E_CUSTOM_COMPONENTS::ccSplitter:
+			retn += "splitter_";
+			break;
+		case E_CUSTOM_COMPONENTS::ccExtra:
+			retn += "ext_";
+			break;
+		default:
+			retn = std::string("err");
+			break;
 	}
 
 	retn += ('0' + (char)subgroup);
@@ -1388,16 +1376,23 @@ void CVehicle::CopyGlobalSuspensionLinesToPrivate()
 
 void CVehicle::SetEngineState(int iState)
 {
-	m_bEngineOn = iState;
-}
-
-void CVehicle::EnableEngine(bool bEnable)
-{
-	if(!IsValidGameVehicle()) return;
-
-	if(bEnable)
-		m_pVehicle->byteFlags |= 0x10;
-	else m_pVehicle->byteFlags &= 0xEF;
+	if(!m_dwGTAId)return;
+	if(!m_pVehicle)return;
+	if (!GamePool_Vehicle_GetAt(m_dwGTAId)) {
+		return;
+	}
+	if (iState)
+	{
+		m_pVehicle->m_nVehicleFlags.bEngineOn = 1;
+		m_bEngineOn = true;
+		m_pVehicle->m_nVehicleFlags.bEngineBroken = 0;
+	}
+	else
+	{
+		m_pVehicle->m_nVehicleFlags.bEngineOn = 0;
+		m_bEngineOn = false;
+		m_pVehicle->m_nVehicleFlags.bEngineBroken = 1;
+	}
 }
 
 int CVehicle::GetEngineState(){

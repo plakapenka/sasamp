@@ -17,7 +17,6 @@
 #include "CClientInfo.h"
 #include "java_systems/CHUD.h"
 
-#include "util/armhook.h"
 #include "CCheckFileHash.h"
 #include "str_obfuscator_no_template.hpp"
 
@@ -48,7 +47,6 @@ CSettings *pSettings = nullptr;
 CHUD *pHud = nullptr;
 CINVENTORY *pInventory = nullptr;
 
-void InitHookStuff();
 void InstallSpecialHooks();
 void InitRenderWareFunctions();
 void ApplyInGamePatches();
@@ -518,6 +516,8 @@ extern "C"
 }
 
 #include "CFPSFix.h"
+#include "util/patch.h"
+
 CFPSFix g_fps;
 
 void (*ANDRunThread)(void* a1);
@@ -569,7 +569,7 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 
 	srand(time(0));
 
-	InitHookStuff();
+	CPatch::InitHookStuff();
 
 	InstallSpecialHooks();
 	InitRenderWareFunctions();

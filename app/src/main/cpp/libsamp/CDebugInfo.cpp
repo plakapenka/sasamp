@@ -9,7 +9,7 @@
 #include "playertags.h"
 #include "keyboard.h"
 #include "CSettings.h"
-#include "util/armhook.h"
+#include "util/patch.h"
 
 extern CGUI* pGUI;
 extern CGame *pGame;
@@ -72,53 +72,11 @@ void CDebugInfo::ApplyDebugPatches()
 {
 #ifdef DEBUG_INFO_ENABLED
 
-	UnFuck(g_libGTASA + 0x008B8018);
+	CPatch::UnFuck(g_libGTASA + 0x008B8018);
 	*(uint8_t*)(g_libGTASA + 0x008B8018) = 1;
-	NOP(g_libGTASA + 0x00399EDA, 2);
-	NOP(g_libGTASA + 0x00399F46, 2);
-	NOP(g_libGTASA + 0x00399F92, 2);
+	CPatch::NOP(g_libGTASA + 0x00399EDA, 2);
+	CPatch::NOP(g_libGTASA + 0x00399F46, 2);
+	CPatch::NOP(g_libGTASA + 0x00399F92, 2);
 
 #endif
-}
-
-void CDebugInfo::ProcessSpeedMode(VECTOR* pVecSpeed)
-{
-	if (!m_dwSpeedMode)
-	{
-		return;
-	}
-	static uint32_t m_dwState = 0;
-	float speed = sqrt((pVecSpeed->X * pVecSpeed->X) + (pVecSpeed->Y * pVecSpeed->Y) + (pVecSpeed->Z * pVecSpeed->Z)) * 2.0f * 100.0f;
-	if (speed >= 1.0f)
-	{
-		if (!m_dwSpeedStart)
-		{
-			m_dwSpeedStart = GetTickCount();
-			m_dwState = 0;
-			CChatWindow::AddDebugMessage("Start");
-		}
-		if ((speed >= 119.0f) && (speed <= 121.0f) && (m_dwState == 0))
-		{
-			CChatWindow::AddDebugMessage("1 to 100: %d", GetTickCount() - m_dwSpeedStart);
-			m_dwSpeedStart = GetTickCount();
-			m_dwState = 1;
-		}
-		if ((speed >= 230.0f) && (speed <= 235.0f) && (m_dwState == 1))
-		{
-			CChatWindow::AddDebugMessage("100 to 200: %d", GetTickCount() - m_dwSpeedStart);
-			m_dwSpeedStart = 0;
-			m_dwState = 0;
-		}
-		// process for 100 and 200
-	}
-	else
-	{
-		if (m_dwSpeedStart)
-		{
-			m_dwSpeedStart = 0;
-			m_dwState = 0;
-			CChatWindow::AddDebugMessage("Reseted");
-			return;
-		}
-	}
 }

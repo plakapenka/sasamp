@@ -1,5 +1,4 @@
 #include "../main.h"
-#include "../util/armhook.h"
 #include "common.h"
 
 #include "..//..//santrope-tea-gtasa/encryption/common.h"
@@ -21,20 +20,20 @@ static int g(int a)
 void ObfuscatedForceExit0()
 {
 	//  CEntryInfoNode::operator new
-	//WriteMemory(g_libGTASA + 0x0039463E, (uintptr_t)"\x4f\xf0\x00\x00\x00\x68", 6); // mov r0, 0, ldr r0, [r0] // trap
+	//WriteMemory(g_libGTASA + 0x0039463E, "\x4f\xf0\x00\x00\x00\x68", 6); // mov r0, 0, ldr r0, [r0] // trap
 }
 
 void ObfuscatedForceExit1()
 {
 	// CPlayerPed::CPlayerPed
-	//WriteMemory(g_libGTASA + 0x00458E88, (uintptr_t)"\x4f\xf0\x00\x03", 4); // mov r3, 0 // trap
+	//WriteMemory(g_libGTASA + 0x00458E88, "\x4f\xf0\x00\x03", 4); // mov r3, 0 // trap
 	//NOP(g_libGTASA + 0x00458E8A, 2);
 }
 
 void ObfuscatedForceExit2()
 {
 	// CTaskSimpleFall::ProcessPed
-	//WriteMemory(g_libGTASA + 0x004B2F02, (uintptr_t)"\x4f\xf0\x00\x01", 4); // trap
+	//WriteMemory(g_libGTASA + 0x004B2F02, "\x4f\xf0\x00\x01", 4); // trap
 }
 
 void WriteUnVerified0()

@@ -56,9 +56,6 @@ void CVehiclePool::Process()
 
 			if(m_bIsActive[x])
 			{
-				pVehicle->EnableEngine(pVehicle->GetEngineState());
-				pVehicle->EnableLights(pVehicle->GetLightsState());
-
 				pVehicle->ProcessDamage();
 
 				if(pVehicle->IsOccupied())
@@ -75,29 +72,6 @@ void CVehiclePool::Process()
 				}
 
 				pVehicle->ProcessMarkers();
-
-
-//				if(pVehicle->GetHealth() == 0.0f)
-//				{
-//						NotifyVehicleDeath(x);
-//						continue;
-//				}
-//
-//				if(pVehicle->GetVehicleSubtype() != VEHICLE_SUBTYPE_BOAT &&
-//					pVehicle->GetDistanceFromLocalPlayerPed() < 200.0f &&
-//					pVehicle->HasSunk())
-//				{
-//					NotifyVehicleDeath(x);
-//					continue;
-//				}
-//
-//
-//				if(pVehicle->m_pVehicle != m_pGTAVehicles[x])
-//					m_pGTAVehicles[x] = pVehicle->m_pVehicle;
-//
-//				pVehicle->ProcessMarkers();*/
-
-
 			}
 		}
 	}

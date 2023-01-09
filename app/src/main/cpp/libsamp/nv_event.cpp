@@ -1,7 +1,6 @@
 #include "nv_event.h"
 
 #include "main.h"
-#include "util/armhook.h"
 #include "game/RW/RenderWare.h"
 #include "game/game.h"
 #include "net/netgame.h"

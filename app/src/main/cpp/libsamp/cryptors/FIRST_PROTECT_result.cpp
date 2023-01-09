@@ -1,7 +1,6 @@
 #include "FIRST_PROTECT_result.h"
 
 #include <stdint.h>
-#include "../util/armhook.h"
 #include <string>
 #include <sys/mman.h>
 #include "../main.h"

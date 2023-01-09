@@ -6,6 +6,8 @@
 #include "game/CAdjustableHudPosition.h"
 #include "game/CAdjustableHudScale.h"
 #include "java_systems/CHUD.h"
+#include "util/patch.h"
+
 extern CGame* pGame;
 extern CHUD *pHud;
 

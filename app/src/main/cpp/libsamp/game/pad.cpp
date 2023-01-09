@@ -1,7 +1,7 @@
 #include "../main.h"
 #include "game.h"
 #include "../net/netgame.h"
-#include "../util/armhook.h"
+#include "util/patch.h"
 
 #include <jni.h>
 
@@ -375,7 +375,7 @@ uint16_t CPad__GetAccelerate_hook(uintptr_t thiz)
 				VEHICLE_TYPE* pGtaVehicle = pPlayerPed->GetGtaVehicle();
 				if (pGtaVehicle)
 				{
-					if (pGtaVehicle->dwFlags.bEngineOn == 0)
+					if (pGtaVehicle->m_nVehicleFlags.bEngineOn == 0)
 					{
 						wAccelerate = 0;
 					}
@@ -480,13 +480,13 @@ void CPed__ProcessControl_hook(uintptr_t thiz)
 		*wCameraMode2 = GameGetPlayerCameraMode(byteCurPlayer);
 		if (*wCameraMode2 == 4)* wCameraMode2 = 0;
 		// CPed::UpdatePosition nulled from CPed::ProcessControl
-		NOP(g_libGTASA + 0x439B7A, 2);
+		CPatch::NOP(g_libGTASA + 0x439B7A, 2);
 		*(uint8_t*)(g_libGTASA + 0x008E864C) = byteCurPlayer;
 		// call original
 		
 		CPed__ProcessControl(thiz);
 		// restore
-		WriteMemory(g_libGTASA + 0x439B7A, (uintptr_t)"\xFA\xF7\x1D\xF8", 4);
+		CPatch::WriteMemory(g_libGTASA + 0x439B7A, "\xFA\xF7\x1D\xF8", 4);
 		*(uint8_t*)(g_libGTASA + 0x008E864C) = 0;
 		*pbyteCameraMode = byteSavedCameraMode;
 		//*((uint16_t*)g_libGTASA + 0x8B0FBC) = wSavedCameraMode2;
@@ -498,12 +498,12 @@ void CPed__ProcessControl_hook(uintptr_t thiz)
 	{
 		// LOCAL PLAYER
 
-		WriteMemory(g_libGTASA + 0x4BED92, (uintptr_t)"\x10\x60", 2);
+		CPatch::WriteMemory(g_libGTASA + 0x4BED92, "\x10\x60", 2);
 		
 		(*CPed__ProcessControl)(thiz);
 
 		// Reapply the no ped rots from Cam patch
-		WriteMemory(g_libGTASA + 0x4BED92, (uintptr_t)"\x00\x46", 2);
+		CPatch::WriteMemory(g_libGTASA + 0x4BED92, "\x00\x46", 2);
 	}
 
 	return;
@@ -589,19 +589,19 @@ void AllVehicles__ProcessControl_hook(uintptr_t thiz)
 	// Tyre burst fix
 	if (pVehicle->pDriver)
 	{
-		if (pVehicle->dwFlags.bTyresDontBurst)
+		if (pVehicle->m_nVehicleFlags.bTyresDontBurst)
 		{
-			pVehicle->dwFlags.bTyresDontBurst = 0;
+			pVehicle->m_nVehicleFlags.bTyresDontBurst = 0;
 		}
-		if(!pVehicle->dwFlags.bCanBeDamaged) pVehicle->dwFlags.bCanBeDamaged = true;
+		if(!pVehicle->m_nVehicleFlags.bCanBeDamaged) pVehicle->m_nVehicleFlags.bCanBeDamaged = true;
 	}
 	else
 	{
-		if (!pVehicle->dwFlags.bTyresDontBurst)
+		if (!pVehicle->m_nVehicleFlags.bTyresDontBurst)
 		{
-			pVehicle->dwFlags.bTyresDontBurst = 1;
+			pVehicle->m_nVehicleFlags.bTyresDontBurst = 1;
 		}
-		if (pVehicle->dwFlags.bCanBeDamaged) pVehicle->dwFlags.bCanBeDamaged = false;
+		if (pVehicle->m_nVehicleFlags.bCanBeDamaged) pVehicle->m_nVehicleFlags.bCanBeDamaged = false;
 	}
 
 	// VEHTYPE::ProcessControl()
@@ -631,6 +631,7 @@ uint32_t CPad__GetWeapon_hook(uintptr_t thiz, uintptr_t ped, bool unk)
 
 
 uintptr_t g_playerPed;
+
 uintptr_t(*ProcessPlayerWeapon)(uintptr_t thiz, uintptr_t playerPed);
 uintptr_t ProcessPlayerWeapon_hook(uintptr_t thiz, uintptr_t playerPed)
 {
@@ -724,7 +725,7 @@ uint32_t TaskUseGun(uintptr_t thiz, uintptr_t ped)
 }
 
 
-uint32_t TaskProcess(uintptr_t thiz, uintptr_t ped, int unk, int unk1)
+uint32_t CPad__TaskProcess(uintptr_t thiz, uintptr_t ped, int unk, int unk1)
 {
 	dwCurPlayerActor = ped;
 	byteCurPlayer = FindPlayerNumFromPedPtr(dwCurPlayerActor);
@@ -803,30 +804,31 @@ void HookCPad()
 	//memcpy((void*)(g_libGTASA + 0x008C3E20), , )
 
 	// CPed::ProcessControl
-	SetUpHook(g_libGTASA+0x45A280, (uintptr_t)CPed__ProcessControl_hook, (uintptr_t*)&CPed__ProcessControl);
+	CPatch::InlineHook(g_libGTASA, 0x45A280, &CPed__ProcessControl_hook, &CPed__ProcessControl);
+
 	// all vehicles ProcessControl
-	InstallMethodHook(g_libGTASA+0x5CCA1C, (uintptr_t)AllVehicles__ProcessControl_hook); // CAutomobile::ProcessControl
-	InstallMethodHook(g_libGTASA+0x5CCD74, (uintptr_t)AllVehicles__ProcessControl_hook); // CBoat::ProcessControl
-	InstallMethodHook(g_libGTASA+0x5CCB44, (uintptr_t)AllVehicles__ProcessControl_hook); // CBike::ProcessControl
-	InstallMethodHook(g_libGTASA+0x5CD0DC, (uintptr_t)AllVehicles__ProcessControl_hook); // CPlane::ProcessControl
-	InstallMethodHook(g_libGTASA+0x5CCE8C, (uintptr_t)AllVehicles__ProcessControl_hook); // CHeli::ProcessControl
-	InstallMethodHook(g_libGTASA+0x5CCC5C, (uintptr_t)AllVehicles__ProcessControl_hook); // CBmx::ProcessControl
-	InstallMethodHook(g_libGTASA+0x5CCFB4, (uintptr_t)AllVehicles__ProcessControl_hook); // CMonsterTruck::ProcessControl
-	InstallMethodHook(g_libGTASA+0x5CD204, (uintptr_t)AllVehicles__ProcessControl_hook); // CQuadBike::ProcessControl
-	InstallMethodHook(g_libGTASA+0x5CD454, (uintptr_t)AllVehicles__ProcessControl_hook); // CTrain::ProcessControl
-	InstallMethodHook(g_libGTASA + 0x005C8610, (uintptr_t)TaskUseGun);
-	//InstallMethodHook(g_libGTASA + 0x005CC1D4, (uintptr_t)TaskProcess);
+	CPatch::MethodHook(g_libGTASA, 0x5CCA1C, &AllVehicles__ProcessControl_hook); // CAutomobile::ProcessControl
+	CPatch::MethodHook(g_libGTASA, 0x5CCD74, &AllVehicles__ProcessControl_hook); // CBoat::ProcessControl
+	CPatch::MethodHook(g_libGTASA, 0x5CCB44, &AllVehicles__ProcessControl_hook); // CBike::ProcessControl
+	CPatch::MethodHook(g_libGTASA, 0x5CD0DC, &AllVehicles__ProcessControl_hook); // CPlane::ProcessControl
+	CPatch::MethodHook(g_libGTASA, 0x5CCE8C, &AllVehicles__ProcessControl_hook); // CHeli::ProcessControl
+	CPatch::MethodHook(g_libGTASA, 0x5CCC5C, &AllVehicles__ProcessControl_hook); // CBmx::ProcessControl
+	CPatch::MethodHook(g_libGTASA, 0x5CCFB4, &AllVehicles__ProcessControl_hook); // CMonsterTruck::ProcessControl
+	CPatch::MethodHook(g_libGTASA, 0x5CD204, &AllVehicles__ProcessControl_hook); // CQuadBike::ProcessControl
+	CPatch::MethodHook(g_libGTASA, 0x5CD454, &AllVehicles__ProcessControl_hook); // CTrain::ProcessControl
+	CPatch::MethodHook(g_libGTASA, 0x005C8610, &TaskUseGun);
+	CPatch::MethodHook(g_libGTASA, 0x5CC1D4, &CPad__TaskProcess);
 
 	// lr/ud (onfoot)
-	SetUpHook(g_libGTASA+0x39D08C, (uintptr_t)CPad__GetPedWalkLeftRight_hook, (uintptr_t*)&CPad__GetPedWalkLeftRight);
-	SetUpHook(g_libGTASA+0x39D110, (uintptr_t)CPad__GetPedWalkUpDown_hook, (uintptr_t*)&CPad__GetPedWalkUpDown);
+	CPatch::InlineHook(g_libGTASA, 0x39D08C, &CPad__GetPedWalkLeftRight_hook, &CPad__GetPedWalkLeftRight);
+	CPatch::InlineHook(g_libGTASA, 0x39D110, &CPad__GetPedWalkUpDown_hook, &CPad__GetPedWalkUpDown);
 
 	// look
-	SetUpHook(g_libGTASA+0x0039D194, (uintptr_t)CPad__GetLookLeft_hook, (uintptr_t*)&CPad__GetLookLeft);
-	SetUpHook(g_libGTASA+0x0039D26C, (uintptr_t)CPad__GetLookRight_hook, (uintptr_t*)&CPad__GetLookRight);
+//	SetUpHook(g_libGTASA+0x0039D194, (uintptr_t)CPad__GetLookLeft_hook, (uintptr_t*)&CPad__GetLookLeft);
+//	SetUpHook(g_libGTASA+0x0039D26C, (uintptr_t)CPad__GetLookRight_hook, (uintptr_t*)&CPad__GetLookRight);
 
-	SetUpHook(g_libGTASA+0x0039D344, (uintptr_t)CPad__GetTurretLeft_hook, (uintptr_t*)&CPad__GetTurretLeft);
-	SetUpHook(g_libGTASA+0x0039D368, (uintptr_t)CPad__GetTurretRight_hook, (uintptr_t*)&CPad__GetTurretRight);
+	CPatch::InlineHook(g_libGTASA, 0x0039D344, &CPad__GetTurretLeft_hook, &CPad__GetTurretLeft);
+	CPatch::InlineHook(g_libGTASA, 0x0039D368, &CPad__GetTurretRight_hook, &CPad__GetTurretRight);
 
 //	SetUpHook(g_libGTASA+0x0039E64C, (uintptr_t)CPad__ShiftTargetLeftJustDown_hook, (uintptr_t*)&CPad__ShiftTargetLeftJustDown);
 //	SetUpHook(g_libGTASA+0x0039E6CC, (uintptr_t)CPad__ShiftTargetRightJustDown_hook, (uintptr_t*)&CPad__ShiftTargetRightJustDown);
@@ -834,42 +836,42 @@ void HookCPad()
 	//SetUpHook(g_libGTASA + 0x)
 
 	// sprint/jump stuff
-	SetUpHook(g_libGTASA+0x0039EB50, (uintptr_t)CPad__SprintJustDown_hook, (uintptr_t*)&CPad__SprintJustDown);// ускоренныйбег
+	CPatch::InlineHook(g_libGTASA, 0x0039EB50, &CPad__SprintJustDown_hook, &CPad__SprintJustDown);// ускоренныйбег
 
 
-	SetUpHook(g_libGTASA+0x39EAA4, (uintptr_t)CPad__GetSprint_hook, (uintptr_t*)&CPad__GetSprint);
-	SetUpHook(g_libGTASA+0x39E9B8, (uintptr_t)CPad__JumpJustDown_hook, (uintptr_t*)&CPad__JumpJustDown);
-	SetUpHook(g_libGTASA+0x39E96C, (uintptr_t)CPad__GetJump_hook, (uintptr_t*)&CPad__GetJump);
-	SetUpHook(g_libGTASA+0x39E824, (uintptr_t)CPad__GetAutoClimb_hook, (uintptr_t*)&CPad__GetAutoClimb);
-	SetUpHook(g_libGTASA+0x39E8C0, (uintptr_t)CPad__GetAbortClimb_hook, (uintptr_t*)&CPad__GetAbortClimb);
+	CPatch::InlineHook(g_libGTASA, 0x39EAA4, &CPad__GetSprint_hook, &CPad__GetSprint);
+	CPatch::InlineHook(g_libGTASA, 0x39E9B8, &CPad__JumpJustDown_hook, &CPad__JumpJustDown);
+	CPatch::InlineHook(g_libGTASA, 0x39E96C, &CPad__GetJump_hook, &CPad__GetJump);
+	CPatch::InlineHook(g_libGTASA, 0x39E824, &CPad__GetAutoClimb_hook, &CPad__GetAutoClimb);
+	CPatch::InlineHook(g_libGTASA, 0x39E8C0, &CPad__GetAbortClimb_hook, &CPad__GetAbortClimb);
 	//SetUpHook(g_libGTASA+0x0037440C, (uintptr_t)CCamera_IsTargetingActive_hook, (uintptr_t*)&CCamera_IsTargetingActive);
 
 	// swimm
-	SetUpHook(g_libGTASA+0x39EA0C, (uintptr_t)CPad__DiveJustDown_hook, (uintptr_t*)&CPad__DiveJustDown);
-	SetUpHook(g_libGTASA+0x39EA4C, (uintptr_t)CPad__SwimJumpJustDown_hook, (uintptr_t*)&CPad__SwimJumpJustDown);
+	CPatch::InlineHook(g_libGTASA, 0x39EA0C, &CPad__DiveJustDown_hook, (uintptr_t*)&CPad__DiveJustDown);
+	CPatch::InlineHook(g_libGTASA, 0x39EA4C, &CPad__SwimJumpJustDown_hook, (uintptr_t*)&CPad__SwimJumpJustDown);
 
-	SetUpHook(g_libGTASA+0x39DD9C, (uintptr_t)CPad__MeleeAttackJustDown_hook, (uintptr_t*)&CPad__MeleeAttackJustDown);
+	CPatch::InlineHook(g_libGTASA, 0x39DD9C, &CPad__MeleeAttackJustDown_hook, (uintptr_t*)&CPad__MeleeAttackJustDown);
 
-	SetUpHook(g_libGTASA + 0x0039E038, (uintptr_t)CPad__GetWeapon_hook, (uintptr_t*)&CPad__GetWeapon);
-	SetUpHook(g_libGTASA + 0x0039E498, (uintptr_t)CPad__GetEnterTargeting_hook, (uintptr_t*)&CPad__GetEnterTargeting);
-	SetUpHook(g_libGTASA + 0x0039E418, (uintptr_t)GetTarget_hook, (uintptr_t*)& GetTarget);
-	SetUpHook(g_libGTASA + 0x004C1748, (uintptr_t)ProcessPlayerWeapon_hook, (uintptr_t*)& ProcessPlayerWeapon);
+	CPatch::InlineHook(g_libGTASA, 0x0039E038, &CPad__GetWeapon_hook, &CPad__GetWeapon);
+	CPatch::InlineHook(g_libGTASA, 0x0039E498, &CPad__GetEnterTargeting_hook, &CPad__GetEnterTargeting);
+	CPatch::InlineHook(g_libGTASA, 0x0039E418, &GetTarget_hook, &GetTarget);
+	CPatch::InlineHook(g_libGTASA, 0x004C1748, &ProcessPlayerWeapon_hook, &ProcessPlayerWeapon);
 
 	//SetUpHook(g_libGTASA+0x39E7B0, (uintptr_t)CPad__DuckJustDown_hook, (uintptr_t*)&CPad__DuckJustDown);
-	SetUpHook(g_libGTASA+0x39E7B0, (uintptr_t)CPad__DuckJustDown_hook, (uintptr_t*)&CPad__DuckJustDown);
+	CPatch::InlineHook(g_libGTASA, 0x39E7B0, &CPad__DuckJustDown_hook, &CPad__DuckJustDown);
 
 
 	// steering lr/ud (incar)
-	SetUpHook(g_libGTASA+0x39C9E4, (uintptr_t)CPad__GetSteeringLeftRight_hook, (uintptr_t*)&CPad__GetSteeringLeftRight);
-	SetUpHook(g_libGTASA+0x39CBF0, (uintptr_t)CPad__GetSteeringUpDown_hook, (uintptr_t*)&CPad__GetSteeringUpDown);
+	CPatch::InlineHook(g_libGTASA, 0x39C9E4, &CPad__GetSteeringLeftRight_hook, &CPad__GetSteeringLeftRight);
+	CPatch::InlineHook(g_libGTASA, 0x39CBF0, &CPad__GetSteeringUpDown_hook, &CPad__GetSteeringUpDown);
 
-	SetUpHook(g_libGTASA+0x39DB7C, (uintptr_t)CPad__GetAccelerate_hook, (uintptr_t*)&CPad__GetAccelerate);
-	SetUpHook(g_libGTASA+0x39D938, (uintptr_t)CPad__GetBrake_hook, (uintptr_t*)&CPad__GetBrake);
-	SetUpHook(g_libGTASA+0x39D754, (uintptr_t)CPad__GetHandBrake_hook, (uintptr_t*)&CPad__GetHandBrake);
-	SetUpHook(g_libGTASA+0x39D4C8, (uintptr_t)CPad__GetHorn_hook, (uintptr_t*)&CPad__GetHorn);
-	SetUpHook(g_libGTASA+0x00510B08, (uintptr_t)CVehicle__UsesSiren_hook, (uintptr_t*)&CVehicle__UsesSiren);
+	CPatch::InlineHook(g_libGTASA, 0x39DB7C, &CPad__GetAccelerate_hook, &CPad__GetAccelerate);
+	CPatch::InlineHook(g_libGTASA, 0x39D938, &CPad__GetBrake_hook, &CPad__GetBrake);
+	CPatch::InlineHook(g_libGTASA, 0x39D754, &CPad__GetHandBrake_hook, &CPad__GetHandBrake);
+	CPatch::InlineHook(g_libGTASA, 0x39D4C8, &CPad__GetHorn_hook, &CPad__GetHorn);
+	CPatch::InlineHook(g_libGTASA, 0x00510B08, &CVehicle__UsesSiren_hook, &CVehicle__UsesSiren);
 
-	SetUpHook(g_libGTASA+0x39DD30, (uintptr_t)CPad__CycleWeaponRightJustDown_hook, (uintptr_t*)&CPad__CycleWeaponRightJustDown);
+	CPatch::InlineHook(g_libGTASA, 0x39DD30, &CPad__CycleWeaponRightJustDown_hook, &CPad__CycleWeaponRightJustDown);
 
 	//SetUpHook(g_libGTASA+0x00351C40, (uintptr_t)IsVehicleRadioActive_hook, (uintptr_t*)&IsVehicleRadioActive);
 

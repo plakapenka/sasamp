@@ -155,7 +155,7 @@ void CFirstPersonCamera::ProcessCameraInVeh(uintptr_t pCam, CPlayerPed* pPed, CV
 		
 	}
 }
-#include "..//util/armhook.h"
+
 void CFirstPersonCamera::SetEnabled(bool bEnabled)
 {
 	m_bEnabled = bEnabled;

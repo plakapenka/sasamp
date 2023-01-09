@@ -1,7 +1,6 @@
 #include "CCustomPlateManager.h"
 
 #include "../main.h"
-#include "../util/armhook.h"
 #include "RW/RenderWare.h"
 #include "game.h"
 #include "..//net/netgame.h"

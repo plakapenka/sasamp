@@ -2,7 +2,6 @@
 #include "../game/game.h"
 #include "netgame.h"
 
-#include "../util/armhook.h"
 #include "../game/scripting.h"
 
 #include "../game/common.h"
@@ -183,6 +182,7 @@ extern bool tabToggle;
 #include "java_systems/CEditobject.h"
 #include "java_systems/CCasino.h"
 #include "java_systems/CAucContainer.h"
+#include "util/patch.h"
 
 bool CLocalPlayer::Process()
 {
@@ -696,7 +696,7 @@ bool CLocalPlayer::Spawn()
 	pGame->DisableTrainTraffic();
 
 	// CCamera::Fade
-	WriteMemory(g_libGTASA+0x36EA2C, (uintptr_t)"\x70\x47", 2); // bx lr
+	CPatch::WriteMemory(g_libGTASA+0x36EA2C, "\x70\x47", 2); // bx lr
 
 	m_pPlayerPed->TeleportTo(m_SpawnInfo.vecPos.X,
 		m_SpawnInfo.vecPos.Y, (m_SpawnInfo.vecPos.Z + 0.5f));

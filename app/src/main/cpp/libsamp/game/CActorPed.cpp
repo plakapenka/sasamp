@@ -1,7 +1,6 @@
 #include "../main.h"
 #include "game.h"
 #include "../net/netgame.h"
-#include "../util/armhook.h"
 #include "common.h"
 
 #include "..//CDebugInfo.h"

@@ -2,7 +2,6 @@
 
 #include "../main.h"
 #include "game.h"
-#include "../util/armhook.h"
 
 bool CRenderTarget::InitialiseScene()
 {

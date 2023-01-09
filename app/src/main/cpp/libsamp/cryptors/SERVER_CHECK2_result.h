@@ -1,5 +1,4 @@
 #include <stdint.h>
-#include "../util/armhook.h"
 
 const uint8_t g_Start_SERVER_CHECK2 [] = { 0x82, 0xB0,
 									0x02, 0xB0,

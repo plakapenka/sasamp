@@ -12,7 +12,6 @@
 #include "keyboard.h"
 #include "CSettings.h"
 #include "chatwindow.h"
-#include "util/armhook.h"
 #include "util/CJavaWrapper.h"
 
 bool CEditobject::isToggle = false;

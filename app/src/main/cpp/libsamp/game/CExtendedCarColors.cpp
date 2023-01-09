@@ -1,8 +1,8 @@
 #include "../main.h"
 #include "game.h"
-#include "../util/armhook.h"
 
 #include "CExtendedCarColors.h"
+#include "util/patch.h"
 
 CRGBA CExtendedCarColors::ms_vehicleColourTable[256];
 
@@ -62,7 +62,7 @@ void CExtendedCarColors::ApplyPatches_level0()
 		DWORD2RGBA(VehicleColoursTableRGBA[i], ms_vehicleColourTable[i]);
 	}
 
-	UnFuck(g_libGTASA + 0x005CF418);
+	CPatch::UnFuck(g_libGTASA + 0x005CF418);
 	*(CRGBA * *)(g_libGTASA + 0x005CF418) = &ms_vehicleColourTable[0];
 
 	Log("Applied car cols patch");

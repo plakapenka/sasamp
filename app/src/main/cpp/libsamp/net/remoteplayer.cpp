@@ -110,16 +110,10 @@ void CRemotePlayer::Process()
 			UpdateOnFootTargetPosition();
 		}
 		else if(GetState() == PLAYER_STATE_DRIVER &&
-			m_byteUpdateFromNetwork == UPDATE_TYPE_INCAR && m_pPlayerPed->IsInVehicle())
+				m_byteUpdateFromNetwork == UPDATE_TYPE_INCAR && m_pPlayerPed->IsInVehicle())
 		{
-			if (!m_pCurrentVehicle)
-			{
+			if(!m_pCurrentVehicle || !GamePool_Vehicle_GetAt(m_pCurrentVehicle->m_dwGTAId))
 				return;
-			}
-			if (!GamePool_Vehicle_GetAt((int)m_pCurrentVehicle->m_dwGTAId))
-			{
-				return;
-			}
 
 			m_icSync.quat.Normalize();
 			m_icSync.quat.GetMatrix(&matVehicle);
@@ -131,46 +125,22 @@ void CRemotePlayer::Process()
 				m_pCurrentVehicle->GetModelIndex() == TRAIN_FREIGHT_LOCO ||
 				m_pCurrentVehicle->GetModelIndex() == TRAIN_TRAM)
 			{
+				//UpdateTrainDriverMatrixAndSpeed(&matVehicle, &m_icSync.vecMoveSpeed, m_icSync.fTrainSpeed);
 			}
 			else
 			{
 				UpdateInCarMatrixAndSpeed(&matVehicle, &m_icSync.vecPos, &m_icSync.vecMoveSpeed);
 				UpdateInCarTargetPosition();
 			}
-			if (m_icSync.fCarHealth <= 300.0f)
-			{
-				m_icSync.fCarHealth = 300.0f;
-			}
+
 			m_pCurrentVehicle->SetHealth(m_icSync.fCarHealth);
 
 			// TRAILER AUTOMATIC ATTACHMENT AS THEY MOVE INTO IT
-			if (m_pCurrentVehicle->GetDistanceFromLocalPlayerPed() < 200.0f)
+			if((m_icSync.TrailerID < 0 || m_icSync.TrailerID >= MAX_VEHICLES) &&
+			   m_pCurrentVehicle->GetTrailer())
 			{
-				if (m_icSync.TrailerID && m_icSync.TrailerID < MAX_VEHICLES)
-				{
-					CVehicle* pRealTrailer = m_pCurrentVehicle->GetTrailer();
-					CVehicle* pTrailerVehicle = pNetGame->GetVehiclePool()->GetAt(m_icSync.TrailerID);
-					if (!pRealTrailer) 
-					{
-						if (pTrailerVehicle) 
-						{
-							m_pCurrentVehicle->SetTrailer(pTrailerVehicle);
-							m_pCurrentVehicle->AttachTrailer();
-						}
-					}
-				}
-				else
-				{
-					if (m_pCurrentVehicle->GetTrailer()) 
-					{
-						m_pCurrentVehicle->DetachTrailer();
-						m_pCurrentVehicle->SetTrailer(nullptr);
-					}
-				}
-			}
-			else
-			{
-				m_pCurrentVehicle->SetTrailer(nullptr);
+				m_pCurrentVehicle->DetachTrailer();
+				m_pCurrentVehicle->SetTrailer(NULL);
 			}
 		}
 		else if(GetState() == PLAYER_STATE_PASSENGER && 
