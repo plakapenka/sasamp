@@ -2,6 +2,7 @@
 #include "RW/RenderWare.h"
 #include <sstream>
 #include "game.h"
+
 #include "../net/netgame.h"
 #include "../gui/gui.h"
 #include "../util/CJavaWrapper.h"
@@ -307,14 +308,29 @@ void MenuItem_add_hook(int r0, uintptr_t r1)
 void (*InitialiseRenderWare)();
 void InitialiseRenderWare_hook()
 {
-	Log("Loading \"samp\" cd..");
-	InitialiseRenderWare();
-	// TextureDatabaseRuntime::Load()
-	(( void (*)(const char*, int, int))(g_libGTASA+0x1BF244+1))("samp", 0, 5);
-	 //(( void (*)(const char*, int, int))(g_libGTASA+0x1BF244+1))("custom", 0, 5);
-	//((void (*)(const char*, int, int))(g_libGTASA + 0x1BF244 + 1))("gui", 0, 5);
+	Log("InitialiseRenderWare ..");
 
-	//return InitialiseRenderWare(); // спорно
+//    CPatch::NOP(g_libGTASA + 0x40C54E, 2);
+//	CPatch::NOP(g_libGTASA + 0x40C55A, 2);
+//	CPatch::NOP(g_libGTASA + 0x40C566, 2);
+//	CPatch::NOP(g_libGTASA + 0x40C572, 2);
+	CPatch::NOP(g_libGTASA + 0x40C57E, 2); // cutscene
+	CPatch::NOP(g_libGTASA + 0x40C592, 2); // player
+//	CPatch::NOP(g_libGTASA + 0x40C59E, 2);
+
+	InitialiseRenderWare();
+	//((void (*)())(g_libGTASA + 0x0055D678 + 1))(); // CVisibilityPlugins::Initialise
+
+//	TextureDatabaseRuntime::Load("mobile", 0, TextureDatabaseRuntime::TextureDatabaseFormat::DF_DXT);
+//	TextureDatabaseRuntime::Load("txd", 0, TextureDatabaseRuntime::TextureDatabaseFormat::DF_DXT);
+//	TextureDatabaseRuntime::Load("gta3", 0, TextureDatabaseRuntime::TextureDatabaseFormat::DF_DXT);
+//	TextureDatabaseRuntime::Load("gta_int", 0, TextureDatabaseRuntime::TextureDatabaseFormat::DF_DXT);
+//	//TextureDatabaseRuntime::Load("cutscene", 0, TextureDatabaseRuntime::TextureDatabaseFormat::DF_DXT);
+//	//TextureDatabaseRuntime::Load("player", 0, TextureDatabaseRuntime::TextureDatabaseFormat::DF_DXT);
+	//TextureDatabaseRuntime::Load("menu", 0, TextureDatabaseRuntime::TextureDatabaseFormat::DF_DXT);
+	TextureDatabaseRuntime::Load("samp", 0, TextureDatabaseRuntime::TextureDatabaseFormat::DF_DXT);
+//	TextureDatabaseRuntime::Load("cars", 0, 5);
+
 }
 
 /* ====================================================== */
@@ -401,6 +417,12 @@ void TouchEvent_hook(int type, int num, int posX, int posY)
 
 /* ====================================================== */
 
+unsigned int (*TextureDatabaseRuntime__Load)(uintptr_t *thiz, const char *a2, const char *a3, bool a4);
+unsigned int TextureDatabaseRuntime__Load_hook(uintptr_t *thiz, const char *a2, const char *a3, bool a4)
+{
+	Log("TextureDatabaseRuntime__Load = %s, %s, %s, %d", (char*)thiz, a2, a3, a4);
+	return TextureDatabaseRuntime__Load(thiz, a2, a3, a4);
+}
 void (*CStreaming_InitImageList)();
 void CStreaming_InitImageList_hook()
 {
@@ -422,15 +444,11 @@ void CStreaming_InitImageList_hook()
 	ms_files[336] = 0;
 	*(uint32_t*)&ms_files[380] = 0;
 
-	(( uint32_t (*)(char*, uint32_t))(g_libGTASA+0x28E7B0+1))("TEXDB\\GTA3.IMG", 1); // CStreaming::AddImageToList
-
-//	(( uint32_t (*)(char*, uint32_t))(g_libGTASA+0x28E7B0+1))("TEXDB\\GTA_INT.IMG", 1); // CStreaming::AddImageToList
-	(( uint32_t (*)(char*, uint32_t))(g_libGTASA+0x28E7B0+1))("TEXDB\\SAMP.IMG", 1); // CStreaming::AddImageToList
-	(( uint32_t (*)(char*, uint32_t))(g_libGTASA+0x28E7B0+1))("TEXDB\\SAMPCOL.IMG", 1); // CStreaming::AddImageToList
-
-	//((uint32_t(*)(char*, uint32_t))(g_libGTASA + 0x28E7B0 + 1))("TEXDB\\ARH1.IMG", 1); // CStreaming::AddImageToList
-	//((uint32_t(*)(char*, uint32_t))(g_libGTASA + 0x28E7B0 + 1))("TEXDB\\ARH2.IMG", 1); // CStreaming::AddImageToList
-	//((uint32_t(*)(char*, uint32_t))(g_libGTASA + 0x28E7B0 + 1))("TEXDB\\ARH3.IMG", 1); // CStreaming::AddImageToList
+	CStreaming::AddImageToList("TEXDB\\GTA3.IMG", true);
+	CStreaming::AddImageToList("TEXDB\\SKINS.IMG", true);
+    CStreaming::AddImageToList("TEXDB\\CARS.IMG", true);
+	CStreaming::AddImageToList("TEXDB\\SAMP.IMG", true);
+	CStreaming::AddImageToList("TEXDB\\SAMPCOL.IMG", true);
 }
 
 /* ====================================================== */
@@ -842,12 +860,6 @@ void CTimer__EndUserPause_hook()
 	*(uint8_t*)(g_libGTASA + 0x008C9BA3) = 0;
 }
 
-void (*RQ_Command_rqSetAlphaTest)(char**);
-void RQ_Command_rqSetAlphaTest_hook(char** a1)
-{
-	return;
-}
-
 void (*TextureDatabase__LoadThumbs)(int a1, int a2);
 void TextureDatabase__LoadThumbs_hook(int a1, int a2)
 {// only dxt.tmb
@@ -1147,10 +1159,27 @@ uintptr_t GetMeshPriority_hook(uintptr_t rpMesh)
 	return GetMeshPriority(rpMesh);
 }
 
+int (*CTextureDatabaseRuntime__GetEntry)(unsigned int a1, const char *a2, bool *a3, int a4);
+int CTextureDatabaseRuntime__GetEntry_hook(unsigned int a1, const char *a2, bool *a3, int a4)
+{
+	//Log("GetEntry = %s", (char*)a1);
+	int result; // r0
+
+	if (a1)
+		result = CTextureDatabaseRuntime__GetEntry(a1, a2, a3, a4);
+	else
+		result = -1;
+	return result;
+}
+
 void InstallSpecialHooks()
 {
 	Log("InstallSpecialHooks");
 
+	// texture
+	CPatch::InlineHook(g_libGTASA, 0x1bdc3c, &CTextureDatabaseRuntime__GetEntry_hook, &CTextureDatabaseRuntime__GetEntry);
+
+	//CPatch::InlineHook(g_libGTASA, 0x0055B968, &TextureDatabaseRuntime__Load_hook, (uintptr_t*)&TextureDatabaseRuntime__Load);
 	//IMG
 	CPatch::InlineHook(g_libGTASA, 0x28E83C, &CStreaming_InitImageList_hook, (uintptr_t*)&CStreaming_InitImageList);
 
@@ -1189,15 +1218,11 @@ void InstallSpecialHooks()
 	CPatch::NOP(g_libGTASA + 0x00398972, 2); // get out fucking roadblocks
 
 	//crash
-    if (!*(uintptr_t *)(g_libGTASA + 0x61B298))
-    {
-        uintptr_t test = ((uintptr_t(*)(const char *))(g_libGTASA + 0x00179A20))("glAlphaFuncQCOM");
-        if (!test)
-        {
-			CPatch::NOP(g_libGTASA + 0x001A6164, 4);
-			CPatch::InlineHook(g_libGTASA, 0x001A6164, &RQ_Command_rqSetAlphaTest_hook, &RQ_Command_rqSetAlphaTest);
-        }
-    }
+	if ( !*(uintptr_t *)(g_libGTASA + 0x61B298) && !((int (*)(const char *))(g_libGTASA + 0x179A20))("glAlphaFuncQCOM") )
+	{
+		CPatch::NOP(g_libGTASA + 0x1A6164, 4);
+		CPatch::WriteMemory(g_libGTASA + 0x1A6164, "\x70\x47", 2);
+	}
 
 	//pvr
 	CPatch::UnFuck(g_libGTASA + 0x00573670);
@@ -1910,11 +1935,10 @@ static bool ShouldBeProcessedButton(int result)
 	return 1;
 }
 
-int (*CWidgetButton__Draw)(int thiz);
-int CWidgetButton__Draw_hook(int thiz)
+int (*CWidgetButton__Draw)(uintptr_t thiz);
+int CWidgetButton__Draw_hook(uintptr_t thiz)
 {
-	if(!pHud)return 0;
-	if(!pHud->isHudToggle)return 0;
+	if(!pHud || !pHud->isHudToggle)return 0;
 
 	return CWidgetButton__Draw(thiz);
 }
@@ -3119,18 +3143,6 @@ int MobileSettings__GetMaxResWidth_hook()
 	return (int)( ((int(*)())(g_libGTASA + 0x0023816C + 1))()/1.1 );
 }
 
-int (*CTextureDatabaseRuntime__GetEntry)(unsigned int a1, const char *a2, bool *a3, int a4);
-int CTextureDatabaseRuntime__GetEntry_hook(unsigned int a1, const char *a2, bool *a3, int a4)
-{
-	int result; // r0
-
-	if (a1)
-		result = CTextureDatabaseRuntime__GetEntry(a1, a2, a3, a4);
-	else
-		result = -1;
-	return result;
-}
-
 int (*CCollision__ProcessLineTriangle)(float *a1, int a2, uint16_t *a3, int16_t *a4, int a5, float *a6, int a7);
 int CCollision__ProcessLineTriangle_hook(float *a1, int a2, uint16_t *a3, int16_t *a4, int a5, float *a6, int a7)
 {
@@ -3533,8 +3545,8 @@ void InstallHooks()
 
 	CPatch::InlineHook(g_libGTASA, 0x56668C, &CWeapon__FireSniper_hook, &CWeapon__FireSniper);
 	// audio
-	CPatch::InlineHook(g_libGTASA, 0x368850, &CAudioEngine__Service_hook, &CAudioEngine__Service);
-	CPatch::InlineHook(g_libGTASA, 0x35AC44, &CAEVehicleAudioEntity__GetAccelAndBrake_hook, &CAEVehicleAudioEntity__GetAccelAndBrake);
+	//CPatch::InlineHook(g_libGTASA, 0x368850, &CAudioEngine__Service_hook, &CAudioEngine__Service);
+	//CPatch::InlineHook(g_libGTASA, 0x35AC44, &CAEVehicleAudioEntity__GetAccelAndBrake_hook, &CAEVehicleAudioEntity__GetAccelAndBrake);
 
 	CPatch::InlineHook(g_libGTASA, 0x29947C, &CCollision__ProcessVerticalLine_hook, &CCollision__ProcessVerticalLine);
 	CPatch::InlineHook(g_libGTASA, 0x5669D8, &CWeapon__GenerateDamageEvent_hook, &CWeapon__GenerateDamageEvent);
@@ -3552,7 +3564,6 @@ void InstallHooks()
 	CPatch::InlineHook(g_libGTASA, 0x39AEF4, &Render2dStuff_hook, &Render2dStuff);
 	CPatch::InlineHook(g_libGTASA, 0x39B098, &Render2dStuffAfterFade_hook, &Render2dStuffAfterFade);
 	CPatch::InlineHook(g_libGTASA, 0x239D5C, &TouchEvent_hook, &TouchEvent);
-
     //
 
 	CPatch::InlineHook(g_libGTASA, 0x336690, &CModelInfo_AddPedModel_hook, &CModelInfo_AddPedModel); // hook is dangerous
@@ -3603,7 +3614,7 @@ void InstallHooks()
 	//SetUpHook(g_libGTASA + 0x0027548C, (DWORD)CWidgetButtonAttack_hook, (DWORD*)&CWidgetButtonAttack);
 	CPatch::InlineHook(g_libGTASA, 0x00274AB4, &CWidgetButton__Update_hook, &CWidgetButton__Update);
 
-	CPatch::InlineHook(g_libGTASA, 0x00274748, &CWidgetButton__Draw_hook, &CWidgetButton__Draw);
+	CPatch::SetUpHook(g_libGTASA + 0x00274748, (uintptr_t)CWidgetButton__Draw_hook, (uintptr_t*)&CWidgetButton__Draw);
 	CPatch::InlineHook(g_libGTASA, 0x00274218, &CWidgetButton__IsTouched_hook, &CWidgetButton__IsTouched);
 	//SetUpHook(g_libGTASA + 0x0027455C, (uintptr_t)CWidget__IsTouched_hook, (uintptr_t*)& CWidget__IsTouched);
 
@@ -3671,7 +3682,6 @@ void InstallHooks()
 	CPatch::InlineHook(g_libGTASA, 0x1BA580, &RwResourcesFreeResEntry_hook, &RwResourcesFreeResEntry);
 	CPatch::InlineHook(g_libGTASA, 0x194B20, &emu_ArraysGetID_hook, &emu_ArraysGetID);
 	CPatch::InlineHook(g_libGTASA, 0x50C5F8, &SetCompAlphaCB_hook, &SetCompAlphaCB);
-	CPatch::InlineHook(g_libGTASA, 0x1bdc3c, &CTextureDatabaseRuntime__GetEntry_hook, &CTextureDatabaseRuntime__GetEntry);
 
 	//================================
 	// ================== plaka ======

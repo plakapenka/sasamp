@@ -30,6 +30,8 @@
 #include "CAdjustableHudScale.h"
 #include "CFirstPersonCamera.h"
 #include "CSnow.h"
+#include "CStreaming.h"
+#include "TextureDatabaseRuntime.h"
 
 class CGame
 {

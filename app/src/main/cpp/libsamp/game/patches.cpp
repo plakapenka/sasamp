@@ -173,6 +173,9 @@ void ApplyPatches_level0()
 	//WriteMemory(g_libGTASA + 0x001A7EB6, (uintptr_t)"\x00\x23", 2); // MOVS            R3, #0
 	//WriteMemory(g_libGTASA + 0x001A7ED2, (uintptr_t)"\x00\x20", 2); // MOVS				R0, #0
 
+	CPatch::NOP(g_libGTASA + 0x00408706, 2); // CClothes::Init
+	CPatch::RET(g_libGTASA + 0x003F1030); // CClothes::RebuildPlayer
+
 	WriteUnVerified0();
 }
 
