@@ -494,35 +494,15 @@ void CRemotePlayer::HandleVehicleEntryExit()
 
 	MATRIX4X4 mat;
 
-//	if(m_pPlayerPed->IsInVehicle() && m_pCurrentVehicle &&  m_pPlayerPed->GetCurrentVehicleID() != m_pCurrentVehicle->m_pVehicle) {
-//		//Log("da");
-//		CVehicle *pVehicle = pVehiclePool->GetAt(m_VehicleID);
-//		if (pVehicle) {
-//			m_pPlayerPed->PutDirectlyInVehicle(pVehicle, m_byteSeatID);
-//		}
-//	}
-
-
 	if( GetState() == PLAYER_STATE_DRIVER || GetState() == PLAYER_STATE_PASSENGER )
 	{
 		if(!m_pPlayerPed->IsInVehicle()) {
 			CVehicle *pVehicle = pVehiclePool->GetAt(m_VehicleID);
 			if(pVehicle) {
-				Log("log from process = %d", this->m_PlayerID);
 				m_pPlayerPed->PutDirectlyInVehicle(pVehicle, m_byteSeatID);
 			}
 		}
 	}
-
-//	if(!m_pPlayerPed->IsInVehicle())
-//	{
-//		if(!m_pPlayerPed->IsInVehicle()) {
-//			CVehicle *pVehicle = pVehiclePool->GetAt(m_VehicleID);
-//			if(pVehicle) {
-//				m_pPlayerPed->PutDirectlyInVehicle(pVehicle, m_byteSeatID);
-//			}
-//		}
-//	}
 }
 void CRemotePlayer::EnterVehicle(VEHICLEID VehicleID, bool bPassenger)
 {
