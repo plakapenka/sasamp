@@ -96,6 +96,7 @@
 #define RPC_RESTORE_PASS   60
 #define RPC_SEND_BUFFER 	61
 #define RPC_SHOW_SALARY 	62
+#define RPC_ADMIN_RECON 	63
 
 // Packet 252
 #define RPC_TOGGLE_LOGIN (1)
@@ -232,6 +233,8 @@ public:
     void Packet_AucContainer(Packet *p);
 
 	void Packet_Salary(Packet *p);
+
+	void Packet_Admin_Recon(Packet *p);
 };
 
 extern CNetGame *pNetGame;

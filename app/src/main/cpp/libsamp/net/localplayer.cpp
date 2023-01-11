@@ -183,6 +183,7 @@ extern bool tabToggle;
 #include "java_systems/CCasino.h"
 #include "java_systems/CAucContainer.h"
 #include "util/patch.h"
+#include "java_systems/CAdminRecon.h"
 
 bool CLocalPlayer::Process()
 {
@@ -450,7 +451,7 @@ bool CLocalPlayer::Process()
 	if(pGame->isDialogActive || pGame->isCasinoDiceActive || tabToggle || pGame->isAutoShopActive
 	|| pGame->isCasinoWheelActive || !m_pPlayerPed || pGame->isRegistrationActive || pGame->isShopStoreActive ||
     pGame->isPreDeathActive || pInventory->isToggle || bFirstSpawn || CEditobject::isToggle || CCasino::isCasinoChipToggle
-	|| CAucContainer::isAucContainerShow)
+	|| CAucContainer::isAucContainerShow || CAdminRecon::bIsToggle)
 	{
 		needDrawableHud = false;
 	}

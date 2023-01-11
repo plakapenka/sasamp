@@ -535,6 +535,11 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			Packet_Salary(p);
 			break;
 		}
+		case RPC_ADMIN_RECON:
+		{
+			Packet_Admin_Recon(p);
+			break;
+		}
 		case RPC_MAFIA_WAR:
 		{
 			Packet_MAFIA_WAR(p);
@@ -624,7 +629,6 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 						}
 					}
 				}
-				Log("%d %d = %s", i, playerID[i], playerName[i]);
 			}
 			int money = pHud->localMoney;
 			g_pJavaWrapper->ShowCasinoDice(toggle, tableID, bet, bank, money, playerName[0], playerStat[0], playerName[1], playerStat[1], playerName[2], playerStat[2], playerName[3], playerStat[3], playerName[4], playerStat[4]);

@@ -60,6 +60,7 @@ import androidx.exifinterface.media.ExifInterface;
 
 import com.liverussia.cr.R;
 import com.liverussia.cr.core.DialogClientSettings;
+import com.liverussia.cr.gui.AdminRecon;
 import com.liverussia.cr.gui.AttachEdit;
 import com.liverussia.cr.gui.AucContainer;
 import com.liverussia.cr.gui.AutoShop;
@@ -997,6 +998,7 @@ public abstract class NvEventQueueActivity
 
         mChooseServer = new ChooseServer(this);
         new Furniture_factory(this);
+        new AdminRecon(this);
         // mInputManager = new InputManager(this);
         //mHeightProvider = new HeightProvider(this).init(mRootFrame).setHeightListener(this);
         mNotification = new Notification(this);
