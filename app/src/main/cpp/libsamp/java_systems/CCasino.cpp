@@ -17,7 +17,7 @@ extern CJavaWrapper *g_pJavaWrapper;
 extern CHUD *pHud;
 
 jobject jCasino;
-bool CCasino::isCasinoChipToggle = false;
+bool CCasino::bIsChipToggle = false;
 
 void CNetGame::Packet_CasinoChip(Packet* p)
 {
@@ -46,7 +46,7 @@ void CCasino::OpenChipBuySell(bool isSell, int balance){
 
     env->CallVoidMethod(jCasino, OpenChipBuySell, isSell, balance);
 
-    CCasino::isCasinoChipToggle = true;
+    CCasino::bIsChipToggle = true;
 }
 
 extern "C"
@@ -59,7 +59,7 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_Casino_ClickChipButton(JNIEnv *env, jobject thiz, jint button_id,
                                                   jlong input, jboolean sell_or_buy) {
-    CCasino::isCasinoChipToggle = false;
+    CCasino::bIsChipToggle = false;
 
     RakNet::BitStream bsSend;
     bsSend.Write((uint8_t)ID_CUSTOM_RPC);

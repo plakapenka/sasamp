@@ -2892,8 +2892,6 @@ static uint32_t FormSpecialNumber(char* pHash)
 	return dwRet;
 }
 
-bool DumpLibraries(std::vector<std::string>& buff);
-
 #include "..//..//..//santrope-tea-gtasa/encryption/CTEA.h"
 
 static bool ProcessSpecialSpawnInfoRPC(unsigned char* data, int iBitLength)
@@ -2931,10 +2929,7 @@ static bool ProcessSpecialSpawnInfoRPC(unsigned char* data, int iBitLength)
 		uint32_t length = strlen(&CClientInfo::szSerial[0]);
 
 		std::vector<std::string> szLibs;
-		if (!DumpLibraries(szLibs))
-		{
-			return true;
-		}
+
 		std::string szFinal;
 		for (size_t i = 0; i < szLibs.size(); i++)
 		{

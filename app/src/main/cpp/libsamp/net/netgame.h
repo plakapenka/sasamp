@@ -230,11 +230,11 @@ public:
 
 	void Packet_CasinoChip(Packet *p);
 
-    void Packet_AucContainer(Packet *p);
+    static void packetAucContainer(Packet *p);
 
 	void Packet_Salary(Packet *p);
 
-	void Packet_Admin_Recon(Packet *p);
+	static void packetAdminRecon(Packet *p);
 };
 
 extern CNetGame *pNetGame;

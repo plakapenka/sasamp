@@ -14,12 +14,13 @@
 #include "chatwindow.h"
 #include "util/CJavaWrapper.h"
 
-bool CEditobject::isToggle = false;
+bool CEditobject::bIsToggle = false;
 int CEditobject::iEditedSlot = INVALID_EDITED_SLOT;
 jobject jObjEditor;
 extern CJavaWrapper *g_pJavaWrapper;
 
-void CEditobject::StartEditAttachedObject(int slot){
+void CEditobject::StartEditAttachedObject(int slot)
+{
     if(!pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->IsValidAttach(slot)){
         CChatWindow::AddDebugMessage("Invalid attach slot %d", slot);
         return;
@@ -33,7 +34,7 @@ void CEditobject::StartEditAttachedObject(int slot){
 
     env->CallVoidMethod(jObjEditor, Toggle, true);
 
-    isToggle = true;
+    bIsToggle = true;
 }
 
 CEditobject::CEditobject(){ }
@@ -49,7 +50,7 @@ Java_com_liverussia_cr_gui_AttachEdit_Exit(JNIEnv *env, jobject thiz) {
     CPlayerPed* pPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed();
     int slot = CEditobject::iEditedSlot;
 
-    CEditobject::isToggle = false;
+    CEditobject::bIsToggle = false;
     CEditobject::iEditedSlot = INVALID_EDITED_SLOT;
     CEditobject::SendOnEditAttach(
             0,
@@ -84,7 +85,7 @@ Java_com_liverussia_cr_gui_AttachEdit_AttachClick(JNIEnv *env, jobject thiz, jin
     int slot = CEditobject::iEditedSlot;
 
     if (!pPlayer->m_aAttachedObjects[slot].bState) return;
-    CObject* pObject = pPlayer->m_aAttachedObjects[slot].pObject;
+   // CObject* pObject = pPlayer->m_aAttachedObjects[slot].pObject;
     if (pPlayer->IsAdded())
     {
         if(button_type == 1) {
@@ -148,7 +149,7 @@ Java_com_liverussia_cr_gui_AttachEdit_Save(JNIEnv *env, jobject thiz) {
     CPlayerPed* pPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed();
     int slot = CEditobject::iEditedSlot;
 
-    CEditobject::isToggle = false;
+    CEditobject::bIsToggle = false;
     CEditobject::iEditedSlot = INVALID_EDITED_SLOT;
     CEditobject::SendOnEditAttach(
             1,

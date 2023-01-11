@@ -193,47 +193,12 @@ void Render2dStuff_hook()
 	if (!bProcessedCleanStreamPool)
 		bProcessedCleanStreamPool = GetTickCount();
 
-	if (bGameStarted)
-	{
-		uintptr_t v1 = *(uintptr_t *)(g_libGTASA + 0x61B8C0); // TextureDatabaseRuntime::storedTexels
-		bool v2 = v1 > 0x45FFFFF;
-		if (v1 <= 0x45FFFFF)
-			v2 = *(uintptr_t *)(g_libGTASA + 0x67067C) > 0x45FFFFFu; // CStreaming::ms_memoryUsed
-		if (!v2)
-			return;
-
-		((void (*) ())(g_libGTASA + 0x293325))();// CStreaming::RemoveAllUnusedModels
-
-	}
-
 	uint32_t result = GetTickCount() - bProcessedCleanStreamPool;
 	if (result >= 5000)
 	{
-		bProcessedCleanStreamPool = GetTickCount();
-		result = 0x5EFFFFF;
-		uint32_t v5 = *(uintptr_t *)(g_libGTASA + 0x61B8C0); // TextureDatabaseRuntime::storedTexels
-		bool v6 = v5 > 0x5EFFFFF;
-		if (v5 <= 0x5EFFFFF)
-			v6 = *(uint32_t *)(g_libGTASA + 0x67067C) > 0x5EFFFFFu; // CStreaming::ms_memoryUsed
-		if (v6)
-
-			((void (*) ())(g_libGTASA + 0x293325))(); // CStreaming::RemoveAllUnusedModels
-
+		CStreaming::RemoveAllUnusedModels();
 	}
 
-
-//	if (pNetGame)
-//	{
-//		CLocalPlayer* pPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer();
-//		if (pPlayer)
-//		{
-//			if (pPlayer->GetPlayerPed())
-//			{
-//				pNetGame->GetTextDrawPool()->Draw();
-//			}
-//		}
-//	}
-	return;
 }
 
 void __fillArray()
@@ -310,26 +275,12 @@ void InitialiseRenderWare_hook()
 {
 	Log("InitialiseRenderWare ..");
 
-//    CPatch::NOP(g_libGTASA + 0x40C54E, 2);
-//	CPatch::NOP(g_libGTASA + 0x40C55A, 2);
-//	CPatch::NOP(g_libGTASA + 0x40C566, 2);
-//	CPatch::NOP(g_libGTASA + 0x40C572, 2);
 	CPatch::NOP(g_libGTASA + 0x40C57E, 2); // cutscene
 	CPatch::NOP(g_libGTASA + 0x40C592, 2); // player
-//	CPatch::NOP(g_libGTASA + 0x40C59E, 2);
 
 	InitialiseRenderWare();
-	//((void (*)())(g_libGTASA + 0x0055D678 + 1))(); // CVisibilityPlugins::Initialise
 
-//	TextureDatabaseRuntime::Load("mobile", 0, TextureDatabaseRuntime::TextureDatabaseFormat::DF_DXT);
-//	TextureDatabaseRuntime::Load("txd", 0, TextureDatabaseRuntime::TextureDatabaseFormat::DF_DXT);
-//	TextureDatabaseRuntime::Load("gta3", 0, TextureDatabaseRuntime::TextureDatabaseFormat::DF_DXT);
-//	TextureDatabaseRuntime::Load("gta_int", 0, TextureDatabaseRuntime::TextureDatabaseFormat::DF_DXT);
-//	//TextureDatabaseRuntime::Load("cutscene", 0, TextureDatabaseRuntime::TextureDatabaseFormat::DF_DXT);
-//	//TextureDatabaseRuntime::Load("player", 0, TextureDatabaseRuntime::TextureDatabaseFormat::DF_DXT);
-	//TextureDatabaseRuntime::Load("menu", 0, TextureDatabaseRuntime::TextureDatabaseFormat::DF_DXT);
-	TextureDatabaseRuntime::Load("samp", 0, TextureDatabaseRuntime::TextureDatabaseFormat::DF_DXT);
-//	TextureDatabaseRuntime::Load("cars", 0, 5);
+	TextureDatabaseRuntime::Load("samp", 0, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
 
 }
 

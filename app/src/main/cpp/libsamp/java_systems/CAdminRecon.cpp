@@ -23,7 +23,7 @@ void CAdminRecon::hide(){
     if(!env)return;
 
     jclass clazz = env->GetObjectClass(j_mAdminRecon);
-    jmethodID Hide = env->GetMethodID(clazz, "Hide", "()V");
+    jmethodID Hide = env->GetMethodID(clazz, "hide", "()V");
 
     env->CallVoidMethod(j_mAdminRecon, Hide);
 
@@ -31,34 +31,32 @@ void CAdminRecon::hide(){
     CAdminRecon::iPlayerID = INVALID_PLAYER_ID;
 }
 
-void CAdminRecon::show(int targetID){
+void CAdminRecon::show(int targetId){
     JNIEnv* env = g_pJavaWrapper->GetEnv();
     if(!env)return;
     if(!pNetGame)return;
 
     CPlayerPool *pPlayerPool = pNetGame->GetPlayerPool();
     if(!pPlayerPool)return;
-    if(!pPlayerPool->GetSlotState(targetID))return;
+    if(!pPlayerPool->GetSlotState(targetId))return;
 
-    jstring jpName = env->NewStringUTF( pPlayerPool->GetPlayerName(targetID) );
+    jstring jName = env->NewStringUTF( pPlayerPool->GetPlayerName(targetId) );
 
     jclass clazz = env->GetObjectClass(j_mAdminRecon);
-    jmethodID Show = env->GetMethodID(clazz, "Show", "(Ljava/lang/String;I)V");
+    jmethodID Show = env->GetMethodID(clazz, "show", "(Ljava/lang/String;I)V");
 
-    env->CallVoidMethod(j_mAdminRecon, Show, jpName, targetID);
+    env->CallVoidMethod(j_mAdminRecon, Show, jName, targetId);
 
     CAdminRecon::bIsToggle = true;
-    CAdminRecon::iPlayerID = targetID;
+    CAdminRecon::iPlayerID = targetId;
 }
 
-void CNetGame::Packet_Admin_Recon(Packet* p)
+void CNetGame::packetAdminRecon(Packet* p)
 {
-   // Log("Packet_Admin_Recon");
     RakNet::BitStream bs((unsigned char*)p->data, p->length, false);
 
     bs.IgnoreBits(40); // skip packet and rpc id
-//    uint8_t packetID;
-//    uint32_t rpcID;
+
     uint8_t toggle;
     uint32_t targetID;
 
@@ -66,20 +64,20 @@ void CNetGame::Packet_Admin_Recon(Packet* p)
     bs.Read(targetID);
 
     if(toggle == 1){
-        CAdminRecon::show(targetID);
-    } else{
+        CAdminRecon::show((int)targetID);
+    } else {
         CAdminRecon::hide();
     }
 }
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_AdminRecon_Init(JNIEnv *env, jobject thiz) {
+Java_com_liverussia_cr_gui_AdminRecon_init(JNIEnv *env, jobject thiz) {
     j_mAdminRecon = env->NewGlobalRef(thiz);
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_AdminRecon_ClickButton(JNIEnv *env, jobject thiz, jint button_id) {
+Java_com_liverussia_cr_gui_AdminRecon_clickButton(JNIEnv *env, jobject thiz, jint button_id) {
     switch (button_id) {
         case CAdminRecon::Buttons::EXIT_BUTTON:{
             pNetGame->SendChatCommand("/reoff");
@@ -182,5 +180,6 @@ Java_com_liverussia_cr_gui_AdminRecon_ClickButton(JNIEnv *env, jobject thiz, jin
             pNetGame->SendChatCommand(tmp );
             break;
         }
+        default: return;
     }
 }

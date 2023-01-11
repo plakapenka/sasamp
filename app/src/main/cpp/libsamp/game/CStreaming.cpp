@@ -9,3 +9,8 @@ int CStreaming::AddImageToList(const char * name, bool b)
 {
     return CPatch::CallFunction<int>(g_libGTASA + 0x28E7B0 + 1, name, b);
 }
+
+void CStreaming::RemoveAllUnusedModels()
+{
+    ((void (*) ())(g_libGTASA + 0x293325))();
+}

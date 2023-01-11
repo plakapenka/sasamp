@@ -523,7 +523,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			break;
 		}
 		case RPC_SHOW_CONTEINER_AUC: {
-			Packet_AucContainer(p);
+            packetAucContainer(p);
 			break;
 		}
 		case RPC_INVENTAR_SHOWHIDE: {
@@ -537,7 +537,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_ADMIN_RECON:
 		{
-			Packet_Admin_Recon(p);
+			packetAdminRecon(p);
 			break;
 		}
 		case RPC_MAFIA_WAR:

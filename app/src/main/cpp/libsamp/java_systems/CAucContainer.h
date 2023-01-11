@@ -8,8 +8,8 @@
 
 static class CAucContainer {
 public:
-    static void Show(int id, int type, int price);
-    static bool isAucContainerShow;
+    static void show(int id, int type, int price);
+    static bool bIsShow;
 };
 
 

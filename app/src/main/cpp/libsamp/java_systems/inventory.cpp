@@ -24,7 +24,7 @@ void CINVENTORY::ToggleShow(bool toggle, float satiety)
     if (pPlayer) {
         if (pPlayer->GetPlayerPed()) {
             env->CallVoidMethod(jInventory, ToggleShow, toggle, satiety, pPlayer->GetPlayerPed()->GetHealth());
-            isToggle = toggle;
+            bIsToggle = toggle;
         }
     }
 }
@@ -169,7 +169,7 @@ void CNetGame::Packet_InventoryUpdateItem(Packet* p)
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_Inventory_SwitchToggle(JNIEnv *env, jobject thiz, jboolean toggle) {
-    pInventory->isToggle = toggle;
+    pInventory->bIsToggle = toggle;
 }
 extern "C"
 JNIEXPORT void JNICALL

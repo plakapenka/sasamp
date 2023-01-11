@@ -10,7 +10,7 @@ static class CCasino {
 public:
     static void OpenChipBuySell(bool isBuy, int balance);
 
-    static bool isCasinoChipToggle;
+    static bool bIsChipToggle;
 };
 
 

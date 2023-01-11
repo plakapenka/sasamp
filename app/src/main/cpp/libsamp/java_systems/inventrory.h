@@ -10,7 +10,7 @@ class CINVENTORY {
 public:
     void ToggleShow(bool toggle, float satiety);
 
-    bool isToggle = false;
+    bool bIsToggle = false;
 
     void InventoryUpdateItem(int matrixindex, int pos, const char sprite[], const char caption[], bool active);
 

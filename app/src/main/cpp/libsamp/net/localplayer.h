@@ -253,8 +253,8 @@ private:
 	uint32_t 			m_dwLastUpdatePassengerData;
 	uint32_t			m_dwLastStatsUpdateTick;
 
-	uint8_t					m_byteLastWeapon[MAX_WEAPONS_SLOT];
-	uint32_t					m_dwLastAmmo[MAX_WEAPONS_SLOT];
-	uint32_t m_dwLastUpdateHudButtons;
+	uint8_t				m_byteLastWeapon[MAX_WEAPONS_SLOT];
+	uint32_t			m_dwLastAmmo[MAX_WEAPONS_SLOT];
+	uint32_t 			m_dwLastUpdateHudButtons;
 
 };

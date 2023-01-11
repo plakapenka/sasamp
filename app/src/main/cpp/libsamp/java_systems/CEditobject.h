@@ -13,7 +13,7 @@ static class CEditobject {
 public:
     CEditobject();
     static void StartEditAttachedObject(int slot);
-    static bool isToggle;
+    static bool bIsToggle;
     static int iEditedSlot;
 
     static void

@@ -61,7 +61,7 @@ public class AucContainer {
         auc_item_img = activity.findViewById(R.id.auc_item_img);
     }
 
-    public void Show(int id, int type, int price){
+    public void show(int id, int type, int price){
         activity.runOnUiThread(() -> {
             auc_price.setText(price_format.format(price)+" руб.");
             int imgres = 0;

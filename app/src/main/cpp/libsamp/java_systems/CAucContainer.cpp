@@ -15,9 +15,9 @@
 #include "CHUD.h"
 
 jobject jAucContainer;
-bool CAucContainer::isAucContainerShow = false;
+bool CAucContainer::bIsShow = false;
 
-void CNetGame::Packet_AucContainer(Packet* p)
+void CNetGame::packetAucContainer(Packet* p)
 {
     RakNet::BitStream bs((unsigned char*)p->data, p->length, false);
     uint8_t packetID;
@@ -32,18 +32,18 @@ void CNetGame::Packet_AucContainer(Packet* p)
     bs.Read(type);
     bs.Read(price);
 
-    CAucContainer::Show(id, type, price);
+    CAucContainer::show(id, type, (int)price);
 }
 
-void CAucContainer::Show(int id, int type, int price){
+void CAucContainer::show(int id, int type, int price){
     JNIEnv* env = g_pJavaWrapper->GetEnv();
 
     jclass clazz = env->GetObjectClass(jAucContainer);
-    jmethodID Show = env->GetMethodID(clazz, "Show", "(III)V");
+    jmethodID Show = env->GetMethodID(clazz, "show", "(III)V");
 
     env->CallVoidMethod(jAucContainer, Show, id, type, price);
 
-    CAucContainer::isAucContainerShow = true;
+    CAucContainer::bIsShow = true;
 }
 
 extern "C"
@@ -54,7 +54,7 @@ Java_com_liverussia_cr_gui_AucContainer_Init(JNIEnv *env, jobject thiz) {
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_AucContainer_SendClick(JNIEnv *env, jobject thiz, jint button_id) {
-    CAucContainer::isAucContainerShow = false;
+    CAucContainer::bIsShow = false;
 
     RakNet::BitStream bsSend;
     bsSend.Write((uint8_t)ID_CUSTOM_RPC);

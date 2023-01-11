@@ -45,11 +45,11 @@ public class AdminRecon {
     ConstraintLayout re_prev_button;
     ConstraintLayout re_next_button;
 
-    public native void Init();
-    public native void ClickButton(int buttonID);
+    public native void init();
+    public native void clickButton(int buttonID);
 
     public AdminRecon(Activity activity){
-        Init();
+        init();
 
         this.activity = activity;
         re_main_layout = activity.findViewById(R.id.re_main_layout);
@@ -60,77 +60,77 @@ public class AdminRecon {
 
         re_exit_butt = activity.findViewById(R.id.re_exit_butt);
         re_exit_butt.setOnClickListener(view -> {
-            ClickButton(EXIT_BUTTON);
+            clickButton(EXIT_BUTTON);
         });
 
         re_stats_button = activity.findViewById(R.id.re_stats_button);
         re_stats_button.setOnClickListener(view -> {
-            ClickButton(STATS_BUTTON);
+            clickButton(STATS_BUTTON);
         });
 
         re_freeze_butt = activity.findViewById(R.id.re_freeze_butt);
         re_freeze_butt.setOnClickListener(view -> {
-            ClickButton(FREEZE_BUTTON);
+            clickButton(FREEZE_BUTTON);
         });
 
         re_unfreeze_butt = activity.findViewById(R.id.re_unfreeze_butt);
         re_unfreeze_butt.setOnClickListener(view -> {
-            ClickButton(UNFREEZE_BUTTON);
+            clickButton(UNFREEZE_BUTTON);
         });
 
         re_spawn_butt = activity.findViewById(R.id.re_spawn_butt);
         re_spawn_butt.setOnClickListener(view -> {
-            ClickButton(SPAWN_BUTTON);
+            clickButton(SPAWN_BUTTON);
         });
 
         re_slap_butt = activity.findViewById(R.id.re_slap_butt);
         re_slap_butt.setOnClickListener(view -> {
-            ClickButton(SLAP_BUTTON);
+            clickButton(SLAP_BUTTON);
         });
 
         re_refresh_button = activity.findViewById(R.id.re_refresh_button);
         re_refresh_button.setOnClickListener(view -> {
-            ClickButton(REFRESH_BUTTON);
+            clickButton(REFRESH_BUTTON);
         });
 
         re_mute_button = activity.findViewById(R.id.re_mute_button);
         re_mute_button.setOnClickListener(view -> {
-            ClickButton(MUTE_BUTTON);
+            clickButton(MUTE_BUTTON);
         });
 
         re_jail_butt = activity.findViewById(R.id.re_jail_butt);
         re_jail_butt.setOnClickListener(view -> {
-            ClickButton(JAIL_BUTTON);
+            clickButton(JAIL_BUTTON);
         });
 
         re_kick_butt = activity.findViewById(R.id.re_kick_butt);
         re_kick_butt.setOnClickListener(view -> {
-            ClickButton(KICK_BUTTON);
+            clickButton(KICK_BUTTON);
         });
 
         re_ban_butt = activity.findViewById(R.id.re_ban_butt);
         re_ban_butt.setOnClickListener(view -> {
-            ClickButton(BAN_BUTTON);
+            clickButton(BAN_BUTTON);
         });
 
         re_warn_butt = activity.findViewById(R.id.re_warn_butt);
         re_warn_butt.setOnClickListener(view -> {
-            ClickButton(WARN_BUTTON);
+            clickButton(WARN_BUTTON);
         });
 
         re_prev_button = activity.findViewById(R.id.re_prev_button);
         re_prev_button.setOnClickListener(view -> {
-            ClickButton(PREV_BUTTON);
+            clickButton(PREV_BUTTON);
         });
 
         re_next_button = activity.findViewById(R.id.re_next_button);
         re_next_button.setOnClickListener(view -> {
-            ClickButton(NEXT_BUTTON);
+            clickButton(NEXT_BUTTON);
         });
     }
 
     @SuppressLint("DefaultLocale")
-    void Show(String nick, int id){
+    void show(String nick, int id){
         activity.runOnUiThread(() -> {
             re_nickname_text.setText(nick);
             re_id_text.setText(String.format("%d", id));
@@ -139,7 +139,7 @@ public class AdminRecon {
         });
     }
 
-    void Hide(){
+    void hide(){
         activity.runOnUiThread(() -> {
             re_main_layout.setVisibility(View.GONE);
         });
