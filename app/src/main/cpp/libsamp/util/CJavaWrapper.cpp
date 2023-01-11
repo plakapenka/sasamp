@@ -1323,7 +1323,7 @@ void CJavaWrapper::ShowCasinoLuckyWheel(int count, int time) {
 	JNIEnv* env = GetEnv();
 
 	jclass clazz = env->GetObjectClass(jCasino_LuckyWheel);
-	jmethodID Show = env->GetMethodID(clazz, "Show", "(II)V");
+	jmethodID Show = env->GetMethodID(clazz, "show", "(II)V");
 
 	env->CallVoidMethod(jCasino_LuckyWheel, Show, count, time);
 }

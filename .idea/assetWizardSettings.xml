@@ -35,8 +35,8 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="C:\Users\plaka\AppData\Local\Temp\baseline_settings_24.xml" />
-                                                <entry key="opacityPercent" value="60" />
+                                                <entry key="imagePath" value="C:\Users\plaka\AppData\Local\Temp\baseline_arrow_back_ios_24.xml" />
+                                                <entry key="opacityPercent" value="80" />
                                                 <entry key="paddingPercent" value="15" />
                                                 <entry key="trimmed" value="true" />
                                               </map>
@@ -49,7 +49,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio1/plugins/android/lib/android.jar!/images/material/icons/materialicons/settings/baseline_settings_24.xml" />
+                                                <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/arrow_back_ios/baseline_arrow_back_ios_24.xml" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -95,9 +95,8 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="assetType" value="IMAGE" />
                                       <entry key="imageAsset" value="D:\players_icon.png" />
-                                      <entry key="outputName" value="players_icon_monitor" />
+                                      <entry key="outputName" value="arrow_back" />
                                       <entry key="theme" value="HOLO_DARK" />
                                       <entry key="themeColor" value="e80202" />
                                     </map>

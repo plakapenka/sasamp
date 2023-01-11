@@ -9,7 +9,6 @@ import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.liverussia.cr.R;
-import com.nvidia.devtech.NvEventQueueActivity;
 
 import java.util.Date;
 
@@ -53,7 +52,7 @@ public class Casino_LuckyWheel {
         });
 
     }
-    public void Show(int count, int time) {
+    public void show(int count, int time) {
 
         ColorStateList color;
 
