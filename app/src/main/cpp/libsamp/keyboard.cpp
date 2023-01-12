@@ -10,6 +10,7 @@
 #include "vendor/imgui/fonts.h"
 #include "net/netgame.h"
 #include "java_systems/CHUD.h"
+#include "java_systems/CAdminRecon.h"
 
 extern CGUI *pGUI;
 extern CJavaWrapper *pJavaWrapper;
@@ -263,6 +264,7 @@ void CKeyBoard::Open()
 	//g_pJavaWrapper->HideVoice();
 
 	if(pNetGame->m_GreenZoneState)g_pJavaWrapper->HideGreenZone();
+	if(CAdminRecon::bIsToggle) CAdminRecon::tempToggle(false);
 	if(pGame->isCasinoDiceActive)g_pJavaWrapper->TempToggleCasinoDice(false);
 	g_pJavaWrapper->HideServerLogo();
 	//g_pJavaWrapper->HideSamwillMoney();
@@ -292,6 +294,7 @@ void CKeyBoard::Close()
 		g_pJavaWrapper->ShowGPS();
 	}
 	if(pGame->isCasinoDiceActive)g_pJavaWrapper->TempToggleCasinoDice(true);
+	if(CAdminRecon::bIsToggle) CAdminRecon::tempToggle(true);
 	if(pNetGame->m_GreenZoneState)g_pJavaWrapper->ShowGreenZone();
 	//g_pJavaWrapper->ShowVoice();
 
@@ -574,6 +577,7 @@ void CKeyBoard::Send()
 	g_pJavaWrapper->ShowServerLogo();
 	if(pNetGame->m_GreenZoneState)g_pJavaWrapper->ShowGreenZone();
 	if(pGame->isCasinoDiceActive)g_pJavaWrapper->TempToggleCasinoDice(true);
+	if(CAdminRecon::bIsToggle) CAdminRecon::tempToggle(true);
 	if (pGame->m_bRaceCheckpointsEnabled)
 	{
 		g_pJavaWrapper->ShowGPS();

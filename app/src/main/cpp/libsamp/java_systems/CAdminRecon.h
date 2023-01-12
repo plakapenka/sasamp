@@ -32,8 +32,11 @@ public:
         BAN_BUTTON,
         WARN_BUTTON,
         NEXT_BUTTON,
-        PREV_BUTTON
+        PREV_BUTTON,
+        FLIP_BUTTON
     };
+
+    static void tempToggle(bool toggle);
 };
 
 

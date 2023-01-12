@@ -25,6 +25,7 @@ public class AdminRecon {
     private static final int WARN_BUTTON = 11;
     private static final int NEXT_BUTTON = 12;
     private static final int PREV_BUTTON = 13;
+    private static final int FLIP_BUTTON = 14;
 
     Activity activity;
     TextView re_nickname_text;
@@ -44,6 +45,7 @@ public class AdminRecon {
     ConstraintLayout re_warn_butt;
     ConstraintLayout re_prev_button;
     ConstraintLayout re_next_button;
+    ConstraintLayout re_flip_butt;
 
     public native void init();
     public native void clickButton(int buttonID);
@@ -57,6 +59,11 @@ public class AdminRecon {
 
         re_nickname_text = activity.findViewById(R.id.re_nickname_text);
         re_id_text = activity.findViewById(R.id.re_id_text);
+
+        re_flip_butt = activity.findViewById(R.id.re_flip_butt);
+        re_flip_butt.setOnClickListener(view -> {
+            clickButton(FLIP_BUTTON);
+        });
 
         re_exit_butt = activity.findViewById(R.id.re_exit_butt);
         re_exit_butt.setOnClickListener(view -> {
@@ -136,6 +143,17 @@ public class AdminRecon {
             re_id_text.setText(String.format("%d", id));
 
             re_main_layout.setVisibility(View.VISIBLE);
+        });
+    }
+
+    void tempToggle(boolean toggle){
+        activity.runOnUiThread(() -> {
+            if(toggle) {
+                re_main_layout.setVisibility(View.VISIBLE);
+            }
+            else {
+                re_main_layout.setVisibility(View.GONE);
+            }
         });
     }
 

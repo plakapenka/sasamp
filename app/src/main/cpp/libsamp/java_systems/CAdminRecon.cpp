@@ -31,6 +31,16 @@ void CAdminRecon::hide(){
     CAdminRecon::iPlayerID = INVALID_PLAYER_ID;
 }
 
+void CAdminRecon::tempToggle(bool toggle){
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+    if(!env)return;
+
+    jclass clazz = env->GetObjectClass(j_mAdminRecon);
+    jmethodID tempToggle = env->GetMethodID(clazz, "tempToggle", "(Z)V");
+
+    env->CallVoidMethod(j_mAdminRecon, tempToggle, toggle);
+}
+
 void CAdminRecon::show(int targetId){
     JNIEnv* env = g_pJavaWrapper->GetEnv();
     if(!env)return;
@@ -177,6 +187,12 @@ Java_com_liverussia_cr_gui_AdminRecon_clickButton(JNIEnv *env, jobject thiz, jin
 
             char tmp[255];
             sprintf(tmp, "/re %d", CAdminRecon::iPlayerID);
+            pNetGame->SendChatCommand(tmp );
+            break;
+        }
+        case CAdminRecon::Buttons::FLIP_BUTTON:{
+            char tmp[255];
+            sprintf(tmp, "/flip %d", CAdminRecon::iPlayerID);
             pNetGame->SendChatCommand(tmp );
             break;
         }

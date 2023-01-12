@@ -30,7 +30,6 @@ private:
 	ImColor HealthBarBDRColor;
 
 	RwTexture* m_pAfk_icon;
-	RwTexture* m_pVoice_icon;
 	RwTexture* m_pKeyboard_icon;
 
 	uint32_t m_dwColors[MAX_PLAYERS];
