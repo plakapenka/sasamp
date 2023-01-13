@@ -220,6 +220,21 @@ VEHICLEID CVehiclePool::FindIDFromGtaPtr(VEHICLE_TYPE *pGtaVehicle)
 	return INVALID_VEHICLE_ID;
 }
 
+CVehicle* CVehiclePool::FindVehicle(VEHICLE_TYPE *pGtaVehicle)
+{
+	for (size_t i = 0; i < MAX_VEHICLES; i++) {
+		if (GetSlotState(i)) {
+			CVehicle *pVehicle = GetAt(i);
+			if (pVehicle && pVehicle->IsAdded()) {
+				if (pVehicle->m_pVehicle == pGtaVehicle) {
+					return pVehicle;
+				}
+			}
+		}
+	}
+	return nullptr;
+}
+
 VEHICLEID CVehiclePool::FindIDFromRwObject(RwObject* pRWObject)
 {
 	int x = 1;

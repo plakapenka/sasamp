@@ -15,12 +15,10 @@ CPlayerTags::CPlayerTags()
 {
 	Log("Loading afk_icon..");
 	m_pAfk_icon = (RwTexture*)LoadTextureFromDB("samp", "afk_icon");
-	m_pVoice_icon = (RwTexture*)LoadTextureFromDB("samp", "micro_icon");
-#ifdef GAME_EDITION_CR
-	m_pKeyboard_icon = (RwTexture*)LoadTextureFromDB("samp", "keyboard_icon");
-#else
-	m_pKeyboard_icon = nullptr;
-#endif
+//	m_pVoice_icon = (RwTexture*)LoadTextureFromDB("samp", "micro_icon");
+
+//	m_pKeyboard_icon = (RwTexture*)LoadTextureFromDB("samp", "keyboard_icon");
+
 	HealthBarBDRColor = ImColor( 0x00, 0x00, 0x00, 0xFF );
 
 	for (int i = 0; i < MAX_PLAYERS; i++)
@@ -356,13 +354,6 @@ void CPlayerTags::Draw(VECTOR* vec, char* szName, uint32_t dwColor,
 
 	if (Out_voice.Z < 1.0f)
 		return;
-
-	if (bVoice && m_pVoice_icon)
-	{
-		ImVec2 a = ImVec2(Out_voice.X - (((pGUI->GetFontSize() * 1.3f) / 2.0f) * 1.5f), Out_voice.Y);
-		ImVec2 b = ImVec2(Out_voice.X + (((pGUI->GetFontSize() * 1.3f) / 2.0f) * 1.5f), Out_voice.Y + ((pGUI->GetFontSize() * 1.3f)));
-		ImGui::GetOverlayDrawList()->AddImage((ImTextureID)m_pVoice_icon->raster, a, b);
-	}
 
 #ifdef GAME_EDITION_CR
 	if (bKeyboard && m_pKeyboard_icon)

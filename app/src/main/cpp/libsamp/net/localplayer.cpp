@@ -909,24 +909,23 @@ void CLocalPlayer::SendInCarFullSyncData()
 	icSync.byteCurrentWeapon = (exKeys << 6) | icSync.byteCurrentWeapon & 0x3F;
 	icSync.byteCurrentWeapon ^= (icSync.byteCurrentWeapon ^ GetPlayerPed()->GetCurrentWeapon()) & 0x3F;
 
-	icSync.TrailerID = 0;
+	icSync.TrailerID = INVALID_VEHICLE_ID;
+
 	VEHICLE_TYPE* vehTrailer = (VEHICLE_TYPE*)pVehicle->m_pVehicle->dwTrailer;
-	if (vehTrailer != NULL)
+	if (vehTrailer != nullptr)
 	{
-		uint16_t id = pNetGame->GetVehiclePool()->FindIDFromGtaPtr(vehTrailer);
-		if (id == INVALID_OBJECT_ID) return;
-		if (ScriptCommand(&is_trailer_on_cab, id, pVehicle->m_dwGTAId)) {
-			icSync.TrailerID = pNetGame->GetVehiclePool()->FindIDFromGtaPtr(vehTrailer);
-		}
-		else {
-			icSync.TrailerID = 0;
+		uint16_t trailerId = pNetGame->GetVehiclePool()->FindIDFromGtaPtr(vehTrailer);
+
+		if (ScriptCommand(&is_trailer_on_cab, trailerId, pVehicle->m_dwGTAId)) {
+			icSync.TrailerID = trailerId;
 		}
 	}
-	if (icSync.TrailerID && icSync.TrailerID < MAX_VEHICLES)
+	if (icSync.TrailerID != INVALID_VEHICLE_ID)
 	{
 		MATRIX4X4 matTrailer;
 		TRAILER_SYNC_DATA trSync;
 		CVehicle* pTrailer = pVehiclePool->GetAt(icSync.TrailerID);
+
 		if (pTrailer && pTrailer->m_pVehicle)
 		{
 			pTrailer->GetMatrix(&matTrailer);
@@ -942,6 +941,7 @@ void CLocalPlayer::SendInCarFullSyncData()
 
 			pTrailer->GetMoveSpeedVector(&trSync.vecMoveSpeed);
 			pTrailer->GetTurnSpeedVector(&trSync.vecTurnSpeed);
+
 			RakNet::BitStream bsTrailerSync;
 			bsTrailerSync.Write((BYTE)ID_TRAILER_SYNC);
 			bsTrailerSync.Write((char*)& trSync, sizeof(TRAILER_SYNC_DATA));

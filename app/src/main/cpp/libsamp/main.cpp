@@ -533,8 +533,6 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 	javaVM = vm;
 
 	Log("SAMP library loaded! Build time: " __DATE__ " " __TIME__);
-	
-
 
 	g_libGTASA = FindLibrary("libGTASA.so");
 	if(g_libGTASA == 0)
@@ -546,15 +544,11 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 
 	firebase::crashlytics::SetCustomKey("build data", __DATE__);
 	firebase::crashlytics::SetCustomKey("build time", __TIME__);
-	firebase::crashlytics::Initialize();
+//	firebase::crashlytics::Initialize();
 
 	uintptr_t libgtasa = FindLibrary("libGTASA.so");
 	uintptr_t libsamp = FindLibrary("libsamp.so");
 	uintptr_t libc = FindLibrary("libc.so");
-
-	Log("libGTASA.so: 0x%x", libgtasa);
-	Log("libsamp.so: 0x%x", libsamp);
-	Log("libc.so: 0x%x", libc);
 
 	char str[100];
 
@@ -566,8 +560,6 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 
 	sprintf(str, "0x%x", libc);
 	firebase::crashlytics::SetCustomKey("libc.so", str);
-
-	srand(time(0));
 
 	CPatch::InitHookStuff();
 

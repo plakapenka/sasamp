@@ -63,6 +63,8 @@ public:
 
 	CVehicle *GetVehicleFromTrailer(CVehicle *pTrailer);
 
+	CVehicle *FindVehicle(VEHICLE_TYPE *pGtaVehicle);
+
 private:
 	VEHICLE_TYPE*	m_pGTAVehicles[MAX_VEHICLES];
 	bool			m_bVehicleSlotState[MAX_VEHICLES];
