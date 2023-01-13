@@ -743,14 +743,60 @@ typedef struct _VEHICLE_TYPE
 	unsigned int m_nCreationTime;
 	uint8_t m_nPrimaryColor;			// 1076-1077	;byteColor1
 	uint8_t m_nSecondaryColor;			// 1077-1078	;byteColor2
-	PADDING(_pad204, 42);		// 1078-1120
+	uint8_t m_colour3;
+	uint8_t m_colour4;
+	uint8_t m_comp1;
+	uint8_t m_comp2;
+	short  m_anUpgrades[15];
+	float m_wheelScale;
+	unsigned short m_nAlarmState;
+	short  m_nForcedRandomRouteSeed; // if this is non-zero the random wander gets deterministic
 	PED_TYPE* pDriver;			// 1120-1124	;driver
-	PED_TYPE* pPassengers[7];	// 1124-1152	;pPassengers
-	PADDING(_pad202, 72);		// 1152-1224
+	PED_TYPE* pPassengers[8];	// 1124-1152	;pPassengers
+	unsigned char  m_nNumPassengers;
+	unsigned char  m_nNumGettingIn;
+	unsigned char  m_nGettingInFlags;
+	unsigned char  m_nGettingOutFlags;
+	unsigned char  m_nMaxPassengers;
+	unsigned char  m_nWindowsOpenFlags; // initialised, but not used?
+	unsigned char  m_nNitroBoosts;
+	unsigned char  m_nSpecialColModel;
+	int32_t m_pEntityWeAreOn;
+	int32_t m_pFire;
+	float  m_fSteerAngle;
+	float  m_f2ndSteerAngle; // used for steering 2nd set of wheels or elevators etc..
+	float  m_fGasPedal;
+	float  m_fBreakPedal;
+	unsigned char  m_nCreatedBy; // see eVehicleCreatedBy
+	unsigned char  abc1;
+	unsigned char  abc2;
+	unsigned char  abc3;
+	uint32_t cachedTotalSteer;
+	short m_nExtendedRemovalRange;
+	unsigned char m_nBombOnBoard : 3; // 0 = None
+	// 1 = Timed
+	// 2 = On ignition
+	// 3 = remotely set ?
+	// 4 = Timed Bomb has been activated
+	// 5 = On ignition has been activated
+	unsigned char m_nOverrideLights : 2; // uses enum NO_CAR_LIGHT_OVERRIDE, FORCE_CAR_LIGHTS_OFF, FORCE_CAR_LIGHTS_ON
+	unsigned char m_nWinchType : 2; // Does this vehicle use a winch?
+	unsigned char m_nGunsCycleIndex : 2; // Cycle through alternate gun hardpoints on planes/helis
+	unsigned char m_nOrdnanceCycleIndex : 2; // Cycle through alternate ordnance hardpoints on planes/helis
+	uint8_t nUsedForCover;
+	uint8_t AmmoInClip;
+	uint8_t PacMansCollected;
+	uint8_t PedsPositionForRoadBlock;
+	uint8_t NumPedsForRoadBlock[4];
+	float   m_fDirtLevel; // Dirt level of vehicle body texture: 0.0f=fully clean, 15.0f=maximum dirt visible
+	unsigned char m_nCurrentGear;
+	PADDING(_pad203, 3);
+	float   m_fGearChangeCount; // used as parameter for cTransmission::CalculateDriveAcceleration, but doesn't change
+	float   m_fWheelSpinForAudio;
 	float fHealth;				// 1224-1228	;fHealth
-	uint32_t unk;				// 1228 - 1232 - unk
+	uint32_t m_pTowingVehicle;
 	uint32_t dwTrailer;			// 1232 - 1236 - trailer
-	PADDING(_pad203, 48);		// 1236-1284
+	PADDING(_pad204, 48);		// 1236-1284
 	uint32_t dwDoorsLocked;
 } VEHICLE_TYPE;
 
