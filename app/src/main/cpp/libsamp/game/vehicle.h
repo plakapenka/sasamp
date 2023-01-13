@@ -105,7 +105,7 @@ public:
 
 	unsigned int GetVehicleSubtype();
 
-	void SetEngineState(int iState);
+	void SetEngineState(bool bEnable);
 	int GetEngineState();
 	void SetLightsState(bool iState);
 	bool GetLightsState();

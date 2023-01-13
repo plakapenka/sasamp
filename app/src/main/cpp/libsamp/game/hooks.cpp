@@ -1147,12 +1147,15 @@ void CAEVehicleAudioEntity__GetVehicleAudioSettings_hook(uintptr_t dest, int16_t
 	memcpy((void*)dest, &VehicleAudioProperties[(ID - 400)], sizeof(VehicleAudioPropertiesStruct));
 }
 
+uintptr_t* (*CCustomRoadsignMgr_RenderRoadsignAtomic)(uintptr_t*, VECTOR const&);
+uintptr_t* CCustomRoadsignMgr_RenderRoadsignAtomic_hook(uintptr_t* atomic, VECTOR const& a2)
+{
+	return atomic;
+}
+
 void InstallSpecialHooks()
 {
 	Log("InstallSpecialHooks");
-
-//	CPatch::InlineHook(g_libGTASA, 0x0035BE30, &CAEVehicleAudioEntity__GetVehicleAudioSettings_hook, &CAEVehicleAudioEntity__GetVehicleAudioSettings);
-//	CPatch::InlineHook(g_libGTASA, 0x004052B8, &CVehicleModelInfo__SetupCommonData_hook, &CVehicleModelInfo__SetupCommonData);
 
 	// texture Краш если с текстурами какая-то хуйня
 	CPatch::InlineHook(g_libGTASA, 0x1bdc3c, &CTextureDatabaseRuntime__GetEntry_hook, &CTextureDatabaseRuntime__GetEntry);
@@ -1184,11 +1187,6 @@ void InstallSpecialHooks()
 	//
 	CPatch::NOP(g_libGTASA + 0x002F9E5C, 10); 	//LoadCutsceneData
 	CPatch::NOP(g_libGTASA + 0x0040E536, 2);		//CCutsceneMgr::Initialise
-
-	//фикс максимальной графики в настройках crash
-	CPatch::NOP(g_libGTASA + 0x0039B01C, 2);// shaders
-	CPatch::NOP(g_libGTASA + 0x00198E76, 4); // shaders max
-	CPatch::NOP(g_libGTASA + 0x001996F6, 2);// BL              _Z22InitializeShaderClosetv ; InitializeShaderCloset
 
 	CPatch::InlineHook(g_libGTASA, 0x003BF784, &CTimer__StartUserPause_hook, &CTimer__StartUserPause);
 	CPatch::InlineHook(g_libGTASA, 0x003BF7A0, &CTimer__EndUserPause_hook, &CTimer__EndUserPause);
@@ -1243,6 +1241,7 @@ void InstallSpecialHooks()
 	CPatch::InlineHook(g_libGTASA, 0x0023ACC4, NVEventGetNextEvent_hook, &NVEventGetNextEvent_hooked);
 	CPatch::InlineHook(g_libGTASA, 0x004042A8, CStreaming__Init2_hook, &CStreaming__Init2);	// increase stream memory value
 	CPatch::InlineHook(g_libGTASA, 0x3AF1A0, &CPools_Initialise_hook, &CPools_Initialise);
+	CPatch::InlineHook(g_libGTASA, 0x531118, &CCustomRoadsignMgr_RenderRoadsignAtomic_hook, &CCustomRoadsignMgr_RenderRoadsignAtomic);
 
 //	JMPCode(g_libGTASA + 0x1A1ED8, (uintptr_t)rqVertexBufferSelect_HOOK);
 }
@@ -1386,15 +1385,6 @@ void CAnimManager__UncompressAnimation_hook(int a1, int a2)
 	if (a1)
 	{
 		CAnimManager__UncompressAnimation(a1, a2);
-	}
-}
-
-void(*CCustomRoadsignMgr__RenderRoadsignAtomic)(int, int);
-void CCustomRoadsignMgr__RenderRoadsignAtomic_hook(int a1, int a2)
-{
-	if (a1)
-	{
-		CCustomRoadsignMgr__RenderRoadsignAtomic(a1, a2);
 	}
 }
 
@@ -2915,6 +2905,7 @@ int CEntity__GetIsOnScreen_hook(ENTITY_TYPE* thiz)
 void (*FxEmitterBP_c__Render)(uintptr_t* a1, int a2, int a3, float a4, char a5);
 void FxEmitterBP_c__Render_hook(uintptr_t* a1, int a2, int a3, float a4, char a5)
 {
+	if(!a1 || !a2) return;
 	uintptr_t* temp = *((uintptr_t**)a1 + 3);
 	if (!temp)
 	{
@@ -3087,58 +3078,6 @@ int CCollision__ProcessLineTriangle_hook(float *a1, int a2, uint16_t *a3, int16_
 	}
 	return CCollision__ProcessLineTriangle(a1, a2, a3, a4, a5, a6, a7);
 }
-
-#define GREEN_TEXTURE_ID 14
-int *detailTexturesStorage;
-int *RasterExtOffset;
-inline void* GetDetailTexturePtr(int texId)
-{
-	return *(void**)(**(int**)(*detailTexturesStorage + 4 * (texId-1)) + *RasterExtOffset);
-}
-
-void (*TextureSetDetailTexture)(void* texture, uint_t tilingScale);
-void TextureSetDetailTexture_hook(void* texture, uint_t tilingScale)
-{
-	if(texture == NULL)
-	{
-		*(uint_t*)(g_libGTASA + 0x0061572C) &= 0xFFFEFFFF;
-		return;
-	}
-	if(texture == GetDetailTexturePtr(GREEN_TEXTURE_ID))
-	{
-
-		*(int*)(g_libGTASA + 0x006118D0) = 0; // textureDetail
-		*(uint_t*)(g_libGTASA + 0x0061572C) &= 0xFFFEFFFF;
-
-		return;
-	}
-	*(uint_t*)(g_libGTASA + 0x0061572C) |= 0x10000u;
-	(*(void (__fastcall **)(void *, int))(*(DWORD *)texture + 0x18))(texture, 1);
-	(*(void (__fastcall **)(void *, DWORD, DWORD))(*(DWORD *)texture + 0xC))(texture, 0, 0);
-	*(float*)(g_libGTASA + 0x0067A178) = (float)tilingScale / 10.0;
-	//return TextureSetDetailTexture(texture, tilingScale);
-	*(int*)(g_libGTASA + 0x006118D0) = 1;
-}
-
-uintptr_t (*RpAnimBlendClumpGetAssociation_int)(uintptr_t *thiz);
-uintptr_t RpAnimBlendClumpGetAssociation_int_hook(uintptr_t *thiz) {
-Log("bike");
-		return RpAnimBlendClumpGetAssociation_int(thiz);
-
-
-//	int *v2; // r0
-//
-//	v2 = *(int **)(&pClump->object.type + ClumpOffset);
-//	do
-//	{
-//		v2 = (int *)*v2;
-//		if ( !v2 )
-//			return 0;
-//	}
-//	while ( *((__int16 *)v2 + 0x14) != id );
-//	return (CAnimBlendAssociation *)(v2 + 0xFFFFFFFF);
-}
-
 
 char **(*CPhysical__Add)(uintptr_t thiz);
 char **CPhysical__Add_hook(uintptr_t thiz)
@@ -3506,7 +3445,6 @@ void InstallHooks()
 	CPatch::InlineHook(g_libGTASA, 0x00336618, &CModelInfo_AddVehicleModel_hook, &CModelInfo_AddVehicleModel); // dangerous
 
 	CPatch::InlineHook(g_libGTASA, 0x0033DA5C, &CAnimManager__UncompressAnimation_hook, &CAnimManager__UncompressAnimation);
-	CPatch::InlineHook(g_libGTASA, 0x00531118, &CCustomRoadsignMgr__RenderRoadsignAtomic_hook, &CCustomRoadsignMgr__RenderRoadsignAtomic);
 	CPatch::InlineHook(g_libGTASA, 0x001AECC0, &RwFrameAddChild_hook, &RwFrameAddChild);
 	CPatch::InlineHook(g_libGTASA, 0x002DFD30, &CUpsideDownCarCheck__IsCarUpsideDown_hook, &CUpsideDownCarCheck__IsCarUpsideDown);
 	CPatch::InlineHook(g_libGTASA, 0x0033AD78, &CAnimBlendNode__FindKeyFrame_hook, &CAnimBlendNode__FindKeyFrame);

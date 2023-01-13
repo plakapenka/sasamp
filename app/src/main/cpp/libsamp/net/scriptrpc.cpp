@@ -671,7 +671,7 @@ void ScrVehicleParamsEx(RPCParameters* rpcParams)
 			pNetGame->GetVehiclePool()->GetAt(VehicleId)->SetDoorState(doors);
 			pGUI->SetDoor(doors);
 			// engine
-			pNetGame->GetVehiclePool()->GetAt(VehicleId)->SetEngineState(engine);
+			pNetGame->GetVehiclePool()->GetAt(VehicleId)->SetEngineState((engine == 1) ? true : false);
 			//pGUI->SetEngine(engine);
 			// lights
 			pNetGame->GetVehiclePool()->GetAt(VehicleId)->SetLightsState((lights == 1) ? true : false);

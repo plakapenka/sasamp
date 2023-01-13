@@ -1354,25 +1354,16 @@ void CVehicle::CopyGlobalSuspensionLinesToPrivate()
 	}
 }
 
-void CVehicle::SetEngineState(int iState)
+void CVehicle::SetEngineState(bool bEnable)
 {
 	if(!m_dwGTAId)return;
 	if(!m_pVehicle)return;
 	if (!GamePool_Vehicle_GetAt(m_dwGTAId)) {
 		return;
 	}
-	if (iState)
-	{
-		m_pVehicle->m_nVehicleFlags.bEngineOn = 1;
-		m_bEngineOn = true;
-		m_pVehicle->m_nVehicleFlags.bEngineBroken = 0;
-	}
-	else
-	{
-		m_pVehicle->m_nVehicleFlags.bEngineOn = 0;
-		m_bEngineOn = false;
-		m_pVehicle->m_nVehicleFlags.bEngineBroken = 1;
-	}
+	//m_pVehicle->m_nVehicleFlags.bEngineBroken = 1;
+	m_bEngineOn = bEnable;
+	m_pVehicle->m_nVehicleFlags.bEngineOn = m_bEngineOn = bEnable;;
 }
 
 int CVehicle::GetEngineState(){
