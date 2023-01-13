@@ -173,8 +173,16 @@ void ApplyPatches_level0()
 	//WriteMemory(g_libGTASA + 0x001A7EB6, (uintptr_t)"\x00\x23", 2); // MOVS            R3, #0
 	//WriteMemory(g_libGTASA + 0x001A7ED2, (uintptr_t)"\x00\x20", 2); // MOVS				R0, #0
 
+	// From CGame::Init2
 	CPatch::NOP(g_libGTASA + 0x00408706, 2); // CClothes::Init
 	CPatch::RET(g_libGTASA + 0x003F1030); // CClothes::RebuildPlayer
+
+	CPatch::NOP(g_libGTASA + 0x004087E8, 2); // CGlass::Init
+	CPatch::NOP(g_libGTASA + 0x004087EC, 2); // CGarages::Init_AfterRestart
+	CPatch::NOP(g_libGTASA + 0x00408800, 2); // CGangs::Initialise
+	//CPatch::NOP(g_libGTASA + 0x00408812, 2); // CClock::Initialise(uint)
+	CPatch::NOP(g_libGTASA + 0x00408816, 2); // CHeli::InitHelis(void)
+//	CPatch::NOP(g_libGTASA + 0x0040881A, 2); // CCranes::InitCranes(void)
 
 	WriteUnVerified0();
 }
@@ -214,13 +222,15 @@ void ApplyPatches()
 	//UnFuck(g_libGTASA + 0x008B8018);
 	//*(uint8_t*)(g_libGTASA + 0x008B8018) = 1;
 
-	// CAudioEngine::StartLoadingTune
+	// CAudioEngine::StartLoadingTune звук загрузочного экрана
 	CPatch::NOP(g_libGTASA + 0x56C150, 2);
-	// Nop CFileLoader::loadPickups
 
+	// Nop CFileLoader::loadPickups
 	CPatch::NOP(g_libGTASA + 0x402472, 2);
+
 	// fucking shit from rockstar CRealTimeShadowManager::Update(void)
 	CPatch::NOP(g_libGTASA + 0x0039B2C0, 2);
+
 	// DefaultPCSaveFileName
 	char* DefaultPCSaveFileName = (char*)(g_libGTASA + 0x60EAE8);
 	memcpy((char*)DefaultPCSaveFileName, "GTASAMP", 8);
@@ -464,7 +474,7 @@ void ApplyInGamePatches()
 	CPatch::NOP(g_libGTASA + 0x4EE7D2, 2);
 	CPatch::NOP(g_libGTASA + 0x4F741E, 2);
 	CPatch::NOP(g_libGTASA + 0x50AB4A, 2);
-
+//
 	CPatch::NOP(g_libGTASA + 0x00398768, 2); // nop police helis
 	CPatch::NOP(g_libGTASA + 0x003987DC, 2);
 
