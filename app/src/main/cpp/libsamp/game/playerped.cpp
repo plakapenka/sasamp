@@ -88,26 +88,22 @@ CPlayerPed::~CPlayerPed()
 	memset(&RemotePlayerKeys[m_bytePlayerNumber], 0, sizeof(PAD_KEYS));
 
 	SetPlayerPedPtrRecord(m_bytePlayerNumber, 0);
-	Log("~CPlayerPed()1");
+
 	if(!m_dwGTAId)return;
 	if(!GamePool_Ped_GetAt(m_dwGTAId))return;
-	Log("~CPlayerPed()2");
+
 	if (m_pPed && IsValidGamePed(m_pPed) && m_pPed->entity.vtable != (g_libGTASA + 0x5C7358))
 	{
-		Log("~CPlayerPed()3");
 		FlushAttach();
-		Log("~CPlayerPed()4");
 		if (IN_VEHICLE(m_pPed)) {
-			Log("Removing from vehicle..");
 			RemoveFromVehicleAndPutAt(100.0f, 100.0f, 20.0f);
 
 		//	ClearAllTasks();
 		}
-		Log("~CPlayerPed()5");
 		uintptr_t dwPedPtr = (uintptr_t)m_pPed;
 		*(uint32_t*)(*(uintptr_t*)(dwPedPtr + 1088) + 76) = 0;
 		// CPlayerPed::Destructor
-		Log("Calling destructor..");
+
 		//(( void (*)(PED_TYPE*))(*(void**)(m_pPed->entity.vtable+0x4)))(m_pPed);
 		((void (*)(uintptr_t))(g_libGTASA+0x45D82C+1))((uintptr_t)m_pEntity);
 		//ScriptCommand(&DELETE_CHAR, m_dwGTAId);
@@ -115,11 +111,9 @@ CPlayerPed::~CPlayerPed()
 		m_pPed = nullptr;
 		m_pEntity = nullptr;
 		m_dwGTAId = 0;
-		Log("~CPlayerPed()7");
 	}
 	else
 	{
-		Log("~CPlayerPed()6");
 		m_pPed = nullptr;
 		m_pEntity = nullptr;
 		m_dwGTAId = 0;

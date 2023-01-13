@@ -165,14 +165,13 @@ CVehicle::~CVehicle()
 {
 	if(!m_dwGTAId)return;
 
-	Log("~CVehicle");
 	CDebugInfo::uiStreamedVehicles--;
 	m_pVehicle = GamePool_Vehicle_GetAt(m_dwGTAId);
 
 	if(!m_pVehicle)return;
 
 	m_bReplacedTexture = false;
-	Log("~CVehicle1");
+
 	for (size_t i = 0; i < MAX_REPLACED_TEXTURES; i++)
 	{
 		if (m_bReplaceTextureStatus[i] && m_szReplacedTextures[i].pTexture)
@@ -185,51 +184,34 @@ CVehicle::~CVehicle()
 		memset(&(m_szReplacedTextures[i].szOld[0]), 0, MAX_REPLACED_TEXTURE_NAME);
 		m_szReplacedTextures[i].pTexture = nullptr;
 	}
-	Log("~CVehicle3");
+
 	if(IsTrailer()){
-		Log("is trailer");
 		CVehiclePool* pVehiclePool = pNetGame->GetVehiclePool();
 		CVehicle *tmpVeh = pVehiclePool->GetVehicleFromTrailer(this);
 		if(tmpVeh)
 		{
-			Log("is trailer");
 			ScriptCommand(&detach_trailer_from_cab, m_dwGTAId, tmpVeh->m_dwGTAId);
-			tmpVeh->m_pTrailer = NULL;
+			tmpVeh->m_pTrailer = nullptr;
 		}
 	}
 
-	Log("~CVehicle5");
 	if (m_dwMarkerID) {
 		ScriptCommand(&disable_marker, m_dwMarkerID);
 		m_dwMarkerID = 0;
 	}
-	Log("~CVehicle6");
 	RemoveEveryoneFromVehicle();
 
 	if(m_pTrailer) {
-		Log("m_pTrailer");
 		ScriptCommand(&detach_trailer_from_cab, m_pTrailer->m_dwGTAId, m_dwGTAId);
-		m_pTrailer = NULL;
+		m_pTrailer = nullptr;
 	}
 
-	Log("CVehicle9");
 	if (m_pVehicle->entity.nModelIndex == TRAIN_PASSENGER_LOCO ||
 		m_pVehicle->entity.nModelIndex == TRAIN_FREIGHT_LOCO) {
 		ScriptCommand(&destroy_train, m_dwGTAId);
 	}
 	else {
-		//	int nModelIndex = m_pVehicle->entity.nModelIndex;
 		ScriptCommand(&destroy_car, m_dwGTAId);
-
-//			if (!GetModelReferenceCount(nModelIndex) &&
-//				//!m_bKeepModelLoaded &&
-//				//(pGame->GetVehicleModelsCount() > 80) &&
-//				pGame->IsModelLoaded(nModelIndex))
-//			{
-//				// CStreaming::RemoveModel
-//				((void (*)(int))(g_libGTASA + 0x290C4C + 1))(nModelIndex);
-//			}
-		Log("CVehicle10");
 	}
 
 	if (m_pCustomHandling) {
