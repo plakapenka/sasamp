@@ -107,7 +107,7 @@ public:
 
 	void SetEngineState(int iState);
 	int GetEngineState();
-	void SetLightsState(int iState);
+	void SetLightsState(bool iState);
 	bool GetLightsState();
 	void SetBootAndBonnetState(int iBoot, int iBonnet);
 

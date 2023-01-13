@@ -284,7 +284,7 @@ void CVehicle::SetColor(int iColor1, int iColor2)
 
 void CVehicle::AttachTrailer()
 {
-	if (m_pTrailer)
+	if (m_pTrailer && GamePool_Vehicle_GetAt(m_pTrailer->m_dwGTAId) )
 	{
 		ScriptCommand(&put_trailer_on_cab, m_pTrailer->m_dwGTAId, m_dwGTAId);
 	}
@@ -294,7 +294,7 @@ void CVehicle::AttachTrailer()
 
 void CVehicle::DetachTrailer()
 {
-	if (m_pTrailer)
+	if (m_pTrailer && GamePool_Vehicle_GetAt(m_pTrailer->m_dwGTAId))
 	{
 		ScriptCommand(&detach_trailer_from_cab, m_pTrailer->m_dwGTAId, m_dwGTAId);
 	}
@@ -311,20 +311,19 @@ void CVehicle::SetTrailer(CVehicle* pTrailer)
 
 CVehicle* CVehicle::GetTrailer()
 {
-	if (!m_pVehicle) return NULL;
+	if (!m_pVehicle) return nullptr;
 
-	// Try to find associated trailer
-	uint32_t dwTrailerGTAPtr = m_pVehicle->dwTrailer;
-
-	if (pNetGame && dwTrailerGTAPtr) {
-		CVehiclePool* pVehiclePool = pNetGame->GetVehiclePool();
-		VEHICLEID TrailerID = (VEHICLEID)pVehiclePool->FindIDFromGtaPtr((VEHICLE_TYPE*)dwTrailerGTAPtr);
-		if (TrailerID < MAX_VEHICLES && pVehiclePool->GetSlotState(TrailerID)) {
-			return pVehiclePool->GetAt(TrailerID);
-		}
-	}
-
-	return NULL;
+	return m_pTrailer;
+//	// Try to find associated trailer
+//	uint32_t dwTrailerGTAPtr = m_pVehicle->dwTrailer;
+//
+//	if (pNetGame && dwTrailerGTAPtr) {
+//		CVehiclePool* pVehiclePool = pNetGame->GetVehiclePool();
+//		VEHICLEID TrailerID = (VEHICLEID)pVehiclePool->FindIDFromGtaPtr((VEHICLE_TYPE*)dwTrailerGTAPtr);
+//		if (TrailerID < MAX_VEHICLES && pVehiclePool->GetSlotState(TrailerID)) {
+//			return pVehiclePool->GetAt(TrailerID);
+//		}
+//	}
 }
 
 void CVehicle::SetHealth(float fHealth)
@@ -511,23 +510,22 @@ int CVehicle::GetDoorState(){
 	return CVehicle::fDoorState;
 }
 
-void CVehicle::SetLightsState(int iState)
+void CVehicle::SetLightsState(bool iState)
 {
 	if(!m_dwGTAId)return;
 	if(!m_pVehicle)return;
 
-	if (GamePool_Vehicle_GetAt(m_dwGTAId))
-	{
-		ScriptCommand(&FORCE_CAR_LIGHTS, m_dwGTAId, iState > 0 ? 2 : 1);
-		m_bLightsOn = iState;
-	}
+	//if (GamePool_Vehicle_GetAt(m_dwGTAId))
+	//{
+		m_pVehicle->m_nOverrideLights = 0;
+		m_pVehicle->m_nVehicleFlags.bLightsOn = iState;
+//		ScriptCommand(&FORCE_CAR_LIGHTS, m_dwGTAId, iState ? 2 : 1);
+	//}
+	m_bLightsOn = iState;
 }
 
 bool CVehicle::GetLightsState(){
-	if (GamePool_Vehicle_GetAt(m_dwGTAId))
-	{
-		return m_bLightsOn;
-	}
+	return m_bLightsOn;
 }
 
 void CVehicle::SetBootAndBonnetState(int iBoot, int iBonnet)

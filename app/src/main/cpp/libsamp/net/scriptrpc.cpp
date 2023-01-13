@@ -659,7 +659,7 @@ void ScrVehicleParamsEx(RPCParameters* rpcParams)
 	bsData.Read(bonnet);
 	bsData.Read(boot);
 	bsData.Read(objective);
-	Log("VehicleId: %d", VehicleId);
+
 	Log("engine: %d, lights: %d, alarm: %d, doors: %d, bonnet: %d, boot: %d, obj: %d",
 		engine, lights, alarm, doors, bonnet, boot, objective);
 
@@ -674,7 +674,7 @@ void ScrVehicleParamsEx(RPCParameters* rpcParams)
 			pNetGame->GetVehiclePool()->GetAt(VehicleId)->SetEngineState(engine);
 			//pGUI->SetEngine(engine);
 			// lights
-			pNetGame->GetVehiclePool()->GetAt(VehicleId)->SetLightsState(lights);
+			pNetGame->GetVehiclePool()->GetAt(VehicleId)->SetLightsState((lights == 1) ? true : false);
 			//pGUI->SetLights(lights);
 
 	//		pNetGame->GetVehiclePool()->AssignSpecialParamsToVehicle(VehicleId, objective,doors);
