@@ -1,5 +1,9 @@
 package com.liverussia.cr.gui.dialogs;
 
+import android.app.Activity;
+import android.graphics.Rect;
+import android.text.TextPaint;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -97,8 +101,9 @@ public class DialogAdapter extends RecyclerView.Adapter {
             }
         }
         for (int i = 0; i < this.mFieldHeaders.size(); i++) {
-            int headerWidth = this.mFieldHeaders.get(i).getWidth();
-            Log.i("DIALOG", max[i] + "\t" + ((Object) this.mFieldHeaders.get(i).getText()) + " " + headerWidth);
+            TextView textView = this.mFieldHeaders.get(i);
+            int headerWidth = measureTextWidth(textView);
+
             if (max[i] < headerWidth) {
                 max[i] = headerWidth;
             }
@@ -111,6 +116,19 @@ public class DialogAdapter extends RecyclerView.Adapter {
         for (int i = 0; i < this.mFieldHeaders.size(); i++) {
             this.mFieldHeaders.get(i).setWidth(max[i]);
         }
+    }
+
+    private int measureTextWidth(TextView view) {
+
+        String text = String.valueOf(view.getText());
+
+        if (TextUtils.isEmpty(text)) {
+            return 0;
+        }/*from  w  w  w. ja  v a2 s. c o  m*/
+
+        TextPaint paint = view.getPaint();
+        int width = (int) (paint.measureText(text) * 1.5);
+        return width;
     }
 
     public void setOnClickListener(OnClickListener onClickListener) {

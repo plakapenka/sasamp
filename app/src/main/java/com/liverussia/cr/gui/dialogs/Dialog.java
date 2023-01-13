@@ -2,12 +2,10 @@ package com.liverussia.cr.gui.dialogs;
 
 import android.app.Activity;
 import android.content.Context;
-import android.text.Editable;
 import android.text.InputType;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -77,7 +75,9 @@ public class Dialog {
         findViewById2.setOnClickListener(view -> sendDialogResponse(0));
         this.mRowsList = new ArrayList<>();
         this.mHeadersList = new ArrayList<>();
+
         ConstraintLayout mHeadersLayout = activity.findViewById(R.id.sd_dialog_tablist_row);
+
         for (int i = 0; i < mHeadersLayout.getChildCount(); i++) {
             this.mHeadersList.add((TextView) mHeadersLayout.getChildAt(i));
         }
@@ -253,6 +253,7 @@ public class Dialog {
         this.mCustomRecyclerView.setAdapter(null);
 
         for (int i = 0; i < this.mHeadersList.size(); i++) {
+            this.mHeadersList.get(i).setText("");
             this.mHeadersList.get(i).setVisibility(View.GONE);
         }
     }

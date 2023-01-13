@@ -1486,9 +1486,24 @@ public abstract class NvEventQueueActivity
         //postCleanup();
     }
 
-    public void hideDialogWithoutReset() { runOnUiThread(() -> { this.mDialog.hideWithoutReset(); }); }
+//    public void hideDialogWithoutReset() { runOnUiThread(() -> { this.mDialog.hideWithoutReset(); }); }
+//
+//    public void showDialogWithOldContent() { runOnUiThread(() -> { this.mDialog.showWithOldContent(); }); }
 
-    public void showDialogWithOldContent() { runOnUiThread(() -> { this.mDialog.showWithOldContent(); }); }
+
+    public void hideDialogWithoutReset() {
+        runOnUiThread(() -> {
+            mDialog = new Dialog(this);
+            this.mDialog.hideWithoutReset();
+        });
+    }
+
+    public void showDialogWithOldContent() {
+        runOnUiThread(() -> {
+            mDialog = new Dialog(this);
+            this.mDialog.showWithOldContent();
+        });
+    }
 
     public byte[] getClipboardText()
     {
@@ -1543,16 +1558,12 @@ public abstract class NvEventQueueActivity
         runOnUiThread(() -> mAndroidUI.setVisibility(z2 ? View.GONE:View.VISIBLE));
     }
 
-    public void toggleAutoShop(boolean toggle)
-    {
-        runOnUiThread(() -> {
-            mAutoShop.ToggleShow(toggle);
-        });
+    public void toggleAutoShop(boolean toggle) {
+        runOnUiThread(() -> mAutoShop.ToggleShow(toggle));
     }
 
-    public void updateAutoShop(String name, int price, int count, float maxspeed, float acceleration)
-    {
-        runOnUiThread(() -> { mAutoShop.Update(name, price, count, maxspeed, acceleration); });
+    public void updateAutoShop(String name, int price, int count, float maxspeed, float acceleration) {
+        runOnUiThread(() -> mAutoShop.Update(name, price, count, maxspeed, acceleration));
     }
 
     public void updateSpeedInfo(int speed, int fuel, int hp, int mileage, int engine, int light, int belt, int lock) { runOnUiThread(() -> { mSpeedometer.UpdateSpeedInfo(speed, fuel, hp, mileage, engine, light, belt, lock); }); }
