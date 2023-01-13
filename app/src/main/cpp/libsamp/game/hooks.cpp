@@ -1123,11 +1123,38 @@ int CTextureDatabaseRuntime__GetEntry_hook(unsigned int a1, const char *a2, bool
 	return result;
 }
 
+int (*CGame__Init2)(uintptr_t *thiz, const char *a2);
+int CGame__Init2_hook(uintptr_t *thiz, const char *a2)
+{
+
+}
+
+
+void readVehiclesAudioSettings();
+void (*CVehicleModelInfo__SetupCommonData)();
+void CVehicleModelInfo__SetupCommonData_hook()
+{
+	CVehicleModelInfo__SetupCommonData();
+	readVehiclesAudioSettings();
+}
+
+extern VehicleAudioPropertiesStruct VehicleAudioProperties[20000];
+static uintptr_t addr_veh_audio = (uintptr_t)& VehicleAudioProperties[0];
+
+void (*CAEVehicleAudioEntity__GetVehicleAudioSettings)(uintptr_t thiz, int16_t a2, int a3);
+void CAEVehicleAudioEntity__GetVehicleAudioSettings_hook(uintptr_t dest, int16_t a2, int ID)
+{
+	memcpy((void*)dest, &VehicleAudioProperties[(ID - 400)], sizeof(VehicleAudioPropertiesStruct));
+}
+
 void InstallSpecialHooks()
 {
 	Log("InstallSpecialHooks");
 
-	// texture
+//	CPatch::InlineHook(g_libGTASA, 0x0035BE30, &CAEVehicleAudioEntity__GetVehicleAudioSettings_hook, &CAEVehicleAudioEntity__GetVehicleAudioSettings);
+//	CPatch::InlineHook(g_libGTASA, 0x004052B8, &CVehicleModelInfo__SetupCommonData_hook, &CVehicleModelInfo__SetupCommonData);
+
+	// texture Краш если с текстурами какая-то хуйня
 	CPatch::InlineHook(g_libGTASA, 0x1bdc3c, &CTextureDatabaseRuntime__GetEntry_hook, &CTextureDatabaseRuntime__GetEntry);
 
 	//CPatch::InlineHook(g_libGTASA, 0x0055B968, &TextureDatabaseRuntime__Load_hook, (uintptr_t*)&TextureDatabaseRuntime__Load);
@@ -1919,50 +1946,6 @@ void CWidgetButton__Update_hook(int result, int a2, int a3, int a4)
 	return CWidgetButton__Update(result, a2, a3, a4);
 }
 
-void readVehiclesAudioSettings();
-void (*CVehicleModelInfo__SetupCommonData)();
-void CVehicleModelInfo__SetupCommonData_hook()
-{
-	CVehicleModelInfo__SetupCommonData();
-	readVehiclesAudioSettings();
-}
-
-extern VehicleAudioPropertiesStruct VehicleAudioProperties[20000];
-static uintptr_t addr_veh_audio = (uintptr_t)& VehicleAudioProperties[0];
-
-void (*CAEVehicleAudioEntity__GetVehicleAudioSettings)(uintptr_t thiz, int16_t a2, int a3);
-void CAEVehicleAudioEntity__GetVehicleAudioSettings_hook(uintptr_t dest, int16_t a2, int ID)
-{
-	memcpy((void*)dest, &VehicleAudioProperties[(ID - 400)], sizeof(VehicleAudioPropertiesStruct));
-}
-
-void (*CDarkel__RegisterCarBlownUpByPlayer)(void* pVehicle, int arg2);
-void CDarkel__RegisterCarBlownUpByPlayer_hook(void* pVehicle, int arg2)
-{
-	return;
-}
-void (*CDarkel__ResetModelsKilledByPlayer)(int playerid);
-void CDarkel__ResetModelsKilledByPlayer_hook(int playerid)
-{
-	return;
-}
-int(*CDarkel__QueryModelsKilledByPlayer)(int, int);
-int CDarkel__QueryModelsKilledByPlayer_hook(int player, int modelid)
-{
-	return 0;
-}
-
-int (*CDarkel__FindTotalPedsKilledByPlayer)(int player);
-int CDarkel__FindTotalPedsKilledByPlayer_hook(int player)
-{
-	return 0;
-}
-
-void (*CDarkel__RegisterKillByPlayer)(void* pKilledPed, unsigned int damageWeaponID, bool bHeadShotted, int arg4);
-void CDarkel__RegisterKillByPlayer_hook(void* pKilledPed, unsigned int damageWeaponID, bool bHeadShotted, int arg4)
-{
-	return;
-}
 
 std::list<std::pair<unsigned int*, unsigned int>> resetEntriesVehicle;
 
@@ -3384,28 +3367,20 @@ int CTaskSimpleCarSetPedInAsDriver__ProcessPed_hook(uintptr_t *thiz, PED_TYPE *a
 	return CTaskSimpleCarSetPedInAsDriver__ProcessPed(thiz, a2);
 }
 
-uint32_t (*CVehicle__GetVehicleLightsStatus)(VEHICLE_TYPE *_pVehicle);
-uint32_t CVehicle__GetVehicleLightsStatus_hook(VEHICLE_TYPE *_pVehicle)
+bool (*CVehicle__GetVehicleLightsStatus)(VEHICLE_TYPE *_pVehicle);
+bool CVehicle__GetVehicleLightsStatus_hook(VEHICLE_TYPE *_pVehicle)
 {
-	if(pNetGame)
-	{
-		CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
-		if(pVehiclePool)
-		{
-			VEHICLEID vehicleId = pVehiclePool->FindIDFromGtaPtr(_pVehicle);
-			if(vehicleId != INVALID_VEHICLE_ID)
-			{
-				CVehicle *pVehicle = pVehiclePool->GetAt(vehicleId);
-				if(pVehicle)
-				{
-					if(pVehicle->GetLightsState() == 0 || pVehicle->GetLightsState() == 1)
-						return pVehicle->GetLightsState();
-				}
-			}
-		}
-	}
+	*(bool*)(g_libGTASA + 0x97180D) = false;
+	if(!pNetGame) return false;
 
-	return CVehicle__GetVehicleLightsStatus(_pVehicle);
+	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
+    if(!pVehiclePool) return false;
+
+    CVehicle *pVehicle = pVehiclePool->FindVehicle(_pVehicle);
+	if(!pVehicle)return false;
+
+	return pVehicle->GetLightsState();
+
 }
 
 
@@ -3496,7 +3471,7 @@ void InstallHooks()
 
 	CPatch::InlineHook(g_libGTASA, 0x56668C, &CWeapon__FireSniper_hook, &CWeapon__FireSniper);
 	// audio
-	//CPatch::InlineHook(g_libGTASA, 0x368850, &CAudioEngine__Service_hook, &CAudioEngine__Service);
+//	CPatch::InlineHook(g_libGTASA, 0x368850, &CAudioEngine__Service_hook, &CAudioEngine__Service);
 	//CPatch::InlineHook(g_libGTASA, 0x35AC44, &CAEVehicleAudioEntity__GetAccelAndBrake_hook, &CAEVehicleAudioEntity__GetAccelAndBrake);
 
 	CPatch::InlineHook(g_libGTASA, 0x29947C, &CCollision__ProcessVerticalLine_hook, &CCollision__ProcessVerticalLine);
@@ -3569,18 +3544,14 @@ void InstallHooks()
 	CPatch::InlineHook(g_libGTASA, 0x00274218, &CWidgetButton__IsTouched_hook, &CWidgetButton__IsTouched);
 	//SetUpHook(g_libGTASA + 0x0027455C, (uintptr_t)CWidget__IsTouched_hook, (uintptr_t*)& CWidget__IsTouched);
 
-	CPatch::InlineHook(g_libGTASA, 0x004052B8, &CVehicleModelInfo__SetupCommonData_hook, &CVehicleModelInfo__SetupCommonData);
-
-	CPatch::InlineHook(g_libGTASA, 0x0035BE30, &CAEVehicleAudioEntity__GetVehicleAudioSettings_hook, &CAEVehicleAudioEntity__GetVehicleAudioSettings);
-
 	CPatch::RET(g_libGTASA + 0x002C0304); // CDarkel__RegisterCarBlownUpByPlayer_hook
 	CPatch::RET(g_libGTASA + 0x002C072C); // CDarkel__ResetModelsKilledByPlayer_hook
 	CPatch::RET(g_libGTASA + 0x002C0758); // CDarkel__QueryModelsKilledByPlayer_hook
 	CPatch::RET(g_libGTASA + 0x002C0778); // CDarkel__FindTotalPedsKilledByPlayer_hook
 	CPatch::RET(g_libGTASA + 0x002C0D04); // CDarkel__RegisterKillByPlayer_hook
 
-	CPatch::InlineHook(g_libGTASA, 0x00338CBC, &CVehicleModelInfo__SetEditableMaterials_hook, &CVehicleModelInfo__SetEditableMaterials);
-	CPatch::InlineHook(g_libGTASA, 0x0050DEF4, &CVehicle__ResetAfterRender_hook, &CVehicle__ResetAfterRender);
+	//CPatch::InlineHook(g_libGTASA, 0x00338CBC, &CVehicleModelInfo__SetEditableMaterials_hook, &CVehicleModelInfo__SetEditableMaterials);
+	//CPatch::InlineHook(g_libGTASA, 0x0050DEF4, &CVehicle__ResetAfterRender_hook, &CVehicle__ResetAfterRender);
 
 	CPatch::InlineHook(g_libGTASA, 0x3986CC, &CGame__Process_hook, &CGame__Process);
 
@@ -3639,6 +3610,7 @@ void InstallHooks()
 	//================================
 
 	// vehicle light processing
+	//CPatch::NOP(g_libGTASA + 0x005198DC, 4);
 	CPatch::InlineHook(g_libGTASA, 0x5189C4, &CVehicle__GetVehicleLightsStatus_hook, &CVehicle__GetVehicleLightsStatus);
 	//
 	CPatch::NOP(g_libGTASA + 0x003989C8, 2);//живность в воде WaterCreatureManager_c::Update
