@@ -55,8 +55,6 @@ class CJavaWrapper
 	jmethodID s_showRegistration;
 	jmethodID s_hideRegistration;
 
-	jmethodID j_showDeathInfo;
-
 	jmethodID j_toggleAutoShop;
 	jmethodID j_updateAutoShop;
 
@@ -97,9 +95,6 @@ public:
 	void HideServerLogo();
 	void ShowServerLogo();
 
-	void SetTabStat(int id, char* name, int score, int ping);
-	void ShowTabWindow();
-
 	void ShowOilFactoryGame();
 	void ShowArmyGame(int quantity);
 	void HideArmyGame();
@@ -130,9 +125,6 @@ public:
 
 	void ShowAuthorization(char *nick, int id, bool ip_match, bool toggleAutoLogin, bool email_acvive);
 	void HideAuthorization();
-
-	void ShowDeathInfo(std::string nick, int id);
-	void HideDeathInfo();
 
 	void ShowRegistration(char *nick, int id);
 	void HideRegistration();

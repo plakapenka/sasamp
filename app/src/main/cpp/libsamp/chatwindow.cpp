@@ -7,7 +7,7 @@
 #include "net/netgame.h"
 #include "vendor/bass/bass.h"
 #include <dlfcn.h>
-#include "java_systems/scoreboard.h"
+#include "java_systems/CTab.h"
 #include "java_systems/CHUD.h"
 
 extern CHUD *pHud;

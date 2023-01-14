@@ -1,5 +1,5 @@
 #include "main.h"
-#include "scoreboard.h"
+#include "CTab.h"
 #include "game/game.h"
 #include "net/netgame.h"
 #include "gui/gui.h"
@@ -18,14 +18,14 @@ extern CGUI* pGUI;
 extern CSettings* pSettings;
 extern CHUD *pHud;
 
-jobject jTab;
+jobject CTab::thiz = nullptr;
 
-bool tabToggle = false;
+bool CTab::bIsShow = false;
 
-void ToggleTab()
+void CTab::toggle()
 {
-    tabToggle = !tabToggle;
-    if (tabToggle)
+    CTab::bIsShow = !CTab::bIsShow;
+    if (CTab::bIsShow)
     {
       //  TabUpdate();
 
@@ -35,13 +35,13 @@ void ToggleTab()
     }
 }
 
-void TabUpdate() {
+void CTab::update() {
     // Get player list
    // pNetGame->UpdatePlayerScoresAndPings();
 
     CPlayerPool* pPlayerPool = pNetGame->GetPlayerPool();
 
-    g_pJavaWrapper->SetTabStat(pPlayerPool->GetLocalPlayerID(),
+    CTab::setStat(pPlayerPool->GetLocalPlayerID(),
                                pPlayerPool->GetLocalPlayerName(),
                                pPlayerPool->GetLocalPlayerScore(),
                                pPlayerPool->GetLocalPlayerPing());
@@ -51,36 +51,36 @@ void TabUpdate() {
     {
         if (!pPlayerPool->GetSlotState(x)) continue;
 
-        g_pJavaWrapper->SetTabStat(x,
-                                   pPlayerPool->GetPlayerName(x),
-                                   pPlayerPool->GetRemotePlayerScore(x),
-                                   pPlayerPool->GetRemotePlayerPing(x));
+        CTab::setStat(x,
+                pPlayerPool->GetPlayerName(x),
+                pPlayerPool->GetRemotePlayerScore(x),
+                pPlayerPool->GetRemotePlayerPing(x) );
 
     }
 
     //Show Window
-    g_pJavaWrapper->ShowTabWindow();
+    CTab::show();
 }
 
 
-void CJavaWrapper::ShowTabWindow()
+void CTab::show()
 {
-    JNIEnv* env = GetEnv();
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
 
     if (!env)
     {
         Log("No env");
         return;
     }
-    jclass Tab = env->GetObjectClass(jTab);
+    jclass Tab = env->GetObjectClass(CTab::thiz);
 
     jmethodID show = env->GetMethodID(Tab, "show", "()V");
-    env->CallVoidMethod(jTab, show);
+    env->CallVoidMethod(CTab::thiz, show);
 }
 
-void CJavaWrapper::SetTabStat(int id, char name[], int score, int ping) {
+void CTab::setStat(int id, char name[], int score, int ping) {
 
-    JNIEnv* env = GetEnv();
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
 
     if (!env)
     {
@@ -88,25 +88,25 @@ void CJavaWrapper::SetTabStat(int id, char name[], int score, int ping) {
         return;
     }
 
-    jclass Tab = env->GetObjectClass(jTab);
+    jclass Tab = env->GetObjectClass(CTab::thiz);
     jmethodID setStat = env->GetMethodID(Tab, "setStat", "(ILjava/lang/String;II)V");
 
 
     jstring jPlayerName = env->NewStringUTF( name );
 
-    env->CallVoidMethod(jTab, setStat, id, jPlayerName, score, ping);
+    env->CallVoidMethod(CTab::thiz, setStat, id, jPlayerName, score, ping);
 
 }
 
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_tab_Tab_onTabClose(JNIEnv *env, jobject thiz) {
-    ToggleTab();
+    CTab::toggle();
 }
 
 
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_tab_Tab_initTab(JNIEnv *env, jobject thiz) {
-    jTab = env->NewGlobalRef(thiz);
+    CTab::thiz = env->NewGlobalRef(thiz);
 }

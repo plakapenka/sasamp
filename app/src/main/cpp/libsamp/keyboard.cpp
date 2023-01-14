@@ -303,6 +303,7 @@ void CKeyBoard::Close()
 #include "util/CJavaWrapper.h"
 #include "chatwindow.h"
 #include "CDebugInfo.h"
+#include "java_systems/CTab.h"
 
 bool CKeyBoard::OnTouchEvent(int type, bool multi, int x, int y)
 {
@@ -2324,7 +2325,7 @@ void CKeyBoard::OnNewKeyboardInput(JNIEnv *pEnv, jobject thiz, jbyteArray str)
 }
 
 extern bool CGame__Shutdown_hook();
-extern void ToggleTab();
+
 bool ProcessLocalCommands(const char str[])
 {
 	if (strstr(str, "/fontsize"))
@@ -2377,7 +2378,7 @@ bool ProcessLocalCommands(const char str[])
 
 	if (strstr(str, "/tab"))
 	{
-		ToggleTab();
+		CTab::toggle();
 		return true;
 	}
 	if (strstr(str, "/dl"))

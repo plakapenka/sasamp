@@ -104,7 +104,7 @@ public class Tab {
     }
 
     public void setStat(int id, String name, int score, int ping) {
-        Log.d("afd", "Update");
+       // Log.d("afd", "Update");
         activity.runOnUiThread( () ->
                 this.mPlayerData.add(new PlayerData(id, name, score, ping)) );
     }

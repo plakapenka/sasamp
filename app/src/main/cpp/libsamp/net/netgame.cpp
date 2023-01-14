@@ -519,7 +519,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			break;
 		}
 		case RPC_SHOW_CASINO_BUY_CHIP: {
-			Packet_CasinoChip(p);
+			packetCasinoChip(p);
 			break;
 		}
 		case RPC_SHOW_CONTEINER_AUC: {
@@ -740,38 +740,12 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_PRE_DEATH:
 		{
-			uint16_t toggle;
-			uint16_t killerId;
-			char killername[25];
-			bs.Read(toggle);
-			bs.Read(killerId);
-
-			if (toggle == 1)
-			{
-				CPlayerPool *pPlayerPool = GetPlayerPool();
-				if (pPlayerPool)
-				{
-					if(pPlayerPool->GetSlotState(killerId))
-					{
-						strcpy(killername, pPlayerPool->GetPlayerName(killerId));
-
-					}
-					else
-					{
-						strcpy(killername, "None");
-					}
-
-					//Log("RPC_PRE_DEATH: %s (%d)", killername, killerId);
-					//CChatWindow::AddDebugMessage("RPC_PRE_DEATH: %s (%d)", killername, killerId);
-
-					g_pJavaWrapper->ShowDeathInfo(killername, killerId);
-				}
-			}
-			else
-			{
-				g_pJavaWrapper->HideDeathInfo();
-			}
-
+			packetPreDeath(p);
+			break;
+		}
+		case RPC_MED_GAME:
+		{
+			packetMedGame(p);
 			break;
 		}
 		case RPC_CHECK_CLIENT:

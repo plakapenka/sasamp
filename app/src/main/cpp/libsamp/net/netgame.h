@@ -97,6 +97,7 @@
 #define RPC_SEND_BUFFER 	61
 #define RPC_SHOW_SALARY 	62
 #define RPC_ADMIN_RECON 	63
+#define RPC_MED_GAME 		64
 
 // Packet 252
 #define RPC_TOGGLE_LOGIN (1)
@@ -228,13 +229,17 @@ public:
 
 	void Packet_InventoryItemActive(Packet *p);
 
-	void Packet_CasinoChip(Packet *p);
+	static void packetCasinoChip(Packet *p);
 
     static void packetAucContainer(Packet *p);
 
 	void Packet_Salary(Packet *p);
 
 	static void packetAdminRecon(Packet *p);
+
+	void packetPreDeath(Packet *p);
+
+	void packetMedGame(Packet *p);
 };
 
 extern CNetGame *pNetGame;

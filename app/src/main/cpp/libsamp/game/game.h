@@ -155,6 +155,7 @@ public:
 	bool isCasinoDiceActive = false;
 	bool isAutoShopActive = false;
 	bool isCasinoWheelActive = false;
+	bool isShowMedicGame = false;
 	bool isRegistrationActive = false;
 	bool isShopStoreActive = false;
 	int wantedLvl = 0;
@@ -162,7 +163,6 @@ public:
 	bool isBanJump = false;
 	bool GameExiting = false;
 
-	bool isPreDeathActive = false;
 	bool 			m_bDl_enabled = false;
 private:
 	bool aToggleStatusHUD[HUD_MAX];

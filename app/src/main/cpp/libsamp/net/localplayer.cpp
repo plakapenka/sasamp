@@ -177,13 +177,15 @@ uint32_t CLocalPlayer::GetCurrentAnimationIndexFlag()
 	return dwAnim;
 }
 extern bool g_uiHeadMoveEnabled;
-extern bool tabToggle;
+
 #include "..//game/CWeaponsOutFit.h"
 #include "java_systems/CEditobject.h"
 #include "java_systems/CCasino.h"
 #include "java_systems/CAucContainer.h"
 #include "util/patch.h"
 #include "java_systems/CAdminRecon.h"
+#include "java_systems/CMedic.h"
+#include "java_systems/CTab.h"
 
 bool CLocalPlayer::Process()
 {
@@ -448,9 +450,9 @@ bool CLocalPlayer::Process()
 	}
 	////////////////////////////
 	bool needDrawableHud = true;
-	if(pGame->isDialogActive || pGame->isCasinoDiceActive || tabToggle || pGame->isAutoShopActive
+	if(pGame->isDialogActive || pGame->isCasinoDiceActive || CTab::bIsShow || pGame->isAutoShopActive
 	   || pGame->isCasinoWheelActive || !m_pPlayerPed || pGame->isRegistrationActive || pGame->isShopStoreActive ||
-	   pGame->isPreDeathActive || pInventory->bIsToggle || bFirstSpawn || CEditobject::bIsToggle || CCasino::bIsChipToggle
+	   CMedic::bIsShow || pInventory->bIsToggle || bFirstSpawn || CEditobject::bIsToggle || CCasino::bIsChipToggle
 	   || CAucContainer::bIsShow || CAdminRecon::bIsToggle)
 	{
 		needDrawableHud = false;

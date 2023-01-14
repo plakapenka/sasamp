@@ -1581,11 +1581,6 @@ public abstract class NvEventQueueActivity
 
     public void hideChooseSpawn() { runOnUiThread(() -> { mChooseSpawn.Hide(); }); }
 
-    public void showPreDeath(String killerName, int killerID)
-    {
-        runOnUiThread(() -> { mPreDeath.Show(killerName, killerID); });
-    }
-
     public void showMenu() { runOnUiThread(() -> { mMenu.ShowMenu(); }); }
 
     public void showSamwill() { runOnUiThread(() -> { mSamwillManager.Show(); }); }

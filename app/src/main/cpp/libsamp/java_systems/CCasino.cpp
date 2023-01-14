@@ -19,7 +19,7 @@ extern CHUD *pHud;
 jobject jCasino;
 bool CCasino::bIsChipToggle = false;
 
-void CNetGame::Packet_CasinoChip(Packet* p)
+void CNetGame::packetCasinoChip(Packet* p)
 {
     RakNet::BitStream bs((unsigned char*)p->data, p->length, false);
     uint8_t packetID;

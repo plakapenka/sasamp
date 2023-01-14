@@ -9,6 +9,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.material.button.MaterialButton;
 import com.liverussia.cr.R;
+import com.nvidia.devtech.NvEventQueueActivity;
 
 public class AdminRecon {
     private static final int EXIT_BUTTON = 0;
@@ -53,7 +54,7 @@ public class AdminRecon {
     public AdminRecon(Activity activity){
         init();
 
-        this.activity = activity;
+        this.activity = NvEventQueueActivity.getInstance();
         re_main_layout = activity.findViewById(R.id.re_main_layout);
         re_main_layout.setVisibility(View.GONE);
 

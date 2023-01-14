@@ -8,7 +8,7 @@ extern "C" JavaVM* javaVM;
 #include "..//net/netgame.h"
 #include "../game/game.h"
 #include "../str_obfuscator_no_template.hpp"
-#include "java_systems/scoreboard.h"
+#include "java_systems/CTab.h"
 #include "java_systems/CHUD.h"
 
 extern CKeyBoard* pKeyBoard;
@@ -209,7 +209,7 @@ extern "C"
 					}
 					case 9:
 					{
-						ToggleTab();
+						CTab::toggle();
 						break;
 					}
 				}
@@ -1002,22 +1002,6 @@ void CJavaWrapper::HideNotification()
 	env->CallVoidMethod(this->activity, this->s_hideNotification);
 }
 
-void CJavaWrapper::ShowDeathInfo(std::string nick, int id)
-{
-	JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-	jstring jStringParam = env->NewStringUTF( nick.c_str() );
-
-	env->CallVoidMethod(this->activity, this->j_showDeathInfo, jStringParam, id);
-
-	pGame->isPreDeathActive = true;
-}
-
 void CJavaWrapper::ToggleAutoShop(bool toggle)
 {
 	JNIEnv* env = GetEnv();
@@ -1045,18 +1029,6 @@ void CJavaWrapper::UpdateAutoShop(const char name[], int price, int count, float
 	env->CallVoidMethod(this->activity, this->j_updateAutoShop, j_name, price, count, maxspeed, acceleration);
 
 	env->DeleteLocalRef(j_name);
-}
-
-void CJavaWrapper::HideDeathInfo() 
-{
-//	JNIEnv* env = GetEnv();
-//
-//	if (!env)
-//	{
-//		Log("No env");
-//		return;
-//	}
-//	env->CallVoidMethod(this->activity, this->s_hideDeathInfo);
 }
 
 void CJavaWrapper::ShowRegistration(char *nick, int id) 
@@ -1246,9 +1218,6 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 	s_showRegistration = env->GetMethodID(nvEventClass, "showRegistration", "(Ljava/lang/String;I)V");
 	s_hideRegistration = env->GetMethodID(nvEventClass, "hideRegistration", "()V");
 
-	j_showDeathInfo = env->GetMethodID(nvEventClass, "showPreDeath", "(Ljava/lang/String;I)V");
-	//s_hideDeathInfo = env->GetMethodID(nvEventClass, "hideDeathInfo", "()V");
-
 	j_toggleAutoShop = env->GetMethodID(nvEventClass, "toggleAutoShop", "(Z)V");
 
 	j_updateAutoShop = env->GetMethodID(nvEventClass, "updateAutoShop", "(Ljava/lang/String;IIFF)V");
@@ -1388,25 +1357,6 @@ Java_com_liverussia_cr_gui_Casino_1LuckyWheel_ClickButt(JNIEnv *env, jobject thi
 	}
 	uint8_t packet = ID_CUSTOM_RPC;
 	uint8_t RPC = RPC_CASINO_LUCKY_WHEEL_MENU;
-	uint8_t button = button_id;
-
-
-	RakNet::BitStream bsSend;
-	bsSend.Write(packet);
-	bsSend.Write(RPC);
-	bsSend.Write(button);
-	pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
-}
-
-
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_PreDeath_OnClickPreDeathButton(JNIEnv *env, jobject thiz,
-                                                          jint button_id) {
-	pGame->isPreDeathActive = false;
-
-	uint8_t packet = ID_CUSTOM_RPC;
-	uint8_t RPC = RPC_PRE_DEATH;
 	uint8_t button = button_id;
 
 
