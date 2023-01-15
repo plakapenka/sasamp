@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum  NativeStorageElements {
     NICKNAME("name"),
     SERVER("server"),
+    LOCKED_SERVER_PASSWORD("password"),
     TEST("test");
 
     private final String value;
