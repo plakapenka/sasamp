@@ -27,6 +27,7 @@ public enum ErrorContainer {
     CAPTCHA_ERROR(219, "Попробуйте заново пройти google captcha", HttpStatus.UNAUTHORIZED),
     NOT_ENOUGH_MONEY(220, "Недостаточно денег", HttpStatus.BAD_REQUEST),
     NETWORK_ERROR(221, "Не удалось загрузить данные. Попробуйте еще раз", HttpStatus.NOT_FOUND),
+    USER_IN_GAME_ERROR(222, "Выйдите из игры со всех устройств или дождитесь отключения от сервера", HttpStatus.BAD_REQUEST),
 
     //TODO мб вынести это в отдельный enum (подумать как на досуге) либо ошибки не содержащие код писать под кодом > 1000
     SERVER_CONNECT_ERROR(1000, "Отсуствует интернет соединение. Для решения: попробуйте переподключить роутер, либо сменить интернет, либо воспользоваться VPN", HttpStatus.NOT_FOUND),

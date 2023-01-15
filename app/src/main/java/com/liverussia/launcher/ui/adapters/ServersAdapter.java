@@ -26,14 +26,22 @@ import com.dinuscxj.progressbar.CircleProgressBar;
 import com.liverussia.launcher.service.ActivityService;
 import com.liverussia.launcher.service.impl.ActivityServiceImpl;
 import com.liverussia.launcher.storage.NativeStorage;
+import com.liverussia.launcher.ui.dialogs.EnterLockedServerPasswordDialog;
 
 import org.apache.commons.lang3.StringUtils;
 import org.ini4j.Wini;
 
 public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersViewHolder> {
+
+	private static final int SERVER_LOCKED_VALUE = 1;
+
 	private Context context;
 	private List<Servers> servers;
 	private int selectedItem;
+
+	private int lockedServerPosition;
+	private Servers lockedServerInfo;
+
 //	private Boolean isselect[10];
 	private final ActivityService activityService;
 
@@ -78,7 +86,7 @@ public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersV
 		holder.mult.setText(servers.getMult());
 		holder.textonline.setText(Integer.toString(servers.getOnline()));
 		holder.textmaxonline.setText("/1000");
-	    holder.progressBar.setProgressStartColor(MainColor);
+		holder.progressBar.setProgressStartColor(MainColor);
 		holder.progressBar.setProgressEndColor(MainColor);
 		holder.progressBar.setProgress(servers.getOnline());
 		holder.progressBar.setMax(1000);
@@ -95,18 +103,28 @@ public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersV
 		}
 
 		holder.container.setOnClickListener(view -> {
+
+			if (SERVER_LOCKED_VALUE == servers.getLock()) {
+				lockedServerPosition = position;
+				lockedServerInfo = servers;
+				EnterLockedServerPasswordDialog dialog = new EnterLockedServerPasswordDialog(context);
+				dialog.setOnDialogCloseListener(this::saveServerPassword);
+				dialog.createDialog();
+				return;
+			}
+
 			selectedItem = position;
 			this.notifyDataSetChanged();
 
-			//view.startAnimation(AnimationUtils.loadAnimation(context, R.anim.button_click));
 			NativeStorage.addClientProperty(NativeStorageElements.SERVER, servers.getServerID(), context);
 
-			//String selectedServer = NativeStorage.getClientProperty(NativeStorageElements.SERVER, context);
+			if (NativeStorage.getClientProperty(NativeStorageElements.SERVER, context) == null) {
+				return;
+			}
 
-			//if (StringUtils.isNotBlank(selectedServer)) {
+			NativeStorage.addClientProperty(NativeStorageElements.LOCKED_SERVER_PASSWORD, StringUtils.EMPTY, context);
 
 			activityService.showMessage(InfoMessage.SERVER_SELECTED.getText(), context);
-			//}
 		});
     }
 
@@ -114,6 +132,30 @@ public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersV
     public int getItemCount() {
         return servers.size();
     }
+
+	private void saveServerPassword(String password) {
+
+		if (StringUtils.isBlank(password)) {
+			return;
+		}
+
+		NativeStorage.addClientProperty(NativeStorageElements.SERVER, lockedServerInfo.getServerID(), context);
+
+		if (NativeStorage.getClientProperty(NativeStorageElements.SERVER, context) == null) {
+			return;
+		}
+
+		NativeStorage.addClientProperty(NativeStorageElements.LOCKED_SERVER_PASSWORD, password, context);
+
+		if (NativeStorage.getClientProperty(NativeStorageElements.LOCKED_SERVER_PASSWORD, context) == null) {
+			return;
+		}
+
+		selectedItem = lockedServerPosition;
+		this.notifyDataSetChanged();
+
+		activityService.showMessage(InfoMessage.SERVER_SELECTED.getText(), context);
+	}
 
     public static class ServersViewHolder extends RecyclerView.ViewHolder {
 
