@@ -32,10 +32,11 @@
 // added in 0.3x
 #define SPECIAL_ACTION_CARRY			25
 
-#define ENTITY_TYPE_UNKNOWN        0
-#define ENTITY_TYPE_PED            1
-#define ENTITY_TYPE_VEHICLE        2
-#define ENTITY_TYPE_OBJECT        3
+#define BULLET_HIT_TYPE_NONE            0
+#define BULLET_HIT_TYPE_PLAYER          1
+#define BULLET_HIT_TYPE_VEHICLE         2
+#define BULLET_HIT_TYPE_OBJECT          3
+#define BULLET_HIT_TYPE_PLAYER_OBJECT   4
 
 typedef unsigned short RW_OBJECTID;
 
@@ -159,7 +160,7 @@ public:
 	void ResetAllSyncAttributes();
 
 	bool Process();
-	void SendBulletSyncData(PLAYERID byteHitID, uint8_t byteHitType, VECTOR vecHitPos);
+
 	void SendWastedNotification();
 
 	void HandleClassSelection();
@@ -208,6 +209,8 @@ public:
 	void
 	GiveTakeDamage(bool bGiveOrTake, uint16_t wPlayerID, float damage_amount, uint32_t weapon_id,
 				   uint32_t bodypart);
+
+	void SendBulletSyncData(PLAYERID byteHitID, uint8_t byteHitType, VECTOR vecHitPos);
 
 public:
 	bool				m_bWaitingForSpawnRequestReply;

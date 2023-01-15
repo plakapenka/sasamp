@@ -35,6 +35,8 @@ struct RwRaster* GetRWRasterFromBitmap(uint8_t* pBitmap, size_t dwStride, size_t
 struct RwRaster* GetRWRasterFromBitmapPalette(uint8_t* pBitmap, size_t dwStride, size_t dwX, size_t dwY, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 
 void ProjectMatrix(VECTOR* vecOut, MATRIX4X4* mat, VECTOR* vecPos);
+void RwMatrixOrthoNormalize(MATRIX4X4 *matIn, MATRIX4X4 *matOut);
+void RwMatrixInvert(MATRIX4X4 *matOut, MATRIX4X4 *matIn);
 void RwMatrixRotate(MATRIX4X4* mat, int axis, float angle);
 void RwMatrixScale(MATRIX4X4* mat, VECTOR* vecScale);
 

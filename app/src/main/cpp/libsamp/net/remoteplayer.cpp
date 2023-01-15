@@ -640,7 +640,7 @@ float                    m_fWeaponDamages[43 + 1]
 };
 void CRemotePlayer::StoreBulletSyncData(BULLET_SYNC* pBulletSync)
 {
-	if (!m_pPlayerPed || !m_pPlayerPed->IsAdded()) return;
+	if(!m_pPlayerPed || !m_pPlayerPed->IsAdded()) return;
 
 	BULLET_DATA btData;
 	memset(&btData, 0, sizeof(BULLET_DATA));
@@ -657,81 +657,76 @@ void CRemotePlayer::StoreBulletSyncData(BULLET_SYNC* pBulletSync)
 	btData.vecOffset.Y = pBulletSync->vecOffset.Y;
 	btData.vecOffset.Z = pBulletSync->vecOffset.Z;
 
-	/*Log("Receiving button data..");
-	Log("vecOrigin: %f, %f, %f", btData.vecOrigin.X, btData.vecOrigin.Y, btData.vecOrigin.Z);
-	Log("vecPos: %f, %f, %f", btData.vecPos.X, btData.vecPos.Y, btData.vecPos.Z);
-	Log("vecOffset: %f, %f, %f", btData.vecOffset.X, btData.vecOffset.Y, btData.vecOffset.Z);
-	Log("hit: %d, ID: %d", pBulletSync->byteHitType, pBulletSync->PlayerID);*/
-
-	if (pBulletSync->byteHitType != 0)
+	if(pBulletSync->byteHitType != 0)
 	{
-		if (btData.vecOffset.X > 300.0f ||
-			btData.vecOffset.X < -300.0f ||
-			btData.vecOffset.Y > 300.0f ||
-			btData.vecOffset.Y < -300.0f ||
-			btData.vecOffset.Z > 300.0f ||
-			btData.vecOffset.Z < -300.0f
+		if(	btData.vecOffset.X > 300.0f 	||
+			   btData.vecOffset.X < -300.0f 	||
+			   btData.vecOffset.Y > 300.0f 	||
+			   btData.vecOffset.Y < -300.0f 	||
+			   btData.vecOffset.Z > 300.0f 	||
+			   btData.vecOffset.Z < -300.0f
 				)
 		{
 			return;
 		}
 
-		if (pBulletSync->byteHitType == 1)
+		if(pBulletSync->byteHitType == 1)
 		{
-			CPlayerPool* pPlayerPool = pNetGame->GetPlayerPool();
-			if (pPlayerPool)
+			CPlayerPool *pPlayerPool = pNetGame->GetPlayerPool();
+			if(pPlayerPool)
 			{
-				if (pBulletSync->PlayerID == pPlayerPool->GetLocalPlayerID())
+				if(pBulletSync->PlayerID == pPlayerPool->GetLocalPlayerID())
 				{
 					btData.pEntity = &pGame->FindPlayerPed()->m_pPed->entity;
 				}
-				else if (pBulletSync->PlayerID == m_PlayerID)
+				else if(pBulletSync->PlayerID == m_PlayerID)
 				{
 					return;
 				}
 				else
 				{
-					CRemotePlayer* pRemotePlayer = pPlayerPool->GetAt(pBulletSync->PlayerID);
-					if (pRemotePlayer)
+					CRemotePlayer *pRemotePlayer = pPlayerPool->GetAt(pBulletSync->PlayerID);
+					if(pRemotePlayer)
 					{
-						CPlayerPed* pPlayerPed = pRemotePlayer->GetPlayerPed();
-
-						if (pPlayerPed)
+						CPlayerPed *pPlayerPed = pRemotePlayer->GetPlayerPed();
+						if(pPlayerPed)
 							btData.pEntity = &pPlayerPed->m_pPed->entity;
 					}
 				}
 			}
 		}
-		else if (pBulletSync->byteHitType == 2)
+		else if(pBulletSync->byteHitType == 2)
 		{
-			CVehiclePool* pVehiclePool = pNetGame->GetVehiclePool();
-			if (pVehiclePool)
+			CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
+			if(pVehiclePool)
 			{
-				CVehicle* pVehicle = pVehiclePool->GetAt(pBulletSync->PlayerID);
-				if (pVehicle)
+				CVehicle *pVehicle = pVehiclePool->GetAt(pBulletSync->PlayerID);
+				if(pVehicle)
 				{
 					btData.pEntity = &pVehicle->m_pVehicle->entity;
 				}
 			}
 		}
-
-		m_pPlayerPed->ProcessBulletData(&btData);
-		m_pPlayerPed->FireInstant();
 	}
 
-	if (m_pPlayerPed->IsAdded())
+	if(m_pPlayerPed->IsAdded())
 	{
 		uint8_t byteWeapon = pBulletSync->byteWeaponID;
-		if (m_pPlayerPed->GetCurrentWeapon() != byteWeapon)
+		if(m_pPlayerPed->GetCurrentWeapon() != byteWeapon)
 		{
 			m_pPlayerPed->SetArmedWeapon(byteWeapon);
-			if (m_pPlayerPed->GetCurrentWeapon() != byteWeapon)
+			if(m_pPlayerPed->GetCurrentWeapon() != byteWeapon)
 			{
 				m_pPlayerPed->GiveWeapon(byteWeapon, 9999);
 				m_pPlayerPed->SetArmedWeapon(byteWeapon);
 			}
 		}
 	}
+
+	m_byteWeaponShotID = pBulletSync->byteWeaponID;
+
+	m_pPlayerPed->ProcessBulletData(&btData);
+	m_pPlayerPed->FireInstant();
 }
 
 void CRemotePlayer::SetPlayerColor(uint32_t dwColor)
@@ -873,7 +868,7 @@ void CRemotePlayer::StoreInCarFullSyncData(INCAR_SYNC_DATA *picSync, uint32_t dw
 		// -------------- TRAILER
 
 		if((m_icSync.TrailerID  == INVALID_VEHICLE_ID) )
-		{
+		{//
 			if(m_pCurrentVehicle->m_pTrailer) {
 				m_pCurrentVehicle->SetTrailer(nullptr);
 				m_pCurrentVehicle->DetachTrailer();
@@ -1041,7 +1036,25 @@ void CRemotePlayer::HideGlobalMarker()
 	}
 }
 
-void CRemotePlayer::StateChange(uint8_t byteNewState, uint8_t byteOldState)
-{
 
+void CRemotePlayer::StateChange(BYTE byteNewState, BYTE byteOldState)
+{
+	if(byteNewState == PLAYER_STATE_DRIVER && byteOldState == PLAYER_STATE_ONFOOT)
+	{
+		// If their new vehicle is the one the local player
+		// is driving, we'll have to kick the local player out
+		CPlayerPed *pLocalPlayerPed = pGame->FindPlayerPed();
+		VEHICLEID LocalVehicle=0xFFFF;
+		MATRIX4X4 mat;
+
+		if(pLocalPlayerPed && pLocalPlayerPed->IsInVehicle() && !pLocalPlayerPed->IsAPassenger())
+		{
+			LocalVehicle = pNetGame->GetVehiclePool()->FindIDFromGtaPtr(pLocalPlayerPed->GetGtaVehicle());
+			if(LocalVehicle == m_VehicleID) {
+				pLocalPlayerPed->GetMatrix(&mat);
+				pLocalPlayerPed->RemoveFromVehicleAndPutAt(mat.pos.X,mat.pos.Y,mat.pos.Z + 1.0f);
+				pGame->DisplayGameText("~r~Car Jacked~w~!",1000,5);
+			}
+		}
+	}
 }

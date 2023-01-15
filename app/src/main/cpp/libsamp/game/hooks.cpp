@@ -507,82 +507,46 @@ __attribute__((naked)) void PickupPickUp_hook()
 					"cmp r1, #6\n\t"
 					"pop {pc}\n\t");
 }
-//
-//extern "C" bool NotifyEnterVehicle(VEHICLE_TYPE *_pVehicle)
-//{
-//    Log("NotifyEnterVehicle");
-//
-//    if(!pNetGame) return false;
-//
-//    CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
-//    CVehicle *pVehicle;
-//    VEHICLEID VehicleID = pVehiclePool->FindIDFromGtaPtr(_pVehicle);
-//
-//    if(VehicleID == INVALID_VEHICLE_ID) return false;
-//    if(!pVehiclePool->GetSlotState(VehicleID)) return false;
-//    pVehicle = pVehiclePool->GetAt(VehicleID);
-//    if(pVehicle->m_bDoorsLocked) return false;
-//    if(pVehicle->m_pVehicle->entity.nModelIndex == TRAIN_PASSENGER) return false;
-//
-////    if(pVehicle->m_pVehicle->pDriver &&
-////        pVehicle->m_pVehicle->pDriver->dwPedType != 0)
-////        return false;
-//
-//    CLocalPlayer *pLocalPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer();
-//
-//    //if(pLocalPlayer->GetPlayerPed() && pLocalPlayer->GetPlayerPed()->GetCurrentWeapon() == WEAPON_PARACHUTE)
-//    //  pLocalPlayer->GetPlayerPed()->SetArmedWeapon(0);
-//
-//    pLocalPlayer->SendEnterVehicleNotification(VehicleID, false);
-//
-//    return true;
-//}
 
-
-uint32_t (*CWeapon__FireInstantHit)(WEAPON_SLOT_TYPE *_this, PED_TYPE *pFiringEntity, VECTOR *vecOrigin, VECTOR *muzzlePosn, ENTITY_TYPE *targetEntity,
-									VECTOR *target, VECTOR *originForDriveBy, int arg6, int muzzle);
-uint32_t CWeapon__FireInstantHit_hook(WEAPON_SLOT_TYPE *_this, PED_TYPE *pFiringEntity, VECTOR *vecOrigin, VECTOR *muzzlePosn, ENTITY_TYPE *targetEntity,
-									  VECTOR *target, VECTOR *originForDriveBy, int arg6, int muzzle)
+// fire weapon hooks
+uint32_t (*CWeapon__FireInstantHit)(WEAPON_SLOT_TYPE *pWeaponSlot, PED_TYPE *pFiringEntity, VECTOR *vecOrigin, VECTOR *muzzlePosn, ENTITY_TYPE *targetEntity, VECTOR *target, VECTOR *originForDriveBy, int arg6, int muzzle);
+uint32_t CWeapon__FireInstantHit_hook(WEAPON_SLOT_TYPE *pWeaponSlot, PED_TYPE *pFiringEntity, VECTOR *vecOrigin, VECTOR *muzzlePosn, ENTITY_TYPE *targetEntity, VECTOR *target, VECTOR *originForDriveBy, int arg6, int muzzle)
 {
-	uintptr_t dwRetAddr = 0;
-	__asm__ volatile("mov %0, lr"
-	: "=r"(dwRetAddr));
 
+	uintptr_t dwRetAddr = 0;
+	__asm__ volatile ("mov %0, lr":"=r" (dwRetAddr));
 	dwRetAddr -= g_libGTASA;
 
-	if (dwRetAddr == 0x569A84 + 1 ||
-		dwRetAddr == 0x569616 + 1 ||
-		dwRetAddr == 0x56978A + 1 ||
-		dwRetAddr == 0x569C06 + 1)
+	if(dwRetAddr == 0x00569A84 + 1 || dwRetAddr == 0x00569616 + 1 || dwRetAddr == 0x0056978A + 1 || dwRetAddr == 0x00569C06 + 1)
 	{
-		// if (GamePool_FindPlayerPed() != pFiringEntity) return 0;
+	PED_TYPE *pLocalPed = pGame->FindPlayerPed()->m_pPed;
+	if(pLocalPed) {
+		if (pFiringEntity != pLocalPed)
+			return muzzle;
 
-		g_pCurrentFiredPed = pGame->FindPlayerPed();
-	}
-
-	return CWeapon__FireInstantHit(_this, pFiringEntity, vecOrigin, muzzlePosn, targetEntity, target, originForDriveBy, arg6, muzzle);
-}
-
-void ProcessPedDamage(PED_TYPE* pIssuer, PED_TYPE* pDamaged)
-{
-	if (!pNetGame) return;
-
-	//PED_TYPE* pPedPlayer = GamePool_FindPlayerPed();
-	if (pDamaged && (pGame->FindPlayerPed()->m_pPed == pIssuer))
-	{
-		if (pNetGame->GetPlayerPool()->FindRemotePlayerIDFromGtaPtr((PED_TYPE*)pDamaged) != INVALID_PLAYER_ID)
-		{
-			CPlayerPool* pPlayerPool = pNetGame->GetPlayerPool();
-			CAMERA_AIM* caAim = pPlayerPool->GetLocalPlayer()->GetPlayerPed()->GetCurrentAim();
-
-			VECTOR aim;
-			aim.X = caAim->f1x;
-			aim.Y = caAim->f1y;
-			aim.Z = caAim->f1z;
-
-			pPlayerPool->GetLocalPlayer()->SendBulletSyncData(pPlayerPool->FindRemotePlayerIDFromGtaPtr((PED_TYPE*)pDamaged), 1, aim);
+		if (pNetGame) {
+			CPlayerPool *pPlayerPool = pNetGame->GetPlayerPool();
+			//if(pPlayerPool)
+			//pPlayerPool->ApplyCollisionChecking();
 		}
+
+		if (pGame) {
+			CPlayerPed *pPlayerPed = pGame->FindPlayerPed();
+			if (pPlayerPed)
+				pPlayerPed->FireInstant();
+		}
+
+		if (pNetGame) {
+			CPlayerPool *pPlayerPool = pNetGame->GetPlayerPool();
+			//if(pPlayerPool)
+			//pPlayerPool->ResetCollisionChecking();
+		}
+
+		return muzzle;
 	}
+	}
+
+	return CWeapon__FireInstantHit(pWeaponSlot, pFiringEntity, vecOrigin, muzzlePosn, targetEntity, target, originForDriveBy, arg6, muzzle);
 }
 
 unsigned int (*MainMenuScreen__Update)(uintptr_t thiz, float a2);
@@ -1246,8 +1210,6 @@ void InstallSpecialHooks()
 //	JMPCode(g_libGTASA + 0x1A1ED8, (uintptr_t)rqVertexBufferSelect_HOOK);
 }
 
-void ProcessPedDamage(PED_TYPE* pIssuer, PED_TYPE* pPlayer);
-
 /* =========================================== Ped damage handler =========================================== */
 enum ePedPieceTypes
 {
@@ -1281,93 +1243,82 @@ struct CPedDamageResponseCalculatorInterface
 	bool bSpeak; // refers to a CPed::Say call (the dying scream?)
 };
 
-uintptr_t (*ComputeDamageResponse)(CPedDamageResponseCalculatorInterface *pPedDamageResponseCalculator, PED_TYPE *pDamagedPed, CPedDamageResponseInterface *pPedDamageResponse, bool bSpeak);
-uintptr_t ComputeDamageResponse_hooked(CPedDamageResponseCalculatorInterface *pPedDamageResponseCalculator, PED_TYPE *pDamagedPed, CPedDamageResponseInterface *pPedDamageResponse, bool bSpeak)
+
+extern float m_fWeaponDamages[43 + 1];
+
+void onDamage(PED_TYPE* issuer, PED_TYPE* damaged)
 {
-	// Make sure that everything is not null
-	if (!pNetGame || !pPedDamageResponseCalculator || !pDamagedPed || !pPedDamageResponse || !pPedDamageResponseCalculator->pEntity)
-		return ComputeDamageResponse(pPedDamageResponseCalculator, pDamagedPed, pPedDamageResponse, bSpeak);
-
-	CPlayerPool *pPlayerPool = pNetGame->GetPlayerPool();
-	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
-	if (!pPlayerPool || !pVehiclePool)
-		return ComputeDamageResponse(pPedDamageResponseCalculator, pDamagedPed, pPedDamageResponse, bSpeak);
-
-	CLocalPlayer *pLocalPlayer = pPlayerPool->GetLocalPlayer();
-	if (!pLocalPlayer)
-		return ComputeDamageResponse(pPedDamageResponseCalculator, pDamagedPed, pPedDamageResponse, bSpeak);
-
-	PED_TYPE *pInflictor = (PED_TYPE *)pPedDamageResponseCalculator->pEntity;
-	PED_TYPE *pLocalPed = GamePool_FindPlayerPed();
-	if (!pLocalPed)
-		return ComputeDamageResponse(pPedDamageResponseCalculator, pDamagedPed, pPedDamageResponse, bSpeak);
-
-	// Damage reason (or weapon)
-	uint32_t damageReason = 54; // 54 in case if we couldn't get the reason
-
-	// Convert damage to Multiplayer values (approximately)
-	float fDamage = (pPedDamageResponseCalculator->fDamage / 3.0303030303);
-
-	// To get ID in the future.
-	CRemotePlayer *pRemotePlayer = nullptr;
-
-	// Change status during the damage processing...
-	bool bGiveOrTake = false;
-
-	// Did we damage ourselves?
-	if ((pInflictor == pLocalPed) && (pInflictor == pDamagedPed))
+	if (!pNetGame) return;
+	PED_TYPE* pPedPlayer = GamePool_FindPlayerPed();
+	if (damaged && (pPedPlayer == issuer))
 	{
-		// Check if the inflictor is a vehicle
-		// Actually, there are more cases, but I'm too lazy to detect them.
-		VEHICLEID vehicleId = pVehiclePool->FindIDFromGtaPtr((VEHICLE_TYPE *)pPedDamageResponseCalculator->pEntity);
-		if (vehicleId != INVALID_VEHICLE_ID)
+		if (pNetGame->GetPlayerPool()->FindRemotePlayerIDFromGtaPtr((PED_TYPE*)damaged) != INVALID_PLAYER_ID)
 		{
-			// Set the reason that we got damaged by a vehicle
-			damageReason = 49;
+			CPlayerPool* pPlayerPool = pNetGame->GetPlayerPool();
+			CAMERA_AIM* caAim = pPlayerPool->GetLocalPlayer()->GetPlayerPed()->GetCurrentAim();
+
+			VECTOR aim;
+			aim.X = caAim->f1x;
+			aim.Y = caAim->f1y;
+			aim.Z = caAim->f1z;
+
+			pPlayerPool->GetLocalPlayer()->SendBulletSyncData(pPlayerPool->FindRemotePlayerIDFromGtaPtr((PED_TYPE*)damaged), BULLET_HIT_TYPE_PLAYER, aim);
 		}
-
-		// Send that we took damage.
-		pLocalPlayer->GiveTakeDamage(true, INVALID_PLAYER_ID, fDamage, damageReason, pPedDamageResponseCalculator->bodyPart);
-		return ComputeDamageResponse(pPedDamageResponseCalculator, pDamagedPed, pPedDamageResponse, bSpeak);
 	}
-	else if (pInflictor == pLocalPed)
-	{
-		// Did we damage someone?
-		// Let's try to get this person
-		PLAYERID remotePlayerId = pPlayerPool->FindRemotePlayerIDFromGtaPtr(pDamagedPed);
-		if (remotePlayerId != INVALID_PLAYER_ID)
-		{
-			pRemotePlayer = pPlayerPool->GetAt(remotePlayerId);
-		}
-
-		bGiveOrTake = false;
-	}
-	else if (pDamagedPed == pLocalPed)
-	{
-		// Or did we get damaged by someone?
-		// Then let's try to get inflictor
-		PLAYERID remotePlayerId = pPlayerPool->FindRemotePlayerIDFromGtaPtr(pInflictor);
-		if (remotePlayerId != INVALID_PLAYER_ID)
-		{
-			pRemotePlayer = pPlayerPool->GetAt(remotePlayerId);
-		}
-
-		bGiveOrTake = true;
-	}
-	else
-	{
-		// Oh, seems like not our case, sorry. Keep processing...
-		return ComputeDamageResponse(pPedDamageResponseCalculator, pDamagedPed, pPedDamageResponse, bSpeak);
-	}
-
-	if (!pRemotePlayer)
-		return ComputeDamageResponse(pPedDamageResponseCalculator, pDamagedPed, pPedDamageResponse, bSpeak);
-
-	// Send damage response now
-	pLocalPlayer->GiveTakeDamage(bGiveOrTake, pRemotePlayer->GetID(), fDamage, pPedDamageResponseCalculator->weaponType, pPedDamageResponseCalculator->bodyPart);
-
-	return ComputeDamageResponse(pPedDamageResponseCalculator, pDamagedPed, pPedDamageResponse, bSpeak);
 }
+
+// thanks Codeesar
+struct stPedDamageResponse
+{
+	ENTITY_TYPE* pEntity;
+	float fDamage;
+	int iBodyPart;
+	int iWeaponType;
+	bool bSpeak;
+};
+
+void (*CPedDamageResponseCalculator__ComputeDamageResponse)(stPedDamageResponse* thiz, ENTITY_TYPE* pEntity, uintptr_t pDamageResponse, bool bSpeak);
+void CPedDamageResponseCalculator__ComputeDamageResponse_hook(stPedDamageResponse* thiz, ENTITY_TYPE* pEntity, uintptr_t pDamageResponse, bool bSpeak)
+{
+	int weaponid = thiz->iWeaponType;
+	float fDamage = m_fWeaponDamages[weaponid];
+	int bodypart = thiz->iBodyPart;
+
+	if(pNetGame)
+	{
+		CPlayerPool* pPlayerPool = pNetGame->GetPlayerPool();
+		if(pPlayerPool)
+		{
+			if(weaponid < 0 || weaponid > 255 || (weaponid > 54 && weaponid < 200) || (weaponid > 201 && weaponid < 255))
+				weaponid = 255; // suicide
+			else if(weaponid == 18)
+				weaponid = 37; // flamethower
+			else if(weaponid == 35 || weaponid == 16)
+				weaponid = 51; // explosion
+
+			PLAYERID damagedid = pPlayerPool->FindRemotePlayerIDFromGtaPtr((PED_TYPE*)thiz->pEntity);
+			PLAYERID issuerid = pPlayerPool->FindRemotePlayerIDFromGtaPtr((PED_TYPE*)pEntity);
+
+			// self damage like fall damage, drowned, etc
+			if(issuerid == INVALID_PLAYER_ID && damagedid == INVALID_PLAYER_ID)
+			{
+				PLAYERID byteLocalId = pPlayerPool->GetLocalPlayerID();
+				pPlayerPool->GetLocalPlayer()->GiveTakeDamage(true, byteLocalId, fDamage, weaponid, bodypart);
+			}
+
+			// give player damage
+			if(issuerid != INVALID_PLAYER_ID && damagedid == INVALID_PLAYER_ID)
+				pPlayerPool->GetLocalPlayer()->GiveTakeDamage(false, issuerid, fDamage, weaponid, bodypart);
+
+				// player take damage
+			else if(issuerid == INVALID_PLAYER_ID && damagedid != INVALID_PLAYER_ID)
+				pPlayerPool->GetLocalPlayer()->GiveTakeDamage(true, damagedid, fDamage, weaponid, bodypart);
+		}
+	}
+
+	return CPedDamageResponseCalculator__ComputeDamageResponse(thiz, pEntity, pDamageResponse, bSpeak);
+}
+
 
 int(*RwFrameAddChild)(int, int);
 int RwFrameAddChild_hook(int a1, int a2)
@@ -3401,6 +3352,176 @@ VECTOR& FindPlayerSpeed_hook(int a1)
 	return FindPlayerSpeed(a1);
 }
 
+void SendBulletSync(VECTOR *vecOrigin, VECTOR *vecEnd, VECTOR *vecPos, ENTITY_TYPE **ppEntity)
+{
+	Log("SendBulletSync");
+	BULLET_DATA bulletData;
+	memset(&bulletData, 0, sizeof(BULLET_DATA));
+
+	bulletData.vecOrigin.X = vecOrigin->X;
+	bulletData.vecOrigin.Y = vecOrigin->Y;
+	bulletData.vecOrigin.Z = vecOrigin->Z;
+
+	bulletData.vecPos.X = vecPos->X;
+	bulletData.vecPos.Y = vecPos->Y;
+	bulletData.vecPos.Z = vecPos->Z;
+
+	if(ppEntity)
+	{
+		static ENTITY_TYPE *pEntity;
+		pEntity = *ppEntity;
+		if(pEntity)
+		{
+			if(pEntity->mat)
+			{
+				if(pNetGame->m_iLagCompensation)
+				{
+					bulletData.vecOffset.X = vecPos->X - pEntity->mat->pos.X;
+					bulletData.vecOffset.Y = vecPos->Y - pEntity->mat->pos.Y;
+					bulletData.vecOffset.Z = vecPos->Z - pEntity->mat->pos.Z;
+				}
+				else
+				{
+					static MATRIX4X4 mat1;
+					memset(&mat1, 0, sizeof(mat1));
+
+					static MATRIX4X4 mat2;
+					memset(&mat2, 0, sizeof(mat2));
+
+					RwMatrixOrthoNormalize(&mat2, pEntity->mat);
+					RwMatrixInvert(&mat1, &mat2);
+					ProjectMatrix(&bulletData.vecOffset, &mat1, vecPos);
+				}
+			}
+
+			bulletData.pEntity = pEntity;
+		}
+	}
+
+	pGame->FindPlayerPed()->ProcessBulletData(&bulletData);
+}
+
+bool g_bForceWorldProcessLineOfSight = false;
+uint32_t (*CWeapon__ProcessLineOfSight)(VECTOR *vecOrigin, VECTOR *vecEnd, VECTOR *vecPos, PED_TYPE **ppEntity, WEAPON_SLOT_TYPE *pWeaponSlot, PED_TYPE **ppEntity2, bool b1, bool b2, bool b3, bool b4, bool b5, bool b6, bool b7);
+uint32_t CWeapon__ProcessLineOfSight_hook(VECTOR *vecOrigin, VECTOR *vecEnd, VECTOR *vecPos, PED_TYPE **ppEntity, WEAPON_SLOT_TYPE *pWeaponSlot, PED_TYPE **ppEntity2, bool b1, bool b2, bool b3, bool b4, bool b5, bool b6, bool b7)
+{
+	uintptr_t dwRetAddr = 0;
+	__asm__ volatile ("mov %0, lr":"=r" (dwRetAddr));
+	dwRetAddr -= g_libGTASA;
+
+	if(dwRetAddr == 0x567AFC+1 || dwRetAddr == 0x5681BA+1 || dwRetAddr == 0x5688D0+1 || dwRetAddr == 0x568DB8+1)
+		g_bForceWorldProcessLineOfSight = true;
+
+	return CWeapon__ProcessLineOfSight(vecOrigin, vecEnd, vecPos, ppEntity, pWeaponSlot, ppEntity2, b1, b2, b3, b4, b5, b6, b7);
+}
+
+bool IsGameEntityArePlaceable(ENTITY_TYPE* pEntity);
+
+uint32_t (*CWorld__ProcessLineOfSight)(VECTOR *vecOrigin, VECTOR *vecEnd, VECTOR *vecPos, PED_TYPE **ppEntity, bool b1, bool b2, bool b3, bool b4, bool b5, bool b6, bool b7, bool b8);
+uint32_t CWorld__ProcessLineOfSight_hook(VECTOR *vecOrigin, VECTOR *vecEnd, VECTOR *vecPos, PED_TYPE **ppEntity, bool b1, bool b2, bool b3, bool b4, bool b5, bool b6, bool b7, bool b8)
+{
+	uintptr_t dwRetAddr = 0;
+	__asm__ volatile ("mov %0, lr":"=r" (dwRetAddr));
+	dwRetAddr -= g_libGTASA;
+
+	if(dwRetAddr == 0x55E2FE + 1 || g_bForceWorldProcessLineOfSight)
+	{
+		g_bForceWorldProcessLineOfSight = false;
+
+		ENTITY_TYPE *pEntity = nullptr;
+		MATRIX4X4 *pMatrix = nullptr;
+		VECTOR vecPosPlusOffset;
+
+		if(pNetGame->m_iLagCompensation != 2)
+		{
+			if(g_pCurrentFiredPed != pGame->FindPlayerPed())
+			{
+				if(g_pCurrentBulletData)
+				{
+					if(g_pCurrentBulletData->pEntity)
+					{
+						if(!IsGameEntityArePlaceable(g_pCurrentBulletData->pEntity))
+						{
+							pMatrix = g_pCurrentBulletData->pEntity->mat;
+							if(pMatrix)
+							{
+								if(pNetGame->m_iLagCompensation)
+								{
+									vecPosPlusOffset.X = pMatrix->pos.X + g_pCurrentBulletData->vecOffset.X;
+									vecPosPlusOffset.Y = pMatrix->pos.Y + g_pCurrentBulletData->vecOffset.Y;
+									vecPosPlusOffset.Z = pMatrix->pos.Z + g_pCurrentBulletData->vecOffset.Z;
+								}
+								else ProjectMatrix(&vecPosPlusOffset, pMatrix, &g_pCurrentBulletData->vecOffset);
+
+								vecEnd->X = vecPosPlusOffset.X - vecOrigin->X + vecPosPlusOffset.X;
+								vecEnd->Y = vecPosPlusOffset.Y - vecOrigin->Y + vecPosPlusOffset.Y;
+								vecEnd->Z = vecPosPlusOffset.Z - vecOrigin->Z + vecPosPlusOffset.Z;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		uint32_t result = 0;
+		result = CWorld__ProcessLineOfSight(vecOrigin, vecEnd, vecPos, ppEntity, b1, b2, b3, b4, b5, b6, b7, b8);
+
+		if(pNetGame->m_iLagCompensation == 2)
+		{
+			if(g_pCurrentFiredPed)
+			{
+				if(g_pCurrentFiredPed == pGame->FindPlayerPed())
+					SendBulletSync(vecOrigin, vecEnd, vecPos, (ENTITY_TYPE**)ppEntity);
+			}
+
+			return result;
+		}
+
+		if(g_pCurrentFiredPed)
+		{
+			if(g_pCurrentFiredPed != pGame->FindPlayerPed())
+			{
+				if(g_pCurrentBulletData)
+				{
+					if(!g_pCurrentBulletData->pEntity)
+					{
+						PED_TYPE *pLocalPed = pGame->FindPlayerPed()->GetGtaActor();
+						if(*ppEntity == pLocalPed || (IN_VEHICLE(pLocalPed) && *(uintptr_t *)ppEntity == pLocalPed->pVehicle))
+						{
+							*ppEntity = nullptr;
+							vecPos->X = 0.0f;
+							vecPos->Y = 0.0f;
+							vecPos->Z = 0.0f;
+							return 0;
+						}
+					}
+				}
+			}
+		}
+
+		if(g_pCurrentFiredPed)
+		{
+			if(g_pCurrentFiredPed == pGame->FindPlayerPed())
+				SendBulletSync(vecOrigin, vecEnd, vecPos, (ENTITY_TYPE **)ppEntity);
+		}
+
+		return result;
+	}
+
+	return CWorld__ProcessLineOfSight(vecOrigin, vecEnd, vecPos, ppEntity, b1, b2, b3, b4, b5, b6, b7, b8);
+}
+
+signed int (*CBulletInfo_AddBullet)(ENTITY_TYPE* pEntity, WEAPON_SLOT_TYPE* pWeapon, VECTOR vec1, VECTOR vec2);
+signed int CBulletInfo_AddBullet_hook(ENTITY_TYPE* pEntity, WEAPON_SLOT_TYPE* pWeapon, VECTOR vec1, VECTOR vec2)
+{
+	vec2.X *= 50.0f;
+	vec2.Y *= 50.0f;
+	vec2.Z *= 50.0f;
+	CBulletInfo_AddBullet(pEntity, pWeapon, vec1, vec2);
+	// CBulletInfo::Update
+	(( void (*)())(g_libGTASA+0x55E170+1))();
+	return 1;
+}
 
 void InstallHooks()
 {
@@ -3408,7 +3529,14 @@ void InstallHooks()
 
 	PROTECT_CODE_INSTALLHOOKS;
 
+	// Стрельба
+	CPatch::InlineHook(g_libGTASA, 0x564E28, &CWeapon__ProcessLineOfSight_hook, &CWeapon__ProcessLineOfSight);
+	CPatch::InlineHook(g_libGTASA, 0x55E090, &CBulletInfo_AddBullet_hook, &CBulletInfo_AddBullet);
 	CPatch::InlineHook(g_libGTASA, 0x56668C, &CWeapon__FireSniper_hook, &CWeapon__FireSniper);
+	CPatch::InlineHook(g_libGTASA, 0x327528, &CPedDamageResponseCalculator__ComputeDamageResponse_hook, &CPedDamageResponseCalculator__ComputeDamageResponse);
+	CPatch::InlineHook(g_libGTASA, 0x567964, &CWeapon__FireInstantHit_hook, &CWeapon__FireInstantHit);
+	CPatch::InlineHook(g_libGTASA, 0x3C70C0, &CWorld__ProcessLineOfSight_hook, &CWorld__ProcessLineOfSight);
+
 	// audio
 //	CPatch::InlineHook(g_libGTASA, 0x368850, &CAudioEngine__Service_hook, &CAudioEngine__Service);
 	//CPatch::InlineHook(g_libGTASA, 0x35AC44, &CAEVehicleAudioEntity__GetAccelAndBrake_hook, &CAEVehicleAudioEntity__GetAccelAndBrake);
@@ -3437,8 +3565,7 @@ void InstallHooks()
 	CPatch::InlineHook(g_libGTASA, 0x3DE9A8, &CRadar__DrawRadarGangOverlay_hook, &CRadar__DrawRadarGangOverlay);
 
 	CPatch::CodeInject(g_libGTASA+0x2D99F4, (uintptr_t)PickupPickUp_hook, 1);
-	CPatch::InlineHook(g_libGTASA, 0x00327528, &ComputeDamageResponse_hooked, (&ComputeDamageResponse));
-	CPatch::InlineHook(g_libGTASA, 0x567964, &CWeapon__FireInstantHit_hook, (&CWeapon__FireInstantHit));
+
 
 	CPatch::InlineHook(g_libGTASA, 0x00336268, &CModelInfo_AddAtomicModel_hook, &CModelInfo_AddAtomicModel);
 

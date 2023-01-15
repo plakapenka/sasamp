@@ -253,9 +253,8 @@ bool CLocalPlayer::Process()
 		}
 			// DRIVER
 		else if (m_pPlayerPed->IsInVehicle() && !m_pPlayerPed->IsAPassenger()) {
-			CVehicle *pVehicle;
 			if (pVehiclePool)
-				m_CurrentVehicle = pVehiclePool->FindIDFromGtaPtr(m_pPlayerPed->GetGtaVehicle());
+				m_CurrentVehicle = m_pPlayerPed->GetCurrentSampVehicleID();
 
 			if ((dwThisTick - m_dwLastSendTick) > (unsigned int) GetOptimumInCarSendRate()) {
 				m_dwLastSendTick = GetTickCount();
@@ -485,6 +484,56 @@ bool CLocalPlayer::Process()
     return true;
 }
 extern float                    m_fWeaponDamages[43 + 1];
+//
+void CLocalPlayer::SendBulletSyncData(PLAYERID byteHitID, uint8_t byteHitType, VECTOR vecHitPos)
+{
+	if (!m_pPlayerPed) return;
+	switch (byteHitType)
+	{
+		case BULLET_HIT_TYPE_NONE:
+			break;
+		case BULLET_HIT_TYPE_PLAYER: //player
+			if (!pNetGame->GetPlayerPool()->GetSlotState((PLAYERID)byteHitID)) return;
+			break;
+
+	}
+	uint8_t byteCurrWeapon = m_pPlayerPed->GetCurrentWeapon(), byteShotWeapon;
+
+	MATRIX4X4 matPlayer;
+	BULLET_SYNC blSync;
+
+	m_pPlayerPed->GetMatrix(&matPlayer);
+
+	blSync.PlayerID = byteHitID;
+	blSync.byteHitType = byteHitType;
+
+	if (byteHitType == BULLET_HIT_TYPE_PLAYER)
+	{
+		float fDistance = pNetGame->GetPlayerPool()->GetAt((PLAYERID)byteHitID)->GetPlayerPed()->GetDistanceFromLocalPlayerPed();
+		if (byteCurrWeapon != 0 && fDistance < 1.0f)
+			byteShotWeapon = 0;
+		else
+			byteShotWeapon = byteCurrWeapon;
+	}
+	else
+	{
+		byteShotWeapon = m_pPlayerPed->GetCurrentWeapon();
+	}
+	blSync.byteWeaponID = byteShotWeapon;
+
+	blSync.vecPos.X = vecHitPos.X;
+	blSync.vecPos.Y = vecHitPos.Y;
+	blSync.vecPos.Z = vecHitPos.Z;
+
+	blSync.vecOffset.X = 0.0f;
+	blSync.vecOffset.Y = 0.0f;
+	blSync.vecOffset.Z = 0.0f;
+
+	RakNet::BitStream bsBulletSync;
+	bsBulletSync.Write((uint8_t)ID_BULLET_SYNC);
+	bsBulletSync.Write((const char*)& blSync, sizeof(BULLET_SYNC));
+	pNetGame->GetRakClient()->Send(&bsBulletSync, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0);
+}
 
 void CLocalPlayer::GiveTakeDamage(bool bGiveOrTake, uint16_t wPlayerID, float damage_amount, uint32_t weapon_id, uint32_t bodypart)
 {
@@ -845,7 +894,6 @@ void CLocalPlayer::SendOnFootFullSyncData()
 
 void CLocalPlayer::SendInCarFullSyncData()
 {
-
 	RakNet::BitStream bsVehicleSync;
 	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
 	if(!pVehiclePool) return;
@@ -894,11 +942,6 @@ void CLocalPlayer::SendInCarFullSyncData()
 	icSync.vecMoveSpeed.X = vecMoveSpeed.X;
 	icSync.vecMoveSpeed.Y = vecMoveSpeed.Y;
 	icSync.vecMoveSpeed.Z = vecMoveSpeed.Z;
-
-	if (pVehicle->GetHealth() <= 300.0f)
-	{
-		pVehicle->SetHealth(300.0f);
-	}
 
 	icSync.fCarHealth = pVehicle->GetHealth();
 	icSync.bytePlayerHealth = (uint8_t)m_pPlayerPed->GetHealth();
@@ -951,17 +994,11 @@ void CLocalPlayer::SendInCarFullSyncData()
 		}
 	}
 
-	// send
-	if( (GetTickCount() - m_dwLastUpdateInCarData) > 500 || memcmp(&m_InCarData, &icSync, sizeof(INCAR_SYNC_DATA)))
-	{
-		m_dwLastUpdateInCarData = GetTickCount();
+	bsVehicleSync.Write((uint8_t)ID_VEHICLE_SYNC);
+	bsVehicleSync.Write((char*)&icSync, sizeof(INCAR_SYNC_DATA));
+	pNetGame->GetRakClient()->Send(&bsVehicleSync, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0);
 
-		bsVehicleSync.Write((uint8_t)ID_VEHICLE_SYNC);
-		bsVehicleSync.Write((char*)&icSync, sizeof(INCAR_SYNC_DATA));
-		pNetGame->GetRakClient()->Send(&bsVehicleSync, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0);
-
-		memcpy(&m_InCarData, &icSync, sizeof(INCAR_SYNC_DATA));
-	}
+	memcpy(&m_InCarData, &icSync, sizeof(INCAR_SYNC_DATA));
 }
 
 void CLocalPlayer::SendPassengerFullSyncData()

@@ -749,19 +749,10 @@ VEHICLEID CPlayerPed::GetCurrentSampVehicleID()
 	if(!pNetGame)return INVALID_VEHICLE_ID;
 
 	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
-	if(!pVehiclePool)return 0;
+	if(!pVehiclePool)return INVALID_VEHICLE_ID;
+	if(!m_pPed->pVehicle)return INVALID_VEHICLE_ID;
 
-	for (size_t i = 0; i < MAX_VEHICLES; i++) {
-		if (pVehiclePool->GetSlotState(i)) {
-			CVehicle *pVehicle = pVehiclePool->GetAt(i);
-			if (pVehicle && pVehicle->IsAdded()) {
-				if (pVehicle->m_pVehicle == (VEHICLE_TYPE *) m_pPed->pVehicle) {
-					return i;
-				}
-			}
-		}
-	}
-	return INVALID_VEHICLE_ID;
+	return pVehiclePool->FindIDFromGtaPtr((VEHICLE_TYPE *)m_pPed->pVehicle);
 }
 CVehicle* CPlayerPed::GetCurrentVehicle()
 {
@@ -964,13 +955,15 @@ void CPlayerPed::GetWeaponInfoForFire(int bLeft, VECTOR* vecBone, VECTOR* vecOut
 		((void (*)(PED_TYPE*, VECTOR*, int, bool))(g_libGTASA + 0x004383C0 + 1))(m_pPed, vecOut, bone_id, false);
 	}
 }
-extern uint32_t(*CWeapon__FireInstantHit)(WEAPON_SLOT_TYPE* thiz, PED_TYPE* pFiringEntity, VECTOR* vecOrigin, VECTOR* muzzlePosn, ENTITY_TYPE* targetEntity, VECTOR* target, VECTOR* originForDriveBy, int arg6, int muzzle);
-void CPlayerPed::FireInstant() {
-	if(!m_pPed) return;
 
-	uint8_t byteSavedCameraMode = 0;
-	uint16_t wSavedCameraMode2 = 0;
-	if(m_bytePlayerNumber != 0)
+extern uint32_t (*CWeapon__FireInstantHit)(WEAPON_SLOT_TYPE* thiz, PED_TYPE* pFiringEntity, VECTOR* vecOrigin, VECTOR* muzzlePosn, ENTITY_TYPE* targetEntity, VECTOR *target, VECTOR* originForDriveBy, int arg6, int muzzle);
+extern uint32_t (*CWeapon__FireSniper)(WEAPON_SLOT_TYPE *pWeaponSlot, PED_TYPE *pFiringEntity, ENTITY_TYPE *a3, VECTOR *vecOrigin);
+
+void CPlayerPed::FireInstant()
+{
+	uint8_t byteSavedCameraMode;
+	uint16_t wSavedCameraMode2;
+	if(m_bytePlayerNumber)
 	{
 		byteSavedCameraMode = *pbyteCameraMode;
 		*pbyteCameraMode = GameGetPlayerCameraMode(m_bytePlayerNumber);
@@ -985,36 +978,37 @@ void CPlayerPed::FireInstant() {
 		GameStoreLocalPlayerAim();
 		GameSetRemotePlayerAim(m_bytePlayerNumber);
 
+		//GameStoreLocalPlayerSkills();
+		//GameSetRemotePlayerSkills(m_bytePlayerNumber);
 	}
 
 	g_pCurrentFiredPed = this;
 
 	if(m_bHaveBulletData)
-	{
 		g_pCurrentBulletData = &m_bulletData;
-	}
 	else
-	{
 		g_pCurrentBulletData = nullptr;
-	}
 
-	WEAPON_SLOT_TYPE *pSlot = GetCurrentWeaponSlot();
+	WEAPON_SLOT_TYPE* pSlot = GetCurrentWeaponSlot();
 	if(pSlot)
 	{
 		if(GetCurrentWeapon() == WEAPON_SNIPER)
 		{
-			if(pSlot)
-				Weapon_FireSniper(pSlot, m_pPed);
+			if(m_pPed)
+				CWeapon__FireSniper(pSlot, m_pPed, nullptr, nullptr);
 			else
-				Weapon_FireSniper(nullptr, nullptr);
+				CWeapon__FireSniper(nullptr, nullptr, nullptr, nullptr);
 		}
 		else
 		{
-			VECTOR vecBonePos;
-			VECTOR vecOut;
+			VECTOR vecBonePos, vecOut;
 
 			GetWeaponInfoForFire(false, &vecBonePos, &vecOut);
-			CWeapon__FireInstantHit(pSlot, m_pPed, &vecBonePos, &vecOut, nullptr, nullptr, nullptr, 0, 1);
+
+			if(m_pPed)
+				CWeapon__FireInstantHit(pSlot, m_pPed, &vecBonePos, &vecOut, nullptr, nullptr, nullptr, 0, 1);
+			else
+				CWeapon__FireInstantHit(nullptr, m_pPed, &vecBonePos, &vecOut, nullptr, nullptr, nullptr, 0, 1);
 		}
 	}
 
@@ -1026,8 +1020,11 @@ void CPlayerPed::FireInstant() {
 		*pbyteCameraMode = byteSavedCameraMode;
 		*wCameraMode2 = wSavedCameraMode2;
 
+		// wCamera2
 		GameSetLocalPlayerCameraExtZoom();
 		GameSetLocalPlayerAim();
+
+		//GameSetLocalPlayerSkills();
 	}
 }
 
@@ -1983,21 +1980,21 @@ void CPlayerPed::ProcessBulletData(BULLET_DATA* btData)
 											else
 											{
 												// object
-												byteHitType = 3;
+												byteHitType = BULLET_HIT_TYPE_OBJECT;
 												InstanceID = ObjectID;
 											}
 										}
 										else
 										{
 											// vehicle
-											byteHitType = 2;
+											byteHitType = BULLET_HIT_TYPE_VEHICLE;
 											InstanceID = VehicleID;
 										}
 									}
 									else
 									{
 										// player
-										byteHitType = 1;
+										byteHitType = BULLET_HIT_TYPE_PLAYER;
 										InstanceID = PlayerID;
 									}
 								}

@@ -51,6 +51,7 @@
                 app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
+                android:id="@+id/textView32"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/visby_round_cf_extra_bold"
@@ -83,6 +84,31 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/casino_bc_red_chip"
+                android:layout_width="@dimen/_23sdp"
+                android:layout_height="@dimen/_23sdp"
+                android:layout_marginStart="@dimen/_20sdp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/chip_universal"
+                app:layout_constraintBottom_toTopOf="@+id/textView32"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <TextView
+                    android:id="@+id/casino_bc_red_chip_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/visby_round_cf_extra_bold"
+                    android:text="100"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_6sdp"
+                    android:includeFontPadding="false"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -185,6 +211,7 @@
                 app:layout_constraintEnd_toEndOf="parent" />
 
             <TextView
+                android:id="@+id/casino_bc_mult_yellow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/visby_round_cf_extra_bold"
@@ -196,14 +223,38 @@
                 app:layout_constraintEnd_toEndOf="@+id/casino_bc_yellow_name" />
 
             <ImageView
-                android:layout_width="@dimen/_100sdp"
-                android:layout_height="@dimen/_100sdp"
+                android:layout_width="@dimen/_80sdp"
+                android:layout_height="@dimen/_80sdp"
                 android:layout_marginEnd="24dp"
                 android:src="@drawable/casino_bc_liverussia_logo"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/casino_bc_yellow_chip"
+                android:layout_width="@dimen/_23sdp"
+                android:layout_height="@dimen/_23sdp"
+                android:layout_marginEnd="@dimen/_20sdp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/chip_universal"
+                app:layout_constraintBottom_toTopOf="@+id/casino_bc_mult_yellow"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <TextView
+                    android:id="@+id/casino_bc_yellow_chip_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/visby_round_cf_extra_bold"
+                    android:includeFontPadding="false"
+                    android:text="100"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_6sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/casino_bc_yellow_card"
@@ -355,6 +406,7 @@
         android:id="@+id/casino_bc_timer_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
         android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/casino_bc_game_layout"

@@ -2150,6 +2150,16 @@ struct RwRaster* GetRWRasterFromBitmap(uint8_t* pBitmap, size_t dwStride, size_t
 	return pRaster;
 }
 
+void RwMatrixOrthoNormalize(MATRIX4X4 *matIn, MATRIX4X4 *matOut)
+{
+    ((void (*)(MATRIX4X4*, MATRIX4X4*))(g_libGTASA+0x1B8CC8+1))(matIn, matOut);
+}
+
+void RwMatrixInvert(MATRIX4X4 *matOut, MATRIX4X4 *matIn)
+{
+    ((void (*)(MATRIX4X4*, MATRIX4X4*))(g_libGTASA+0x1B91CC+1))(matOut, matIn);
+}
+
 void ProjectMatrix(VECTOR* vecOut, MATRIX4X4* mat, VECTOR* vecPos)
 {
 	vecOut->X = mat->at.X * vecPos->Z + mat->up.X * vecPos->Y + mat->right.X * vecPos->X + mat->pos.X;
