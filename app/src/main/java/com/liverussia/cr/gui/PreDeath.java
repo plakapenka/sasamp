@@ -122,10 +122,10 @@ public class PreDeath {
 
             timeRemaining = 15;
 
+            pde_death_game_buttons.setVisibility(View.GONE);
             pre_death_deathbuttons_layout.setVisibility(View.VISIBLE);
 
-            String _str = String.format("%s (%d)", killerName, killerID);
-            pre_death_killer_text.setText(_str);
+            pre_death_killer_text.setText(String.format("%s (%d)", killerName, killerID));
 
             Utils.ShowLayout(pre_death_layout, true);
 
@@ -144,7 +144,10 @@ public class PreDeath {
         main_activity.runOnUiThread(() -> {
             pde_death_game_buttons.setVisibility(View.VISIBLE);
             pre_death_deathbuttons_layout.setVisibility(View.GONE);
+            pre_death_killer_text.setText(playerName);
             updatePulseAndHealth();
+
+            Utils.ShowLayout(pre_death_layout, true);
         });
     }
     @SuppressLint("SetTextI18n")

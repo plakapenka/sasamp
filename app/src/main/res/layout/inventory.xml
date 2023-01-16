@@ -58,8 +58,10 @@
                 app:layout_constraintTop_toBottomOf="@+id/imageView53" >
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -67,7 +69,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_8sdp"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="5dp"
@@ -76,15 +78,15 @@
                     app:layout_constraintTop_toTopOf="parent" >
 
                 <TextView
-                    android:textAlignment="center"
                     android:paddingRight="@dimen/_3sdp"
                     android:paddingLeft="@dimen/_3sdp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/tajawal_regular"
+                    android:fontFamily="@font/sfprodisplaysemibold"
+                    android:includeFontPadding="false"
                     android:text="3"
                     android:textSize="@dimen/_5sdp"
-                    android:textColor="@color/white"
+                    android:textColor="@color/black"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -105,9 +107,10 @@
                 app:layout_constraintTop_toBottomOf="@+id/inv_active_1" >
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -115,7 +118,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_8sdp"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="5dp"
@@ -124,15 +127,15 @@
                     app:layout_constraintTop_toTopOf="parent" >
 
                     <TextView
-                        android:textAlignment="center"
                         android:paddingRight="@dimen/_3sdp"
                         android:paddingLeft="@dimen/_3sdp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/tajawal_regular"
+                        android:fontFamily="@font/sfprodisplaysemibold"
+                        android:includeFontPadding="false"
                         android:text="3"
                         android:textSize="@dimen/_5sdp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -152,8 +155,10 @@
                 app:layout_constraintTop_toBottomOf="@+id/inv_active_2" >
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -161,7 +166,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_8sdp"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="5dp"
@@ -170,15 +175,15 @@
                     app:layout_constraintTop_toTopOf="parent" >
 
                     <TextView
-                        android:textAlignment="center"
                         android:paddingRight="@dimen/_3sdp"
                         android:paddingLeft="@dimen/_3sdp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/tajawal_regular"
+                        android:fontFamily="@font/sfprodisplaysemibold"
+                        android:includeFontPadding="false"
                         android:text="3"
                         android:textSize="@dimen/_5sdp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -199,8 +204,10 @@
 
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -208,7 +215,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_8sdp"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="5dp"
@@ -217,15 +224,15 @@
                     app:layout_constraintTop_toTopOf="parent" >
 
                     <TextView
-                        android:textAlignment="center"
                         android:paddingRight="@dimen/_3sdp"
                         android:paddingLeft="@dimen/_3sdp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/tajawal_regular"
+                        android:fontFamily="@font/sfprodisplaysemibold"
+                        android:includeFontPadding="false"
                         android:text="3"
                         android:textSize="@dimen/_5sdp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -249,11 +256,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/din_pro_bold"
-                android:outlineAmbientShadowColor="@color/black"
-                android:shadowColor="@color/black"
+                android:shadowRadius="2"
+                android:shadowColor="#DC000000"
                 android:text="ВЫЙТИ"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_10sdp"
+                android:includeFontPadding="false"
                 app:layout_constraintBottom_toBottomOf="@+id/inv_close_butt"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/inv_close_butt"
@@ -307,9 +315,10 @@
                 app:layout_constraintTop_toBottomOf="@+id/inv_p_top_bg" >
 
                 <ImageView
-                    android:adjustViewBounds="true"
-                    android:layout_width="wrap_content"
+                    android:layout_width="@dimen/_30sdp"
                     android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -317,7 +326,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_8sdp"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="5dp"
@@ -326,15 +335,15 @@
                     app:layout_constraintTop_toTopOf="parent" >
 
                     <TextView
-                        android:textAlignment="center"
                         android:paddingRight="@dimen/_3sdp"
                         android:paddingLeft="@dimen/_3sdp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/tajawal_regular"
+                        android:fontFamily="@font/sfprodisplaysemibold"
+                        android:includeFontPadding="false"
                         android:text="3"
                         android:textSize="@dimen/_5sdp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -354,8 +363,10 @@
                 app:layout_constraintTop_toBottomOf="@+id/inv_player_1" >
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -363,7 +374,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_8sdp"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="5dp"
@@ -372,15 +383,15 @@
                     app:layout_constraintTop_toTopOf="parent" >
 
                     <TextView
-                        android:textAlignment="center"
                         android:paddingRight="@dimen/_3sdp"
                         android:paddingLeft="@dimen/_3sdp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/tajawal_regular"
+                        android:fontFamily="@font/sfprodisplaysemibold"
+                        android:includeFontPadding="false"
                         android:text="3"
                         android:textSize="@dimen/_5sdp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -400,8 +411,10 @@
                 app:layout_constraintTop_toBottomOf="@+id/inv_player_2" >
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -409,7 +422,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_8sdp"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="5dp"
@@ -418,15 +431,15 @@
                     app:layout_constraintTop_toTopOf="parent" >
 
                     <TextView
-                        android:textAlignment="center"
                         android:paddingRight="@dimen/_3sdp"
                         android:paddingLeft="@dimen/_3sdp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/tajawal_regular"
+                        android:fontFamily="@font/sfprodisplaysemibold"
+                        android:includeFontPadding="false"
                         android:text="3"
                         android:textSize="@dimen/_5sdp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -446,8 +459,10 @@
                 app:layout_constraintTop_toBottomOf="@+id/inv_player_3" >
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -455,7 +470,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_8sdp"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="5dp"
@@ -464,15 +479,15 @@
                     app:layout_constraintTop_toTopOf="parent" >
 
                     <TextView
-                        android:textAlignment="center"
                         android:paddingRight="@dimen/_3sdp"
                         android:paddingLeft="@dimen/_3sdp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/tajawal_regular"
+                        android:fontFamily="@font/sfprodisplaysemibold"
+                        android:includeFontPadding="false"
                         android:text="3"
                         android:textSize="@dimen/_5sdp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -693,7 +708,6 @@
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/skin_270"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -701,7 +715,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_8sdp"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="5dp"
@@ -710,15 +724,15 @@
                     app:layout_constraintTop_toTopOf="parent" >
 
                     <TextView
-                        android:textAlignment="center"
                         android:paddingRight="@dimen/_3sdp"
                         android:paddingLeft="@dimen/_3sdp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/tajawal_regular"
+                        android:fontFamily="@font/sfprodisplaysemibold"
+                        android:includeFontPadding="false"
                         android:text="3"
                         android:textSize="@dimen/_5sdp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -737,8 +751,10 @@
                 app:layout_constraintTop_toBottomOf="@+id/inv_main_1" >
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -746,7 +762,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_8sdp"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="5dp"
@@ -755,15 +771,15 @@
                     app:layout_constraintTop_toTopOf="parent" >
 
                     <TextView
-                        android:textAlignment="center"
                         android:paddingRight="@dimen/_3sdp"
                         android:paddingLeft="@dimen/_3sdp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/tajawal_regular"
+                        android:fontFamily="@font/sfprodisplaysemibold"
+                        android:includeFontPadding="false"
                         android:text="3"
                         android:textSize="@dimen/_5sdp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -782,8 +798,10 @@
                 app:layout_constraintTop_toBottomOf="@+id/inv_main_2" >
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -791,7 +809,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_8sdp"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="5dp"
@@ -800,15 +818,15 @@
                     app:layout_constraintTop_toTopOf="parent" >
 
                     <TextView
-                        android:textAlignment="center"
                         android:paddingRight="@dimen/_3sdp"
                         android:paddingLeft="@dimen/_3sdp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/tajawal_regular"
+                        android:fontFamily="@font/sfprodisplaysemibold"
+                        android:includeFontPadding="false"
                         android:text="3"
                         android:textSize="@dimen/_5sdp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -827,8 +845,10 @@
                 app:layout_constraintTop_toBottomOf="@+id/inv_main_3" >
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -836,7 +856,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_8sdp"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="5dp"
@@ -845,15 +865,15 @@
                     app:layout_constraintTop_toTopOf="parent" >
 
                     <TextView
-                        android:textAlignment="center"
                         android:paddingRight="@dimen/_3sdp"
                         android:paddingLeft="@dimen/_3sdp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/tajawal_regular"
+                        android:fontFamily="@font/sfprodisplaysemibold"
+                        android:includeFontPadding="false"
                         android:text="3"
                         android:textSize="@dimen/_5sdp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -872,8 +892,10 @@
                 app:layout_constraintTop_toTopOf="@+id/inv_main_1" >
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -881,7 +903,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_8sdp"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="5dp"
@@ -890,15 +912,15 @@
                     app:layout_constraintTop_toTopOf="parent" >
 
                     <TextView
-                        android:textAlignment="center"
                         android:paddingRight="@dimen/_3sdp"
                         android:paddingLeft="@dimen/_3sdp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/tajawal_regular"
+                        android:fontFamily="@font/sfprodisplaysemibold"
+                        android:includeFontPadding="false"
                         android:text="3"
                         android:textSize="@dimen/_5sdp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -917,8 +939,10 @@
                 app:layout_constraintTop_toTopOf="@+id/inv_main_2" >
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -926,7 +950,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_8sdp"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="5dp"
@@ -935,15 +959,15 @@
                     app:layout_constraintTop_toTopOf="parent" >
 
                     <TextView
-                        android:textAlignment="center"
                         android:paddingRight="@dimen/_3sdp"
                         android:paddingLeft="@dimen/_3sdp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/tajawal_regular"
+                        android:fontFamily="@font/sfprodisplaysemibold"
+                        android:includeFontPadding="false"
                         android:text="3"
                         android:textSize="@dimen/_5sdp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -962,8 +986,10 @@
                 app:layout_constraintTop_toTopOf="@+id/inv_main_3">
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -971,7 +997,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_8sdp"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="5dp"
@@ -980,15 +1006,15 @@
                     app:layout_constraintTop_toTopOf="parent" >
 
                     <TextView
-                        android:textAlignment="center"
                         android:paddingRight="@dimen/_3sdp"
                         android:paddingLeft="@dimen/_3sdp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/tajawal_regular"
+                        android:fontFamily="@font/sfprodisplaysemibold"
+                        android:includeFontPadding="false"
                         android:text="3"
                         android:textSize="@dimen/_5sdp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -1007,8 +1033,10 @@
                 app:layout_constraintTop_toTopOf="@+id/inv_main_4" >
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -1016,7 +1044,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_8sdp"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="5dp"
@@ -1025,15 +1053,15 @@
                     app:layout_constraintTop_toTopOf="parent" >
 
                     <TextView
-                        android:textAlignment="center"
                         android:paddingRight="@dimen/_3sdp"
                         android:paddingLeft="@dimen/_3sdp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/tajawal_regular"
+                        android:fontFamily="@font/sfprodisplaysemibold"
+                        android:includeFontPadding="false"
                         android:text="3"
                         android:textSize="@dimen/_5sdp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -1052,8 +1080,10 @@
                 app:layout_constraintTop_toTopOf="@+id/inv_main_5" >
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -1061,7 +1091,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_8sdp"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="5dp"
@@ -1070,15 +1100,15 @@
                     app:layout_constraintTop_toTopOf="parent" >
 
                     <TextView
-                        android:textAlignment="center"
                         android:paddingRight="@dimen/_3sdp"
                         android:paddingLeft="@dimen/_3sdp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/tajawal_regular"
+                        android:fontFamily="@font/sfprodisplaysemibold"
+                        android:includeFontPadding="false"
                         android:text="3"
                         android:textSize="@dimen/_5sdp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -1097,8 +1127,10 @@
                 app:layout_constraintTop_toTopOf="@+id/inv_main_6" >
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -1106,7 +1138,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_8sdp"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="5dp"
@@ -1115,15 +1147,15 @@
                     app:layout_constraintTop_toTopOf="parent" >
 
                     <TextView
-                        android:textAlignment="center"
                         android:paddingRight="@dimen/_3sdp"
                         android:paddingLeft="@dimen/_3sdp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/tajawal_regular"
+                        android:fontFamily="@font/sfprodisplaysemibold"
+                        android:includeFontPadding="false"
                         android:text="3"
                         android:textSize="@dimen/_5sdp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -1142,8 +1174,10 @@
                 app:layout_constraintTop_toTopOf="@+id/inv_main_7" >
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -1151,7 +1185,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_8sdp"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="5dp"
@@ -1160,15 +1194,15 @@
                     app:layout_constraintTop_toTopOf="parent" >
 
                     <TextView
-                        android:textAlignment="center"
                         android:paddingRight="@dimen/_3sdp"
                         android:paddingLeft="@dimen/_3sdp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/tajawal_regular"
+                        android:fontFamily="@font/sfprodisplaysemibold"
+                        android:includeFontPadding="false"
                         android:text="3"
                         android:textSize="@dimen/_5sdp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -1187,8 +1221,10 @@
                 app:layout_constraintTop_toTopOf="@+id/inv_main_8" >
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -1196,7 +1232,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_8sdp"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="5dp"
@@ -1205,15 +1241,15 @@
                     app:layout_constraintTop_toTopOf="parent" >
 
                     <TextView
-                        android:textAlignment="center"
                         android:paddingRight="@dimen/_3sdp"
                         android:paddingLeft="@dimen/_3sdp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/tajawal_regular"
+                        android:fontFamily="@font/sfprodisplaysemibold"
+                        android:includeFontPadding="false"
                         android:text="3"
                         android:textSize="@dimen/_5sdp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -1232,8 +1268,10 @@
                 app:layout_constraintTop_toTopOf="@+id/inv_main_1" >
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -1241,7 +1279,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_8sdp"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="5dp"
@@ -1250,15 +1288,15 @@
                     app:layout_constraintTop_toTopOf="parent" >
 
                     <TextView
-                        android:textAlignment="center"
                         android:paddingRight="@dimen/_3sdp"
                         android:paddingLeft="@dimen/_3sdp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/tajawal_regular"
+                        android:fontFamily="@font/sfprodisplaysemibold"
+                        android:includeFontPadding="false"
                         android:text="3"
                         android:textSize="@dimen/_5sdp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -1277,8 +1315,10 @@
                 app:layout_constraintTop_toTopOf="@+id/inv_main_10" >
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -1286,7 +1326,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_8sdp"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="5dp"
@@ -1295,15 +1335,15 @@
                     app:layout_constraintTop_toTopOf="parent" >
 
                     <TextView
-                        android:textAlignment="center"
                         android:paddingRight="@dimen/_3sdp"
                         android:paddingLeft="@dimen/_3sdp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/tajawal_regular"
+                        android:fontFamily="@font/sfprodisplaysemibold"
+                        android:includeFontPadding="false"
                         android:text="3"
                         android:textSize="@dimen/_5sdp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -1322,8 +1362,10 @@
                 app:layout_constraintTop_toTopOf="@+id/inv_main_11" >
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -1331,7 +1373,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_8sdp"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="5dp"
@@ -1340,15 +1382,15 @@
                     app:layout_constraintTop_toTopOf="parent" >
 
                     <TextView
-                        android:textAlignment="center"
                         android:paddingRight="@dimen/_3sdp"
                         android:paddingLeft="@dimen/_3sdp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/tajawal_regular"
+                        android:fontFamily="@font/sfprodisplaysemibold"
+                        android:includeFontPadding="false"
                         android:text="3"
                         android:textSize="@dimen/_5sdp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -1367,8 +1409,10 @@
                 app:layout_constraintTop_toTopOf="@+id/inv_main_12" >
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -1376,7 +1420,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_8sdp"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="5dp"
@@ -1385,15 +1429,15 @@
                     app:layout_constraintTop_toTopOf="parent" >
 
                     <TextView
-                        android:textAlignment="center"
                         android:paddingRight="@dimen/_3sdp"
                         android:paddingLeft="@dimen/_3sdp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/tajawal_regular"
+                        android:fontFamily="@font/sfprodisplaysemibold"
+                        android:includeFontPadding="false"
                         android:text="3"
                         android:textSize="@dimen/_5sdp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"

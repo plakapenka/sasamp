@@ -3,6 +3,7 @@ package com.liverussia.cr.gui;
 import android.app.Activity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -179,13 +180,14 @@ public class Inventory {
 
             ConstraintLayout item = items.get(matrixindex-1).get(pos);
             ConstraintLayout bgitem = (ConstraintLayout) item.getChildAt(1);
+            ImageView imgcell = (ImageView)item.getChildAt(0);
 
             if(!sprite.isEmpty()) {
                 int id = activity.getResources().getIdentifier(sprite, "drawable", activity.getPackageName());
-                item.getChildAt(0).setBackgroundResource(id);
+                imgcell.setImageResource(id);
             }
             else {
-                item.getChildAt(0).setBackgroundResource(0);
+                imgcell.setImageResource(0);
             }
 
             if(!caption.isEmpty()) {
