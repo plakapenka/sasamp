@@ -25,8 +25,6 @@ CRemotePlayer::CRemotePlayer()
 	m_byteSpecialAction = 0;
 	m_byteSeatID = 0;
 	m_byteWeaponShotID = 0xFF;
-	m_fReportedHealth = 0.0f;
-	m_fReportedArmour = 0.0f;
 	m_bKeyboardOpened = false;
 
 	m_dwCurrentAnimation = 0;
@@ -84,6 +82,10 @@ void CRemotePlayer::Process()
 
 	if(IsActive())
 	{
+		m_bIsAFK = false;
+		if((GetTickCount() - m_dwLastRecvTick) > 3500)
+			m_bIsAFK = true;
+
 		// ---- ONFOOT NETWORK PROCESSING ----
 		if(GetState() == PLAYER_STATE_ONFOOT &&
 			m_byteUpdateFromNetwork == UPDATE_TYPE_ONFOOT && !m_pPlayerPed->IsInVehicle())
@@ -121,14 +123,26 @@ void CRemotePlayer::Process()
 				UpdateInCarMatrixAndSpeed(&matVehicle, &m_icSync.vecPos, &m_icSync.vecMoveSpeed);
 				UpdateInCarTargetPosition();
 			}
-
-			m_pCurrentVehicle->SetHealth(m_icSync.fCarHealth);
-
 		}
 		else if(GetState() == PLAYER_STATE_PASSENGER &&
 			m_byteUpdateFromNetwork == UPDATE_TYPE_PASSENGER)
 		{
 			if(!m_pCurrentVehicle) return;
+
+			// UPDATE CURRENT WEAPON
+			uint8_t byteCurrentWeapon = m_ofSync.byteCurrentWeapon & 0x3F;
+			if(m_pPlayerPed->IsAdded() && m_pPlayerPed->GetCurrentWeapon() != byteCurrentWeapon)
+			{
+				m_pPlayerPed->GiveWeapon(byteCurrentWeapon, 9999);
+				m_pPlayerPed->SetArmedWeapon(byteCurrentWeapon);
+
+				// double check
+				if(m_pPlayerPed->GetCurrentWeapon() != byteCurrentWeapon)
+				{
+					m_pPlayerPed->GiveWeapon(byteCurrentWeapon, 9999);
+					m_pPlayerPed->SetArmedWeapon(byteCurrentWeapon);
+				}
+			}
 		}
 
 		m_byteUpdateFromNetwork = UPDATE_TYPE_NONE;
@@ -184,10 +198,7 @@ void CRemotePlayer::Process()
 				m_pPlayerPed->SetMoveSpeedVector(m_ofSync.vecMoveSpeed);
 			}
 
-			if((GetTickCount() - m_dwLastRecvTick) > 1500)
-				m_bIsAFK = true;
-
-			if(m_bIsAFK && ((GetTickCount() - m_dwLastRecvTick) > 3000))
+			if(m_bIsAFK)
 			{
 				m_ofSync.lrAnalog = 0;
 				m_ofSync.udAnalog = 0;
@@ -204,7 +215,7 @@ void CRemotePlayer::Process()
 				m_pPlayerPed->SetMatrix(matPlayer);
 			}
 		}
-		else if(GetState() == PLAYER_STATE_DRIVER && m_pPlayerPed->IsInVehicle())
+		if(GetState() == PLAYER_STATE_DRIVER && m_pPlayerPed->IsInVehicle())
 		{
 			if (!m_pCurrentVehicle)
 			{
@@ -230,29 +241,11 @@ void CRemotePlayer::Process()
 
 			m_pPlayerPed->SetKeys(m_icSync.wKeys, m_icSync.lrAnalog, m_icSync.udAnalog);
 
-			if((GetTickCount() - m_dwLastRecvTick) > 1500)
-				m_bIsAFK = true;
-
-		}
-		else if(GetState() == PLAYER_STATE_PASSENGER)
-		{
-			if((GetTickCount() - m_dwLastRecvTick) >= 3000)
-				m_bIsAFK = true;
-		}
-		else
-		{
-			m_pPlayerPed->SetKeys(0, 0, 0);
-			vecMoveSpeed.X = 0.0f;
-			vecMoveSpeed.Y = 0.0f;
-			vecMoveSpeed.Z = 0.0f;
-			m_pPlayerPed->SetMoveSpeedVector(vecMoveSpeed);
 		}
 
 		if(m_byteState != PLAYER_STATE_WASTED)
 			m_pPlayerPed->SetHealth(1000.0f);
 
-		if((GetTickCount() - m_dwLastRecvTick) < 1500)
-			m_bIsAFK = false;
 	}
 	else
 	{
@@ -456,7 +449,7 @@ bool CRemotePlayer::Spawn(uint8_t byteTeam, unsigned int iSkin, VECTOR *vecPos, 
 			pPlayer->ShowMarker(m_PlayerID);
 
 		m_pPlayerPed = pPlayer;
-		m_fReportedHealth = 100.0f;
+
 		if(byteFightingStyle != 4)
 			m_pPlayerPed->SetFightingStyle(byteFightingStyle);
 
@@ -468,24 +461,6 @@ bool CRemotePlayer::Spawn(uint8_t byteTeam, unsigned int iSkin, VECTOR *vecPos, 
 	return false;
 }
 
-void CRemotePlayer::HandleVehicleEntryExit()
-{
-	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
-	if(!pVehiclePool)return;
-	if(!m_pPlayerPed ) return;
-
-	MATRIX4X4 mat;
-
-	if( GetState() == PLAYER_STATE_DRIVER || GetState() == PLAYER_STATE_PASSENGER )
-	{
-		if(!m_pPlayerPed->IsInVehicle()) {
-			CVehicle *pVehicle = pVehiclePool->GetAt(m_VehicleID);
-			if(pVehicle) {
-				m_pPlayerPed->PutDirectlyInVehicle(pVehicle, m_byteSeatID);
-			}
-		}
-	}
-}
 void CRemotePlayer::EnterVehicle(VEHICLEID VehicleID, bool bPassenger)
 {
 	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
@@ -813,97 +788,90 @@ void CRemotePlayer::UpdateAimFromSyncData(AIM_SYNC_DATA * pAimSync)
 
 void CRemotePlayer::StoreOnFootFullSyncData(ONFOOT_SYNC_DATA *pofSync, uint32_t dwTime)
 {
-	if( !dwTime || (dwTime - m_dwUnkTime) >= 0 )
+	memcpy(&m_ofSync, pofSync, sizeof(ONFOOT_SYNC_DATA));
+
+	m_byteSpecialAction = pofSync->byteSpecialAction;
+	m_byteUpdateFromNetwork = UPDATE_TYPE_ONFOOT;
+
+	if(m_pPlayerPed)
 	{
-		m_dwUnkTime = dwTime;
-		//m_iKey0 = key;
-		m_dwLastRecvTick = GetTickCount();
-		memcpy(&m_ofSync, pofSync, sizeof(ONFOOT_SYNC_DATA));
-		m_fReportedHealth = (float)pofSync->byteHealth;
-		m_fReportedArmour = (float)pofSync->byteArmour;
-		m_byteSpecialAction = pofSync->byteSpecialAction;
-		m_byteUpdateFromNetwork = UPDATE_TYPE_ONFOOT;
+		m_fCurrentHealth = pofSync->byteHealth;
+		m_fCurrentArmor = pofSync->byteArmour;
 
-
-		if(m_pPlayerPed)
+		if(m_pPlayerPed->IsInVehicle())
 		{
-			if(m_pPlayerPed->IsInVehicle())
-			{
-				if( m_byteSpecialAction != SPECIAL_ACTION_ENTER_VEHICLE &&
-					m_byteSpecialAction != SPECIAL_ACTION_EXIT_VEHICLE /*&& !sub_100A6F00()*/)
-					RemoveFromVehicle();
-			}
+			MATRIX4X4 mat;
+			m_pPlayerPed->GetMatrix(&mat);
+			m_pPlayerPed->RemoveFromVehicleAndPutAt(mat.pos.X, mat.pos.Y, mat.pos.Z);
 		}
-
-		SetState(PLAYER_STATE_ONFOOT);
 	}
+	m_dwLastRecvTick = GetTickCount();
+	SetState(PLAYER_STATE_ONFOOT);
 }
 void CRemotePlayer::StoreInCarFullSyncData(INCAR_SYNC_DATA *picSync, uint32_t dwTime)
 {
 	if(!m_pPlayerPed)return;
 
-	if(!dwTime || (dwTime - m_dwUnkTime >= 0)) {
-		m_dwUnkTime = dwTime;
+	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
 
-		CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
+	memcpy(&m_icSync, picSync, sizeof(INCAR_SYNC_DATA));
 
-		memcpy(&m_icSync, picSync, sizeof(INCAR_SYNC_DATA));
+	m_VehicleID = picSync->VehicleID;
+	if (!pVehiclePool) return;
+	if (!pVehiclePool->GetSlotState(m_VehicleID)) return;
 
-		m_VehicleID = picSync->VehicleID;
-		if (!pVehiclePool) return;
-		if (!pVehiclePool->GetSlotState(m_VehicleID)) return;
+	m_pCurrentVehicle = pVehiclePool->GetAt(m_VehicleID);
+	if (!m_pCurrentVehicle)return;
 
-		m_pCurrentVehicle = pVehiclePool->GetAt(m_VehicleID);
-		if (!m_pCurrentVehicle)return;
-
-		if (m_pPlayerPed->GetCurrentVehicle() != m_pCurrentVehicle) {
-			if (m_pPlayerPed->IsInVehicle()) {
-				MATRIX4X4 mat;
-				m_pPlayerPed->GetMatrix(&mat);
-				m_pPlayerPed->RemoveFromVehicleAndPutAt(mat.pos.X, mat.pos.Y, mat.pos.Z);
-			}
-			m_pPlayerPed->PutDirectlyInVehicle(m_pCurrentVehicle, 0);
-		}
-
-		// -------------- TRAILER
-
-		if((m_icSync.TrailerID  == INVALID_VEHICLE_ID) )
-		{//
-			if(m_pCurrentVehicle->m_pTrailer) {
-				m_pCurrentVehicle->SetTrailer(nullptr);
-				m_pCurrentVehicle->DetachTrailer();
-			}
-		}
-		else {
-			CVehicle *pTrailer = pVehiclePool->GetAt(m_icSync.TrailerID);
-            if(pTrailer) {
-                if (m_pCurrentVehicle->m_pTrailer) {
-                    if (m_pCurrentVehicle->m_pTrailer != pTrailer) {
-                        m_pCurrentVehicle->SetTrailer(nullptr);
-                        m_pCurrentVehicle->DetachTrailer();
-                    }
-
-                } else {
-                    if (GamePool_Vehicle_GetAt(pTrailer->m_dwGTAId)) {
-                        m_pCurrentVehicle->SetTrailer(pTrailer);
-                        m_pCurrentVehicle->AttachTrailer();
-                    }
-                }
-            }
-		}
-		// -----------------------------------------------------------
-
-		m_byteSeatID = 0;
-		m_fReportedHealth = (float) picSync->bytePlayerHealth;
-		m_fReportedArmour = (float) picSync->bytePlayerArmour;
-		m_byteUpdateFromNetwork = UPDATE_TYPE_INCAR;
-		m_dwLastRecvTick = GetTickCount();
-
-		m_byteSpecialAction = 0;
-		//m_pCurrentVehicle->SetSirenState(picSync->byteSirenOn);
-		SetState(PLAYER_STATE_DRIVER);
-
+	if(!m_pPlayerPed->IsInVehicle())
+	{
+		m_pPlayerPed->PutDirectlyInVehicle(m_pCurrentVehicle, 0);
 	}
+	else if (m_pPlayerPed->GetCurrentVehicle() != m_pCurrentVehicle) {
+		MATRIX4X4 mat;
+		m_pPlayerPed->GetMatrix(&mat);
+		m_pPlayerPed->RemoveFromVehicleAndPutAt(mat.pos.X, mat.pos.Y, mat.pos.Z);
+	}
+
+	// -------------- TRAILER
+
+	if((m_icSync.TrailerID  == INVALID_VEHICLE_ID) )
+	{//
+		if(m_pCurrentVehicle->m_pTrailer) {
+			m_pCurrentVehicle->SetTrailer(nullptr);
+			m_pCurrentVehicle->DetachTrailer();
+		}
+	}
+	else {
+		CVehicle *pTrailer = pVehiclePool->GetAt(m_icSync.TrailerID);
+		if(pTrailer) {
+			if (m_pCurrentVehicle->m_pTrailer) {
+				if (m_pCurrentVehicle->m_pTrailer != pTrailer) {
+					m_pCurrentVehicle->SetTrailer(nullptr);
+					m_pCurrentVehicle->DetachTrailer();
+				}
+			} else {
+				if (GamePool_Vehicle_GetAt(pTrailer->m_dwGTAId)) {
+					m_pCurrentVehicle->SetTrailer(pTrailer);
+					m_pCurrentVehicle->AttachTrailer();
+				}
+			}
+		}
+	}
+	// -----------------------------------------------------------
+
+	m_byteSeatID = 0;
+	m_fCurrentHealth = picSync->bytePlayerHealth;
+	m_fCurrentArmor = picSync->bytePlayerArmour;
+
+	m_byteUpdateFromNetwork = UPDATE_TYPE_INCAR;
+	m_dwLastRecvTick = GetTickCount();
+
+	m_byteSpecialAction = 0;
+	m_pCurrentVehicle->SetHealth(picSync->fCarHealth);
+	//m_pCurrentVehicle->SetSirenState(picSync->byteSirenOn);
+	SetState(PLAYER_STATE_DRIVER);
+
 }
 
 void CRemotePlayer::StorePassengerFullSyncData(PASSENGER_SYNC_DATA *ppsSync)
@@ -919,13 +887,20 @@ void CRemotePlayer::StorePassengerFullSyncData(PASSENGER_SYNC_DATA *ppsSync)
 	m_pCurrentVehicle = pVehiclePool->GetAt(m_VehicleID);
 
 	if(!m_pCurrentVehicle)return;
-	if(!m_pPlayerPed->IsInVehicle()) {
-		m_pPlayerPed->PutDirectlyInVehicle(m_pCurrentVehicle, m_byteSeatID);
+	if (m_pPlayerPed->GetCurrentVehicle() != m_pCurrentVehicle) {
+		if (m_pPlayerPed->IsInVehicle()) {
+			MATRIX4X4 mat;
+			m_pPlayerPed->GetMatrix(&mat);
+			m_pPlayerPed->RemoveFromVehicleAndPutAt(mat.pos.X, mat.pos.Y, mat.pos.Z);
+		}
+		m_pPlayerPed->PutDirectlyInVehicle(m_pCurrentVehicle, 0);
 	}
+//	if(!m_pPlayerPed->IsInVehicle()) {
+//		m_pPlayerPed->PutDirectlyInVehicle(m_pCurrentVehicle, m_byteSeatID);
+//	}
+	m_fCurrentHealth = ppsSync->bytePlayerHealth;
+	m_fCurrentArmor = ppsSync->bytePlayerArmour;
 
-
-	m_fReportedHealth = (float)ppsSync->bytePlayerHealth;
-	m_fReportedArmour = (float)ppsSync->bytePlayerArmour;
 	m_byteUpdateFromNetwork = UPDATE_TYPE_PASSENGER;
 	m_dwLastRecvTick = GetTickCount();
 
@@ -956,8 +931,7 @@ void CRemotePlayer::HandleDeath()
 		GetPlayerPed()->SetKeys(0, 0, 0);
 		GetPlayerPed()->SetDead();
 	}
-	m_fReportedHealth = 0.0f;
-	m_fReportedArmour = 0.0f;
+
 	SetState(PLAYER_STATE_WASTED);
 
 	memset(&m_ofSync, 0, sizeof(m_ofSync));

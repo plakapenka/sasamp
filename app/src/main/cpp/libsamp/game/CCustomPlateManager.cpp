@@ -420,6 +420,8 @@ void CCustomPlateManager::Initialise()
 //	m_pNoPlateSprite->m_pRwTexture = (RwTexture*)LoadTextureFromDB("samp", "plate_outside");
 
 	m_pBitmap = new uint8_t[PLATE_BITMAP_HEIGHT * PLATE_BITMAP_WIDTH];
+
+	Log("CCustomPlateManager::Initialise ..");
 }
 
 void CCustomPlateManager::Shutdown()

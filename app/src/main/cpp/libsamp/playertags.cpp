@@ -99,8 +99,8 @@ void CPlayerTags::Render()
 							Draw(&VecPos, szNickBuf,
 								 pPlayer->GetPlayerColor(),
 								 pPlayerPed->GetDistanceFromCamera(),
-								 pPlayer->m_fReportedHealth,
-								 pPlayer->m_fReportedArmour,
+								 pPlayer->m_fCurrentHealth,
+								 pPlayer->m_fCurrentArmor,
 								 pPlayer->IsAFK(), 0, pPlayer->m_bKeyboardOpened);
 						}
 					}

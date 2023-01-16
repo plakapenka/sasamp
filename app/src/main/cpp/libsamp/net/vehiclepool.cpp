@@ -46,7 +46,7 @@ void CVehiclePool::Process()
 {
 	CVehicle *pVehicle;
 	CPlayerPool* pPlayerPool = pNetGame->GetPlayerPool();
-	CLocalPlayer* pLocalPlayer = pPlayerPool->GetLocalPlayer();
+	//CLocalPlayer* pLocalPlayer = pPlayerPool->GetLocalPlayer();
 
 	for(VEHICLEID x = 0; x < MAX_VEHICLES; x++)
 	{
@@ -56,20 +56,23 @@ void CVehiclePool::Process()
 
 			if(m_bIsActive[x])
 			{
+				if (pVehicle->GetHealth() < 300.0f)
+				{
+					MATRIX4X4 matrix4X4;
+					pVehicle->GetMatrix(&matrix4X4);
+					pVehicle->SetMatrix(matrix4X4);
+					pVehicle->SetHealth(300.0f);
+				}
+
+				pVehicle->SetEngineState(pVehicle->m_bEngineOn);
+				pVehicle->SetLightsState(pVehicle->m_bLightsOn);
+
 				pVehicle->ProcessDamage();
 
-				if(pVehicle->IsOccupied())
-				{
-					if(pVehicle->m_bIsInvulnerable)
-					{
-						pVehicle->SetInvulnerable(false);
-					}
-
-				}
-				else if(!pVehicle->m_bIsInvulnerable)
-				{
+				if(pVehicle->IsDriverLocalPlayer())
+					pVehicle->SetInvulnerable(false);
+				else
 					pVehicle->SetInvulnerable(true);
-				}
 
 				pVehicle->ProcessMarkers();
 			}
@@ -93,66 +96,6 @@ bool CVehiclePool::New(NEW_VEHICLE *pNewVehicle)
 	m_pVehicles[pNewVehicle->VehicleID] = pGame->NewVehicle(pNewVehicle->iVehicleType,
 		pNewVehicle->vecPos.X, pNewVehicle->vecPos.Y, pNewVehicle->vecPos.Z, 
 		pNewVehicle->fRotation, pNewVehicle->byteAddSiren);
-
-	int random = rand() % 10;
-	switch (random)
-	{
-		case 0:
-		{
-			CCustomPlateManager::PushPlate(pNewVehicle->VehicleID, 2, "KA 8723 AK", "");
-			break;
-		}
-		case 1:
-		{
-			CCustomPlateManager::PushPlate(pNewVehicle->VehicleID, 1, "c065mk", "77");
-			break;
-		}
-		case 2:
-		{
-			CCustomPlateManager::PushPlate(pNewVehicle->VehicleID, 3, "8765 AX-3", "");
-			break;
-		}
-		case 3:
-		{
-			CCustomPlateManager::PushPlate(pNewVehicle->VehicleID, 4, "421epa", "02");
-			break;
-		}
-		case 4:
-		{
-			CCustomPlateManager::PushPlate(pNewVehicle->VehicleID, 5, "a 8762", "77");
-			break;
-		}
-		case 5:
-		{
-			CCustomPlateManager::PushPlate(pNewVehicle->VehicleID, 2, "HA 9823 KK", "");
-			break;
-		}
-		case 6:
-		{
-			CCustomPlateManager::PushPlate(pNewVehicle->VehicleID, 1, "c089mk", "28");
-			break;
-		}
-		case 7:
-		{
-			CCustomPlateManager::PushPlate(pNewVehicle->VehicleID, 3, "2398 AA-7", "");
-			break;
-		}
-		case 8:
-		{
-			CCustomPlateManager::PushPlate(pNewVehicle->VehicleID, 4, "872epa", "02");
-			break;
-		}
-		case 9:
-		{
-			CCustomPlateManager::PushPlate(pNewVehicle->VehicleID, 5, "o 9123", "53");
-			break;
-		}
-		case 10:
-		{
-			CCustomPlateManager::PushPlate(pNewVehicle->VehicleID, 5, "a 8762", "77");
-			break;
-		}
-	}
 
 	if(m_pVehicles[pNewVehicle->VehicleID])
 	{

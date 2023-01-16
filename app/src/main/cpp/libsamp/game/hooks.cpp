@@ -1933,31 +1933,24 @@ uintptr_t CVehicle__SetupRenderCB(uintptr_t atomic, void* data)
 }
 #include "..//cryptors/MODELINFO_EDITABLE_result.h"
 typedef uintptr_t RpClump;
-void(*CVehicleModelInfo__SetEditableMaterials)(uintptr_t);
+void (*CVehicleModelInfo__SetEditableMaterials)(uintptr_t);
 void CVehicleModelInfo__SetEditableMaterials_hook(uintptr_t clump)
 {
 	PROTECT_CODE_MODELINFO_EDITABLE;
-	RpClump* pClump = (RpClump*)clump;
-
-	
+	RpClump *pClump = (RpClump *)clump;
 
 	if (pNetGame && pClump)
 	{
 		if (pNetGame->GetVehiclePool())
 		{
-			VEHICLEID vehId = pNetGame->GetVehiclePool()->FindIDFromRwObject((RwObject*)clump);
-			CVehicle* pVehicle = pNetGame->GetVehiclePool()->GetAt(vehId);
-			if (pVehicle )
+			VEHICLEID vehId = pNetGame->GetVehiclePool()->FindIDFromRwObject((RwObject *)clump);
+			CVehicle *pVehicle = pNetGame->GetVehiclePool()->GetAt(vehId);
+			if (pVehicle)
 			{
-				VEHICLE_TYPE* ThisVehicleType;
-				if((ThisVehicleType = GamePool_Vehicle_GetAt(pVehicle->m_dwGTAId)) == 0) return;
-				if (ThisVehicleType->fHealth == 0.0f) return;
-				if (ThisVehicleType->entity.vtable == g_libGTASA + 0x5C7358) return;
-
 				if (pVehicle->m_bReplacedTexture)
 				{
 					// RpClump* RpClumpForAllAtomics(RpClump* clump, RpAtomicCallBack callback, void* pData);
-					((RpClump * (*)(RpClump*, uintptr_t, void*))(g_libGTASA + 0x001E0EA0 + 1))(pClump, (uintptr_t)CVehicle__SetupRenderCB, (void*)pVehicle); // RpClumpForAllAtomics
+					((RpClump * (*)(RpClump *, uintptr_t, void *))(g_libGTASA + 0x1E0EA0 + 1))(pClump, (uintptr_t)CVehicle__SetupRenderCB, (void *)pVehicle); // RpClumpForAllAtomics
 				}
 			}
 		}
@@ -1998,14 +1991,14 @@ void CGame__Process_hook()
 	if (!once)
 	{
 		CCustomPlateManager::Initialise();
-		CSnow::Initialise();
+		//CSnow::Initialise();
 		once = true;
 	}
 
-	if (pNetGame && pNetGame->GetPlayerPool() && pNetGame->GetPlayerPool()->GetLocalPlayer())
-	{
-		CSnow::Process(pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed(), pGame->GetActiveInterior());
-	}
+//	if (pNetGame && pNetGame->GetPlayerPool() && pNetGame->GetPlayerPool()->GetLocalPlayer())
+//	{
+//		CSnow::Process(pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed(), pGame->GetActiveInterior());
+//	}
 
 //	if (pNetGame)
 //	{
@@ -3615,8 +3608,8 @@ void InstallHooks()
 	CPatch::RET(g_libGTASA + 0x002C0778); // CDarkel__FindTotalPedsKilledByPlayer_hook
 	CPatch::RET(g_libGTASA + 0x002C0D04); // CDarkel__RegisterKillByPlayer_hook
 
-	//CPatch::InlineHook(g_libGTASA, 0x00338CBC, &CVehicleModelInfo__SetEditableMaterials_hook, &CVehicleModelInfo__SetEditableMaterials);
-	//CPatch::InlineHook(g_libGTASA, 0x0050DEF4, &CVehicle__ResetAfterRender_hook, &CVehicle__ResetAfterRender);
+	CPatch::InlineHook(g_libGTASA, 0x338CBC, &CVehicleModelInfo__SetEditableMaterials_hook, &CVehicleModelInfo__SetEditableMaterials);
+	CPatch::InlineHook(g_libGTASA, 0x0050DEF4, &CVehicle__ResetAfterRender_hook, &CVehicle__ResetAfterRender);
 
 	CPatch::InlineHook(g_libGTASA, 0x3986CC, &CGame__Process_hook, &CGame__Process);
 

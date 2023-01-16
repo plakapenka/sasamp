@@ -28,6 +28,8 @@ void CMedic::showPreDeath(char* nick, int id)
     jmethodID method = env->GetMethodID(clazz, "showPreDeath", "(Ljava/lang/String;I)V");
 
     env->CallVoidMethod(CMedic::thiz, method, jNick, id);
+
+    CMedic::bIsShow = true;
 }
 
 void CMedic::showMedGame(char* nick)
@@ -41,6 +43,8 @@ void CMedic::showMedGame(char* nick)
     jmethodID method = env->GetMethodID(clazz, "showMiniGame", "(Ljava/lang/String;)V");
 
     env->CallVoidMethod(CMedic::thiz, method, jNick);
+
+    CMedic::bIsShow = true;
 }
 
 //void CMedic::hidePreDeath()
@@ -87,7 +91,7 @@ void CNetGame::packetMedGame(Packet* p) {
     bs.IgnoreBits(40); // skip packet and rpc id
 
     uint16_t strLen;
-    char nick[25];
+    char nick[MAX_PLAYER_NAME];
 
     bs.Read(strLen);
     bs.Read(nick, strLen);
@@ -104,6 +108,8 @@ Java_com_liverussia_cr_gui_PreDeath_init(JNIEnv *env, jobject thiz) {
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_PreDeath_medicMiniGameExit(JNIEnv *env, jobject thiz, jint type_id) {
+    CMedic::bIsShow = false;
+
     uint8_t packet = ID_CUSTOM_RPC;
     uint8_t RPC = RPC_MED_GAME;
 

@@ -78,12 +78,8 @@ public:
 	void UpdateInCarMatrixAndSpeed(MATRIX4X4* mat, VECTOR* pos, VECTOR* speed);
 	void UpdateInCarTargetPosition();
 	void UpdateVehicleRotation();
-	void HandleVehicleEntryExit();
 	void EnterVehicle(VEHICLEID VehicleID, bool bPassenger);
 	void ExitVehicle();
-
-	float GetReportedHealth() { return m_fReportedHealth; };
-	float GetReportedArmour() { return m_fReportedArmour; };
 
 	uint32_t GetPlayerColor();
 	void ShowGlobalMarker(short sX, short sY, short sZ);
@@ -92,8 +88,8 @@ public:
 public:
 	bool				m_bShowNameTag;
 	bool				m_bKeyboardOpened;
-	float 				m_fReportedHealth;
-	float 				m_fReportedArmour;
+	float 				m_fCurrentHealth;
+	float 				m_fCurrentArmor;
 
 private:
 	CPlayerPed			*m_pPlayerPed;

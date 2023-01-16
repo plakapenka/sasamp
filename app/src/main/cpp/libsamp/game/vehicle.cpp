@@ -56,6 +56,7 @@ CVehicle::CVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRota
 		{
 			//m_pVehicle->m_nOverrideLights = eVehicleOverrideLightsState::NO_CAR_LIGHT_OVERRIDE;
 			m_pVehicle->dwDoorsLocked = 0;
+			m_pVehicle->fHealth = 1000.0;
 			m_bIsLocked = false;
 
 			GetMatrix(&mat);
@@ -224,7 +225,7 @@ CVehicle::~CVehicle()
 			m_Shadow.pTexture = nullptr;
 		}
 	}
-	Log("~CVehicle2");
+
 	if (bHasSuspensionLines && m_pSuspensionLines) {
 		delete[] m_pSuspensionLines;
 		m_pSuspensionLines = nullptr;
@@ -1362,7 +1363,7 @@ void CVehicle::SetEngineState(bool bEnable)
 		return;
 	}
 	//m_pVehicle->m_nVehicleFlags.bEngineBroken = 1;
-	m_bEngineOn = bEnable;
+	//m_bEngineOn = bEnable;
 	m_pVehicle->m_nVehicleFlags.bEngineOn = m_bEngineOn = bEnable;;
 }
 

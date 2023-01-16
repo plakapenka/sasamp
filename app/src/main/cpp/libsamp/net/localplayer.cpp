@@ -66,7 +66,7 @@ CLocalPlayer::CLocalPlayer()
 	m_dwLastUpdateOnFootData = GetTickCount();
 	m_dwLastStatsUpdateTick = GetTickCount();
 	m_dwLastUpdateInCarData = GetTickCount();
-	m_dwLastUpdatePassengerData = GetTickCount();
+	//m_dwLastUpdatePassengerData = GetTickCount();
 	m_dwPassengerEnterExit = GetTickCount();
 
 	m_CurrentVehicle = INVALID_VEHICLE_ID;
@@ -251,8 +251,9 @@ bool CLocalPlayer::Process()
 		if (m_bIsSpectating) {
 			ProcessSpectating();
 		}
-			// DRIVER
-		else if (m_pPlayerPed->IsInVehicle() && !m_pPlayerPed->IsAPassenger()) {
+
+		// DRIVER
+		if (m_pPlayerPed->IsInVehicle() && !m_pPlayerPed->IsAPassenger()) {
 			if (pVehiclePool)
 				m_CurrentVehicle = m_pPlayerPed->GetCurrentSampVehicleID();
 
@@ -341,7 +342,7 @@ bool CLocalPlayer::Process()
 			}
 		}
 			// PASSENGER
-		else if (m_pPlayerPed->IsInVehicle() && m_pPlayerPed->IsAPassenger()) {
+		if (m_pPlayerPed->IsInVehicle() && m_pPlayerPed->IsAPassenger()) {
 			if ((dwThisTick - m_dwLastSendTick) > (unsigned int) GetOptimumInCarSendRate()) {
 				m_dwLastSendTick = GetTickCount();
 				SendPassengerFullSyncData();
@@ -1032,9 +1033,9 @@ void CLocalPlayer::SendPassengerFullSyncData()
 	psSync.vecPos.Z = mat.pos.Z;
 
 	// send
-	if((GetTickCount() - m_dwLastUpdatePassengerData) > 500 || memcmp(&m_PassengerData, &psSync, sizeof(PASSENGER_SYNC_DATA)))
+	if(memcmp(&m_PassengerData, &psSync, sizeof(PASSENGER_SYNC_DATA)))
 	{
-		m_dwLastUpdatePassengerData = GetTickCount();
+	//	m_dwLastUpdatePassengerData = GetTickCount();
 
 		bsPassengerSync.Write((uint8_t)ID_PASSENGER_SYNC);
 		bsPassengerSync.Write((char*)&psSync, sizeof(PASSENGER_SYNC_DATA));

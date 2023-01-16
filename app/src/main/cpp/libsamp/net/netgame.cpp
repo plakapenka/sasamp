@@ -934,7 +934,6 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			bs.Read(maxspeed);
 			bs.Read(acceleration);
 
-			Log("%s %d %d %f %f", name, price, count, maxspeed, acceleration);
 			char utf8[200];
 			cp1251_to_utf8(utf8, name);
 			g_pJavaWrapper->UpdateAutoShop(utf8, price, count, maxspeed, acceleration);
@@ -1912,13 +1911,8 @@ void CNetGame::Packet_VehicleSync(Packet* pkt)
 	// vehicle health
 	uint16_t wTempVehicleHealth;
 	bsSync.Read(wTempVehicleHealth);
-	//pGUI->SetHealth(wTempVehicleHealth);
-	CVehicle *pVehicle = pVehiclePool->GetAt(icSync.VehicleID);
 	icSync.fCarHealth = (float)wTempVehicleHealth;
-	if(pVehicle)
-	{
-		pVehicle->SetHealth(wTempVehicleHealth);
-	}
+
 	// health/armour
 	uint8_t byteHealthArmour;
 	uint8_t byteArmTemp=0, byteHlTemp=0;
