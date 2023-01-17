@@ -10,7 +10,7 @@ extern CNetGame *pNetGame;
 
 void CEntity::Add()
 {
-	if (!m_pEntity || m_pEntity->vtable == 0x5C7358)
+	if (!m_pEntity || !CUtil::IsGameEntityArePlaceable(m_pEntity))
 	{
 		return;
 	}
@@ -35,13 +35,13 @@ void CEntity::SetGravityProcessing(bool bProcess)
 
 void CEntity::UpdateRwMatrixAndFrame()
 {
-	if (m_pEntity && m_pEntity->vtable != g_libGTASA + 0x5C7358)
+	if (m_pEntity && CUtil::IsGameEntityArePlaceable(m_pEntity))
 	{
-		if (m_pEntity->m_RwObject)
+		if (m_pEntity->m_pRwObject)
 		{
 			if (m_pEntity->mat)
 			{
-				uintptr_t pRwMatrix = *(uintptr_t*)(m_pEntity->m_RwObject + 4) + 0x10;
+				uintptr_t pRwMatrix = *(uintptr_t*)(m_pEntity->m_pRwObject + 4) + 0x10;
 				// CMatrix::UpdateRwMatrix
 				((void (*) (MATRIX4X4*, uintptr_t))(g_libGTASA + 0x3E862C + 1))(m_pEntity->mat, pRwMatrix);
 
@@ -70,39 +70,47 @@ void CEntity::UpdateMatrix(MATRIX4X4 mat)
 	}
 }
 
+bool CEntity::GetCollisionChecking()
+{
+	if(!m_pEntity || CUtil::IsGameEntityArePlaceable(m_pEntity))
+		return true;
+
+	return m_pEntity->nEntityFlags.m_bCollisionProcessed;
+}
+
 void CEntity::SetCollisionChecking(bool bCheck)
 {
-	*(uint32_t*)((uintptr_t)m_pEntity + 28) &= 0xFFFFFFFE;
+	if(!m_pEntity || CUtil::IsGameEntityArePlaceable(m_pEntity))
+		return;
+
+	m_pEntity->nEntityFlags.m_bCollisionProcessed = bCheck;
 }
 
 void CEntity::Render()
 {
-	uintptr_t pRwObject = m_pEntity->m_RwObject;
+	uintptr_t pRwObject = m_pEntity->m_pRwObject;
 
 	int iModel = GetModelIndex();
-	if (iModel >= 400 && iModel <= 611 && pRwObject)
+	if(iModel >= 400 && iModel <= 611 && pRwObject)
 	{
 		// CVisibilityPlugins::SetupVehicleVariables
+		((void (*)(uintptr_t))(g_libGTASA+0x55D4EC+1))(pRwObject);
 	}
 
 	// CEntity::PreRender
-	((void (*)(ENTITY_TYPE*))(*(void**)(m_pEntity->vtable + 0x48)))(m_pEntity);
+	(( void (*)(ENTITY_TYPE*))(*(void**)(m_pEntity->vtable+0x48)))(m_pEntity);
 
 	// CRenderer::RenderOneNonRoad
-	((void (*)(ENTITY_TYPE*))(g_libGTASA + 0x3B1690 + 1))(m_pEntity);
+	(( void (*)(ENTITY_TYPE*))(g_libGTASA+0x3B1690+1))(m_pEntity);
 }
 
-//void CEntity::Remove()
-//{
-//	if (!m_pEntity || m_pEntity->vtable == 0x5C7358)
-//	{
-//		return;
-//	}
-//
-//	if (m_pEntity->dwUnkModelRel) {
-//		WorldRemoveEntity((uintptr_t)m_pEntity);
-//	}
-//}
+void CEntity::Remove()
+{
+    if(!m_pEntity || CUtil::IsGameEntityArePlaceable(m_pEntity) || !m_pEntity->dwUnkModelRel)
+        return;
+
+    CUtil::WorldRemoveEntity((uintptr_t)m_pEntity);
+}
 
 // 0.3.7
 void CEntity::GetMatrix(PMATRIX4X4 Matrix)
@@ -259,7 +267,7 @@ float CEntity::GetDistanceFromCamera()
 {
 	MATRIX4X4 matEnt;
 
-	if(!m_pEntity || m_pEntity->vtable == g_libGTASA+0x5C7358 /* CPlaceable */)
+	if(!m_pEntity || CUtil::IsGameEntityArePlaceable(m_pEntity))
 		return 100000.0f;
 
 	this->GetMatrix(&matEnt);

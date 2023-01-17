@@ -42,4 +42,8 @@ public:
 public:
 	ENTITY_TYPE		*m_pEntity;
 	uint32_t		m_dwGTAId;
+
+    bool GetCollisionChecking();
+
+	void Remove();
 };

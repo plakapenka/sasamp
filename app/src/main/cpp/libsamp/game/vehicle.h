@@ -250,9 +250,6 @@ public:
 
 	bool IsValidGameVehicle();
 
-	void EnableLights(bool bState);
-
-	void EnableEngine(bool bEnable);
 };
 
 enum eVehicleOverrideLightsState {

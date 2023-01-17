@@ -46,7 +46,7 @@ uintptr_t LoadTexture(const char* texname);
 void DrawTextureUV(uintptr_t texture, RECT* rect, uint32_t dwColor, float* uv);
 
 void WorldAddEntity(uintptr_t pEnt);
-//void WorldRemoveEntity(uintptr_t pEnt);
+
 uintptr_t GetModelInfoByID(int iModelID);
 
 void DestroyAtomicOrClump(uintptr_t rwObject);

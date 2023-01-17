@@ -144,10 +144,10 @@ CVehicle::CVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRota
 	m_bShadow = false;
 	m_Shadow.pTexture = nullptr;
 
-	RwFrame* pWheelLF = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x00335CEC + 1))(m_pVehicle->entity.m_RwObject, "wheel_lf_dummy"); // GetFrameFromname
-	RwFrame* pWheelRF = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x00335CEC + 1))(m_pVehicle->entity.m_RwObject, "wheel_rf_dummy"); // GetFrameFromname
-	RwFrame* pWheelRB = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x00335CEC + 1))(m_pVehicle->entity.m_RwObject, "wheel_rb_dummy"); // GetFrameFromname
-	RwFrame* pWheelLB = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x00335CEC + 1))(m_pVehicle->entity.m_RwObject, "wheel_lb_dummy"); // GetFrameFromname
+	RwFrame* pWheelLF = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x00335CEC + 1))(m_pVehicle->entity.m_pRwObject, "wheel_lf_dummy"); // GetFrameFromname
+	RwFrame* pWheelRF = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x00335CEC + 1))(m_pVehicle->entity.m_pRwObject, "wheel_rf_dummy"); // GetFrameFromname
+	RwFrame* pWheelRB = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x00335CEC + 1))(m_pVehicle->entity.m_pRwObject, "wheel_rb_dummy"); // GetFrameFromname
+	RwFrame* pWheelLB = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x00335CEC + 1))(m_pVehicle->entity.m_pRwObject, "wheel_lb_dummy"); // GetFrameFromname
 
 	if (pWheelLF && pWheelRF && pWheelRB && pWheelLB)
 	{
@@ -500,6 +500,8 @@ void CVehicle::SetLightsState(bool iState)
 
 	//if (GamePool_Vehicle_GetAt(m_dwGTAId))
 	//{
+
+
 		m_pVehicle->m_nOverrideLights = 0;
 		m_pVehicle->m_nVehicleFlags.bLightsOn = iState;
 //		ScriptCommand(&FORCE_CAR_LIGHTS, m_dwGTAId, iState ? 2 : 1);
@@ -1081,8 +1083,8 @@ void CVehicle::ProcessWheelsOffset()
 		if (m_bWheelOffsetX)
 		{
 			//CChatWindow::AddDebugMessage("setting wheel offset X");
-			RwFrame* pWheelLF = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x00335CEC + 1))(m_pVehicle->entity.m_RwObject, "wheel_lf_dummy"); // GetFrameFromname
-			RwFrame* pWheelRF = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x00335CEC + 1))(m_pVehicle->entity.m_RwObject, "wheel_rf_dummy"); // GetFrameFromname
+			RwFrame* pWheelLF = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x00335CEC + 1))(m_pVehicle->entity.m_pRwObject, "wheel_lf_dummy"); // GetFrameFromname
+			RwFrame* pWheelRF = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x00335CEC + 1))(m_pVehicle->entity.m_pRwObject, "wheel_rf_dummy"); // GetFrameFromname
 
 			/*if (m_fNewOffsetX)
 			{
@@ -1106,8 +1108,8 @@ void CVehicle::ProcessWheelsOffset()
 		if (m_bWheelOffsetY)
 		{
 			//CChatWindow::AddDebugMessage("setting wheel offset Y");
-			RwFrame* pWheelRB = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x00335CEC + 1))(m_pVehicle->entity.m_RwObject, "wheel_rb_dummy"); // GetFrameFromname
-			RwFrame* pWheelLB = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x00335CEC + 1))(m_pVehicle->entity.m_RwObject, "wheel_lb_dummy"); // GetFrameFromname
+			RwFrame* pWheelRB = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x00335CEC + 1))(m_pVehicle->entity.m_pRwObject, "wheel_rb_dummy"); // GetFrameFromname
+			RwFrame* pWheelLB = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x00335CEC + 1))(m_pVehicle->entity.m_pRwObject, "wheel_lb_dummy"); // GetFrameFromname
 
 			/*if (m_fNewOffsetY)
 			{
@@ -1194,13 +1196,13 @@ void CVehicle::SetComponentVisibleInternal(const char* szComponent, bool bVisibl
 		return;
 	}
 
-	if (!m_pVehicle->entity.m_RwObject)
+	if (!m_pVehicle->entity.m_pRwObject)
 	{
 		return;
 	}
 
 
-	RwFrame* pFrame = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x00335CEC + 1))(m_pVehicle->entity.m_RwObject, szComponent); // GetFrameFromname
+	RwFrame* pFrame = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x00335CEC + 1))(m_pVehicle->entity.m_pRwObject, szComponent); // GetFrameFromname
 	if (pFrame != NULL)
 	{
 		// Get all atomics for this component - Usually one, or two if there is a damaged version
