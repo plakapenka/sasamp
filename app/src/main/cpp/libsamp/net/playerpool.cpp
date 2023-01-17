@@ -30,6 +30,44 @@ extern CSettings* pSettings;
 extern CGame* pGame;
 extern CNetGame* pNetGame;
 
+
+void CPlayerPool::ApplyCollisionChecking()
+{
+	for(int i = 0; i < MAX_PLAYERS; i++)
+	{
+		CRemotePlayer *pPlayer = GetAt(i);
+		if(pPlayer)
+		{
+			CPlayerPed *pPlayerPed = pPlayer->GetPlayerPed();
+			if(pPlayerPed)
+			{
+				if(!pPlayerPed->IsInVehicle())
+				{
+					m_bCollisionChecking[i] = pPlayerPed->GetCollisionChecking();
+					pPlayerPed->SetCollisionChecking(true);
+				}
+			}
+		}
+	}
+}
+
+void CPlayerPool::ResetCollisionChecking()
+{
+	for(int i = 0; i < MAX_PLAYERS; i++)
+	{
+		CRemotePlayer *pPlayer = GetAt(i);
+		if(pPlayer)
+		{
+			CPlayerPed *pPlayerPed = pPlayer->GetPlayerPed();
+			if(pPlayerPed)
+			{
+				if(!pPlayerPed->IsInVehicle())
+					pPlayerPed->SetCollisionChecking(m_bCollisionChecking[i]);
+			}
+		}
+	}
+}
+
 void CPlayerPool::UpdateScore(PLAYERID playerId, int iScore)
 {
 	if (playerId == m_LocalPlayerID)

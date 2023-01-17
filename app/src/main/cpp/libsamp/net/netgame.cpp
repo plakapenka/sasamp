@@ -10,7 +10,6 @@
 
 extern CWidgetManager* g_pWidgetManager;
 extern CNetGame *pNetGame;
-extern CHUD *pHud;
 extern CSettings* pSettings;
 
 #include "../chatwindow.h"
@@ -630,7 +629,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 					}
 				}
 			}
-			int money = pHud->localMoney;
+			int money = CHUD::iLocalMoney;
 			g_pJavaWrapper->ShowCasinoDice(toggle, tableID, bet, bank, money, playerName[0], playerStat[0], playerName[1], playerStat[1], playerName[2], playerStat[2], playerName[3], playerStat[3], playerName[4], playerStat[4]);
 			break;
 		}
@@ -1455,7 +1454,7 @@ void CNetGame::ShutDownForGameRestart()
 		pPlayerPed->SetArmour(0.0f);
 	}
 
-	pHud->localMoney = 0;
+	CHUD::iLocalMoney = 0;
 	pGame->EnableZoneNames(false);
 	m_bZoneNames = false;
 	GameResetRadarColors();

@@ -22,8 +22,8 @@ android {
     //    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         applicationId "com.liverussia.cr"
-        versionName "112"
-        versionCode 112
+        versionName "116"
+        versionCode 116
         vectorDrawables.useSupportLibrary = true
 
         multiDexEnabled = true
@@ -70,7 +70,8 @@ android {
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation 'androidx.appcompat:appcompat:1.5.1'
+
+    implementation 'androidx.appcompat:appcompat:1.6.0'
     implementation 'com.google.android.material:material:1.7.0'
     implementation 'com.tuyenmonkey:mkloader:1.4.0'
     implementation group: 'org.ini4j', name: 'ini4j', version: '0.5.4'

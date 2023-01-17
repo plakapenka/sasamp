@@ -95,10 +95,8 @@ void ApplyPatches_level0()
 {
 	Log("ApplyPatches_level0");
 
-	PLAYERS_REALLOC = ((char* (*)(uint32_t))(g_libGTASA + 0x179B40))(404 * 257 * sizeof(char));
-	memset(PLAYERS_REALLOC, 0, 404 * 257);
-	CPatch::UnFuck(g_libGTASA + 0x5D021C);
-	*(char**)(g_libGTASA + 0x5D021C) = PLAYERS_REALLOC;
+	PLAYERS_REALLOC = new char[404*MAX_PLAYERS];
+	CPatch::Write<char*>(g_libGTASA + 0x5D021C, PLAYERS_REALLOC);
 
 	// 3 touch begin
 	CPatch::UnFuck(g_libGTASA + 0x005D1E8C);
@@ -194,9 +192,31 @@ struct _ATOMIC_MODEL
 };
 struct _ATOMIC_MODEL *ATOMIC_MODELS;
 
+void ApplyShadowPatch(){
+
+	// nop calling CRealTimeShadowManager::ReturnRealTimeShadow from ~CPhysical
+	CPatch::NOP(g_libGTASA + 0x3A019C, 2);
+
+	CPatch::NOP(g_libGTASA + 0x2661DA, 2); // Display - Shadows ( настройки )
+
+	//shadow CRealTimeShadowManager::Update
+	CPatch::RET(g_libGTASA + 0x541AC4);
+
+	// Fix shadows crash (thx R*)
+	CPatch::NOP(g_libGTASA + 0x0039B2C4, 2); // CMirrors::BeforeMainRender(void)
+
+}
+
 void ApplyPatches()
 {
 	Log("Installing patches..");
+
+	// ped ussles
+	CPatch::RET(g_libGTASA + 0x003BFFBC); // CWanted::Initialise
+//	CPatch::RET(g_libGTASA + 0x3AD84C); // CPlayerPedData::AllocateData
+//	CPatch::RET(g_libGTASA + 0x3F0D8C); // CPedClothesDesc::SetTextureAndModel
+
+	ApplyShadowPatch();
 
 	// allocate Atomic models pool
 	ATOMIC_MODELS = new _ATOMIC_MODEL[120000];
@@ -219,6 +239,8 @@ void ApplyPatches()
 	CPatch::NOP(g_libGTASA + 0x0045A4C8, 11);
 	CPatch::NOP(g_libGTASA + 0x0045A4E0, 3);
 
+	CPatch::NOP(g_libGTASA + 0x50FF68, 2); // crash FindPlayerPed
+
 	//UnFuck(g_libGTASA + 0x008B8018);
 	//*(uint8_t*)(g_libGTASA + 0x008B8018) = 1;
 
@@ -227,9 +249,6 @@ void ApplyPatches()
 
 	// Nop CFileLoader::loadPickups
 	CPatch::NOP(g_libGTASA + 0x402472, 2);
-
-	// fucking shit from rockstar CRealTimeShadowManager::Update(void)
-	CPatch::NOP(g_libGTASA + 0x0039B2C0, 2);
 
 	// DefaultPCSaveFileName
 	char* DefaultPCSaveFileName = (char*)(g_libGTASA + 0x60EAE8);
@@ -246,9 +265,6 @@ void ApplyPatches()
 
 	//CPatch::WriteMemory(g_libGTASA + 0x00458D68, (uintptr_t)"\x00\x46\x00\x46", 4); // cFire::extinguish nopped
 	CPatch::NOP(g_libGTASA + 0x458D68, 2);	// CFire::Extinguish from CPlayerPed::SetInitialState
-
-	// nop calling CRealTimeShadowManager::ReturnRealTimeShadow from ~CPhysical
-	CPatch::NOP(g_libGTASA + 0x3A019C, 2);
 
 	CPatch::NOP(g_libGTASA + 0x0054D720, 2); //CMotionBlurStreaks::Update
 	CPatch::NOP(g_libGTASA + 0x00398A4C, 2); // CEntryExitManager::Update
@@ -305,9 +321,6 @@ void ApplyPatches()
 	CPatch::WriteMemory(g_libGTASA + 0x27D8D0, "\x4F\xF0\x00\x08", 4);					// CWidgetPlayerInfo::DrawWanted
 	CPatch::WriteMemory(g_libGTASA + 0x3C5B58, "\x02\x21", 2); 							// CWorld::Process
 	CPatch::NOP(g_libGTASA + 0x45F74C, 16); // CPopulation::AddPedInCar - skip some wtf stuff
-
-	// Fix shadows crash (thx R*)
-	CPatch::NOP(g_libGTASA + 0x0039B2C4, 2);
 
 	CPatch::NOP(g_libGTASA + 0x00454950, 17); // CAnimManager::RemoveAnimBlockRef
 

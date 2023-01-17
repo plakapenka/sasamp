@@ -3,6 +3,7 @@
 //
 #pragma once
 #include "../util/CJavaWrapper.h"
+#include "game/common.h"
 
 
 #ifndef LIVERUSSIA_HUD_H
@@ -10,60 +11,56 @@
 
 
 
-class CHUD {
+static class CHUD {
 public:
-    void InitServerLogo(int i);
 
-    void ToggleAll(bool toggle, bool withchat = false);
-    void UpdateHudInfo();
-    void ToggleEnterPassengerButton(bool toggle);
-    void ToggleEnterExitVehicleButton(bool toggle);
-    void ToggleLockVehicleButton(bool toggle);
+    static void toggleAll(bool toggle, bool withchat = false);
+    static void UpdateHudInfo();
+    static void togglePassengerButton(bool toggle);
+    static void toggleEnterExitButton(bool toggle);
+    static void toggleLockButton(bool toggle);
 
-    int GetScreenSize(bool isWidth);
     CHUD();
-    bool isHudToggle = false;
-    int localMoney = 0;
-    bool isEnterPassengerButtOn = false;
-    bool isEnterExitVehicleButtonOn = false;
-    bool isLockVehicleButtonOn = false;
-    bool isHornButtonOn = false;
-    bool isChatOn = true;
+    static bool bIsShow;
+    static int  iLocalMoney;
+    static bool bIsShowPassengerButt;
+    static bool bIsShowEnterExitButt;
+    static bool bIsShowLockButt;
+    static bool bIsShowHornButt;
+    static bool bIsShowChat;
+    static jobject thiz;
 
-    void UpdateWanted();
+    static void UpdateWanted();
 
-    void UpdateMoney();
+    static void UpdateMoney();
 
-    void ToggleHornButton(bool toggle);
+    static void toggleHornButton(bool toggle);
 
-    void UpdateOpgWarLayout(int time, int attack_score, int def_score);
+    static void updateOpgWarLayout(int time, int attack_score, int def_score);
 
-    bool isMafia_war_layout_active = false;
+    static bool bIsShowMafiaWar;
 
-    float radarbgx1;
-    float radarbgy1;
-    float radarbgx2;
-    float radarbgy2;
-    float radarx1;
-    float radary1;
-    float radarScalex;
-    float radarScaley;
+    static CVector2DFloat radarBgPos1;
+    static CVector2DFloat radarBgPos2;
+    static CVector2DFloat radarPos;
 
-    void AddChatMessage(const char msg[]);
+    static void AddChatMessage(const char msg[]);
 
-    void SetChatInput(const char ch[]);
+    static void SetChatInput(const char ch[]);
 
-    void ToggleChatInput(bool toggle);
+    static void ToggleChatInput(bool toggle);
 
-    void ToggleHpText(bool toggle);
+    static void ToggleHpText(bool toggle);
 
-    void ChangeChatHeight(int height);
+    static void ChangeChatHeight(int height);
 
     void ToggleChat(bool toggle);
 
-    void ChangeChatTextSize(int size);
+    static void ChangeChatTextSize(int size);
 
-    void UpdateSalary(int salary, int lvl, float exp);
+    static void UpdateSalary(int salary, int lvl, float exp);
+
+    static int iWantedLevel;
 };
 
 

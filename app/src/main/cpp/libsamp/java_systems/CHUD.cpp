@@ -17,62 +17,62 @@
 extern CSettings* pSettings;
 extern CJavaWrapper *g_pJavaWrapper;
 extern CGame *pGame;
-extern CHUD *pHud;
 extern CGUI* pGUI;
 
-jobject jHudManager;
+bool    CHUD::bIsShow = false;
+bool    CHUD::bIsShowPassengerButt = false;
+bool    CHUD::bIsShowEnterExitButt = false;
+bool    CHUD::bIsShowLockButt = false;
+bool    CHUD::bIsShowHornButt = false;
+bool    CHUD::bIsShowChat = true;
+int     CHUD::iLocalMoney = 0;
+int     CHUD::iWantedLevel = 0;
+bool    CHUD::bIsShowMafiaWar = false;
+
+CVector2DFloat CHUD::radarBgPos1;
+CVector2DFloat CHUD::radarBgPos2;
+CVector2DFloat CHUD::radarPos;
+
+jobject CHUD::thiz = nullptr;
+
 jmethodID jUpdateHudInfo;
-
-CHUD::CHUD()
-{
-    // LoadSettings(nullptr);
-}
-
-void CHUD::InitServerLogo(int serverID) {
-    JNIEnv* env = g_pJavaWrapper->GetEnv();
-
-    jclass clazz = env->GetObjectClass(jHudManager);
-    jmethodID InitServerLogo = env->GetMethodID(clazz, "InitServerLogo", "(I)V");
-
-    env->CallVoidMethod(jHudManager, InitServerLogo, serverID);
-}
 
 void CHUD::ChangeChatHeight(int height) {
     JNIEnv* env = g_pJavaWrapper->GetEnv();
     if(!env)return;
 
-    jclass clazz = env->GetObjectClass(jHudManager);
-    jmethodID ChangeChatHeight = env->GetMethodID(clazz, "ChangeChatHeight", "(I)V");
+    jclass clazz = env->GetObjectClass(thiz);
+    jmethodID method = env->GetMethodID(clazz, "ChangeChatHeight", "(I)V");
 
-    env->CallVoidMethod(jHudManager, ChangeChatHeight, height);
+    env->CallVoidMethod(thiz, method, height);
 }
 
 void CHUD::ChangeChatTextSize(int size) {
     JNIEnv* env = g_pJavaWrapper->GetEnv();
     if(!env)return;
 
-    jclass clazz = env->GetObjectClass(jHudManager);
-    jmethodID ChangeChatFontSize = env->GetMethodID(clazz, "ChangeChatFontSize", "(I)V");
+    jclass clazz = env->GetObjectClass(thiz);
+    jmethodID method = env->GetMethodID(clazz, "ChangeChatFontSize", "(I)V");
 
-    env->CallVoidMethod(jHudManager, ChangeChatFontSize, size);
+    env->CallVoidMethod(thiz, method, size);
 }
 
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_HudManager_HudInit(JNIEnv *env, jobject thiz) {
 
-    jHudManager = env->NewGlobalRef(thiz);
+    CHUD::thiz = env->NewGlobalRef(thiz);
     jUpdateHudInfo = env->GetMethodID(env->GetObjectClass(thiz), "UpdateHudInfo", "(IIIIII)V");
 
-    pHud->ToggleHpText(pSettings->GetWrite().iHPArmourText);
-    pHud->ChangeChatHeight(pSettings->GetWrite().iChatMaxMessages);
-    pHud->ChangeChatTextSize(pSettings->GetWrite().iChatFontSize);
+    CHUD::ToggleHpText(pSettings->GetWrite().iHPArmourText);
+    CHUD::ChangeChatHeight(pSettings->GetWrite().iChatMaxMessages);
+    CHUD::ChangeChatTextSize(pSettings->GetWrite().iChatFontSize);
 
 }
 extern bool showSpeedometr;
-void CHUD::ToggleAll(bool toggle, bool withchat)
+void CHUD::toggleAll(bool toggle, bool withchat)
 {
-    if(toggle == isHudToggle)
+    if(toggle == bIsShow)
     {
         return;
     }
@@ -90,7 +90,7 @@ void CHUD::ToggleAll(bool toggle, bool withchat)
         }
     }
 
-    isHudToggle = toggle;
+    bIsShow = toggle;
 
     pGame->ToggleHUDElement(HUD_ELEMENT_BUTTONS, toggle);
 
@@ -103,72 +103,59 @@ void CHUD::ToggleAll(bool toggle, bool withchat)
         Log("No env");
         return;
     }
-    jclass clazz = env->GetObjectClass(jHudManager);
+    jclass clazz = env->GetObjectClass(thiz);
 
-    jmethodID ToggleAll = env->GetMethodID(clazz, "ToggleAll", "(Z)V");
-    env->CallVoidMethod(jHudManager, ToggleAll, toggle);
+    jmethodID method = env->GetMethodID(clazz, "toggleAll", "(Z)V");
+    env->CallVoidMethod(thiz, method, toggle);
 
     *(uint8_t*)(g_libGTASA+0x7165E8) = 0;//дефолт худ офф
     ScriptCommand(&toggle_radar_blank, (int)toggle); // радар офф
-    Log("HudToggle = %d", toggle);
+
 }
-//
-void CHUD::ToggleEnterPassengerButton(bool toggle)
+
+void CHUD::togglePassengerButton(bool toggle)
 {
-    isEnterPassengerButtOn = toggle;
+    bIsShowPassengerButt = toggle;
 
     JNIEnv* env = g_pJavaWrapper->GetEnv();
-    jclass clazz = env->GetObjectClass(jHudManager);
-    jmethodID ToggleEnterPassengerButton = env->GetMethodID(clazz, "ToggleEnterPassengerButton", "(Z)V");
-    env->CallVoidMethod(jHudManager, ToggleEnterPassengerButton, toggle);
+    jclass clazz = env->GetObjectClass(thiz);
+
+    jmethodID method = env->GetMethodID(clazz, "togglePassengerButton", "(Z)V");
+    env->CallVoidMethod(thiz, method, toggle);
 }
 
-void CHUD::ToggleEnterExitVehicleButton(bool toggle)
+void CHUD::toggleEnterExitButton(bool toggle)
 {
-    isEnterExitVehicleButtonOn = toggle;
+    bIsShowEnterExitButt = toggle;
 
     JNIEnv* env = g_pJavaWrapper->GetEnv();
-    jclass clazz = env->GetObjectClass(jHudManager);
-    jmethodID ToggleEnterExitVehicleButton = env->GetMethodID(clazz, "ToggleEnterExitVehicleButton", "(Z)V");
-    env->CallVoidMethod(jHudManager, ToggleEnterExitVehicleButton, toggle);
+    jclass clazz = env->GetObjectClass(thiz);
+    jmethodID ToggleEnterExitVehicleButton = env->GetMethodID(clazz, "toggleEnterExitButton", "(Z)V");
+    env->CallVoidMethod(thiz, ToggleEnterExitVehicleButton, toggle);
 }
 
-void CHUD::ToggleLockVehicleButton(bool toggle)
+void CHUD::toggleLockButton(bool toggle)
 {
-    isLockVehicleButtonOn = toggle;
+    bIsShowLockButt = toggle;
 
     JNIEnv* env = g_pJavaWrapper->GetEnv();
-    jclass clazz = env->GetObjectClass(jHudManager);
+    jclass clazz = env->GetObjectClass(thiz);
 
-    jmethodID ToggleLockVehicleButton = env->GetMethodID(clazz, "ToggleLockVehicleButton", "(Z)V");
-    env->CallVoidMethod(jHudManager, ToggleLockVehicleButton, toggle);
+    jmethodID ToggleLockVehicleButton = env->GetMethodID(clazz, "toggleLockButton", "(Z)V");
+    env->CallVoidMethod(thiz, ToggleLockVehicleButton, toggle);
 }
 
-void CHUD::ToggleHornButton(bool toggle)
+void CHUD::toggleHornButton(bool toggle)
 {
-    isHornButtonOn = toggle;
+    bIsShowHornButt = toggle;
 
     JNIEnv* env = g_pJavaWrapper->GetEnv();
-    jclass clazz = env->GetObjectClass(jHudManager);
+    jclass clazz = env->GetObjectClass(thiz);
 
-    jmethodID ToggleHornButton = env->GetMethodID(clazz, "ToggleHornButton", "(Z)V");
-    env->CallVoidMethod(jHudManager, ToggleHornButton, toggle);
+    jmethodID ToggleHornButton = env->GetMethodID(clazz, "toggleHornButton", "(Z)V");
+    env->CallVoidMethod(thiz, ToggleHornButton, toggle);
 }
 
-int CHUD::GetScreenSize(bool isWidth)
-{
-    JNIEnv* env = g_pJavaWrapper->GetEnv();
-
-    if (!env)
-    {
-        Log("No env");
-        return 0;
-    }
-    jclass clazz = env->GetObjectClass(jHudManager);
-    jmethodID jGetScreenSize = env->GetMethodID(clazz, "GetScreenSize", "(Z)I");
-    jint value = env->CallIntMethod(jHudManager, jGetScreenSize, isWidth);
-    return value;
-}
 int tickUpdate;
 void CHUD::UpdateHudInfo()
 {
@@ -186,7 +173,7 @@ void CHUD::UpdateHudInfo()
         return;
     }
 
-    env->CallVoidMethod(jHudManager, jUpdateHudInfo,
+    env->CallVoidMethod(thiz, jUpdateHudInfo,
                         (int)pPed->GetHealth(),
                         (int)pPed->GetArmour(),
                         (int)pGUI->GetEat(),
@@ -204,10 +191,10 @@ void CHUD::UpdateWanted()
         Log("No env");
         return;
     }
-    jclass clazz = env->GetObjectClass(jHudManager);
+    jclass clazz = env->GetObjectClass(thiz);
     jmethodID UpdateWanted = env->GetMethodID(clazz, "UpdateWanted", "(I)V");
 
-    env->CallVoidMethod(jHudManager, UpdateWanted, pGame->GetWantedLevel());
+    env->CallVoidMethod(thiz, UpdateWanted, pGame->GetWantedLevel());
 }
 
 void CHUD::UpdateMoney()
@@ -219,10 +206,10 @@ void CHUD::UpdateMoney()
         Log("No env");
         return;
     }
-    jclass clazz = env->GetObjectClass(jHudManager);
+    jclass clazz = env->GetObjectClass(thiz);
     jmethodID UpdateMoney = env->GetMethodID(clazz, "UpdateMoney", "(I)V");
 
-    env->CallVoidMethod(jHudManager, UpdateMoney, localMoney);
+    env->CallVoidMethod(thiz, UpdateMoney, iLocalMoney);
 }
 
 extern "C"
@@ -310,7 +297,7 @@ void CNetGame::Packet_Salary(Packet* p)
     bs.Read(exp);
 
 
-    pHud->UpdateSalary(salary, lvl, exp);
+    CHUD::UpdateSalary(salary, lvl, exp);
 }
 
 void CNetGame::Packet_MAFIA_WAR(Packet* p)
@@ -326,39 +313,39 @@ void CNetGame::Packet_MAFIA_WAR(Packet* p)
     bs.Read(attack_score);
     bs.Read(def_score);
 
-    pHud->UpdateOpgWarLayout(time, attack_score, def_score);
+    CHUD::updateOpgWarLayout(time, attack_score, def_score);
 }
 extern CKeyBoard *pKeyBoard;
 
-void CHUD::UpdateOpgWarLayout(int time, int attack_score, int def_score)
+void CHUD::updateOpgWarLayout(int time, int attack_score, int def_score)
 {
     JNIEnv* env = g_pJavaWrapper->GetEnv();
 
-    jclass clazz = env->GetObjectClass(jHudManager);
-    jmethodID UpdateOpgWarLayout = env->GetMethodID(clazz, "UpdateOpgWarLayout", "(III)V");
+    jclass clazz = env->GetObjectClass(thiz);
+    jmethodID UpdateOpgWarLayout = env->GetMethodID(clazz, "updateOpgWarLayout", "(III)V");
 
     if(pKeyBoard->IsOpen())
     {
-        env->CallVoidMethod(jHudManager, UpdateOpgWarLayout, 0, 0, 0);
+        env->CallVoidMethod(thiz, UpdateOpgWarLayout, 0, 0, 0);
         return;
     }
 
-    env->CallVoidMethod(jHudManager, UpdateOpgWarLayout, time, attack_score, def_score);
+    env->CallVoidMethod(thiz, UpdateOpgWarLayout, time, attack_score, def_score);
 
     if(!time){
-        isMafia_war_layout_active = false;
+        bIsShowMafiaWar = false;
     }
-    else isMafia_war_layout_active = true;
+    else bIsShowMafiaWar = true;
 }
 
 void CHUD::UpdateSalary(int salary, int lvl, float exp)
 {
     JNIEnv* env = g_pJavaWrapper->GetEnv();
 
-    jclass clazz = env->GetObjectClass(jHudManager);
+    jclass clazz = env->GetObjectClass(thiz);
     jmethodID UpdateSalary = env->GetMethodID(clazz, "UpdateSalary", "(IIF)V");
 
-    env->CallVoidMethod(jHudManager, UpdateSalary, salary, lvl, exp);
+    env->CallVoidMethod(thiz, UpdateSalary, salary, lvl, exp);
 }
 
 void CHUD::SetChatInput(const char ch[])
@@ -369,10 +356,10 @@ void CHUD::SetChatInput(const char ch[])
 
     jstring jch = env->NewStringUTF(msg_utf);
 
-    jclass clazz = env->GetObjectClass(jHudManager);
+    jclass clazz = env->GetObjectClass(thiz);
     jmethodID AddToChatInput = env->GetMethodID(clazz, "AddToChatInput", "(Ljava/lang/String;)V");
 
-    env->CallVoidMethod(jHudManager, AddToChatInput, jch);
+    env->CallVoidMethod(thiz, AddToChatInput, jch);
 }
 
 void CHUD::ToggleChatInput(bool toggle)
@@ -380,15 +367,15 @@ void CHUD::ToggleChatInput(bool toggle)
     JNIEnv* env = g_pJavaWrapper->GetEnv();
 
 
-    jclass clazz = env->GetObjectClass(jHudManager);
+    jclass clazz = env->GetObjectClass(thiz);
     jmethodID ToggleChatInput = env->GetMethodID(clazz, "ToggleChatInput", "(Z)V");
 
-    env->CallVoidMethod(jHudManager, ToggleChatInput, toggle);
+    env->CallVoidMethod(thiz, ToggleChatInput, toggle);
 }
 
 void CHUD::AddChatMessage(const char msg[])
 {
-    if(!jHudManager)return;
+    if(!thiz)return;
 
     char msg_utf[1024];
     cp1251_to_utf8(msg_utf, msg);
@@ -398,47 +385,47 @@ void CHUD::AddChatMessage(const char msg[])
     //
     jstring jmsg = env->NewStringUTF( ConvertColorToHtml(msg_utf) );
 
-    jclass clazz = env->GetObjectClass(jHudManager);
+    jclass clazz = env->GetObjectClass(thiz);
     jmethodID AddChatMessage = env->GetMethodID(clazz, "AddChatMessage", "(Ljava/lang/String;)V");
 
-    env->CallVoidMethod(jHudManager, AddChatMessage, jmsg);
+    env->CallVoidMethod(thiz, AddChatMessage, jmsg);
 }
 
 void CHUD::ToggleHpText(bool toggle)
 {
     JNIEnv* env = g_pJavaWrapper->GetEnv();
 
-    jclass clazz = env->GetObjectClass(jHudManager);
+    jclass clazz = env->GetObjectClass(thiz);
     jmethodID ToggleHpText = env->GetMethodID(clazz, "ToggleHpText", "(Z)V");
-    env->CallVoidMethod(jHudManager, ToggleHpText, toggle);
+    env->CallVoidMethod(thiz, ToggleHpText, toggle);
 }
 
 void CHUD::ToggleChat(bool toggle){
-    isChatOn = toggle;
+    bIsShowChat = toggle;
 
     JNIEnv* env = g_pJavaWrapper->GetEnv();
 
-    jclass clazz = env->GetObjectClass(jHudManager);
+    jclass clazz = env->GetObjectClass(thiz);
     jmethodID ToggleChat = env->GetMethodID(clazz, "ToggleChat" , "(Z)V");
-    env->CallVoidMethod(jHudManager, ToggleChat, toggle);
+    env->CallVoidMethod(thiz, ToggleChat, toggle);
 }
 
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_HudManager_SetRadarBgPos(JNIEnv *env, jobject thiz, jfloat x1, jfloat y1,
                                                     jfloat x2, jfloat y2) {
-    pHud->radarbgx1 = x1;
-    pHud->radarbgy1 = y1;
+    CHUD::radarBgPos1.X = x1;
+    CHUD::radarBgPos1.Y = y1;
 
-    pHud->radarbgx2 = x2;
-    pHud->radarbgy2 = y2;
+    CHUD::radarBgPos2.X = x2;
+    CHUD::radarBgPos2.Y = y2;
 }
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_HudManager_SetRadarPos(JNIEnv *env, jobject thiz, jfloat x1, jfloat y1) {
 
-    pHud->radarx1 = x1;
-    pHud->radary1 = y1;
+    CHUD::radarPos.X = x1;
+    CHUD::radarPos.Y = y1;
 
 }
 

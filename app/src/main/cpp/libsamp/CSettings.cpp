@@ -9,7 +9,6 @@
 #include "util/patch.h"
 
 extern CGame* pGame;
-extern CHUD *pHud;
 
 static void ClearBackslashN(char *pStr, size_t size)
 {
@@ -45,8 +44,8 @@ void CSettings::ToDefaults(int iCategory)
 	Save(iCategory);
 	LoadSettings(m_Settings.szNickName);
 
-	pHud->ChangeChatHeight(m_Settings.iChatMaxMessages);
-	pHud->ChangeChatTextSize(m_Settings.iChatFontSize);
+	CHUD::ChangeChatHeight(m_Settings.iChatMaxMessages);
+	CHUD::ChangeChatTextSize(m_Settings.iChatFontSize);
 
 }
 
@@ -321,7 +320,7 @@ Java_com_nvidia_devtech_NvEventQueueActivity_setNativeHpArmourText(JNIEnv *pEnv,
 	if (pSettings) {
 		pSettings->GetWrite().iHPArmourText = b;
 	}
-	pHud->ToggleHpText(b);
+	CHUD::ToggleHpText(b);
 	pSettings->Save();
 	//CInfoBarText::SetEnabled(b);
 }
@@ -347,7 +346,7 @@ Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_ChatFontSizeChang
 	{
 		pSettings->GetWrite().iChatFontSize = size;
 		pSettings->Save();
-        pHud->ChangeChatTextSize(size);
+		CHUD::ChangeChatTextSize(size);
 	}
 }
 

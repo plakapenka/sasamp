@@ -60,6 +60,10 @@ public:
 
 	PLAYERID FindRemotePlayerIDFromGtaPtr(PED_TYPE * pActor);
 
+	void ResetCollisionChecking();
+
+	void ApplyCollisionChecking();
+
 private:
 	// LOCAL
 	PLAYERID		m_LocalPlayerID;
@@ -74,4 +78,6 @@ private:
 	char			m_szPlayerNames[MAX_PLAYERS][MAX_PLAYER_NAME+1];
 	int				m_iPlayerScores[MAX_PLAYERS];
 	uint32_t		m_dwPlayerPings[MAX_PLAYERS];
+	bool 			m_bCollisionChecking[MAX_PLAYERS];
+
 };

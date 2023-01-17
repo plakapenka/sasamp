@@ -16,7 +16,6 @@ extern CGUI *pGUI;
 extern CJavaWrapper *pJavaWrapper;
 extern CSettings *pSettings;
 extern CGame *pGame;
-extern CHUD *pHud;
 
 CKeyBoard::CKeyBoard()
 {
@@ -282,7 +281,7 @@ void CKeyBoard::Close()
 	m_bEnable = false;
 
 	m_sInput.clear();
-	pHud->SetChatInput(m_sInput.c_str());
+	CHUD::SetChatInput(m_sInput.c_str());
 	m_iInputOffset = 0;
 	m_utf8Input[0] = 0;
 	m_iCase = LOWER_CASE;
@@ -517,7 +516,7 @@ void CKeyBoard::AddCharToInput(char sym)
 		m_sInput.push_back(sym);
 		cp1251_to_utf8(m_utf8Input, &m_sInput.c_str()[m_iInputOffset]);
 
-		pHud->SetChatInput(m_sInput.c_str());
+		CHUD::SetChatInput(m_sInput.c_str());
 
 	}
 }
@@ -537,7 +536,7 @@ void CKeyBoard::DeleteCharFromInput()
 
 	m_sInput.pop_back();
 
-	pHud->SetChatInput(m_sInput.c_str());
+	CHUD::SetChatInput(m_sInput.c_str());
 
 }
 extern bool ProcessLocalCommands(const char str[]);
@@ -573,7 +572,7 @@ void CKeyBoard::Send()
 	}
 
 	m_bEnable = false;
-	pHud->ToggleChatInput(false);
+	CHUD::ToggleChatInput(false);
 
 	g_pJavaWrapper->ShowServerLogo();
 	if(pNetGame->m_GreenZoneState)g_pJavaWrapper->ShowGreenZone();
@@ -2280,7 +2279,7 @@ void CKeyBoard::Flush()
 		return;
 
 	m_sInput.clear();
-	pHud->SetChatInput(m_sInput.c_str());
+	CHUD::SetChatInput(m_sInput.c_str());
 	m_iInputOffset = 0;
 	CChatWindow::cursorStart = 0;
 	CChatWindow::cursorEnd = 0;
@@ -2346,10 +2345,32 @@ bool ProcessLocalCommands(const char str[])
 			return true;
 		}
 		size = 27*size;
-		pHud->ChangeChatTextSize(size);
+		CHUD::ChangeChatTextSize(size);
 		return true;
 	}
 
+	if (strstr(str, "/test"))
+	{
+		while (*str)
+		{
+			if (*str == ' ')
+			{
+				str++;
+				break;
+			}
+			str++;
+		}
+		int size = 0;
+		if (sscanf(str, "%d", &size) == -1)
+		{
+			CChatWindow::AddDebugMessage("Используйте: /test [scale]");
+			return true;
+		}
+
+//
+		Log("AAAAAAAAAAAA = %d", (( int* (*)(int))(g_libGTASA+0x41DD44+1))(size));
+		return true;
+	}
 
 	if (strcmp(str, "/q") == 0)
 	{

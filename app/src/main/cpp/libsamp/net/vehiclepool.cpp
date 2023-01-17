@@ -186,7 +186,7 @@ VEHICLEID CVehiclePool::FindIDFromRwObject(RwObject* pRWObject)
 	{
 		if (m_pGTAVehicles[x])
 		{
-			if (pRWObject == (RwObject*)(m_pGTAVehicles[x]->entity.m_RwObject)) return x;
+			if (pRWObject == (RwObject*)(m_pGTAVehicles[x]->entity.m_pRwObject)) return x;
 		}
 		x++;
 	}

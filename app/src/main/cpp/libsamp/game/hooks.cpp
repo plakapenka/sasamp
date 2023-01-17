@@ -22,7 +22,6 @@ extern "C"
 extern CGame* pGame;
 #include "..//CSettings.h"
 extern CSettings* pSettings;
-extern CHUD *pHud;
 extern CPlayerPed *g_pCurrentFiredPed;
 extern BULLET_DATA *g_pCurrentBulletData;
 
@@ -181,7 +180,7 @@ void RenderBackgroundHud();
 void (*Render2dStuff)();
 void Render2dStuff_hook()
 {
-	if (pHud->isHudToggle) pHud->UpdateHudInfo();
+	if (CHUD::bIsShow) CHUD::UpdateHudInfo();
 
 	bGameStarted = true;
 	MAKE_PROFILE(test, test_time);
@@ -247,7 +246,6 @@ void MainMenu_OnStartSAMP()
 	//*(uint32_t*)(g_libGTASA + 0x009E75B8) = 8;
 
 	g_bPlaySAMP = true;
-	return;
 }
 
 // OsArray<FlowScreen::MenuItem>::Add
@@ -264,7 +262,7 @@ void MenuItem_add_hook(int r0, uintptr_t r1)
 		!strcmp(name, "FEH_BRI") ))
 		return;
 
-	return MenuItem_add(r0, r1);
+	MenuItem_add(r0, r1);
 }
 
 /* ====================================================== */
@@ -305,8 +303,6 @@ void CLoadingScreen_DisplayPCScreen_hook()
 //		RwCameraEndUpdate(camera);
 //		RwCameraShowRaster(camera, 0, 0);
 //	}
-
-	return;
 }
 
 int bBlockCWidgetRegionLookUpdate = 0;
@@ -509,44 +505,47 @@ __attribute__((naked)) void PickupPickUp_hook()
 }
 
 // fire weapon hooks
-uint32_t (*CWeapon__FireInstantHit)(WEAPON_SLOT_TYPE *pWeaponSlot, PED_TYPE *pFiringEntity, VECTOR *vecOrigin, VECTOR *muzzlePosn, ENTITY_TYPE *targetEntity, VECTOR *target, VECTOR *originForDriveBy, int arg6, int muzzle);
-uint32_t CWeapon__FireInstantHit_hook(WEAPON_SLOT_TYPE *pWeaponSlot, PED_TYPE *pFiringEntity, VECTOR *vecOrigin, VECTOR *muzzlePosn, ENTITY_TYPE *targetEntity, VECTOR *target, VECTOR *originForDriveBy, int arg6, int muzzle)
+uint32_t (*CWeapon__FireInstantHit)(WEAPON_SLOT_TYPE * thiz, PED_TYPE * pFiringEntity, VECTOR * vecOrigin, VECTOR * muzzlePosn, ENTITY_TYPE * targetEntity, VECTOR * target, VECTOR * originForDriveBy, int arg6, int muzzle);
+uint32_t CWeapon__FireInstantHit_hook(WEAPON_SLOT_TYPE * thiz, PED_TYPE * pFiringEntity, VECTOR * vecOrigin, VECTOR * muzzlePosn, ENTITY_TYPE * targetEntity, VECTOR * target, VECTOR * originForDriveBy, int arg6, int muzzle)
 {
-
 	uintptr_t dwRetAddr = 0;
 	__asm__ volatile ("mov %0, lr":"=r" (dwRetAddr));
-	dwRetAddr -= g_libGTASA;
 
+	dwRetAddr -= g_libGTASA;
 	if(dwRetAddr == 0x00569A84 + 1 || dwRetAddr == 0x00569616 + 1 || dwRetAddr == 0x0056978A + 1 || dwRetAddr == 0x00569C06 + 1)
 	{
-	PED_TYPE *pLocalPed = pGame->FindPlayerPed()->m_pPed;
-	if(pLocalPed) {
-		if (pFiringEntity != pLocalPed)
+		PED_TYPE *pLocalPed = pGame->FindPlayerPed()->GetGtaActor();
+		if(pLocalPed)
+		{
+			if(pFiringEntity != pLocalPed)
+				return muzzle;
+
+			if(pNetGame)
+			{
+				CPlayerPool *pPlayerPool = pNetGame->GetPlayerPool();
+				if(pPlayerPool)
+					pPlayerPool->ApplyCollisionChecking();
+			}
+
+			if(pGame)
+			{
+				CPlayerPed *pPlayerPed = pGame->FindPlayerPed();
+				if(pPlayerPed)
+					pPlayerPed->FireInstant();
+			}
+
+			if(pNetGame)
+			{
+				CPlayerPool *pPlayerPool = pNetGame->GetPlayerPool();
+				if(pPlayerPool)
+					pPlayerPool->ResetCollisionChecking();
+			}
+
 			return muzzle;
-
-		if (pNetGame) {
-			CPlayerPool *pPlayerPool = pNetGame->GetPlayerPool();
-			//if(pPlayerPool)
-			//pPlayerPool->ApplyCollisionChecking();
 		}
-
-		if (pGame) {
-			CPlayerPed *pPlayerPed = pGame->FindPlayerPed();
-			if (pPlayerPed)
-				pPlayerPed->FireInstant();
-		}
-
-		if (pNetGame) {
-			CPlayerPool *pPlayerPool = pNetGame->GetPlayerPool();
-			//if(pPlayerPool)
-			//pPlayerPool->ResetCollisionChecking();
-		}
-
-		return muzzle;
-	}
 	}
 
-	return CWeapon__FireInstantHit(pWeaponSlot, pFiringEntity, vecOrigin, muzzlePosn, targetEntity, target, originForDriveBy, arg6, muzzle);
+	return CWeapon__FireInstantHit(thiz, pFiringEntity, vecOrigin, muzzlePosn, targetEntity, target, originForDriveBy, arg6, muzzle);
 }
 
 unsigned int (*MainMenuScreen__Update)(uintptr_t thiz, float a2);
@@ -559,8 +558,6 @@ unsigned int MainMenuScreen__Update_hook(uintptr_t thiz, float a2)
 
 extern char(*CStreaming__ConvertBufferToObject)(int, int, int);
 char CStreaming__ConvertBufferToObject_hook(int a1, int a2, int a3);
-
-void RedirectCall(uintptr_t addr, uintptr_t func);
 
 static char szLastBufferedName[40];
 int (*cHandlingDataMgr__FindExactWord)(uintptr_t thiz, char* line, char* nameTable, int entrySize, int entryCount);
@@ -775,24 +772,6 @@ void CTimer__EndUserPause_hook()
 	*(uint8_t*)(g_libGTASA + 0x008C9BA3) = 0;
 }
 
-void (*TextureDatabase__LoadThumbs)(int a1, int a2);
-void TextureDatabase__LoadThumbs_hook(int a1, int a2)
-{// only dxt.tmb
-//	char v5[256]; // [sp+Ch] [bp+4h] BYREF
-//
-//	snprintf(v5, 0x100u, "texdb/%s/%s.dxt.tmb", *(const char **)(a1 + 4), *(const char **)(a1 + 4));
-//
-//	return ((void(*)(int, int, uint*))(g_libGTASA + 0x001BD128 + 1))(a1, (int)v5, (unsigned int *)(a1 + 0xC * a2 + 0x20));
-	return TextureDatabase__LoadThumbs(a1, a2);
-}
-
-void (*TextureDatabase__LoadDataOffsets)(int a1, int a2, unsigned int *a3, void **a4, char a5);
-void TextureDatabase__LoadDataOffsets_hook(int a1, int a2, unsigned int *a3, void **a4, char a5)
-{
-	return TextureDatabase__LoadDataOffsets(a1, 1, a3, a4, a5); // only dxt.toc
-	//return;
-}
-
 extern char g_iLastBlock[512];
 int *(*LoadFullTexture)(uintptr_t *thiz, unsigned int a2);
 int *LoadFullTexture_hook(uintptr_t *thiz, unsigned int a2)
@@ -874,18 +853,6 @@ uint8_t* RLEDecompress_hook(uint8_t* pDest, size_t uiDestSize, uint8_t const* pS
 
     return pDest;
 }
-
-//#include <GLES2/gl2.h>
-//void rqVertexBufferSelect_HOOK(unsigned int **result)
-//{
-//	unsigned int buffer = *(*result)++;
-//
-//	if (!buffer)
-//		return glBindBuffer(0x8892, 0);
-//
-//	glBindBuffer(0x8892, buffer + 8);
-//	*(uint32_t *)(g_libGTASA + 0x617234) = 0;
-//}
 
 void (*CPools_Initialise)(void);
 void CPools_Initialise_hook(void)
@@ -1093,24 +1060,6 @@ int CGame__Init2_hook(uintptr_t *thiz, const char *a2)
 
 }
 
-
-void readVehiclesAudioSettings();
-void (*CVehicleModelInfo__SetupCommonData)();
-void CVehicleModelInfo__SetupCommonData_hook()
-{
-	CVehicleModelInfo__SetupCommonData();
-	readVehiclesAudioSettings();
-}
-
-extern VehicleAudioPropertiesStruct VehicleAudioProperties[20000];
-static uintptr_t addr_veh_audio = (uintptr_t)& VehicleAudioProperties[0];
-
-void (*CAEVehicleAudioEntity__GetVehicleAudioSettings)(uintptr_t thiz, int16_t a2, int a3);
-void CAEVehicleAudioEntity__GetVehicleAudioSettings_hook(uintptr_t dest, int16_t a2, int ID)
-{
-	memcpy((void*)dest, &VehicleAudioProperties[(ID - 400)], sizeof(VehicleAudioPropertiesStruct));
-}
-
 uintptr_t* (*CCustomRoadsignMgr_RenderRoadsignAtomic)(uintptr_t*, VECTOR const&);
 uintptr_t* CCustomRoadsignMgr_RenderRoadsignAtomic_hook(uintptr_t* atomic, VECTOR const& a2)
 {
@@ -1128,8 +1077,7 @@ void InstallSpecialHooks()
 	//IMG
 	CPatch::InlineHook(g_libGTASA, 0x28E83C, &CStreaming_InitImageList_hook, (uintptr_t*)&CStreaming_InitImageList);
 
-	//shadow
-	CPatch::RET(g_libGTASA + 0x541AC4);
+
 
 	CPatch::InlineHook(g_libGTASA, 0x001E4AE4, &GetMeshPriority_hook, &GetMeshPriority);
 	//new fix
@@ -1246,27 +1194,6 @@ struct CPedDamageResponseCalculatorInterface
 
 extern float m_fWeaponDamages[43 + 1];
 
-void onDamage(PED_TYPE* issuer, PED_TYPE* damaged)
-{
-	if (!pNetGame) return;
-	PED_TYPE* pPedPlayer = GamePool_FindPlayerPed();
-	if (damaged && (pPedPlayer == issuer))
-	{
-		if (pNetGame->GetPlayerPool()->FindRemotePlayerIDFromGtaPtr((PED_TYPE*)damaged) != INVALID_PLAYER_ID)
-		{
-			CPlayerPool* pPlayerPool = pNetGame->GetPlayerPool();
-			CAMERA_AIM* caAim = pPlayerPool->GetLocalPlayer()->GetPlayerPed()->GetCurrentAim();
-
-			VECTOR aim;
-			aim.X = caAim->f1x;
-			aim.Y = caAim->f1y;
-			aim.Z = caAim->f1z;
-
-			pPlayerPool->GetLocalPlayer()->SendBulletSyncData(pPlayerPool->FindRemotePlayerIDFromGtaPtr((PED_TYPE*)damaged), BULLET_HIT_TYPE_PLAYER, aim);
-		}
-	}
-}
-
 // thanks Codeesar
 struct stPedDamageResponse
 {
@@ -1316,7 +1243,7 @@ void CPedDamageResponseCalculator__ComputeDamageResponse_hook(stPedDamageRespons
 		}
 	}
 
-	return CPedDamageResponseCalculator__ComputeDamageResponse(thiz, pEntity, pDamageResponse, bSpeak);
+	CPedDamageResponseCalculator__ComputeDamageResponse(thiz, pEntity, pDamageResponse, bSpeak);
 }
 
 
@@ -1553,87 +1480,6 @@ uintptr_t RwFrameForAllObjectsCALLBACK1(uintptr_t object, CObject* pObject)
 }
 
 int g_iLastRenderedObject;
-void(*CObject__Render)(ENTITY_TYPE*);
-void CObject__Render_hook(ENTITY_TYPE* thiz)
-{
-	// 0051ABB0 + 1
-	// 004353FE + 1
-	// 004352C4 + 1
-
-	uintptr_t dwRetAddr = 0;
-	__asm__ volatile ("mov %0, lr" : "=r" (dwRetAddr));
-	dwRetAddr -= g_libGTASA;
-
-	if (dwRetAddr == 0x0051ABB0 + 1 || dwRetAddr == 0x004353FE + 1 || dwRetAddr == 0x004352C4 + 1)
-	{
-		return CObject__Render(thiz);
-	}
-
-	uintptr_t pAtomic = thiz->m_RwObject;
-	if (!pAtomic)
-	{
-		return CObject__Render(thiz); // CObject::Render(CObject*)
-	}
-	if (!*(uintptr_t*)(pAtomic + 4))
-	{
-		return CObject__Render(thiz); // CObject::Render(CObject*)
-	}
-
-	if (pNetGame)
-	{
-		CObjectPool* pObjectPool = pNetGame->GetObjectPool();
-		if (pObjectPool)
-		{
-			CObject* pObject = pObjectPool->GetObjectFromGtaPtr(thiz);
-			if (pObject)
-			{
-				if (pObject->m_pEntity)
-				{
-					g_iLastRenderedObject = pObject->m_pEntity->nModelIndex;
-				}
-				
-				((void(*)())(g_libGTASA + 0x00559EF8 + 1))(); // DeActivateDirectional
-				if (pObject->m_bMaterials)
-				{
-					//thiz->m_bLightObject = 0;
-					((uintptr_t(*)(uintptr_t, uintptr_t, uintptr_t))(g_libGTASA + 0x001AEE2C + 1))(*(uintptr_t*)(pAtomic + 4), (uintptr_t)RwFrameForAllObjectsCALLBACK1, (uintptr_t)pObject); // RwFrameForAllObjects
-					//((void(*)(ENTITY_TYPE*, bool))(g_libGTASA + 0x003B1F1C + 1))(thiz, 1); // CObject::RemoveLighting(CObject*, bool)
-					//((void(*)())(g_libGTASA + 0x00559EF8 + 1))(); // DeActivateDirectional
-
-				}
-			}
-			
-		}
-	}
-
-	CObject__Render(thiz); // CObject::Render(CObject*)
-	for (auto& p : resetEntries)
-		* p.first = p.second;
-	resetEntries.clear();
-}
-#pragma optimize( "", off )
-
-char CStreaming__ConvertBufferToObject_hook(int a1, int a2, int a3)
-{
-	uintptr_t dwRetAddr = 0;
-	__asm__ volatile ("mov %0, lr" : "=r" (dwRetAddr));
-	
-
-	uint32_t tickStart = GetTickCount();
-	CGameResourcesDecryptor::CStreaming__ConvertBufferToObject_hook((char*)a1, a2, a3);
-	if (a2 >= 15000 && a2 <= 15100)
-	{
-		//CChatWindow::AddDebugMessage("loading time %d", GetTickCount() - tickStart);
-	}
-	char a12 = CStreaming__ConvertBufferToObject(a1, a2, a3);
-	return a12;
-}
-
-// CGameIntegrity
-// CodeObfuscation
-
-#pragma optimize( "", on )
-
 
 uintptr_t(*GetTexture_orig)(const char*);
 uintptr_t GetTexture_hook(const char* a1)
@@ -1677,11 +1523,11 @@ RwFrame* CClumpModelInfo_GetFrameFromId_Post(RwFrame* pFrameResult, RpClump* pCl
 		|| calledFrom == 0x00515730             // CVehicle::ClearWindowOpenFlag
 		|| calledFrom == 0x00338698             // CVehicleModelInfo::GetOriginalCompPosition
 		|| calledFrom == 0x00338B2C)            // CVehicleModelInfo::CreateInstance
-		return NULL;
+		return nullptr;
 
 	for (uint i = 2; i < 40; i++)
 	{
-		RwFrame* pNewFrameResult = NULL;
+		RwFrame* pNewFrameResult = nullptr;
 		uint     uiNewId = id + (i / 2) * ((i & 1) ? -1 : 1);
 
 		pNewFrameResult = ((RwFrame * (*)(RpClump * pClump, int id))(g_libGTASA + 0x00335CC0 + 1))(pClump, i);
@@ -1692,7 +1538,7 @@ RwFrame* CClumpModelInfo_GetFrameFromId_Post(RwFrame* pFrameResult, RpClump* pCl
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 RwFrame* (*CClumpModelInfo_GetFrameFromId)(RpClump*, int);
 RwFrame* CClumpModelInfo_GetFrameFromId_hook(RpClump* a1, int a2)
@@ -1718,7 +1564,7 @@ void CWidgetRegionLook__Update_hook(uintptr_t thiz)
 	}
 	else
 	{
-		return CWidgetRegionLook__Update(thiz);
+		CWidgetRegionLook__Update(thiz);
 	}
 }
 
@@ -1728,7 +1574,7 @@ void ProcessCommands300To399_hook(uintptr_t* thiz, int a2)
 	//Log("pedHandle = %d, local = %d", pedHandle, pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->m_dwGTAId);
 	if(!a2)return;
 
-	return ProcessCommands300To399(thiz, a2);
+	ProcessCommands300To399(thiz, a2);
 }
 
 void (*ProcessCommands1400To1499)(uintptr_t* thiz, int a2);
@@ -1737,7 +1583,7 @@ void ProcessCommands1400To1499_hook(uintptr_t* thiz, int a2)
 	//Log("pedHandle = %d, local = %d", pedHandle, pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->m_dwGTAId);
 	if(!a2)return;
 
-	return ProcessCommands1400To1499(thiz, a2);
+	ProcessCommands1400To1499(thiz, a2);
 }
 
 void (*GivePedScriptedTask)(uintptr_t* thiz, int pedHandle, uintptr_t* a3, int commandID);
@@ -1754,7 +1600,7 @@ void GivePedScriptedTask_hook(uintptr_t* thiz, int pedHandle, uintptr_t* a3, int
 
 	if(  !(*(const PED_TYPE**) tmp + 0x4 ) ) return; // CPools::ms_pPedPool
 
-	return GivePedScriptedTask(thiz, pedHandle, a3, commandID);
+	GivePedScriptedTask(thiz, pedHandle, a3, commandID);
 }
 
 int (*CObject__ProcessGarageDoorBehaviour)(uintptr_t, int);
@@ -1857,7 +1703,7 @@ static bool ShouldBeProcessedButton(int result)
 int (*CWidgetButton__Draw)(uintptr_t thiz);
 int CWidgetButton__Draw_hook(uintptr_t thiz)
 {
-	if(!pHud || !pHud->isHudToggle)return 0;
+	if(!CHUD::bIsShow)return 0;
 
 	return CWidgetButton__Draw(thiz);
 }
@@ -1865,7 +1711,7 @@ int CWidgetButton__Draw_hook(uintptr_t thiz)
 int (*CWidgetButton__IsTouched)(CVector2D* a1);
 int CWidgetButton__IsTouched_hook(CVector2D* a1)
 {
-	if(!pHud->isHudToggle)return 0;
+	if(!CHUD::bIsShow)return 0;
 	return CWidgetButton__IsTouched(a1);
 }
 
@@ -1884,7 +1730,7 @@ void CWidgetButton__Update_hook(int result, int a2, int a3, int a4)
 	{
 		((void (*)(unsigned int, unsigned int)) (g_libGTASA + 0x00274178 + 1))(CTouchInterface__m_bWidgets[1], 0); // кулак
 	}
-	return CWidgetButton__Update(result, a2, a3, a4);
+	CWidgetButton__Update(result, a2, a3, a4);
 }
 
 
@@ -1995,19 +1841,6 @@ void CGame__Process_hook()
 		once = true;
 	}
 
-//	if (pNetGame && pNetGame->GetPlayerPool() && pNetGame->GetPlayerPool()->GetLocalPlayer())
-//	{
-//		CSnow::Process(pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed(), pGame->GetActiveInterior());
-//	}
-
-//	if (pNetGame)
-//	{
-//		CTextDrawPool* pTextDrawPool = pNetGame->GetTextDrawPool();
-//		if (pTextDrawPool) {
-//			pTextDrawPool->SnapshotProcess();
-//		}
-//	}
-
 	if (g_pWidgetManager)
 	{
 		PED_TYPE* pPed = GamePool_FindPlayerPed();
@@ -2096,15 +1929,6 @@ void CAutomobile__ProcessEntityCollision_hook(VEHICLE_TYPE* a1, ENTITY_TYPE* a2,
 	{
 		*(void**)(pColData + 16) = pOld;
 	}
-}
-
-
-void (*CWidget__DrawHelpIcon)();
-void CWidget__DrawHelpIcon_hook()
-{
-	Log("CWidget__DrawHelpIcon_hook");
-	return;
-	//return CGame__Shutdown();
 }
 
 bool (*CGame__Shutdown)();
@@ -2414,185 +2238,8 @@ float CRadar__LimitRadarPoint_hook(float* a1)
 	return value;
 }
 
-void (*CSprite2d__DrawBarChart)(float x, float y, unsigned short width, unsigned char height, float progress, signed char progressAdd,
-	unsigned char drawPercentage, unsigned char drawBlackBorder, CRGBA* color, CRGBA* addColor);
-void CSprite2d__DrawBarChart_hook(float x, float y, unsigned short width, unsigned char height, float progress, signed char progressAdd,
-	unsigned char drawPercentage, unsigned char drawBlackBorder, CRGBA* color, CRGBA* addColor)
-{
-	uintptr_t dwRetAddr = 0;
-	__asm__ volatile ("mov %0, lr" : "=r" (dwRetAddr));
-	dwRetAddr -= g_libGTASA;
-
-	float fX = x;
-	float fY = y;
-
-	unsigned short usWidth = width;
-	unsigned char usHeight = height;
-
-	if (dwRetAddr == 0x0027D524 + 1)
-	{
-		if (CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_HP).X != -1)
-		{
-			fX = pGUI->ScaleX(CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_HP).X);
-		}
-		if (CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_HP).Y != -1)
-		{
-			fY = pGUI->ScaleY(CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_HP).Y);
-		}
-
-		if (CAdjustableHudScale::GetElementScale(E_HUD_ELEMENT::HUD_HP).X != -1)
-		{
-			usWidth = pGUI->ScaleX(CAdjustableHudScale::GetElementScale(E_HUD_ELEMENT::HUD_HP).X);
-		}
-		if (CAdjustableHudScale::GetElementScale(E_HUD_ELEMENT::HUD_HP).Y != -1)
-		{
-			usHeight = pGUI->ScaleY(CAdjustableHudScale::GetElementScale(E_HUD_ELEMENT::HUD_HP).Y);
-		}
-
-		if (CAdjustableHudColors::IsUsingHudColor(E_HUD_ELEMENT::HUD_HP))
-		{
-			color->A = CAdjustableHudColors::GetHudColor(E_HUD_ELEMENT::HUD_HP).A;
-			color->R = CAdjustableHudColors::GetHudColor(E_HUD_ELEMENT::HUD_HP).R;
-			color->G = CAdjustableHudColors::GetHudColor(E_HUD_ELEMENT::HUD_HP).G;
-			color->B = CAdjustableHudColors::GetHudColor(E_HUD_ELEMENT::HUD_HP).B;
-		}
-		color->A = 0;
-		color->R = CAdjustableHudColors::GetHudColor(E_HUD_ELEMENT::HUD_HP).R;
-		color->G = CAdjustableHudColors::GetHudColor(E_HUD_ELEMENT::HUD_HP).G;
-		color->B = CAdjustableHudColors::GetHudColor(E_HUD_ELEMENT::HUD_HP).B;
-	}
-	else if (dwRetAddr == 0x0027D83E + 1)
-	{
-		if (CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_ARMOR).X != -1)
-		{
-			fX = pGUI->ScaleX(CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_ARMOR).X);
-		}
-		if (CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_ARMOR).Y != -1)
-		{
-			fY = pGUI->ScaleY(CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_ARMOR).Y);
-		}
-
-		if (CAdjustableHudScale::GetElementScale(E_HUD_ELEMENT::HUD_ARMOR).X != -1)
-		{
-			usWidth = pGUI->ScaleX(CAdjustableHudScale::GetElementScale(E_HUD_ELEMENT::HUD_ARMOR).X);
-		}
-		if (CAdjustableHudScale::GetElementScale(E_HUD_ELEMENT::HUD_ARMOR).Y != -1)
-		{
-			usHeight = pGUI->ScaleY(CAdjustableHudScale::GetElementScale(E_HUD_ELEMENT::HUD_ARMOR).Y);
-		}
-
-		if (CAdjustableHudColors::IsUsingHudColor(E_HUD_ELEMENT::HUD_ARMOR))
-		{
-			color->A = CAdjustableHudColors::GetHudColor(E_HUD_ELEMENT::HUD_ARMOR).A;
-			color->R = CAdjustableHudColors::GetHudColor(E_HUD_ELEMENT::HUD_ARMOR).R;
-			color->G = CAdjustableHudColors::GetHudColor(E_HUD_ELEMENT::HUD_ARMOR).G;
-			color->B = CAdjustableHudColors::GetHudColor(E_HUD_ELEMENT::HUD_ARMOR).B;
-		}
-		color->A = 0;
-		color->R = CAdjustableHudColors::GetHudColor(E_HUD_ELEMENT::HUD_ARMOR).R;
-		color->G = CAdjustableHudColors::GetHudColor(E_HUD_ELEMENT::HUD_ARMOR).G;
-		color->B = CAdjustableHudColors::GetHudColor(E_HUD_ELEMENT::HUD_ARMOR).B;
-	}
-	CSprite2d__DrawBarChart(fX, fY, usWidth, usHeight, progress, progressAdd, drawPercentage, drawBlackBorder, color, addColor);
-}
 static int g_iCurrentWanted = 0;
 static float g_fInitialPos = 0.0f;
-void (*CWidgetPlayerInfo__DrawWanted)(void*);
-void CWidgetPlayerInfo__DrawWanted_hook(void* thiz)
-{
-	g_iCurrentWanted = 0;
-	g_fInitialPos = *((float*)thiz + 10);
-	CWidgetPlayerInfo__DrawWanted(thiz);
-	g_iCurrentWanted = 0;
-}
-
-void (*CFont__PrintString)(float x, float y, uint16_t* text);
-void CFont__PrintString_hook(float x, float y, uint16_t* text)
-{
-	uintptr_t dwRetAddr = 0;
-	__asm__ volatile ("mov %0, lr" : "=r" (dwRetAddr));
-	dwRetAddr -= g_libGTASA;
-
-	float fX = x;
-	float fY = y;
-
-//	if (dwRetAddr == 0x0027E15C + 1) // money
-//	{
-//		if (CAdjustableHudColors::IsUsingHudColor(E_HUD_ELEMENT::HUD_MONEY))
-//		{
-//			CRGBA col = CAdjustableHudColors::GetHudColor(E_HUD_ELEMENT::HUD_MONEY);
-//			uint32_t m1 = col.ToInt();
-//			CFont::SetColor(&m1);
-//		}
-//
-//		if (CAdjustableHudScale::GetElementScale(E_HUD_ELEMENT::HUD_MONEY).X != -1)
-//		{
-//			float value = (float)CAdjustableHudScale::GetElementScale(E_HUD_ELEMENT::HUD_MONEY).X / 100.0f;
-//			CFont::SetScale(value, 0.0f);
-//		}
-//
-//		if (CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_MONEY).X != -1)
-//		{
-//			fX = pGUI->ScaleX(CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_MONEY).X);
-//		}
-//		if (CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_MONEY).Y != -1)
-//		{
-//			fY = pGUI->ScaleY(CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_MONEY).Y);
-//		}
-//	}
-	if (dwRetAddr == 0x0027D9E6 + 1) // wanted
-	{
-		if (CAdjustableHudColors::IsUsingHudColor(E_HUD_ELEMENT::HUD_WANTED))
-		{
-			CRGBA col = CAdjustableHudColors::GetHudColor(E_HUD_ELEMENT::HUD_WANTED);
-			uint32_t m1 = col.ToInt();
-			CFont::SetColor(&m1);
-		}
-
-		if (CAdjustableHudScale::GetElementScale(E_HUD_ELEMENT::HUD_WANTED).X != -1)
-		{
-			float value = (float)CAdjustableHudScale::GetElementScale(E_HUD_ELEMENT::HUD_WANTED).X / 100.0f;
-			CFont::SetScale(value, 0.0f);
-		}
-		
-		if (CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_WANTED).X != -1)
-		{
-			fX -= g_fInitialPos;
-			fX += pGUI->ScaleX(CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_WANTED).X);
-		}
-		if (CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_WANTED).Y != -1)
-		{
-			fY = pGUI->ScaleY(CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_WANTED).Y);
-		}
-		g_iCurrentWanted++;
-
-	}
-	else if (dwRetAddr == 0x0027D330 + 1) // ammo text
-	{
-		if (CAdjustableHudColors::IsUsingHudColor(E_HUD_ELEMENT::HUD_AMMO))
-		{
-			CRGBA col = CAdjustableHudColors::GetHudColor(E_HUD_ELEMENT::HUD_AMMO);
-			uint32_t m1 = col.ToInt();
-			CFont::SetColor(&m1);
-		}
-
-		if (CAdjustableHudScale::GetElementScale(E_HUD_ELEMENT::HUD_AMMO).X != -1)
-		{
-			float value = (float)CAdjustableHudScale::GetElementScale(E_HUD_ELEMENT::HUD_AMMO).X / 100.0f;
-			CFont::SetScale(value, 0.0f);
-		}
-
-		if (CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_AMMO).X != -1)
-		{
-			fX = pGUI->ScaleX(CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_AMMO).X);
-		}
-		if (CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_AMMO).Y != -1)
-		{
-			fY = pGUI->ScaleY(CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_AMMO).Y);
-		}
-	}
-	CFont__PrintString(fX, fY, text);
-}
 
 void (*CSprite2d__Draw)(CSprite2d* a1, CRect* a2, CRGBA* a3);
 void CSprite2d__Draw_hook(CSprite2d* a1, CRect* a2, CRGBA* a3)
@@ -2608,7 +2255,7 @@ void CSprite2d__Draw_hook(CSprite2d* a1, CRect* a2, CRGBA* a3)
 
 	if (dwRetAddr == 0x003D3796 + 1 || dwRetAddr == 0x003D376C + 1 || dwRetAddr == 0x003D373E + 1 || dwRetAddr == 0x003D3710 + 1)
 	{
-		if(!pHud->isHudToggle)return;
+		if(!CHUD::bIsShow)return;
 		if (CRadarRect::m_pDiscTexture == nullptr)
 		{
 			CRadarRect::m_pDiscTexture = a1->m_pRwTexture;
@@ -2638,8 +2285,8 @@ void CSprite2d__Draw_hook(CSprite2d* a1, CRect* a2, CRGBA* a3)
 		if (thiz)
 		{
 
-			thiz[3] = pHud->radarx1;
-			thiz[4] = pHud->radary1;
+			thiz[3] = CHUD::radarPos.X;
+			thiz[4] = CHUD::radarPos.Y;
 
 			thiz[5] = 38.0f;
 			thiz[6] = 38.0f;
@@ -2647,44 +2294,7 @@ void CSprite2d__Draw_hook(CSprite2d* a1, CRect* a2, CRGBA* a3)
 		
 	}
 
-	return CSprite2d__Draw(a1, a2, a3);
-}
-
-void (*CWidgetPlayerInfo__DrawWeaponIcon)(float* thiz, void* ped, CRect rect, float a4);
-void CWidgetPlayerInfo__DrawWeaponIcon_hook(float* thiz, void* ped, CRect rect, float a4)
-{
-	float diffX = rect.right - rect.left;
-	float diffY = rect.bottom - rect.top;
-	if (CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_FIST).X != -1)
-	{
-		rect.left = pGUI->ScaleX(CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_FIST).X);
-		rect.right = pGUI->ScaleX(CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_FIST).X) + diffX;
-
-		thiz[38] = rect.left;
-		thiz[40] = rect.right;
-	}
-	if (CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_FIST).Y != -1)
-	{
-		rect.top = pGUI->ScaleY(CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_FIST).Y);
-		rect.bottom = pGUI->ScaleY(CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_FIST).Y) + diffY;
-
-		thiz[39] = rect.bottom;
-		thiz[41] = rect.top;
-	}
-
-	if (CAdjustableHudScale::GetElementScale(E_HUD_ELEMENT::HUD_FIST).X != -1)
-	{
-		float coef = (float)CAdjustableHudScale::GetElementScale(E_HUD_ELEMENT::HUD_FIST).X / 100.0f;
-		float diffX = rect.right - rect.left;
-		float diffY = rect.bottom - rect.top;
-		diffX *= coef;
-		diffY *= coef;
-
-		rect.right = rect.left + diffX;
-		rect.bottom = rect.top + diffY;
-	}
-
-	return CWidgetPlayerInfo__DrawWeaponIcon(thiz, ped, rect, a4);
+	CSprite2d__Draw(a1, a2, a3);
 }
 
 void(*CHud__Draw)();
@@ -2829,23 +2439,6 @@ int CPad__CycleCameraModeDownJustDown_hook(void* thiz)
 	return 0;
 }
 
-int (*CEntity__GetIsOnScreen)(ENTITY_TYPE*);
-int CEntity__GetIsOnScreen_hook(ENTITY_TYPE* thiz)
-{
-	int retn = CEntity__GetIsOnScreen(thiz);
-	
-	/*if (CSkyBox::m_pSkyObjectDaily)
-	{
-		if (thiz == CSkyBox::m_pSkyObjectAfternoon->m_pEntity || thiz == CSkyBox::m_pSkyObjectDaily->m_pEntity ||
-			thiz == CSkyBox::m_pSkyObjectEvening->m_pEntity || thiz == CSkyBox::m_pSkyObjectNight->m_pEntity)
-		{
-			return 1;
-		}
-	}*/
-
-	return retn;
-}
-
 void (*FxEmitterBP_c__Render)(uintptr_t* a1, int a2, int a3, float a4, char a5);
 void FxEmitterBP_c__Render_hook(uintptr_t* a1, int a2, int a3, float a4, char a5)
 {
@@ -2856,13 +2449,6 @@ void FxEmitterBP_c__Render_hook(uintptr_t* a1, int a2, int a3, float a4, char a5
 		return;
 	}
 	FxEmitterBP_c__Render(a1, a2, a3, a4, a5);
-}
-
-void(*CStreaming__RemoveModel)(int);
-void CStreaming__RemoveModel_hook(int model)
-{
-	Log("Removing model %d", model);
-	CStreaming__RemoveModel(model);
 }
 
 int g_iLastProcessedSkinCollision = 228;
@@ -2890,41 +2476,10 @@ int emu_ArraysDelete_hook(unsigned int a1, int a2, int a3, int a4)
 {
 	if (a1 > g_libGTASA)
 		return emu_ArraysDelete(a1, a2, a3, a4);
+
 	return 0;
 }
 
-char (*CFileMgr__ReadLine)(int a1, char*, int);
-char CFileMgr__ReadLine_hook(int a1, char *a2, int a3)
-{
-	char retv = CFileMgr__ReadLine(a1, a2, a3);
-	char *pStr = a2;
-	int value = *(int *)pStr;
-	//Log("%d, %d, %d, %d, %d", value, g_unobfuscate(g_iIdentifierVersion2), UNOBFUSCATE_DATA(value), OBFUSCATE_DATA(value) );
-	//Log("%c %c", a2[0], a2[1]);
-	if (value == g_unobfuscate(g_iIdentifierVersion2))
-	{
-		Log("Helloo");
-		pStr += 4;
-		int length = *(int *)pStr;
-		pStr -= 4;
-		memcpy((void *)pStr, (const void *)&pStr[8], length);
-
-		pStr[length] = 0;
-		std::stringstream ss;
-
-		uint32_t keyi = g_unobfuscate(g_i64Encrypt);
-
-		ss << keyi;
-
-		std::string key(ss.str());
-		std::string val(pStr);
-
-		std::string decr = decrypt(val, key);
-
-		strcpy((char *)a2, decr.c_str());
-	}
-	return retv;
-}
 int (*_RwTextureDestroy)(RwTexture *);
 int _RwTextureDestroy_hook(RwTexture *texture)
 {
@@ -2932,18 +2487,6 @@ int _RwTextureDestroy_hook(RwTexture *texture)
 		return 1;
 	return _RwTextureDestroy(texture);
 }
-
-// баня едет
-//int (*TextureDatabaseRuntime__SortEntries)(uintptr_t *thiz, int a2);
-//int TextureDatabaseRuntime__SortEntries_hook(uintptr_t *thiz, int a2)
-//{
-//
-//	int v84 = *((DWORD *)v4 + 0x2A);
-//	int v68 = v86[2 * v66++];
-//	int v79 = *(DWORD *)(v84 + 4 * v68);
-//
-//	return TextureDatabaseRuntime__SortEntries(thiz, a2);
-//}
 
 int (*RwResourcesFreeResEntry)(int);
 int RwResourcesFreeResEntry_hook(int a1)
@@ -3010,17 +2553,6 @@ int MobileSettings__GetMaxResWidth_hook()
 {
 	//Log("res = %d", ((int(*)())(g_libGTASA + 0x0023816C + 1))());
 	return (int)( ((int(*)())(g_libGTASA + 0x0023816C + 1))()/1.1 );
-}
-
-int (*CCollision__ProcessLineTriangle)(float *a1, int a2, uint16_t *a3, int16_t *a4, int a5, float *a6, int a7);
-int CCollision__ProcessLineTriangle_hook(float *a1, int a2, uint16_t *a3, int16_t *a4, int a5, float *a6, int a7)
-{
-	if(!a4 || !a3)
-	{
-		CChatWindow::AddDebugMessage("Crash collision %d %d", g_iLastProcessedEntityCollision, g_iLastProcessedModelIndexAutoEnt);
-		return 0;
-	}
-	return CCollision__ProcessLineTriangle(a1, a2, a3, a4, a5, a6, a7);
 }
 
 char **(*CPhysical__Add)(uintptr_t thiz);
@@ -3250,10 +2782,17 @@ int CTaskSimpleCarSetPedInAsDriver__ProcessPed_hook(uintptr_t *thiz, PED_TYPE *a
 	return CTaskSimpleCarSetPedInAsDriver__ProcessPed(thiz, a2);
 }
 
-bool (*CVehicle__GetVehicleLightsStatus)(VEHICLE_TYPE *_pVehicle);
-bool CVehicle__GetVehicleLightsStatus_hook(VEHICLE_TYPE *_pVehicle)
+uint32_t (*CVehicle__GetVehicleLightsStatus)(VEHICLE_TYPE *_pVehicle);
+uint32_t CVehicle__GetVehicleLightsStatus_hook(VEHICLE_TYPE *_pVehicle)
 {
-	*(bool*)(g_libGTASA + 0x97180D) = false;
+//	*(bool*)(g_libGTASA + 0x97180D) = false;
+//	//unsigned int v6; // r2
+//	//int v7; // r3
+//	//v6 = *(uint8_t *)(_pVehicle + 0x428);
+//	//(v6 >> 6) = 0;
+//	_pVehicle->byteFlags |= 0x40;
+//	_pVehicle->m_nOverrideLights = 0;
+
 	if(!pNetGame) return false;
 
 	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
@@ -3263,7 +2802,6 @@ bool CVehicle__GetVehicleLightsStatus_hook(VEHICLE_TYPE *_pVehicle)
 	if(!pVehicle)return false;
 
 	return pVehicle->GetLightsState();
-
 }
 
 
@@ -3287,21 +2825,6 @@ void RenderEffects_hook()
 //	{
 //		RenderEffects();
 //	}
-}
-
-int (*CAudioEngine__Service)(uintptr_t a1);
-int CAudioEngine__Service_hook(uintptr_t a1)
-{
-	if(!a1) return 0;
-	return CAudioEngine__Service(a1);
-}
-
-int (*CAEVehicleAudioEntity__GetAccelAndBrake)(int a1, int a2);
-int CAEVehicleAudioEntity__GetAccelAndBrake_hook(int a1, int a2)
-{
-	if(!a1 || !a2) return 0;
-	if(!*(uintptr_t *)(a1 + 12)) return 0;
-	return CAEVehicleAudioEntity__GetAccelAndBrake(a1, a2);
 }
 
 uint32_t (*CWeapon__FireSniper)(WEAPON_SLOT_TYPE *pWeaponSlot, PED_TYPE *pFiringEntity, ENTITY_TYPE *a3, VECTOR *vecOrigin);
@@ -3348,6 +2871,7 @@ VECTOR& FindPlayerSpeed_hook(int a1)
 void SendBulletSync(VECTOR *vecOrigin, VECTOR *vecEnd, VECTOR *vecPos, ENTITY_TYPE **ppEntity)
 {
 	Log("SendBulletSync");
+
 	BULLET_DATA bulletData;
 	memset(&bulletData, 0, sizeof(BULLET_DATA));
 
@@ -3392,6 +2916,7 @@ void SendBulletSync(VECTOR *vecOrigin, VECTOR *vecEnd, VECTOR *vecPos, ENTITY_TY
 	}
 
 	pGame->FindPlayerPed()->ProcessBulletData(&bulletData);
+
 }
 
 bool g_bForceWorldProcessLineOfSight = false;
@@ -3407,8 +2932,6 @@ uint32_t CWeapon__ProcessLineOfSight_hook(VECTOR *vecOrigin, VECTOR *vecEnd, VEC
 
 	return CWeapon__ProcessLineOfSight(vecOrigin, vecEnd, vecPos, ppEntity, pWeaponSlot, ppEntity2, b1, b2, b3, b4, b5, b6, b7);
 }
-
-bool IsGameEntityArePlaceable(ENTITY_TYPE* pEntity);
 
 uint32_t (*CWorld__ProcessLineOfSight)(VECTOR *vecOrigin, VECTOR *vecEnd, VECTOR *vecPos, PED_TYPE **ppEntity, bool b1, bool b2, bool b3, bool b4, bool b5, bool b6, bool b7, bool b8);
 uint32_t CWorld__ProcessLineOfSight_hook(VECTOR *vecOrigin, VECTOR *vecEnd, VECTOR *vecPos, PED_TYPE **ppEntity, bool b1, bool b2, bool b3, bool b4, bool b5, bool b6, bool b7, bool b8)
@@ -3433,7 +2956,7 @@ uint32_t CWorld__ProcessLineOfSight_hook(VECTOR *vecOrigin, VECTOR *vecEnd, VECT
 				{
 					if(g_pCurrentBulletData->pEntity)
 					{
-						if(!IsGameEntityArePlaceable(g_pCurrentBulletData->pEntity))
+						if(!CUtil::IsGameEntityArePlaceable(g_pCurrentBulletData->pEntity))
 						{
 							pMatrix = g_pCurrentBulletData->pEntity->mat;
 							if(pMatrix)
@@ -3529,6 +3052,9 @@ void InstallHooks()
 	CPatch::InlineHook(g_libGTASA, 0x327528, &CPedDamageResponseCalculator__ComputeDamageResponse_hook, &CPedDamageResponseCalculator__ComputeDamageResponse);
 	CPatch::InlineHook(g_libGTASA, 0x567964, &CWeapon__FireInstantHit_hook, &CWeapon__FireInstantHit);
 	CPatch::InlineHook(g_libGTASA, 0x3C70C0, &CWorld__ProcessLineOfSight_hook, &CWorld__ProcessLineOfSight);
+
+	//
+	//CPatch::InlineHook(g_libGTASA, 0x003AC5DC, &FindPlayerPed_hook, &FindPlayerPed);
 
 	// audio
 //	CPatch::InlineHook(g_libGTASA, 0x368850, &CAudioEngine__Service_hook, &CAudioEngine__Service);
@@ -3650,7 +3176,6 @@ void InstallHooks()
 	CPatch::InlineHook(g_libGTASA, 0x003D6E6C, (uintptr_t)CHud__Draw_hook, (uintptr_t*)& CHud__Draw);
 	CPatch::InlineHook(g_libGTASA, 0x0039DC68, (uintptr_t)CPad__CycleCameraModeDownJustDown_hook, (uintptr_t*)& CPad__CycleCameraModeDownJustDown);
 
-	CPatch::InlineHook(g_libGTASA, 0x00391FE0, (uintptr_t)CEntity__GetIsOnScreen_hook, (uintptr_t*)& CEntity__GetIsOnScreen);
 	CPatch::InlineHook(g_libGTASA, 0x0031B164, (uintptr_t)FxEmitterBP_c__Render_hook, (uintptr_t*)& FxEmitterBP_c__Render);
 	CPatch::InlineHook(g_libGTASA, 0x0043A17C, (uintptr_t)CPed__ProcessEntityCollision_hook, (uintptr_t*)&CPed__ProcessEntityCollision);
 	CPatch::InlineHook(g_libGTASA, 0x3AA3C0, (uintptr_t)CPhysical__Add_hook, (uintptr_t*)&CPhysical__Add);
@@ -3670,6 +3195,7 @@ void InstallHooks()
 	// vehicle light processing
 	//CPatch::NOP(g_libGTASA + 0x005198DC, 4);
 	CPatch::InlineHook(g_libGTASA, 0x5189C4, &CVehicle__GetVehicleLightsStatus_hook, &CVehicle__GetVehicleLightsStatus);
+	//CPatch::InlineHook(g_libGTASA, 0x5189C4, &CVehicle__GetVehicleLightsStatus_hook, &CVehicle__GetVehicleLightsStatus);
 	//
 	CPatch::NOP(g_libGTASA + 0x003989C8, 2);//живность в воде WaterCreatureManager_c::Update
 	// дефолтный худ
@@ -3701,7 +3227,7 @@ void InstallHooks()
 	CPatch::NOP(g_libGTASA + 0x266460, 2); // Game - TrafficMode
 	CPatch::NOP(g_libGTASA + 0x266496, 2); // Game - AimMode
 	CPatch::NOP(g_libGTASA + 0x261A50, 2); // Language
-	CPatch::NOP(g_libGTASA + 0x2661DA, 2); // Display - Shadows
+
 	CPatch::NOP(g_libGTASA + 0x2665EE, 2); // Game - SocialClub
 	//
 	CPatch::InlineHook(g_libGTASA, 0x004904AC, &CTaskSimpleCarSetPedInAsDriver__ProcessPed_hook, &CTaskSimpleCarSetPedInAsDriver__ProcessPed);

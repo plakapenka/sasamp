@@ -10,7 +10,6 @@
 #include "java_systems/CTab.h"
 #include "java_systems/CHUD.h"
 
-extern CHUD *pHud;
 extern CGUI *pGUI;
 extern CKeyBoard *pKeyBoard;
 extern CSettings *pSettings;
@@ -195,7 +194,7 @@ void CChatWindow::ProcessPushedCommands()
 void CChatWindow::AddChatMessage(char* szNick, uint32_t dwNickColor, char* szMessage)
 {
 	FilterInvalidChars(szMessage);
-	pHud->AddChatMessage(szMessage);
+	CHUD::AddChatMessage(szMessage);
 	//AddToChatWindowBuffer(CHAT_TYPE_CHAT, szMessage, szNick, m_dwTextColor, dwNickColor);
 }
 
@@ -210,7 +209,7 @@ void CChatWindow::AddInfoMessage(char* szFormat, ...)
 	va_end(args);
 
 	FilterInvalidChars(tmp_buf);
-	pHud->AddChatMessage(tmp_buf);
+	CHUD::AddChatMessage(tmp_buf);
 	//AddToChatWindowBuffer(CHAT_TYPE_INFO, tmp_buf, nullptr, m_dwInfoColor, 0);
 }
 
@@ -226,14 +225,14 @@ void CChatWindow::AddDebugMessage(char* szFormat, ...)
 
 	FilterInvalidChars(tmp_buf);
 
-	pHud->AddChatMessage(tmp_buf);
+	CHUD::AddChatMessage(tmp_buf);
 	//AddToChatWindowBuffer(CHAT_TYPE_DEBUG, tmp_buf, nullptr, m_dwDebugColor, 0);
 }
 
 void CChatWindow::AddDebugMessageNonFormatted(char* szStr)
 {
 	FilterInvalidChars(szStr);
-	pHud->AddChatMessage(szStr);
+	CHUD::AddChatMessage(szStr);
 	//AddToChatWindowBuffer(CHAT_TYPE_DEBUG, szStr, nullptr, m_dwDebugColor, 0);
 }
 

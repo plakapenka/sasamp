@@ -812,11 +812,10 @@ void CRemotePlayer::StoreInCarFullSyncData(INCAR_SYNC_DATA *picSync, uint32_t dw
 {
 	if(!m_pPlayerPed)return;
 
-	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
-
 	memcpy(&m_icSync, picSync, sizeof(INCAR_SYNC_DATA));
-
 	m_VehicleID = picSync->VehicleID;
+
+	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
 	if (!pVehiclePool) return;
 	if (!pVehiclePool->GetSlotState(m_VehicleID)) return;
 
@@ -828,9 +827,7 @@ void CRemotePlayer::StoreInCarFullSyncData(INCAR_SYNC_DATA *picSync, uint32_t dw
 		m_pPlayerPed->PutDirectlyInVehicle(m_pCurrentVehicle, 0);
 	}
 	else if (m_pPlayerPed->GetCurrentVehicle() != m_pCurrentVehicle) {
-		MATRIX4X4 mat;
-		m_pPlayerPed->GetMatrix(&mat);
-		m_pPlayerPed->RemoveFromVehicleAndPutAt(mat.pos.X, mat.pos.Y, mat.pos.Z);
+        RemoveFromVehicle();
 	}
 
 	// -------------- TRAILER
@@ -878,26 +875,24 @@ void CRemotePlayer::StorePassengerFullSyncData(PASSENGER_SYNC_DATA *ppsSync)
 {
 	if(!m_pPlayerPed) return;
 
-	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
-	if(pVehiclePool) return;
-
 	memcpy(&m_psSync, ppsSync, sizeof(PASSENGER_SYNC_DATA));
 	m_VehicleID = ppsSync->VehicleID;
+
+	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
+	if(!pVehiclePool) return;
+	if (!pVehiclePool->GetSlotState(m_VehicleID)) return;
+
 	m_byteSeatID = ppsSync->byteSeatFlags & 127;
 	m_pCurrentVehicle = pVehiclePool->GetAt(m_VehicleID);
 
 	if(!m_pCurrentVehicle)return;
-	if (m_pPlayerPed->GetCurrentVehicle() != m_pCurrentVehicle) {
-		if (m_pPlayerPed->IsInVehicle()) {
-			MATRIX4X4 mat;
-			m_pPlayerPed->GetMatrix(&mat);
-			m_pPlayerPed->RemoveFromVehicleAndPutAt(mat.pos.X, mat.pos.Y, mat.pos.Z);
-		}
-		m_pPlayerPed->PutDirectlyInVehicle(m_pCurrentVehicle, 0);
+	if(!m_pPlayerPed->IsInVehicle()){
+		m_pPlayerPed->PutDirectlyInVehicle(m_pCurrentVehicle, m_byteSeatID);
 	}
-//	if(!m_pPlayerPed->IsInVehicle()) {
-//		m_pPlayerPed->PutDirectlyInVehicle(m_pCurrentVehicle, m_byteSeatID);
-//	}
+	else if (m_pPlayerPed->GetCurrentVehicle() != m_pCurrentVehicle) {
+        RemoveFromVehicle();
+	}
+
 	m_fCurrentHealth = ppsSync->bytePlayerHealth;
 	m_fCurrentArmor = ppsSync->bytePlayerArmour;
 
@@ -905,9 +900,6 @@ void CRemotePlayer::StorePassengerFullSyncData(PASSENGER_SYNC_DATA *ppsSync)
 	m_dwLastRecvTick = GetTickCount();
 
 	SetState(PLAYER_STATE_PASSENGER);
-
-
-
 }
 
 void CRemotePlayer::RemoveFromVehicle()

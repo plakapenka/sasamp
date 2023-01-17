@@ -7,7 +7,6 @@
 
 extern CGame *pGame;
 extern CGUI* pGUI;
-extern CHUD *pHud;
 
 RwTexture* splashTexture = nullptr;
 
@@ -110,14 +109,14 @@ void RenderBackgroundHud()
 	ImGui_ImplRenderWare_NewFrame();
 	ImGui::NewFrame();
 		
-	if (pHud->isHudToggle)
+	if (CHUD::bIsShow)
 	{
 
 		if (splashTexture)
 		{//183 55.. 399..33
 			ImGui::GetBackgroundDrawList()->AddImage((ImTextureID)splashTexture->raster,
-													 ImVec2(pHud->radarbgx1, pHud->radarbgy1),
-													 ImVec2(pHud->radarbgx2, pHud->radarbgy2),
+													 ImVec2(CHUD::radarBgPos1.X, CHUD::radarBgPos1.Y),
+													 ImVec2(CHUD::radarBgPos2.X, CHUD::radarBgPos2.Y),
 													 ImVec2(0, 0), ImVec2(1, 1));
 		}
 	}

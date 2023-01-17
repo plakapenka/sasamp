@@ -44,7 +44,6 @@ CPlayerTags *pPlayerTags = nullptr;
 CGUI *pGUI = nullptr;
 CKeyBoard *pKeyBoard = nullptr;
 CSettings *pSettings = nullptr;
-CHUD *pHud = nullptr;
 CINVENTORY *pInventory = nullptr;
 
 void InstallSpecialHooks();
@@ -115,7 +114,6 @@ void InitSAMP(JNIEnv* pEnv, jobject thiz, const char* path)
 	Log("Storage: %s", g_pszStorage);
 
 	pSettings = new CSettings();
-	pHud = new CHUD();
 	pInventory = new CINVENTORY();
 
 	//“”“ ÃŒ∆ÕŒ «¿√–”«»“‹

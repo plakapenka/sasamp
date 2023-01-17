@@ -23,8 +23,6 @@ import com.liverussia.cr.R;
 import com.liverussia.cr.gui.util.Utils;
 import com.skydoves.progressview.ProgressView;
 
-import org.checkerframework.checker.units.qual.A;
-
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;

@@ -14,7 +14,6 @@
 #include "CHUD.h"
 
 extern CJavaWrapper *g_pJavaWrapper;
-extern CHUD *pHud;
 
 jobject jCasino;
 bool CCasino::bIsChipToggle = false;
@@ -33,7 +32,7 @@ void CNetGame::packetCasinoChip(Packet* p)
     bs.Read(balance);
 
     if(!type) {
-        balance = pHud->localMoney;
+        balance = CHUD::iLocalMoney;
     }
     CCasino::OpenChipBuySell(!type, balance);
 }

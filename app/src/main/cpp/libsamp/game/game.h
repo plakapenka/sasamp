@@ -42,10 +42,10 @@ public:
 	int GetScreenWidth() { return RsGlobal->maximumWidth; };
 	int GetScreenHeight() { return RsGlobal->maximumHeight; };
 
-	void InitInMenu();
-	void InitInGame();
+	static void InitInMenu();
+	static void InitInGame();
 
-	void RemoveModel(int iModel, bool bFromStreaming);
+	static void RemoveModel(int iModel, bool bFromStreaming);
 
 	void HandleChangedHUDStatus();
 	bool IsToggledHUDElement(int iID);
@@ -56,26 +56,26 @@ public:
 	// 0.3.7
 	CPlayerPed* FindPlayerPed() { if(!m_pGamePlayer) m_pGamePlayer = new CPlayerPed(); return m_pGamePlayer; }
 	// 0.3.7
-	uint8_t FindFirstFreePlayerPedSlot();
+	static uint8_t FindFirstFreePlayerPedSlot();
 	// 0.3.7
 	CPlayerPed* NewPlayer(int iSkin, float fX, float fY, float fZ, float fRotation, uint8_t byteCreateMarker = 0);
 	// 0.3.7
-	void RemovePlayer(CPlayerPed* pPlayer);
+	static void RemovePlayer(CPlayerPed* pPlayer);
 	// 0.3.7
-	CVehicle* NewVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRotation, bool bAddSiren);
-	CObject* NewObject(int iModel, float fPosX, float fPosY, float fPosZ, VECTOR vecRot, float fDrawDistance);
+	static CVehicle* NewVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRotation, bool bAddSiren);
+	CObject* NewObject(int iModel, float fPosX, float fPosY, float fPosZ, VECTOR vecRot, float fDrawDistastatic);
 	uint32_t CreatePickup(int iModel, int iType, float fX, float fY, float fZ, int *unk);
 
-	float FindGroundZForCoord(float x, float y, float z);
+	static float FindGroundZForCoord(float x, float y, float z);
 	// 0.3.7
-	uint8_t GetActiveInterior();
+	static uint8_t GetActiveInterior();
 	// 0.3.7
-	void SetWorldTime(int iHour, int iMinute);
+	static void SetWorldTime(int iHour, int iMinute);
 	// 0.3.7
-	void SetWorldWeather(unsigned char byteWeatherID);
+	void SetWorldWeather(unsigned char byteWeatherID) const;
 	// 0.3.7
 	void EnableClock(bool bEnable);
-	void ToggleThePassingOfTime(bool bOnOff);
+	static void ToggleThePassingOfTime(bool bOnOff);
 	// 0.3.7
 	void EnableZoneNames(bool bEnable);
 	void DisplayWidgets(bool bDisp);
@@ -101,44 +101,44 @@ public:
 	// 0.3.7
 	void DisableRaceCheckpoint();
 	// 0.3.7
-	uint32_t CreateRadarMarkerIcon(int iMarkerType, float fX, float fY, float fZ, int iColor, int iStyle);
+	static uint32_t CreateRadarMarkerIcon(int iMarkerType, float fX, float fY, float fZ, int iColor, int iStyle);
 	// 0.3.7
-	void DisableMarker(uint32_t dwMarkerID);
+	static void DisableMarker(uint32_t dwMarkerID);
 	// 0.3.7
 	void RequestModel(unsigned int iModelID, int iLoadingStream = 2);
 	// 0.3.7
-	void LoadRequestedModels();
+	static void LoadRequestedModels();
 	// 0.3.7
-	uint8_t IsModelLoaded(unsigned int iModelID);
+	static uint8_t IsModelLoaded(unsigned int iModelID);
 	// 0.3.7
-	void RefreshStreamingAt(float x, float y);
+	static void RefreshStreamingAt(float x, float y);
 	// 0.3.7
-	void DisableTrainTraffic();
+	static void DisableTrainTraffic();
 	// 0.3.7
-	void SetMaxStats();
+	static void SetMaxStats();
 
-	void SetWantedLevel(uint8_t byteLevel);
-	uint8_t GetWantedLevel();
+	static void SetWantedLevel(uint8_t byteLevel);
+	static uint8_t GetWantedLevel();
 
-	bool IsAnimationLoaded(const char szAnimFile[]);
+	static bool IsAnimationLoaded(const char szAnimFile[]);
 
 	static void RequestAnimation(const char szAnimFile[]) {
 		ScriptCommand(&request_animation, szAnimFile);
 	}
 	// 0.3.7
-	void DisplayGameText(char* szStr, int iTime, int iType);
+	static void DisplayGameText(char* szStr, int iTime, int iType);
 	// 0.3.7
-	void SetGravity(float fGravity);
-	void ToggleCJWalk(bool bUseCJWalk);
+	static void SetGravity(float fGravity);
+	static void ToggleCJWalk(bool bUseCJWalk);
 	// 0.3.7
-	void DisableInteriorEnterExits();
+	static void DisableInteriorEnterExits();
 
 	// 0.3.7
-	void AddToLocalMoney(int iAmmount);
+	static void AddToLocalMoney(int iAmmount);
 	// 0.3.7
 	void ResetLocalMoney();
 
-	void DrawGangZone(float fPos[], uint32_t dwColor);
+	static void DrawGangZone(float fPos[], uint32_t dwColor);
 
 
 	// race checkpoint
@@ -158,7 +158,6 @@ public:
 	bool isShowMedicGame = false;
 	bool isRegistrationActive = false;
 	bool isShopStoreActive = false;
-	int wantedLvl = 0;
 	bool isHornActive = false;
 	bool isBanJump = false;
 	bool GameExiting = false;

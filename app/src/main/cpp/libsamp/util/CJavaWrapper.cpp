@@ -15,14 +15,11 @@ extern CKeyBoard* pKeyBoard;
 extern CSettings* pSettings;
 extern CNetGame* pNetGame;
 extern CGame* pGame;
-extern CHUD *pHud;
-
-
 
 JNIEnv* CJavaWrapper::GetEnv()
 {
 	JNIEnv* env = nullptr;
-	int getEnvStat = javaVM->GetEnv((void**)& env, JNI_VERSION_1_4);
+	int getEnvStat = javaVM->GetEnv((void**)& env, JNI_VERSION_1_6);
 
 	if (getEnvStat == JNI_EDETACHED)
 	{

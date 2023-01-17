@@ -16,7 +16,6 @@ extern CNetGame* pNetGame;
 extern CGame* pGame;
 extern CGUI* pGUI;
 extern CSettings* pSettings;
-extern CHUD *pHud;
 
 jobject CTab::thiz = nullptr;
 

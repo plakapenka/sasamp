@@ -5,7 +5,6 @@
 #include "java_systems/CHUD.h"
 #include "util/patch.h"
 
-extern CHUD *pHud;
 void ApplyPatches();
 void ApplyInGamePatches();
 void InstallHooks();
@@ -94,7 +93,6 @@ void CGame::RemovePlayer(CPlayerPed* pPlayer)
 // 0.3.7
 CVehicle* CGame::NewVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRotation, bool bAddSiren)
 {
-	Log("NewVehicle(%d, %4.f, %4.f, %4.f, %4.f)", iType, fPosX, fPosY, fPosZ, fRotation);
 	CVehicle *pVehicleNew = new	CVehicle(iType, fPosX, fPosY, fPosZ, fRotation, bAddSiren);
 	return pVehicleNew;
 }
@@ -182,7 +180,7 @@ void CGame::HandleChangedHUDStatus()
 
 uint8_t CGame::GetWantedLevel()
 {
-	return wantedLvl;
+	return CHUD::iWantedLevel;
 	//return *(uint8_t*)(g_libGTASA + 0x27D8D2);
 }
 
@@ -203,8 +201,6 @@ void CGame::SetCheckpointInformation(VECTOR *pos, VECTOR *extent)
 // 0.3.7
 void CGame::SetRaceCheckpointInformation(uint8_t byteType, VECTOR *pos, VECTOR *next, float fSize)
 {
-	Log("SetRaceCheckpointInformation");
-
 	memcpy(&m_vecRaceCheckpointPos,pos,sizeof(VECTOR));
 	memcpy(&m_vecRaceCheckpointNext,next,sizeof(VECTOR));
 	m_fRaceCheckpointSize = fSize;
@@ -216,7 +212,6 @@ void CGame::SetRaceCheckpointInformation(uint8_t byteType, VECTOR *pos, VECTOR *
 // 0.3.7
 void CGame::MakeRaceCheckpoint()
 {
-	Log("MakeRaceCheckpoint");
 	if(m_bRaceCheckpointsEnabled)
 	{
 		DisableRaceCheckpoint();
@@ -321,7 +316,7 @@ void CGame::SetWorldTime(int iHour, int iMinute)
 }
 
 // 0.3.7
-void CGame::SetWorldWeather(unsigned char byteWeatherID)
+void CGame::SetWorldWeather(unsigned char byteWeatherID) const
 {
 	*(unsigned char*)(g_libGTASA+0x9DB98E) = byteWeatherID;
 
@@ -440,9 +435,8 @@ void CGame::SetMaxStats()
 
 void CGame::SetWantedLevel(uint8_t byteLevel)
 {
-	wantedLvl = byteLevel;
-	pHud->UpdateWanted();
-//	WriteMemory(g_libGTASA+0x27D8D2, (uintptr_t)&byteLevel, 1);
+	CHUD::iWantedLevel = byteLevel;
+	CHUD::UpdateWanted();
 }
 
 bool CGame::IsAnimationLoaded(const char szAnimFile[])
@@ -483,9 +477,9 @@ void CGame::DisableMarker(uint32_t dwMarkerID)
 
 void CGame::AddToLocalMoney(int iAmmount)
 {
-	pHud->localMoney = iAmmount;
+	CHUD::iLocalMoney = iAmmount;
 
-	pHud->UpdateMoney();
+	CHUD::UpdateMoney();
 }
 
 // 0.3.7
@@ -493,7 +487,6 @@ void CGame::DisableInteriorEnterExits()
 {
 	uintptr_t addr = *(uintptr_t*)(g_libGTASA+0x700120);
 	int count = *(uint32_t*)(addr+8);
-	Log("Count = %d", count);
 
 	addr = *(uintptr_t*)addr;
 

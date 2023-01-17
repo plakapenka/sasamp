@@ -16,7 +16,6 @@ extern CKeyBoard* pKeyBoard;
 extern CINVENTORY *pInventory;
 extern CGame *pGame;
 extern CSettings *pSettings;
-extern CHUD *pHud;
 
 bool bFirstSpawn = true;
 
@@ -104,7 +103,7 @@ void CLocalPlayer::SendStatsUpdate()
 //	uint32_t wAmmo = m_pPlayerPed->GetCurrentWeaponSlot()->dwAmmo;
 
 	bsStats.Write((BYTE)ID_STATS_UPDATE);
-	bsStats.Write(pHud->localMoney);
+	bsStats.Write(CHUD::iLocalMoney);
 	//bsStats.Write(wAmmo);
 	bsStats.Write(m_pPlayerPed->drunk_level);
 	pNetGame->GetRakClient()->Send(&bsStats, HIGH_PRIORITY, UNRELIABLE, 0);
@@ -353,18 +352,18 @@ bool CLocalPlayer::Process()
 			//  нопки вход/выход/закрыть машину
 			if (!m_pPlayerPed->lToggle ||
 				m_pPlayerPed->m_iCurrentSpecialAction == SPECIAL_ACTION_CARRY) {
-				if (pHud->isEnterPassengerButtOn) {
-					pHud->ToggleEnterPassengerButton(false);
+				if (CHUD::bIsShowPassengerButt) {
+					CHUD::togglePassengerButton(false);
 				}
-				if (pHud->isEnterExitVehicleButtonOn) {
-					pHud->ToggleEnterExitVehicleButton(false);
+				if (CHUD::bIsShowEnterExitButt) {
+					CHUD::toggleEnterExitButton(false);
 				}
-				if (pHud->isLockVehicleButtonOn) {
-					pHud->ToggleLockVehicleButton(false);
+				if (CHUD::bIsShowLockButt) {
+					CHUD::toggleLockButton(false);
 				}
 			} else if (!m_pPlayerPed->IsInVehicle()) {
-				if (pHud->isHornButtonOn) {
-					pHud->ToggleHornButton(false);
+				if (CHUD::bIsShowHornButt) {
+					CHUD::toggleHornButton(false);
 				}
 				if (pVehiclePool) {
 					VEHICLEID ClosetVehicleID = pVehiclePool->FindNearestToLocalPlayerPed();
@@ -374,75 +373,75 @@ bool CLocalPlayer::Process()
 						if (pVehicle && pVehicle->GetDistanceFromLocalPlayerPed() < 4.0f  && !pVehicle->IsTrailer()) {
 							//if(!pVehicle->m_bIsLocked)
 							if (!pVehicle->m_bDoorsLocked) {// тачка открыта
-								if (!pHud->isEnterPassengerButtOn) {
-									pHud->ToggleEnterPassengerButton(true);
+								if (!CHUD::bIsShowPassengerButt) {
+									CHUD::togglePassengerButton(true);
 								}
-								if (!pHud->isEnterExitVehicleButtonOn) {
-									pHud->ToggleEnterExitVehicleButton(true);
+								if (!CHUD::bIsShowEnterExitButt) {
+									CHUD::toggleEnterExitButton(true);
 								}
 							} else {
-								if (pHud->isEnterPassengerButtOn) {
-									pHud->ToggleEnterPassengerButton(false);
+								if (CHUD::bIsShowPassengerButt) {
+									CHUD::togglePassengerButton(false);
 								}
-								if (pHud->isEnterExitVehicleButtonOn) {
-									pHud->ToggleEnterExitVehicleButton(false);
+								if (CHUD::bIsShowEnterExitButt) {
+									CHUD::toggleEnterExitButton(false);
 								}
 							}
-							if (!pHud->isLockVehicleButtonOn) {
-								pHud->ToggleLockVehicleButton(true);
+							if (!CHUD::bIsShowLockButt) {
+								CHUD::toggleLockButton(true);
 							}
 
 						} else {
-							if (pHud->isEnterPassengerButtOn) {
-								pHud->ToggleEnterPassengerButton(false);
+							if (CHUD::bIsShowPassengerButt) {
+								CHUD::togglePassengerButton(false);
 							}
-							if (pHud->isEnterExitVehicleButtonOn) {
-								pHud->ToggleEnterExitVehicleButton(false);
+							if (CHUD::bIsShowEnterExitButt) {
+								CHUD::toggleEnterExitButton(false);
 							}
-							if (pHud->isLockVehicleButtonOn) {
-								pHud->ToggleLockVehicleButton(false);
+							if (CHUD::bIsShowLockButt) {
+								CHUD::toggleLockButton(false);
 							}
 						}
 					} else {
-						if (pHud->isEnterPassengerButtOn) {
-							pHud->ToggleEnterPassengerButton(false);
+						if (CHUD::bIsShowPassengerButt) {
+							CHUD::togglePassengerButton(false);
 						}
-						if (pHud->isEnterExitVehicleButtonOn) {
-							pHud->ToggleEnterExitVehicleButton(false);
+						if (CHUD::bIsShowEnterExitButt) {
+							CHUD::toggleEnterExitButton(false);
 						}
-						if (pHud->isLockVehicleButtonOn) {
-							pHud->ToggleLockVehicleButton(false);
+						if (CHUD::bIsShowLockButt) {
+							CHUD::toggleLockButton(false);
 						}
 					}
 				}
 
 			} else {// в машине
 				if (m_pPlayerPed->IsAPassenger()) {// на пассажирке
-					if (!pHud->isEnterExitVehicleButtonOn) {
-						pHud->ToggleEnterExitVehicleButton(true);
+					if (!CHUD::bIsShowEnterExitButt) {
+						CHUD::toggleEnterExitButton(true);
 					}
-					if (pHud->isLockVehicleButtonOn) {
-						pHud->ToggleLockVehicleButton(false);
+					if (CHUD::bIsShowLockButt) {
+						CHUD::toggleLockButton(false);
 					}
-					if (pHud->isHornButtonOn) {
-						pHud->ToggleHornButton(false);
+					if (CHUD::bIsShowHornButt) {
+						CHUD::toggleHornButton(false);
 					}
-					if (pHud->isEnterPassengerButtOn) {
-						pHud->ToggleEnterPassengerButton(false);
+					if (CHUD::bIsShowPassengerButt) {
+						CHUD::togglePassengerButton(false);
 					}
 				} else {
-					if (!pHud->isEnterExitVehicleButtonOn) {
-						pHud->ToggleEnterExitVehicleButton(true);
+					if (!CHUD::bIsShowEnterExitButt) {
+						CHUD::toggleEnterExitButton(true);
 					}
 
-					if (!pHud->isLockVehicleButtonOn) {
-						pHud->ToggleLockVehicleButton(true);
+					if (!CHUD::bIsShowLockButt) {
+						CHUD::toggleLockButton(true);
 					}
-					if (!pHud->isHornButtonOn) {
-						pHud->ToggleHornButton(true);
+					if (!CHUD::bIsShowHornButt) {
+						CHUD::toggleHornButton(true);
 					}
-					if (pHud->isEnterPassengerButtOn) {
-						pHud->ToggleEnterPassengerButton(false);
+					if (CHUD::bIsShowPassengerButt) {
+						CHUD::togglePassengerButton(false);
 					}
 				}
 			}
@@ -458,7 +457,7 @@ bool CLocalPlayer::Process()
 		needDrawableHud = false;
 	}
 
-	pHud->ToggleAll(needDrawableHud);
+	CHUD::toggleAll(needDrawableHud);
 
     if(m_bIsSpectating && !m_bIsActive)
     {

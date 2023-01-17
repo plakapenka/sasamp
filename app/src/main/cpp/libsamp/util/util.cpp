@@ -1,6 +1,29 @@
 #include "../main.h"
 #include <vector>
 
+bool CUtil::IsValidGameVehicle(VEHICLE_TYPE *pVehicle)
+{
+	// IsVehiclePointerValid
+	return (((bool (*)(VEHICLE_TYPE *))(g_libGTASA+0x5109E8+1))(pVehicle));
+}
+
+bool CUtil::IsValidGamePed(PED_TYPE * pPed)
+{
+	// IsPedPointerValid(CPed *) — 0x00435614
+	return ((bool(*)(PED_TYPE *)) (g_libGTASA + 0x00435614 + 1)) (pPed);
+}
+
+bool CUtil::IsGameEntityArePlaceable(ENTITY_TYPE *pEntity)
+{
+	if(pEntity)
+	{
+		if(pEntity->vtable == g_libGTASA + 0x005C7358)
+			return true;
+	}
+
+	return false;
+}
+
 uintptr_t FindLibrary(const char* library)
 {
 	char filename[0xFF] = { 0 },

@@ -7,24 +7,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.media.Image;
 import android.text.Html;
-import android.util.Log;
 import android.util.TypedValue;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -33,12 +24,9 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.factor.bouncy.BouncyRecyclerView;
 import com.liverussia.cr.gui.util.Utils;
-import com.liverussia.launcher.async.dto.response.Servers;
 import com.liverussia.launcher.domain.enums.NativeStorageElements;
 import com.liverussia.launcher.storage.NativeStorage;
-import com.liverussia.launcher.utils.MainUtils;
 import com.nvidia.devtech.NvEventQueueActivity;
 import com.liverussia.cr.R;
 import com.skydoves.progressview.ProgressView;
@@ -48,7 +36,6 @@ import org.jetbrains.annotations.NotNull;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
-import java.util.Formatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
@@ -264,6 +251,7 @@ public class HudManager {
         adapter = new ChatAdapter(activity, chat_lines);
         // устанавливаем для списка адаптер
         chat.setAdapter(adapter);
+        //============================== .chat ==============================
 
         HudInit();
         DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
@@ -384,9 +372,6 @@ public class HudManager {
 
             SetRadarBgPos(hud_bg.getX(), hud_bg.getY(), hud_bg.getX()+hud_bg.getWidth(), hud_bg.getY()+hud_bg.getHeight());
 
-
-            //
-           // int screenwidth = activity.getResources().getDisplayMetrics().widthPixels;
             int screenwidth = hud_main.getWidth();
             int screenheight = hud_main.getHeight();
 
@@ -396,12 +381,6 @@ public class HudManager {
 
             float gtaX =  (640*(real_prcX/100f));
             float gtaY =  (480*(real_prcY/100f));
-
-//            float real_prcscaleX = ( ( hud_bg.getX()+hud_bg.getWidth() ) /screenwidth)*100;
-//            float real_prcscaleY = ( ( hud_bg.getY()+hud_bg.getHeight() ) /screenheight)*100;
-//
-//            float gtaX =  (640*(real_prcX/100f));
-//            float gtaY =  (480*(real_prcY/100f));
 
             SetRadarPos(gtaX, gtaY);
 
@@ -441,18 +420,17 @@ public class HudManager {
     public void AddChatMessage(String msg){
         adapter.addItem(msg);
     }
-    public void ToggleEnterPassengerButton(boolean toggle)
+
+    public void togglePassengerButton(boolean toggle)
     {
-        if(toggle)
-        {
-            activity.runOnUiThread(() -> Utils.ShowLayout(enter_passenger, true) );
+        if(toggle) {
+            activity.runOnUiThread(() -> Utils.ShowLayout(enter_passenger, true));
         }
-        else
-        {
+        else {
             activity.runOnUiThread(() -> Utils.HideLayout(enter_passenger, true) );
         }
     }
-    public void UpdateOpgWarLayout(int time, int attackscore, int defscore)
+    public void updateOpgWarLayout(int time, int attackscore, int defscore)
     {
         activity.runOnUiThread(() -> {
             if(time == 0)
@@ -467,7 +445,7 @@ public class HudManager {
         } );
 
     }
-    public void ToggleHornButton(boolean toggle)
+    void toggleHornButton(boolean toggle)
     {
         if(toggle)
         {
@@ -478,7 +456,7 @@ public class HudManager {
             activity.runOnUiThread(() -> Utils.HideLayout(button_horn, true) );
         }
     }
-    public void ToggleEnterExitVehicleButton(boolean toggle)
+    void toggleEnterExitButton(boolean toggle)
     {
         if(toggle)
         {
@@ -489,7 +467,7 @@ public class HudManager {
             activity.runOnUiThread(() -> Utils.HideLayout(enterexit_driver, true) );
         }
     }
-    public void ToggleLockVehicleButton(boolean toggle)
+    void toggleLockButton(boolean toggle)
     {
         if(toggle)
         {
@@ -665,7 +643,7 @@ public class HudManager {
             }
         });
     }
-    public void ToggleAll(boolean toggle)
+    public void toggleAll(boolean toggle)
     {
         if(!toggle)
         {

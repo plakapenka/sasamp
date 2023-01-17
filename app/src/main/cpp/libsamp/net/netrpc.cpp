@@ -11,7 +11,6 @@
 extern CGame *pGame;
 extern CNetGame *pNetGame;
 extern CSettings *pSettings;
-extern CHUD *pHud;
 
 int iNetModeNormalOnfootSendRate	= NETMODE_ONFOOT_SENDRATE;
 int iNetModeNormalInCarSendRate		= NETMODE_INCAR_SENDRATE;
@@ -165,7 +164,7 @@ void ClientMessage(RPCParameters *rpcParams)
 	char buf[dwStrLen+55];
 	snprintf(buf, sizeof(buf), "{%x}%s", (dwColor>>8)&0xFFFFFF, szMsg);
 
-	pHud->AddChatMessage(buf);
+	CHUD::AddChatMessage(buf);
 
 	free(szMsg);
 }
@@ -594,7 +593,6 @@ void DialogBox(RPCParameters *rpcParams)
 		if(wDialogID < 0) return;
 		if(strlen(info) < 3) return;
 
-		Log("DIalog = %s", title);
 		g_pJavaWrapper->MakeDialog(wDialogID, byteDialogStyle, title, info, button1, button2);
 }
 
