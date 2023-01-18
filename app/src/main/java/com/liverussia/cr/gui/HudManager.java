@@ -42,7 +42,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class HudManager {
-    private Timer timer;
+    private Timer money_timer;
+
     private Activity activity;
     private ConstraintLayout hud_main;
     private ConstraintLayout target_notify;
@@ -90,6 +91,9 @@ public class HudManager {
     private ProgressView salary_job_progress;
     private TextView salary_job_exp_text;
 
+    // damage inf
+    Timer take_damage_timer;
+    Timer give_damage_timer;
     TextView damage_informer_give;
     TextView damage_informer_take;
 
@@ -414,13 +418,13 @@ public class HudManager {
                     damage_informer_give.setVisibility(View.GONE);
                 });
 
-                timer = null;
+                give_damage_timer = null;
             }
         };
 
-        if(timer != null) timer.cancel();
-        timer = new Timer("Timer");
-        timer.schedule(task, 2000L);
+        if(give_damage_timer != null) give_damage_timer.cancel();
+        give_damage_timer = new Timer("Timer");
+        give_damage_timer.schedule(task, 2000L);
 
         activity.runOnUiThread(() -> {
             damage_informer_give.setText(String.format("%s - %s +%.2f", nick, weapon, damage));
@@ -433,16 +437,16 @@ public class HudManager {
         TimerTask task = new TimerTask() {
             public void run() {
                 activity.runOnUiThread(() -> {
-                    damage_informer_give.setVisibility(View.GONE);
+                    damage_informer_take.setVisibility(View.GONE);
                 });
 
-                timer = null;
+                take_damage_timer = null;
             }
         };
 
-        if(timer != null) timer.cancel();
-        timer = new Timer("Timer");
-        timer.schedule(task, 2000L);
+        if(take_damage_timer != null) take_damage_timer.cancel();
+        take_damage_timer = new Timer("Timer");
+        take_damage_timer.schedule(task, 2000L);
 
         activity.runOnUiThread(() -> {
             damage_informer_take.setText(String.format("%s - %s -%.2f", nick, weapon, damage));
@@ -611,7 +615,7 @@ public class HudManager {
                     });
                 }
 
-                timer = null;
+                money_timer = null;
             }
         };
 
@@ -622,18 +626,18 @@ public class HudManager {
                     hud_money_dif.setText(formatter.format(reference));
                     hud_money_dif.setVisibility(View.VISIBLE);
                 });
-                if(timer != null) timer.cancel();
-                Timer timer = new Timer("Timer");
-                timer.schedule(task, 4000L);
+                if(money_timer != null) money_timer.cancel();
+                money_timer = new Timer("Timer");
+                money_timer.schedule(task, 4000L);
             }else {
                 activity.runOnUiThread(() -> {
                     hud_money_dif.setTextColor(Color.parseColor("#76ff03"));
                     hud_money_dif.setText("+" + formatter.format(reference));
                     hud_money_dif.setVisibility(View.VISIBLE);
                 });
-                if(timer != null) timer.cancel();
-                Timer timer = new Timer("Timer");
-                timer.schedule(task, 4000L);
+                if(money_timer != null) money_timer.cancel();
+                money_timer = new Timer("Timer");
+                money_timer.schedule(task, 4000L);
             }
         } else {
             if(thread_update_money!= null && thread_update_money.isAlive()){

@@ -8,12 +8,13 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.liverussia.cr.R;
 
 public class CasinoBaccarat {
-    private static final int CHIP_TYPE_1 = 1;
-    private static final int CHIP_TYPE_5 = 2;
-    private static final int CHIP_TYPE_25 = 3;
-    private static final int CHIP_TYPE_100 = 4;
-    private static final int CHIP_TYPE_500 = 5;
-    private static final int CHIP_TYPE_1000 = 6;
+    static final int CHIP_TYPE_1 = 1;
+    static final int CHIP_TYPE_5 = 2;
+    static final int CHIP_TYPE_25 = 3;
+    static final int CHIP_TYPE_100 = 4;
+    static final int CHIP_TYPE_500 = 5;
+    static final int CHIP_TYPE_1000 = 6;
+
 
     private int selected_chip = 0;
     private int current_bet = 0;

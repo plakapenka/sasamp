@@ -210,8 +210,6 @@ public:
 	GiveTakeDamage(bool bGiveOrTake, uint16_t wPlayerID, float damage_amount, uint32_t weapon_id,
 				   uint32_t bodypart);
 
-	void SendBulletSyncData(PLAYERID byteHitID, uint8_t byteHitType, VECTOR vecHitPos);
-
 public:
 	bool				m_bWaitingForSpawnRequestReply;
 

@@ -1222,26 +1222,20 @@ void CPedDamageResponseCalculator__ComputeDamageResponse_hook(stPedDamageRespons
 			else if(weaponid == 35 || weaponid == 16)
 				weaponid = 51; // explosion
 
-			PLAYERID damagedid = pPlayerPool->FindRemotePlayerIDFromGtaPtr((PED_TYPE*)thiz->pEntity);
-			PLAYERID issuerid = pPlayerPool->FindRemotePlayerIDFromGtaPtr((PED_TYPE*)pEntity);
+			PLAYERID damagedid = pPlayerPool->FindRemotePlayerIDFromGtaPtr((PED_TYPE*)thiz->pEntity); // отправитель урона
+			PLAYERID issuerid = pPlayerPool->FindRemotePlayerIDFromGtaPtr((PED_TYPE*)pEntity); // получатель
 
-			// self damage like fall damage, drowned, etc
-			if(issuerid == INVALID_PLAYER_ID && damagedid == INVALID_PLAYER_ID)
-			{
-				PLAYERID byteLocalId = pPlayerPool->GetLocalPlayerID();
-				pPlayerPool->GetLocalPlayer()->GiveTakeDamage(true, byteLocalId, fDamage, weaponid, bodypart);
-			}
+			PLAYERID byteLocalId = pPlayerPool->GetLocalPlayerID();
 
 			// give player damage
-			if(issuerid != INVALID_PLAYER_ID && damagedid == INVALID_PLAYER_ID) {
+			if((PED_TYPE*)thiz->pEntity == pGame->FindPlayerPed()->m_pPed && issuerid != INVALID_PLAYER_ID) {
+				CHUD::addGiveDamageNotify(pPlayerPool->GetPlayerName(issuerid), weaponid, fDamage);
 				pPlayerPool->GetLocalPlayer()->GiveTakeDamage(false, issuerid, fDamage, weaponid,
 															  bodypart);
-
-				CHUD::addGiveDamageNotify(pPlayerPool->GetPlayerName(issuerid), weaponid, fDamage);
 			}
 
-				// player take damage
-			else if(issuerid == INVALID_PLAYER_ID && damagedid != INVALID_PLAYER_ID) {
+			// player take damage
+			else if((PED_TYPE*)pEntity == pGame->FindPlayerPed()->m_pPed) {
 				pPlayerPool->GetLocalPlayer()->GiveTakeDamage(true, damagedid, fDamage, weaponid, bodypart);
 
 				CHUD::addTakeDamageNotify(pPlayerPool->GetPlayerName(damagedid), weaponid, fDamage);

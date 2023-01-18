@@ -366,7 +366,7 @@
                 android:textSize="@dimen/_8sdp"
                 android:fontFamily="@font/visby_round_cf_extra_bold"
                 android:text="Oxpa_Litvinenko - Deagle +46.20"
-                android:textColor="#311b92"
+                android:textColor="@color/blue_"
                 android:shadowColor="@color/black"
                 android:shadowRadius="1"
                 app:layout_constraintBottom_toTopOf="@+id/hud_logo"
@@ -381,6 +381,8 @@
                 android:fontFamily="@font/visby_round_cf_extra_bold"
                 android:text="Oxpa_Litvinenko - Deagle +46.20"
                 android:textColor="@color/blue_"
+                android:shadowColor="@color/black"
+                android:shadowRadius="1"
                 android:textSize="@dimen/_8sdp"
                 app:layout_constraintBottom_toTopOf="@+id/hud_logo"
                 app:layout_constraintEnd_toEndOf="parent" />
