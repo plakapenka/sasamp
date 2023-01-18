@@ -1191,9 +1191,6 @@ struct CPedDamageResponseCalculatorInterface
 	bool bSpeak; // refers to a CPed::Say call (the dying scream?)
 };
 
-
-extern float m_fWeaponDamages[43 + 1];
-
 // thanks Codeesar
 struct stPedDamageResponse
 {
@@ -1203,6 +1200,8 @@ struct stPedDamageResponse
 	int iWeaponType;
 	bool bSpeak;
 };
+
+extern float m_fWeaponDamages[43 + 1];
 
 void (*CPedDamageResponseCalculator__ComputeDamageResponse)(stPedDamageResponse* thiz, ENTITY_TYPE* pEntity, uintptr_t pDamageResponse, bool bSpeak);
 void CPedDamageResponseCalculator__ComputeDamageResponse_hook(stPedDamageResponse* thiz, ENTITY_TYPE* pEntity, uintptr_t pDamageResponse, bool bSpeak)
@@ -1234,12 +1233,19 @@ void CPedDamageResponseCalculator__ComputeDamageResponse_hook(stPedDamageRespons
 			}
 
 			// give player damage
-			if(issuerid != INVALID_PLAYER_ID && damagedid == INVALID_PLAYER_ID)
-				pPlayerPool->GetLocalPlayer()->GiveTakeDamage(false, issuerid, fDamage, weaponid, bodypart);
+			if(issuerid != INVALID_PLAYER_ID && damagedid == INVALID_PLAYER_ID) {
+				pPlayerPool->GetLocalPlayer()->GiveTakeDamage(false, issuerid, fDamage, weaponid,
+															  bodypart);
+
+				CHUD::addGiveDamageNotify(pPlayerPool->GetPlayerName(issuerid), weaponid, fDamage);
+			}
 
 				// player take damage
-			else if(issuerid == INVALID_PLAYER_ID && damagedid != INVALID_PLAYER_ID)
+			else if(issuerid == INVALID_PLAYER_ID && damagedid != INVALID_PLAYER_ID) {
 				pPlayerPool->GetLocalPlayer()->GiveTakeDamage(true, damagedid, fDamage, weaponid, bodypart);
+
+				CHUD::addTakeDamageNotify(pPlayerPool->GetPlayerName(damagedid), weaponid, fDamage);
+			}
 		}
 	}
 
@@ -2870,8 +2876,6 @@ VECTOR& FindPlayerSpeed_hook(int a1)
 
 void SendBulletSync(VECTOR *vecOrigin, VECTOR *vecEnd, VECTOR *vecPos, ENTITY_TYPE **ppEntity)
 {
-	Log("SendBulletSync");
-
 	BULLET_DATA bulletData;
 	memset(&bulletData, 0, sizeof(BULLET_DATA));
 

@@ -9,6 +9,7 @@ struct stSettings
 	char player_password[66];
 	char szPassword[66];
 	int szAutoLogin;
+	int iIsEnableDamageInformer;
 	int szServer;
 	int szDebug;
 	int szHeadMove;

@@ -483,7 +483,7 @@ bool CLocalPlayer::Process()
     }
     return true;
 }
-extern float                    m_fWeaponDamages[43 + 1];
+
 //
 void CLocalPlayer::SendBulletSyncData(PLAYERID byteHitID, uint8_t byteHitType, VECTOR vecHitPos)
 {

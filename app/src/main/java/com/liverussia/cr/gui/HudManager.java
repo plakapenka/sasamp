@@ -90,6 +90,9 @@ public class HudManager {
     private ProgressView salary_job_progress;
     private TextView salary_job_exp_text;
 
+    TextView damage_informer_give;
+    TextView damage_informer_take;
+
     private int cursorPos = 0;
     private final int INVALID = -1;
     private final int ME_BUTTON = 0;
@@ -127,6 +130,7 @@ public class HudManager {
     public native void SendChatButton(int buttonID);
     public native void ChatSetCursor(int start, int end);
     ChatAdapter adapter;
+    int damageSound = 0;
 
     ArrayList<String> chat_lines = new ArrayList<>();
 
@@ -134,6 +138,12 @@ public class HudManager {
     public HudManager(Activity aactivity) {
         activity = aactivity;
 
+        // === damage informer
+        damage_informer_give = activity.findViewById(R.id.damage_informer_give);
+        damage_informer_take = activity.findViewById(R.id.damage_informer_take);
+        damageSound = NvEventQueueActivity.getInstance().soundPool.load(activity.getApplication(), R.raw.hit, 0);
+
+        // == нотифай заработано
         salary_job_layout = activity.findViewById(R.id.salary_job_layout);
         salary_job_layout.setVisibility(View.GONE);
         salary_job_salary_text = activity.findViewById(R.id.salary_job_salary_text);
@@ -393,6 +403,51 @@ public class HudManager {
         });
 
         Utils.HideLayout(hud_gpsactive, false);
+    }
+
+    void addGiveDamageNotify(String nick, String weapon, float damage){
+        NvEventQueueActivity.getInstance().soundPool.play(damageSound, 0.1f, 0.1f, 1, 0, 1.2f);
+
+        TimerTask task = new TimerTask() {
+            public void run() {
+                activity.runOnUiThread(() -> {
+                    damage_informer_give.setVisibility(View.GONE);
+                });
+
+                timer = null;
+            }
+        };
+
+        if(timer != null) timer.cancel();
+        timer = new Timer("Timer");
+        timer.schedule(task, 2000L);
+
+        activity.runOnUiThread(() -> {
+            damage_informer_give.setText(String.format("%s - %s +%.2f", nick, weapon, damage));
+            damage_informer_give.setVisibility(View.VISIBLE);
+        });
+    }
+
+    void addTakeDamageNotify(String nick, String weapon, float damage){
+
+        TimerTask task = new TimerTask() {
+            public void run() {
+                activity.runOnUiThread(() -> {
+                    damage_informer_give.setVisibility(View.GONE);
+                });
+
+                timer = null;
+            }
+        };
+
+        if(timer != null) timer.cancel();
+        timer = new Timer("Timer");
+        timer.schedule(task, 2000L);
+
+        activity.runOnUiThread(() -> {
+            damage_informer_take.setText(String.format("%s - %s -%.2f", nick, weapon, damage));
+            damage_informer_take.setVisibility(View.VISIBLE);
+        });
     }
 
     public void ToggleHpText(boolean toggle)

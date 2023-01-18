@@ -61,6 +61,10 @@ public:
     static void UpdateSalary(int salary, int lvl, float exp);
 
     static int iWantedLevel;
+
+    static void addGiveDamageNotify(char *nick, int weaponId, float damage);
+
+    static void addTakeDamageNotify(char *nick, int weaponId, float damage);
 };
 
 

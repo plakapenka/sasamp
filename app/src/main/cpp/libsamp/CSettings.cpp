@@ -8,12 +8,10 @@
 #include "java_systems/CHUD.h"
 #include "util/patch.h"
 
-extern CGame* pGame;
+extern CGame *pGame;
 
-static void ClearBackslashN(char *pStr, size_t size)
-{
-	for (size_t i = 0; i < size; i++)
-	{
+static void ClearBackslashN(char *pStr, size_t size) {
+	for (size_t i = 0; i < size; i++) {
 		if (pStr[i] == '\n' || pStr[i] == 13)
 		{
 			pStr[i] = 0;
@@ -62,7 +60,9 @@ void CSettings::Save(int iIgnoreCategory)
 	ini_table_create_entry(config, "client", "player_password", m_Settings.player_password);
 	
 	ini_table_create_entry_as_int(config, "client", "autologin", m_Settings.szAutoLogin);
+
 	ini_table_create_entry_as_int(config, "gui", "hparmourtext", m_Settings.iHPArmourText);
+	ini_table_create_entry_as_int(config, "gui", "damageinformer", m_Settings.iIsEnableDamageInformer);
 	
 
 
@@ -247,6 +247,7 @@ void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 	m_Settings.iAndroidKeyboard = ini_table_get_entry_as_int(config, "gui", "androidKeyboard", 0);
 
 	m_Settings.iOutfitGuns = ini_table_get_entry_as_int(config, "gui", "outfit", 1);
+	m_Settings.iIsEnableDamageInformer = ini_table_get_entry_as_int(config, "gui", "damageinformer", 1);
 	m_Settings.iHPArmourText = ini_table_get_entry_as_int(config, "gui", "hparmourtext", 0);
 	m_Settings.iSkyBox = ini_table_get_entry_as_int(config, "gui", "ctimecyc", 1);
 	m_Settings.iSnow = ini_table_get_entry_as_int(config, "gui", "snow", 1);
@@ -325,29 +326,40 @@ Java_com_nvidia_devtech_NvEventQueueActivity_setNativeHpArmourText(JNIEnv *pEnv,
 	//CInfoBarText::SetEnabled(b);
 }
 
-extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_ChatLineChanged(JNIEnv *env,
 																			   jobject thiz,
 																			   jint newcount) {
-	if (pSettings)
-	{
+	if (pSettings) {
 		pSettings->GetWrite().iChatMaxMessages = newcount;
 		pSettings->Save();
 	}
 }
 
-extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_ChatFontSizeChanged(JNIEnv *env,
 																				   jobject thiz,
 																				   jint size) {
-	if (pSettings)
-	{
+	if (pSettings) {
 		pSettings->GetWrite().iChatFontSize = size;
 		pSettings->Save();
 		CHUD::ChangeChatTextSize(size);
 	}
 }
 
+JNIEXPORT jboolean JNICALL
+Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_getNativeDamageInformer(JNIEnv *env,
+																					   jobject thiz) {
+	return pSettings->GetReadOnly().iIsEnableDamageInformer;
+}
+
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_setNativeDamageInformer(JNIEnv *env,
+																					   jobject thiz,
+																					   jboolean state) {
+	if (pSettings) {
+		pSettings->GetWrite().iIsEnableDamageInformer = state;
+		pSettings->Save();
+	}
+}
 }

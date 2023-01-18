@@ -531,7 +531,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_SHOW_SALARY:
 		{
-			Packet_Salary(p);
+			packetSalary(p);
 			break;
 		}
 		case RPC_ADMIN_RECON:
@@ -541,7 +541,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_MAFIA_WAR:
 		{
-			Packet_MAFIA_WAR(p);
+            packetMafiaWar(p);
 			break;
 		}
 		case RPC_CASINO_LUCKY_WHEEL_MENU:

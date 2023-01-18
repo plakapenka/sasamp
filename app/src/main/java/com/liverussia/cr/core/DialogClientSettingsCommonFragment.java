@@ -22,9 +22,13 @@ import com.nvidia.devtech.NvEventQueueActivity;
 import java.util.HashMap;
 
 public class DialogClientSettingsCommonFragment extends Fragment implements ISaveableFragment {
+    native boolean getNativeDamageInformer();
+    native void setNativeDamageInformer(boolean state);
+
     private SwitchCompat mSwitchFPSCounter;
     private SwitchCompat mSwitchOutfit;
     private SwitchCompat mSwitchHpArmour;
+    SwitchCompat switch_damageinformer;
     private SeekBar chat_line_count;
     private SeekBar chat_font_size;
 
@@ -78,6 +82,7 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
 
         mSwitchFPSCounter = mRootView.findViewById(R.id.switch_fps_counter);
         mSwitchHpArmour = mRootView.findViewById(R.id.switch_info_bar);
+        switch_damageinformer = mRootView.findViewById(R.id.switch_damageinformer);
         mSwitchOutfit = mRootView.findViewById(R.id.switch_outfit_weapons);
         chat_line_count = mRootView.findViewById(R.id.chat_line_count);
         chat_line_count.setProgress(mContext.findViewById(R.id.chat).getLayoutParams().height);
@@ -137,6 +142,13 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 mContext.setNativeHpArmourText(b);
+            }
+        });
+
+        switch_damageinformer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                setNativeDamageInformer(b);
             }
         });
 
@@ -224,6 +236,7 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
     public void getValues() {
         mSwitchFPSCounter.setChecked(mContext.getNativeFpsCounterSettings());
         mSwitchHpArmour.setChecked(mContext.getNativeHpArmourText());
+        switch_damageinformer.setChecked(getNativeDamageInformer());
         mSwitchOutfit.setChecked(mContext.getNativeOutfitGunsSettings());
 
         bChangeAllowed = false;

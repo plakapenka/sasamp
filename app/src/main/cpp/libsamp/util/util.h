@@ -8,6 +8,8 @@ public:
     static bool IsGameEntityArePlaceable(ENTITY_TYPE *pEntity);
 
     static void WorldRemoveEntity(uintptr_t pEnt);
+
+    static const char *GetWeaponName(int iWeaponID);
 };
 
 uintptr_t FindLibrary(const char* library);

@@ -357,6 +357,34 @@
                     app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/damage_informer_give"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:textSize="@dimen/_8sdp"
+                android:fontFamily="@font/visby_round_cf_extra_bold"
+                android:text="Oxpa_Litvinenko - Deagle +46.20"
+                android:textColor="#311b92"
+                android:shadowColor="@color/black"
+                android:shadowRadius="1"
+                app:layout_constraintBottom_toTopOf="@+id/hud_logo"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/damage_informer_take"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:fontFamily="@font/visby_round_cf_extra_bold"
+                android:text="Oxpa_Litvinenko - Deagle +46.20"
+                android:textColor="@color/blue_"
+                android:textSize="@dimen/_8sdp"
+                app:layout_constraintBottom_toTopOf="@+id/hud_logo"
+                app:layout_constraintEnd_toEndOf="parent" />
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/hud_logo"
                 android:layout_width="wrap_content"
@@ -789,7 +817,6 @@
                 android:background="@drawable/chat_input"
                 android:clickable="true"
                 android:fontFamily="@font/visby_round_cf_extra_bold"
-                android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:gravity="center"
                 android:text="/me"
                 android:textColor="#DDDDDB"
@@ -806,7 +833,6 @@
                 android:background="@drawable/chat_input"
                 android:clickable="true"
                 android:fontFamily="@font/visby_round_cf_extra_bold"
-                android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:gravity="center"
                 android:text="/try"
                 android:textColor="#DDDDDB"
@@ -823,7 +849,6 @@
                 android:background="@drawable/chat_input"
                 android:clickable="true"
                 android:fontFamily="@font/visby_round_cf_extra_bold"
-                android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:gravity="center"
                 android:text="/do"
                 android:textColor="#DDDDDB"
@@ -923,4 +948,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="TouchTargetSizeCheck" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

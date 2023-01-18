@@ -192,9 +192,9 @@ void CHUD::UpdateWanted()
         return;
     }
     jclass clazz = env->GetObjectClass(thiz);
-    jmethodID UpdateWanted = env->GetMethodID(clazz, "UpdateWanted", "(I)V");
+    jmethodID method = env->GetMethodID(clazz, "UpdateWanted", "(I)V");
 
-    env->CallVoidMethod(thiz, UpdateWanted, pGame->GetWantedLevel());
+    env->CallVoidMethod(thiz, method, iWantedLevel);
 }
 
 void CHUD::UpdateMoney()
@@ -207,9 +207,9 @@ void CHUD::UpdateMoney()
         return;
     }
     jclass clazz = env->GetObjectClass(thiz);
-    jmethodID UpdateMoney = env->GetMethodID(clazz, "UpdateMoney", "(I)V");
+    jmethodID method = env->GetMethodID(clazz, "UpdateMoney", "(I)V");
 
-    env->CallVoidMethod(thiz, UpdateMoney, iLocalMoney);
+    env->CallVoidMethod(thiz, method, iLocalMoney);
 }
 
 extern "C"
@@ -228,25 +228,20 @@ Java_com_liverussia_cr_gui_HudManager_ClickEnterExitVehicleButton(JNIEnv *env, j
     if(!pNetGame->GetPlayerPool())return;
 
     CLocalPlayer *pPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer();
-
     if(!pPlayer)return;
-    if(!pPlayer->GetPlayerPed())return;
 
-    if(pPlayer->GetPlayerPed()->IsInVehicle()) {
+    CPlayerPed *pPed = pPlayer->GetPlayerPed();
+    if(!pPed) return;
 
-        CVehiclePool *pVehiclePool=pNetGame->GetVehiclePool();
-        VEHICLEID VehicleID = pVehiclePool->FindIDFromGtaPtr((VEHICLE_TYPE *)GamePool_FindPlayerPed()->pVehicle);
+    if(pPed->IsInVehicle())
+    {
+        VEHICLEID vehicleId = pPed->GetCurrentSampVehicleID();
 
-        if(!VehicleID)return;
-
-       // VEHICLE_TYPE* CheckVeh = GamePool_Vehicle_GetAt(VehicleID);
-
-      //  if (CheckVeh->fHealth == 0.0f) return;
-      //  if (CheckVeh->entity.vtable == g_libGTASA + 0x5C7358) return;
+        if(vehicleId == INVALID_VEHICLE_ID) return;
 
         pPlayer->GetPlayerPed()->ExitCurrentVehicle();
 
-        pPlayer->SendExitVehicleNotification(VehicleID);
+        pPlayer->SendExitVehicleNotification(vehicleId);
     }
     else {
         pPlayer->GoEnterVehicle(false);
@@ -281,7 +276,7 @@ Java_com_liverussia_cr_gui_Speedometer_ClickSpedometr(JNIEnv *env, jobject thiz,
     pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
 }
 
-void CNetGame::Packet_Salary(Packet* p)
+void CNetGame::packetSalary(Packet* p)
 {
     RakNet::BitStream bs((unsigned char*)p->data, p->length, false);
     uint8_t packetID;
@@ -300,7 +295,7 @@ void CNetGame::Packet_Salary(Packet* p)
     CHUD::UpdateSalary(salary, lvl, exp);
 }
 
-void CNetGame::Packet_MAFIA_WAR(Packet* p)
+void CNetGame::packetMafiaWar(Packet* p)
 {
     RakNet::BitStream bs((unsigned char*)p->data, p->length, false);
     uint8_t packetID;
@@ -391,13 +386,43 @@ void CHUD::AddChatMessage(const char msg[])
     env->CallVoidMethod(thiz, AddChatMessage, jmsg);
 }
 
+void CHUD::addGiveDamageNotify(char nick[], int weaponId, float damage)
+{
+    if(!pSettings->GetWrite().iIsEnableDamageInformer) return;
+
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+
+    jstring jnick = env->NewStringUTF( nick );
+    jstring jweap = env->NewStringUTF( CUtil::GetWeaponName(weaponId) );
+
+    jclass clazz = env->GetObjectClass(thiz);
+    jmethodID method = env->GetMethodID(clazz, "addGiveDamageNotify", "(Ljava/lang/String;Ljava/lang/String;F)V");
+
+    env->CallVoidMethod(thiz, method, jnick, jweap, damage);
+}
+
+void CHUD::addTakeDamageNotify(char nick[], int weaponId, float damage)
+{
+    if(!pSettings->GetWrite().iIsEnableDamageInformer) return;
+
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+
+    jstring jnick = env->NewStringUTF( nick );
+    jstring jweap = env->NewStringUTF( CUtil::GetWeaponName(weaponId) );
+
+    jclass clazz = env->GetObjectClass(thiz);
+    jmethodID method = env->GetMethodID(clazz, "addTakeDamageNotify", "(Ljava/lang/String;Ljava/lang/String;F)V");
+
+    env->CallVoidMethod(thiz, method, jnick, jweap, damage);
+}
+
 void CHUD::ToggleHpText(bool toggle)
 {
     JNIEnv* env = g_pJavaWrapper->GetEnv();
 
     jclass clazz = env->GetObjectClass(thiz);
-    jmethodID ToggleHpText = env->GetMethodID(clazz, "ToggleHpText", "(Z)V");
-    env->CallVoidMethod(thiz, ToggleHpText, toggle);
+    jmethodID method = env->GetMethodID(clazz, "ToggleHpText", "(Z)V");
+    env->CallVoidMethod(thiz, method, toggle);
 }
 
 void CHUD::ToggleChat(bool toggle){

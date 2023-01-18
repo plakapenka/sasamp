@@ -996,6 +996,15 @@ public abstract class NvEventQueueActivity
 
         mRootFrame.setOnTouchListener(this);
 
+        AudioAttributes attributes = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_GAME)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build();
+
+        soundPool = new SoundPool.Builder()
+                .setAudioAttributes(attributes)
+                .build();
+
         mChooseServer = new ChooseServer(this);
         new Furniture_factory(this);
         new AdminRecon(this);
@@ -1020,16 +1029,6 @@ public abstract class NvEventQueueActivity
         mine_3 = new MineGame3(this);
         mHudManager = new HudManager(this);
         mCasinoLuckyWheel = new Casino_LuckyWheel(this);
-
-        AudioAttributes attributes = new AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_GAME)
-                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                .build();
-
-        soundPool = new SoundPool.Builder()
-                .setAudioAttributes(attributes)
-                .build();
-
 
         mSamwillManager = new SamwillManager(this);
         mSpeedometer = new Speedometer(this);

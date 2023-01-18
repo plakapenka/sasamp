@@ -220,7 +220,7 @@ public:
 	int 		m_iVehicleFriendlyFire;
     void Packet_FurnitureFactory(Packet* p);
 
-	void Packet_MAFIA_WAR(Packet *p);
+	static void packetMafiaWar(Packet *p);
 
 	void Packet_InventoryToggle(Packet *p);
 
@@ -233,7 +233,7 @@ public:
 
     static void packetAucContainer(Packet *p);
 
-	void Packet_Salary(Packet *p);
+	static void packetSalary(Packet *p);
 
 	static void packetAdminRecon(Packet *p);
 
