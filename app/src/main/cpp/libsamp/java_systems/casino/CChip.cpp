@@ -2,21 +2,21 @@
 // Created by plaka on 06.12.2022.
 //
 
-#include "CCasino.h"
+#include "CChip.h"
 #include <jni.h>
 
 #include "main.h"
 
-#include "../game/game.h"
+#include "game/game.h"
 #include "net/netgame.h"
 #include "gui/gui.h"
 
-#include "CHUD.h"
+#include "java_systems/CHUD.h"
 
 extern CJavaWrapper *g_pJavaWrapper;
 
 jobject jCasino;
-bool CCasino::bIsChipToggle = false;
+bool CChip::bIsShow = false;
 
 void CNetGame::packetCasinoChip(Packet* p)
 {
@@ -34,10 +34,10 @@ void CNetGame::packetCasinoChip(Packet* p)
     if(!type) {
         balance = CHUD::iLocalMoney;
     }
-    CCasino::OpenChipBuySell(!type, balance);
+    CChip::OpenChipBuySell(!type, balance);
 }
 
-void CCasino::OpenChipBuySell(bool isSell, int balance){
+void CChip::OpenChipBuySell(bool isSell, int balance){
     JNIEnv* env = g_pJavaWrapper->GetEnv();
 
     jclass clazz = env->GetObjectClass(jCasino);
@@ -45,7 +45,7 @@ void CCasino::OpenChipBuySell(bool isSell, int balance){
 
     env->CallVoidMethod(jCasino, OpenChipBuySell, isSell, balance);
 
-    CCasino::bIsChipToggle = true;
+    CChip::bIsShow = true;
 }
 
 extern "C"
@@ -58,7 +58,7 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_Casino_ClickChipButton(JNIEnv *env, jobject thiz, jint button_id,
                                                   jlong input, jboolean sell_or_buy) {
-    CCasino::bIsChipToggle = false;
+    CChip::bIsShow = false;
 
     RakNet::BitStream bsSend;
     bsSend.Write((uint8_t)ID_CUSTOM_RPC);

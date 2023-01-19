@@ -166,6 +166,8 @@
             android:id="@+id/casino_bc_yellow_area"
             android:layout_width="@dimen/_170sdp"
             android:layout_height="@dimen/_117sdp"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:background="@drawable/casino_bc_yellow_bg"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -312,6 +314,7 @@
             android:id="@+id/casino_bc_green_area"
             android:layout_width="@dimen/_94sdp"
             android:layout_height="@dimen/_96sdp"
+            android:clickable="true"
             android:background="@drawable/casino_bc_green_bg"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -345,57 +348,62 @@
         app:layout_constraintEnd_toEndOf="@+id/casino_bc_game_layout"
         app:layout_constraintStart_toStartOf="@+id/casino_bc_game_layout">
 
-        <View
+        <ImageView
             android:id="@+id/casino_bc_chip_1"
-            android:layout_width="@dimen/_18sdp"
-            android:layout_height="@dimen/_18sdp"
-
+            android:layout_width="@dimen/_19sdp"
+            android:layout_height="@dimen/_19sdp"
+            android:backgroundTintMode="multiply"
             android:background="@drawable/casino_chip_1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <View
+        <ImageView
             android:id="@+id/casino_bc_chip_5"
-            android:layout_width="@dimen/_18sdp"
-            android:layout_height="@dimen/_18sdp"
+            android:layout_width="@dimen/_19sdp"
+            android:layout_height="@dimen/_19sdp"
             android:layout_marginStart="8dp"
+            android:backgroundTintMode="multiply"
             android:background="@drawable/casino_chip_5"
             app:layout_constraintStart_toEndOf="@+id/casino_bc_chip_1"
             app:layout_constraintTop_toTopOf="@+id/casino_bc_chip_1" />
 
-        <View
+        <ImageView
             android:id="@+id/casino_bc_chip_25"
-            android:layout_width="@dimen/_18sdp"
-            android:layout_height="@dimen/_18sdp"
+            android:layout_width="@dimen/_19sdp"
+            android:layout_height="@dimen/_19sdp"
             android:layout_marginStart="8dp"
+            android:backgroundTintMode="multiply"
             android:background="@drawable/casino_chip_25"
             app:layout_constraintStart_toEndOf="@+id/casino_bc_chip_5"
             app:layout_constraintTop_toTopOf="@+id/casino_bc_chip_5" />
 
-        <View
+        <ImageView
             android:id="@+id/casino_bc_chip_100"
-            android:layout_width="@dimen/_18sdp"
-            android:layout_height="@dimen/_18sdp"
+            android:layout_width="@dimen/_19sdp"
+            android:layout_height="@dimen/_19sdp"
             android:layout_marginStart="8dp"
+            android:backgroundTintMode="multiply"
             android:background="@drawable/casino_chip_100"
             app:layout_constraintStart_toEndOf="@+id/casino_bc_chip_25"
             app:layout_constraintTop_toTopOf="@+id/casino_bc_chip_25" />
 
-        <View
+        <ImageView
             android:id="@+id/casino_bc_chip_500"
-            android:layout_width="@dimen/_18sdp"
-            android:layout_height="@dimen/_18sdp"
+            android:layout_width="@dimen/_19sdp"
+            android:layout_height="@dimen/_19sdp"
             android:layout_marginStart="8dp"
+            android:backgroundTintMode="multiply"
             android:background="@drawable/casino_chip_500"
             app:layout_constraintStart_toEndOf="@+id/casino_bc_chip_100"
             app:layout_constraintTop_toTopOf="@+id/casino_bc_chip_100" />
 
-        <View
+        <ImageView
             android:id="@+id/casino_bc_chip_1000"
-            android:layout_width="@dimen/_18sdp"
-            android:layout_height="@dimen/_18sdp"
+            android:layout_width="@dimen/_19sdp"
+            android:layout_height="@dimen/_19sdp"
             android:layout_marginStart="8dp"
+            android:backgroundTintMode="multiply"
             android:background="@drawable/casino_chip_1000"
             app:layout_constraintStart_toEndOf="@+id/casino_bc_chip_500"
             app:layout_constraintTop_toTopOf="@+id/casino_bc_chip_500" />
@@ -416,9 +424,10 @@
             android:id="@+id/casino_bc_timer_bg"
             android:layout_width="@dimen/_84sdp"
             android:layout_height="@dimen/_17sdp"
+            android:layout_marginStart="16dp"
             android:background="@drawable/casino_bc_timer_bg"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/casino_bc_cancel_button"
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
@@ -435,22 +444,30 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <View
+        <ImageView
+            android:id="@+id/casino_bc_repeat_button"
+            android:layout_width="@dimen/_22sdp"
+            android:layout_height="@dimen/_22sdp"
+            android:layout_marginStart="16dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:src="@drawable/casino_bc_repeat_button"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/casino_bc_timer_bg"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
             android:id="@+id/casino_bc_cancel_button"
             android:layout_width="@dimen/_22sdp"
             android:layout_height="@dimen/_22sdp"
-
+            android:clickable="true"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:layout_marginEnd="16dp"
-            android:background="@drawable/casino_bc_cancel_button"
+            android:src="@drawable/casino_bc_cancel_button"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/casino_bc_timer_bg"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <View
-            android:layout_width="@dimen/_22sdp"
-            android:layout_height="@dimen/_22sdp"
-            android:background="@drawable/casino_bc_repeat_button"
-            app:layout_constraintStart_toEndOf="@+id/casino_bc_timer_bg" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
