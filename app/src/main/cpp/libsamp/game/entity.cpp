@@ -10,7 +10,7 @@ extern CNetGame *pNetGame;
 
 void CEntity::Add()
 {
-	if (!m_pEntity || !CUtil::IsGameEntityArePlaceable(m_pEntity))
+	if (!m_pEntity || CUtil::IsGameEntityArePlaceable(m_pEntity))
 	{
 		return;
 	}
@@ -35,7 +35,7 @@ void CEntity::SetGravityProcessing(bool bProcess)
 
 void CEntity::UpdateRwMatrixAndFrame()
 {
-	if (m_pEntity && CUtil::IsGameEntityArePlaceable(m_pEntity))
+	if (m_pEntity && !CUtil::IsGameEntityArePlaceable(m_pEntity))
 	{
 		if (m_pEntity->m_pRwObject)
 		{

@@ -1,6 +1,7 @@
 #include "../main.h"
 #include "game.h"
 #include "../net/netgame.h"
+#include "util/patch.h"
 #include <cmath>
 
 extern CGame *pGame;
@@ -84,6 +85,7 @@ void CObject::Process(float fElapsedTime)
 	if (!(m_pEntity->mat)) return;
 	if (m_byteMoving & 1)
 	{
+		Log("moooooooov");
 		VECTOR vecSpeed = { 0.0f, 0.0f, 0.0f };
 		MATRIX4X4 matEnt;
 		GetMatrix(&matEnt);
@@ -315,9 +317,9 @@ void CObject::StopMoving()
 
 void CObject::ApplyMoveSpeed()
 {
-	if (m_pEntity)
+	if(m_pEntity)
 	{
-		float fTimeStep = *(float*)(g_libGTASA + 0x8C9BB4);
+		float fTimeStep	= *(float*)(g_libGTASA + 0x8C9BB4); // 2.00 - 0x96B500
 
 		MATRIX4X4 mat;
 		GetMatrix(&mat);
@@ -328,20 +330,16 @@ void CObject::ApplyMoveSpeed()
 	}
 }
 
-void CObject::GetRotation(float* pfX, float* pfY, float* pfZ)
+void CObject::GetRotation(float* pfX,float* pfY,float* pfZ)
 {
-	if (m_pEntity)
-	{
-		MATRIX4X4* mat = m_pEntity->mat;
+	if (!m_pEntity) return;
 
-		if (mat)
-		{
-			// CMatrix::ConvertToEulerAngles
-			((void(*)(PMATRIX4X4, float*, float*, float*, int))(g_libGTASA + 0x3E8098 + 1))(mat, pfX, pfY, pfZ, 21);
-		}
+	MATRIX4X4* mat = m_pEntity->mat;
 
-		*pfX = *pfX * 57.295776 * -1.0;
-		*pfY = *pfY * 57.295776 * -1.0;
-		*pfZ = *pfZ * 57.295776 * -1.0;
-	}
+	if(mat) CPatch::CallFunction<void>(g_libGTASA + 0x3E8098 + 1, mat, pfX, pfY, pfZ, 21);
+
+	*pfX = *pfX * 57.295776 * -1.0;
+	*pfY = *pfY * 57.295776 * -1.0;
+	*pfZ = *pfZ * 57.295776 * -1.0;
+
 }

@@ -62,7 +62,6 @@ public:
 	// 0.3.7
 	static void RemovePlayer(CPlayerPed* pPlayer);
 	// 0.3.7
-	static CVehicle* NewVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRotation, bool bAddSiren);
 	CObject* NewObject(int iModel, float fPosX, float fPosY, float fPosZ, VECTOR vecRot, float fDrawDistastatic);
 	uint32_t CreatePickup(int iModel, int iType, float fX, float fY, float fZ, int *unk);
 
