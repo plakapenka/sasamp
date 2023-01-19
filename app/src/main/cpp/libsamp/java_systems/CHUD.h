@@ -62,7 +62,9 @@ public:
 
     static int iWantedLevel;
 
-    static void addGiveDamageNotify(char *nick, int weaponId, float damage);
+    static void addGiveDamageNotify(PLAYERID Id, int weaponId, float damage);
+    static PLAYERID lastGiveDamagePlayerId;
+    static float fLastGiveDamage;
 
     static void addTakeDamageNotify(char *nick, int weaponId, float damage);
 };

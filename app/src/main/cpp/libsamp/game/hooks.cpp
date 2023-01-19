@@ -556,9 +556,6 @@ unsigned int MainMenuScreen__Update_hook(uintptr_t thiz, float a2)
 	return ret;
 }
 
-extern char(*CStreaming__ConvertBufferToObject)(int, int, int);
-char CStreaming__ConvertBufferToObject_hook(int a1, int a2, int a3);
-
 static char szLastBufferedName[40];
 int (*cHandlingDataMgr__FindExactWord)(uintptr_t thiz, char* line, char* nameTable, int entrySize, int entryCount);
 int cHandlingDataMgr__FindExactWord_hook(uintptr_t thiz, char* line, char* nameTable, int entrySize, int entryCount)
@@ -1229,7 +1226,7 @@ void CPedDamageResponseCalculator__ComputeDamageResponse_hook(stPedDamageRespons
 
 			// give player damage
 			if((PED_TYPE*)thiz->pEntity == pGame->FindPlayerPed()->m_pPed && issuerid != INVALID_PLAYER_ID) {
-				CHUD::addGiveDamageNotify(pPlayerPool->GetPlayerName(issuerid), weaponid, fDamage);
+				CHUD::addGiveDamageNotify(issuerid, weaponid, fDamage);
 				pPlayerPool->GetLocalPlayer()->GiveTakeDamage(false, issuerid, fDamage, weaponid,
 															  bodypart);
 			}

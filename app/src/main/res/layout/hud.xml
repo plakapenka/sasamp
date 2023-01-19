@@ -357,20 +357,45 @@
                     app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                android:visibility="gone"
-                android:id="@+id/damage_informer_give"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/damage_informer_give_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:textSize="@dimen/_8sdp"
-                android:fontFamily="@font/visby_round_cf_extra_bold"
-                android:text="Oxpa_Litvinenko - Deagle +46.20"
-                android:textColor="@color/blue_"
-                android:shadowColor="@color/black"
-                android:shadowRadius="1"
+                android:layout_marginStart="@dimen/_3sdp"
                 app:layout_constraintBottom_toTopOf="@+id/hud_logo"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent">
+
+                <ImageView
+                    android:id="@+id/hud_damage_bg"
+                    android:layout_width="@dimen/_140sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/blood"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/damage_informer_give_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:fontFamily="@font/visby_round_cf_extra_bold"
+                    android:includeFontPadding="false"
+                    android:text="Oxpa_Litvinenko - Deagle +46.20"
+                    android:textColor="#DF000000"
+                    android:shadowRadius="1"
+                    android:shadowColor="@color/black"
+                    android:textSize="@dimen/_7sdp"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             <TextView
                 android:visibility="gone"

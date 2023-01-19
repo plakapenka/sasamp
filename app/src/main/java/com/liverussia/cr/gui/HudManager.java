@@ -94,7 +94,8 @@ public class HudManager {
     // damage inf
     Timer take_damage_timer;
     Timer give_damage_timer;
-    TextView damage_informer_give;
+    TextView damage_informer_give_text;
+    ConstraintLayout damage_informer_give_layout;
     TextView damage_informer_take;
 
     private int cursorPos = 0;
@@ -143,7 +144,8 @@ public class HudManager {
         activity = aactivity;
 
         // === damage informer
-        damage_informer_give = activity.findViewById(R.id.damage_informer_give);
+        damage_informer_give_layout = activity.findViewById(R.id.damage_informer_give_layout);
+        damage_informer_give_text = activity.findViewById(R.id.damage_informer_give_text);
         damage_informer_take = activity.findViewById(R.id.damage_informer_take);
         damageSound = NvEventQueueActivity.getInstance().soundPool.load(activity.getApplication(), R.raw.hit, 0);
 
@@ -415,7 +417,7 @@ public class HudManager {
         TimerTask task = new TimerTask() {
             public void run() {
                 activity.runOnUiThread(() -> {
-                    damage_informer_give.setVisibility(View.GONE);
+                    damage_informer_give_layout.setVisibility(View.GONE);
                 });
 
                 give_damage_timer = null;
@@ -427,8 +429,8 @@ public class HudManager {
         give_damage_timer.schedule(task, 2000L);
 
         activity.runOnUiThread(() -> {
-            damage_informer_give.setText(String.format("%s - %s +%.2f", nick, weapon, damage));
-            damage_informer_give.setVisibility(View.VISIBLE);
+            damage_informer_give_text.setText(String.format("%s - %s +%.2f", nick, weapon, damage));
+            damage_informer_give_layout.setVisibility(View.VISIBLE);
         });
     }
 

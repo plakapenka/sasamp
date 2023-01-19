@@ -19,15 +19,17 @@ extern CJavaWrapper *g_pJavaWrapper;
 extern CGame *pGame;
 extern CGUI* pGUI;
 
-bool    CHUD::bIsShow = false;
-bool    CHUD::bIsShowPassengerButt = false;
-bool    CHUD::bIsShowEnterExitButt = false;
-bool    CHUD::bIsShowLockButt = false;
-bool    CHUD::bIsShowHornButt = false;
-bool    CHUD::bIsShowChat = true;
-int     CHUD::iLocalMoney = 0;
-int     CHUD::iWantedLevel = 0;
-bool    CHUD::bIsShowMafiaWar = false;
+bool        CHUD::bIsShow = false;
+bool        CHUD::bIsShowPassengerButt = false;
+bool        CHUD::bIsShowEnterExitButt = false;
+bool        CHUD::bIsShowLockButt = false;
+bool        CHUD::bIsShowHornButt = false;
+bool        CHUD::bIsShowChat = true;
+int         CHUD::iLocalMoney = 0;
+int         CHUD::iWantedLevel = 0;
+bool        CHUD::bIsShowMafiaWar = false;
+float       CHUD::fLastGiveDamage = 0.0f;
+PLAYERID    CHUD::lastGiveDamagePlayerId = INVALID_PLAYER_ID;
 
 CVector2DFloat CHUD::radarBgPos1;
 CVector2DFloat CHUD::radarBgPos2;
@@ -386,19 +388,31 @@ void CHUD::AddChatMessage(const char msg[])
     env->CallVoidMethod(thiz, AddChatMessage, jmsg);
 }
 
-void CHUD::addGiveDamageNotify(char nick[], int weaponId, float damage)
+void CHUD::addGiveDamageNotify(PLAYERID Id, int weaponId, float damage)
 {
     if(!pSettings->GetWrite().iIsEnableDamageInformer) return;
 
+    CPlayerPool* pPlayerPool = pNetGame->GetPlayerPool();
+    if(!pPlayerPool)return;
+    if(!pPlayerPool->GetSlotState(Id))return;
+
+    if(lastGiveDamagePlayerId == Id) {
+        fLastGiveDamage += damage;
+    }
+    else {
+        lastGiveDamagePlayerId = Id;
+        fLastGiveDamage = damage;
+    }
+
     JNIEnv* env = g_pJavaWrapper->GetEnv();
 
-    jstring jnick = env->NewStringUTF( nick );
+    jstring jnick = env->NewStringUTF( pPlayerPool->GetPlayerName(Id) );
     jstring jweap = env->NewStringUTF( CUtil::GetWeaponName(weaponId) );
 
     jclass clazz = env->GetObjectClass(thiz);
     jmethodID method = env->GetMethodID(clazz, "addGiveDamageNotify", "(Ljava/lang/String;Ljava/lang/String;F)V");
 
-    env->CallVoidMethod(thiz, method, jnick, jweap, damage);
+    env->CallVoidMethod(thiz, method, jnick, jweap, fLastGiveDamage);
 }
 
 void CHUD::addTakeDamageNotify(char nick[], int weaponId, float damage)
