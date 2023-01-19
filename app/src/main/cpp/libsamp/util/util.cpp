@@ -9,7 +9,7 @@ bool CUtil::IsValidGameVehicle(VEHICLE_TYPE *pVehicle)
 
 bool CUtil::IsValidGamePed(PED_TYPE * pPed)
 {
-	// IsPedPointerValid(CPed *) — 0x00435614
+	// IsPedPointerValid(CPed *) â€” 0x00435614
 	return ((bool(*)(PED_TYPE *)) (g_libGTASA + 0x00435614 + 1)) (pPed);
 }
 

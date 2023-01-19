@@ -11,7 +11,6 @@ CVehiclePool::CVehiclePool()
 	{
 		m_bVehicleSlotState[VehicleID] = false;
 		m_pVehicles[VehicleID] = nullptr;
-		m_pGTAVehicles[VehicleID] = nullptr;
 	}
 }
 
@@ -84,18 +83,18 @@ void CVehiclePool::Process()
 
 bool CVehiclePool::New(NEW_VEHICLE *pNewVehicle)
 {
-#ifdef _CDEBUG
-	CChatWindow::AddDebugMessage("Added veh %d %d", pNewVehicle->VehicleID, pNewVehicle->iVehicleType);
-#endif
 	if(m_pVehicles[pNewVehicle->VehicleID] != nullptr)
 	{
 		CChatWindow::AddDebugMessage("Warning: vehicle %u was not deleted", pNewVehicle->VehicleID);
 		Delete(pNewVehicle->VehicleID);
 	}
 
-	m_pVehicles[pNewVehicle->VehicleID] = pGame->NewVehicle(pNewVehicle->iVehicleType,
-		pNewVehicle->vecPos.X, pNewVehicle->vecPos.Y, pNewVehicle->vecPos.Z, 
-		pNewVehicle->fRotation, pNewVehicle->byteAddSiren);
+	m_pVehicles[pNewVehicle->VehicleID] = new	CVehicle(pNewVehicle->iVehicleType,
+														  pNewVehicle->vecPos.X,
+														  pNewVehicle->vecPos.Y,
+														  pNewVehicle->vecPos.Z,
+														  pNewVehicle->fRotation,
+														  pNewVehicle->byteAddSiren);
 
 	if(m_pVehicles[pNewVehicle->VehicleID])
 	{
@@ -109,8 +108,7 @@ bool CVehiclePool::New(NEW_VEHICLE *pNewVehicle)
 		// health
 		m_pVehicles[pNewVehicle->VehicleID]->SetHealth(pNewVehicle->fHealth);
 
-		// gta handle
-		m_pGTAVehicles[pNewVehicle->VehicleID] = m_pVehicles[pNewVehicle->VehicleID]->m_pVehicle;
+		// slot
 		m_bVehicleSlotState[pNewVehicle->VehicleID] = true;
 
 		// interior
@@ -145,7 +143,6 @@ bool CVehiclePool::Delete(VEHICLEID VehicleID)
 	m_bVehicleSlotState[VehicleID] = false;
 	delete m_pVehicles[VehicleID];
 	m_pVehicles[VehicleID] = nullptr;
-	m_pGTAVehicles[VehicleID] = nullptr;
 
 	return true;
 }
@@ -156,7 +153,7 @@ VEHICLEID CVehiclePool::FindIDFromGtaPtr(VEHICLE_TYPE *pGtaVehicle)
 
 	while(x != MAX_VEHICLES) 
 	{
-		if(pGtaVehicle == m_pGTAVehicles[x]) return x;
+		if(m_pVehicles[x] && pGtaVehicle == m_pVehicles[x]->m_pVehicle) return x;
 		x++;
 	}
 
@@ -184,9 +181,9 @@ VEHICLEID CVehiclePool::FindIDFromRwObject(RwObject* pRWObject)
 
 	while (x != MAX_VEHICLES)
 	{
-		if (m_pGTAVehicles[x])
+		if (m_pVehicles[x] && m_pVehicles[x]->m_pVehicle)
 		{
-			if (pRWObject == (RwObject*)(m_pGTAVehicles[x]->entity.m_pRwObject)) return x;
+			if (pRWObject == (RwObject*)(m_pVehicles[x]->m_pVehicle->entity.m_pRwObject)) return x;
 		}
 		x++;
 	}
@@ -194,10 +191,10 @@ VEHICLEID CVehiclePool::FindIDFromRwObject(RwObject* pRWObject)
 	return INVALID_VEHICLE_ID;
 }
 
-int CVehiclePool::FindGtaIDFromID(int iID)
+int CVehiclePool::FindGtaIDFromID(int id)
 {
-	if(m_pGTAVehicles[iID])
-		return GamePool_Vehicle_GetIndex(m_pGTAVehicles[iID]);
+	if(m_pVehicles[id]->m_pVehicle)
+		return GamePool_Vehicle_GetIndex(m_pVehicles[id]->m_pVehicle);
 	else
 		return INVALID_VEHICLE_ID;
 }

@@ -521,6 +521,10 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			packetCasinoChip(p);
 			break;
 		}
+		case RPC_UPDATE_BACCARAT: {
+			packetCasinoBaccarat(p);
+			break;
+		}
 		case RPC_SHOW_CONTEINER_AUC: {
             packetAucContainer(p);
 			break;
@@ -2026,7 +2030,6 @@ void CNetGame::Packet_MarkersSync(Packet *pkt)
 
 void CNetGame::Packet_BulletSync(Packet* p)
 {
-	Log("Packet_BulletSync");
 	uint8_t bytePacketID;
 	uint16_t PlayerID;
 	BULLET_SYNC btSync;

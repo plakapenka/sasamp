@@ -98,6 +98,7 @@
 #define RPC_SHOW_SALARY 	62
 #define RPC_ADMIN_RECON 	63
 #define RPC_MED_GAME 		64
+#define RPC_UPDATE_BACCARAT				65
 
 // Packet 252
 #define RPC_TOGGLE_LOGIN (1)
@@ -240,6 +241,8 @@ public:
 	void packetPreDeath(Packet *p);
 
 	void packetMedGame(Packet *p);
+
+	void packetCasinoBaccarat(Packet *p);
 };
 
 extern CNetGame *pNetGame;
