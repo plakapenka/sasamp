@@ -97,6 +97,8 @@ void CNetGame::packetMedGame(Packet* p) {
     bs.Read(nick, strLen);
     nick[strLen] = '\0';
 
+    cp1251_to_utf8(nick, nick);
+
     CMedic::showMedGame(nick);
 }
 
