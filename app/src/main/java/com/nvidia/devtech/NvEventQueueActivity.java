@@ -65,6 +65,7 @@ import com.liverussia.cr.gui.AttachEdit;
 import com.liverussia.cr.gui.AucContainer;
 import com.liverussia.cr.gui.AutoShop;
 import com.liverussia.cr.gui.Casino;
+import com.liverussia.cr.gui.CasinoBaccarat;
 import com.liverussia.cr.gui.CasinoDice;
 import com.liverussia.cr.gui.Casino_LuckyWheel;
 import com.liverussia.cr.gui.Furniture_factory;
@@ -1034,6 +1035,7 @@ public abstract class NvEventQueueActivity
         mSpeedometer = new Speedometer(this);
         mAutoShop = new AutoShop(this);
         mCasinoDice = new CasinoDice(this);
+        new CasinoBaccarat(this);
         new AucContainer(this);
         mTab = new Tab(this);
         mCasino = new Casino(this);
