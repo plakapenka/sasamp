@@ -2349,29 +2349,6 @@ bool ProcessLocalCommands(const char str[])
 		return true;
 	}
 
-	if (strstr(str, "/test"))
-	{
-		while (*str)
-		{
-			if (*str == ' ')
-			{
-				str++;
-				break;
-			}
-			str++;
-		}
-		int size = 0;
-		if (sscanf(str, "%d", &size) == -1)
-		{
-			CChatWindow::AddDebugMessage("Используйте: /test [scale]");
-			return true;
-		}
-
-//
-		Log("AAAAAAAAAAAA = %d", (( int* (*)(int))(g_libGTASA+0x41DD44+1))(size));
-		return true;
-	}
-
 	if (strcmp(str, "/q") == 0)
 	{
 		CGame__Shutdown_hook();
@@ -2395,7 +2372,6 @@ bool ProcessLocalCommands(const char str[])
 //		pHud->ToggleChat( !pHud->isChatOn);
 //		return true;
 //	}
-
 
 	if (strstr(str, "/tab"))
 	{

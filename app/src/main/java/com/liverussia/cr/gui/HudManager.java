@@ -66,6 +66,7 @@ public class HudManager {
     private ProgressBar progressArmor;
 
     private ImageView enter_passenger;
+    ImageView camera_mode_butt;
     private ImageView enterexit_driver;
     private ImageView lock_vehicle;
     private ImageView button_horn;
@@ -134,6 +135,7 @@ public class HudManager {
     public native void SendChatMessage(byte str[]);
     public native void SendChatButton(int buttonID);
     public native void ChatSetCursor(int start, int end);
+    native void clickCameraMode();
     ChatAdapter adapter;
     int damageSound = 0;
 
@@ -143,6 +145,10 @@ public class HudManager {
     public HudManager(Activity aactivity) {
         activity = aactivity;
 
+        camera_mode_butt = activity.findViewById(R.id.camera_mode_butt);
+        camera_mode_butt.setOnClickListener(view -> {
+            clickCameraMode();
+        });
         // === damage informer
         damage_informer_give_layout = activity.findViewById(R.id.damage_informer_give_layout);
         damage_informer_give_text = activity.findViewById(R.id.damage_informer_give_text);

@@ -15,6 +15,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -23,12 +24,14 @@ import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.liverussia.cr.R;
+import com.nvidia.devtech.NvEventQueueActivity;
 
 import java.util.Random;
 
 public class CasinoBaccarat {
 
     static final int INVALID_CARD = -1;
+    int current_bet = 0;
     enum ChipType
     {
         CHIP_TYPE_NONE,
@@ -67,6 +70,8 @@ public class CasinoBaccarat {
     ConstraintLayout casino_bc_red_card;
     ConstraintLayout casino_bc_yellow_card;
     ConstraintLayout casino_bc_timer_bg;
+
+    int betsound = 0;
 
     native void sendAddBet(int sum, int bettype);
     native void init();
@@ -144,6 +149,7 @@ public class CasinoBaccarat {
 
     void update(int red_card, int yellow_card, int totalBets, int totalRed, int totalYellow, int totalGreen, int time, int betType, int betSum)
     {
+        Log.d("Sdf", "reciev = " + betType + "  " + betSum);
         activity.runOnUiThread(() -> {
 
             // main
@@ -168,18 +174,24 @@ public class CasinoBaccarat {
 
             // bets
             if(betSum > 0) {
-                TextView chip_count;
-                if( betType == BET_TYPE_RED.ordinal() ) {
-                    chip_count = (TextView)casino_bc_red_chip.getChildAt(0);
-                    casino_bc_red_chip.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.popup_show_notification));
-                }
-                else if( betType == BET_TYPE_YELLOW.ordinal() ){
-                    chip_count = (TextView)casino_bc_yellow_chip.getChildAt(0);
-                    casino_bc_yellow_chip.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.popup_show_notification));
-                }
-                else return;
+                if(current_bet != betSum) {
+                    current_bet = betSum;
+                    TextView chip_count;
+                    if (betType == BET_TYPE_RED.ordinal()) {
+                        chip_count = (TextView) casino_bc_red_chip.getChildAt(0);
+                        casino_bc_red_chip.setVisibility(View.VISIBLE);
+                        casino_bc_red_chip.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.popup_show_notification));
+                        NvEventQueueActivity.getInstance().soundPool.play(betsound, 0.2f, 0.2f, 1, 0, 1.0f);
+                    }
+                    else if (betType == BET_TYPE_YELLOW.ordinal()) {
+                        chip_count = (TextView) casino_bc_yellow_chip.getChildAt(0);
+                        casino_bc_yellow_chip.setVisibility(View.VISIBLE);
+                        casino_bc_yellow_chip.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.popup_show_notification));
+                        NvEventQueueActivity.getInstance().soundPool.play(betsound, 0.2f, 0.2f, 1, 0, 1.0f);
+                    } else return;
 
-                chip_count.setText(String.format("%d", betSum));
+                    chip_count.setText(String.format("%d", betSum));
+                }
             }
             else {
                 if( casino_bc_yellow_chip.getVisibility() == View.VISIBLE || casino_bc_red_chip.getVisibility() == View.VISIBLE ) {
@@ -200,8 +212,8 @@ public class CasinoBaccarat {
         });
     }
 
-    String[] cards_value = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
-    String[] cards_suit_res = {"card_clubs", "card_diamonds", "card_hearts", "card_spades"};
+    String[] cards_value = {"0", "A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
+    String[] cards_suit_res = {"0", "card_clubs", "card_diamonds", "card_hearts", "card_spades"};
     String[] card_color = {"#000000", "#F24E1E", "#F24E1E", "#000000"};
 
     void updateYellowCard(int cardNum) {

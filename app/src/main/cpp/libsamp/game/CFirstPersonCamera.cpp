@@ -23,18 +23,7 @@ void CFirstPersonCamera::ProcessCameraOnFoot(uintptr_t pCam, CPlayerPed* pPed)
 	vecOffset.X = 0.35f;
 	vecOffset.Y = 0.1f;
 	vecOffset.Z = 0.1f;
-	if (CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_FIRSTPERSON).X != -1)
-	{
-		vecOffset.X += (float)(CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_FIRSTPERSON).X - 200) / 100.0f;
-	}
-	if (CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_FIRSTPERSON).Y != -1)
-	{
-		vecOffset.Y += (float)(CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_FIRSTPERSON).Y - 200) / 100.0f;
-	}
-	if (CAdjustableHudScale::GetElementScale(E_HUD_ELEMENT::HUD_FIRSTPERSON).Y != -1)
-	{
-		vecOffset.Z += (float)(CAdjustableHudScale::GetElementScale(E_HUD_ELEMENT::HUD_FIRSTPERSON).Y - 200) / 100.0f;
-	}
+
 
 	VECTOR vecOut;
 	RwMatrixMultiplyByVector(&vecOut, &(pPed->m_HeadBoneMatrix), &vecOffset);

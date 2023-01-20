@@ -121,7 +121,7 @@ const char* CUtil::GetWeaponName(int iWeaponID)
 		case WEAPON_DROWN:
 			return "Drowned";
 		case WEAPON_COLLISION:
-			return "Splat";
+			return "Collision";
 		default:
 			return "unknown";
 	}

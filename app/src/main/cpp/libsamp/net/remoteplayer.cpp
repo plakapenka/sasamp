@@ -922,6 +922,7 @@ void CRemotePlayer::HandleDeath()
 	{
 		GetPlayerPed()->SetKeys(0, 0, 0);
 		GetPlayerPed()->SetDead();
+		m_fCurrentHealth = 0;
 	}
 
 	SetState(PLAYER_STATE_WASTED);

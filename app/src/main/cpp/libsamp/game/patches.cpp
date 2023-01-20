@@ -95,8 +95,10 @@ void ApplyPatches_level0()
 {
 	Log("ApplyPatches_level0");
 
-	PLAYERS_REALLOC = new char[404*MAX_PLAYERS];
-	CPatch::Write<char*>(g_libGTASA + 0x5D021C, PLAYERS_REALLOC);
+	PLAYERS_REALLOC = (( char* (*)(int))(g_libGTASA + 0x179B40))(404*MAX_PLAYERS);
+	CPatch::UnFuck(g_libGTASA + 0x5D021C);
+	*(char**)(g_libGTASA + 0x5D021C) = PLAYERS_REALLOC;
+	Log("CWorld::Player new address = 0x%X", PLAYERS_REALLOC);
 
 	// 3 touch begin
 	CPatch::UnFuck(g_libGTASA + 0x005D1E8C);

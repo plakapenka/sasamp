@@ -92,6 +92,8 @@ Java_com_liverussia_cr_gui_CasinoBaccarat_sendAddBet(JNIEnv *env, jobject thiz, 
     bsSend.Write((uint32_t)sum);
     bsSend.Write((uint8_t)bettype);
 
+    Log("Send %d, %d", sum, bettype);
+
     pNetGame->GetRakClient()->Send(&bsSend, HIGH_PRIORITY, RELIABLE_SEQUENCED, 0);
 }
 

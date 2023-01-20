@@ -396,6 +396,8 @@ void CHUD::addGiveDamageNotify(PLAYERID Id, int weaponId, float damage)
     if(!pPlayerPool)return;
     if(!pPlayerPool->GetSlotState(Id))return;
 
+    if(damage > 200) damage = 200.0f;
+
     if(lastGiveDamagePlayerId == Id) {
         fLastGiveDamage += damage;
     }
@@ -420,7 +422,7 @@ void CHUD::addTakeDamageNotify(char nick[], int weaponId, float damage)
     if(!pSettings->GetWrite().iIsEnableDamageInformer) return;
 
     JNIEnv* env = g_pJavaWrapper->GetEnv();
-
+    if(damage > 200) damage = 200.0f;
     jstring jnick = env->NewStringUTF( nick );
     jstring jweap = env->NewStringUTF( CUtil::GetWeaponName(weaponId) );
 
@@ -494,4 +496,9 @@ Java_com_liverussia_cr_gui_HudManager_ToggleKeyBoard(JNIEnv *env, jobject thiz, 
             pKeyBoard->Close();
         }
     }
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_HudManager_clickCameraMode(JNIEnv *env, jobject thiz) {
+    CFirstPersonCamera::Toggle();
 }
