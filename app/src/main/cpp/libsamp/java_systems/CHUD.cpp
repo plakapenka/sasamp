@@ -29,6 +29,7 @@ int         CHUD::iLocalMoney = 0;
 int         CHUD::iWantedLevel = 0;
 bool        CHUD::bIsShowMafiaWar = false;
 float       CHUD::fLastGiveDamage = 0.0f;
+bool        CHUD::bIsTouchCameraButt = false;
 PLAYERID    CHUD::lastGiveDamagePlayerId = INVALID_PLAYER_ID;
 
 CVector2DFloat CHUD::radarBgPos1;
@@ -500,5 +501,20 @@ Java_com_liverussia_cr_gui_HudManager_ToggleKeyBoard(JNIEnv *env, jobject thiz, 
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_HudManager_clickCameraMode(JNIEnv *env, jobject thiz) {
-    CFirstPersonCamera::Toggle();
+//
+    if(!pNetGame)return;
+    if(!pNetGame->GetPlayerPool())return;
+
+    CLocalPlayer *pPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer();
+    if(!pPlayer)return;
+
+    CPlayerPed *pPed = pPlayer->GetPlayerPed();
+    if(!pPed) return;
+
+    if(pPed->IsInVehicle()) {
+        CHUD::bIsTouchCameraButt = true;
+    }
+    else {
+        CFirstPersonCamera::Toggle();
+    }
 }

@@ -269,17 +269,20 @@ void MenuItem_add_hook(int r0, uintptr_t r1)
 
 // CGame::InitialiseRenderWare
 void (*InitialiseRenderWare)();
-void InitialiseRenderWare_hook()
-{
+void InitialiseRenderWare_hook() {
 	Log("InitialiseRenderWare ..");
 
-	CPatch::NOP(g_libGTASA + 0x40C57E, 2); // cutscene
-	CPatch::NOP(g_libGTASA + 0x40C592, 2); // player
-
-	InitialiseRenderWare();
+	CPatch::NOP(g_libGTASA + 0x40C546, 44);
 
 	TextureDatabaseRuntime::Load("samp", 0, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
 
+	TextureDatabaseRuntime::Load("mobile", 0, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
+	TextureDatabaseRuntime::Load("txd", 0, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
+	TextureDatabaseRuntime::Load("gta3", 0, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
+	TextureDatabaseRuntime::Load("gta_int", 0, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
+	TextureDatabaseRuntime::Load("menu", 0, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
+
+	InitialiseRenderWare();
 }
 
 /* ====================================================== */
@@ -1244,6 +1247,14 @@ void CPedDamageResponseCalculator__ComputeDamageResponse_hook(stPedDamageRespons
 			else if((PED_TYPE*)pEntity == pGame->FindPlayerPed()->m_pPed) {
 				pPlayerPool->GetLocalPlayer()->GiveTakeDamage(true, damagedid, fDamage, weaponid, bodypart);
 
+				char nick[MAX_PLAYER_NAME];
+				if( pPlayerPool->GetSlotState(damagedid) )
+				{
+					strcpy(nick, pPlayerPool->GetPlayerName(damagedid));
+				}
+				else {
+					strcpy(nick, "None");
+				}
 				CHUD::addTakeDamageNotify(pPlayerPool->GetPlayerName(damagedid), weaponid, fDamage);
 			}
 		}
@@ -2353,59 +2364,57 @@ void CCam__Process_hook(uintptr_t thiz)
 		}
 	}
 }
-//int g_iCounterVehicleCamera = 0;
-//int (*CPad__CycleCameraModeDownJustDown)(void*);
-//int CPad__CycleCameraModeDownJustDown_hook(void* thiz)
-//{
-//	if (!g_pWidgetManager)
-//	{
-//		return 0;
-//	}
-//	if (!g_pWidgetManager->GetSlotState(WIDGET_CAMERA_CYCLE))
-//	{
-//		return 0;
-//	}
-//	PED_TYPE* pPed = GamePool_FindPlayerPed();
-//	if (!pPed)
-//	{
-//		return 0;
-//	}
-//
-//	static uint32_t lastTick = GetTickCount();
-//	bool bPressed = false;
-//	if (g_pWidgetManager->IsTouched(WIDGET_CAMERA_CYCLE) && GetTickCount() - lastTick >= 250)
-//	{
-//		bPressed = true;
-//		lastTick = GetTickCount();
-//	}
-//
-//	if (IN_VEHICLE(pPed))
-//	{
-//		if (bPressed)
-//		{
-//			g_iCounterVehicleCamera++;
-//		}
-//		if (g_iCounterVehicleCamera == 6)
-//		{
-//			CFirstPersonCamera::SetEnabled(true);
-//			return 0;
-//		}
-//		else if (g_iCounterVehicleCamera >= 7)
-//		{
-//			g_iCounterVehicleCamera = 0;
-//			CFirstPersonCamera::SetEnabled(false);
-//			return 1;
-//
-//		}
-//		else
-//		{
-//			CFirstPersonCamera::SetEnabled(false);
-//		}
-//
-//		return bPressed;
-//	}
-//	return 0;
-//}
+int g_iCounterVehicleCamera = 0;
+int (*CPad__CycleCameraModeDownJustDown)(void*);
+int CPad__CycleCameraModeDownJustDown_hook(void* thiz)
+{
+	if (!g_pWidgetManager)
+	{
+		return 0;
+	}
+
+	PED_TYPE* pPed = GamePool_FindPlayerPed();
+	if (!pPed)
+	{
+		return 0;
+	}
+
+	static uint32_t lastTick = GetTickCount();
+	bool bPressed = false;
+	if (CHUD::bIsTouchCameraButt && GetTickCount() - lastTick >= 250)
+	{
+		CHUD::bIsTouchCameraButt = false;
+		bPressed = true;
+		lastTick = GetTickCount();
+	}
+
+	if (IN_VEHICLE(pPed))
+	{
+		if (bPressed)
+		{
+			g_iCounterVehicleCamera++;
+		}
+		if (g_iCounterVehicleCamera == 6)
+		{
+			CFirstPersonCamera::SetEnabled(true);
+			return 0;
+		}
+		else if (g_iCounterVehicleCamera >= 7)
+		{
+			g_iCounterVehicleCamera = 0;
+			CFirstPersonCamera::SetEnabled(false);
+			return 1;
+
+		}
+		else
+		{
+			CFirstPersonCamera::SetEnabled(false);
+		}
+
+		return bPressed;
+	}
+	return 0;
+}
 
 void (*FxEmitterBP_c__Render)(uintptr_t* a1, int a2, int a3, float a4, char a5);
 void FxEmitterBP_c__Render_hook(uintptr_t* a1, int a2, int a3, float a4, char a5)
@@ -3140,7 +3149,7 @@ void InstallHooks()
 	CPatch::InlineHook(g_libGTASA, 0x00389D74, (uintptr_t)CCam__Process_hook, (uintptr_t*)& CCam__Process);
 
 	CPatch::InlineHook(g_libGTASA, 0x003D6E6C, (uintptr_t)CHud__Draw_hook, (uintptr_t*)& CHud__Draw);
-	//CPatch::InlineHook(g_libGTASA, 0x0039DC68, (uintptr_t)CPad__CycleCameraModeDownJustDown_hook, (uintptr_t*)& CPad__CycleCameraModeDownJustDown);
+	CPatch::InlineHook(g_libGTASA, 0x0039DC68, (uintptr_t)CPad__CycleCameraModeDownJustDown_hook, (uintptr_t*)& CPad__CycleCameraModeDownJustDown);
 
 	CPatch::InlineHook(g_libGTASA, 0x0031B164, (uintptr_t)FxEmitterBP_c__Render_hook, (uintptr_t*)& FxEmitterBP_c__Render);
 	CPatch::InlineHook(g_libGTASA, 0x0043A17C, (uintptr_t)CPed__ProcessEntityCollision_hook, (uintptr_t*)&CPed__ProcessEntityCollision);
@@ -3199,9 +3208,6 @@ void InstallHooks()
 	CPatch::NOP(g_libGTASA + 0x2665EE, 2); // Game - SocialClub
 	//
 	CPatch::InlineHook(g_libGTASA, 0x004904AC, &CTaskSimpleCarSetPedInAsDriver__ProcessPed_hook, &CTaskSimpleCarSetPedInAsDriver__ProcessPed);
-
-	// passenger radar speed fix
-	CPatch::InlineHook(g_libGTASA, 0x3AC45C, &FindPlayerSpeed_hook, &FindPlayerSpeed);
 
 	// fix разрешения экрана
 	CPatch::InlineHook(g_libGTASA, 0x0026CE30, &MobileSettings__GetMaxResWidth_hook, &MobileSettings__GetMaxResWidth);
