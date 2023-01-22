@@ -105,11 +105,8 @@ void InitBASSFuncs()
 {
 	void* handle;
 
-#ifdef GAME_EDITION_CR
-	handle = dlopen("/data/data/com.liverussia.cr/lib/libbass.so", 3);
-#else
-	handle = dlopen("/data/data/com.liverussia.cr/lib/libbass.so", 3);
-#endif
+	handle = dlopen("libbass.so", 3);
+
 	if (!handle)
 	{
 		Log("Cannot load libbass.so");
