@@ -831,11 +831,9 @@ void CRemotePlayer::StoreInCarFullSyncData(INCAR_SYNC_DATA *picSync, uint32_t dw
 	}
 
 	// -------------- TRAILER
-
-	if((m_icSync.TrailerID  == INVALID_VEHICLE_ID) )
+	if(m_icSync.TrailerID  == INVALID_VEHICLE_ID || m_icSync.TrailerID  == 0 )
 	{//
 		if(m_pCurrentVehicle->m_pTrailer) {
-			m_pCurrentVehicle->SetTrailer(nullptr);
 			m_pCurrentVehicle->DetachTrailer();
 		}
 	}
@@ -843,8 +841,7 @@ void CRemotePlayer::StoreInCarFullSyncData(INCAR_SYNC_DATA *picSync, uint32_t dw
 		CVehicle *pTrailer = pVehiclePool->GetAt(m_icSync.TrailerID);
 		if(pTrailer) {
 			if (m_pCurrentVehicle->m_pTrailer) {
-				if (m_pCurrentVehicle->m_pTrailer != pTrailer) {
-					m_pCurrentVehicle->SetTrailer(nullptr);
+				if ( (VEHICLE_TYPE*)(m_pCurrentVehicle->m_pVehicle->dwTrailer) != pTrailer->m_pVehicle) {
 					m_pCurrentVehicle->DetachTrailer();
 				}
 			} else {

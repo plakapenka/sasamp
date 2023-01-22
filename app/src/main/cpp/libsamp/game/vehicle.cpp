@@ -281,6 +281,7 @@ void CVehicle::DetachTrailer()
 	{
 		ScriptCommand(&detach_trailer_from_cab, m_pTrailer->m_dwGTAId, m_dwGTAId);
 	}
+	m_pTrailer = nullptr;
 }
 
 //-----------------------------------------------------------

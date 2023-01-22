@@ -56,7 +56,7 @@
 #define RPC_TOGGLE_GPS_INFO 18
 #define RPC_TOGGLE_GREENZONE 19
 #define RPC_TOGGLE_SAMWILL_GAME 20
-#define RPC_KILLLIST 21
+#define RPC_KILL_LIST 21
 #define RPC_CLEAR_KILLLIST 22
 #define RPC_SHOW_DUELS_KILLS_LEFT 23
 #define RPC_DUELS_SHOW_LOCAL_TOP 24
@@ -243,6 +243,8 @@ public:
 	void packetMedGame(Packet *p);
 
 	void packetCasinoBaccarat(Packet *p);
+
+    static void packetKillList(Packet *p);
 };
 
 extern CNetGame *pNetGame;
