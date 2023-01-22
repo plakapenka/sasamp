@@ -7,6 +7,7 @@ char* PLAYERS_REALLOC = nullptr;
 #include "game.h"
 #include "CExtendedCarColors.h"
 #include "util/patch.h"
+#include "chatwindow.h"
 
 extern CSettings* pSettings;
 
@@ -85,6 +86,14 @@ void DisableAutoAim()
 
 }
 
+void ApplyFPSPatch(uint8_t fps)
+{
+	CPatch::WriteMemory(g_libGTASA + 0x463FE8, (uintptr_t)& fps, 1);
+	CPatch::WriteMemory(g_libGTASA + 0x56C1F6, (uintptr_t)& fps, 1);
+	CPatch::WriteMemory(g_libGTASA + 0x56C126, (uintptr_t)& fps, 1);
+	CPatch::WriteMemory(g_libGTASA + 0x95B074, (uintptr_t)& fps, 1);
+}
+
 int test_pointsArray[1000];
 int test_pointersLibArray[1000];
 
@@ -124,16 +133,12 @@ void ApplyPatches_level0()
 
 	CExtendedCarColors::ApplyPatches_level0();
 
-	uint8_t fps = 90;
+	uint8_t fps = 60;
 	if (pSettings)
 	{
 		fps = pSettings->GetReadOnly().iFPS;
 	}
-
-	CPatch::WriteMemory(g_libGTASA + 0x463FE8, (uintptr_t)& fps, 1);
-	CPatch::WriteMemory(g_libGTASA + 0x56C1F6, (uintptr_t)& fps, 1);
-	CPatch::WriteMemory(g_libGTASA + 0x56C126, (uintptr_t)& fps, 1);
-	CPatch::WriteMemory(g_libGTASA + 0x95B074, (uintptr_t)& fps, 1);
+	ApplyFPSPatch(fps);
 
 	CPatch::SetUpHook(g_libGTASA + 0x0023768C, (uintptr_t)ANDRunThread_hook, (uintptr_t*)& ANDRunThread);
 
@@ -255,12 +260,6 @@ void ApplyPatches()
 	// DefaultPCSaveFileName
 	char* DefaultPCSaveFileName = (char*)(g_libGTASA + 0x60EAE8);
 	memcpy((char*)DefaultPCSaveFileName, "GTASAMP", 8);
-
-	uint8_t fps = pSettings->GetReadOnly().iFPS;
-	CPatch::WriteMemory(g_libGTASA + 0x463FE8, (uintptr_t)& fps, 1);
-	CPatch::WriteMemory(g_libGTASA + 0x56C1F6, (uintptr_t)& fps, 1);
-	CPatch::WriteMemory(g_libGTASA + 0x56C126, (uintptr_t)& fps, 1);
-	CPatch::WriteMemory(g_libGTASA + 0x95B074, (uintptr_t)& fps, 1);
 
 	// CVehicleRecording::Load
 	CPatch::RET(g_libGTASA + 0x2DC8E0);

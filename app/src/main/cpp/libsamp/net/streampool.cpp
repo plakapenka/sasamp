@@ -120,7 +120,7 @@ void CStreamPool::PlayIndividualStream(const char* szUrl, int type) // ready
 	{
 		StopIndividualStream();
 	}
-	m_hIndividualStream = BASS_StreamCreateURL(szUrl, 0, type, NULL, 0);
+	m_hIndividualStream = BASS_StreamCreateURL(szUrl, 0, type, nullptr, nullptr);
 
 	strcpy(&m_szIndividualLastLink[0], szUrl);
 
@@ -290,7 +290,7 @@ void CStreamPool::Process() // ready
 	pos.y = matLocal.pos.Y;
 	pos.z = matLocal.pos.Z;
 
-	BASS_Set3DPosition(&pos, NULL, NULL, NULL);
+	BASS_Set3DPosition(&pos, nullptr, nullptr, nullptr);
 
 	BASS_Apply3D();
 }

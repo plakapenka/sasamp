@@ -63,6 +63,8 @@ void CSettings::Save(int iIgnoreCategory)
 
 	ini_table_create_entry_as_int(config, "gui", "hparmourtext", m_Settings.iHPArmourText);
 	ini_table_create_entry_as_int(config, "gui", "damageinformer", m_Settings.iIsEnableDamageInformer);
+	ini_table_create_entry_as_int(config, "gui", "text3dinveh", m_Settings.iIsEnable3dTextInVehicle);
+
 	
 
 
@@ -248,6 +250,8 @@ void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 
 	m_Settings.iOutfitGuns = ini_table_get_entry_as_int(config, "gui", "outfit", 1);
 	m_Settings.iIsEnableDamageInformer = ini_table_get_entry_as_int(config, "gui", "damageinformer", 1);
+	m_Settings.iIsEnable3dTextInVehicle = ini_table_get_entry_as_int(config, "gui", "text3dinveh", 1);
+
 	m_Settings.iHPArmourText = ini_table_get_entry_as_int(config, "gui", "hparmourtext", 0);
 	m_Settings.iSkyBox = ini_table_get_entry_as_int(config, "gui", "ctimecyc", 1);
 	m_Settings.iSnow = ini_table_get_entry_as_int(config, "gui", "snow", 1);
@@ -362,4 +366,40 @@ Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_setNativeDamageIn
 		pSettings->Save();
 	}
 }
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_setNativeShow3dText(JNIEnv *env,
+                                                                                   jobject thiz,
+                                                                                   jboolean state) {
+	if (pSettings) {
+		pSettings->GetWrite().iIsEnable3dTextInVehicle = state;
+		pSettings->Save();
+	}
+}
+extern "C"
+JNIEXPORT jboolean JNICALL
+Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_getNativeShow3dText(JNIEnv *env,
+																				   jobject thiz) {
+	return pSettings->GetReadOnly().iIsEnable3dTextInVehicle;
+}
+extern "C"
+JNIEXPORT jint JNICALL
+Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_getNativeFpsLimit(JNIEnv *env,
+                                                                                 jobject thiz) {
+	return pSettings->GetReadOnly().iFPS;
+}
+
+extern void ApplyFPSPatch(uint8_t fps);
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_setNativeFpsCount(JNIEnv *env,
+																				 jobject thiz,
+																				 jint fps) {
+	if (pSettings) {
+		pSettings->GetWrite().iFPS = fps;
+		ApplyFPSPatch(fps);
+		pSettings->Save();
+	}
 }

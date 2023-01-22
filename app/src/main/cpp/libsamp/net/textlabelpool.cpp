@@ -2,9 +2,11 @@
 #include "../gui/gui.h"
 #include "../game/game.h"
 #include "netgame.h"
+#include "CSettings.h"
 
 extern CNetGame *pNetGame;
 extern CGUI *pGUI;
+extern CSettings *pSettings;
 
 void TextWithColors(ImVec2 pos, ImColor col, const char* szStr, const char* szStrWithoutColors);
 
@@ -29,6 +31,20 @@ void CText3DLabelsPool::DrawNonAttached(TEXT_LABELS* pLabel)
 
 void CText3DLabelsPool::DrawAttachedToPlayer(TEXT_LABELS* pLabel)
 {
+	if (!pNetGame->GetPlayerPool()->GetLocalPlayer())
+	{
+		return;
+	}
+	CPlayerPed* pPed = pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed();
+	if (!pPed)
+	{
+		return;
+	}
+
+	if(!pSettings->GetReadOnly().iIsEnable3dTextInVehicle && pPed->IsInVehicle())
+	{
+		return;
+	}
 	if (!pLabel)
 	{
 		return;

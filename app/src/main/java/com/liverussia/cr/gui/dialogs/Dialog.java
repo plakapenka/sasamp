@@ -198,10 +198,13 @@ public class Dialog {
             old_casino_layout_state = false;
             casino_dice_main_layout.setVisibility(View.VISIBLE);
         }
-        if (mCurrentDialogTypeId == DIALOG_STYLE_INPUT || mCurrentDialogTypeId == DIALOG_STYLE_PASSWORD||
-        mCurrentDialogTypeId == DIALOG_STYLE_INPUT_NUMBER) {
+        if (    mCurrentDialogTypeId == DIALOG_STYLE_INPUT ||
+                mCurrentDialogTypeId == DIALOG_STYLE_PASSWORD||
+                mCurrentDialogTypeId == DIALOG_STYLE_INPUT_NUMBER)
+        {
             this.mCurrentInputText = this.mInput.getText().toString();
-        } else if(mCurrentDialogTypeId == DIALOG_STYLE_MSGBOX) {
+        }
+        else if(mCurrentDialogTypeId == DIALOG_STYLE_MSGBOX) {
             this.mCurrentInputText = "";
         }
         try {

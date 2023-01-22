@@ -2324,7 +2324,7 @@ void CKeyBoard::OnNewKeyboardInput(JNIEnv *pEnv, jobject thiz, jbyteArray str)
 }
 
 extern bool CGame__Shutdown_hook();
-
+extern void ApplyFPSPatch(uint8_t fps);
 bool ProcessLocalCommands(const char str[])
 {
 	if (strstr(str, "/fontsize"))
@@ -2376,6 +2376,25 @@ bool ProcessLocalCommands(const char str[])
 	if (strstr(str, "/tab"))
 	{
 		CTab::toggle();
+		return true;
+	}
+	if (strstr(str, "/fpslimit"))
+	{
+
+		int fps = 0;
+		if (sscanf(str, "%*s%d", &fps) == -1)
+		{
+			CChatWindow::AddDebugMessage("Èñïîëüçóéòå: /fpslimit [fps]");
+			return true;
+		}
+		ApplyFPSPatch(fps);
+
+		CChatWindow::AddInfoMessage("-> Íîâûé ëèìèò FPS: %d", fps);
+
+		if (pSettings) {
+			pSettings->GetWrite().iFPS = fps;
+			pSettings->Save();
+		}
 		return true;
 	}
 	if (strstr(str, "/dl"))

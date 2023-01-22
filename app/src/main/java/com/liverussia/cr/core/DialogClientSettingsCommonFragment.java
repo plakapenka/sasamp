@@ -2,10 +2,13 @@ package com.liverussia.cr.core;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -24,13 +27,23 @@ import java.util.HashMap;
 public class DialogClientSettingsCommonFragment extends Fragment implements ISaveableFragment {
     native boolean getNativeDamageInformer();
     native void setNativeDamageInformer(boolean state);
+    native int getNativeFpsLimit();
+    native void setNativeFpsCount(int fps);
+
+    native boolean getNativeShow3dText();
+    native void setNativeShow3dText(boolean state);
 
     private SwitchCompat mSwitchFPSCounter;
     private SwitchCompat mSwitchOutfit;
     private SwitchCompat mSwitchHpArmour;
     SwitchCompat switch_damageinformer;
+    SwitchCompat switch_3dtext_show;
     private SeekBar chat_line_count;
     private SeekBar chat_font_size;
+
+    EditText fps_text;
+    TextView fps_plus_butt;
+    TextView fps_dec_butt;
 
     public native void ChatFontSizeChanged(int size);
 
@@ -80,9 +93,49 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
 
         mRootView = inflater.inflate(R.layout.dialog_settings_common,container,false);
 
+        fps_text = mRootView.findViewById(R.id.fps_text);
+        fps_text.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                int curFps;
+                try {
+                    curFps = Integer.parseInt(String.valueOf(fps_text.getText()));
+                } catch (NumberFormatException e) {
+                    curFps = 10;
+                }
+
+                setNativeFpsCount(curFps);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+        fps_plus_butt = mRootView.findViewById(R.id.fps_plus_butt);
+        fps_plus_butt.setOnClickListener(view -> {
+            int curFps = Integer.parseInt(String.valueOf(fps_text.getText()));
+            curFps ++;
+            fps_text.setText(String.format("%d", curFps));
+            setNativeFpsCount(curFps);
+        });
+        fps_dec_butt = mRootView.findViewById(R.id.fps_dec_butt);
+        fps_dec_butt.setOnClickListener(view -> {
+            int curFps = Integer.parseInt(String.valueOf(fps_text.getText()));
+            curFps --;
+            fps_text.setText(String.format("%d", curFps));
+            setNativeFpsCount(curFps);
+        });
+
         mSwitchFPSCounter = mRootView.findViewById(R.id.switch_fps_counter);
         mSwitchHpArmour = mRootView.findViewById(R.id.switch_info_bar);
         switch_damageinformer = mRootView.findViewById(R.id.switch_damageinformer);
+        switch_3dtext_show = mRootView.findViewById(R.id.switch_3dtext_show);
         mSwitchOutfit = mRootView.findViewById(R.id.switch_outfit_weapons);
         chat_line_count = mRootView.findViewById(R.id.chat_line_count);
         chat_line_count.setProgress(mContext.findViewById(R.id.chat).getLayoutParams().height);
@@ -149,6 +202,13 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 setNativeDamageInformer(b);
+            }
+        });
+
+        switch_3dtext_show.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                setNativeShow3dText(b);
             }
         });
 
@@ -237,7 +297,9 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
         mSwitchFPSCounter.setChecked(mContext.getNativeFpsCounterSettings());
         mSwitchHpArmour.setChecked(mContext.getNativeHpArmourText());
         switch_damageinformer.setChecked(getNativeDamageInformer());
+        switch_3dtext_show.setChecked(getNativeShow3dText());
         mSwitchOutfit.setChecked(mContext.getNativeOutfitGunsSettings());
+        fps_text.setText(String.format("%d", getNativeFpsLimit()));
 
         bChangeAllowed = false;
         for(int i = DialogClientSettings.mSettingsComonStart; i < DialogClientSettings.mSettingsComonEnd; i++)

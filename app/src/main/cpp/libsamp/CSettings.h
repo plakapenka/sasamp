@@ -10,6 +10,7 @@ struct stSettings
 	char szPassword[66];
 	int szAutoLogin;
 	int iIsEnableDamageInformer;
+	int iIsEnable3dTextInVehicle;
 	int szServer;
 	int szDebug;
 	int szHeadMove;
