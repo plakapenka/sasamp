@@ -13,7 +13,6 @@
 
 #include "java_systems/CHUD.h"
 
-extern CJavaWrapper *g_pJavaWrapper;
 
 jobject jCasino;
 bool CChip::bIsShow = false;

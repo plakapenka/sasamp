@@ -521,6 +521,10 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			packetCasinoChip(p);
 			break;
 		}
+		case RPC_KILL_LIST: {
+			packetKillList(p);
+			break;
+		}
 		case RPC_UPDATE_BACCARAT: {
 			packetCasinoBaccarat(p);
 			break;
@@ -1168,12 +1172,20 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		{
 			char str[255];
 			uint8_t len;
+			uint8_t repeat;
+
 			bs.Read(len);
 			bs.Read(&str[0], len);
 			str[len] = '\0';
+			bs.Read(repeat);
 			//CChatWindow::AddDebugMessage("%s", str);
 			//CChatWindow::AddDebugMessage("Playing audiostream %s", str);
-			GetStreamPool()->PlayIndividualStream(&str[0]);
+			if(repeat) {
+				GetStreamPool()->PlayIndividualStream(&str[0], BASS_SAMPLE_LOOP);
+			}
+			else {
+				GetStreamPool()->PlayIndividualStream(&str[0], BASS_STREAM_AUTOFREE);
+			}
 			break;
 		}
 		case RPC_STREAM_POS:

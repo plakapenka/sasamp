@@ -990,4 +990,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="TouchTargetSizeCheck" />
 
+<!--    <include layout="@layout/gametext"/>-->
+    <include layout="@layout/killist"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

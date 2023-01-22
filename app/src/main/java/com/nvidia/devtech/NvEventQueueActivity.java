@@ -71,6 +71,7 @@ import com.liverussia.cr.gui.Casino_LuckyWheel;
 import com.liverussia.cr.gui.Furniture_factory;
 import com.liverussia.cr.gui.HudManager;
 import com.liverussia.cr.gui.Inventory;
+import com.liverussia.cr.gui.Killist;
 import com.liverussia.cr.gui.MineGame1;
 import com.liverussia.cr.gui.MineGame2;
 import com.liverussia.cr.gui.MineGame3;
@@ -1009,6 +1010,7 @@ public abstract class NvEventQueueActivity
         mChooseServer = new ChooseServer(this);
         new Furniture_factory(this);
         new AdminRecon(this);
+        new Killist(this);
         // mInputManager = new InputManager(this);
         //mHeightProvider = new HeightProvider(this).init(mRootFrame).setHeightListener(this);
         mNotification = new Notification(this);

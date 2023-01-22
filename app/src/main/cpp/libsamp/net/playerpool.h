@@ -56,7 +56,12 @@ public:
 	};
 
 	void SetPlayerName(PLAYERID playerId, char* szName) { strcpy(m_szPlayerNames[playerId], szName); }
-	char* GetPlayerName(PLAYERID playerId){ return m_szPlayerNames[playerId]; }
+	char* GetPlayerName(PLAYERID playerId) {
+		if(GetSlotState(playerId)) {
+			return m_szPlayerNames[playerId];
+		}
+		return "None";
+	}
 
 	PLAYERID FindRemotePlayerIDFromGtaPtr(PED_TYPE * pActor);
 

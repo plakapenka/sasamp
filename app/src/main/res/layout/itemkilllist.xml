@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="@dimen/_22sdp"
+    xmlns:strokeAttrs="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/kill_list_bg"
+    android:backgroundTint="@color/blue_"
+    android:id="@+id/chat_line">
+
+    <ImageView
+        android:id="@+id/kill_list_icondeath"
+        android:layout_width="@dimen/_10sdp"
+        android:layout_height="@dimen/_10sdp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/kill_list_icon_death"
+        android:backgroundTint="@color/blue_"
+        strokeAttrs:layout_constraintBottom_toBottomOf="parent"
+        strokeAttrs:layout_constraintStart_toStartOf="parent"
+        strokeAttrs:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/kill_list_killer_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Leonid_Litvinenko"
+        android:textSize="@dimen/_7sdp"
+        android:fontFamily="@font/visby_round_cf_extra_bold"
+        android:textColor="@color/white"
+        strokeAttrs:layout_constraintBottom_toBottomOf="parent"
+        strokeAttrs:layout_constraintStart_toEndOf="@+id/kill_list_icondeath"
+        strokeAttrs:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/kill_list_gun_icon"
+        android:layout_width="@dimen/_10sdp"
+        android:layout_height="@dimen/_10sdp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/kill_list_icon_weapon_31"
+        strokeAttrs:layout_constraintBottom_toBottomOf="parent"
+        strokeAttrs:layout_constraintStart_toEndOf="@+id/kill_list_killer_textview"
+        strokeAttrs:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/kill_list_death_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingEnd="@dimen/_20sdp"
+        android:layout_marginStart="8dp"
+        android:text="Vova_Zobenko"
+        android:textSize="@dimen/_7sdp"
+        android:fontFamily="@font/visby_round_cf_extra_bold"
+        android:textColor="@color/white"
+        strokeAttrs:layout_constraintBottom_toBottomOf="parent"
+        strokeAttrs:layout_constraintStart_toEndOf="@+id/kill_list_gun_icon"
+        strokeAttrs:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
