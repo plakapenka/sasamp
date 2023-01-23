@@ -52,7 +52,7 @@ public class HudManager {
     private ImageView target_notify_exit;
     private ImageView target_notify_status;
     private TextView target_notify_text;
-    private TextView hud_money;
+    final TextView hud_money_textview;
     private TextView hud_money_dif;
     private ImageView hud_weapon;
     private ImageView hud_menu;
@@ -99,6 +99,9 @@ public class HudManager {
     ConstraintLayout damage_informer_give_layout;
     TextView damage_informer_take;
 
+    // damage
+    TextView death_anounce_text;
+
     private int cursorPos = 0;
     private final int INVALID = -1;
     private final int ME_BUTTON = 0;
@@ -124,17 +127,17 @@ public class HudManager {
 
     DecimalFormat formatter;
 
-    public native void HudInit();
-    public native void ClickEnterPassengerButton();
-    public native void ClickEnterExitVehicleButton();
-    public native void ClickLockVehicleButton();
-    public native void PressedHorn(boolean pressed);
-    public native void SetRadarBgPos(float x1, float y1, float x2, float y2);
-    public native void SetRadarPos(float x1, float y1);
-    public native void ToggleKeyBoard(boolean toggle);
-    public native void SendChatMessage(byte str[]);
-    public native void SendChatButton(int buttonID);
-    public native void ChatSetCursor(int start, int end);
+    native void HudInit();
+    native void ClickEnterPassengerButton();
+    native void ClickEnterExitVehicleButton();
+    native void ClickLockVehicleButton();
+    native void PressedHorn(boolean pressed);
+    native void SetRadarBgPos(float x1, float y1, float x2, float y2);
+    native void SetRadarPos(float x1, float y1);
+    native void ToggleKeyBoard(boolean toggle);
+    native void SendChatMessage(byte str[]);
+    native void SendChatButton(int buttonID);
+    native void ChatSetCursor(int start, int end);
     native void clickCameraMode();
     ChatAdapter adapter;
     int damageSound = 0;
@@ -144,6 +147,9 @@ public class HudManager {
     @SuppressLint("ClickableViewAccessibility")
     public HudManager(Activity aactivity) {
         activity = aactivity;
+
+        // kill anounce
+        death_anounce_text = activity.findViewById(R.id.death_anounce_text);
 
         camera_mode_butt = activity.findViewById(R.id.camera_mode_butt);
         camera_mode_butt.setOnClickListener(view -> {
@@ -367,7 +373,7 @@ public class HudManager {
         progressArmor = aactivity.findViewById(R.id.hud_armor_pb);
         progressHP = aactivity.findViewById(R.id.hud_health_pb);
 
-        hud_money = aactivity.findViewById(R.id.hud_money);
+        hud_money_textview = aactivity.findViewById(R.id.hud_money_textview);
         hud_money_dif = activity.findViewById(R.id.hud_money_dif);
         hud_weapon = aactivity.findViewById(R.id.hud_weapon);
         hud_menu = aactivity.findViewById(R.id.hud_menu);
@@ -415,6 +421,10 @@ public class HudManager {
         });
 
         Utils.HideLayout(hud_gpsactive, false);
+    }
+
+    void showKillAnounce(String text) {
+
     }
 
     void addGiveDamageNotify(String nick, String weapon, float damage){
@@ -619,7 +629,7 @@ public class HudManager {
                     thread_update_money.start();
                 } catch (Exception e) {
                     activity.runOnUiThread(() -> {
-                        hud_money.setText(formatter.format(current_visual_money));
+                        hud_money_textview.setText(formatter.format(current_visual_money));
                     });
                 }
 
@@ -656,7 +666,7 @@ public class HudManager {
                 thread_update_money.start();
             } catch (Exception e) {
                 activity.runOnUiThread(() -> {
-                    hud_money.setText(formatter.format(current_visual_money));
+                    hud_money_textview.setText(formatter.format(current_visual_money));
                 });
             }
         }
@@ -673,7 +683,7 @@ public class HudManager {
                     current_visual_money = current_real_money;
                 }
                 activity.runOnUiThread(() -> {
-                    hud_money.setText(formatter.format(current_visual_money));
+                    hud_money_textview.setText(formatter.format(current_visual_money));
                 });
                 try {
                     sleep(10);
@@ -687,7 +697,7 @@ public class HudManager {
                     current_visual_money = current_real_money;
                 }
                 activity.runOnUiThread(() -> {
-                    hud_money.setText(formatter.format(current_visual_money));
+                    hud_money_textview.setText(formatter.format(current_visual_money));
                 });
 
                 try {

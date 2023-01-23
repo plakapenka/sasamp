@@ -303,6 +303,7 @@ void CKeyBoard::Close()
 #include "chatwindow.h"
 #include "CDebugInfo.h"
 #include "java_systems/CTab.h"
+#include "java_systems/CDuelsGui.h"
 
 bool CKeyBoard::OnTouchEvent(int type, bool multi, int x, int y)
 {
@@ -2329,49 +2330,22 @@ bool ProcessLocalCommands(const char str[])
 {
 	if (strstr(str, "/fontsize"))
 	{
-		while (*str)
-		{
-			if (*str == ' ')
-			{
-				str++;
-				break;
-			}
-			str++;
-		}
-		int size = 0;
-		if (sscanf(str, "%f", &size) == -1)
+		float size = 0;
+		if (sscanf(str, "%*s%f", &size) == -1)
 		{
 			CChatWindow::AddDebugMessage("Используйте: /fontsize [scale]");
 			return true;
 		}
-		size = 27*size;
-		CHUD::ChangeChatTextSize(size);
+		size = 27 * size;
+		CHUD::ChangeChatTextSize( ceil(size) );
 		return true;
 	}
 
 	if (strcmp(str, "/q") == 0)
 	{
 		CGame__Shutdown_hook();
-//		// Update this flag so DoGameRestart finishes the game.
-//		*(uint8_t *)(g_libGTASA + 0x63E094) = 0;
-//
-//		// DoGameRestart
-//		((void (*)())(g_libGTASA + 0x261C8C + 1))();
 		return true;
 	}
-
-//	if (strstr(str, "/reconnect"))
-//	{
-//		pNetGame->ShutDownForGameRestart();
-//		pNetGame->SetGameState(GAMESTATE_WAIT_CONNECT);
-//		return true;
-//	}
-
-//	if (strstr(str, "/chat"))
-//	{
-//		pHud->ToggleChat( !pHud->isChatOn);
-//		return true;
-//	}
 
 	if (strstr(str, "/tab"))
 	{
@@ -2380,7 +2354,6 @@ bool ProcessLocalCommands(const char str[])
 	}
 	if (strstr(str, "/fpslimit"))
 	{
-
 		int fps = 0;
 		if (sscanf(str, "%*s%d", &fps) == -1)
 		{
