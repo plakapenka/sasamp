@@ -2,6 +2,8 @@ package com.liverussia.cr.gui;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.text.Html;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -10,10 +12,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.liverussia.cr.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Killist {
@@ -34,8 +38,17 @@ public class Killist {
         kill_list.setAdapter(adapter);
     }
 
-    void addItem(String killertext, String deathtext, int gun, int ream) {
-        adapter.addItem(killertext, deathtext, gun);
+    void addItem(String killertext, String deathtext, int gun, int team) {
+        adapter.addItem(killertext, deathtext, gun, team);
+
+        if(kill_list.getVisibility() == View.GONE) {
+            activity.runOnUiThread( () -> kill_list.setVisibility(View.VISIBLE) );
+        }
+    }
+
+    void clearKillList() {
+        activity.runOnUiThread( () -> kill_list.setVisibility(View.GONE) );
+        adapter.clearItems();
     }
 
     public class KillListAdapter  extends RecyclerView.Adapter<KillListAdapter.ViewHolder> {
@@ -44,8 +57,14 @@ public class Killist {
         List<String> killertext;
         List<String> deathtext;
         List<Integer> gun;
+        List<Integer> teamColor;
 
         KillListAdapter(Context context) {
+            killertext = new ArrayList<>();
+            deathtext = new ArrayList<>();
+            gun = new ArrayList<>();
+            teamColor = new ArrayList<>();
+
             this.inflater = LayoutInflater.from(context);
         }
         @Override
@@ -60,26 +79,37 @@ public class Killist {
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             holder.kill_list_killer_textview.setText(killertext.get(position));
             holder.kill_list_death_textview.setText(deathtext.get(position));
+            holder.kill_list_bg.setBackgroundTintList(ColorStateList.valueOf(teamColor.get(position)));
         }
 
         @Override
         public int getItemCount() {
-            return 0;
+            return killertext.size();
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             final TextView kill_list_killer_textview;
             final TextView kill_list_death_textview;
+            final ConstraintLayout kill_list_bg;
 
             ViewHolder(View view){
                 super(view);
+                kill_list_bg = view.findViewById(R.id.kill_list_bg);
                 kill_list_killer_textview = view.findViewById(R.id.kill_list_killer_textview);
                 kill_list_death_textview = view.findViewById(R.id.kill_list_death_textview);
             }
         }
-        public void addItem(String killer, String death, int gun) {
+
+        void clearItems() {
+            this.killertext.clear();
+            this.deathtext.clear();
+            this.gun.clear();
+            this.teamColor.clear();
+        }
+
+        void addItem(String killer, String death, int gun, int team) {
             activity.runOnUiThread(() -> {
-                if(this.killertext != null && this.killertext.size() > 4){
+                if(this.killertext != null && this.killertext.size() > 2){
                     this.killertext.remove(0);
                     this.deathtext.remove(0);
                     this.gun.remove(0);
@@ -88,6 +118,19 @@ public class Killist {
                 this.killertext.add(killer);
                 this.deathtext.add(death);
                 this.gun.add(gun);
+                switch (team) {
+                    case 1: {
+                        this.teamColor.add(Color.parseColor("#e53935"));
+                        break;
+                    }
+                    case 2: {
+                        this.teamColor.add(Color.parseColor("#165A7A"));
+                        break;
+                    }
+                    default: {
+                        this.teamColor.add(Color.parseColor("#90a4ae"));
+                    }
+                }
                 notifyItemInserted(this.killertext.size()-1);
 
             });

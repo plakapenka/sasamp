@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="@dimen/_22sdp"
+    android:layout_width="@dimen/_150sdp"
+    android:layout_height="@dimen/_18sdp"
     xmlns:strokeAttrs="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/kill_list_bg"
-    android:backgroundTint="@color/blue_"
-    android:id="@+id/chat_line">
+    android:backgroundTint="#90a4ae"
+    android:layout_marginBottom="@dimen/_1sdp"
+    android:layout_marginTop="@dimen/_1sdp"
+    android:id="@+id/kill_list_bg">
 
     <ImageView
         android:id="@+id/kill_list_icondeath"
-        android:layout_width="@dimen/_10sdp"
-        android:layout_height="@dimen/_10sdp"
+        android:layout_width="@dimen/_11sdp"
+        android:layout_height="@dimen/_11sdp"
         android:layout_marginStart="8dp"
         android:background="@drawable/kill_list_icon_death"
-        android:backgroundTint="@color/blue_"
+        android:backgroundTint="@color/gray"
         strokeAttrs:layout_constraintBottom_toBottomOf="parent"
         strokeAttrs:layout_constraintStart_toStartOf="parent"
         strokeAttrs:layout_constraintTop_toTopOf="parent" />
@@ -22,10 +24,11 @@
     <TextView
         android:id="@+id/kill_list_killer_textview"
         android:layout_width="wrap_content"
+        android:includeFontPadding="false"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="@dimen/_4sdp"
         android:text="Leonid_Litvinenko"
-        android:textSize="@dimen/_7sdp"
+        android:textSize="@dimen/_5sdp"
         android:fontFamily="@font/visby_round_cf_extra_bold"
         android:textColor="@color/white"
         strokeAttrs:layout_constraintBottom_toBottomOf="parent"
@@ -34,9 +37,9 @@
 
     <ImageView
         android:id="@+id/kill_list_gun_icon"
-        android:layout_width="@dimen/_10sdp"
-        android:layout_height="@dimen/_10sdp"
-        android:layout_marginStart="8dp"
+        android:layout_width="@dimen/_11sdp"
+        android:layout_height="@dimen/_11sdp"
+        android:layout_marginStart="@dimen/_4sdp"
         android:background="@drawable/kill_list_icon_weapon_31"
         strokeAttrs:layout_constraintBottom_toBottomOf="parent"
         strokeAttrs:layout_constraintStart_toEndOf="@+id/kill_list_killer_textview"
@@ -46,10 +49,11 @@
         android:id="@+id/kill_list_death_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:includeFontPadding="false"
         android:paddingEnd="@dimen/_20sdp"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="@dimen/_4sdp"
         android:text="Vova_Zobenko"
-        android:textSize="@dimen/_7sdp"
+        android:textSize="@dimen/_5sdp"
         android:fontFamily="@font/visby_round_cf_extra_bold"
         android:textColor="@color/white"
         strokeAttrs:layout_constraintBottom_toBottomOf="parent"

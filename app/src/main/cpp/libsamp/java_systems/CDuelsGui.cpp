@@ -2,7 +2,7 @@
 // Created by plaka on 21.01.2023.
 //
 
-#include "CKillList.h"
+#include "CDuelsGui.h"
 
 #include "main.h"
 
@@ -10,9 +10,20 @@
 #include "net/netgame.h"
 #include "util/CJavaWrapper.h"
 
-jobject CKillList::thiz = nullptr;
+jobject CDuelsGui::thiz = nullptr;
 
-void CKillList::addMessage(PLAYERID killer, PLAYERID killee, int reason, int team)
+void CDuelsGui::clearKillList()
+{
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+    if(!env)return;
+
+    jclass clazz = env->GetObjectClass(CDuelsGui::thiz);
+    jmethodID method = env->GetMethodID(clazz, "clearKillList", "()V");
+
+    env->CallVoidMethod(CDuelsGui::thiz, method);
+}
+
+void CDuelsGui::addMessage(PLAYERID killer, PLAYERID killee, int reason, int team)
 {
     JNIEnv* env = g_pJavaWrapper->GetEnv();
     if(!env)return;
@@ -24,10 +35,10 @@ void CKillList::addMessage(PLAYERID killer, PLAYERID killee, int reason, int tea
     jstring jKillername = env->NewStringUTF( pPlayerPool->GetPlayerName(killer) );
     jstring jKilleename = env->NewStringUTF( pPlayerPool->GetPlayerName(killee) );
 
-    jclass clazz = env->GetObjectClass(CKillList::thiz);
+    jclass clazz = env->GetObjectClass(CDuelsGui::thiz);
     jmethodID method = env->GetMethodID(clazz, "addItem", "(Ljava/lang/String;Ljava/lang/String;II)V");
 
-    env->CallVoidMethod(CKillList::thiz, method, jKillername, jKilleename, reason, team);
+    env->CallVoidMethod(CDuelsGui::thiz, method, jKillername, jKilleename, reason, team);
 }
 
 void CNetGame::packetKillList(Packet* p)
@@ -46,11 +57,11 @@ void CNetGame::packetKillList(Packet* p)
     bs.Read(reason);
     bs.Read(team);
 
-    CKillList::addMessage(killer, killee, reason, team);
+    CDuelsGui::addMessage(killer, killee, reason, team);
 }
 
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_Killist_init(JNIEnv *env, jobject thiz) {
-    CKillList::thiz = env->NewGlobalRef(thiz);
+    CDuelsGui::thiz = env->NewGlobalRef(thiz);
 }
