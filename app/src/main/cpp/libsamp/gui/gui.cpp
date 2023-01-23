@@ -211,7 +211,7 @@ void CGUI::ShowSpeed()
             bDoor = pVehicle->GetDoorState();
         }
     }
-	g_pJavaWrapper->UpdateSpeedInfo(i_speed, m_fuel, bHealth, bMeliage,
+	g_pJavaWrapper->UpdateSpeedInfo(i_speed*1.2, m_fuel, bHealth, bMeliage,
 									pVehicle->m_bEngineOn,
 									pVehicle->GetLightsState(),
 									0,
