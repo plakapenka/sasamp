@@ -304,7 +304,8 @@ void ApplyPatches()
 	CPatch::RET(g_libGTASA + 0x2C9EEC); // CGarages::TriggerMessage
 	CPatch::RET(g_libGTASA + 0x3D4EAC); // CHud_DrawVitalStats
 
-	CPatch::NOP(g_libGTASA + 0x454A88, 2);  // CCamera::ClearPlayerWeaponMode from CPlayerPed::ClearWeaponTarget
+	CPatch::RET(g_libGTASA + 0x36E88C); // CCamera::ClearPlayerWeaponMode не понятен эффект. крашит
+	//CPatch::NOP(g_libGTASA + 0x454A88, 2);  // CCamera::ClearPlayerWeaponMode from CPlayerPed::ClearWeaponTarget
 	CPatch::NOP(g_libGTASA + 0x2FEE76, 2);	// CGarages::RespraysAreFree = true in CRunningScript::ProcessCommands800To899
 	CPatch::NOP(g_libGTASA + 0x50FF64, 2);	// skip playerGifts from CVehicle::SetDriver
 	CPatch::NOP(g_libGTASA + 0x39840A, 2);	// CStreaming::Shutdown from CGame::Shutdown
