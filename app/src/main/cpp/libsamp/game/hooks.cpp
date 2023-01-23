@@ -3014,11 +3014,20 @@ signed int CBulletInfo_AddBullet_hook(ENTITY_TYPE* pEntity, WEAPON_SLOT_TYPE* pW
 	return 1;
 }
 
+bool (*CEventKnockOffBike__AffectsPed)(uintptr_t *thiz, PED_TYPE *a2);
+bool CEventKnockOffBike__AffectsPed_hook(uintptr_t *thiz, PED_TYPE *a2)
+{
+	return false;
+}
+
 void InstallHooks()
 {
 	Log("InstallHooks");
 
 	PROTECT_CODE_INSTALLHOOKS;
+
+	// не падать с мотоцикла
+	CPatch::InlineHook(g_libGTASA, 0x00322FBC, &CEventKnockOffBike__AffectsPed_hook, &CEventKnockOffBike__AffectsPed);
 
 	// Стрельба
 	CPatch::InlineHook(g_libGTASA, 0x564E28, &CWeapon__ProcessLineOfSight_hook, &CWeapon__ProcessLineOfSight);
