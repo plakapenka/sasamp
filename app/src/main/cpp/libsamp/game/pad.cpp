@@ -660,12 +660,17 @@ uint32_t GetTarget_hook(uintptr_t thiz, int a2)
 uint32_t(*CPad__GetEnterTargeting)(uintptr_t thiz);
 uint32_t CPad__GetEnterTargeting_hook(uintptr_t thiz)
 {
+
 	if (dwCurPlayerActor && (byteCurPlayer != 0))
 	{
 		return RemotePlayerKeys[byteCurPlayer].bKeys[ePadKeys::KEY_HANDBRAKE];
 	}
 	else
 	{
+		if(pNetGame && pNetGame->m_GreenZoneState )
+		{
+			return 0;
+		}
 		uint8_t old = *(uint8_t*)(g_libGTASA + 0x008E864C);
 		*(uint8_t*)(g_libGTASA + 0x008E864C) = byteCurPlayer;
 		uintptr_t result = CPad__GetEnterTargeting(thiz);
