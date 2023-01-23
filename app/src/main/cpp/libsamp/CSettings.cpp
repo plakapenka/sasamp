@@ -188,7 +188,7 @@ void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 	if (!ini_table_read_from_file(config, buff))
 	{
 		Log("Cannot load settings, exiting...");
-		std::terminate();
+		g_pJavaWrapper->ExitGame();
 		return;
 	}
 

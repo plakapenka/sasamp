@@ -85,7 +85,6 @@ void CObject::Process(float fElapsedTime)
 	if (!(m_pEntity->mat)) return;
 	if (m_byteMoving & 1)
 	{
-		Log("moooooooov");
 		VECTOR vecSpeed = { 0.0f, 0.0f, 0.0f };
 		MATRIX4X4 matEnt;
 		GetMatrix(&matEnt);
