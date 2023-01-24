@@ -30,6 +30,7 @@ int         CHUD::iWantedLevel = 0;
 bool        CHUD::bIsShowMafiaWar = false;
 float       CHUD::fLastGiveDamage = 0.0f;
 bool        CHUD::bIsTouchCameraButt = false;
+bool        CHUD::bIsCamEditGui = false;
 PLAYERID    CHUD::lastGiveDamagePlayerId = INVALID_PLAYER_ID;
 
 CVector2DFloat CHUD::radarBgPos1;

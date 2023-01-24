@@ -2302,33 +2302,11 @@ bool CKeyBoard::IsNewKeyboard()
 	return m_bNewKeyboard;
 }
 
-void CKeyBoard::OnNewKeyboardInput(JNIEnv *pEnv, jobject thiz, jbyteArray str)
-{
-	if (!str)
-	{
-		return;
-	}
-	jboolean isCopy = true;
-
-	jbyte *pMsg = pEnv->GetByteArrayElements(str, &isCopy);
-	jsize length = pEnv->GetArrayLength(str);
-
-	std::string szStr((char *)pMsg, length);
-
-	std::string *toWrite = bufferedStrings.WriteLock();
-
-	*toWrite = szStr;
-
-	bufferedStrings.WriteUnlock();
-
-	pEnv->ReleaseByteArrayElements(str, pMsg, JNI_ABORT);
-}
-
 extern bool CGame__Shutdown_hook();
 extern void ApplyFPSPatch(uint8_t fps);
 bool ProcessLocalCommands(const char str[])
 {
-	if (strstr(str, "/fontsize"))
+	if (strstr(str, "/fontsize "))
 	{
 		float size = 0;
 		if (sscanf(str, "%*s%f", &size) == -1)
@@ -2346,13 +2324,19 @@ bool ProcessLocalCommands(const char str[])
 		CGame__Shutdown_hook();
 		return true;
 	}
+	if (strcmp(str, "/cameditgui") == 0)
+	{
+		CHUD::bIsCamEditGui = !CHUD::bIsCamEditGui;
+		CHUD::toggleAll( CHUD::bIsCamEditGui );
+		return true;
+	}
 
-	if (strstr(str, "/tab"))
+	if (strcmp(str, "/tab") == 0)
 	{
 		CTab::toggle();
 		return true;
 	}
-	if (strstr(str, "/fpslimit"))
+	if (strstr(str, "/fpslimit "))
 	{
 		int fps = 0;
 		if (sscanf(str, "%*s%d", &fps) == -1)
@@ -2370,19 +2354,19 @@ bool ProcessLocalCommands(const char str[])
 		}
 		return true;
 	}
-	if (strstr(str, "/dl"))
+	if (strcmp(str, "/dl") == 0)
 	{
 		pGame->m_bDl_enabled = !pGame->m_bDl_enabled;
 		return true;
 	}
 
-	if (strstr(str, "/settings"))
+	if (strcmp(str, "/settings") == 0)
 	{
 		g_pJavaWrapper->ShowClientSettings();
 		return true;
 	}
 
-	if (strstr(str, "/fpsinfo"))
+	if (strcmp(str, "/fpsinfo") == 0)
 	{
 		CDebugInfo::ToggleDebugDraw();
 		return true;

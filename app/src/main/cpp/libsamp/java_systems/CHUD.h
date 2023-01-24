@@ -29,6 +29,7 @@ public:
     static bool bIsShowHornButt;
     static bool bIsShowChat;
     static bool bIsTouchCameraButt;
+    static bool bIsCamEditGui;
     static jobject thiz;
 
     static void UpdateWanted();
