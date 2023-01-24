@@ -182,15 +182,10 @@ public class HudManager {
         hide_chat = activity.findViewById(R.id.hide_chat);
         hide_chat.setOnClickListener(view -> {
             if(chat_box.getVisibility() == View.GONE){
-                activity.runOnUiThread(() -> {
-                    Utils.ShowLayout(chat_box, true);
-                    hide_chat.setScaleY(1);
-                });
-            } else{
-                activity.runOnUiThread(() -> {
-                    Utils.HideLayout(chat_box, true);
-                    hide_chat.setScaleY(-1);
-                });
+                showChat();
+            }
+            else{
+                hideChat();
             }
         });
 
@@ -425,6 +420,20 @@ public class HudManager {
 
     void showKillAnounce(String text) {
 
+    }
+
+    void hideChat() {
+        activity.runOnUiThread(() -> {
+            Utils.HideLayout(chat_box, true);
+            hide_chat.setScaleY(-1);
+        });
+    }
+
+    void showChat() {
+        activity.runOnUiThread(() -> {
+            Utils.ShowLayout(chat_box, true);
+            hide_chat.setScaleY(1);
+        });
     }
 
     void addGiveDamageNotify(String nick, String weapon, float damage){
