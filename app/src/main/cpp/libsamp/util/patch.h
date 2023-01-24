@@ -9,7 +9,7 @@ extern "C"
     void sub_naebal(uintptr_t dest, uintptr_t src, size_t size);
 }
 
-class CPatch {
+class CHook {
 public:
 
     static uintptr_t mmap_start, mmap_end, memlib_start, memlib_end;
@@ -51,7 +51,7 @@ public:
     static Src Write(uintptr_t dest, Src src, size_t size = 0)
     {   
 	    size = sizeof(Src);
-        CPatch::WriteMemory(dest, &src, size);
+        CHook::WriteMemory(dest, &src, size);
 	    return src;
     }
 

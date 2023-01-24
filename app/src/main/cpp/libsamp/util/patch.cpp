@@ -10,30 +10,30 @@
 
 #define HOOK_PROC "\x01\xB4\x01\xB4\x01\x48\x01\x90\x01\xBD\x00\xBF\x00\x00\x00\x00"
 
-uintptr_t CPatch::mmap_start 	= 0;
-uintptr_t CPatch::mmap_end		= 0;
-uintptr_t CPatch::memlib_start	= 0;
-uintptr_t CPatch::memlib_end	= 0;
+uintptr_t CHook::mmap_start 	= 0;
+uintptr_t CHook::mmap_end		= 0;
+uintptr_t CHook::memlib_start	= 0;
+uintptr_t CHook::memlib_end	= 0;
 
 void sub_naebal(uintptr_t dest, uintptr_t src, size_t size)
 {
-    CPatch::UnFuck(dest - CRYPT_MASK);
+    CHook::UnFuck(dest - CRYPT_MASK);
     memcpy((void*)(dest - CRYPT_MASK), (void*)src, size - CRYPT_MASK);
     cacheflush(dest - CRYPT_MASK, dest+size - CRYPT_MASK, 0);
 }
 
-void CPatch::UnFuck(uintptr_t ptr)
+void CHook::UnFuck(uintptr_t ptr)
 {
     mprotect((void*)(ptr & 0xFFFFF000), PAGE_SIZE, PROT_READ | PROT_WRITE | PROT_EXEC);
 }
 
-void CPatch::ReadMemory(uintptr_t dest, uintptr_t src, size_t size)
+void CHook::ReadMemory(uintptr_t dest, uintptr_t src, size_t size)
 {
     UnFuck(src);
     memcpy((void*)dest, (void*)src, size);
 }
 
-void CPatch::InitHookStuff()
+void CHook::InitHookStuff()
 {
     memlib_start = g_libGTASA + 0x180044;
     memlib_end = memlib_start + 0x450;
@@ -43,13 +43,13 @@ void CPatch::InitHookStuff()
     mmap_end = (mmap_start + PAGE_SIZE);
 }
 
-void CPatch::JMPCode(uintptr_t func, uintptr_t addr)
+void CHook::JMPCode(uintptr_t func, uintptr_t addr)
 {
     uint32_t code = ((addr-func-4) >> 12) & 0x7FF | 0xF000 | ((((addr-func-4) >> 1) & 0x7FF | 0xB800) << 16);
     WriteMemory(func, (uintptr_t)&code, 4);
 }
 
-void CPatch::WriteHookProc(uintptr_t addr, uintptr_t func)
+void CHook::WriteHookProc(uintptr_t addr, uintptr_t func)
 {
     char code[16];
     memcpy(code, HOOK_PROC, 16);
@@ -57,7 +57,7 @@ void CPatch::WriteHookProc(uintptr_t addr, uintptr_t func)
     WriteMemory(addr, (uintptr_t)code, 16);
 }
 
-void CPatch::CodeInject(uintptr_t addr, uintptr_t func, int reg)
+void CHook::CodeInject(uintptr_t addr, uintptr_t func, int reg)
 {
     char injectCode[12];
 
