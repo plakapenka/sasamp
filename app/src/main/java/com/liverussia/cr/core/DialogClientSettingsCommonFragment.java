@@ -182,7 +182,6 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
         });
 
         getValues();
-        setSeekBarListeners();
 
         mSwitchOutfit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -222,71 +221,6 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
         return mRootView;
     }
 
-    private void setSeekBarListeners()
-    {
-        mListenerSeekBars = new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                if(bChangeAllowed)
-                {
-                    passValuesToNative();
-                }
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar)
-            {
-                mContext.onSettingsWindowSave();
-            }
-        };
-
-        for(int i = DialogClientSettings.mSettingsComonStart; i < DialogClientSettings.mSettingsComonEnd; i++)
-        {
-            String widgetX = "hud_element_pos_x_" + i;
-            String widgetY = "hud_element_pos_y_" + i;
-
-            int resIDX = mContext.getResources().getIdentifier(widgetX, "id", mContext.getPackageName());
-            int resIDY = mContext.getResources().getIdentifier(widgetY, "id", mContext.getPackageName());
-
-            SeekBar barX = mRootView.findViewById(resIDX);
-            SeekBar barY = mRootView.findViewById(resIDY);
-
-            if(barX != null)
-            {
-                barX.setOnSeekBarChangeListener(mListenerSeekBars);
-            }
-            if(barY != null)
-            {
-                barY.setOnSeekBarChangeListener(mListenerSeekBars);
-            }
-        }
-
-        for(int i = DialogClientSettings.mSettingsComonStart; i < DialogClientSettings.mSettingsComonEnd; i++)
-        {
-            String widgetX = "hud_element_scale_x_" + i;
-            String widgetY = "hud_element_scale_y_" + i;
-
-            int resIDX = mContext.getResources().getIdentifier(widgetX, "id", mContext.getPackageName());
-            int resIDY = mContext.getResources().getIdentifier(widgetY, "id", mContext.getPackageName());
-
-            SeekBar barX = mRootView.findViewById(resIDX);
-            SeekBar barY = mRootView.findViewById(resIDY);
-
-            if(barX != null)
-            {
-                barX.setOnSeekBarChangeListener(mListenerSeekBars);
-            }
-            if(barY != null)
-            {
-                barY.setOnSeekBarChangeListener(mListenerSeekBars);
-            }
-        }
-    }
-
     @Override
     public void save() {
 
@@ -302,113 +236,8 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
         fps_text.setText(String.format("%d", getNativeFpsLimit()));
 
         bChangeAllowed = false;
-        for(int i = DialogClientSettings.mSettingsComonStart; i < DialogClientSettings.mSettingsComonEnd; i++)
-        {
-            String widgetX = "hud_element_pos_x_" + i;
-            String widgetY = "hud_element_pos_y_" + i;
-
-            int resIDX = mContext.getResources().getIdentifier(widgetX, "id", mContext.getPackageName());
-            int resIDY = mContext.getResources().getIdentifier(widgetY, "id", mContext.getPackageName());
-
-            SeekBar barX = mRootView.findViewById(resIDX);
-            SeekBar barY = mRootView.findViewById(resIDY);
-
-            int[] pos = mContext.getNativeHudElementPosition(i);
-
-            if(pos[0] == -1)
-            {
-                pos[0] = 1;
-            }
-            if(pos[1] == -1)
-            {
-                pos[1] = 1;
-            }
-
-            if(barX != null)
-            {
-                barX.setProgress(pos[0]);
-            }
-            if(barY != null)
-            {
-                barY.setProgress(pos[1]);
-            }
-        }
-
-        for(int i = DialogClientSettings.mSettingsComonStart; i < DialogClientSettings.mSettingsComonEnd; i++)
-        {
-            String widgetX = "hud_element_scale_x_" + i;
-            String widgetY = "hud_element_scale_y_" + i;
-
-            int resIDX = mContext.getResources().getIdentifier(widgetX, "id", mContext.getPackageName());
-            int resIDY = mContext.getResources().getIdentifier(widgetY, "id", mContext.getPackageName());
-
-            SeekBar barX = mRootView.findViewById(resIDX);
-            SeekBar barY = mRootView.findViewById(resIDY);
-
-            int[] pos = mContext.getNativeHudElementScale(i);
-
-            if(pos[0] == -1)
-            {
-                pos[0] = 1;
-            }
-            if(pos[1] == -1)
-            {
-                pos[1] = 1;
-            }
-
-            if(barX != null && pos[0] != -1)
-            {
-                barX.setProgress(pos[0]);
-            }
-            if(barY != null && pos[1] != -1)
-            {
-                barY.setProgress(pos[1]);
-            }
-        }
 
         bChangeAllowed = true;
     }
-    public void passValuesToNative() {
-        for (int i = DialogClientSettings.mSettingsComonStart; i < DialogClientSettings.mSettingsComonEnd; i++) {
-            String widgetX = "hud_element_pos_x_" + i;
-            String widgetY = "hud_element_pos_y_" + i;
 
-            int resIDX = mContext.getResources().getIdentifier(widgetX, "id", mContext.getPackageName());
-            int resIDY = mContext.getResources().getIdentifier(widgetY, "id", mContext.getPackageName());
-
-            SeekBar barX = mRootView.findViewById(resIDX);
-            SeekBar barY = mRootView.findViewById(resIDY);
-            int x = -1;
-            int y = -1;
-            if (barX != null) {
-                x = barX.getProgress();
-            }
-            if (barY != null) {
-                y = barY.getProgress();
-            }
-
-            mContext.setNativeHudElementPosition(i, x, y);
-        }
-
-        for (int i = DialogClientSettings.mSettingsComonStart; i < DialogClientSettings.mSettingsComonEnd; i++) {
-            String widgetX = "hud_element_scale_x_" + i;
-            String widgetY = "hud_element_scale_y_" + i;
-
-            int resIDX = mContext.getResources().getIdentifier(widgetX, "id", mContext.getPackageName());
-            int resIDY = mContext.getResources().getIdentifier(widgetY, "id", mContext.getPackageName());
-
-            SeekBar barX = mRootView.findViewById(resIDX);
-            SeekBar barY = mRootView.findViewById(resIDY);
-            int x = -1;
-            int y = -1;
-            if (barX != null) {
-                x = barX.getProgress();
-            }
-            if (barY != null) {
-                y = barY.getProgress();
-            }
-
-            mContext.setNativeHudElementScale(i, x, y);
-        }
-    }
 }
