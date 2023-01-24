@@ -507,15 +507,15 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			Log("%d - %d", gg, tt);
 		}
 		case RPC_INVENTAR_CARRYNG: {
-			Packet_InventoryUpdateCarryng(p);
+			packetInventoryUpdateCarryng(p);
 			break;
 		}
 		case RPC_ITEM_MATRIX: {
-			Packet_InventoryUpdateItem(p);
+			packetInventoryUpdateItem(p);
 			break;
 		}
 		case RPC_ITEM_ACTIVETOGGLE: {
-			Packet_InventoryItemActive(p);
+            packetInventoryItemActive(p);
 			break;
 		}
 		case RPC_SHOW_CASINO_BUY_CHIP: {
@@ -543,7 +543,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			break;
 		}
 		case RPC_INVENTAR_SHOWHIDE: {
-			Packet_InventoryToggle(p);
+			packetInventoryToggle(p);
 			break;
 		}
 		case RPC_SHOW_SALARY:

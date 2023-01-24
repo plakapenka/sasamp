@@ -21,6 +21,7 @@
 //----------------------------------------------------------------------------------
 package com.nvidia.devtech;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -609,6 +610,7 @@ public abstract class NvEventQueueActivity
     public native void startPause();
     public native void endPause();
 
+    @SuppressLint("SuspiciousIndentation")
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -641,11 +643,11 @@ public abstract class NvEventQueueActivity
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
-        {
-            // TODO: cutout
-            //getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
+//        {
+//            // TODO: cutout
+//            //getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+//        }
 
         systemInit();
 

@@ -5,70 +5,66 @@
 
 #include "../game/game.h"
 #include "net/netgame.h"
-#include "inventrory.h"
+#include "CInventory.h"
 #include "chatwindow.h"
 
-extern CJavaWrapper *g_pJavaWrapper;
-extern CINVENTORY *pInventory;
+jobject CInventory::thiz = nullptr;
+bool CInventory::bIsToggle = false;
 
-jobject jInventory;
-
-void CINVENTORY::ToggleShow(bool toggle, float satiety)
+void CInventory::toggleShow(bool toggle, float satiety)
 {
     JNIEnv* env = g_pJavaWrapper->GetEnv();
 
-    jclass clazz = env->GetObjectClass(jInventory);
-    jmethodID ToggleShow = env->GetMethodID(clazz, "ToggleShow", "(ZFF)V");
+    jclass clazz = env->GetObjectClass(CInventory::thiz);
+    jmethodID ToggleShow = env->GetMethodID(clazz, "toggleShow", "(ZFF)V");
 
     CLocalPlayer* pPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer();
-    if (pPlayer) {
-        if (pPlayer->GetPlayerPed()) {
-            env->CallVoidMethod(jInventory, ToggleShow, toggle, satiety, pPlayer->GetPlayerPed()->GetHealth());
-            bIsToggle = toggle;
-        }
-    }
+    if (!pPlayer || !pPlayer->GetPlayerPed()) return;
+
+    env->CallVoidMethod(CInventory::thiz, ToggleShow, toggle, satiety, pPlayer->GetPlayerPed()->GetHealth());
+    bIsToggle = toggle;
 }
 
-void CINVENTORY::InventoryUpdateItem(int matrixindex, int pos, const char sprite[], const char caption[], bool active) {
+void CInventory::updateItem(int matrixindex, int pos, const char sprite[], const char caption[], bool active) {
     JNIEnv* env = g_pJavaWrapper->GetEnv();
 
     jstring jsprite = env->NewStringUTF( sprite );
     jstring jcaption = env->NewStringUTF( caption );
 
-    jclass clazz = env->GetObjectClass(jInventory);
-    jmethodID InventoryUpdateItem = env->GetMethodID(clazz, "InventoryUpdateItem", "(IILjava/lang/String;Ljava/lang/String;Z)V");
+    jclass clazz = env->GetObjectClass(CInventory::thiz);
+    jmethodID method = env->GetMethodID(clazz, "updateItem", "(IILjava/lang/String;Ljava/lang/String;Z)V");
 
 
-    env->CallVoidMethod(jInventory, InventoryUpdateItem, matrixindex, pos, jsprite, jcaption, active);
+    env->CallVoidMethod(CInventory::thiz, method, matrixindex, pos, jsprite, jcaption, active);
 }
 
-void CINVENTORY::UpdateCarryng(int matrixindex, int brutto, int maxbrutto) {
+void CInventory::updateCarryng(int matrixindex, int brutto, int maxbrutto) {
     JNIEnv* env = g_pJavaWrapper->GetEnv();
 
-    jclass clazz = env->GetObjectClass(jInventory);
-    jmethodID UpdateCarryng = env->GetMethodID(clazz, "UpdateCarryng", "(III)V");
+    jclass clazz = env->GetObjectClass(CInventory::thiz);
+    jmethodID method = env->GetMethodID(clazz, "updateCarryng", "(III)V");
 
 
-    env->CallVoidMethod(jInventory, UpdateCarryng, matrixindex, brutto, maxbrutto);
+    env->CallVoidMethod(CInventory::thiz, method, matrixindex, brutto, maxbrutto);
 }
 
-void CINVENTORY::UpdateItem(int matrixindex, int pos, bool active) {
+void CInventory::updateItem(int matrixindex, int pos, bool active) {
     JNIEnv* env = g_pJavaWrapper->GetEnv();
 
-    jclass clazz = env->GetObjectClass(jInventory);
-    jmethodID InventoryItemActive = env->GetMethodID(clazz, "InventoryItemActive", "(IIZ)V");
+    jclass clazz = env->GetObjectClass(CInventory::thiz);
+    jmethodID method = env->GetMethodID(clazz, "itemToggleActive", "(IIZ)V");
 
 
-    env->CallVoidMethod(jInventory, InventoryItemActive, matrixindex, pos, active);
+    env->CallVoidMethod(CInventory::thiz, method, matrixindex, pos, active);
 }
 
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_Inventory_InventoryInit(JNIEnv *env, jobject thiz) {
-    jInventory = env->NewGlobalRef(thiz);
+    CInventory::thiz = env->NewGlobalRef(thiz);
 }
 
-void CNetGame::Packet_InventoryItemActive(Packet* p)
+void CNetGame::packetInventoryItemActive(Packet* p)
 {
     RakNet::BitStream bs((unsigned char*)p->data, p->length, false);
     uint8_t packetID;
@@ -83,11 +79,11 @@ void CNetGame::Packet_InventoryItemActive(Packet* p)
     bs.Read(pos);
     bs.Read(active);
 
-    pInventory->UpdateItem(matrixindex, pos, active);
+    CInventory::updateItem(matrixindex, pos, active);
 
 }
 
-void CNetGame::Packet_InventoryToggle(Packet* p)
+void CNetGame::packetInventoryToggle(Packet* p)
 {
     RakNet::BitStream bs((unsigned char*)p->data, p->length, false);
     uint8_t packetID;
@@ -100,11 +96,11 @@ void CNetGame::Packet_InventoryToggle(Packet* p)
     bs.Read(toggle);
     bs.Read(satiety);
 
-    pInventory->ToggleShow(toggle, satiety);
+    CInventory::toggleShow(toggle, satiety);
 
 }
 
-void CNetGame::Packet_InventoryUpdateCarryng(Packet* p)
+void CNetGame::packetInventoryUpdateCarryng(Packet* p)
 {
     RakNet::BitStream bs((unsigned char*)p->data, p->length, false);
     uint8_t packetID;
@@ -119,12 +115,10 @@ void CNetGame::Packet_InventoryUpdateCarryng(Packet* p)
     bs.Read(brutto);
     bs.Read(maxbrutto);
 
-    pInventory->UpdateCarryng(matrixindex, brutto, maxbrutto);
-
-    Log("%d, %d, %d", matrixindex, brutto, maxbrutto);
+    CInventory::updateCarryng(matrixindex, brutto, maxbrutto);
 }
 
-void CNetGame::Packet_InventoryUpdateItem(Packet* p)
+void CNetGame::packetInventoryUpdateItem(Packet* p)
 {
     RakNet::BitStream bs((unsigned char*)p->data, p->length, false);
     uint8_t packetID;
@@ -160,20 +154,20 @@ void CNetGame::Packet_InventoryUpdateItem(Packet* p)
     char utf8_2[123];
     cp1251_to_utf8(utf8_2, caption);
 
-    pInventory->InventoryUpdateItem(matrixindex, pos, utf8_1, utf8_2, active);
+    CInventory::updateItem(matrixindex, pos, utf8_1, utf8_2, active);
 
-    //Log("Packet_InventoryToggle %d", toggle);
+    //Log("packetInventoryToggle %d", toggle);
 }
 
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_Inventory_SwitchToggle(JNIEnv *env, jobject thiz, jboolean toggle) {
-    pInventory->bIsToggle = toggle;
+Java_com_liverussia_cr_gui_Inventory_switchToggle(JNIEnv *env, jobject thiz, jboolean toggle) {
+    CInventory::bIsToggle = toggle;
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_Inventory_SendSelectItem(JNIEnv *env, jobject thiz, jint matrindex,
+Java_com_liverussia_cr_gui_Inventory_sendSelectItem(JNIEnv *env, jobject thiz, jint matrindex,
                                                     jint pos) {
 
     RakNet::BitStream bsSend;
@@ -186,7 +180,7 @@ Java_com_liverussia_cr_gui_Inventory_SendSelectItem(JNIEnv *env, jobject thiz, j
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_Inventory_SendClickButton(JNIEnv *env, jobject thiz, jint buttonid) {
+Java_com_liverussia_cr_gui_Inventory_sendClickButton(JNIEnv *env, jobject thiz, jint buttonid) {
     RakNet::BitStream bsSend;
     bsSend.Write((uint8_t)ID_CUSTOM_RPC);
     bsSend.Write((uint8_t)RPC_INVENTAR_BUTTONS);

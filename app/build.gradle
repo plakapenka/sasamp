@@ -22,8 +22,8 @@ android {
     //    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         applicationId "com.liverussia.cr"
-        versionName "125"
-        versionCode 125
+        versionName "128"
+        versionCode 128
         vectorDrawables.useSupportLibrary = true
 
         multiDexEnabled = true
@@ -88,7 +88,7 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.13.0'
 
     //CrashLytics
-    implementation 'com.google.firebase:firebase-crashlytics:18.3.2'
+    implementation 'com.google.firebase:firebase-crashlytics:18.3.3'
     implementation platform('com.google.firebase:firebase-bom:31.1.0')
 
     implementation 'com.google.firebase:firebase-crashlytics-ndk'

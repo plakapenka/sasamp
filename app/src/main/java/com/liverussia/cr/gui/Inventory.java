@@ -1,7 +1,6 @@
 package com.liverussia.cr.gui;
 
 import android.app.Activity;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -19,14 +18,14 @@ public class Inventory {
 
     List<ArrayList<ConstraintLayout>> items = new ArrayList<>();
 
-    private Activity activity;
+    private final Activity activity;
     private ConstraintLayout inv_main_layout;
     private View inv_close_butt;
     private View isSelectedItem = null;
 
-    public native void SwitchToggle(boolean toggle);
-    public native void SendSelectItem(int matrindex, int pos);
-    public native void SendClickButton(int buttonid);
+    public native void switchToggle(boolean toggle);
+    public native void sendSelectItem(int matrindex, int pos);
+    public native void sendClickButton(int buttonid);
 
     static final int INVENTAR_BUTTON_TRATE = 1;
     static final int INVENTAR_BUTTON_REPRT = 2;
@@ -37,7 +36,6 @@ public class Inventory {
     static final int INVENTAR_BUTTON_USE = 7;
     static final int INVENTAR_BUTTON_INFO = 8;
 
-    private View inv_use_butt;
     private View inv_inf_butt;
     private View inv_sell_butt;
     private View inv_del_butt;
@@ -66,48 +64,48 @@ public class Inventory {
         //кнопка задания
         inv_task_butt = activity.findViewById(R.id.inv_task_butt);
         inv_task_butt.setOnClickListener(view -> {
-            SendClickButton(INVENTAR_BUTTON_QUEST);
+            sendClickButton(INVENTAR_BUTTON_QUEST);
         });
 
         //Кнопка магазин
         inv_shop_butt = activity.findViewById(R.id.inv_shop_butt);
         inv_shop_butt.setOnClickListener(view -> {
-            SendClickButton(INVENTAR_BUTTON_DONATE);
+            sendClickButton(INVENTAR_BUTTON_DONATE);
         });
 
         //кнопка помощь
         inv_help_butt = activity.findViewById(R.id.inv_help_butt);
         inv_help_butt.setOnClickListener(view -> {
-            SendClickButton(INVENTAR_BUTTON_REPRT);
+            sendClickButton(INVENTAR_BUTTON_REPRT);
         });
 
         //кнопка меню
         inv_menu_butt = activity.findViewById(R.id.inv_menu_butt);
         inv_menu_butt.setOnClickListener(view -> {
-            SendClickButton(INVENTAR_BUTTON_MMENU);
+            sendClickButton(INVENTAR_BUTTON_MMENU);
         });
 
         // кнопка удалить
         inv_del_butt = activity.findViewById(R.id.inv_del_butt);
         inv_del_butt.setOnClickListener(view -> {
-            SendClickButton(INVENTAR_BUTTON_DELETE);
+            sendClickButton(INVENTAR_BUTTON_DELETE);
         });
 
         //кнопка продать
         inv_sell_butt = activity.findViewById(R.id.inv_sell_butt);
         inv_sell_butt.setOnClickListener(view -> {
-            SendClickButton(INVENTAR_BUTTON_TRATE);
+            sendClickButton(INVENTAR_BUTTON_TRATE);
         });
 
         // кнопка Использовать
-        inv_use_butt = activity.findViewById(R.id.inv_use_butt);
+        View inv_use_butt = activity.findViewById(R.id.inv_use_butt);
         inv_use_butt.setOnClickListener(view -> {
-            SendClickButton(INVENTAR_BUTTON_USE);
+            sendClickButton(INVENTAR_BUTTON_USE);
         });
         // Кнопка инфо
         inv_inf_butt = activity.findViewById(R.id.inv_inf_butt);
         inv_inf_butt.setOnClickListener(view -> {
-            SendClickButton(INVENTAR_BUTTON_INFO);
+            sendClickButton(INVENTAR_BUTTON_INFO);
         });
 
         inv_main_layout = activity.findViewById(R.id.inv_main_layout);
@@ -116,7 +114,7 @@ public class Inventory {
         inv_close_butt = activity.findViewById(R.id.inv_close_butt);
         inv_close_butt.setOnClickListener(view -> {
             inv_main_layout.setVisibility(View.GONE);
-            SwitchToggle(false);
+            switchToggle(false);
         });
 
         ArrayList <ConstraintLayout> colum1 = new ArrayList<>();
@@ -155,26 +153,13 @@ public class Inventory {
         for(int i = 0; i < items.size(); i++) {
             for (int j = 0; j < items.get(i).size(); j++) {
                 items.get(i).get(j).setOnClickListener(view -> {
-                   // if(isSelectedItem != null)// снятие выделения
-                   // {
-                        SendSelectItem(GetItemMat(view), GetItemPos(view)); // отправка пакета
-
-                       // isSelectedItem.setBackgroundResource(R.drawable.inv_bg_shape);
-                       // isSelectedItem = null;
-                   // }
-                   // else {// выделение
-                       // isSelectedItem = view;
-                       // view.setBackgroundResource(R.drawable.inv_bg_shape_active);
-
-                     //   SendSelectItem(GetItemMat(isSelectedItem), GetItemPos(isSelectedItem)); // отправка пакета
-                   // }
-
+                    sendSelectItem(getItemMat(view), getItemPos(view)); // отправка пакета
                 });
             }
         }
 
     }
-    public void InventoryUpdateItem(int matrixindex, int pos, String sprite, String caption, boolean active){
+    public void updateItem(int matrixindex, int pos, String sprite, String caption, boolean active){
         activity.runOnUiThread(() -> {
             if(matrixindex < 1)return;
 
@@ -211,7 +196,7 @@ public class Inventory {
         });
     }
 
-    public void InventoryItemActive(int matrixindex, int pos, boolean active){
+    public void itemToggleActive(int matrixindex, int pos, boolean active){
         activity.runOnUiThread(() -> {
             if(matrixindex < 1)return;
 
@@ -228,7 +213,7 @@ public class Inventory {
         });
     }
 
-    public void UpdateCarryng(int matrixindex, int brutto, int maxbrutto){
+    public void updateCarryng(int matrixindex, int brutto, int maxbrutto){
         activity.runOnUiThread(() -> {
             // if(matrixindex < 1)return;
             inv_progress.setProgress(brutto);
@@ -238,7 +223,7 @@ public class Inventory {
             inv_main_layout.invalidate();
         });
     }
-    public void ToggleShow(boolean toggle, float satiety, float health)
+    public void toggleShow(boolean toggle, float satiety, float health)
     {
         if(toggle){
             activity.runOnUiThread(() -> {
@@ -254,7 +239,7 @@ public class Inventory {
         }
 
     }
-    public int GetItemPos(View view)
+    public int getItemPos(View view)
     {
         for(int i = 0; i < items.size(); i++)
         {
@@ -268,7 +253,7 @@ public class Inventory {
         }
         return -1;
     }
-    public int GetItemMat(View view)
+    public int getItemMat(View view)
     {
         for(int i = 0; i < items.size(); i++)
         {

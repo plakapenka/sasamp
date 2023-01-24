@@ -32,7 +32,7 @@ char g_pszStorage[255];
 #include "CServerManager.h"
 #include "CLocalisation.h"
 #include "java_systems/CHUD.h"
-#include "java_systems/inventrory.h"
+#include "java_systems/CInventory.h"
 
 const cryptor::string_encryptor encLib = cryptor::create("libsamp.so", 11);
 void CrashLog(const char* fmt, ...);
@@ -44,7 +44,6 @@ CPlayerTags *pPlayerTags = nullptr;
 CGUI *pGUI = nullptr;
 CKeyBoard *pKeyBoard = nullptr;
 CSettings *pSettings = nullptr;
-CINVENTORY *pInventory = nullptr;
 
 void InstallSpecialHooks();
 void InitRenderWareFunctions();
@@ -110,7 +109,6 @@ void InitSAMP(JNIEnv* pEnv, jobject thiz, const char* path)
 	Log("Storage: %s", g_pszStorage);
 
 	pSettings = new CSettings();
-	pInventory = new CINVENTORY();
 
 	//ÒÓÒ ÌÎÆÍÎ ÇÀÃÐÓÇÈÒÜ
 	isTestMode = (bool)pSettings->GetReadOnly().isTestMode;

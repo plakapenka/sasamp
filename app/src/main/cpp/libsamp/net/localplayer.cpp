@@ -10,10 +10,9 @@
 #include "../CSettings.h"
 #include "../util/CJavaWrapper.h"
 #include "java_systems/CHUD.h"
-#include "java_systems/inventrory.h"
+#include "java_systems/CInventory.h"
 
 extern CKeyBoard* pKeyBoard;
-extern CINVENTORY *pInventory;
 extern CGame *pGame;
 extern CSettings *pSettings;
 
@@ -234,10 +233,9 @@ bool CLocalPlayer::Process()
 
 
 		// handle interior changing
-		// хуета
-//		uint8_t byteInterior = pGame->GetActiveInterior();
-//		if (byteInterior != m_byteCurInterior)
-//			UpdateRemoteInterior(byteInterior);
+		uint8_t byteInterior = pGame->GetActiveInterior();
+		if (byteInterior != m_byteCurInterior)
+			UpdateRemoteInterior(byteInterior);
 
 		// The new regime for adjusting sendrates is based on the number
 		// of players that will be effected by this update. The more players
@@ -452,7 +450,7 @@ bool CLocalPlayer::Process()
 	bool needDrawableHud = true;
 	if(pGame->isDialogActive || pGame->isCasinoDiceActive || CTab::bIsShow || pGame->isAutoShopActive
 	   || pGame->isCasinoWheelActive || !m_pPlayerPed || pGame->isRegistrationActive || pGame->isShopStoreActive ||
-	   CMedic::bIsShow || pInventory->bIsToggle || bFirstSpawn || CEditobject::bIsToggle || CChip::bIsShow
+	   CMedic::bIsShow || CInventory::bIsToggle || bFirstSpawn || CEditobject::bIsToggle || CChip::bIsShow
 	   || CAucContainer::bIsShow || CAdminRecon::bIsToggle || CHUD::bIsCamEditGui )
 	{
 		needDrawableHud = false;

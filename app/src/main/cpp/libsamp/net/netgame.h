@@ -219,16 +219,16 @@ public:
 	bool 		m_bInstagib;
 	int 		m_iLagCompensation;
 	int 		m_iVehicleFriendlyFire;
-    void Packet_FurnitureFactory(Packet* p);
+    static void Packet_FurnitureFactory(Packet* p);
 
 	static void packetMafiaWar(Packet *p);
 
-	void Packet_InventoryToggle(Packet *p);
+	static void packetInventoryToggle(Packet *p);
 
-    void Packet_InventoryUpdateItem(Packet *p);
-	void Packet_InventoryUpdateCarryng(Packet *p);
+    static void packetInventoryUpdateItem(Packet *p);
+	static void packetInventoryUpdateCarryng(Packet *p);
 
-	void Packet_InventoryItemActive(Packet *p);
+	static void packetInventoryItemActive(Packet *p);
 
 	static void packetCasinoChip(Packet *p);
 

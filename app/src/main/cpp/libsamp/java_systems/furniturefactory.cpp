@@ -41,6 +41,7 @@ pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
 
 void CNetGame::Packet_FurnitureFactory(Packet* p)
 {
+    Log("Packet_FurnitureFactory");
     RakNet::BitStream bs((unsigned char*)p->data, p->length, false);
     uint8_t packetID;
     uint32_t rpcID;
