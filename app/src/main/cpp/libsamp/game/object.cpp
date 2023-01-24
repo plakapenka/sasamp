@@ -335,7 +335,7 @@ void CObject::GetRotation(float* pfX,float* pfY,float* pfZ)
 
 	MATRIX4X4* mat = m_pEntity->mat;
 
-	if(mat) CPatch::CallFunction<void>(g_libGTASA + 0x3E8098 + 1, mat, pfX, pfY, pfZ, 21);
+	if(mat) CHook::CallFunction<void>(g_libGTASA + 0x3E8098 + 1, mat, pfX, pfY, pfZ, 21);
 
 	*pfX = *pfX * 57.295776 * -1.0;
 	*pfY = *pfY * 57.295776 * -1.0;

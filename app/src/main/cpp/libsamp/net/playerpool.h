@@ -57,6 +57,9 @@ public:
 
 	void SetPlayerName(PLAYERID playerId, char* szName) { strcpy(m_szPlayerNames[playerId], szName); }
 	char* GetPlayerName(PLAYERID playerId) {
+		if(playerId == GetLocalPlayerID()) {
+			return GetLocalPlayerName();
+		}
 		if(GetSlotState(playerId)) {
 			return m_szPlayerNames[playerId];
 		}

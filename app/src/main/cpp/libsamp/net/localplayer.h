@@ -251,7 +251,7 @@ private:
 	uint32_t			m_dwLastHeadUpdate;
 	uint32_t 			m_dwLastUpdateOnFootData;
 	uint32_t			m_dwLastUpdateInCarData;
-	//uint32_t 			m_dwLastUpdatePassengerData;
+	uint32_t 			m_dwLastUpdatePassengerData;
 	uint32_t			m_dwLastStatsUpdateTick;
 
 	uint8_t				m_byteLastWeapon[MAX_WEAPONS_SLOT];

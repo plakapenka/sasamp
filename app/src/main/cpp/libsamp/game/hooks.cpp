@@ -272,7 +272,7 @@ void (*InitialiseRenderWare)();
 void InitialiseRenderWare_hook() {
 	Log("InitialiseRenderWare ..");
 
-	CPatch::NOP(g_libGTASA + 0x40C546, 44);
+	CHook::NOP(g_libGTASA + 0x40C546, 44);
 
 	TextureDatabaseRuntime::Load("samp", 0, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
 
@@ -659,7 +659,7 @@ void(*CStreaming__Init2)();
 void CStreaming__Init2_hook()
 {
 	CStreaming__Init2();
-	CPatch::UnFuck(g_libGTASA + 0x5DE734);
+	CHook::UnFuck(g_libGTASA + 0x5DE734);
 	*(uint32_t*)(g_libGTASA + 0x5DE734) = 0x20000000;
 }
 
@@ -667,7 +667,7 @@ void (*NvUtilInit)(void);
 void NvUtilInit_hook(void)
 {	
 	NvUtilInit();
-	CPatch::UnFuck(g_libGTASA + 0x5D1608);
+	CHook::UnFuck(g_libGTASA + 0x5D1608);
 	*(char**)(g_libGTASA + 0x5D1608) = (char*)g_pszStorage;
 }
 
@@ -944,7 +944,7 @@ void CPools_Initialise_hook(void)
 void (*CPlaceable_InitMatrixArray)();
 void CPlaceable_InitMatrixArray_hook()
 {
-	CPatch::CallFunction<void>(g_libGTASA+0x3AB2D8+1, g_libGTASA+0x8B90A8, 10000);
+	CHook::CallFunction<void>(g_libGTASA + 0x3AB2D8 + 1, g_libGTASA + 0x8B90A8, 10000);
 }
 
 
@@ -1071,89 +1071,87 @@ void InstallSpecialHooks()
 	Log("InstallSpecialHooks");
 
 	// texture Краш если с текстурами какая-то хуйня
-	CPatch::InlineHook(g_libGTASA, 0x1bdc3c, &CTextureDatabaseRuntime__GetEntry_hook, &CTextureDatabaseRuntime__GetEntry);
+	CHook::InlineHook(g_libGTASA, 0x1bdc3c, &CTextureDatabaseRuntime__GetEntry_hook, &CTextureDatabaseRuntime__GetEntry);
 
-	//CPatch::InlineHook(g_libGTASA, 0x0055B968, &TextureDatabaseRuntime__Load_hook, (uintptr_t*)&TextureDatabaseRuntime__Load);
+	//CHook::InlineHook(g_libGTASA, 0x0055B968, &TextureDatabaseRuntime__Load_hook, (uintptr_t*)&TextureDatabaseRuntime__Load);
 	//IMG
-	CPatch::InlineHook(g_libGTASA, 0x28E83C, &CStreaming_InitImageList_hook, (uintptr_t*)&CStreaming_InitImageList);
+	CHook::InlineHook(g_libGTASA, 0x28E83C, &CStreaming_InitImageList_hook, (uintptr_t*)&CStreaming_InitImageList);
 
-
-
-	CPatch::InlineHook(g_libGTASA, 0x001E4AE4, &GetMeshPriority_hook, &GetMeshPriority);
+	CHook::InlineHook(g_libGTASA, 0x001E4AE4, &GetMeshPriority_hook, &GetMeshPriority);
 	//new fix
-	CPatch::InlineHook(g_libGTASA, 0x1EEC90, &rxOpenGLDefaultAllInOneRenderCB_hook, &rxOpenGLDefaultAllInOneRenderCB);
-	CPatch::InlineHook(g_libGTASA, 0x28AAAC, &CustomPipeRenderCB_hook, &CustomPipeRenderCB);
+	CHook::InlineHook(g_libGTASA, 0x1EEC90, &rxOpenGLDefaultAllInOneRenderCB_hook, &rxOpenGLDefaultAllInOneRenderCB);
+	CHook::InlineHook(g_libGTASA, 0x28AAAC, &CustomPipeRenderCB_hook, &CustomPipeRenderCB);
 
 	//
 	// CPlaceable::InitMatrixArray
-	CPatch::WriteMemory(g_libGTASA + 0x3ABB0A, "\x4F\xF4\x7A\x61", 4); // MOV.W R1, #4000
-	CPatch::InlineHook(g_libGTASA, 0x3ABB08, &CPlaceable_InitMatrixArray_hook, &CPlaceable_InitMatrixArray);
+	CHook::WriteMemory(g_libGTASA + 0x3ABB0A, "\x4F\xF4\x7A\x61", 4); // MOV.W R1, #4000
+	CHook::InlineHook(g_libGTASA, 0x3ABB08, &CPlaceable_InitMatrixArray_hook, &CPlaceable_InitMatrixArray);
 
 	// RLEDecompress fix
-	CPatch::InlineHook(g_libGTASA, 0x001BC314, &RLEDecompress_hook, &RLEDecompress);
+	CHook::InlineHook(g_libGTASA, 0x001BC314, &RLEDecompress_hook, &RLEDecompress);
 
 	//
-	CPatch::InlineHook(g_libGTASA, 0x001BDCC4, &LoadFullTexture_hook, &LoadFullTexture);
+	CHook::InlineHook(g_libGTASA, 0x001BDCC4, &LoadFullTexture_hook, &LoadFullTexture);
 
-	CPatch::NOP(g_libGTASA + 0x00185DE8, 2);//_rwOpenGLNativeTextureReadXBOXPvS_
+	CHook::NOP(g_libGTASA + 0x00185DE8, 2);//_rwOpenGLNativeTextureReadXBOXPvS_
 	//
-	CPatch::NOP(g_libGTASA + 0x002F9E5C, 10); 	//LoadCutsceneData
-	CPatch::NOP(g_libGTASA + 0x0040E536, 2);		//CCutsceneMgr::Initialise
+	CHook::NOP(g_libGTASA + 0x002F9E5C, 10); 	//LoadCutsceneData
+	CHook::NOP(g_libGTASA + 0x0040E536, 2);		//CCutsceneMgr::Initialise
 
-	CPatch::InlineHook(g_libGTASA, 0x003BF784, &CTimer__StartUserPause_hook, &CTimer__StartUserPause);
-	CPatch::InlineHook(g_libGTASA, 0x003BF7A0, &CTimer__EndUserPause_hook, &CTimer__EndUserPause);
+	CHook::InlineHook(g_libGTASA, 0x003BF784, &CTimer__StartUserPause_hook, &CTimer__StartUserPause);
+	CHook::InlineHook(g_libGTASA, 0x003BF7A0, &CTimer__EndUserPause_hook, &CTimer__EndUserPause);
 
-	CPatch::NOP(g_libGTASA + 0x00398972, 2); // get out fucking roadblocks
+	CHook::NOP(g_libGTASA + 0x00398972, 2); // get out fucking roadblocks
 
 	//crash
 	if ( !*(uintptr_t *)(g_libGTASA + 0x61B298) && !((int (*)(const char *))(g_libGTASA + 0x179A20))("glAlphaFuncQCOM") )
 	{
-		CPatch::NOP(g_libGTASA + 0x1A6164, 4);
-		CPatch::WriteMemory(g_libGTASA + 0x1A6164, "\x70\x47", 2);
+		CHook::NOP(g_libGTASA + 0x1A6164, 4);
+		CHook::WriteMemory(g_libGTASA + 0x1A6164, "\x70\x47", 2);
 	}
 
 	//pvr
-	CPatch::UnFuck(g_libGTASA + 0x00573670);
+	CHook::UnFuck(g_libGTASA + 0x00573670);
 	*(char*)(g_libGTASA + 0x00573670 + 12) = 'd';
 	*(char*)(g_libGTASA + 0x00573670 + 13) = 'x';
 	*(char*)(g_libGTASA + 0x00573670 + 14) = 't';
 
-	CPatch::UnFuck(g_libGTASA + 0x005736CC);
+	CHook::UnFuck(g_libGTASA + 0x005736CC);
 	*(char*)(g_libGTASA + 0x005736CC + 12) = 'd';
 	*(char*)(g_libGTASA + 0x005736CC + 13) = 'x';
 	*(char*)(g_libGTASA + 0x005736CC + 14) = 't';
 
 	//etc
-	CPatch::UnFuck(g_libGTASA + 0x00573684);
+	CHook::UnFuck(g_libGTASA + 0x00573684);
 	*(char*)(g_libGTASA + 0x00573684 + 12) = 'd';
 	*(char*)(g_libGTASA + 0x00573684 + 13) = 'x';
 	*(char*)(g_libGTASA + 0x00573684 + 14) = 't';
 
-	CPatch::UnFuck(g_libGTASA + 0x005736DC);
+	CHook::UnFuck(g_libGTASA + 0x005736DC);
 	*(char*)(g_libGTASA + 0x005736DC + 12) = 'd';
 	*(char*)(g_libGTASA + 0x005736DC + 13) = 'x';
 	*(char*)(g_libGTASA + 0x005736DC + 14) = 't';
 
-	//CPatch::InlineHook(g_libGTASA, 0x0052B810, &VolumetricCloudsInit_hook, &VolumetricCloudsInit);
+	//CHook::InlineHook(g_libGTASA, 0x0052B810, &VolumetricCloudsInit_hook, &VolumetricCloudsInit);
 
-	CPatch::WriteMemory(g_libGTASA + 0x0023BEDC, "\xF8\xB5", 2);
-	CPatch::WriteMemory(g_libGTASA + 0x0023BEDE, "\x00\x46\x00\x46", 4);
+	CHook::WriteMemory(g_libGTASA + 0x0023BEDC, "\xF8\xB5", 2);
+	CHook::WriteMemory(g_libGTASA + 0x0023BEDE, "\x00\x46\x00\x46", 4);
 
-	CPatch::InlineHook(g_libGTASA, 0x0023BEDC, &OS_FileRead_hook, &OS_FileRead);
-	CPatch::InlineHook(g_libGTASA, 0x23B3DC, &NvFOpen_hook, & NvFOpen);
-	CPatch::InlineHook(g_libGTASA, 0x241D94, &NvUtilInit_hook, &NvUtilInit);
+	CHook::InlineHook(g_libGTASA, 0x0023BEDC, &OS_FileRead_hook, &OS_FileRead);
+	CHook::InlineHook(g_libGTASA, 0x23B3DC, &NvFOpen_hook, & NvFOpen);
+	CHook::InlineHook(g_libGTASA, 0x241D94, &NvUtilInit_hook, &NvUtilInit);
 
-	CPatch::InlineHook(g_libGTASA, 0x269974, &MenuItem_add_hook, &MenuItem_add);
-	CPatch::InlineHook(g_libGTASA, 0x40C530, &InitialiseRenderWare_hook, &InitialiseRenderWare);
-	CPatch::InlineHook(g_libGTASA, 0x0025E660, &MainMenuScreen__Update_hook, &MainMenuScreen__Update);
-	CPatch::InlineHook(g_libGTASA, 0x0023BB84, &OS_FileOpen_hook, &OS_FileOpen);
+	CHook::InlineHook(g_libGTASA, 0x269974, &MenuItem_add_hook, &MenuItem_add);
+	CHook::InlineHook(g_libGTASA, 0x40C530, &InitialiseRenderWare_hook, &InitialiseRenderWare);
+	CHook::InlineHook(g_libGTASA, 0x0025E660, &MainMenuScreen__Update_hook, &MainMenuScreen__Update);
+	CHook::InlineHook(g_libGTASA, 0x0023BB84, &OS_FileOpen_hook, &OS_FileOpen);
 
-	CPatch::InlineHook(g_libGTASA, 0x004FBBB0, &cHandlingDataMgr__FindExactWord_hook, &cHandlingDataMgr__FindExactWord);
-	CPatch::InlineHook(g_libGTASA, 0x004FBCF4, cHandlingDataMgr__ConvertDataToGameUnits_hook, &cHandlingDataMgr__ConvertDataToGameUnits);
-	CPatch::InlineHook(g_libGTASA, 0x0023ACC4, NVEventGetNextEvent_hook, &NVEventGetNextEvent_hooked);
-	CPatch::InlineHook(g_libGTASA, 0x004042A8, CStreaming__Init2_hook, &CStreaming__Init2);	// increase stream memory value
-	CPatch::InlineHook(g_libGTASA, 0x3AF1A0, &CPools_Initialise_hook, &CPools_Initialise);
-	CPatch::InlineHook(g_libGTASA, 0x531118, &CCustomRoadsignMgr_RenderRoadsignAtomic_hook, &CCustomRoadsignMgr_RenderRoadsignAtomic);
+	CHook::InlineHook(g_libGTASA, 0x004FBBB0, &cHandlingDataMgr__FindExactWord_hook, &cHandlingDataMgr__FindExactWord);
+	CHook::InlineHook(g_libGTASA, 0x004FBCF4, cHandlingDataMgr__ConvertDataToGameUnits_hook, &cHandlingDataMgr__ConvertDataToGameUnits);
+	CHook::InlineHook(g_libGTASA, 0x0023ACC4, NVEventGetNextEvent_hook, &NVEventGetNextEvent_hooked);
+	CHook::InlineHook(g_libGTASA, 0x004042A8, CStreaming__Init2_hook, &CStreaming__Init2);	// increase stream memory value
+	CHook::InlineHook(g_libGTASA, 0x3AF1A0, &CPools_Initialise_hook, &CPools_Initialise);
+	CHook::InlineHook(g_libGTASA, 0x531118, &CCustomRoadsignMgr_RenderRoadsignAtomic_hook, &CCustomRoadsignMgr_RenderRoadsignAtomic);
 
 //	JMPCode(g_libGTASA + 0x1A1ED8, (uintptr_t)rqVertexBufferSelect_HOOK);
 }
@@ -1728,7 +1726,7 @@ int CWidgetButton__Draw_hook(uintptr_t thiz)
 int (*CWidgetButton__IsTouched)(CVector2D* a1);
 int CWidgetButton__IsTouched_hook(CVector2D* a1)
 {
-	if(!CHUD::bIsShow)return 0;
+	//if(!CHUD::bIsShow)return 0;
 	return CWidgetButton__IsTouched(a1);
 }
 
@@ -1914,9 +1912,8 @@ bool (*CGame__Shutdown)();
 bool CGame__Shutdown_hook()
 {
 	Log("Exiting game...");
-	CPatch::NOP(g_libGTASA + 0x00341FCC, 2); // nop PauseOpenSLES
-	CPatch::NOP(g_libGTASA + 0x0039B262, 2); // CGame::Process(void)
-	CPatch::NOP(g_libGTASA + 0x0046389E, 2); // nop saving
+	CHook::NOP(g_libGTASA + 0x00341FCC, 2); // nop PauseOpenSLES
+	CHook::NOP(g_libGTASA + 0x0039B262, 2); // CGame::Process(void)
 
 	if (pNetGame)
 	{
@@ -1930,7 +1927,7 @@ bool CGame__Shutdown_hook()
 
 	//std::this_thread::sleep_for(std::chrono::milliseconds(3000));
 
-	return 0;
+	return false;
 	//return CGame__Shutdown();
 }
 
@@ -2669,15 +2666,15 @@ int CWeapon__GenerateDamageEvent_hook(PED_TYPE *victim, ENTITY_TYPE *creator, un
 	if (pedPiece != PED_PIECE_HEAD)
 	{
 		// Disable ComputeDamageAnim when it's not a head!
-		CPatch::NOP(g_libGTASA + 0x566B30, 2);
-		CPatch::NOP(g_libGTASA + 0x566B88, 2);
+		CHook::NOP(g_libGTASA + 0x566B30, 2);
+		CHook::NOP(g_libGTASA + 0x566B88, 2);
 	}
 	int result = CWeapon__GenerateDamageEvent(victim, creator, weaponType, damageFactor, pedPiece, direction);
 	if (pedPiece != PED_PIECE_HEAD)
 	{
 		// Restore bytes
-		CPatch::WriteMemory(g_libGTASA + 0x566B30, (uintptr_t) "\xC1\xF5\xD8\xF9", 4);
-		CPatch::WriteMemory(g_libGTASA + 0x566B88, (uintptr_t) "\xBB\xF5\xFE\xF8", 4);
+		CHook::WriteMemory(g_libGTASA + 0x566B30, (uintptr_t) "\xC1\xF5\xD8\xF9", 4);
+		CHook::WriteMemory(g_libGTASA + 0x566B88, (uintptr_t) "\xBB\xF5\xFE\xF8", 4);
 	}
 	return result;
 }
@@ -2795,8 +2792,8 @@ void RenderEffects_hook()
 		RwRenderStateSet(rwRENDERSTATEVERTEXALPHAENABLE, (void*)1);
 		RwRenderStateSet(rwRENDERSTATETEXTURERASTER, (void*)0);
 
-		CPatch::CallFunction<void>(g_libGTASA + 0x54C330 + 1);
-		CPatch::CallFunction<void>(g_libGTASA + 0x54D738 + 1);
+		CHook::CallFunction<void>(g_libGTASA + 0x54C330 + 1);
+		CHook::CallFunction<void>(g_libGTASA + 0x54D738 + 1);
 //	}
 //	else
 //	{
@@ -3027,63 +3024,60 @@ void InstallHooks()
 	PROTECT_CODE_INSTALLHOOKS;
 
 	// не падать с мотоцикла
-	CPatch::InlineHook(g_libGTASA, 0x00322FBC, &CEventKnockOffBike__AffectsPed_hook, &CEventKnockOffBike__AffectsPed);
+	CHook::InlineHook(g_libGTASA, 0x00322FBC, &CEventKnockOffBike__AffectsPed_hook, &CEventKnockOffBike__AffectsPed);
 
 	// Стрельба
-	CPatch::InlineHook(g_libGTASA, 0x564E28, &CWeapon__ProcessLineOfSight_hook, &CWeapon__ProcessLineOfSight);
-	CPatch::InlineHook(g_libGTASA, 0x55E090, &CBulletInfo_AddBullet_hook, &CBulletInfo_AddBullet);
-	CPatch::InlineHook(g_libGTASA, 0x56668C, &CWeapon__FireSniper_hook, &CWeapon__FireSniper);
-	CPatch::InlineHook(g_libGTASA, 0x327528, &CPedDamageResponseCalculator__ComputeDamageResponse_hook, &CPedDamageResponseCalculator__ComputeDamageResponse);
-	CPatch::InlineHook(g_libGTASA, 0x567964, &CWeapon__FireInstantHit_hook, &CWeapon__FireInstantHit);
-	CPatch::InlineHook(g_libGTASA, 0x3C70C0, &CWorld__ProcessLineOfSight_hook, &CWorld__ProcessLineOfSight);
-
-	//
-	//CPatch::InlineHook(g_libGTASA, 0x003AC5DC, &FindPlayerPed_hook, &FindPlayerPed);
+	CHook::InlineHook(g_libGTASA, 0x564E28, &CWeapon__ProcessLineOfSight_hook, &CWeapon__ProcessLineOfSight);
+	CHook::InlineHook(g_libGTASA, 0x55E090, &CBulletInfo_AddBullet_hook, &CBulletInfo_AddBullet);
+	CHook::InlineHook(g_libGTASA, 0x56668C, &CWeapon__FireSniper_hook, &CWeapon__FireSniper);
+	CHook::InlineHook(g_libGTASA, 0x327528, &CPedDamageResponseCalculator__ComputeDamageResponse_hook, &CPedDamageResponseCalculator__ComputeDamageResponse);
+	CHook::InlineHook(g_libGTASA, 0x567964, &CWeapon__FireInstantHit_hook, &CWeapon__FireInstantHit);
+	CHook::InlineHook(g_libGTASA, 0x3C70C0, &CWorld__ProcessLineOfSight_hook, &CWorld__ProcessLineOfSight);
 
 	// audio
-//	CPatch::InlineHook(g_libGTASA, 0x368850, &CAudioEngine__Service_hook, &CAudioEngine__Service);
-	//CPatch::InlineHook(g_libGTASA, 0x35AC44, &CAEVehicleAudioEntity__GetAccelAndBrake_hook, &CAEVehicleAudioEntity__GetAccelAndBrake);
+//	CHook::InlineHook(g_libGTASA, 0x368850, &CAudioEngine__Service_hook, &CAudioEngine__Service);
+	//CHook::InlineHook(g_libGTASA, 0x35AC44, &CAEVehicleAudioEntity__GetAccelAndBrake_hook, &CAEVehicleAudioEntity__GetAccelAndBrake);
 
-	CPatch::InlineHook(g_libGTASA, 0x29947C, &CCollision__ProcessVerticalLine_hook, &CCollision__ProcessVerticalLine);
-	CPatch::InlineHook(g_libGTASA, 0x5669D8, &CWeapon__GenerateDamageEvent_hook, &CWeapon__GenerateDamageEvent);
+	CHook::InlineHook(g_libGTASA, 0x29947C, &CCollision__ProcessVerticalLine_hook, &CCollision__ProcessVerticalLine);
+	CHook::InlineHook(g_libGTASA, 0x5669D8, &CWeapon__GenerateDamageEvent_hook, &CWeapon__GenerateDamageEvent);
 	// Fire extingusher fix
-	CPatch::InlineHook(g_libGTASA, 0x46D6AC, &CTaskSimpleUseGun__SetPedPosition_hook, &CTaskSimpleUseGun__SetPedPosition);
+	CHook::InlineHook(g_libGTASA, 0x46D6AC, &CTaskSimpleUseGun__SetPedPosition_hook, &CTaskSimpleUseGun__SetPedPosition);
 
 	//SetUpHook(g_libGTASA+0x291104, (uintptr_t)CStreaming__ConvertBufferToObject_hook, (uintptr_t*)&CStreaming__ConvertBufferToObject);
 	//SetUpHook(g_libGTASA+0x3961C8, (uintptr_t)CFileMgr__ReadLine_hook, (uintptr_t*)&CFileMgr__ReadLine);
 
-	CPatch::InlineHook(g_libGTASA, 0x0032217C, &CEventHandler__HandleEvents_hook, &CEventHandler__HandleEvents);
-	CPatch::InlineHook(g_libGTASA, 0x00281398, &CWidgetRegionLook__Update_hook, &CWidgetRegionLook__Update);
+	CHook::InlineHook(g_libGTASA, 0x0032217C, &CEventHandler__HandleEvents_hook, &CEventHandler__HandleEvents);
+	CHook::InlineHook(g_libGTASA, 0x00281398, &CWidgetRegionLook__Update_hook, &CWidgetRegionLook__Update);
 
-	CPatch::InlineHook(g_libGTASA, 0x3D7CA8, &CLoadingScreen_DisplayPCScreen_hook, &CLoadingScreen_DisplayPCScreen);
+	CHook::InlineHook(g_libGTASA, 0x3D7CA8, &CLoadingScreen_DisplayPCScreen_hook, &CLoadingScreen_DisplayPCScreen);
 
-	CPatch::InlineHook(g_libGTASA, 0x39AEF4, &Render2dStuff_hook, &Render2dStuff);
-	CPatch::InlineHook(g_libGTASA, 0x39B098, &Render2dStuffAfterFade_hook, &Render2dStuffAfterFade);
-	CPatch::InlineHook(g_libGTASA, 0x239D5C, &TouchEvent_hook, &TouchEvent);
+	CHook::InlineHook(g_libGTASA, 0x39AEF4, &Render2dStuff_hook, &Render2dStuff);
+	CHook::InlineHook(g_libGTASA, 0x39B098, &Render2dStuffAfterFade_hook, &Render2dStuffAfterFade);
+	CHook::InlineHook(g_libGTASA, 0x239D5C, &TouchEvent_hook, &TouchEvent);
     //
 
-	CPatch::InlineHook(g_libGTASA, 0x336690, &CModelInfo_AddPedModel_hook, &CModelInfo_AddPedModel); // hook is dangerous
-	CPatch::InlineHook(g_libGTASA, 0x3DBA88, &CRadar__GetRadarTraceColor_hook, &CRadar__GetRadarTraceColor); // dangerous
-	CPatch::InlineHook(g_libGTASA, 0x3DAF84, &CRadar__SetCoordBlip_hook, &CRadar__SetCoordBlip);
-	CPatch::InlineHook(g_libGTASA, 0x3DE9A8, &CRadar__DrawRadarGangOverlay_hook, &CRadar__DrawRadarGangOverlay);
+	CHook::InlineHook(g_libGTASA, 0x336690, &CModelInfo_AddPedModel_hook, &CModelInfo_AddPedModel); // hook is dangerous
+	CHook::InlineHook(g_libGTASA, 0x3DBA88, &CRadar__GetRadarTraceColor_hook, &CRadar__GetRadarTraceColor); // dangerous
+	CHook::InlineHook(g_libGTASA, 0x3DAF84, &CRadar__SetCoordBlip_hook, &CRadar__SetCoordBlip);
+	CHook::InlineHook(g_libGTASA, 0x3DE9A8, &CRadar__DrawRadarGangOverlay_hook, &CRadar__DrawRadarGangOverlay);
 
-	CPatch::CodeInject(g_libGTASA+0x2D99F4, (uintptr_t)PickupPickUp_hook, 1);
+	CHook::CodeInject(g_libGTASA + 0x2D99F4, (uintptr_t)PickupPickUp_hook, 1);
 
 
-	CPatch::InlineHook(g_libGTASA, 0x00336268, &CModelInfo_AddAtomicModel_hook, &CModelInfo_AddAtomicModel);
+	CHook::InlineHook(g_libGTASA, 0x00336268, &CModelInfo_AddAtomicModel_hook, &CModelInfo_AddAtomicModel);
 
-	CPatch::InlineHook(g_libGTASA, 0x00336618, &CModelInfo_AddVehicleModel_hook, &CModelInfo_AddVehicleModel); // dangerous
+	CHook::InlineHook(g_libGTASA, 0x00336618, &CModelInfo_AddVehicleModel_hook, &CModelInfo_AddVehicleModel); // dangerous
 
-	CPatch::InlineHook(g_libGTASA, 0x0033DA5C, &CAnimManager__UncompressAnimation_hook, &CAnimManager__UncompressAnimation);
-	CPatch::InlineHook(g_libGTASA, 0x001AECC0, &RwFrameAddChild_hook, &RwFrameAddChild);
-	CPatch::InlineHook(g_libGTASA, 0x002DFD30, &CUpsideDownCarCheck__IsCarUpsideDown_hook, &CUpsideDownCarCheck__IsCarUpsideDown);
-	CPatch::InlineHook(g_libGTASA, 0x0033AD78, &CAnimBlendNode__FindKeyFrame_hook, &CAnimBlendNode__FindKeyFrame);
+	CHook::InlineHook(g_libGTASA, 0x0033DA5C, &CAnimManager__UncompressAnimation_hook, &CAnimManager__UncompressAnimation);
+	CHook::InlineHook(g_libGTASA, 0x001AECC0, &RwFrameAddChild_hook, &RwFrameAddChild);
+	CHook::InlineHook(g_libGTASA, 0x002DFD30, &CUpsideDownCarCheck__IsCarUpsideDown_hook, &CUpsideDownCarCheck__IsCarUpsideDown);
+	CHook::InlineHook(g_libGTASA, 0x0033AD78, &CAnimBlendNode__FindKeyFrame_hook, &CAnimBlendNode__FindKeyFrame);
 
 	// TextDraw render
 	//SetUpHook(g_libGTASA + 0x003D5894, (uintptr_t)CHud__DrawScriptText_hook, (uintptr_t*)& CHud__DrawScriptText);
 
 	// attached objects
-	CPatch::InlineHook(g_libGTASA, 0x003C1BF8, &CWorld_ProcessPedsAfterPreRender_hook, &CWorld_ProcessPedsAfterPreRender);
+	CHook::InlineHook(g_libGTASA, 0x003C1BF8, &CWorld_ProcessPedsAfterPreRender_hook, &CWorld_ProcessPedsAfterPreRender);
 
 	//remove building
 	//SetUpHook(g_libGTASA + 0x00395994, (uintptr_t)CFileLoader__LoadObjectInstance_hook, (uintptr_t*)& CFileLoader__LoadObjectInstance);
@@ -3092,142 +3086,142 @@ void InstallHooks()
 	//SetUpHook(g_libGTASA + 0x00391E20, (uintptr_t)CObject__Render_hook, (uintptr_t*)& CObject__Render);
 
 	// gettexture fix crash
-	CPatch::InlineHook(g_libGTASA, 0x00258910, &GetTexture_hook, &GetTexture_orig);
+	CHook::InlineHook(g_libGTASA, 0x00258910, &GetTexture_hook, &GetTexture_orig);
 
 	// steal objects fix
-	CPatch::InlineHook(g_libGTASA, 0x003AD8E0, &CPlayerInfo__Process_hook, &CPlayerInfo__Process);
+	CHook::InlineHook(g_libGTASA, 0x003AD8E0, &CPlayerInfo__Process_hook, &CPlayerInfo__Process);
 
 	// GetFrameFromID fix
-	CPatch::InlineHook(g_libGTASA, 0x00335CC0, &CClumpModelInfo_GetFrameFromId_hook, &CClumpModelInfo_GetFrameFromId);
+	CHook::InlineHook(g_libGTASA, 0x00335CC0, &CClumpModelInfo_GetFrameFromId_hook, &CClumpModelInfo_GetFrameFromId);
 
 	// random crash fix
-	CPatch::InlineHook(g_libGTASA, 0x001A8530, &RenderQueue__ProcessCommand_hook, &RenderQueue__ProcessCommand);
+	CHook::InlineHook(g_libGTASA, 0x001A8530, &RenderQueue__ProcessCommand_hook, &RenderQueue__ProcessCommand);
 	// fix
-	CPatch::InlineHook(g_libGTASA, 0x001B9D74, &_rwFreeListFreeReal_hook, &_rwFreeListFreeReal);
+	CHook::InlineHook(g_libGTASA, 0x001B9D74, &_rwFreeListFreeReal_hook, &_rwFreeListFreeReal);
 
 	//SetUpHook(g_libGTASA + 0x0027548C, (DWORD)CWidgetButtonAttack_hook, (DWORD*)&CWidgetButtonAttack);
-	CPatch::InlineHook(g_libGTASA, 0x00274AB4, &CWidgetButton__Update_hook, &CWidgetButton__Update);
+	CHook::InlineHook(g_libGTASA, 0x00274AB4, &CWidgetButton__Update_hook, &CWidgetButton__Update);
 
-	CPatch::SetUpHook(g_libGTASA + 0x00274748, (uintptr_t)CWidgetButton__Draw_hook, (uintptr_t*)&CWidgetButton__Draw);
-	CPatch::InlineHook(g_libGTASA, 0x00274218, &CWidgetButton__IsTouched_hook, &CWidgetButton__IsTouched);
+	CHook::SetUpHook(g_libGTASA + 0x00274748, (uintptr_t)CWidgetButton__Draw_hook, (uintptr_t*)&CWidgetButton__Draw);
+	CHook::InlineHook(g_libGTASA, 0x00274218, &CWidgetButton__IsTouched_hook, &CWidgetButton__IsTouched);
 	//SetUpHook(g_libGTASA + 0x0027455C, (uintptr_t)CWidget__IsTouched_hook, (uintptr_t*)& CWidget__IsTouched);
 
-	CPatch::RET(g_libGTASA + 0x002C0304); // CDarkel__RegisterCarBlownUpByPlayer_hook
-	CPatch::RET(g_libGTASA + 0x002C072C); // CDarkel__ResetModelsKilledByPlayer_hook
-	CPatch::RET(g_libGTASA + 0x002C0758); // CDarkel__QueryModelsKilledByPlayer_hook
-	CPatch::RET(g_libGTASA + 0x002C0778); // CDarkel__FindTotalPedsKilledByPlayer_hook
-	CPatch::RET(g_libGTASA + 0x002C0D04); // CDarkel__RegisterKillByPlayer_hook
+	CHook::RET(g_libGTASA + 0x002C0304); // CDarkel__RegisterCarBlownUpByPlayer_hook
+	CHook::RET(g_libGTASA + 0x002C072C); // CDarkel__ResetModelsKilledByPlayer_hook
+	CHook::RET(g_libGTASA + 0x002C0758); // CDarkel__QueryModelsKilledByPlayer_hook
+	CHook::RET(g_libGTASA + 0x002C0778); // CDarkel__FindTotalPedsKilledByPlayer_hook
+	CHook::RET(g_libGTASA + 0x002C0D04); // CDarkel__RegisterKillByPlayer_hook
 
-	CPatch::InlineHook(g_libGTASA, 0x338CBC, &CVehicleModelInfo__SetEditableMaterials_hook, &CVehicleModelInfo__SetEditableMaterials);
-	CPatch::InlineHook(g_libGTASA, 0x0050DEF4, &CVehicle__ResetAfterRender_hook, &CVehicle__ResetAfterRender);
+	CHook::InlineHook(g_libGTASA, 0x338CBC, &CVehicleModelInfo__SetEditableMaterials_hook, &CVehicleModelInfo__SetEditableMaterials);
+	CHook::InlineHook(g_libGTASA, 0x0050DEF4, &CVehicle__ResetAfterRender_hook, &CVehicle__ResetAfterRender);
 
-	CPatch::InlineHook(g_libGTASA, 0x3986CC, &CGame__Process_hook, &CGame__Process);
+	CHook::InlineHook(g_libGTASA, 0x3986CC, &CGame__Process_hook, &CGame__Process);
 
-	CPatch::InlineHook(g_libGTASA, 0x004D4A6C, &CAutomobile__ProcessEntityCollision_hook, &CAutomobile__ProcessEntityCollision);
+	CHook::InlineHook(g_libGTASA, 0x004D4A6C, &CAutomobile__ProcessEntityCollision_hook, &CAutomobile__ProcessEntityCollision);
 
-	CPatch::InlineHook(g_libGTASA, 0x00398334, &CGame__Shutdown_hook, &CGame__Shutdown);
+	CHook::InlineHook(g_libGTASA, 0x00398334, &CGame__Shutdown_hook, &CGame__Shutdown);
 
-	CPatch::WriteMemory(g_libGTASA + 0x003DA86C,
+	CHook::WriteMemory(g_libGTASA + 0x003DA86C,
 		"\x80\xB4"\
 		"\x00\xAF"\
 		"\x1B\x4B"\
 		"\x7B\x44"\
 		"\x1B\x68", 10); // CRadar::LimitRadarPoint
 
-	CPatch::NOP(g_libGTASA + 0x003DA876, 3); // CRadar::LimitRadarPoint
+	CHook::NOP(g_libGTASA + 0x003DA876, 3); // CRadar::LimitRadarPoint
 
 	// headlights color, wheel size, wheel align
-	CPatch::InlineHook(g_libGTASA, 0x005466EC, &CShadows__StoreCarLightShadow_hook, &CShadows__StoreCarLightShadow);
-	CPatch::InlineHook(g_libGTASA, 0x00518EC4, &CVehicle__DoHeadLightBeam_hook, &CVehicle__DoHeadLightBeam);
+	CHook::InlineHook(g_libGTASA, 0x005466EC, &CShadows__StoreCarLightShadow_hook, &CShadows__StoreCarLightShadow);
+	CHook::InlineHook(g_libGTASA, 0x00518EC4, &CVehicle__DoHeadLightBeam_hook, &CVehicle__DoHeadLightBeam);
 
-	CPatch::InlineHook(g_libGTASA, 0x004E671C, &CAutomobile__PreRender_hook, &CAutomobile__PreRender);
-	CPatch::InlineHook(g_libGTASA, 0x004DC6E8, &CAutomobile__UpdateWheelMatrix_hook, &CAutomobile__UpdateWheelMatrix);
-	CPatch::InlineHook(g_libGTASA, 0x003E8D48, &CMatrix__Rotate_hook, &CMatrix__Rotate);
-	CPatch::InlineHook(g_libGTASA, 0x003E8884, &CMatrix__SetScale_hook, &CMatrix__SetScale);
+	CHook::InlineHook(g_libGTASA, 0x004E671C, &CAutomobile__PreRender_hook, &CAutomobile__PreRender);
+	CHook::InlineHook(g_libGTASA, 0x004DC6E8, &CAutomobile__UpdateWheelMatrix_hook, &CAutomobile__UpdateWheelMatrix);
+	CHook::InlineHook(g_libGTASA, 0x003E8D48, &CMatrix__Rotate_hook, &CMatrix__Rotate);
+	CHook::InlineHook(g_libGTASA, 0x003E8884, &CMatrix__SetScale_hook, &CMatrix__SetScale);
 
-	CPatch::InlineHook(g_libGTASA, 0x0046CEF4, &CTaskSimpleUseGun__RemoveStanceAnims_hook, &CTaskSimpleUseGun__RemoveStanceAnims);
+	CHook::InlineHook(g_libGTASA, 0x0046CEF4, &CTaskSimpleUseGun__RemoveStanceAnims_hook, &CTaskSimpleUseGun__RemoveStanceAnims);
 
-	CPatch::InlineHook(g_libGTASA, 0x003DA86C, &CRadar__LimitRadarPoint_hook, &CRadar__LimitRadarPoint); // TO FIX
-	//CPatch::InlineHook(g_libGTASA, 0x005529FC, &CSprite2d__DrawBarChart_hook, &CSprite2d__DrawBarChart);
+	CHook::InlineHook(g_libGTASA, 0x003DA86C, &CRadar__LimitRadarPoint_hook, &CRadar__LimitRadarPoint); // TO FIX
+	//CHook::InlineHook(g_libGTASA, 0x005529FC, &CSprite2d__DrawBarChart_hook, &CSprite2d__DrawBarChart);
 	//SetUpHook(g_libGTASA + 0x005353B4, (uintptr_t)CFont__PrintString_hook, (uintptr_t*)& CFont__PrintString);
-	CPatch::InlineHook(g_libGTASA, 0x0055265C, &CSprite2d__Draw_hook, &CSprite2d__Draw);
+	CHook::InlineHook(g_libGTASA, 0x0055265C, &CSprite2d__Draw_hook, &CSprite2d__Draw);
 
 	//SetUpHook(g_libGTASA + 0x0027D8A8, (uintptr_t)CWidgetPlayerInfo__DrawWanted_hook, (uintptr_t*)& CWidgetPlayerInfo__DrawWanted);
 
 	//SetUpHook(g_libGTASA + 0x0027CE88, (uintptr_t)CWidgetPlayerInfo__DrawWeaponIcon_hook, (uintptr_t*)& CWidgetPlayerInfo__DrawWeaponIcon);
-	CPatch::InlineHook(g_libGTASA, 0x00389D74, (uintptr_t)CCam__Process_hook, (uintptr_t*)& CCam__Process);
+	CHook::InlineHook(g_libGTASA, 0x00389D74, (uintptr_t)CCam__Process_hook, (uintptr_t*)& CCam__Process);
 
-	CPatch::InlineHook(g_libGTASA, 0x003D6E6C, (uintptr_t)CHud__Draw_hook, (uintptr_t*)& CHud__Draw);
-	CPatch::InlineHook(g_libGTASA, 0x0039DC68, (uintptr_t)CPad__CycleCameraModeDownJustDown_hook, (uintptr_t*)& CPad__CycleCameraModeDownJustDown);
+	CHook::InlineHook(g_libGTASA, 0x003D6E6C, (uintptr_t)CHud__Draw_hook, (uintptr_t*)& CHud__Draw);
+	CHook::InlineHook(g_libGTASA, 0x0039DC68, (uintptr_t)CPad__CycleCameraModeDownJustDown_hook, (uintptr_t*)& CPad__CycleCameraModeDownJustDown);
 
-	CPatch::InlineHook(g_libGTASA, 0x0031B164, (uintptr_t)FxEmitterBP_c__Render_hook, (uintptr_t*)& FxEmitterBP_c__Render);
-	CPatch::InlineHook(g_libGTASA, 0x0043A17C, (uintptr_t)CPed__ProcessEntityCollision_hook, (uintptr_t*)&CPed__ProcessEntityCollision);
-	CPatch::InlineHook(g_libGTASA, 0x3AA3C0, (uintptr_t)CPhysical__Add_hook, (uintptr_t*)&CPhysical__Add);
+	CHook::InlineHook(g_libGTASA, 0x0031B164, (uintptr_t)FxEmitterBP_c__Render_hook, (uintptr_t*)& FxEmitterBP_c__Render);
+	CHook::InlineHook(g_libGTASA, 0x0043A17C, (uintptr_t)CPed__ProcessEntityCollision_hook, (uintptr_t*)&CPed__ProcessEntityCollision);
+	CHook::InlineHook(g_libGTASA, 0x3AA3C0, (uintptr_t)CPhysical__Add_hook, (uintptr_t*)&CPhysical__Add);
 
-	CPatch::InlineHook(g_libGTASA, 0x004B97FC, &CTaskSimpleGetUp__ProcessPed_hook, &CTaskSimpleGetUp__ProcessPed); // CTaskSimpleGetUp::ProcessPed
+	CHook::InlineHook(g_libGTASA, 0x004B97FC, &CTaskSimpleGetUp__ProcessPed_hook, &CTaskSimpleGetUp__ProcessPed); // CTaskSimpleGetUp::ProcessPed
 
 	//==================
-	CPatch::InlineHook(g_libGTASA, 0x194B04, &emu_ArraysDelete_hook, &emu_ArraysDelete);
-	CPatch::InlineHook(g_libGTASA, 0x1BA580, &RwResourcesFreeResEntry_hook, &RwResourcesFreeResEntry);
-	CPatch::InlineHook(g_libGTASA, 0x194B20, &emu_ArraysGetID_hook, &emu_ArraysGetID);
-	CPatch::InlineHook(g_libGTASA, 0x50C5F8, &SetCompAlphaCB_hook, &SetCompAlphaCB);
+	CHook::InlineHook(g_libGTASA, 0x194B04, &emu_ArraysDelete_hook, &emu_ArraysDelete);
+	CHook::InlineHook(g_libGTASA, 0x1BA580, &RwResourcesFreeResEntry_hook, &RwResourcesFreeResEntry);
+	CHook::InlineHook(g_libGTASA, 0x194B20, &emu_ArraysGetID_hook, &emu_ArraysGetID);
+	CHook::InlineHook(g_libGTASA, 0x50C5F8, &SetCompAlphaCB_hook, &SetCompAlphaCB);
 
 	//================================
 	// ================== plaka ======
 	//================================
 
 	// vehicle light processing
-	//CPatch::NOP(g_libGTASA + 0x005198DC, 4);
-	CPatch::InlineHook(g_libGTASA, 0x5189C4, &CVehicle__GetVehicleLightsStatus_hook, &CVehicle__GetVehicleLightsStatus);
-	CPatch::NOP(g_libGTASA + 0x408AAA, 2);
+	CHook::InlineHook(g_libGTASA, 0x5189C4, &CVehicle__GetVehicleLightsStatus_hook, &CVehicle__GetVehicleLightsStatus);
+	CHook::NOP(g_libGTASA + 0x408AAA, 2);
 
-	//CPatch::InlineHook(g_libGTASA, 0x5189C4, &CVehicle__GetVehicleLightsStatus_hook, &CVehicle__GetVehicleLightsStatus);
 	//
-	CPatch::NOP(g_libGTASA + 0x003989C8, 2);//живность в воде WaterCreatureManager_c::Update
+	CHook::NOP(g_libGTASA + 0x003989C8, 2);//живность в воде WaterCreatureManager_c::Update
+
 	// дефолтный худ
-	CPatch::NOP(g_libGTASA + 0x0027E21A, 2); // CWidgetPlayerInfo::DrawWeaponIcon
-	CPatch::NOP(g_libGTASA + 0x0027E24E, 2); // CWidgetPlayerInfo::DrawWanted
-	CPatch::NOP(g_libGTASA + 0x0027E1E8, 2); // CWidgetPlayerInfo::RenderBreathBar
-	CPatch::NOP(g_libGTASA + 0x0027E1AE, 2); // CWidgetPlayerInfo::RenderArmorBar
-	CPatch::NOP(g_libGTASA + 0x0027E188, 2); // CWidgetPlayerInfo::RenderHealthBar
-	CPatch::NOP(g_libGTASA + 0x27E158, 2); // PrintMoney
-	CPatch::NOP(g_libGTASA + 0x27E056, 2); // PrintTime
+	CHook::NOP(g_libGTASA + 0x0027E21A, 2); // CWidgetPlayerInfo::DrawWeaponIcon
+	CHook::NOP(g_libGTASA + 0x0027E24E, 2); // CWidgetPlayerInfo::DrawWanted
+	CHook::NOP(g_libGTASA + 0x0027E1E8, 2); // CWidgetPlayerInfo::RenderBreathBar
+	CHook::NOP(g_libGTASA + 0x0027E1AE, 2); // CWidgetPlayerInfo::RenderArmorBar
+	CHook::NOP(g_libGTASA + 0x0027E188, 2); // CWidgetPlayerInfo::RenderHealthBar
+	CHook::NOP(g_libGTASA + 0x27E158, 2); // PrintMoney
+	CHook::NOP(g_libGTASA + 0x27E056, 2); // PrintTime
 
 	//RpMaterialDestroy fix ? не точно
-	CPatch::InlineHook(g_libGTASA, 0x001E3C54, &RpMaterialDestroy_hook, &RpMaterialDestroy);
-	CPatch::InlineHook(g_libGTASA, 0x1B1808, &_RwTextureDestroy_hook, &_RwTextureDestroy);
+	CHook::InlineHook(g_libGTASA, 0x001E3C54, &RpMaterialDestroy_hook, &RpMaterialDestroy);
+	CHook::InlineHook(g_libGTASA, 0x1B1808, &_RwTextureDestroy_hook, &_RwTextureDestroy);
 
 	//CRunningScript fix ? не точно
-	CPatch::InlineHook(g_libGTASA, 0x002E5400, &GivePedScriptedTask_hook, &GivePedScriptedTask);
+	CHook::InlineHook(g_libGTASA, 0x002E5400, &GivePedScriptedTask_hook, &GivePedScriptedTask);
 
-	CPatch::InlineHook(g_libGTASA, 0x00308640, &ProcessCommands1400To1499_hook, &ProcessCommands1400To1499);
-	CPatch::InlineHook(g_libGTASA, 0x002F7910, &ProcessCommands300To399_hook, &ProcessCommands300To399);
+	CHook::InlineHook(g_libGTASA, 0x00308640, &ProcessCommands1400To1499_hook, &ProcessCommands1400To1499);
+	CHook::InlineHook(g_libGTASA, 0x002F7910, &ProcessCommands300To399_hook, &ProcessCommands300To399);
 
 	//
-	CPatch::NOP(g_libGTASA + 0x0039ADE6, 2);//CCoronas::RenderSunReflection crash
+	CHook::NOP(g_libGTASA + 0x0039ADE6, 2);//CCoronas::RenderSunReflection crash
 
-	CPatch::NOP(g_libGTASA+0x0051018A, 2);// не давать ган при выходе из тачки
-	CPatch::NOP(g_libGTASA+0x005101A6, 2);// не давать ган при выходе из тачки
+	CHook::NOP(g_libGTASA + 0x0051018A, 2);// не давать ган при выходе из тачки
+	CHook::NOP(g_libGTASA + 0x005101A6, 2);// не давать ган при выходе из тачки
 
 	// Настройки
-	CPatch::NOP(g_libGTASA + 0x266460, 2); // Game - TrafficMode
-	CPatch::NOP(g_libGTASA + 0x266496, 2); // Game - AimMode
-	CPatch::NOP(g_libGTASA + 0x261A50, 2); // Language
+	CHook::NOP(g_libGTASA + 0x266460, 2); // Game - TrafficMode
+	CHook::NOP(g_libGTASA + 0x266496, 2); // Game - AimMode
+	CHook::NOP(g_libGTASA + 0x261A50, 2); // Main - Language
+	CHook::NOP(g_libGTASA + 0x2665EE, 2); // Game - SocialClub
 
-	CPatch::NOP(g_libGTASA + 0x2665EE, 2); // Game - SocialClub
 	//
-	CPatch::InlineHook(g_libGTASA, 0x004904AC, &CTaskSimpleCarSetPedInAsDriver__ProcessPed_hook, &CTaskSimpleCarSetPedInAsDriver__ProcessPed);
+	CHook::InlineHook(g_libGTASA, 0x004904AC, &CTaskSimpleCarSetPedInAsDriver__ProcessPed_hook, &CTaskSimpleCarSetPedInAsDriver__ProcessPed);
 
 	// fix разрешения экрана
-	CPatch::InlineHook(g_libGTASA, 0x0026CE30, &MobileSettings__GetMaxResWidth_hook, &MobileSettings__GetMaxResWidth);
+	CHook::InlineHook(g_libGTASA, 0x0026CE30, &MobileSettings__GetMaxResWidth_hook, &MobileSettings__GetMaxResWidth);
 
 	//
-	//CPatch::InlineHook(g_libGTASA, 0x39AE28, &RenderEffects_hook, &RenderEffects);
+	//CHook::InlineHook(g_libGTASA, 0x39AE28, &RenderEffects_hook, &RenderEffects);
 
 	//размытие на скорости
-	CPatch::InlineHook(g_libGTASA, 0x005311D0, &CDraw__SetFOV_hook, &CDraw__SetFOV);
+	CHook::InlineHook(g_libGTASA, 0x005311D0, &CDraw__SetFOV_hook, &CDraw__SetFOV);
 
-	CPatch::InlineHook(g_libGTASA, 0x003B0E6C, &CEntity__RegisterReference_hook, &CEntity__RegisterReference);
+	//
+	CHook::InlineHook(g_libGTASA, 0x003B0E6C, &CEntity__RegisterReference_hook, &CEntity__RegisterReference);
 
 	HookCPad();
 }

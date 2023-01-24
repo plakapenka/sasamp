@@ -2046,7 +2046,7 @@ struct RwRaster* GetRWRasterFromBitmapPalette(uint8_t* pBitmap, size_t dwStride,
 		return nullptr;
 	}
 
-	CPatch::WriteMemory(g_libGTASA + 0x001D6F9A, "\x03\x20", 2); // rwSTREAMMEMORY
+	CHook::WriteMemory(g_libGTASA + 0x001D6F9A, "\x03\x20", 2); // rwSTREAMMEMORY
 
 	RwMemory memoryImage;
 	RwInt32 width, height, depth, flags;
@@ -2095,7 +2095,7 @@ struct RwRaster* GetRWRasterFromBitmapPalette(uint8_t* pBitmap, size_t dwStride,
 	RwImageDestroy(pImage);
 	STBIW_FREE(png);
 
-    CPatch::WriteMemory(g_libGTASA + 0x001D6F9A, "\x02\x20", 2); // rwSTREAMFILENAME
+    CHook::WriteMemory(g_libGTASA + 0x001D6F9A, "\x02\x20", 2); // rwSTREAMFILENAME
 
 	return pRaster;
 }
@@ -2113,7 +2113,7 @@ struct RwRaster* GetRWRasterFromBitmap(uint8_t* pBitmap, size_t dwStride, size_t
 		return nullptr;
 	}
 
-    CPatch::WriteMemory(g_libGTASA + 0x001D6F9A, "\x03\x20", 2); // rwSTREAMMEMORY
+    CHook::WriteMemory(g_libGTASA + 0x001D6F9A, "\x03\x20", 2); // rwSTREAMMEMORY
 
 	RwMemory memoryImage;
 	RwInt32 width, height, depth, flags;
@@ -2145,7 +2145,7 @@ struct RwRaster* GetRWRasterFromBitmap(uint8_t* pBitmap, size_t dwStride, size_t
 	RwImageDestroy(pImage);
 	STBIW_FREE(png);
 
-    CPatch::WriteMemory(g_libGTASA + 0x001D6F9A, "\x02\x20", 2); // rwSTREAMFILENAME
+    CHook::WriteMemory(g_libGTASA + 0x001D6F9A, "\x02\x20", 2); // rwSTREAMFILENAME
 
 	return pRaster;
 }

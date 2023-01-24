@@ -53,9 +53,6 @@ public:
 
 	bool IsNewKeyboard();
 
-	void ProcessInputCommands();
-	void OnNewKeyboardInput(JNIEnv *pEnv, jobject thiz, jbyteArray str);
-
 	std::vector<kbKey> m_Rows[3][4]; // eng, rus, num
 
 	std::string m_sInput;

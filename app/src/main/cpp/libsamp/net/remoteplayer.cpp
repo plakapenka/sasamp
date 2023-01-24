@@ -939,14 +939,14 @@ void CRemotePlayer::HandleAnimations()
 	}
 
 	int flag = m_ofSync.dwAnimation >> 31;
-	//CChatWindow::AddDebugMessage("FLAG REMOTE %d", flag);
+	//pChatWindow->AddDebugMessage("FLAG REMOTE %d", flag);
 
 	if (!flag)
 	{
 		uint16_t newAnim = (uint16_t)m_ofSync.dwAnimation;
 		if (newAnim != m_usPlayingAnimIdx)
 		{
-			//CChatWindow::AddDebugMessage("applying %hu anium", newAnim);
+			//pChatWindow->AddDebugMessage("applying %hu anium", newAnim);
 			m_usPlayingAnimIdx = newAnim;
 			m_pPlayerPed->PlayAnimByIdx(newAnim, 4.0f);
 		}
@@ -963,10 +963,7 @@ void CRemotePlayer::HandleAnimations()
 	{
 		m_usPlayingAnimIdx = 0;
 		// we have to reset anim
-		m_pPlayerPed->PlayAnimByIdx(0, 4.0f,
-									m_ofSync.animation.flags.loop,
-									m_ofSync.animation.flags.freeze
-		);
+		m_pPlayerPed->PlayAnimByIdx(0, 4.0f);
 		m_bWasSettedFlag = false;
 	}
 }

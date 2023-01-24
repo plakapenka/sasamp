@@ -41,6 +41,34 @@ void CDuelsGui::addMessage(PLAYERID killer, PLAYERID killee, int reason, int tea
     env->CallVoidMethod(CDuelsGui::thiz, method, jKillername, jKilleename, reason, team);
 }
 
+void CDuelsGui::showKillsLeft(bool show, int kills, int needKills)
+{
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+    if(!env)return;
+
+    jclass clazz = env->GetObjectClass(CDuelsGui::thiz);
+    jmethodID method = env->GetMethodID(clazz, "showKillsLeft", "(ZII)V");
+
+    env->CallVoidMethod(CDuelsGui::thiz, method, show, kills, needKills);
+}
+
+void CNetGame::packetDuelsKillsLeft(Packet* p)
+{
+    RakNet::BitStream bs((unsigned char*)p->data, p->length, false);
+
+    bs.IgnoreBits(40); // skip packet and rpc id
+
+    uint8_t show;
+    uint8_t kills;
+    uint8_t needKiils;
+
+    bs.Read(show);
+    bs.Read(kills);
+    bs.Read(needKiils);
+
+    CDuelsGui::showKillsLeft(show, kills, needKiils);
+}
+
 void CNetGame::packetKillList(Packet* p)
 {
     RakNet::BitStream bs((unsigned char*)p->data, p->length, false);
@@ -62,6 +90,6 @@ void CNetGame::packetKillList(Packet* p)
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_Killist_init(JNIEnv *env, jobject thiz) {
+Java_com_liverussia_cr_gui_DuelsHud_init(JNIEnv *env, jobject thiz) {
     CDuelsGui::thiz = env->NewGlobalRef(thiz);
 }

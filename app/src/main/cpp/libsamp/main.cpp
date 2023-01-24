@@ -89,7 +89,6 @@ void PrintBuildCrashInfo()
 void InitBASSFuncs();
 void InitSAMP(JNIEnv* pEnv, jobject thiz, const char* path)
 {
-	PROTECT_CODE_INITSAMP;
 
 	Log("Initializing SAMP..");
 
@@ -97,9 +96,7 @@ void InitSAMP(JNIEnv* pEnv, jobject thiz, const char* path)
 	BASS_Init(-1, 44100, BASS_DEVICE_3D, 0, NULL);
 	BASS_Set3DFactors(0.2, 0.1, 0);
 
-	//g_pszStorage = path;
 	strcpy(g_pszStorage, path);
-//	g_pszStorage = "/storage/emulated/0/Android/data/com.liverussia.cr/files/";
 
 	if(!strlen(g_pszStorage))
 	{
@@ -107,7 +104,6 @@ void InitSAMP(JNIEnv* pEnv, jobject thiz, const char* path)
 		std::terminate();
 		return;
 	}
-
 
 	PrintBuildInfo();
 
@@ -120,23 +116,14 @@ void InitSAMP(JNIEnv* pEnv, jobject thiz, const char* path)
 	isTestMode = (bool)pSettings->GetReadOnly().isTestMode;
 	CWeaponsOutFit::SetEnabled(pSettings->GetReadOnly().iOutfitGuns);
 	CDebugInfo::SetDrawFPS(pSettings->GetReadOnly().szDebug);
-	//CSnow::SetCurrentSnow(pSettings->GetReadOnly().iSnow);
-	//CSnow::SetCurrentSnow(3);
 
 	g_pJavaWrapper = new CJavaWrapper(pEnv, thiz);
-
-	//CLocalisation::Initialise("ru.lc");
 
 	firebase::crashlytics::SetUserId(pSettings->GetReadOnly().szNickName);
 	firebase::crashlytics::SetCustomKey("Nick", pSettings->GetReadOnly().szNickName);
 
 	CWeaponsOutFit::ParseDatFile();
 
-//	if(!CCheckFileHash::IsFilesValid())
-//	{
-//		CClientInfo::bSAMPModified = false;
-//		return;
-//	}
 }
 void ProcessCheckForKeyboard();
 
@@ -530,8 +517,6 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 {
 	javaVM = vm;
 
-	Log("SAMP library loaded! Build time: " __DATE__ " " __TIME__);
-
 	g_libGTASA = FindLibrary("libGTASA.so");
 	if(g_libGTASA == 0)
 	{
@@ -542,15 +527,13 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 
 	firebase::crashlytics::SetCustomKey("build data", __DATE__);
 	firebase::crashlytics::SetCustomKey("build time", __TIME__);
-//	firebase::crashlytics::Initialize();
 
-	uintptr_t libgtasa = FindLibrary("libGTASA.so");
 	uintptr_t libsamp = FindLibrary("libsamp.so");
 	uintptr_t libc = FindLibrary("libc.so");
 
 	char str[100];
 
-	sprintf(str, "0x%x", libgtasa);
+	sprintf(str, "0x%x", g_libGTASA);
 	firebase::crashlytics::SetCustomKey("libGTASA.so", str);
 
 	sprintf(str, "0x%x", libsamp);
@@ -559,7 +542,7 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 	sprintf(str, "0x%x", libc);
 	firebase::crashlytics::SetCustomKey("libc.so", str);
 
-	CPatch::InitHookStuff();
+	CHook::InitHookStuff();
 
 	InstallSpecialHooks();
 	InitRenderWareFunctions();

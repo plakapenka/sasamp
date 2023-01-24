@@ -16,6 +16,8 @@ public:
     static void addMessage(unsigned short killer, unsigned short killee, int reason, int team);
 
     static void clearKillList();
+
+    static void showKillsLeft(bool show, int kills, int needKills);
 };
 
 

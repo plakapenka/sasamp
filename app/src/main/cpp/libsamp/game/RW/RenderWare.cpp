@@ -123,6 +123,6 @@ void InitRenderWareFunctions()
 
 	*(void**)(&RwTextureDestroy) = (void*)(g_libGTASA + 0x001B1808 + 1);
 
-//	CPatch::WriteMemory(g_libGTASA + 0x001A7EF2, "\x4F\xF4\x40\x10\x4F\xF4\x40\x10", 8);
-//	CPatch::WriteMemory(g_libGTASA + 0x001A7F34, "\x4F\xF4\x40\x10\x4F\xF4\x40\x10", 8);
+//	CHook::WriteMemory(g_libGTASA + 0x001A7EF2, "\x4F\xF4\x40\x10\x4F\xF4\x40\x10", 8);
+//	CHook::WriteMemory(g_libGTASA + 0x001A7F34, "\x4F\xF4\x40\x10\x4F\xF4\x40\x10", 8);
 }

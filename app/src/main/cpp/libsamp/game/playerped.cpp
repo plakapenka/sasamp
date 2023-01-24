@@ -836,7 +836,7 @@ void CPlayerPed::SetModelIndex(unsigned int uiModel)
 	if(m_pPed)
 	{
 		// CClothes::RebuildPlayer nulled
-		CPatch::WriteMemory(g_libGTASA+0x3F1030, "\x70\x47", 2);
+		CHook::WriteMemory(g_libGTASA + 0x3F1030, "\x70\x47", 2);
 		DestroyFollowPedTask();
 		CEntity::SetModelIndex(uiModel);
 
@@ -1565,9 +1565,9 @@ void CPlayerPed::ApplyAnimation(char* szAnimName, char* szAnimFile, float fDelta
 	//	usleep(100000);
 	}
 
-	animFlagTime = (uint8_t)uiTime;
-	animFlagFreeze = bFreeze;
-	animFlagLoop = bLoop;
+//	animFlagTime = (uint8_t)uiTime;
+//	animFlagFreeze = bFreeze;
+//	animFlagLoop = bLoop;
 
 	ScriptCommand(&apply_animation, m_dwGTAId, szAnimName, szAnimFile, fDelta, bLoop, bLockX, bLockY, bFreeze, uiTime);
 }

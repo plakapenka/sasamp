@@ -125,11 +125,23 @@ uint32_t CGame::CreatePickup(int iModel, int iType, float fX, float fY, float fZ
 	return hnd;
 }
 
+void *Init(void *p)
+{
+	ApplyPatches();
+	InstallHooks();
+
+	pthread_exit(0);
+}
+
 void CGame::InitInMenu()
 {
 	Log("CGame: InitInMenu");
-	ApplyPatches();
-	InstallHooks();
+
+	pthread_t thread;
+	pthread_create(&thread, nullptr, Init, nullptr);
+
+	//ApplyPatches();
+	//InstallHooks();
 	GameAimSyncInit();
 	LoadSplashTexture();
 
@@ -323,16 +335,16 @@ void CGame::SetWorldWeather(unsigned char byteWeatherID) const
 void CGame::ToggleThePassingOfTime(bool bOnOff)
 {
 	if(bOnOff)
-		CPatch::WriteMemory(g_libGTASA+0x38C154, (uintptr_t)"\x2D\xE9", 2);
+		CHook::WriteMemory(g_libGTASA + 0x38C154, (uintptr_t)"\x2D\xE9", 2);
 	else
-		CPatch::WriteMemory(g_libGTASA+0x38C154, (uintptr_t)"\xF7\x46", 2);
+		CHook::WriteMemory(g_libGTASA + 0x38C154, (uintptr_t)"\xF7\x46", 2);
 }
 
 // 0.3.7
 void CGame::EnableClock(bool bEnable)
 {
 	char byteClockData[] = { '%', '0', '2', 'd', ':', '%', '0', '2', 'd', 0 };
-	CPatch::UnFuck(g_libGTASA+0x599504);
+	CHook::UnFuck(g_libGTASA + 0x599504);
 
 	if(bEnable)
 	{
@@ -423,7 +435,7 @@ void CGame::SetMaxStats()
 	(( int (*)())(g_libGTASA+0x2BAE68+1))();
 
 	// CStats::SetStatValue nop
-	CPatch::WriteMemory(g_libGTASA+0x3B9074, (uintptr_t)"\xF7\x46", 2);
+	CHook::WriteMemory(g_libGTASA + 0x3B9074, (uintptr_t)"\xF7\x46", 2);
 }
 
 void CGame::SetWantedLevel(uint8_t byteLevel)
@@ -449,16 +461,16 @@ void CGame::DisplayGameText(char* szStr, int iTime, int iType)
 // 0.3.7
 void CGame::SetGravity(float fGravity)
 {
-	CPatch::UnFuck(g_libGTASA+0x3A0B64);
+	CHook::UnFuck(g_libGTASA + 0x3A0B64);
 	*(float*)(g_libGTASA+0x3A0B64) = fGravity;
 }
 
 void CGame::ToggleCJWalk(bool bUseCJWalk)
 {
 	if(bUseCJWalk)
-		CPatch::WriteMemory(g_libGTASA+0x45477E, (uintptr_t)"\xC4\xF8\xDC\x64", 4);
+		CHook::WriteMemory(g_libGTASA + 0x45477E, (uintptr_t)"\xC4\xF8\xDC\x64", 4);
 	else
-		CPatch::NOP(g_libGTASA+0x45477E, 2);
+		CHook::NOP(g_libGTASA + 0x45477E, 2);
 }
 
 void CGame::DisableMarker(uint32_t dwMarkerID)

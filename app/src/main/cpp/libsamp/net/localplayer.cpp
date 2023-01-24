@@ -65,7 +65,7 @@ CLocalPlayer::CLocalPlayer()
 	m_dwLastUpdateOnFootData = GetTickCount();
 	m_dwLastStatsUpdateTick = GetTickCount();
 	m_dwLastUpdateInCarData = GetTickCount();
-	//m_dwLastUpdatePassengerData = GetTickCount();
+	m_dwLastUpdatePassengerData = GetTickCount();
 	m_dwPassengerEnterExit = GetTickCount();
 
 	m_CurrentVehicle = INVALID_VEHICLE_ID;
@@ -234,9 +234,10 @@ bool CLocalPlayer::Process()
 
 
 		// handle interior changing
-		uint8_t byteInterior = pGame->GetActiveInterior();
-		if (byteInterior != m_byteCurInterior)
-			UpdateRemoteInterior(byteInterior);
+		// хуета
+//		uint8_t byteInterior = pGame->GetActiveInterior();
+//		if (byteInterior != m_byteCurInterior)
+//			UpdateRemoteInterior(byteInterior);
 
 		// The new regime for adjusting sendrates is based on the number
 		// of players that will be effected by this update. The more players
@@ -452,7 +453,7 @@ bool CLocalPlayer::Process()
 	if(pGame->isDialogActive || pGame->isCasinoDiceActive || CTab::bIsShow || pGame->isAutoShopActive
 	   || pGame->isCasinoWheelActive || !m_pPlayerPed || pGame->isRegistrationActive || pGame->isShopStoreActive ||
 	   CMedic::bIsShow || pInventory->bIsToggle || bFirstSpawn || CEditobject::bIsToggle || CChip::bIsShow
-	   || CAucContainer::bIsShow || CAdminRecon::bIsToggle)
+	   || CAucContainer::bIsShow || CAdminRecon::bIsToggle || CHUD::bIsCamEditGui )
 	{
 		needDrawableHud = false;
 	}
@@ -697,7 +698,7 @@ bool CLocalPlayer::Spawn()
 	pGame->DisableTrainTraffic();
 
 	// CCamera::Fade
-	CPatch::WriteMemory(g_libGTASA+0x36EA2C, "\x70\x47", 2); // bx lr
+	CHook::WriteMemory(g_libGTASA + 0x36EA2C, "\x70\x47", 2); // bx lr
 
 	m_pPlayerPed->TeleportTo(m_SpawnInfo.vecPos.X,
 		m_SpawnInfo.vecPos.Y, (m_SpawnInfo.vecPos.Z + 0.5f));
@@ -818,16 +819,16 @@ void CLocalPlayer::SendOnFootFullSyncData()
 	ofSync.wSurfInfo = 0;
 
 	ofSync.dwAnimation = GetCurrentAnimationIndexFlag();
-	ofSync.animation.flags.lockY = m_pPlayerPed->animFlagLockY;
-	ofSync.animation.flags.lockX = m_pPlayerPed->animFlagLockX;
-	ofSync.animation.flags.time = m_pPlayerPed->animFlagTime;
-	ofSync.animation.flags.loop = m_pPlayerPed->animFlagLoop;
-	ofSync.animation.flags.freeze = m_pPlayerPed->animFlagFreeze;
-	m_pPlayerPed->animFlagTime = 0;
-	m_pPlayerPed->animFlagLoop = false;
-	m_pPlayerPed->animFlagFreeze = false;
-	ofSync.animation.flags.lockY = false;
-	ofSync.animation.flags.lockX = false;
+//	ofSync.animation.flags.lockY = m_pPlayerPed->animFlagLockY;
+//	ofSync.animation.flags.lockX = m_pPlayerPed->animFlagLockX;
+//	ofSync.animation.flags.time = m_pPlayerPed->animFlagTime;
+//	ofSync.animation.flags.loop = m_pPlayerPed->animFlagLoop;
+//	ofSync.animation.flags.freeze = m_pPlayerPed->animFlagFreeze;
+//	m_pPlayerPed->animFlagTime = 0;
+//	m_pPlayerPed->animFlagLoop = false;
+//	m_pPlayerPed->animFlagFreeze = false;
+//	ofSync.animation.flags.lockY = false;
+//	ofSync.animation.flags.lockX = false;
 
 	if( (GetTickCount() - m_dwLastUpdateOnFootData) > 500 || memcmp(&m_OnFootData, &ofSync, sizeof(ONFOOT_SYNC_DATA)))
 	{
@@ -981,9 +982,9 @@ void CLocalPlayer::SendPassengerFullSyncData()
 	psSync.vecPos.Z = mat.pos.Z;
 
 	// send
-	if(memcmp(&m_PassengerData, &psSync, sizeof(PASSENGER_SYNC_DATA)))
+	if((GetTickCount() - m_dwLastUpdatePassengerData) > 500 || memcmp(&m_PassengerData, &psSync, sizeof(PASSENGER_SYNC_DATA)))
 	{
-	//	m_dwLastUpdatePassengerData = GetTickCount();
+		m_dwLastUpdatePassengerData = GetTickCount();
 
 		bsPassengerSync.Write((uint8_t)ID_PASSENGER_SYNC);
 		bsPassengerSync.Write((char*)&psSync, sizeof(PASSENGER_SYNC_DATA));

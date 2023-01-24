@@ -73,7 +73,7 @@ bool CRadarRect::IsEnabled()
 
 void CRadarRect::SetEnabled(bool bEnabled)
 {
-	CPatch::UnFuck(g_libGTASA + 0x003DED84);
+	CHook::UnFuck(g_libGTASA + 0x003DED84);
 	m_bEnabled = bEnabled;
 	if (!m_bEnabled)
 	{
