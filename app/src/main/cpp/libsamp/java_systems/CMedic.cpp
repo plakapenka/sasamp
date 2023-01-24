@@ -15,8 +15,6 @@
 jobject CMedic::thiz = nullptr;
 bool CMedic::bIsShow = false;
 
-extern CJavaWrapper *g_pJavaWrapper;
-
 void CMedic::showPreDeath(char* nick, int id)
 {
     JNIEnv* env = g_pJavaWrapper->GetEnv();
@@ -47,16 +45,18 @@ void CMedic::showMedGame(char* nick)
     CMedic::bIsShow = true;
 }
 
-//void CMedic::hidePreDeath()
-//{
-//    JNIEnv* env = g_pJavaWrapper->GetEnv();
-//    if(!env)return;
-//
-//    jclass clazz = env->GetObjectClass(CMedic::thiz);
-//    jmethodID method = env->GetMethodID(clazz, "showPreDeath", "(Ljava/lang/String;I)V");
-//
-//    env->CallVoidMethod(CMedic::thiz, method, jNick, id);
-//}
+void CMedic::hide()
+{
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+    if(!env)return;
+
+    jclass clazz = env->GetObjectClass(CMedic::thiz);
+    jmethodID method = env->GetMethodID(clazz, "hide", "()V");
+
+    env->CallVoidMethod(CMedic::thiz, method);
+
+    CMedic::bIsShow = false;
+}
 
 void CNetGame::packetPreDeath(Packet* p) {
     RakNet::BitStream bs((unsigned char*)p->data, p->length, false);
@@ -65,7 +65,7 @@ void CNetGame::packetPreDeath(Packet* p) {
 
     uint16_t toggle;
     uint16_t killerId;
-    char killername[25];
+    char* killername;
 
     bs.Read(toggle);
     bs.Read(killerId);
@@ -73,12 +73,7 @@ void CNetGame::packetPreDeath(Packet* p) {
     if (toggle == 1) {
         CPlayerPool *pPlayerPool = GetPlayerPool();
         if (pPlayerPool) {
-            if (pPlayerPool->GetSlotState(killerId)) {
-                strcpy(killername, pPlayerPool->GetPlayerName(killerId));
-
-            } else {
-                strcpy(killername, "None");
-            }
+            killername =  pPlayerPool->GetPlayerName(killerId);
 
             CMedic::showPreDeath(killername, killerId);
         }
@@ -97,9 +92,10 @@ void CNetGame::packetMedGame(Packet* p) {
     bs.Read(nick, strLen);
     nick[strLen] = '\0';
 
-    cp1251_to_utf8(nick, nick);
+    char utf8_nick[MAX_PLAYER_NAME];
+    cp1251_to_utf8(utf8_nick, nick);
 
-    CMedic::showMedGame(nick);
+    CMedic::showMedGame(utf8_nick);
 }
 
 extern "C"

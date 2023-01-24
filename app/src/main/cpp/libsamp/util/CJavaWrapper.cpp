@@ -130,6 +130,7 @@ void CJavaWrapper::MakeDialog(int dialogId, int dialogTypeId, char caption[], ch
 
 #include "..//CDebugInfo.h"
 #include "chatwindow.h"
+#include "java_systems/CMedic.h"
 
 extern "C"
 {
@@ -1131,6 +1132,7 @@ void CJavaWrapper::ClearScreen()
 	HideBusInfo();
 	HideGPS();
 	HideGreenZone();
+	CMedic::hide();
 
 	ShowCasinoDice(false, 0, 0, 0, 0, "--", 0, "--", 0, "--", 0, "--", 0, "--", 0);
 }

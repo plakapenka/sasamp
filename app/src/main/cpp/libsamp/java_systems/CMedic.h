@@ -19,6 +19,8 @@ public:
     //void hidePreDeath();
 
     static void showMedGame(char *nick);
+
+    static void hide();
 };
 
 
