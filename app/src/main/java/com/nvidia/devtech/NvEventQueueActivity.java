@@ -227,15 +227,6 @@ public abstract class NvEventQueueActivity
     public native boolean getNativeOutfitGunsSettings();
     public native boolean getNativeHpArmourText();
 
-    public native void setNativeHudElementColor(int id, int a, int r, int g, int b);
-    public native byte[] getNativeHudElementColor(int id);
-
-    public native void setNativeHudElementPosition(int id, int x, int y);
-    public native int[] getNativeHudElementPosition(int id);
-
-    public native void setNativeHudElementScale(int id, int x, int y);
-    public native int[] getNativeHudElementScale(int id);
-
     public native void setNativeWidgetPositionAndScale(int id, int x, int y, int scale);
     public native int[] getNativeWidgetPositionAndScale(int id);
 
@@ -266,24 +257,6 @@ public abstract class NvEventQueueActivity
     // 1 - Меню
     // 2 - Сервер
     public native void sendRPC(int type, byte[] str, int action);
-
-    //public native int getLastServer();
-
-    public String getHudElementColor(int id)
-    {
-        byte[] color = getNativeHudElementColor(id);
-        String str = null;
-        try {
-            str = new String(color, "windows-1251");
-        }
-        catch(UnsupportedEncodingException e)
-        {
-
-        }
-
-        return str;
-
-    }
 
     @Override
     public void onBackPressed() {
