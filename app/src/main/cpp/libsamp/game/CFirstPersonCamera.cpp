@@ -77,19 +77,6 @@ void CFirstPersonCamera::ProcessCameraInVeh(uintptr_t pCam, CPlayerPed* pPed, CV
 		((RwCamera * (*)(RwCamera*, float))(g_libGTASA + 0x001AD6F4 + 1))(*(RwCamera * *)(g_libGTASA + 0x95B064), 0.01f);
 	}
 
-	if (CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_FIRSTPERSON_VEH).X != -1)
-	{
-		vecOffset.X += (float)(CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_FIRSTPERSON_VEH).X - 200) / 100.0f;
-	}
-	if (CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_FIRSTPERSON_VEH).Y != -1)
-	{
-		vecOffset.Y += (float)(CAdjustableHudPosition::GetElementPosition(E_HUD_ELEMENT::HUD_FIRSTPERSON_VEH).Y - 200) / 100.0f;
-	}
-	if (CAdjustableHudScale::GetElementScale(E_HUD_ELEMENT::HUD_FIRSTPERSON_VEH).Y != -1)
-	{
-		vecOffset.Z += (float)(CAdjustableHudScale::GetElementScale(E_HUD_ELEMENT::HUD_FIRSTPERSON_VEH).Y - 200) / 100.0f;
-	}
-
 	VECTOR vecOut;
 	MATRIX4X4 mat;
 

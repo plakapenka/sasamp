@@ -177,12 +177,6 @@ bool CGame::IsToggledHUDElement(int iID)
 	return aToggleStatusHUD[iID];
 }
 
-void CGame::HandleChangedHUDStatus()
-{
-	ToggleRadar(aToggleStatusHUD[HUD_ELEMENT_MAP]);
-	DisplayWidgets(aToggleStatusHUD[HUD_ELEMENT_BUTTONS]);
-}
-
 uint8_t CGame::GetWantedLevel()
 {
 	return CHUD::iWantedLevel;

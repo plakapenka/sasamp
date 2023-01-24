@@ -55,40 +55,6 @@ void CWeaponsOutFit::OnWeaponAdded(CPlayerPed* pPed, int iWeaponID)
 	info.dwBone = (uint32_t)m_Settings[iWeaponID].iBone;
 
 	info.vecOffset.X = m_Settings[iWeaponID].vOffset.X;
-	if (CAdjustableHudPosition::GetElementPosition(HUD_WEAPONSPOS).X != -1)
-	{
-		info.vecOffset.X += ((float)CAdjustableHudPosition::GetElementPosition(HUD_WEAPONSPOS).X / 100.0f) - 2.0f;
-	}
-
-	info.vecOffset.Y = m_Settings[iWeaponID].vOffset.Y;
-	if (CAdjustableHudPosition::GetElementPosition(HUD_WEAPONSPOS).Y != -1)
-	{
-		info.vecOffset.Y += ((float)CAdjustableHudPosition::GetElementPosition(HUD_WEAPONSPOS).Y / 100.0f) - 2.0f;
-	}
-
-	info.vecOffset.Z = m_Settings[iWeaponID].vOffset.Z;
-	if (CAdjustableHudScale::GetElementScale(HUD_WEAPONSPOS).Y != -1)
-	{
-		info.vecOffset.Z += ((float)CAdjustableHudScale::GetElementScale(HUD_WEAPONSPOS).Y / 100.0f) - 2.0f;
-	}
-
-	info.vecRotation.X = m_Settings[iWeaponID].vRotation.X;
-	if (CAdjustableHudPosition::GetElementPosition(HUD_WEAPONSROT).X != -1)
-	{
-		info.vecRotation.X += ((float)CAdjustableHudPosition::GetElementPosition(HUD_WEAPONSROT).X) - 200.0f;
-	}
-
-	info.vecRotation.Y = m_Settings[iWeaponID].vRotation.Y;
-	if (CAdjustableHudPosition::GetElementPosition(HUD_WEAPONSROT).Y != -1)
-	{
-		info.vecRotation.Y += ((float)CAdjustableHudPosition::GetElementPosition(HUD_WEAPONSROT).Y) - 200.0f;
-	}
-
-	info.vecRotation.Z = m_Settings[iWeaponID].vRotation.Z;
-	if (CAdjustableHudScale::GetElementScale(HUD_WEAPONSROT).Y != -1)
-	{
-		info.vecRotation.Z += ((float)CAdjustableHudScale::GetElementScale(HUD_WEAPONSROT).Y) - 200.0f;
-	}
 
 	info.vecScale.X = 1.0f;
 	info.vecScale.Y = 1.0f;
@@ -238,36 +204,6 @@ void CWeaponsOutFit::ProcessLocalPlayer(CPlayerPed* pPed)
 
 			vecPos = m_Settings[iWeaponID].vOffset;
 			vecRot = m_Settings[iWeaponID].vRotation;
-
-			if (CAdjustableHudPosition::GetElementPosition(HUD_WEAPONSPOS).X != -1)
-			{
-				vecPos.X += ((float)CAdjustableHudPosition::GetElementPosition(HUD_WEAPONSPOS).X / 100.0f) - 2.0f;
-			}
-
-			if (CAdjustableHudPosition::GetElementPosition(HUD_WEAPONSPOS).Y != -1)
-			{
-				vecPos.Y += ((float)CAdjustableHudPosition::GetElementPosition(HUD_WEAPONSPOS).Y / 100.0f) - 2.0f;
-			}
-
-			if (CAdjustableHudScale::GetElementScale(HUD_WEAPONSPOS).Y != -1)
-			{
-				vecPos.Z += ((float)CAdjustableHudScale::GetElementScale(HUD_WEAPONSPOS).Y / 100.0f) - 2.0f;
-			}
-
-			if (CAdjustableHudPosition::GetElementPosition(HUD_WEAPONSROT).X != -1)
-			{
-				vecRot.X += ((float)CAdjustableHudPosition::GetElementPosition(HUD_WEAPONSROT).X) - 200.0f;
-			}
-
-			if (CAdjustableHudPosition::GetElementPosition(HUD_WEAPONSROT).Y != -1)
-			{
-				vecRot.Y += ((float)CAdjustableHudPosition::GetElementPosition(HUD_WEAPONSROT).Y) - 200.0f;
-			}
-
-			if (CAdjustableHudScale::GetElementScale(HUD_WEAPONSROT).Y != -1)
-			{
-				vecRot.Z += ((float)CAdjustableHudScale::GetElementScale(HUD_WEAPONSROT).Y) - 200.0f;
-			}
 
 			pPed->SetAttachOffset(i + 10, vecPos, vecRot);
 		}
