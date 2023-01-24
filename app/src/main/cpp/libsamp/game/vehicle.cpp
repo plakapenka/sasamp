@@ -669,11 +669,14 @@ void CVehicle::SetHandlingData(std::vector<SHandlingData>& vHandlingData)
 		switch (i.flag)
 		{
 			case E_HANDLING_PARAMS::hpMaxSpeed:
-				m_pCustomHandling->m_transmissionData.m_fMaxGearVelocity = i.fValue;
+				m_pCustomHandling->m_transmissionData.m_fMaxGearVelocity = i.fValue * 0.84;
 				break;
-			case E_HANDLING_PARAMS::hpAcceleration:
-				m_pCustomHandling->m_transmissionData.m_fEngineAcceleration = i.fValue * 0.4f;
+			case E_HANDLING_PARAMS::hpAcceleration: {
+				float sampSpeed = m_pCustomHandling->m_transmissionData.m_fMaxGearVelocity * 1.2f;
+				m_pCustomHandling->m_transmissionData.m_fEngineAcceleration = sampSpeed / 13.9f;
+				//m_pCustomHandling->m_transmissionData.m_fEngineAcceleration = 50.0f;
 				break;
+			}
 			case E_HANDLING_PARAMS::hpEngineInertion:
 				m_pCustomHandling->m_transmissionData.m_fEngineInertia = i.fValue;
 				break;
