@@ -3,10 +3,7 @@ package com.liverussia.cr.core;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
-
-import androidx.appcompat.app.AppCompatDelegate;
 
 import com.liverussia.launcher.utils.MainUtils;
 import com.wardrumstudios.utils.WarMedia;
@@ -23,9 +20,9 @@ public class GTASA extends WarMedia {
             vmVersion = System.getProperty("java.vm.version");
             System.out.println("vmVersion " + vmVersion);
             System.loadLibrary("ImmEmulatorJ");
-        } catch (ExceptionInInitializerError | UnsatisfiedLinkError e) {
         }
-        System.loadLibrary("SCAnd");
+        catch (ExceptionInInitializerError | UnsatisfiedLinkError e) {
+        }
         System.loadLibrary("GTASA");
         System.loadLibrary("samp");
     }
