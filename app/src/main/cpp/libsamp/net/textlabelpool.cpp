@@ -6,7 +6,6 @@
 
 extern CNetGame *pNetGame;
 extern CGUI *pGUI;
-extern CSettings *pSettings;
 
 void TextWithColors(ImVec2 pos, ImColor col, const char* szStr, const char* szStrWithoutColors);
 
@@ -41,7 +40,7 @@ void CText3DLabelsPool::DrawAttachedToPlayer(TEXT_LABELS* pLabel)
 		return;
 	}
 
-	if(!pSettings->GetReadOnly().iIsEnable3dTextInVehicle && pPed->IsInVehicle())
+	if(!CSettings::m_Settings.iIsEnable3dTextInVehicle && pPed->IsInVehicle())
 	{
 		return;
 	}

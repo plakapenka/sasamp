@@ -10,7 +10,6 @@
 
 extern CGame *pGame;
 extern CNetGame *pNetGame;
-extern CSettings *pSettings;
 
 int iNetModeNormalOnfootSendRate	= NETMODE_ONFOOT_SENDRATE;
 int iNetModeNormalInCarSendRate		= NETMODE_INCAR_SENDRATE;

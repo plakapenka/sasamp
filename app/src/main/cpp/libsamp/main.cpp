@@ -1,5 +1,4 @@
-///* weikton $ 2022
-///myaski gay\\\
+
 #include <jni.h>
 #include <android/log.h>
 #include <ucontext.h>
@@ -16,6 +15,7 @@
 #include "CSettings.h"
 #include "CClientInfo.h"
 #include "java_systems/CHUD.h"
+#include "CLoader.h"
 
 #include "CCheckFileHash.h"
 #include "str_obfuscator_no_template.hpp"
@@ -43,7 +43,6 @@ CPlayerTags *pPlayerTags = nullptr;
 
 CGUI *pGUI = nullptr;
 CKeyBoard *pKeyBoard = nullptr;
-CSettings *pSettings = nullptr;
 
 void InstallSpecialHooks();
 void InitRenderWareFunctions();
@@ -84,45 +83,25 @@ void PrintBuildCrashInfo()
 #include "cryptors/INITSAMP_result.h"
 #include "CDebugInfo.h"
 
-
-void InitBASSFuncs();
-void InitSAMP(JNIEnv* pEnv, jobject thiz, const char* path)
+void InitSAMP(JNIEnv* pEnv, jobject thiz, const char path[])
 {
-
 	Log("Initializing SAMP..");
 
-	InitBASSFuncs();
-	BASS_Init(-1, 44100, BASS_DEVICE_3D, 0, NULL);
-	BASS_Set3DFactors(0.2, 0.1, 0);
+	CLoader::redirectDirection(path);
 
-	strcpy(g_pszStorage, path);
+	CSettings::LoadSettings(nullptr);
 
-	if(!strlen(g_pszStorage))
-	{
-		Log("Error: storage path not found!");
-		std::terminate();
-		return;
-	}
-
-	PrintBuildInfo();
-
-	Log("Storage: %s", g_pszStorage);
-
-	pSettings = new CSettings();
-
-	//ÒÓÒ ÌÎÆÍÎ ÇÀÃÐÓÇÈÒÜ
-	isTestMode = (bool)pSettings->GetReadOnly().isTestMode;
-	CWeaponsOutFit::SetEnabled(pSettings->GetReadOnly().iOutfitGuns);
-	CDebugInfo::SetDrawFPS(pSettings->GetReadOnly().szDebug);
+	isTestMode = (bool)CSettings::m_Settings.isTestMode;
+	CWeaponsOutFit::SetEnabled(CSettings::m_Settings.iOutfitGuns);
+	CDebugInfo::SetDrawFPS(CSettings::m_Settings.szDebug);
 
 	g_pJavaWrapper = new CJavaWrapper(pEnv, thiz);
 
-	firebase::crashlytics::SetUserId(pSettings->GetReadOnly().szNickName);
-	firebase::crashlytics::SetCustomKey("Nick", pSettings->GetReadOnly().szNickName);
+	CLoader::initCrashLytics();
 
 	CWeaponsOutFit::ParseDatFile();
-
 }
+
 void ProcessCheckForKeyboard();
 
 void InitInMenu()
@@ -162,7 +141,7 @@ bool unique_library_handler(const char* library)
 
 void ProcessCheckForKeyboard()
 {
-	if (pSettings->GetReadOnly().iAndroidKeyboard)
+	if (CSettings::m_Settings.iAndroidKeyboard)
 	{
 		pKeyBoard->EnableNewKeyboard();
 	}
@@ -211,10 +190,10 @@ void InitInGame()
 	{
 		CChatWindow::AddDebugMessage("{bbbbbb}Êëèåíò {ff0000}LIVE RUSSIA{bbbbbb} çàïóùåí");
 		pNetGame = new CNetGame(
-			g_sEncryptedAddresses[pSettings->GetReadOnly().szServer].decrypt(),
-			g_sEncryptedAddresses[pSettings->GetReadOnly().szServer].getPort(),
-			pSettings->GetReadOnly().szNickName,
-			pSettings->GetReadOnly().szPassword);
+			g_sEncryptedAddresses[CSettings::m_Settings.szServer].decrypt(),
+			g_sEncryptedAddresses[CSettings::m_Settings.szServer].getPort(),
+			CSettings::m_Settings.szNickName,
+			CSettings::m_Settings.szPassword);
 
 		bNetworkInited = true;
 		Log("InitInGame() end");
@@ -500,6 +479,7 @@ extern "C"
 
 #include "CFPSFix.h"
 #include "util/patch.h"
+#include "CLoader.h"
 
 CFPSFix g_fps;
 
@@ -510,6 +490,8 @@ void ANDRunThread_hook(void* a1)
 
 	ANDRunThread(a1);
 }
+
+
 
 jint JNI_OnLoad(JavaVM *vm, void *reserved)
 {
@@ -523,29 +505,14 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 	}
 	Log("libGTASA.so image base address: 0x%X", g_libGTASA);
 
-	firebase::crashlytics::SetCustomKey("build data", __DATE__);
-	firebase::crashlytics::SetCustomKey("build time", __TIME__);
-
-	uintptr_t libsamp = FindLibrary("libsamp.so");
-	uintptr_t libc = FindLibrary("libc.so");
-
-	char str[100];
-
-	sprintf(str, "0x%x", g_libGTASA);
-	firebase::crashlytics::SetCustomKey("libGTASA.so", str);
-
-	sprintf(str, "0x%x", libsamp);
-	firebase::crashlytics::SetCustomKey("libsamp.so", str);
-
-	sprintf(str, "0x%x", libc);
-	firebase::crashlytics::SetCustomKey("libc.so", str);
-
 	CHook::InitHookStuff();
 
 	InstallSpecialHooks();
 	InitRenderWareFunctions();
 
 	ApplyPatches_level0();
+
+	CLoader::loadBassLib();
 
 	struct sigaction act;
 	act.sa_sigaction = handler;

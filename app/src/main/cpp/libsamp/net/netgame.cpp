@@ -10,7 +10,6 @@
 
 extern CWidgetManager* g_pWidgetManager;
 extern CNetGame *pNetGame;
-extern CSettings* pSettings;
 
 #include "../chatwindow.h"
 
@@ -408,12 +407,12 @@ void CNetGame::Packet_AuthRPC(Packet *p)
 					g_pJavaWrapper->ShowAuthorization(pPlayerPool->GetLocalPlayerName(),
 													  pPlayerPool->GetLocalPlayerID(),
 													  (bool) ip_match,
-													  (bool) pSettings->GetReadOnly().szAutoLogin,
+													  (bool) CSettings::m_Settings.szAutoLogin,
 													  (bool) email_acvive
 					);
 
-					if (pSettings->GetReadOnly().szAutoLogin && ip_match && timepassed) {
-						SendLoginPacket(pSettings->GetReadOnly().player_password);
+					if (CSettings::m_Settings.szAutoLogin && ip_match && timepassed) {
+						SendLoginPacket(CSettings::m_Settings.player_password);
 					}
 				}
 			}
@@ -1580,8 +1579,8 @@ void CNetGame::SendLoginPacket(const char password[])
 	bsSend.Write(password, bytePasswordLen);
 	GetRakClient()->Send(&bsSend, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0);
 
-	strcpy(pSettings->GetWrite().player_password, password);
-	pSettings->Save();
+	strcpy(CSettings::m_Settings.player_password, password);
+    CSettings::save();
 }
 
 void CNetGame::SendRegisterPacket(char *password, char *mail, uint8_t sex, uint8_t skin)

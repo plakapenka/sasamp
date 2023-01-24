@@ -2,8 +2,6 @@
 #include "CSettings.h"
 #include "vendor/raknet/SHA1.h"
 
-extern CSettings* pSettings;
-
 uint16_t CClientInfo::usSAMPMajorVersion = SAMP_MAJOR_VERSION;
 uint16_t CClientInfo::usSAMPMinorVersion = SAMP_MINOR_VERSION;
 //bool		CClientInfo::bSAMPModified = false;

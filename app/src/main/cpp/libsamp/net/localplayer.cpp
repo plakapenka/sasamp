@@ -14,7 +14,6 @@
 
 extern CKeyBoard* pKeyBoard;
 extern CGame *pGame;
-extern CSettings *pSettings;
 
 bool bFirstSpawn = true;
 

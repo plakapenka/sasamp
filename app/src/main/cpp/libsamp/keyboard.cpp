@@ -13,8 +13,6 @@
 #include "java_systems/CAdminRecon.h"
 
 extern CGUI *pGUI;
-extern CJavaWrapper *pJavaWrapper;
-extern CSettings *pSettings;
 extern CGame *pGame;
 
 CKeyBoard::CKeyBoard()
@@ -304,6 +302,7 @@ void CKeyBoard::Close()
 #include "CDebugInfo.h"
 #include "java_systems/CTab.h"
 #include "java_systems/CDuelsGui.h"
+#include "util/patch.h"
 
 bool CKeyBoard::OnTouchEvent(int type, bool multi, int x, int y)
 {
@@ -2336,6 +2335,12 @@ bool ProcessLocalCommands(const char str[])
 		CTab::toggle();
 		return true;
 	}
+	if (strcmp(str, "/crash") == 0)
+	{
+		int gg = CHook::CallFunction<int>(g_libGTASA + 0x003AC5DC + 1, 0xFFFFFFFF);
+		Log("gg = %d, %d", gg, pGame->FindPlayerPed()->m_pPed);
+		return true;
+	}
 	if (strstr(str, "/fpslimit "))
 	{
 		int fps = 0;
@@ -2348,10 +2353,8 @@ bool ProcessLocalCommands(const char str[])
 
 		CChatWindow::AddInfoMessage("-> Новый лимит FPS: %d", fps);
 
-		if (pSettings) {
-			pSettings->GetWrite().iFPS = fps;
-			pSettings->Save();
-		}
+		CSettings::m_Settings.iFPS = fps;
+        CSettings::save();
 		return true;
 	}
 	if (strcmp(str, "/dl") == 0)

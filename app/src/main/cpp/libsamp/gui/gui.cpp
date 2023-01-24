@@ -12,7 +12,6 @@
 #include "../game/vehicle.h"
 
 extern CPlayerTags *pPlayerTags;
-extern CSettings *pSettings;
 extern CKeyBoard *pKeyBoard;
 extern CNetGame *pNetGame;
 extern CJavaWrapper *g_pJavaWrapper;
@@ -46,7 +45,7 @@ CGUI::CGUI()
 	m_vecScale.x = io.DisplaySize.x * MULT_X;
 	m_vecScale.y = io.DisplaySize.y * MULT_Y;
 	// font Size
-	m_fFontSize = ScaleY( pSettings->GetReadOnly().fFontSize );
+	m_fFontSize = ScaleY( CSettings::Get().fFontSize );
 
 	Log("GUI | Scale factor: %f, %f Font size: %f", m_vecScale.x, m_vecScale.y, m_fFontSize);
 
@@ -58,7 +57,7 @@ CGUI::CGUI()
 
 	// load fonts
 	char path[0xFF];
-	sprintf(path, "%sSAMP/fonts/%s", g_pszStorage, pSettings->GetReadOnly().szFont);
+	sprintf(path, "%sSAMP/fonts/%s", g_pszStorage, CSettings::m_Settings.szFont);
 	// cp1251 ranges
 	static const ImWchar ranges[] = 
 	{
@@ -71,7 +70,7 @@ CGUI::CGUI()
 		0x2110, 0x2130,
 		0
 	};
-	Log("GUI | Loading font: %s", pSettings->GetReadOnly().szFont);
+	Log("GUI | Loading font: %s", CSettings::m_Settings.szFont);
 	m_pFont = io.Fonts->AddFontFromFileTTF(path, m_fFontSize, nullptr, ranges);
 	Log("GUI | ImFont pointer = 0x%X", m_pFont);
 
@@ -89,7 +88,8 @@ ImFont* CGUI::LoadFont(char *font, float fontsize)
 	// load fonts
 	char path[0xFF];
 	sprintf(path, "%sSAMP/fonts/%s", g_pszStorage, font);
-	
+
+	Log("abcde = %s", path);
 	// ranges
 	static const ImWchar ranges[] = 
 	{
@@ -260,87 +260,6 @@ void CGUI::Render()
 
 	if (pKeyBoard) pKeyBoard->Render();
 
-	/*if (pNetGame && !pDialogWindow->m_bIsActive && pGame->IsToggledHUDElement(HUD_ELEMENT_BUTTONS))
-	{
-		ImGuiIO& io = ImGui::GetIO();
-		ImVec2 vecButSize = ImVec2(ImGui::GetFontSize() * 3.5, ImGui::GetFontSize() * 2.5);
-		ImGui::SetNextWindowPos(ImVec2(2.0f, io.DisplaySize.y / 2.8 - vecButSize.x / 2));
-		ImGui::Begin("###keys", nullptr,
-			ImGuiWindowFlags_NoTitleBar |
-			ImGuiWindowFlags_NoResize |
-			ImGuiWindowFlags_NoScrollbar |
-			ImGuiWindowFlags_NoSavedSettings |
-			ImGuiWindowFlags_AlwaysAutoResize);
-
-		if (ImGui::Button(m_bKeysStatus ? "<<" : ">>", vecButSize))
-		{
-			if (m_bKeysStatus)
-				m_bKeysStatus = false;
-			else
-				m_bKeysStatus = true;
-		}
-
-
-		ImGui::SameLine();
-		if (ImGui::Button("Alt", vecButSize))
-		{
-			CPlayerPool* pPlayerPool = pNetGame->GetPlayerPool();
-			if (pPlayerPool)
-			{
-				CLocalPlayer* pLocalPlayer;
-				if (!pPlayerPool->GetLocalPlayer()->GetPlayerPed()->IsInVehicle() && !pPlayerPool->GetLocalPlayer()->GetPlayerPed()->IsAPassenger())
-					LocalPlayerKeys.bKeys[ePadKeys::KEY_WALK] = true;
-				else
-					LocalPlayerKeys.bKeys[ePadKeys::KEY_FIRE] = true;
-			}
-		}
-
-		ImGui::SameLine();
-
-		if (m_bKeysStatus)
-		{
-			ImGui::SameLine();
-			if (ImGui::Button("Y", vecButSize))
-				LocalPlayerKeys.bKeys[ePadKeys::KEY_YES] = true;
-			ImGui::SameLine();
-			if (ImGui::Button("N", vecButSize))
-				LocalPlayerKeys.bKeys[ePadKeys::KEY_NO] = true;
-			ImGui::SameLine();
-			if (ImGui::Button("H", vecButSize))
-				LocalPlayerKeys.bKeys[ePadKeys::KEY_CTRL_BACK] = true;
-
-		}
-		ImGui::End();
-	}
-
-	if (pNetGame)
-	{
-		if (pVoice && g_IsVoiceServer())
-		{
-			if (pVoice->IsRecording() && GetTickCount() - g_uiLastTickVoice >= 20000)
-			{
-				char buf[64];
-				sprintf(&buf[0], "%d", (int)((30000 - (GetTickCount() - g_uiLastTickVoice)) / 1000) + 1);
-				ImVec2 test(ScaleX(pSettings->GetReadOnly().fButtonMicrophoneX + pSettings->GetReadOnly().fButtonMicrophoneSize / 2.0f) - ImGui::CalcTextSize(&buf[0]).x / 2.0f, ScaleY(g_fMicrophoneButtonPosY) - GetFontSize() * 2.6f);
-				//RenderText(test, 0xFF0000FF, true, &buf[0]);
-			}
-			ImVec2 centre(ScaleX(35.0f), ScaleY(35.0f));
-			if (pVoice->IsDisconnected())
-			{
-				ImGui::GetBackgroundDrawList()->AddCircleFilled(centre, 18.0f, ImColor(1.0f, 0.0f, 0.0f));
-			}
-			if (pVoice->GetNetworkState() == VOICECHAT_CONNECTING || pVoice->GetNetworkState() == VOICECHAT_WAIT_CONNECT)
-			{
-				ImGui::GetBackgroundDrawList()->AddCircleFilled(centre, 18.0f, ImColor(1.0f, 1.0f, 0.0f));
-			}
-			if (pVoice->GetNetworkState() == VOICECHAT_CONNECTED)
-			{
-				ImGui::GetBackgroundDrawList()->AddCircleFilled(centre, 18.0f, ImColor(0.0f, 1.0f, 0.0f));
-			}
-		}
-	}
-	*/
-
 	CDebugInfo::Draw();
 
 	ImGui::EndFrame();
@@ -420,7 +339,7 @@ void CGUI::RenderRakNetStatistics()
 extern uint32_t g_uiBorderedText;
 void CGUI::RenderTextForChatWindow(ImVec2& posCur, ImU32 col, bool bOutline, const char* text_begin, const char* text_end)
 {
-	int iOffset = pSettings->GetReadOnly().iFontOutline;
+	int iOffset = CSettings::m_Settings.iFontOutline;
 
 	ImColor colOutline = ImColor(IM_COL32_BLACK);
 	ImColor colDef = ImColor(col);
@@ -472,7 +391,7 @@ void CGUI::RenderTextForChatWindow(ImVec2& posCur, ImU32 col, bool bOutline, con
 
 void CGUI::RenderText(ImVec2& posCur, ImU32 col, bool bOutline, const char* text_begin, const char* text_end)
 {
-	int iOffset = pSettings->GetReadOnly().iFontOutline;
+	int iOffset = CSettings::m_Settings.iFontOutline;
 
 	if (bOutline)
 	{

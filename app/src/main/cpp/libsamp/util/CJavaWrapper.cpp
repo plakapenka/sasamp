@@ -12,7 +12,6 @@ extern "C" JavaVM* javaVM;
 #include "java_systems/CHUD.h"
 
 extern CKeyBoard* pKeyBoard;
-extern CSettings* pSettings;
 extern CNetGame* pNetGame;
 extern CGame* pGame;
 
@@ -229,10 +228,7 @@ extern "C"
 		else
 			pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->TogglePlayerControllable(true, true);
 	}
-	JNIEXPORT jint JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_getLastServer(JNIEnv* pEnv, jobject thiz)
-	{
-		return (jint)pSettings->GetReadOnly().szServer;
-	}
+
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onEventBackPressed(JNIEnv* pEnv, jobject thiz)
 	{
 		if (pKeyBoard)
@@ -247,10 +243,7 @@ extern "C"
 
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_setNativeKeyboardSettings(JNIEnv* pEnv, jobject thiz, jboolean b)
 	{
-		if (pSettings)
-		{
-			pSettings->GetWrite().iAndroidKeyboard = b;
-		}
+		CSettings::m_Settings.iAndroidKeyboard = b;
 
 		if (pKeyBoard && b)
 		{
@@ -264,179 +257,44 @@ extern "C"
 
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_setNativeFpsCounterSettings(JNIEnv* pEnv, jobject thiz, jboolean b)
 	{
-		if (pSettings)
-		{
-			pSettings->GetWrite().szDebug = b;
-		}
+		CSettings::m_Settings.szDebug = b;
 
 		CDebugInfo::SetDrawFPS(b);
 	}
 
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_setNativeOutfitGunsSettings(JNIEnv* pEnv, jobject thiz, jboolean b)
 	{
-		if (pSettings)
-		{
-			pSettings->GetWrite().iOutfitGuns = b;
+		CSettings::m_Settings.iOutfitGuns = b;
 
-			CWeaponsOutFit::SetEnabled(b);
-		}
+		CWeaponsOutFit::SetEnabled(b);
 	}
 
 
 	JNIEXPORT jboolean JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_getNativeFpsCounterSettings(JNIEnv* pEnv, jobject thiz)
 	{
-		if (pSettings)
-		{
-			return pSettings->GetReadOnly().szDebug;
-		}
-		return 0;
+		return CSettings::m_Settings.szDebug;
 	}
 
 	JNIEXPORT jboolean JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_getNativeHpArmourText(JNIEnv* pEnv, jobject thiz)
 	{
-		if (pSettings)
-		{
-			return pSettings->GetReadOnly().iHPArmourText;
-		}
-		return 0;
+		CSettings::m_Settings.iHPArmourText;
 	}
 
 	JNIEXPORT jboolean JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_getNativeOutfitGunsSettings(JNIEnv* pEnv, jobject thiz)
 	{
-		if (pSettings)
-		{
-			return pSettings->GetReadOnly().iOutfitGuns;
-		}
-		return 0;
+		return CSettings::m_Settings.iOutfitGuns;
 	}
 
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onSettingsWindowSave(JNIEnv* pEnv, jobject thiz)
 	{
-		if (pSettings)
-		{
-			pSettings->Save();
-		}
+		CSettings::save();
 	}
 
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onSettingsWindowDefaults(JNIEnv* pEnv, jobject thiz, jint category)
 	{
-		if (pSettings)
-		{
-			pSettings->ToDefaults(category);
+        CSettings::toDefaults(category);
 
 			//CChatWindow::m_bPendingReInit = true;
-		}
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_setNativeHudElementColor(JNIEnv* pEnv, jobject thiz, jint id, jint a, jint r, jint g, jint b)
-	{
-		CAdjustableHudColors::SetHudColorFromRGBA((E_HUD_ELEMENT)id, r, g, b, a);
-	}
-
-	JNIEXPORT jbyteArray JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_getNativeHudElementColor(JNIEnv* pEnv, jobject thiz, jint id)
-	{
-		char pTemp[9];
-		jbyteArray color = pEnv->NewByteArray(sizeof(pTemp));
-
-		if (!color)
-		{
-			return nullptr;
-		}
-
-		pEnv->SetByteArrayRegion(color, 0, sizeof(pTemp), (const jbyte*)CAdjustableHudColors::GetHudColorString((E_HUD_ELEMENT)id).c_str());
-
-		return color;
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_setNativeHudElementPosition(JNIEnv* pEnv, jobject thiz, jint id, jint x, jint y)
-	{
-		if (id == HUD_SNOW)
-		{
-			if (pSettings)
-			{
-				pSettings->GetWrite().iSnow = x;
-			}
-			CSnow::SetCurrentSnow(pSettings->GetReadOnly().iSnow);
-			return;
-		}
-		CAdjustableHudPosition::SetElementPosition((E_HUD_ELEMENT)id, x, y);
-
-		if (id >= HUD_WEAPONSPOS && id <= HUD_WEAPONSROT)
-		{
-			CWeaponsOutFit::OnUpdateOffsets();
-		}
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_setNativeHudElementScale(JNIEnv* pEnv, jobject thiz, jint id, jint x, jint y)
-	{
-		CAdjustableHudScale::SetElementScale((E_HUD_ELEMENT)id, x, y);
-
-		if (id >= HUD_WEAPONSPOS && id <= HUD_WEAPONSROT)
-		{
-			CWeaponsOutFit::OnUpdateOffsets();
-		}
-	}
-
-	JNIEXPORT jintArray JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_getNativeHudElementScale(JNIEnv* pEnv, jobject thiz, jint id)
-	{
-		jintArray color = pEnv->NewIntArray(2);
-
-		if (!color)
-		{
-			return nullptr;
-		}
-		int arr[2];
-		arr[0] = CAdjustableHudScale::GetElementScale((E_HUD_ELEMENT)id).X;
-		arr[1] = CAdjustableHudScale::GetElementScale((E_HUD_ELEMENT)id).Y;
-		pEnv->SetIntArrayRegion(color, 0, 2, (const jint*)& arr[0]);
-
-		return color;
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_setNativeWidgetPositionAndScale(JNIEnv* pEnv, jobject thiz, jint id, jint x, jint y, jint scale)
-	{
-
-	}
-
-	JNIEXPORT jintArray JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_getNativeHudElementPosition(JNIEnv* pEnv, jobject thiz, jint id)
-	{
-		jintArray color = pEnv->NewIntArray(2);
-
-		if (!color)
-		{
-			return nullptr;
-		}
-		int arr[2];
-
-		if (id == HUD_SNOW && pSettings)
-		{
-			arr[0] = CSnow::GetCurrentSnow();
-			arr[1] = CSnow::GetCurrentSnow();
-		}
-		else
-		{
-			arr[0] = CAdjustableHudPosition::GetElementPosition((E_HUD_ELEMENT)id).X;
-			arr[1] = CAdjustableHudPosition::GetElementPosition((E_HUD_ELEMENT)id).Y;
-		}
-
-		pEnv->SetIntArrayRegion(color, 0, 2, (const jint*)&arr[0]);
-
-		return color;
-	}
-
-	JNIEXPORT jintArray JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_getNativeWidgetPositionAndScale(JNIEnv* pEnv, jobject thiz, jint id)
-	{
-		jintArray color = pEnv->NewIntArray(3);
-
-		if (!color)
-		{
-			return nullptr;
-		}
-		int arr[3] = { -1, -1, -1 };
-
-		pEnv->SetIntArrayRegion(color, 0, 3, (const jint*)& arr[0]);
-
-		return color;
 	}
 
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onSpeedEngineClick(JNIEnv *pEnv, jobject thiz) {

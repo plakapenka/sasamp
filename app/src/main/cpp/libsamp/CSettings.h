@@ -2,7 +2,7 @@
 
 #define MAX_SETTINGS_STRING	0x7F
 
-struct stSettings
+static struct stSettings
 {
 	// client
 	char szNickName[MAX_PLAYER_NAME+1];
@@ -31,23 +31,17 @@ struct stSettings
 	int iOutfitGuns;
 	int isTestMode;
 	int iHPArmourText;
-	int iSkyBox;
-	int iSnow;
 };
 
-class CSettings
+static class CSettings
 {
 public:
-	CSettings();
-	~CSettings();
-    stSettings& Get() { return m_Settings; }
-	void ToDefaults(int iCategory);
+    static stSettings& Get() { return m_Settings; }
+	static void toDefaults(int iCategory);
 
-	void Save(int iIgnoreCategory = 0);
+	static static void save(int iIgnoreCategory = 0);
 
-	const stSettings& GetReadOnly();
-	stSettings& GetWrite();
-	void LoadSettings(const char* szNickName, int iChatLines = -1);
-private:
-	stSettings m_Settings;
+	static void LoadSettings(const char* szNickName, int iChatLines = -1);
+
+	static stSettings m_Settings;
 };

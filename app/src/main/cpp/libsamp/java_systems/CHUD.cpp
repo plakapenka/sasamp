@@ -14,7 +14,6 @@
 #include "CSettings.h"
 #include "chatwindow.h"
 
-extern CSettings* pSettings;
 extern CJavaWrapper *g_pJavaWrapper;
 extern CGame *pGame;
 extern CGUI* pGUI;
@@ -68,9 +67,9 @@ Java_com_liverussia_cr_gui_HudManager_HudInit(JNIEnv *env, jobject thiz) {
     CHUD::thiz = env->NewGlobalRef(thiz);
     jUpdateHudInfo = env->GetMethodID(env->GetObjectClass(thiz), "UpdateHudInfo", "(IIIIII)V");
 
-    CHUD::ToggleHpText(pSettings->GetWrite().iHPArmourText);
-    CHUD::ChangeChatHeight(pSettings->GetWrite().iChatMaxMessages);
-    CHUD::ChangeChatTextSize(pSettings->GetWrite().iChatFontSize);
+    CHUD::ToggleHpText(CSettings::m_Settings.iHPArmourText);
+    CHUD::ChangeChatHeight(CSettings::m_Settings.iChatMaxMessages);
+    CHUD::ChangeChatTextSize(CSettings::m_Settings.iChatFontSize);
 
 }
 extern bool showSpeedometr;
@@ -392,7 +391,7 @@ void CHUD::AddChatMessage(const char msg[])
 
 void CHUD::addGiveDamageNotify(PLAYERID Id, int weaponId, float damage)
 {
-    if(!pSettings->GetWrite().iIsEnableDamageInformer) return;
+    if(!CSettings::m_Settings.iIsEnableDamageInformer) return;
 
     CPlayerPool* pPlayerPool = pNetGame->GetPlayerPool();
     if(!pPlayerPool)return;
@@ -421,7 +420,7 @@ void CHUD::addGiveDamageNotify(PLAYERID Id, int weaponId, float damage)
 
 void CHUD::addTakeDamageNotify(char nick[], int weaponId, float damage)
 {
-    if(!pSettings->GetWrite().iIsEnableDamageInformer) return;
+    if(!CSettings::m_Settings.iIsEnableDamageInformer) return;
 
     JNIEnv* env = g_pJavaWrapper->GetEnv();
     if(damage > 200) damage = 200.0f;

@@ -25,8 +25,6 @@ CPlayerPool::~CPlayerPool()
 #include "..//chatwindow.h"
 #include "..//game/game.h"
 #include "..//net/netgame.h"
-#include "..//CSettings.h"
-extern CSettings* pSettings;
 extern CGame* pGame;
 extern CNetGame* pNetGame;
 

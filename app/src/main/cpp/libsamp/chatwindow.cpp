@@ -12,7 +12,6 @@
 
 extern CGUI *pGUI;
 extern CKeyBoard *pKeyBoard;
-extern CSettings *pSettings;
 extern CNetGame *pNetGame;
 extern CAMERA_AIM * pcaInternalAim;
 extern CGame * pGame;

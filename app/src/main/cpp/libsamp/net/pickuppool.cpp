@@ -5,7 +5,6 @@
 
 extern CGame *pGame;
 extern CNetGame *pNetGame;
-extern CSettings *pSettings;
 
 CPickupPool::CPickupPool()
 {

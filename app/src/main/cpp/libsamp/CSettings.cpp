@@ -2,13 +2,11 @@
 #include "CSettings.h"
 #include "game/game.h"
 #include "vendor/ini/config.h"
-#include "game/CAdjustableHudColors.h"
-#include "game/CAdjustableHudPosition.h"
-#include "game/CAdjustableHudScale.h"
 #include "java_systems/CHUD.h"
 #include "util/patch.h"
 
 extern CGame *pGame;
+stSettings CSettings::m_Settings;
 
 static void ClearBackslashN(char *pStr, size_t size) {
 	for (size_t i = 0; i < size; i++) {
@@ -19,16 +17,7 @@ static void ClearBackslashN(char *pStr, size_t size) {
 	}
 }
 
-CSettings::CSettings()
-{
-	LoadSettings(nullptr);
-}
-
-CSettings::~CSettings()
-{
-}
-
-void CSettings::ToDefaults(int iCategory)
+void CSettings::toDefaults(int iCategory)
 {
 	char buff[0x7F];
 	sprintf(buff, "%sSAMP/settings.ini", g_pszStorage);
@@ -39,7 +28,7 @@ void CSettings::ToDefaults(int iCategory)
 
 	fclose(pFile);
 
-	Save(iCategory);
+	save(iCategory);
 	LoadSettings(m_Settings.szNickName);
 
 	CHUD::ChangeChatHeight(m_Settings.iChatMaxMessages);
@@ -47,7 +36,7 @@ void CSettings::ToDefaults(int iCategory)
 
 }
 
-void CSettings::Save(int iIgnoreCategory)
+void CSettings::save(int iIgnoreCategory)
 {
 	char buff[0x7F];
 	sprintf(buff, "%sSAMP/settings.ini", g_pszStorage);
@@ -64,9 +53,6 @@ void CSettings::Save(int iIgnoreCategory)
 	ini_table_create_entry_as_int(config, "gui", "hparmourtext", m_Settings.iHPArmourText);
 	ini_table_create_entry_as_int(config, "gui", "damageinformer", m_Settings.iIsEnableDamageInformer);
 	ini_table_create_entry_as_int(config, "gui", "text3dinveh", m_Settings.iIsEnable3dTextInVehicle);
-
-	
-
 
 	ini_table_create_entry_as_int(config, "client", "server", m_Settings.szServer);
 	ini_table_create_entry_as_int(config, "client", "debug", m_Settings.szDebug);
@@ -92,84 +78,13 @@ void CSettings::Save(int iIgnoreCategory)
 
 		// ini_table_create_entry_as_int(config, "gui", "hparmourtext", m_Settings.iHPArmourText);
 		// ini_table_create_entry_as_int(config, "gui", "pcmoney", m_Settings.iPCMoney);
-		// ini_table_create_entry_as_int(config, "gui", "ctimecyc", m_Settings.iSkyBox);
-		// ini_table_create_entry_as_int(config, "gui", "snow", m_Settings.iSnow);
-	}
-
-	if (iIgnoreCategory != 2)
-	{
-		for (int i = 0; i < E_HUD_ELEMENT::HUD_SIZE; i++)
-		{
-			char buff[30];
-			snprintf(buff, sizeof(buff), "hud_color_%d", i);
-			if (CAdjustableHudColors::IsUsingHudColor((E_HUD_ELEMENT)i))
-			{
-				ini_table_create_entry(config, "hud", buff, CAdjustableHudColors::GetHudColorString((E_HUD_ELEMENT)i).c_str());
-			}
-		}
-	}
-
-	if (iIgnoreCategory != 2)
-	{
-		for (int i = 0; i < E_HUD_ELEMENT::HUD_SIZE - 2; i++)
-		{
-			char buff[30];
-			snprintf(buff, sizeof(buff), "hud_position_x_%d", i);
-			ini_table_create_entry_as_int(config, "hud", buff, CAdjustableHudPosition::GetElementPosition((E_HUD_ELEMENT)i).X);
-
-			snprintf(buff, sizeof(buff), "hud_position_y_%d", i);
-			ini_table_create_entry_as_int(config, "hud", buff, CAdjustableHudPosition::GetElementPosition((E_HUD_ELEMENT)i).Y);
-		}
-
-		for (int i = 0; i < E_HUD_ELEMENT::HUD_SIZE - 2; i++)
-		{
-			char buff[30];
-			snprintf(buff, sizeof(buff), "hud_scale_x_%d", i);
-			ini_table_create_entry_as_int(config, "hud", buff, CAdjustableHudScale::GetElementScale((E_HUD_ELEMENT)i).X);
-
-			snprintf(buff, sizeof(buff), "hud_scale_y_%d", i);
-			ini_table_create_entry_as_int(config, "hud", buff, CAdjustableHudScale::GetElementScale((E_HUD_ELEMENT)i).Y);
-		}
-	}
-
-	if (iIgnoreCategory != 2)
-	{
-		for (int i = 10; i < E_HUD_ELEMENT::HUD_SIZE; i++)
-		{
-			char buff[30];
-			snprintf(buff, sizeof(buff), "hud_position_x_%d", i);
-			ini_table_create_entry_as_int(config, "hud", buff, CAdjustableHudPosition::GetElementPosition((E_HUD_ELEMENT)i).X);
-
-			snprintf(buff, sizeof(buff), "hud_position_y_%d", i);
-			ini_table_create_entry_as_int(config, "hud", buff, CAdjustableHudPosition::GetElementPosition((E_HUD_ELEMENT)i).Y);
-		}
-
-		for (int i = 10; i < E_HUD_ELEMENT::HUD_SIZE; i++)
-		{
-			char buff[30];
-			snprintf(buff, sizeof(buff), "hud_scale_x_%d", i);
-			ini_table_create_entry_as_int(config, "hud", buff, CAdjustableHudScale::GetElementScale((E_HUD_ELEMENT)i).X);
-
-			snprintf(buff, sizeof(buff), "hud_scale_y_%d", i);
-			ini_table_create_entry_as_int(config, "hud", buff, CAdjustableHudScale::GetElementScale((E_HUD_ELEMENT)i).Y);
-		}
 	}
 
 	ini_table_write_to_file(config, buff);
 	ini_table_destroy(config);
 }
 
-const stSettings &CSettings::GetReadOnly()
-{
-	return m_Settings;
-}
-
-stSettings &CSettings::GetWrite()
-{
-	Save();
-	return m_Settings;
-}
-
+extern void ApplyFPSPatch(uint8_t fps);
 void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 {
 	char tempNick[40];
@@ -194,10 +109,11 @@ void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 
 	snprintf(m_Settings.szNickName, sizeof(m_Settings.szNickName), "__android_%d%d", rand() % 1000, rand() % 1000);
 	memset(m_Settings.szPassword, 0, sizeof(m_Settings.szPassword));
-			memset(m_Settings.player_password, 0, sizeof(m_Settings.player_password));
+	memset(m_Settings.player_password, 0, sizeof(m_Settings.player_password));
+
 	snprintf(m_Settings.szFont, sizeof(m_Settings.szFont), "visby-round-cf-extra-bold.ttf");
 
-	const char *szName = ini_table_get_entry(config, "client", "name");
+	std::string szName = ini_table_get_entry(config, "client", "name");
 	const char *szPassword = ini_table_get_entry(config, "client", "password");
 	const char *pPassword = ini_table_get_entry(config, "client", "player_password");
 
@@ -209,23 +125,23 @@ void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 	m_Settings.szTimeStamp = ini_table_get_entry_as_int(config, "client", "timestamp", 0);
 	m_Settings.isTestMode = ini_table_get_entry_as_int(config, "client", "test", 0);
 
-	const char *szFontName = ini_table_get_entry(config, "gui", "Font");
+	std::string szFontName = ini_table_get_entry(config, "gui", "Font");
 
 	if(pPassword)
 	{
 		strcpy(m_Settings.player_password, pPassword);
 	}
-	if (szName)
+	if ( !szName.empty() )
 	{
-		strcpy(m_Settings.szNickName, szName);
+		strcpy(m_Settings.szNickName, szName.c_str());
 	}
 	if (szPassword)
 	{
 		strcpy(m_Settings.szPassword, szPassword);
 	}
-	if (szFontName)
+	if ( !szFontName.empty() )
 	{
-		strcpy(m_Settings.szFont, szFontName);
+		strcpy(m_Settings.szFont, szFontName.c_str());
 	}
 
 	ClearBackslashN(m_Settings.szNickName, sizeof(m_Settings.szNickName));
@@ -245,6 +161,7 @@ void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 	m_Settings.iChatMaxMessages = ini_table_get_entry_as_int(config, "gui", "ChatMaxMessages", -1);
 
 	m_Settings.iFPS = ini_table_get_entry_as_int(config, "gui", "fps", 60);
+	ApplyFPSPatch(m_Settings.iFPS);
 
 	m_Settings.iAndroidKeyboard = ini_table_get_entry_as_int(config, "gui", "androidKeyboard", 0);
 
@@ -253,61 +170,9 @@ void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 	m_Settings.iIsEnable3dTextInVehicle = ini_table_get_entry_as_int(config, "gui", "text3dinveh", 1);
 
 	m_Settings.iHPArmourText = ini_table_get_entry_as_int(config, "gui", "hparmourtext", 0);
-	m_Settings.iSkyBox = ini_table_get_entry_as_int(config, "gui", "ctimecyc", 1);
-	m_Settings.iSnow = ini_table_get_entry_as_int(config, "gui", "snow", 1);
-
-	for (int i = 0; i < E_HUD_ELEMENT::HUD_SIZE; i++)
-	{
-		char buff[30];
-		snprintf(buff, sizeof(buff), "hud_color_%d", i);
-		const char *szInput = ini_table_get_entry(config, "hud", buff);
-		if (szInput)
-		{
-			strcpy(buff, szInput);
-
-			ClearBackslashN(buff, sizeof(buff));
-
-			std::string szTemp(buff + 1);
-
-			CAdjustableHudColors::SetHudColorFromString((E_HUD_ELEMENT)i, szTemp);
-		}
-		else
-		{
-			CAdjustableHudColors::SetHudColorFromRGBA((E_HUD_ELEMENT)i, -1, -1, -1, -1);
-		}
-	}
-
-	for (int i = 0; i < E_HUD_ELEMENT::HUD_SIZE; i++)
-	{
-		char buff[30];
-		snprintf(buff, sizeof(buff), "hud_position_x_%d", i);
-		int valueX = ini_table_get_entry_as_int(config, "hud", buff, -1);
-
-		snprintf(buff, sizeof(buff), "hud_position_y_%d", i);
-		int valueY = ini_table_get_entry_as_int(config, "hud", buff, -1);
-
-		CAdjustableHudPosition::SetElementPosition((E_HUD_ELEMENT)i, valueX, valueY);
-		CAdjustableHudPosition::SetElementPosition((HUD_RADAR), 97, 85); //97, 85
-
-	}
-
-	for (int i = 0; i < E_HUD_ELEMENT::HUD_SIZE; i++)
-	{
-		char buff[30];
-		snprintf(buff, sizeof(buff), "hud_scale_x_%d", i);
-		int valueX = ini_table_get_entry_as_int(config, "hud", buff, -1);
-
-		snprintf(buff, sizeof(buff), "hud_scale_y_%d", i);
-		int valueY = ini_table_get_entry_as_int(config, "hud", buff, -1);
-
-		CAdjustableHudScale::SetElementScale((E_HUD_ELEMENT)i, valueX, valueY);
-		CAdjustableHudScale::SetElementScale((HUD_RADAR), 73, -1);
-	}
 
 	ini_table_destroy(config);
 }
-
-extern CSettings* pSettings;
 
 extern "C"
 {
@@ -315,18 +180,16 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_AuthorizationManager_ToggleAutoLogin(JNIEnv *env, jobject thiz,
 																jboolean toggle) {
-	pSettings->GetWrite().szAutoLogin = toggle;
-	pSettings->Save();
+	CSettings::m_Settings.szAutoLogin = toggle;
+	CSettings::save();
 }
 
 JNIEXPORT void JNICALL
 Java_com_nvidia_devtech_NvEventQueueActivity_setNativeHpArmourText(JNIEnv *pEnv, jobject thiz,
 																   jboolean b) {
-	if (pSettings) {
-		pSettings->GetWrite().iHPArmourText = b;
-	}
+	CSettings::m_Settings.iHPArmourText = b;
 	CHUD::ToggleHpText(b);
-	pSettings->Save();
+	CSettings::save();
 	//CInfoBarText::SetEnabled(b);
 }
 
@@ -334,37 +197,31 @@ JNIEXPORT void JNICALL
 Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_ChatLineChanged(JNIEnv *env,
 																			   jobject thiz,
 																			   jint newcount) {
-	if (pSettings) {
-		pSettings->GetWrite().iChatMaxMessages = newcount;
-		pSettings->Save();
-	}
+	CSettings::m_Settings.iChatMaxMessages = newcount;
+	CSettings::save();
 }
 
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_ChatFontSizeChanged(JNIEnv *env,
 																				   jobject thiz,
 																				   jint size) {
-	if (pSettings) {
-		pSettings->GetWrite().iChatFontSize = size;
-		pSettings->Save();
-		CHUD::ChangeChatTextSize(size);
-	}
+	CSettings::m_Settings.iChatFontSize = size;
+	CSettings::save();
+	CHUD::ChangeChatTextSize(size);
 }
 
 JNIEXPORT jboolean JNICALL
 Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_getNativeDamageInformer(JNIEnv *env,
 																					   jobject thiz) {
-	return pSettings->GetReadOnly().iIsEnableDamageInformer;
+	return CSettings::m_Settings.iIsEnableDamageInformer;
 }
 
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_setNativeDamageInformer(JNIEnv *env,
 																					   jobject thiz,
 																					   jboolean state) {
-	if (pSettings) {
-		pSettings->GetWrite().iIsEnableDamageInformer = state;
-		pSettings->Save();
-	}
+	CSettings::m_Settings.iIsEnableDamageInformer = state;
+	CSettings::save();
 }
 }
 extern "C"
@@ -372,22 +229,20 @@ JNIEXPORT void JNICALL
 Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_setNativeShow3dText(JNIEnv *env,
                                                                                    jobject thiz,
                                                                                    jboolean state) {
-	if (pSettings) {
-		pSettings->GetWrite().iIsEnable3dTextInVehicle = state;
-		pSettings->Save();
-	}
+	CSettings::m_Settings.iIsEnable3dTextInVehicle = state;
+	CSettings::save();
 }
 extern "C"
 JNIEXPORT jboolean JNICALL
 Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_getNativeShow3dText(JNIEnv *env,
 																				   jobject thiz) {
-	return pSettings->GetReadOnly().iIsEnable3dTextInVehicle;
+	return CSettings::m_Settings.iIsEnable3dTextInVehicle;
 }
 extern "C"
 JNIEXPORT jint JNICALL
 Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_getNativeFpsLimit(JNIEnv *env,
                                                                                  jobject thiz) {
-	return pSettings->GetReadOnly().iFPS;
+	return CSettings::m_Settings.iFPS;
 }
 
 extern void ApplyFPSPatch(uint8_t fps);
@@ -397,9 +252,7 @@ JNIEXPORT void JNICALL
 Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_setNativeFpsCount(JNIEnv *env,
 																				 jobject thiz,
 																				 jint fps) {
-	if (pSettings) {
-		pSettings->GetWrite().iFPS = fps;
-		ApplyFPSPatch(fps);
-		pSettings->Save();
-	}
+	CSettings::m_Settings.iFPS = fps;
+	CSettings::save();
+	ApplyFPSPatch(fps);
 }

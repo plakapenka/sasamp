@@ -9,7 +9,6 @@
 extern CGame *pGame;
 extern CNetGame *pNetGame;
 extern CGUI *pGUI;
-extern CSettings *pSettings;
 
 CPlayerTags::CPlayerTags()
 {
@@ -266,7 +265,7 @@ void CPlayerTags::Draw(VECTOR* vec, char* szName, uint32_t dwColor,
 
 	float fWidth = pGUI->ScaleX( 60.0f );
 	float fHeight = pGUI->ScaleY( 10.0f );
-	float fOutline = (float)pSettings->GetReadOnly().iFontOutline;
+	float fOutline = (float)CSettings::m_Settings.iFontOutline;
 
 	// top left
 	HealthBarBDR1.x = Out.X - ((fWidth/2) + fOutline);
