@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.text.Html;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,14 +18,17 @@ import com.liverussia.cr.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Killist {
+public class DuelsHud {
     Activity activity;
     KillListAdapter adapter;
     RecyclerView kill_list;
 
+    ConstraintLayout duels_kills_left_layout;
+    TextView duels_kills_left_text;
+
     native void init();
 
-    public Killist(Activity activity)
+    public DuelsHud(Activity activity)
     {
         init();
         this.activity = activity;
@@ -36,14 +37,33 @@ public class Killist {
 
         adapter = new KillListAdapter(activity);
         kill_list.setAdapter(adapter);
+
+        //
+        duels_kills_left_layout = activity.findViewById(R.id.duels_kills_left_layout);
+        duels_kills_left_text = activity.findViewById(R.id.duels_kills_left_text);
+    }
+
+    void showKillsLeft(boolean show, int kills, int needKills) {
+        if(show) {
+            activity.runOnUiThread(() -> {
+                duels_kills_left_layout.setVisibility(View.VISIBLE);
+                duels_kills_left_text.setText( String.format("%d/%d", kills, needKills) );
+            });
+        }
+        else {
+            activity.runOnUiThread( () -> {
+                duels_kills_left_layout.setVisibility(View.GONE);
+            });
+        }
     }
 
     void addItem(String killertext, String deathtext, int gun, int team) {
-        adapter.addItem(killertext, deathtext, gun, team);
-
-        if(kill_list.getVisibility() == View.GONE) {
-            activity.runOnUiThread( () -> kill_list.setVisibility(View.VISIBLE) );
-        }
+        activity.runOnUiThread(() -> {
+            if(kill_list.getVisibility() == View.GONE) {
+                kill_list.setVisibility(View.VISIBLE);
+                adapter.addItem(killertext, deathtext, gun, team);
+            }
+        });
     }
 
     void clearKillList() {
@@ -77,6 +97,8 @@ public class Killist {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            if(killertext.get(position) == null) return;
+
             holder.kill_list_killer_textview.setText(killertext.get(position));
             holder.kill_list_death_textview.setText(deathtext.get(position));
             holder.kill_list_bg.setBackgroundTintList(ColorStateList.valueOf(teamColor.get(position)));

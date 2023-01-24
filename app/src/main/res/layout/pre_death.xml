@@ -8,7 +8,7 @@
     android:background="@drawable/pre_death_gradient_background"
     android:orientation="vertical"
     android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
-    
+
     <ImageView
         android:id="@+id/imageView49"
         android:layout_width="435dp"
@@ -36,7 +36,7 @@
         tools:ignore="ImageContrastCheck" />
 
     <TextView
-        android:id="@+id/textView19"
+        android:id="@+id/pre_death_caption_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -44,6 +44,9 @@
         android:text="@string/pre_death_kill_Text"
         android:textColor="#ffffff"
         android:textFontWeight="700"
+        android:textSize="@dimen/_14sdp"
+        android:shadowRadius="0.5"
+        android:shadowColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView50" />
@@ -55,12 +58,14 @@
         android:layout_marginTop="8dp"
         android:fontFamily="@font/din_pro_bold"
         android:text="Leonid_Litvinenko (123)"
+        android:shadowColor="@color/black"
+        android:shadowRadius="1"
         android:textColor="#ffffff"
         android:textFontWeight="500"
-        android:textSize="24px"
+        android:textSize="@dimen/_13sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView19" />
+        app:layout_constraintTop_toBottomOf="@+id/pre_death_caption_textview" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/pde_death_game_buttons"

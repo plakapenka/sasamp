@@ -8,6 +8,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:visibility="gone"
 
+        android:id="@+id/duels_kills_left_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_30sdp"
@@ -16,7 +17,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/textView33"
+            android:id="@+id/duel_kills_caption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/visby_chat"
@@ -33,9 +34,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_2sdp"
-            app:layout_constraintEnd_toEndOf="@+id/textView33"
-            app:layout_constraintStart_toStartOf="@+id/textView33"
-            app:layout_constraintTop_toBottomOf="@+id/textView33">
+            app:layout_constraintEnd_toEndOf="@+id/duel_kills_caption"
+            app:layout_constraintStart_toStartOf="@+id/duel_kills_caption"
+            app:layout_constraintTop_toBottomOf="@+id/duel_kills_caption">
 
             <ImageView
                 android:id="@+id/duel_pistol_icon"
@@ -43,7 +44,6 @@
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
                 android:src="@drawable/duel_pistol_icon"
-                android:tint="@color/black"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 

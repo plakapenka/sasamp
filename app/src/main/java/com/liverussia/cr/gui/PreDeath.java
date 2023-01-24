@@ -1,26 +1,18 @@
 package com.liverussia.cr.gui;
 
-import static com.google.android.material.internal.ContextUtils.getActivity;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.pm.ActivityInfo;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
+import android.text.Html;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
 
 import com.liverussia.cr.R;
 import com.liverussia.cr.gui.util.Utils;
-import com.nvidia.devtech.NvEventQueueActivity;
 
 import java.util.Random;
 
@@ -30,13 +22,14 @@ public class PreDeath {
     private Button waitHelpButton;
     private TextView pre_death_killer_text;
     private int timeRemaining = 0;
-    private Activity main_activity;
+    private Activity activity;
     private ConstraintLayout pre_death_deathbuttons_layout;
     private ConstraintLayout pde_death_game_buttons;
     private ConstraintLayout pre_death_adr_button;
     private ConstraintLayout pre_death_df_button;
     private TextView pre_death_pulse_count;
     private TextView pre_death_health_count;
+    TextView pre_death_caption_textview;
     public native void medicPreDeathExit(int buttonID);
     public native void medicMiniGameExit(int typeId);
     private native void init();
@@ -48,7 +41,8 @@ public class PreDeath {
     {
         init();
 
-        main_activity = activity;
+        this.activity = activity;
+        pre_death_caption_textview = activity.findViewById(R.id.pre_death_caption_textview);
         pre_death_adr_button = activity.findViewById(R.id.pre_death_adr_button);
         pde_death_game_buttons = activity.findViewById(R.id.pde_death_game_buttons);
         pre_death_deathbuttons_layout = activity.findViewById(R.id.pre_death_deathbuttons_layout);
@@ -100,9 +94,14 @@ public class PreDeath {
         });
         Utils.HideLayout(pre_death_layout, false);
     }
+    void hide() {
+        activity.runOnUiThread( () -> {
+            pre_death_layout.setVisibility(View.GONE);
+        });
+    }
     public void setButtonActive()
     {
-        main_activity.runOnUiThread(new Runnable() {
+        activity.runOnUiThread(new Runnable() {
             public void run()  {
                 toHospitalButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#ffffff")));
             }
@@ -110,7 +109,7 @@ public class PreDeath {
     }
     public void setButtonText(String str)
     {
-        main_activity.runOnUiThread(new Runnable() {
+        activity.runOnUiThread(new Runnable() {
             public void run()  {
                 toHospitalButton.setText(str);
             }
@@ -118,8 +117,9 @@ public class PreDeath {
     }
     void showPreDeath(String killerName, int killerID)
     {// death
-        main_activity.runOnUiThread(() -> {
+        activity.runOnUiThread(() -> {
 
+            pre_death_caption_textview.setText(Html.fromHtml("Вы были <font color='#fbc02d'>ранены</font> игроком"));
             timeRemaining = 15;
 
             pde_death_game_buttons.setVisibility(View.GONE);
@@ -134,14 +134,15 @@ public class PreDeath {
         });
     }
     void updatePulseAndHealth(){
-        main_activity.runOnUiThread(() -> {
+        activity.runOnUiThread(() -> {
             pre_death_pulse_count.setText(String.format("%d", pulse));
             pre_death_health_count.setText(String.format("%d", health));
         });
     }
     void showMiniGame(String playerName){
         pulse = health = 0;
-        main_activity.runOnUiThread(() -> {
+        activity.runOnUiThread(() -> {
+            pre_death_caption_textview.setText(Html.fromHtml("<font color='#fbc02d'>Пострадавший</font>"));
             pde_death_game_buttons.setVisibility(View.VISIBLE);
             pre_death_deathbuttons_layout.setVisibility(View.GONE);
             pre_death_killer_text.setText(playerName);

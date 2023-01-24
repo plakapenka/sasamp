@@ -58,7 +58,7 @@
 #define RPC_TOGGLE_SAMWILL_GAME 20
 #define RPC_KILL_LIST 21
 #define RPC_CLEAR_KILL_LIST 22
-#define RPC_SHOW_DUELS_KILLS_LEFT 23
+#define RPC_DUELS_SHOW_KILL_LEFT 23
 #define RPC_DUELS_SHOW_LOCAL_TOP 24
 #define RPC_DUELS_SHOW_LOCAL_STAT 25
 #define RPC_SHOW_ACTION_LABEL 26
@@ -240,11 +240,13 @@ public:
 
 	void packetPreDeath(Packet *p);
 
-	void packetMedGame(Packet *p);
+	static void packetMedGame(Packet *p);
 
 	void packetCasinoBaccarat(Packet *p);
 
     static void packetKillList(Packet *p);
+
+	static void packetDuelsKillsLeft(Packet *p);
 };
 
 extern CNetGame *pNetGame;

@@ -526,6 +526,10 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			packetKillList(p);
 			break;
 		}
+		case RPC_DUELS_SHOW_KILL_LEFT: {
+			packetDuelsKillsLeft(p);
+			break;
+		}
 		case RPC_CLEAR_KILL_LIST: {
             CDuelsGui::clearKillList();
 			break;
@@ -948,7 +952,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 
 			char utf8[200];
 			cp1251_to_utf8(utf8, name);
-			g_pJavaWrapper->UpdateAutoShop(utf8, price, count, maxspeed*1.2, acceleration);
+			g_pJavaWrapper->UpdateAutoShop(utf8, price, count, maxspeed, acceleration);
 			break;
 		}
 		case RPC_CUSTOM_HANDLING_DEFAULTS:
