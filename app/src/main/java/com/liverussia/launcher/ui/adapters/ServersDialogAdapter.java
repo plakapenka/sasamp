@@ -27,7 +27,6 @@ import com.liverussia.launcher.async.dto.response.Servers;
 import java.util.List;
 
 public class ServersDialogAdapter extends RecyclerView.Adapter<ServersAdapter.ServersViewHolder> {
-    private final static String HOST_PORT_DELIMITER = ":";
 
     private Context context;
     private List<Servers> servers;
@@ -63,18 +62,14 @@ public class ServersDialogAdapter extends RecyclerView.Adapter<ServersAdapter.Se
         holder.progressBar.setProgressStartColor(MainColor);
         holder.progressBar.setProgressEndColor(MainColor);
         holder.progressBar.setProgress(servers.getOnline());
-        holder.container.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                view.startAnimation(AnimationUtils.loadAnimation(context, R.anim.button_click));
-                selectServerDialog.setSelectedServer(servers);
+        holder.container.setOnClickListener(view -> {
+            view.startAnimation(AnimationUtils.loadAnimation(context, R.anim.button_click));
+            selectServerDialog.setSelectedServer(servers);
 
-                String rouletteUrl = ROULETTE_SERVER_PROTOCOL
-                        .concat(servers.getRouletteIp())
-                        .concat(HOST_PORT_DELIMITER)
-                        .concat(servers.getRoulettePort());
+            String rouletteUrl = ROULETTE_SERVER_PROTOCOL
+                    .concat(servers.getRouletteDomain());
 
-                Storage.addProperty(StorageElements.ROULETTE_SERVER_HOST.getValue(), rouletteUrl, context);
-            }
+            Storage.addProperty(StorageElements.ROULETTE_SERVER_HOST.getValue(), rouletteUrl, context);
         });
     }
 

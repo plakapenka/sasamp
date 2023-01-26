@@ -7,7 +7,7 @@ public class Config {
     private static final String URL_DONATE = "https://liverussia.online/donate_v2/confirm.php?server=%s&serverName=%s&sum=%s&account=%s&mail=%s&captcha=%s";
 
     public static final String LIVE_RUSSIA_RESOURCE_SERVER_URL = "https://files.liverussia.online";
-    public static final String ROULETTE_SERVER_PROTOCOL = "http://";
+    public static final String ROULETTE_SERVER_PROTOCOL = "https://";
 
     public static final String DISCORD_URI = "https://discord.com/invite/pkT6SEEXKS";
     public static final String VK_URI = "https://vk.com/liverussia.online";
