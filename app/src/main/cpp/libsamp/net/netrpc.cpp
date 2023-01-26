@@ -98,7 +98,7 @@ void InitGame(RPCParameters *rpcParams)
 
 	pGame->SetWorldWeather(pNetGame->m_byteWeather);
 	pGame->ToggleCJWalk(pNetGame->m_bUseCJWalk);
-
+	pNetGame->GetPlayerPool()->SetLocalPlayerID(MyPlayerID);
 }
 
 void ServerJoin(RPCParameters *rpcParams)
