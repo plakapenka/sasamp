@@ -897,11 +897,11 @@ void CLocalPlayer::SendInCarFullSyncData()
 	//icSync.byteSirenOn = pVehicle->IsSirenOn() != 0;
 	//icSync.byteLandingGearState = pVehicle->GetLandingGearState() != 0;
 
-	uint8_t exKeys = GetPlayerPed()->GetExtendedKeys();
-	icSync.byteCurrentWeapon = (exKeys << 6) | icSync.byteCurrentWeapon & 0x3F;
-	icSync.byteCurrentWeapon ^= (icSync.byteCurrentWeapon ^ GetPlayerPed()->GetCurrentWeapon()) & 0x3F;
+	//uint8_t exKeys = GetPlayerPed()->GetExtendedKeys();
+	//icSync.byteCurrentWeapon = (exKeys << 6) | icSync.byteCurrentWeapon & 0x3F;
+	//icSync.byteCurrentWeapon ^= (icSync.byteCurrentWeapon ^ GetPlayerPed()->GetCurrentWeapon()) & 0x3F;
 
-	icSync.TrailerID = INVALID_VEHICLE_ID;
+	icSync.TrailerID = 0;
 
 	VEHICLE_TYPE* vehTrailer = (VEHICLE_TYPE*)pVehicle->m_pVehicle->dwTrailer;
 	if (vehTrailer != nullptr)
@@ -912,7 +912,7 @@ void CLocalPlayer::SendInCarFullSyncData()
 			icSync.TrailerID = trailerId;
 		}
 	}
-	if (icSync.TrailerID != INVALID_VEHICLE_ID)
+    if (icSync.TrailerID && icSync.TrailerID < MAX_VEHICLES)
 	{
 		MATRIX4X4 matTrailer;
 		TRAILER_SYNC_DATA trSync;
@@ -940,12 +940,15 @@ void CLocalPlayer::SendInCarFullSyncData()
 			pNetGame->GetRakClient()->Send(&bsTrailerSync, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0);
 		}
 	}
+	// send
+	if( (GetTickCount() - m_dwLastUpdateInCarData) > 500 || memcmp(&m_InCarData, &icSync, sizeof(INCAR_SYNC_DATA))) {
+		m_dwLastUpdateInCarData = GetTickCount();
+		bsVehicleSync.Write((uint8_t) ID_VEHICLE_SYNC);
+		bsVehicleSync.Write((char *) &icSync, sizeof(INCAR_SYNC_DATA));
+		pNetGame->GetRakClient()->Send(&bsVehicleSync, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0);
 
-	bsVehicleSync.Write((uint8_t)ID_VEHICLE_SYNC);
-	bsVehicleSync.Write((char*)&icSync, sizeof(INCAR_SYNC_DATA));
-	pNetGame->GetRakClient()->Send(&bsVehicleSync, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0);
-
-	memcpy(&m_InCarData, &icSync, sizeof(INCAR_SYNC_DATA));
+		memcpy(&m_InCarData, &icSync, sizeof(INCAR_SYNC_DATA));
+	}
 }
 
 void CLocalPlayer::SendPassengerFullSyncData()
