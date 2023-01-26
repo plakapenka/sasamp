@@ -99,6 +99,8 @@
 #define RPC_ADMIN_RECON 	63
 #define RPC_MED_GAME 		64
 #define RPC_UPDATE_BACCARAT				65
+#define RPC_SET_MONEY				66
+
 
 // Packet 252
 #define RPC_TOGGLE_LOGIN (1)

@@ -504,6 +504,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			bs.Read(tt);
 
 			Log("%d - %d", gg, tt);
+            break;
 		}
 		case RPC_INVENTAR_CARRYNG: {
 			packetInventoryUpdateCarryng(p);
@@ -535,6 +536,15 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_UPDATE_BACCARAT: {
 			packetCasinoBaccarat(p);
+			break;
+		}
+		case RPC_SET_MONEY: {
+			uint32_t money;
+			bs.Read(money);
+
+			CHUD::iLocalMoney = money;
+
+			CHUD::UpdateMoney();
 			break;
 		}
 		case RPC_SHOW_CONTEINER_AUC: {
