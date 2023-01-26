@@ -623,8 +623,6 @@ uint8_t* GetCollisionDataFromModel(int nModelIndex)
 }
 void CVehicle::SetHandlingData(std::vector<SHandlingData>& vHandlingData)
 {
-
-
 	if (!m_pVehicle || !m_dwGTAId)
 	{
 		return;
@@ -672,9 +670,9 @@ void CVehicle::SetHandlingData(std::vector<SHandlingData>& vHandlingData)
 				m_pCustomHandling->m_transmissionData.m_fMaxGearVelocity = i.fValue * 0.84;
 				break;
 			case E_HANDLING_PARAMS::hpAcceleration: {
-				float sampSpeed = m_pCustomHandling->m_transmissionData.m_fMaxGearVelocity * 1.2f;
-				m_pCustomHandling->m_transmissionData.m_fEngineAcceleration = sampSpeed / 13.9f;
-				//m_pCustomHandling->m_transmissionData.m_fEngineAcceleration = 50.0f;
+				//float sampSpeed = m_pCustomHandling->m_transmissionData.m_fMaxGearVelocity * 1.2f;
+				//m_pCustomHandling->m_transmissionData.m_fEngineAcceleration = sampSpeed / 12.0f;
+				m_pCustomHandling->m_transmissionData.m_fEngineAcceleration =  i.fValue;
 				break;
 			}
 			case E_HANDLING_PARAMS::hpEngineInertion:
@@ -745,6 +743,7 @@ void CVehicle::SetHandlingData(std::vector<SHandlingData>& vHandlingData)
 			}
 		}
 	}
+
 	float fOldFrontWheelSize = 0.0f;
 	float fOldRearWheelSize = 0.0f;
 
@@ -784,6 +783,7 @@ void CVehicle::SetHandlingData(std::vector<SHandlingData>& vHandlingData)
 	{
 		((void (*)(VEHICLE_TYPE*))(g_libGTASA + 0x004D6078 + 1))(m_pVehicle); // process suspension
 	}
+	//ScriptCommand(&set_car_heavy, m_dwGTAId, 1);
 }
 
 void CVehicle::ResetVehicleHandling()

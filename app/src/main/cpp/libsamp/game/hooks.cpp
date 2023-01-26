@@ -20,8 +20,6 @@ extern "C"
 #include "../util/patch.h"
 
 extern CGame* pGame;
-#include "..//CSettings.h"
-extern CSettings* pSettings;
 extern CPlayerPed *g_pCurrentFiredPed;
 extern BULLET_DATA *g_pCurrentBulletData;
 
@@ -103,7 +101,7 @@ stFile* NvFOpen_hook(const char* r0, const char* r1, int r2, int r3)
 	if(!strncmp(r1+12, "mainV1.scm", 10))
 	{
 		sprintf(path, "%sSAMP/main.scm", g_pszStorage);
-		Log("Loading mainV1.scm..");
+		Log("Loading %s", path);
 		goto open;
 	}
 	// ----------------------------
@@ -213,25 +211,6 @@ void Render2dStuffAfterFade_hook()
 	if (pGUI && bGameStarted) pGUI->Render();
 	return;
 }
-
-/* ====================================================== */
-
-uint16_t gxt_string[0x7F];
-uint16_t* (*CText_Get)(uintptr_t thiz, const char* text);
-uint16_t* CText_Get_hook(uintptr_t thiz, const char* text)
-{
-	if(text[0] == 'S' && text[1] == 'A' && text[2] == 'M' && text[3] == 'P')
-	{
-		const char* code = &text[5];
-		if(!strcmp(code, "MP")) CFont::AsciiToGxtChar("MultiPlayer", gxt_string);
-
-    	return gxt_string;
-	}
-
-	return CText_Get(thiz, text);
-}
-
-/* ====================================================== */
 
 void MainMenu_OnStartSAMP()
 {
@@ -667,8 +646,8 @@ void (*NvUtilInit)(void);
 void NvUtilInit_hook(void)
 {	
 	NvUtilInit();
-	CHook::UnFuck(g_libGTASA + 0x5D1608);
-	*(char**)(g_libGTASA + 0x5D1608) = (char*)g_pszStorage;
+
+
 }
 
 signed int (*OS_FileOpen)(unsigned int a1, int *a2, const char *a3, int a4);
@@ -1139,7 +1118,7 @@ void InstallSpecialHooks()
 
 	CHook::InlineHook(g_libGTASA, 0x0023BEDC, &OS_FileRead_hook, &OS_FileRead);
 	CHook::InlineHook(g_libGTASA, 0x23B3DC, &NvFOpen_hook, & NvFOpen);
-	CHook::InlineHook(g_libGTASA, 0x241D94, &NvUtilInit_hook, &NvUtilInit);
+	//CHook::InlineHook(g_libGTASA, 0x241D94, &NvUtilInit_hook, &NvUtilInit);
 
 	CHook::InlineHook(g_libGTASA, 0x269974, &MenuItem_add_hook, &MenuItem_add);
 	CHook::InlineHook(g_libGTASA, 0x40C530, &InitialiseRenderWare_hook, &InitialiseRenderWare);
@@ -2247,14 +2226,6 @@ void CSprite2d__Draw_hook(CSprite2d* a1, CRect* a2, CRGBA* a3)
 			//CChatWindow::AddDebugMessage("Replacing for disc");
 		}
 
-		if (CAdjustableHudColors::IsUsingHudColor(E_HUD_ELEMENT::HUD_RADAR))
-		{
-			CRGBA col = CAdjustableHudColors::GetHudColor(E_HUD_ELEMENT::HUD_RADAR);
-			a3->A = 255;
-			a3->B = 155;
-			a3->G = 5;
-			a3->R = 7;
-		}
 		float* thiz = (float*) * (uintptr_t*)(g_libGTASA + 0x6580C8);
 
 		//thiz[0] = (float)100;
@@ -3017,12 +2988,22 @@ bool CEventKnockOffBike__AffectsPed_hook(uintptr_t *thiz, PED_TYPE *a2)
 	return false;
 }
 
+void (*CVehicle__ReduceVehicleDamage)(VEHICLE_TYPE* thiz, float *fDamage);
+void CVehicle__ReduceVehicleDamage_hook(VEHICLE_TYPE* thiz, float *fDamage)
+{
+	*fDamage = *fDamage/10;
+}
+
 void InstallHooks()
 {
 	Log("InstallHooks");
 
 	PROTECT_CODE_INSTALLHOOKS;
 
+	//
+	//CHook::InlineHook(g_libGTASA, 0x0050F37C, &CVehicle__ReduceVehicleDamage_hook, &CVehicle__ReduceVehicleDamage);
+
+	//CHook::NOP(g_libGTASA + 0x50F3A0, 6); // CVehicle::ReduceVehicleDamage
 	// не падать с мотоцикла
 	CHook::InlineHook(g_libGTASA, 0x00322FBC, &CEventKnockOffBike__AffectsPed_hook, &CEventKnockOffBike__AffectsPed);
 

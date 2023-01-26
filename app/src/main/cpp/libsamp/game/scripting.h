@@ -27,6 +27,7 @@ struct SCRIPT_COMMAND
 
 int ScriptCommand(const SCRIPT_COMMAND* pScriptCommand, ...);
 
+const SCRIPT_COMMAND SET_CAR_AVOID_LEVEL_TRANSITIONS = { 0x0428, "ii" };
 const SCRIPT_COMMAND SET_CHAR_HEALTH = { 0x0223, "ii" };
 const SCRIPT_COMMAND LIMIT_ANGLE = { 0x0656, "ff" };
 const SCRIPT_COMMAND GET_ANGLE_BETWEEN_2D_VECTORS = { 0x05A4, "fffff" };

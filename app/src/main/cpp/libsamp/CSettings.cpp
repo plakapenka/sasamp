@@ -4,6 +4,7 @@
 #include "vendor/ini/config.h"
 #include "java_systems/CHUD.h"
 #include "util/patch.h"
+#include "CDebugInfo.h"
 
 extern CGame *pGame;
 stSettings CSettings::m_Settings;
@@ -119,7 +120,10 @@ void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 
 	m_Settings.szAutoLogin = ini_table_get_entry_as_int(config, "client", "autologin", 0);
 	m_Settings.szServer = ini_table_get_entry_as_int(config, "client", "server", 0);
+
 	m_Settings.szDebug = ini_table_get_entry_as_int(config, "client", "debug", 0);
+	CDebugInfo::SetDrawFPS(CSettings::m_Settings.szDebug);
+
 	m_Settings.szHeadMove = ini_table_get_entry_as_int(config, "client", "headmove", 0);
 	m_Settings.szDL = ini_table_get_entry_as_int(config, "client", "dl", 0);
 	m_Settings.szTimeStamp = ini_table_get_entry_as_int(config, "client", "timestamp", 0);
@@ -161,11 +165,14 @@ void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 	m_Settings.iChatMaxMessages = ini_table_get_entry_as_int(config, "gui", "ChatMaxMessages", -1);
 
 	m_Settings.iFPS = ini_table_get_entry_as_int(config, "gui", "fps", 60);
+	if( m_Settings.iFPS < 20 ) m_Settings.iFPS = 60;
 	ApplyFPSPatch(m_Settings.iFPS);
 
 	m_Settings.iAndroidKeyboard = ini_table_get_entry_as_int(config, "gui", "androidKeyboard", 0);
 
 	m_Settings.iOutfitGuns = ini_table_get_entry_as_int(config, "gui", "outfit", 1);
+	CWeaponsOutFit::SetEnabled(CSettings::m_Settings.iOutfitGuns);
+
 	m_Settings.iIsEnableDamageInformer = ini_table_get_entry_as_int(config, "gui", "damageinformer", 1);
 	m_Settings.iIsEnable3dTextInVehicle = ini_table_get_entry_as_int(config, "gui", "text3dinveh", 1);
 

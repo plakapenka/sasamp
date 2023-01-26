@@ -17,7 +17,7 @@ void CLoader::loadBassLib()
     BASS_Set3DFactors(0.2, 0.1, 0);
 }
 
-void CLoader::redirectDirection(const char path[])
+void CLoader::redirectDirection(const char* path)
 {
     strcpy(g_pszStorage, path);
 

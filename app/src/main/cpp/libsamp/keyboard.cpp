@@ -2335,12 +2335,7 @@ bool ProcessLocalCommands(const char str[])
 		CTab::toggle();
 		return true;
 	}
-	if (strcmp(str, "/crash") == 0)
-	{
-		int gg = CHook::CallFunction<int>(g_libGTASA + 0x003AC5DC + 1, 0xFFFFFFFF);
-		Log("gg = %d, %d", gg, pGame->FindPlayerPed()->m_pPed);
-		return true;
-	}
+
 	if (strstr(str, "/fpslimit "))
 	{
 		int fps = 0;

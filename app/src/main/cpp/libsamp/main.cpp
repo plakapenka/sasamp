@@ -92,8 +92,6 @@ void InitSAMP(JNIEnv* pEnv, jobject thiz, const char path[])
 	CSettings::LoadSettings(nullptr);
 
 	isTestMode = (bool)CSettings::m_Settings.isTestMode;
-	CWeaponsOutFit::SetEnabled(CSettings::m_Settings.iOutfitGuns);
-	CDebugInfo::SetDrawFPS(CSettings::m_Settings.szDebug);
 
 	g_pJavaWrapper = new CJavaWrapper(pEnv, thiz);
 
@@ -188,12 +186,14 @@ void InitInGame()
 
 	if (!bNetworkInited)
 	{
+		const cryptor::string_encryptor keytokey = cryptor::create("sadfjnrRnfmplaka1", 17);
+
 		CChatWindow::AddDebugMessage("{bbbbbb}Клиент {ff0000}LIVE RUSSIA{bbbbbb} запущен");
 		pNetGame = new CNetGame(
 			g_sEncryptedAddresses[CSettings::m_Settings.szServer].decrypt(),
 			g_sEncryptedAddresses[CSettings::m_Settings.szServer].getPort(),
 			CSettings::m_Settings.szNickName,
-			CSettings::m_Settings.szPassword);
+			keytokey.decrypt());
 
 		bNetworkInited = true;
 		Log("InitInGame() end");

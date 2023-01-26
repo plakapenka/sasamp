@@ -140,7 +140,9 @@ public class CasinoBaccarat {
 
         casino_bc_yellow_area = activity.findViewById(R.id.casino_bc_yellow_area);
         casino_bc_yellow_area.setOnClickListener(view -> {
+            if(selected_chip_type == CHIP_TYPE_NONE) return;
 
+            sendAddBet( getChipValue(selected_chip_type), BET_TYPE_YELLOW.ordinal() );
         });
 
         casino_bc_red_chip = activity.findViewById(R.id.casino_bc_red_chip);
@@ -179,14 +181,18 @@ public class CasinoBaccarat {
                     TextView chip_count;
                     if (betType == BET_TYPE_RED.ordinal()) {
                         chip_count = (TextView) casino_bc_red_chip.getChildAt(0);
-                        casino_bc_red_chip.setVisibility(View.VISIBLE);
-                        casino_bc_red_chip.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.popup_show_notification));
+                        if( casino_bc_red_chip.getVisibility() == View.GONE ) {
+                            casino_bc_red_chip.setVisibility(View.VISIBLE);
+                            casino_bc_red_chip.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.popup_show_notification));
+                        }
                         NvEventQueueActivity.getInstance().soundPool.play(betsound, 0.2f, 0.2f, 1, 0, 1.0f);
                     }
                     else if (betType == BET_TYPE_YELLOW.ordinal()) {
                         chip_count = (TextView) casino_bc_yellow_chip.getChildAt(0);
-                        casino_bc_yellow_chip.setVisibility(View.VISIBLE);
-                        casino_bc_yellow_chip.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.popup_show_notification));
+                        if( casino_bc_yellow_chip.getVisibility() == View.GONE ) {
+                            casino_bc_yellow_chip.setVisibility(View.VISIBLE);
+                            casino_bc_yellow_chip.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.popup_show_notification));
+                        }
                         NvEventQueueActivity.getInstance().soundPool.play(betsound, 0.2f, 0.2f, 1, 0, 1.0f);
                     } else return;
 

@@ -9,8 +9,6 @@ char* PLAYERS_REALLOC = nullptr;
 #include "util/patch.h"
 #include "chatwindow.h"
 
-extern CSettings* pSettings;
-
 void WriteUnVerified0();
 void InitInGame();
 
@@ -92,6 +90,8 @@ void ApplyFPSPatch(uint8_t fps)
 	CHook::WriteMemory(g_libGTASA + 0x56C1F6, (uintptr_t)& fps, 1);
 	CHook::WriteMemory(g_libGTASA + 0x56C126, (uintptr_t)& fps, 1);
 	CHook::WriteMemory(g_libGTASA + 0x95B074, (uintptr_t)& fps, 1);
+
+	Log("New fps limit = %d", fps);
 }
 
 int test_pointsArray[1000];
@@ -104,10 +104,8 @@ void ApplyPatches_level0()
 {
 	Log("ApplyPatches_level0");
 
-	PLAYERS_REALLOC = ((char* (*)(uint32_t))(g_libGTASA + 0x179B40))(404 * 257 * sizeof(char));
-	memset(PLAYERS_REALLOC, 0, 404 * 257);
-	CHook::UnFuck(g_libGTASA + 0x5D021C);
-	*(char**)(g_libGTASA + 0x5D021C) = PLAYERS_REALLOC;
+	PLAYERS_REALLOC = new char[404*MAX_PLAYERS];
+	CHook::Write<char*>(g_libGTASA + 0x5D021C, PLAYERS_REALLOC);
 
 	// 3 touch begin
 	CHook::UnFuck(g_libGTASA + 0x005D1E8C);
@@ -132,13 +130,6 @@ void ApplyPatches_level0()
 	// col links limits end
 
 	CExtendedCarColors::ApplyPatches_level0();
-
-	uint8_t fps = 60;
-	if (pSettings)
-	{
-		fps = pSettings->GetReadOnly().iFPS;
-	}
-	ApplyFPSPatch(fps);
 
 	CHook::SetUpHook(g_libGTASA + 0x0023768C, (uintptr_t)ANDRunThread_hook, (uintptr_t*)& ANDRunThread);
 
@@ -188,6 +179,9 @@ void ApplyPatches_level0()
 	//CHook::NOP(g_libGTASA + 0x00408812, 2); // CClock::Initialise(uint)
 	CHook::NOP(g_libGTASA + 0x00408816, 2); // CHeli::InitHelis(void)
 
+	//CHook::NOP(g_libGTASA + 0x402472, 2);
+	CHook::RET(g_libGTASA + 0x401BAC); // CFileLoader::LoadPickup
+
 	//CHook::RET(g_libGTASA + 0x0036E88C); // CCamera::ClearPlayerWeaponMode не понятен эффект. крашит
 //	CHook::NOP(g_libGTASA + 0x0040881A, 2); // CCranes::InitCranes(void)
 
@@ -201,19 +195,16 @@ struct _ATOMIC_MODEL
 };
 struct _ATOMIC_MODEL *ATOMIC_MODELS;
 
-void ApplyShadowPatch(){
-
-	// nop calling CRealTimeShadowManager::ReturnRealTimeShadow from ~CPhysical
-	CHook::NOP(g_libGTASA + 0x3A019C, 2);
-
+void ApplyShadowPatch()
+{
+	CHook::RET(g_libGTASA + 0x541AA8); // CRealTimeShadowManager::ReturnRealTimeShadow from ~CPhysical
 	CHook::NOP(g_libGTASA + 0x2661DA, 2); // Display - Shadows ( настройки )
-
-	//shadow CRealTimeShadowManager::Update
-	CHook::RET(g_libGTASA + 0x541AC4);
-
-	// Fix shadows crash (thx R*)
+	CHook::RET(g_libGTASA + 0x541AC4); //shadow CRealTimeShadowManager::Update
+	CHook::RET(g_libGTASA + 0x543B04); // CShadows::RenderStaticShadows
 	CHook::NOP(g_libGTASA + 0x0039B2C4, 2); // CMirrors::BeforeMainRender(void)
-
+	CHook::RET(g_libGTASA + 0x5471F4); // CShadows::RenderStoredShadows
+	CHook::RET(g_libGTASA + 0x545C04); // CShadows::StoreStaticShadow
+	CHook::NOP(g_libGTASA + 0x39B2C0, 2);	// CRealTimeShadowManager::Update from Idle
 }
 
 void ApplyPatches()
@@ -255,9 +246,6 @@ void ApplyPatches()
 
 	// CAudioEngine::StartLoadingTune звук загрузочного экрана
 	CHook::NOP(g_libGTASA + 0x56C150, 2);
-
-	// Nop CFileLoader::loadPickups
-	CHook::NOP(g_libGTASA + 0x402472, 2);
 
 	// DefaultPCSaveFileName
 	char* DefaultPCSaveFileName = (char*)(g_libGTASA + 0x60EAE8);
@@ -306,9 +294,23 @@ void ApplyPatches()
 	CHook::RET(g_libGTASA + 0x2C9EEC); // CGarages::TriggerMessage
 	CHook::RET(g_libGTASA + 0x3D4EAC); // CHud_DrawVitalStats
 
+	//
+	CHook::RET(g_libGTASA + 0x4F90AC); // CTheCarGenerators::Process
+	CHook::RET(g_libGTASA + 0x45F1A4); // CPopulation::AddPed
+	CHook::RET(g_libGTASA + 0x2E82CC); // CCarCtrl::GenerateRandomCars
+	CHook::RET(g_libGTASA + 0x504DB8); // CPlane::DoPlaneGenerationAndRemoval
+
+	CHook::RET(g_libGTASA + 0x2C1CB0); // CEntryExit::GenerateAmbientPeds
+	CHook::RET(g_libGTASA + 0x2B055C); // CCarCtrl::GenerateOneEmergencyServicesCar
+	CHook::NOP(g_libGTASA + 0x4612A0, 9); 	// CPedIntelligence::SetPedDecisionMakerType from CPopulation::AddPedAtAttractor
+	CHook::NOP(g_libGTASA + 0x4045D2, 1);	// CStreaming::ms_memoryAvailable = (int)v24
+	CHook::NOP(g_libGTASA + 0x39872A, 2);	// CCover::Update from CGame::Process
+	CHook::NOP(g_libGTASA + 0x3AC8B2, 2); 	// CMessages::AddBigMessage from CPlayerInfo::KillPlayer
+	CHook::NOP(g_libGTASA + 0x4F75B4, 4);  // CBoat::ProcessControl
+
 	//CHook::NOP(g_libGTASA + 0x454A88, 2);  // CCamera::ClearPlayerWeaponMode from CPlayerPed::ClearWeaponTarget
 	CHook::NOP(g_libGTASA + 0x2FEE76, 2);	// CGarages::RespraysAreFree = true in CRunningScript::ProcessCommands800To899
-	CHook::NOP(g_libGTASA + 0x50FF64, 2);	// skip playerGifts from CVehicle::SetDriver
+	//CHook::NOP(g_libGTASA + 0x50FF64, 2);	// skip playerGifts from CVehicle::SetDriver
 	CHook::NOP(g_libGTASA + 0x39840A, 2);	// CStreaming::Shutdown from CGame::Shutdown
 	CHook::NOP(g_libGTASA + 0x4874E0, 5);  // CPedIntelligence::AddTaskPrimaryMaybeInGroup from CTaskComplexEnterCar::CreateNextSubTask
 	CHook::NOP(g_libGTASA + 0x2E1EDC, 2); 	// CUpsideDownCarCheck::UpdateTimers from CTheScripts::Process
@@ -352,6 +354,7 @@ void ApplyPatches()
 
 	// TxdStore pool (old: 5000, new: 20000)
 	CHook::WriteMemory(g_libGTASA + 0x0055BA9A, (uintptr_t)"\x4f\xf4\xb8\x50\xc0\xf2\x11\x00", 8); //  MOV.W	R0, #0x1700 | MOVT	R0, #0x11
+	//CHook::WriteMemory(g_libGTASA + 0x55BA9E, "\xC0\xF2\x11\x00", 4);
 	CHook::WriteMemory(g_libGTASA + 0x0055BAA8, (uintptr_t)"\x44\xf6\x20\x60", 4); // MOVW	R0, #0x4E20
 	CHook::WriteMemory(g_libGTASA + 0x0055BAB0, (uintptr_t)"\x44\xf6\x20\x62", 4); // MOVW	R2, #0x4E20
 

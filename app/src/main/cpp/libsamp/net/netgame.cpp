@@ -42,6 +42,8 @@ unsigned char GetPacketID(Packet *p)
 		return (unsigned char) p->data[0];
 }
 
+class string_encryptor;
+
 CNetGame::CNetGame(const char* szHostOrIp, int iPort, const char* szPlayerName, const char* szPass)
 {
 	strcpy(m_szHostName, "San Andreas Multiplayer");
@@ -65,6 +67,8 @@ CNetGame::CNetGame(const char* szHostOrIp, int iPort, const char* szPlayerName, 
 	m_pRakClient = RakNetworkFactory::GetRakClientInterface();
 	RegisterRPCs(m_pRakClient);
 	RegisterScriptRPCs(m_pRakClient);
+	// key
+
 	m_pRakClient->SetPassword(szPass);
 
 	m_dwLastConnectAttempt = GetTickCount();
