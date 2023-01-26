@@ -55,6 +55,11 @@ void CWeaponsOutFit::OnWeaponAdded(CPlayerPed* pPed, int iWeaponID)
 	info.dwBone = (uint32_t)m_Settings[iWeaponID].iBone;
 
 	info.vecOffset.X = m_Settings[iWeaponID].vOffset.X;
+	info.vecOffset.Y = m_Settings[iWeaponID].vOffset.Y;
+	info.vecOffset.Z = m_Settings[iWeaponID].vOffset.Z;
+	info.vecRotation.X = m_Settings[iWeaponID].vRotation.X;
+	info.vecRotation.Y = m_Settings[iWeaponID].vRotation.Y;
+	info.vecRotation.Z = m_Settings[iWeaponID].vRotation.Z;
 
 	info.vecScale.X = 1.0f;
 	info.vecScale.Y = 1.0f;
