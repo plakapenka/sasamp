@@ -1997,12 +1997,8 @@ void CPlayerPed::ProcessBulletData(BULLET_DATA* btData)
 							bsBullet.Write((char)ID_BULLET_SYNC);
 							bsBullet.Write((char*)&bulletSyncData, sizeof(BULLET_SYNC));
 
-							if(bulletSyncData.byteHitType == BULLET_HIT_TYPE_PLAYER){
-								pNetGame->GetRakClient()->Send(&bsBullet, HIGH_PRIORITY, RELIABLE, 0);
-							}
-							else {
-								pNetGame->GetRakClient()->Send(&bsBullet, HIGH_PRIORITY, UNRELIABLE, 0);
-							}
+
+							pNetGame->GetRakClient()->Send(&bsBullet, HIGH_PRIORITY, RELIABLE, 0);
 						}
 					}
 				}

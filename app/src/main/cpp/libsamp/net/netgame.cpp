@@ -275,7 +275,7 @@ void CNetGame::UpdateNetwork()
 		{
 			case ID_AUTH_KEY:
 				Log("Incoming packet: ID_AUTH_KEY");
-				Packet_AuthKey(pkt);
+				packetAuthKey(pkt);
 				break;
 
 			case ID_CONNECTION_ATTEMPT_FAILED:
@@ -1510,7 +1510,7 @@ void CNetGame::SendCheckClientPacket(const char password[])
 	bsSend.Write(RPC);
 	bsSend.Write(bytePasswordLen);
 	bsSend.Write(password, bytePasswordLen);
-	GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, UNRELIABLE_SEQUENCED, 0);
+	GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE, 0);
 
 	//CChatWindow::AddDebugMessage("key: %s", password);
 }
@@ -1533,7 +1533,7 @@ void CNetGame::SendCustomPacket(uint8_t packet, uint8_t RPC, uint8_t Quantity)
 	bsSend.Write(packet);
 	bsSend.Write(RPC);
 	bsSend.Write(Quantity);
-	GetRakClient()->Send(&bsSend, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0);
+	GetRakClient()->Send(&bsSend, HIGH_PRIORITY, RELIABLE, 0);
 }
 
 void CNetGame::SendNotifyButtonPacket(uint16_t actionId, uint8_t buttonId)
@@ -1545,7 +1545,7 @@ void CNetGame::SendNotifyButtonPacket(uint16_t actionId, uint8_t buttonId)
 	bsSend.Write(RPC);
 	bsSend.Write(actionId);
 	bsSend.Write(buttonId);
-	GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, UNRELIABLE_SEQUENCED, 0);
+	GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE, 0);
 }
 
 void CNetGame::SendRegisterSkinPacket(uint32_t skinId)
@@ -1556,7 +1556,7 @@ void CNetGame::SendRegisterSkinPacket(uint32_t skinId)
 	bsSend.Write(packet);
 	bsSend.Write(RPC);
 	bsSend.Write(skinId);
-	GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, UNRELIABLE_SEQUENCED, 0);
+	GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE, 0);
 }
 
 void CNetGame::SendCustomPacketFuelData(uint8_t packet, uint8_t RPC, uint8_t fueltype, uint32_t fuel)
@@ -1566,19 +1566,7 @@ void CNetGame::SendCustomPacketFuelData(uint8_t packet, uint8_t RPC, uint8_t fue
 	bsSend.Write(RPC);
 	bsSend.Write(fueltype);
 	bsSend.Write(fuel);
-	GetRakClient()->Send(&bsSend, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0);
-}
-
-void CNetGame::SendCustomCasinoChipPacket(uint8_t packet, uint8_t RPC, uint8_t type, uint8_t button, uint32_t money)
-{
-	RakNet::BitStream bsSend;
-	bsSend.Write(packet);
-	bsSend.Write(RPC);
-	bsSend.Write(type);
-	bsSend.Write(button);
-	bsSend.Write(money);
-	CChatWindow::AddDebugMessage("packet: %d rpc: %d type: %d button: %d money: %d", packet, RPC, type, button, money);
-	GetRakClient()->Send(&bsSend, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0);
+	GetRakClient()->Send(&bsSend, HIGH_PRIORITY, RELIABLE, 0);
 }
 
 void CNetGame::SendLoginPacket(const char password[])
@@ -1591,7 +1579,7 @@ void CNetGame::SendLoginPacket(const char password[])
 	bsSend.Write(RPC);
 	bsSend.Write(bytePasswordLen);
 	bsSend.Write(password, bytePasswordLen);
-	GetRakClient()->Send(&bsSend, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0);
+	GetRakClient()->Send(&bsSend, HIGH_PRIORITY, RELIABLE, 0);
 
 	strcpy(CSettings::m_Settings.player_password, password);
     CSettings::save();
@@ -1612,7 +1600,7 @@ void CNetGame::SendRegisterPacket(char *password, char *mail, uint8_t sex, uint8
 	bsSend.Write(mail, byteMailLen);
 	bsSend.Write(sex);
 	bsSend.Write(skin);
-	GetRakClient()->Send(&bsSend, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0);
+	GetRakClient()->Send(&bsSend, HIGH_PRIORITY, RELIABLE, 0);
 }
 
 void CNetGame::SendChatMessage(const char* szMsg)
@@ -1650,7 +1638,7 @@ void CNetGame::SendDialogResponse(uint16_t wDialogID, uint8_t byteButtonID, uint
 	bsSend.Write(wListBoxItem);
 	bsSend.Write(respLen);
 	bsSend.Write(szInput, respLen);
-	m_pRakClient->RPC(&RPC_DialogResponse, &bsSend, HIGH_PRIORITY, RELIABLE_ORDERED, 0, false, UNASSIGNED_NETWORK_ID, NULL);
+	m_pRakClient->RPC(&RPC_DialogResponse, &bsSend, HIGH_PRIORITY, RELIABLE, 0, false, UNASSIGNED_NETWORK_ID, NULL);
 
 }
 
@@ -1682,7 +1670,7 @@ void CNetGame::UpdatePlayerScoresAndPings()
 }
 
 void gen_auth_key(char buf[260], char* auth_in);
-void CNetGame::Packet_AuthKey(Packet* pkt)
+void CNetGame::packetAuthKey(Packet* pkt)
 {
 	RakNet::BitStream bsAuth((unsigned char *)pkt->data, pkt->length, false);
 
@@ -1705,7 +1693,6 @@ void CNetGame::Packet_AuthKey(Packet* pkt)
 	bsKey.Write(szAuthKey, byteAuthKeyLen);
 	m_pRakClient->Send(&bsKey, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
 
-	Log("[AUTH] %s -> %s", szAuth, szAuthKey);
 }
 
 void CNetGame::Packet_DisconnectionNotification(Packet* pkt)

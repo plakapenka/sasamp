@@ -186,7 +186,7 @@ void InitInGame()
 
 	if (!bNetworkInited)
 	{
-		const cryptor::string_encryptor keytokey = cryptor::create("sadfjnrRnfmplaka1", 17);
+		const cryptor::string_encryptor keytokey = cryptor::create("JfnagnuYqernqbfd", 17);
 
 		CChatWindow::AddDebugMessage("{bbbbbb}Клиент {ff0000}LIVE RUSSIA{bbbbbb} запущен");
 		pNetGame = new CNetGame(

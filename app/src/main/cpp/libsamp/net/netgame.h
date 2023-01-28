@@ -34,7 +34,7 @@
 #define INVALID_VEHICLE_ID 0xFFFF
 
 
-#define AUTH_SALT "78r5jgwvbcg6dv1"
+#define AUTH_SALT "Hnerny41dsR5weVV"
 
 // Packet 251
 #define RPC_TOGGLE_HUD_ELEMENT 1
@@ -176,7 +176,7 @@ private:
 	uint32_t			m_dwMapIcons[100];
 
 	void UpdateNetwork();
-	void Packet_AuthKey(Packet *p);
+	void packetAuthKey(Packet *pkt);
 	void Packet_DisconnectionNotification(Packet *p);
 	void Packet_ConnectionLost(Packet *p);
 	void Packet_ConnectionSucceeded(Packet *p);

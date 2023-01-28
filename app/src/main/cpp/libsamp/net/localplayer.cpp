@@ -137,7 +137,7 @@ void CLocalPlayer::CheckWeapons()
 			bsWeapons.Write((uint8_t) m_byteLastWeapon[i]);
 			bsWeapons.Write((uint16_t) m_dwLastAmmo[i]);
 		}
-		pNetGame->GetRakClient()->Send(&bsWeapons, HIGH_PRIORITY, UNRELIABLE, 0);
+		pNetGame->GetRakClient()->Send(&bsWeapons, HIGH_PRIORITY, RELIABLE, 0);
 	}
 }
 uint32_t CLocalPlayer::GetCurrentAnimationIndexFlag()
@@ -496,7 +496,7 @@ void CLocalPlayer::GiveTakeDamage(bool bGiveOrTake, uint16_t wPlayerID, float da
 
 	// pChatWindow->AddDebugMessage("Id: %d, Weapon: %d, Damage: %d", wPlayerID, weapon_id, damage_amount);
 
-	pNetGame->GetRakClient()->RPC(&RPC_PlayerGiveTakeDamage, &bitStream, HIGH_PRIORITY, RELIABLE_ORDERED, 0, false, UNASSIGNED_NETWORK_ID, nullptr);
+	pNetGame->GetRakClient()->RPC(&RPC_PlayerGiveTakeDamage, &bitStream, HIGH_PRIORITY, RELIABLE, 0, false, UNASSIGNED_NETWORK_ID, nullptr);
 }
 
 void CLocalPlayer::SendWastedNotification()
