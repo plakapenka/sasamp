@@ -868,6 +868,7 @@
                 android:background="@drawable/chat_input"
                 android:completionThreshold="2"
                 android:fontFamily="@font/visby_round_cf_extra_bold"
+                android:textCursorDrawable="@drawable/text_cursor"
                 android:imeOptions="flagNoExtractUi|actionSend"
                 android:inputType="textNoSuggestions"
                 android:paddingLeft="@dimen/_3sdp"
