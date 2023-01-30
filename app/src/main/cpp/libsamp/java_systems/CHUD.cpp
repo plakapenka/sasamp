@@ -518,3 +518,8 @@ Java_com_liverussia_cr_gui_HudManager_clickCameraMode(JNIEnv *env, jobject thiz)
         CFirstPersonCamera::Toggle();
     }
 }
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_HudManager_clickMultText(JNIEnv *env, jobject thiz) {
+    pNetGame->SendChatCommand("/action");
+}

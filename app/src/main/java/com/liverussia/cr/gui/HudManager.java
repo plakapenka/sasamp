@@ -143,6 +143,7 @@ public class HudManager {
     native void SendChatButton(int buttonID);
     native void ChatSetCursor(int start, int end);
     native void clickCameraMode();
+    native void clickMultText();
     ChatAdapter adapter;
     int damageSound = 0;
 
@@ -392,6 +393,13 @@ public class HudManager {
             NvEventQueueActivity.getInstance().showMenu();
          //   NvEventQueueActivity.getInstance().togglePlayer(1);
         });
+
+        // X2 click
+        TextView multiText = activity.findViewById(R.id.hud_logo_multi_text);
+        multiText.setOnClickListener(view -> {
+            clickMultText();
+        });
+
         hud_weapon.setOnClickListener(v -> NvEventQueueActivity.getInstance().onWeaponChanged());
 
         hud_bg.post(() -> {
