@@ -2,12 +2,15 @@
 #include "inlinehook.h"
 #include "../main.h"
 #include <string.h>
+#include <dlfcn.h>
 
 
 extern "C"
 {
     void sub_naebal(uintptr_t dest, uintptr_t src, size_t size);
 }
+
+#define SET_TO(__a1, __a2) *(void**)&(__a1) = (void*)(__a2)
 
 class CHook {
 public:
@@ -60,6 +63,13 @@ public:
     static void WriteHookProc(uintptr_t addr, uintptr_t func);
     static void CodeInject(uintptr_t addr, uintptr_t func, int reg);
     static void JMPCode(uintptr_t func, uintptr_t addr);
+
+    static uintptr_t getSym(uintptr_t libAddr, const char* sym)
+    {
+        Dl_info info;
+        if(dladdr((void*)libAddr, &info) == 0) return 0;
+        return (uintptr_t)dlsym(info.dli_fbase, sym);
+    }
     
     template <typename Addr, typename Func, typename Orig>
     static void SetUpHook(Addr addr, Func func, Orig orig)
