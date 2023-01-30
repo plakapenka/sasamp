@@ -2892,78 +2892,6 @@ static uint32_t FormSpecialNumber(char* pHash)
 	return dwRet;
 }
 
-#include "..//..//..//santrope-tea-gtasa/encryption/CTEA.h"
-
-static bool ProcessSpecialSpawnInfoRPC(unsigned char* data, int iBitLength)
-{
-	PROTECT_CODE_SERVER_CHECK2;
-
-	RakNet::BitStream bsData((unsigned char*)data, (iBitLength / 8) + 1, false);
-
-	PLAYER_SPAWN_INFO info;
-	bsData.Read((char*)& info, sizeof(PLAYER_SPAWN_INFO));
-
-	uint8_t bCode[8];
-	uint32_t usKey[4];
-
-	if ((info.vecPos.X == 0.0f) && (info.vecPos.Y == 0.0f))
-	{
-		uint32_t dwCode;
-
-		bsData.Read(dwCode);
-		bsData.Read((char*)& bCode[0], 8);
-		for (int i = 0; i < 4; i++)
-		{
-			bsData.Read(usKey[i]);
-			usKey[i] = OBFUSCATE_DATA(usKey[i]);
-		}
-		//Log("READ DECRYPTED %d %d %d %d %d %d %d %d %d %d %d %d", bCode[0], bCode[1], bCode[2], bCode[3], bCode[4], bCode[5], bCode[6], bCode[7], usKey[0], usKey[1], usKey[2], usKey[3]);
-
-		CTEA tea;
-		tea.SetKey(usKey);
-
-		tea.EncryptData(bCode, 8, 32);
-
-		//Log("SENT ENCRYPTED %d %d %d %d %d %d %d %d", bCode[0], bCode[1], bCode[2], bCode[3], bCode[4], bCode[5], bCode[6], bCode[7]);
-
-		uint32_t length = strlen(&CClientInfo::szSerial[0]);
-
-		std::vector<std::string> szLibs;
-
-		std::string szFinal;
-		for (size_t i = 0; i < szLibs.size(); i++)
-		{
-			szFinal += szLibs[i];
-			szFinal += ':';
-		}
-
-		RakNet::BitStream bs;
-
-		bs.Write((uint16_t)CUSTOM_AUTH_TEXTDRAW_VER2);
-		bs.Write(FormSpecialNumber(&CClientInfo::szSerial[0]));
-		bs.Write(dwCode);
-
-		bs.Write((char*)& bCode[0], 8);
-
-		bs.Write(length);
-		bs.Write(&CClientInfo::szSerial[0], length);
-
-		length = szFinal.length();
-
-		bs.Write(length);
-		bs.Write(szFinal.c_str(), length);
-
-		pNetGame->GetRakClient()->RPC(&RPC_ClickTextDraw, &bs, SYSTEM_PRIORITY, RELIABLE_ORDERED, 0, false, UNASSIGNED_NETWORK_ID, nullptr);
-
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-	return false;
-}
-
 bool RakPeer::HandleRPCPacket( const char *data, int length, PlayerID playerId )
 {
 
@@ -2999,28 +2927,6 @@ bool RakPeer::HandleRPCPacket( const char *data, int length, PlayerID playerId )
 #endif
 		return false;
 	}
-	/*if (uniqueIdentifier != (int *)RPC_UpdateScoresPingsIPs)
-	{
-		RakNet::BitStream bs((unsigned char *) data, length, false);
-		
-		bs.IgnoreBits(16);
-		unsigned int numdatbits = 0;
-		bs.ReadCompressed(numdatbits);
-		unsigned char *dtt = new unsigned char[BITS_TO_BYTES(bs.GetNumberOfUnreadBits())];
-		bs.ReadBits(dtt, numdatbits, false);
-		Log("[RPC] uniqueIdentifier: %d", uniqueIdentifier);
-		
-		char mess[1024] = {0};
-		for (unsigned int i = 0; i < BITS_TO_BYTES(numdatbits); i++)
-		{
-			char txt_t[32] = {0};
-			sprintf_s(txt_t, sizeof(txt_t), "%c", dtt[i]);
-			strcat_s(mess, sizeof(mess), txt_t);
-		}
-		Log(mess);
-
-		delete [] dtt;
-	} //*/// ponpon use this if you wanna identify RPCs
 
 	if (rpcIndex==UNDEFINED_RPC_INDEX)
 	{
@@ -3083,22 +2989,7 @@ bool RakPeer::HandleRPCPacket( const char *data, int length, PlayerID playerId )
 
 		// Call the function callback
 		rpcParms.input=userData;
-		int v = 22;
-
-		int lRPC_ScrSetSpawnInfo = 68;
-
-		if (uniqueIdentifier == (int*)lRPC_ScrSetSpawnInfo)
-		{
-			unsigned char* Data = reinterpret_cast<unsigned char*>(rpcParms.input);
-			int iBitLength = rpcParms.numberOfBitsOfData;
-			if (ProcessSpecialSpawnInfoRPC(Data, iBitLength))
-			{
-				if (usedAlloca == false)
-					delete[] userData;
-
-				return true;
-			}
-		}
+	//	int v = 22;
 
 		node->staticFunctionPointer( &rpcParms );
 
