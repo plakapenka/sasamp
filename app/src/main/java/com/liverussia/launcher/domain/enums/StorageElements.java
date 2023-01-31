@@ -12,6 +12,9 @@ public enum StorageElements {
     AUTHENTICATED_NICKNAME("authenticated_nickname"),
     AUTHENTICATED_SERVER("authenticated_server"),
     USER_BALANCE("user_balance"),
+    SERVER_MULTI("server_multi"),
+    SERVER_NAME("server_name"),
+    SERVER_COLOR("server_color"),
 
     ACCESS_TOKEN("access_token"),
     REFRESH_TOKEN("refresh_token"),

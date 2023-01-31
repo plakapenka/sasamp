@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 
 import com.liverussia.cr.R;
 import com.liverussia.launcher.domain.enums.NativeStorageElements;
+import com.liverussia.launcher.domain.enums.StorageElements;
 import com.liverussia.launcher.domain.messages.InfoMessage;
 import com.liverussia.launcher.async.dto.response.Servers;
 
@@ -26,6 +27,7 @@ import com.dinuscxj.progressbar.CircleProgressBar;
 import com.liverussia.launcher.service.ActivityService;
 import com.liverussia.launcher.service.impl.ActivityServiceImpl;
 import com.liverussia.launcher.storage.NativeStorage;
+import com.liverussia.launcher.storage.Storage;
 import com.liverussia.launcher.ui.dialogs.EnterLockedServerPasswordDialog;
 
 import org.apache.commons.lang3.StringUtils;
@@ -92,10 +94,12 @@ public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersV
 		holder.progressBar.setMax(1000);
 
 		if(selectedItem == position){
-
 			holder.container.setScaleX(1.05f);
 			holder.container.setScaleY(1.05f);
 			holder.backColor.setAlpha(0.60f);
+
+			//todo данная штука сделана для обратной совместимости, удалить через месяц - два
+			saveServerInfoToStorage(servers);
 		}else{
 			holder.container.setScaleX(1.0f);
 			holder.container.setScaleY(1.0f);
@@ -122,13 +126,21 @@ public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersV
 				return;
 			}
 
+			saveServerInfoToStorage(servers);
+
 			NativeStorage.addClientProperty(NativeStorageElements.LOCKED_SERVER_PASSWORD, StringUtils.EMPTY, context);
 
 			activityService.showMessage(InfoMessage.SERVER_SELECTED.getText(), context);
 		});
     }
 
-    @Override
+	private void saveServerInfoToStorage(Servers servers) {
+		Storage.addProperty(StorageElements.SERVER_MULTI.getValue(), servers.getMult(), context);
+		Storage.addProperty(StorageElements.SERVER_COLOR.getValue(), servers.getColor(), context);
+		Storage.addProperty(StorageElements.SERVER_NAME.getValue(), servers.getname(), context);
+	}
+
+	@Override
     public int getItemCount() {
         return servers.size();
     }
@@ -152,6 +164,7 @@ public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersV
 		}
 
 		selectedItem = lockedServerPosition;
+		saveServerInfoToStorage(lockedServerInfo);
 		this.notifyDataSetChanged();
 
 		activityService.showMessage(InfoMessage.SERVER_SELECTED.getText(), context);
