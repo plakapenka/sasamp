@@ -104,7 +104,7 @@ void ApplyPatches_level0()
 {
 	Log("ApplyPatches_level0");
 
-	PLAYERS_REALLOC = new char[404 * MAX_PLAYERS];
+	PLAYERS_REALLOC = new char[404*MAX_PLAYERS];
 	CHook::Write<char*>(g_libGTASA + 0x5D021C, PLAYERS_REALLOC);
 
 	// 3 touch begin
@@ -135,7 +135,13 @@ void ApplyPatches_level0()
 
     DisableAutoAim();
 
+	//UnFuck(g_libGTASA + 0x0056CA68);
+	//*(uint8_t*)(g_libGTASA + 0x0056CA68) = 1;
+
+	//NOP(g_libGTASA + 0x001A869C, 2);
+
 	// nop random pickups
+	CHook::NOP(g_libGTASA + 0x00402472, 2);
 	CHook::NOP(g_libGTASA + 0x003E1AF0, 2);
 
 	// osMutexStuff
@@ -175,6 +181,11 @@ void ApplyPatches_level0()
 
 	//CHook::NOP(g_libGTASA + 0x402472, 2);
 	CHook::RET(g_libGTASA + 0x401BAC); // CFileLoader::LoadPickup
+
+	//CHook::RET(g_libGTASA + 0x0036E88C); // CCamera::ClearPlayerWeaponMode не понятен эффект. крашит
+//	CHook::NOP(g_libGTASA + 0x0040881A, 2); // CCranes::InitCranes(void)
+
+	WriteUnVerified0();
 }
 
 struct _ATOMIC_MODEL
@@ -228,6 +239,11 @@ void ApplyPatches()
 	CHook::NOP(g_libGTASA + 0x0045A4C8, 11);
 	CHook::NOP(g_libGTASA + 0x0045A4E0, 3);
 
+//	CHook::NOP(g_libGTASA + 0x50FF68, 2); // crash FindPlayerPed
+
+	//UnFuck(g_libGTASA + 0x008B8018);
+	//*(uint8_t*)(g_libGTASA + 0x008B8018) = 1;
+
 	// CAudioEngine::StartLoadingTune звук загрузочного экрана
 	CHook::NOP(g_libGTASA + 0x56C150, 2);
 
@@ -247,7 +263,7 @@ void ApplyPatches()
 	CHook::NOP(g_libGTASA + 0x0039B394, 2); // CCamera::RenderMotionBlur(void)
 
 	CHook::RET(g_libGTASA + 0x3474E0);	// CAEGlobalWeaponAudioEntity::ServiceAmbientGunFire
-	CHook::RET(g_libGTASA + 0x284BB8); // CWidgetRegionSteeringSelection::Draw
+	CHook::RET(g_libGTASA + 0x284BB8); 	// CWidgetRegionSteeringSelection::Draw
 	CHook::RET(g_libGTASA + 0x3BF8B4);	// CPlaceName::Process
 	CHook::RET(g_libGTASA + 0x4BDB18);	// CTaskSimplePlayerOnFoot::PlayIdleAnimations
 	CHook::RET(g_libGTASA + 0x494FE4);	// CCarEnterExit::SetPedInCarDirect
@@ -281,7 +297,7 @@ void ApplyPatches()
 	//
 	CHook::RET(g_libGTASA + 0x4F90AC); // CTheCarGenerators::Process
 	CHook::RET(g_libGTASA + 0x45F1A4); // CPopulation::AddPed
-	CHook::RET(g_libGTASA + 0x2B5C24); // CCarCtrl::GenerateRandomCars
+	CHook::RET(g_libGTASA + 0x2E82CC); // CCarCtrl::GenerateRandomCars
 	CHook::RET(g_libGTASA + 0x504DB8); // CPlane::DoPlaneGenerationAndRemoval
 
 	CHook::RET(g_libGTASA + 0x2C1CB0); // CEntryExit::GenerateAmbientPeds
@@ -292,7 +308,7 @@ void ApplyPatches()
 	CHook::NOP(g_libGTASA + 0x3AC8B2, 2); 	// CMessages::AddBigMessage from CPlayerInfo::KillPlayer
 	CHook::NOP(g_libGTASA + 0x4F75B4, 4);  // CBoat::ProcessControl
 
-	CHook::NOP(g_libGTASA + 0x454A88, 2);  // CCamera::ClearPlayerWeaponMode from CPlayerPed::ClearWeaponTarget
+	//CHook::NOP(g_libGTASA + 0x454A88, 2);  // CCamera::ClearPlayerWeaponMode from CPlayerPed::ClearWeaponTarget
 	CHook::NOP(g_libGTASA + 0x2FEE76, 2);	// CGarages::RespraysAreFree = true in CRunningScript::ProcessCommands800To899
 	//CHook::NOP(g_libGTASA + 0x50FF64, 2);	// skip playerGifts from CVehicle::SetDriver
 	CHook::NOP(g_libGTASA + 0x39840A, 2);	// CStreaming::Shutdown from CGame::Shutdown
@@ -307,7 +323,9 @@ void ApplyPatches()
 	CHook::WriteMemory(g_libGTASA + 0x293218, "\x01\x20\x70\x47", 4); 					// CStreaming::RemoveLoadedVehicle
 	CHook::WriteMemory(g_libGTASA + 0x1BDD4A, "\x10\x46\xA2\xF1\x04\x0B", 6); 			// TextureDatabaseRuntime::LoadFullTexture
 	CHook::WriteMemory(g_libGTASA + 0x3E1A2C, "\x67\xE0", 2);							// Interior_c::Init
+	CHook::WriteMemory(g_libGTASA + 0x27D8D0, "\x4F\xF0\x00\x08", 4);					// CWidgetPlayerInfo::DrawWanted
 	CHook::WriteMemory(g_libGTASA + 0x3C5B58, "\x02\x21", 2); 							// CWorld::Process
+	CHook::NOP(g_libGTASA + 0x45F74C, 16); // CPopulation::AddPedInCar - skip some wtf stuff
 
 	CHook::NOP(g_libGTASA + 0x00454950, 17); // CAnimManager::RemoveAnimBlockRef
 
@@ -421,34 +439,64 @@ void ApplyInGamePatches()
 	// CTheZones::ZonesRevealed
 	*(uint32_t*)(g_libGTASA + 0x8EA7A8) = 100;
 
-	CHook::Write<float>(g_libGTASA + 0x3BAC68, 176.0f);	// MaxHealth
-	CHook::Write<float>(g_libGTASA + 0x27D884, 176.0f); 	// MaxArmour
+	// CarCtl::GenerateRandomCars nulled from CGame::Process
+	CHook::NOP(g_libGTASA + 0x398A3A, 2);
 
+	// CTheCarGenerators::Process nulled from CGame::Process
+	CHook::NOP(g_libGTASA + 0x398A34, 2);
+
+	// множитель для MaxHealth
+	CHook::UnFuck(g_libGTASA + 0x3BAC68);
+	*(float*)(g_libGTASA + 0x3BAC68) = 176.0f;
+	// множитель для Armour
+	CHook::UnFuck(g_libGTASA + 0x27D884);
+	*(float*)(g_libGTASA + 0x27D884) = 176.0;
+
+	// CEntryExit::GenerateAmbientPeds nulled from CEntryExit::TransitionFinished
+	CHook::NOP(g_libGTASA + 0x2C2C22, 4);
+
+	CHook::NOP(g_libGTASA + 0x003D6FDC, 2);
 	CHook::NOP(g_libGTASA + 0x0026B214, 2);
 
 	// CPlayerPed::CPlayerPed task fix
 	CHook::WriteMemory(g_libGTASA + 0x458ED1, (uintptr_t)"\xE0", 1);
 
+	// ReapplyPlayerAnimation (хз зачем)
+	CHook::NOP(g_libGTASA + 0x45477E, 5);
+
 	// radar draw blips
 	CHook::NOP(g_libGTASA + 0x3DCA90, 2);
 	CHook::NOP(g_libGTASA + 0x3DD4A4, 2);
-
 	// CCamera::CamShake from CExplosion::AddExplosion
 	CHook::NOP(g_libGTASA + 0x55EFB8, 2);
 	CHook::NOP(g_libGTASA + 0x55F8F8, 2);
 
-	CHook::Write<uint8_t>(g_libGTASA + 0x2F7B68, 0xBE); 	// camera_on_actor path
+	// camera_on_actor path
+	CHook::UnFuck(g_libGTASA + 0x2F7B68);
+	*(uint8_t*)(g_libGTASA + 0x2F7B6B) = 0xBE;
 
 	// CPed::RemoveWeaponWhenEnteringVehicle (GetPlayerInfoForThisPlayerPed)
+	//UnFuck(g_libGTASA + 0x434D94);
 	CHook::NOP(g_libGTASA + 0x434D94, 6);
 
-	CHook::Write<uint8_t>(g_libGTASA + 0x4EE200, 0x9B); 	// CBike::ProcessAI
+	// CBike::ProcessAI
+	CHook::UnFuck(g_libGTASA + 0x4EE200);
+	*(uint8_t*)(g_libGTASA + 0x4EE200) = 0x9B;
+
+	// CWidgetPlayerInfo::DrawWanted
+	//WriteMemory(g_libGTASA + 0x27D8D0, (uintptr_t)"\x4F\xF0\x00\x08", 4);
 
 	// no vehicle audio processing
 	CHook::NOP(g_libGTASA + 0x4E31A6, 2);
 	CHook::NOP(g_libGTASA + 0x4EE7D2, 2);
 	CHook::NOP(g_libGTASA + 0x4F741E, 2);
 	CHook::NOP(g_libGTASA + 0x50AB4A, 2);
+//
+	CHook::NOP(g_libGTASA + 0x00398768, 2); // nop police helis
+	CHook::NOP(g_libGTASA + 0x003987DC, 2);
+
+	CHook::NOP(g_libGTASA + 0x003688EC, 2); // nop ServiceAmbientGunFire
+
 
 	// Disable in-game radio
 	CHook::NOP(g_libGTASA + 0x3688DA, 2);
@@ -462,13 +510,16 @@ void ApplyInGamePatches()
 	// Stop it trying to load tracks4.dat
 	CHook::NOP(g_libGTASA + 0x508F54, 2);
 
+    // Prevent cheats processing
+	CHook::NOP(g_libGTASA + 0x3987BA, 2);
+
 	// мини-карта в меню
 	CHook::NOP(g_libGTASA + 0x0026B504, 2); // убирает текст легенды карты
-	CHook::RET(g_libGTASA + 0x003DA500); // убирает значки легенды
-	//CHook::NOP(g_libGTASA + 0x0026B49C, 2); // fix crash GetNextSpace
+	CHook::NOP(g_libGTASA + 0x0026B514, 2); // убирает значки легенды
+	CHook::NOP(g_libGTASA + 0x0026B49C, 2); // fix crash GetNextSpace
 
 	// дефолт кнопка сесть в авто
-	CHook::RET(g_libGTASA + 0x00276510); //CWidgetButtonEnterCar::Draw
+	CHook::NOP(g_libGTASA + 0x00276512, 32); //CWidgetButtonEnterCar::Draw
 
 	//todo CPlayerPed::ProcessAnimGroups in the end
 }
