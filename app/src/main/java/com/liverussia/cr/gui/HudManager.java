@@ -625,7 +625,7 @@ public class HudManager {
             }
         });
     }
-    public void UpdateMoney(int money)
+    public void updateMoney(int money)
     {
         int old_money = current_real_money;
         current_real_money = money;
