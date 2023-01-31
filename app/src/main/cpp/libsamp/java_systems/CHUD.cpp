@@ -210,7 +210,7 @@ void CHUD::UpdateMoney()
         return;
     }
     jclass clazz = env->GetObjectClass(thiz);
-    jmethodID method = env->GetMethodID(clazz, "UpdateMoney", "(I)V");
+    jmethodID method = env->GetMethodID(clazz, "updateMoney", "(I)V");
 
     env->CallVoidMethod(thiz, method, iLocalMoney);
 }
