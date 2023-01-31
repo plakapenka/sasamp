@@ -530,6 +530,10 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			packetKillList(p);
 			break;
 		}
+		case RPC_DAILY_REWARDS: {
+			packetDailyRewards(p);
+			break;
+		}
 		case RPC_DUELS_SHOW_KILL_LEFT: {
 			packetDuelsKillsLeft(p);
 			break;

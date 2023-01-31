@@ -100,6 +100,7 @@
 #define RPC_MED_GAME 		64
 #define RPC_UPDATE_BACCARAT				65
 #define RPC_SET_MONEY				66
+#define RPC_DAILY_REWARDS	67
 
 
 // Packet 252
@@ -249,6 +250,8 @@ public:
     static void packetKillList(Packet *p);
 
 	static void packetDuelsKillsLeft(Packet *p);
+
+	static void packetDailyRewards(Packet *p);
 };
 
 extern CNetGame *pNetGame;

@@ -126,7 +126,6 @@ void WriteVerified1();
 void WriteVerified0();
 
 void WriteUnVerified1();
-void WriteUnVerified0();
 
 void CheckForProtected0();
 

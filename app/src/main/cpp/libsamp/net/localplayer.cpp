@@ -183,6 +183,7 @@ extern bool g_uiHeadMoveEnabled;
 #include "java_systems/CAdminRecon.h"
 #include "java_systems/CMedic.h"
 #include "java_systems/CTab.h"
+#include "java_systems/CDailyReward.h"
 
 bool CLocalPlayer::Process()
 {
@@ -450,7 +451,7 @@ bool CLocalPlayer::Process()
 	if(pGame->isDialogActive || pGame->isCasinoDiceActive || CTab::bIsShow || pGame->isAutoShopActive
 	   || pGame->isCasinoWheelActive || !m_pPlayerPed || pGame->isRegistrationActive || pGame->isShopStoreActive ||
 	   CMedic::bIsShow || CInventory::bIsToggle || bFirstSpawn || CEditobject::bIsToggle || CChip::bIsShow
-	   || CAucContainer::bIsShow || CAdminRecon::bIsToggle || CHUD::bIsCamEditGui )
+	   || CAucContainer::bIsShow || CAdminRecon::bIsToggle || CHUD::bIsCamEditGui || CDailyReward::isShow)
 	{
 		needDrawableHud = false;
 	}
@@ -670,8 +671,7 @@ bool CLocalPlayer::Spawn()
 
 	//pGame->DisplayHUD(true);
 
-	CCamera *pGameCamera;
-	pGameCamera = pGame->GetCamera();
+	CCamera *pGameCamera = pGame->GetCamera();
 	pGameCamera->Restore();
 	pGameCamera->SetBehindPlayer();
 	pGame->DisplayWidgets(true);
@@ -685,7 +685,7 @@ bool CLocalPlayer::Spawn()
 
 	bFirstSpawn = false;
 
-	pGame->RefreshStreamingAt(m_SpawnInfo.vecPos.X,m_SpawnInfo.vecPos.Y);
+	//pGame->RefreshStreamingAt(m_SpawnInfo.vecPos.X,m_SpawnInfo.vecPos.Y);
 
 	m_pPlayerPed->RestartIfWastedAt(&m_SpawnInfo.vecPos, m_SpawnInfo.fRotation);
 	m_pPlayerPed->SetModelIndex(m_SpawnInfo.iSkin);
@@ -695,7 +695,7 @@ bool CLocalPlayer::Spawn()
 	pGame->DisableTrainTraffic();
 
 	// CCamera::Fade
-	CHook::WriteMemory(g_libGTASA + 0x36EA2C, "\x70\x47", 2); // bx lr
+	//CHook::WriteMemory(g_libGTASA + 0x36EA2C, "\x70\x47", 2); // bx lr
 
 	m_pPlayerPed->TeleportTo(m_SpawnInfo.vecPos.X,
 		m_SpawnInfo.vecPos.Y, (m_SpawnInfo.vecPos.Z + 0.5f));
@@ -706,10 +706,9 @@ bool CLocalPlayer::Spawn()
 	m_bIsActive = true;
 	m_bWaitingForSpawnRequestReply = false;
 
-
 	RakNet::BitStream bsSendSpawn;
-	pNetGame->GetRakClient()->RPC(&RPC_Spawn, &bsSendSpawn, HIGH_PRIORITY, 
-		RELIABLE_SEQUENCED, 0, false, UNASSIGNED_NETWORK_ID, NULL);
+	pNetGame->GetRakClient()->RPC(&RPC_Spawn, &bsSendSpawn, SYSTEM_PRIORITY,
+		RELIABLE_SEQUENCED, 0, false, UNASSIGNED_NETWORK_ID, nullptr);
 
 	return true;
 }

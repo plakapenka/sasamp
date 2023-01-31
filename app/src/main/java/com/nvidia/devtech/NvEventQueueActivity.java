@@ -67,6 +67,7 @@ import com.liverussia.cr.gui.Casino;
 import com.liverussia.cr.gui.CasinoBaccarat;
 import com.liverussia.cr.gui.CasinoDice;
 import com.liverussia.cr.gui.Casino_LuckyWheel;
+import com.liverussia.cr.gui.DailyReward;
 import com.liverussia.cr.gui.Furniture_factory;
 import com.liverussia.cr.gui.HudManager;
 import com.liverussia.cr.gui.Inventory;
@@ -1012,6 +1013,7 @@ public abstract class NvEventQueueActivity
         mCasinoDice = new CasinoDice(this);
         new CasinoBaccarat(this);
         new AucContainer(this);
+        new DailyReward(this);
         mTab = new Tab(this);
         mCasino = new Casino(this);
 
