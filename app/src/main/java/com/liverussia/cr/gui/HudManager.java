@@ -26,10 +26,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.liverussia.cr.gui.util.Utils;
-import com.liverussia.launcher.async.dto.response.Servers;
-import com.liverussia.launcher.domain.enums.NativeStorageElements;
-import com.liverussia.launcher.storage.NativeStorage;
-import com.liverussia.launcher.utils.MainUtils;
+import com.liverussia.launcher.domain.enums.StorageElements;
+import com.liverussia.launcher.storage.Storage;
 import com.nvidia.devtech.NvEventQueueActivity;
 import com.liverussia.cr.R;
 import com.skydoves.progressview.ProgressView;
@@ -174,9 +172,7 @@ public class HudManager {
         salary_job_progress = activity.findViewById(R.id.salary_job_progress);
         salary_job_exp_text = activity.findViewById(R.id.salary_job_exp_text);
 
-        // TODO hueta
-        String selectedServer = NativeStorage.getClientProperty(NativeStorageElements.SERVER, activity);
-        InitServerLogo(Integer.parseInt(selectedServer));
+        initServerLogo();
 
         armour_text = activity.findViewById(R.id.armour_text);
         hp_text = activity.findViewById(R.id.hp_text);
@@ -767,23 +763,25 @@ public class HudManager {
         Utils.HideLayout(hud_gpsactive, true);
     }
 
-    public void InitServerLogo(int serverid) {
+    public void initServerLogo() {
         activity.runOnUiThread(() -> {
-            List<Servers> list = MainUtils.SERVERS;
-            Servers servers = list.get(serverid);
+
+            String serverColor = Storage.getProperty(StorageElements.SERVER_COLOR.getValue(), activity);
+            String serverName = Storage.getProperty(StorageElements.SERVER_NAME.getValue(), activity);
+            String serverMulti = Storage.getProperty(StorageElements.SERVER_MULTI.getValue(), activity);
 
             ImageView img = activity.findViewById(R.id.hud_logo_img);
             TextView text = activity.findViewById(R.id.hud_logo_text);
 
-            int mainColor = Color.parseColor(servers.getColor());
+            int mainColor = Color.parseColor(serverColor);
             img.setColorFilter(mainColor, PorterDuff.Mode.SRC_ATOP);
             text.setTextColor(mainColor);
-            text.setText(servers.getname()+" ");
+            text.setText(serverName.concat(" "));
 
-            if (StringUtils.isNotBlank(servers.getMult())) {
+            if (StringUtils.isNotBlank(serverMulti)) {
                 TextView multiText = activity.findViewById(R.id.hud_logo_multi_text);
                 multiText.setVisibility(View.VISIBLE);
-                multiText.setText(servers.getMult()+" ");
+                multiText.setText(serverMulti.concat(" "));
             }
         });
     }
