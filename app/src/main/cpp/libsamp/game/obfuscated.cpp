@@ -36,13 +36,6 @@ void ObfuscatedForceExit2()
 	//WriteMemory(g_libGTASA + 0x004B2F02, "\x4f\xf0\x00\x01", 4); // trap
 }
 
-void WriteUnVerified1()
-{
-	/*pVerified1 = (int*)((char* (*)(int))(g_libGTASA + 0x179B40))(4);
-	uintptr_t v = UNVERIFIED_FLAG1;
-	WriteMemory1((uintptr_t)pVerified1, (uintptr_t)& v, 4);*/
-}
-
 void WriteVerified0()
 {
 	/*if (!pVerified0)

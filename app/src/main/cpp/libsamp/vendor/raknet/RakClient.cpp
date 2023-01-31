@@ -125,8 +125,6 @@ extern CNetGame* pNetGame;
 void WriteVerified1();
 void WriteVerified0();
 
-void WriteUnVerified1();
-
 void CheckForProtected0();
 
 Packet* RakClient::Receive( void )

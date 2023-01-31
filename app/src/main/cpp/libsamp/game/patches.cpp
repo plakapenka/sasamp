@@ -9,7 +9,6 @@ char* PLAYERS_REALLOC = nullptr;
 #include "util/patch.h"
 #include "chatwindow.h"
 
-void WriteUnVerified0();
 void InitInGame();
 
 VehicleAudioPropertiesStruct VehicleAudioProperties[20000];
@@ -184,8 +183,6 @@ void ApplyPatches_level0()
 
 	//CHook::RET(g_libGTASA + 0x0036E88C); // CCamera::ClearPlayerWeaponMode не понятен эффект. крашит
 //	CHook::NOP(g_libGTASA + 0x0040881A, 2); // CCranes::InitCranes(void)
-
-	WriteUnVerified0();
 }
 
 struct _ATOMIC_MODEL
