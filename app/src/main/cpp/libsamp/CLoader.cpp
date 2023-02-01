@@ -17,25 +17,6 @@ void CLoader::loadBassLib()
     BASS_Set3DFactors(0.2, 0.1, 0);
 }
 
-void CLoader::redirectDirection(const char* path)
-{
-    strcpy(g_pszStorage, path);
-
-    CHook::UnFuck(g_libGTASA + 0x63C4B8);
-    *(char**)(g_libGTASA + 0x63C4B8) = (char*)g_pszStorage;
-
-    CHook::UnFuck(g_libGTASA + 0x5D1608);
-    *(char**)(g_libGTASA + 0x5D1608) = (char*)g_pszStorage;
-
-    Log("Storage: %s", g_pszStorage);
-
-    if( !strlen(g_pszStorage) )
-    {
-        Log("Error: storage path not found! %s", path);
-        std::terminate();
-    }
-}
-
 void CLoader::initCrashLytics()
 {
     firebase::crashlytics::SetCustomKey("build data", __DATE__);
@@ -58,3 +39,19 @@ void CLoader::initCrashLytics()
     sprintf(str, "0x%x", libc);
     firebase::crashlytics::SetCustomKey("libc.so", str);
 }
+
+void CLoader::loadSetting()
+{
+    pthread_t thread;
+    pthread_create(&thread, nullptr, CLoader::loadSettingThread, nullptr);
+}
+
+void *CLoader::loadSettingThread(void *p)
+{
+    Log("loadSettingThread");
+
+    CSettings::LoadSettings(nullptr);
+
+    pthread_exit(nullptr);
+}
+

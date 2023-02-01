@@ -11,9 +11,11 @@ static class CLoader {
 public:
     static void loadBassLib();
 
-    static void redirectDirection(const char *path);
-
     static void initCrashLytics();
+
+    static void *loadSettingThread(void *p);
+
+    static void loadSetting();
 };
 
 
