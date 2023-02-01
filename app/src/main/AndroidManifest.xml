@@ -57,11 +57,16 @@
         </provider>
 
         <activity
-            android:name="com.liverussia.cr.core.GTASA"
-            android:excludeFromRecents="true"
+            android:name="com.liverussia.cr.core.Samp"
+            android:exported="true"
+            android:launchMode="singleTask"
             android:screenOrientation="landscape"
-            android:windowSoftInputMode="adjustPan"
+            android:fitsSystemWindows="true"
+            android:windowSoftInputMode="adjustResize"
+            android:hardwareAccelerated="true"
+            android:largeHeap="true"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"/>
+
         <activity
             android:name="com.liverussia.launcher.ui.activity.SplashActivity"
             android:exported="true"

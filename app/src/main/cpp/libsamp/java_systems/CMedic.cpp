@@ -26,6 +26,7 @@ void CMedic::showPreDeath(char* nick, int id)
     jmethodID method = env->GetMethodID(clazz, "showPreDeath", "(Ljava/lang/String;I)V");
 
     env->CallVoidMethod(CMedic::thiz, method, jNick, id);
+    env->DeleteLocalRef(jNick);
 
     CMedic::bIsShow = true;
 }
@@ -41,6 +42,7 @@ void CMedic::showMedGame(char* nick)
     jmethodID method = env->GetMethodID(clazz, "showMiniGame", "(Ljava/lang/String;)V");
 
     env->CallVoidMethod(CMedic::thiz, method, jNick);
+    env->DeleteLocalRef(jNick);
 
     CMedic::bIsShow = true;
 }

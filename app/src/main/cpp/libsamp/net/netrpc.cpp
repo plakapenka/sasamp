@@ -554,47 +554,6 @@ void ExitVehicle(RPCParameters *rpcParams)
 	}	
 }
 
-void DialogBox(RPCParameters *rpcParams)
-{
-	unsigned char * Data = reinterpret_cast<unsigned char *>(rpcParams->input);
-	int iBitLength = rpcParams->numberOfBitsOfData;
-
-	uint16_t wDialogID = -1;
-	uint8_t byteDialogStyle = 0;
-	uint8_t len;
-	char szBuff[4096+1];
-	char title[64 * 3 + 1], info[4096+1], button1[20+1], button2[20+1];
-
-	RakNet::BitStream bsData((unsigned char *)Data,(iBitLength/8)+1,false);
-
-	bsData.Read(wDialogID);
-		bsData.Read(byteDialogStyle);
-		// title
-		bsData.Read(len);
-		bsData.Read(szBuff, len);
-		szBuff[len] = '\0';
-		cp1251_to_utf8(title, szBuff);
-		// button1
-		bsData.Read(len);
-		bsData.Read(szBuff, len);
-		szBuff[len] = '\0';
-		cp1251_to_utf8(button1, szBuff);
-		// button2
-		bsData.Read(len);
-		bsData.Read(szBuff, len);
-		szBuff[len] = '\0';
-		cp1251_to_utf8(button2, szBuff);
-
-		// info
-		stringCompressor->DecodeString(szBuff, 4096, &bsData);
-		cp1251_to_utf8(info, szBuff);
-
-		if(wDialogID < 0) return;
-		if(strlen(info) < 3) return;
-
-		g_pJavaWrapper->MakeDialog(wDialogID, byteDialogStyle, title, info, button1, button2);
-}
-
 void GameModeRestart(RPCParameters *rpcParams)
 {
 	// CChatWindow::AddInfoMessage("The server is restarting..");
@@ -1057,6 +1016,7 @@ void RemoveBuilding(RPCParameters* rpcParams)
 #include "..//gui/gui.h"
 #include "../playertags.h"
 #include "java_systems/CTab.h"
+#include "java_systems/CDialog.h"
 
 extern CPlayerTags* pPlayerTags;
 
@@ -1372,7 +1332,7 @@ void RegisterRPCs(RakClientInterface* pRakClient)
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_WorldVehicleRemove, WorldVehicleRemove);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_EnterVehicle, EnterVehicle);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ExitVehicle, ExitVehicle);
-	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrDialogBox, DialogBox);
+	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrDialogBox, CDialog::rpcShowPlayerDialog);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_GameModeRestart, GameModeRestart);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ConnectionRejected, ConnectionRejected);
 

@@ -15,11 +15,6 @@ Java_com_liverussia_cr_gui_CasinoDice_CasinoInit(JNIEnv *env, jobject thiz) {
     g_pJavaWrapper->jCasinoDice = env->NewGlobalRef(thiz);
 }
 }
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_dialogs_Dialog_DialogInit(JNIEnv *env, jobject thiz) {
-    g_pJavaWrapper->jDialog = env->NewGlobalRef(thiz);
-}
 
 
 extern "C"

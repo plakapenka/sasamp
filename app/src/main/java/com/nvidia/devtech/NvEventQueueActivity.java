@@ -176,7 +176,6 @@ public abstract class NvEventQueueActivity
     //private HeightProvider mHeightProvider = null;
     private DialogClientSettings mDialogClientSettings = null;
 
-    private Dialog mDialog = null;
     private HudManager mHudManager = null;
     private SamwillManager mSamwillManager = null;
     private Speedometer mSpeedometer = null;
@@ -508,7 +507,6 @@ public abstract class NvEventQueueActivity
      */
 		public native void cleanup();
 		public native boolean init(boolean z);
-		public native void initSAMP(String game_path);
 		public native void setWindowSize(int w, int h);
 		public native void quitAndWait();
 		public native void postCleanup();
@@ -557,11 +555,6 @@ public abstract class NvEventQueueActivity
 		{
 		    System.out.println("Calling init(false)");
             init(false);
-
-            System.out.println("Calling initSAMP");
-
-            initSAMP(getExternalFilesDir(null).toString()+"/");
-            System.out.println("Called");
         }
         handler = new Handler();
 //        if(wantsAccelerometer && (mSensorManager == null)) {
@@ -714,6 +707,7 @@ public abstract class NvEventQueueActivity
 //        }
         finishAndRemoveTask();
         super.onDestroy();
+        systemCleanup();
         //systemCleanup();
     }
 
@@ -950,7 +944,7 @@ public abstract class NvEventQueueActivity
         mGunShopManager = new GunShopManager(this);
         mChooseSpawn = new ChooseSpawn(this);
         new PreDeath(this);
-        mDialog = new Dialog(this);
+        new Dialog(this);
         new Inventory(this);
         new MineGame1(this);
         new MineGame2(this);
@@ -1415,25 +1409,6 @@ public abstract class NvEventQueueActivity
         //postCleanup();
     }
 
-//    public void hideDialogWithoutReset() { runOnUiThread(() -> { this.mDialog.hideWithoutReset(); }); }
-//
-//    public void showDialogWithOldContent() { runOnUiThread(() -> { this.mDialog.showWithOldContent(); }); }
-
-
-    public void hideDialogWithoutReset() {
-        runOnUiThread(() -> {
-            mDialog = new Dialog(this);
-            this.mDialog.hideWithoutReset();
-        });
-    }
-
-    public void showDialogWithOldContent() {
-        runOnUiThread(() -> {
-            mDialog = new Dialog(this);
-            this.mDialog.showWithOldContent();
-        });
-    }
-
     public byte[] getClipboardText()
     {
         String retn = " ";
@@ -1466,9 +1441,6 @@ public abstract class NvEventQueueActivity
     public static NvEventQueueActivity getInstance() {
         return instance;
     }
-
-    public native void sendDialogResponse(int i, int i2, int i3, byte[] str);
-
 
     public void updateLevelInfo(int level, int currentexp, int maxexp) { runOnUiThread(() -> { mHudManager.UpdateLevelInfo(level, currentexp, maxexp); }); }
 

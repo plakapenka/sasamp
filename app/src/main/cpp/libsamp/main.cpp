@@ -598,13 +598,7 @@ uint32_t GetTickCount()
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_nvidia_devtech_NvEventQueueActivity_iniGameDir(JNIEnv *env, jobject thiz, jstring path) {
-	Log("// TODO: implement iniGameDir()");
-}
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_nvidia_devtech_NvEventQueueActivity_initSAMP(JNIEnv *env, jobject thiz,
-													  jstring game_path) {
+Java_com_liverussia_cr_core_Samp_initSAMP(JNIEnv *env, jobject thiz, jstring game_path) {
 	const char *path = env->GetStringUTFChars(game_path, nullptr);
 
 	strcpy(g_pszStorage, path);
@@ -620,6 +614,4 @@ Java_com_nvidia_devtech_NvEventQueueActivity_initSAMP(JNIEnv *env, jobject thiz,
 	}
 
 	InitSAMP(env, thiz);
-
-
 }

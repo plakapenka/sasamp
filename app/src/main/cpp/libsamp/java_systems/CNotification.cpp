@@ -39,6 +39,7 @@ void CNotification::show(int type, char* text, int duration, int actionId) {
     jmethodID method = env->GetMethodID(clazz, "ShowNotification", "(ILjava/lang/String;II)V");
 
     env->CallVoidMethod(CNotification::thiz, method, type, jtext, duration, actionId);
+    env->DeleteLocalRef(jtext);
 }
 
 void CNetGame::packetNotification(Packet* p)

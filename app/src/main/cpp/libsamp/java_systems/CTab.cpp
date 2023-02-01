@@ -93,7 +93,7 @@ void CTab::setStat(int id, char name[], int score, int ping) {
     jstring jPlayerName = env->NewStringUTF( name );
 
     env->CallVoidMethod(CTab::thiz, setStat, id, jPlayerName, score, ping);
-
+    env->DeleteLocalRef(jPlayerName);
 }
 
 extern "C"

@@ -39,6 +39,8 @@ void CDuelsGui::addMessage(PLAYERID killer, PLAYERID killee, int reason, int tea
     jmethodID method = env->GetMethodID(clazz, "addItem", "(Ljava/lang/String;Ljava/lang/String;II)V");
 
     env->CallVoidMethod(CDuelsGui::thiz, method, jKillername, jKilleename, reason, team);
+    env->DeleteLocalRef(jKilleename);
+    env->DeleteLocalRef(jKillername);
 }
 
 void CDuelsGui::showKillsLeft(bool show, int kills, int needKills)

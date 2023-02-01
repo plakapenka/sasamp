@@ -36,6 +36,8 @@ void CInventory::updateItem(int matrixindex, int pos, const char sprite[], const
 
 
     env->CallVoidMethod(CInventory::thiz, method, matrixindex, pos, jsprite, jcaption, active);
+    env->DeleteLocalRef(jsprite);
+    env->DeleteLocalRef(jcaption);
 }
 
 void CInventory::updateCarryng(int matrixindex, int brutto, int maxbrutto) {

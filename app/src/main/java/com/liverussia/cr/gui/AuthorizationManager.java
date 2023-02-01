@@ -40,8 +40,8 @@ public class AuthorizationManager {
     private MaterialButton autologin_help_close;
     private ImageView autologin_open_help;
 
-    public native void ToggleAutoLogin(boolean toggle);
-    public native void ClickRecoveryPass();
+    native void ToggleAutoLogin(boolean toggle);
+    native void ClickRecoveryPass();
 
     public AuthorizationManager(Activity activity){
         autologin_open_help = activity.findViewById(R.id.autologin_open_help);

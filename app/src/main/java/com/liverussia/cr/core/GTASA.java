@@ -3,6 +3,7 @@ package com.liverussia.cr.core;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 
 import com.liverussia.launcher.utils.MainUtils;
@@ -82,6 +83,7 @@ public class GTASA extends WarMedia {
         wantsMultitouch = true;
       //  wantsAccelerometer = true;
         MainUtils.currentContext = this;
+
         super.onCreate(bundle);
     }
 

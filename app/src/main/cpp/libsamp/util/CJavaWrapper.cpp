@@ -95,64 +95,12 @@ void CJavaWrapper::ShowClientSettings()
 	EXCEPTION_CHECK(env);
 }
 
-void CJavaWrapper::MakeDialog(int dialogId, int dialogTypeId, char caption[], char info[], char button1[], char button2[])
-{
-	pGame->isDialogActive = true;
-
-    JNIEnv* env = GetEnv();
-    if (!env)
-    {
-	Log("No env");
-	return;
-    }
-
-	jstring j_caption = env->NewStringUTF( caption);
-	jstring j_info = env->NewStringUTF( info );
-	jstring j_button1 = env->NewStringUTF( button1 );
-	jstring j_button2 = env->NewStringUTF( button2 );
-
-
-	jclass clazz = env->GetObjectClass(jDialog);
-
-	jmethodID Show = env->GetMethodID(clazz, "show", "(IILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
-
-    env->CallVoidMethod(jDialog, Show, dialogId, dialogTypeId, j_caption, j_info, j_button1, j_button2);
-
-	// не уверен что нужно, но внятного ответа в интернетах нет
-	env->DeleteLocalRef(j_caption);
-	env->DeleteLocalRef(j_info);
-	env->DeleteLocalRef(j_button1);
-	env->DeleteLocalRef(j_button2);
-
-   // EXCEPTION_CHECK(env);
-}
-
 #include "..//CDebugInfo.h"
 #include "chatwindow.h"
 #include "java_systems/CMedic.h"
 
 extern "C"
 {
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_sendDialogResponse(JNIEnv* pEnv, jobject thiz, jint i3, jint i, jint i2, jbyteArray str)
-	{
-		jbyte* pMsg = pEnv->GetByteArrayElements(str, nullptr);
-		jsize length = pEnv->GetArrayLength(str);
-
-		std::string szStr((char*)pMsg, length);
-		//const char *inputText = pEnv->GetStringUTFChars(str, nullptr);
-
-		if(pNetGame) {
-			pNetGame->SendDialogResponse(i, i3, i2, const_cast<char *>(szStr.c_str()));
-
-		}
-		pEnv->ReleaseByteArrayElements(str, pMsg, JNI_ABORT);
-
-		pGame->isDialogActive = false;
-
-		//	Log("sendDialogResponse: inputtext1 - %s, inputText - %s", inputtext1, inputText);
-
-		//pEnv->ReleaseStringUTFChars(str, inputText);
-	}
 
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_sendRPC(JNIEnv* pEnv, jobject thiz, jint type, jbyteArray str, jint action)
 	{
@@ -494,6 +442,7 @@ void CJavaWrapper::ShowUpdateTargetNotify(int type, char *text)
     env->SetByteArrayRegion(bytes, 0, strlen(text), (jbyte*)text);
     jstring jtext = (jstring) env->NewObject(strClass, ctorID, bytes, encoding);
     env->CallVoidMethod(this->activity, this->s_showUpdateTargetNotify, type, jtext);
+	env->DeleteLocalRef(encoding);
 }
 
 void CJavaWrapper::HideTargetNotify()
@@ -760,15 +709,11 @@ void CJavaWrapper::ShowRegistration(char *nick, int id)
 		return;
 	}
 
-	jclass strClass = env->FindClass("java/lang/String");
-    jmethodID ctorID = env->GetMethodID(strClass, "<init>", "([BLjava/lang/String;)V");
-    jstring encoding = env->NewStringUTF("UTF-8");
+    jstring jNick = env->NewStringUTF(nick);
 
-	jbyteArray bytes = env->NewByteArray(strlen(nick));
-    env->SetByteArrayRegion(bytes, 0, strlen(nick), (jbyte*)nick);
-    jstring jnick = (jstring) env->NewObject(strClass, ctorID, bytes, encoding);
+	env->CallVoidMethod(this->activity, this->s_showRegistration, jNick, id);
+	env->DeleteLocalRef(jNick);
 
-	env->CallVoidMethod(this->activity, this->s_showRegistration, jnick, id);
 	g_pJavaWrapper->RegisterSkinValue = 1;
 }
 
@@ -797,6 +742,7 @@ void CJavaWrapper::ShowAuthorization(char *nick, int id, bool ip_match, bool tog
 	jstring jnick = env->NewStringUTF( nick );
 
 	env->CallVoidMethod(this->activity, this->s_showAuthorization, jnick, id, ip_match, toggleAutoLogin, email_acvive);
+	env->DeleteLocalRef(jnick);
 }
 
 void CJavaWrapper::HideAuthorization() 
@@ -1001,6 +947,12 @@ void CJavaWrapper::ShowCasinoDice(bool show, int tableID, int tableBet, int tabl
 	jstring jPlayer5Name = env->NewStringUTF( player5name );
 
 	env->CallVoidMethod(jCasinoDice, Toggle, show, tableID, tableBet, tableBank, money, jPlayer1Name, player1stat, jPlayer2Name, player2stat, jPlayer3Name, player3stat, jPlayer4Name, player4stat, jPlayer5Name, player5stat);
+
+	env->DeleteLocalRef(jPlayer1Name);
+	env->DeleteLocalRef(jPlayer2Name);
+	env->DeleteLocalRef(jPlayer3Name);
+	env->DeleteLocalRef(jPlayer4Name);
+	env->DeleteLocalRef(jPlayer5Name);
 }
 
 void CJavaWrapper::ShowCasinoLuckyWheel(int count, int time) {
@@ -1023,6 +975,7 @@ void CJavaWrapper::SendBuffer(const char string[]) {
 	jmethodID CopyTextToBuffer = env->GetMethodID(nvEventClass, "CopyTextToBuffer", "(Ljava/lang/String;)V");
 
 	env->CallVoidMethod(activity, CopyTextToBuffer, jstring);
+	env->DeleteLocalRef(jstring);
 }
 
 CJavaWrapper* g_pJavaWrapper = nullptr;

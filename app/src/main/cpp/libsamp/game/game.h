@@ -147,7 +147,6 @@ public:
 	uint32_t		m_dwCheckpointMarker;
 	VECTOR			m_vecCheckpointPos;
 	VECTOR			m_vecCheckpointExtent;
-	bool isDialogActive = false;
 	bool isCasinoDiceActive = false;
 	bool isAutoShopActive = false;
 	bool isCasinoWheelActive = false;

@@ -150,6 +150,8 @@ void CGUI::PostProcessInput()
 	}
 }
 #include "..//CDebugInfo.h"
+#include "java_systems/CDialog.h"
+
 extern CGame* pGame;
 
 void CGUI::SetHealth(float fhpcar){
@@ -240,7 +242,7 @@ void CGUI::Render()
 		pNetGame->GetLabelPool()->Draw();
 	}
 
-	if(pGame->FindPlayerPed()->IsInVehicle() && !pGame->FindPlayerPed()->IsAPassenger() && !pKeyBoard->IsOpen() && !pGame->isDialogActive)
+	if(pGame->FindPlayerPed()->IsInVehicle() && !pGame->FindPlayerPed()->IsAPassenger() && !pKeyBoard->IsOpen() && !CDialog::bIsShow)
 	{
 		if(!showSpeedometr)
 		{

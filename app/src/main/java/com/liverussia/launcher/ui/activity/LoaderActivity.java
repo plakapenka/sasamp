@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.liverussia.cr.core.Samp;
 import com.liverussia.launcher.domain.messages.InfoMessage;
 import com.liverussia.launcher.utils.MainUtils;
 import com.liverussia.cr.core.GTASA;
@@ -225,7 +226,7 @@ public class LoaderActivity extends AppCompatActivity {
             return;
         }
 
-        startActivity(new Intent(this, GTASA.class));
+        startActivity(new Intent(this, Samp.class));
 
         this.finish();
     }

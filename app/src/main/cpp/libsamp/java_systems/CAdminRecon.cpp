@@ -56,6 +56,7 @@ void CAdminRecon::show(int targetId){
     jmethodID Show = env->GetMethodID(clazz, "show", "(Ljava/lang/String;I)V");
 
     env->CallVoidMethod(j_mAdminRecon, Show, jName, targetId);
+    env->DeleteLocalRef(jName);
 
     CAdminRecon::bIsToggle = true;
     CAdminRecon::iPlayerID = targetId;

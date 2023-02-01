@@ -146,7 +146,6 @@ public:
 
 	void SendChatMessage(const char* szMsg);
 	void SendChatCommand(const char* szMsg);
-	void SendDialogResponse(uint16_t wDialogID, uint8_t byteButtonID, uint16_t wListboxItem, char* szInput);
 	void SendCustomPacket(uint8_t packet, uint8_t RPC, uint8_t Quantity);
 	void SendCustomCasinoChipPacket(uint8_t packet, uint8_t RPC, uint8_t type, uint8_t button, uint32_t money);
 	void SendCustomPacketFuelData(uint8_t packet, uint8_t RPC, uint8_t fueltype, uint32_t fuel);
@@ -160,8 +159,9 @@ public:
 	void DisableMapIcon(uint8_t byteIndex);
 
 	void UpdatePlayerScoresAndPings();
-private:
+
 	RakClientInterface* m_pRakClient;
+private:
 	CPlayerPool*		m_pPlayerPool;
 	CVehiclePool*		m_pVehiclePool;
 	CObjectPool*		m_pObjectPool;

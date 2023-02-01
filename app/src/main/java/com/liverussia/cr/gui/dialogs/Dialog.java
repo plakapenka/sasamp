@@ -22,15 +22,16 @@ import java.util.ArrayList;
 
 
 public class Dialog {
-    private static final int DIALOG_LEFT_BTN_ID = 1;
-    private static final int DIALOG_RIGHT_BTN_ID = 0;
-    private static final int DIALOG_STYLE_INPUT = 1;
-    private static final int DIALOG_STYLE_LIST = 2;
-    private static final int DIALOG_STYLE_MSGBOX = 0;
-    private static final int DIALOG_STYLE_PASSWORD = 3;
-    private static final int DIALOG_STYLE_TABLIST = 4;
-    private static final int DIALOG_STYLE_TABLIST_HEADER = 5;
-    private static final int DIALOG_STYLE_INPUT_NUMBER = 6;
+    static final int DIALOG_LEFT_BTN_ID     = 1;
+    static final int DIALOG_RIGHT_BTN_ID    = 0;
+
+    static final int DIALOG_STYLE_MSGBOX            = 0;
+    static final int DIALOG_STYLE_INPUT             = 1;
+    static final int DIALOG_STYLE_LIST              = 2;
+    static final int DIALOG_STYLE_PASSWORD          = 3;
+    static final int DIALOG_STYLE_TABLIST           = 4;
+    static final int DIALOG_STYLE_TABLIST_HEADER    = 5;
+    static final int DIALOG_STYLE_INPUT_NUMBER      = 6;
 
 
     private final TextView mCaption;
@@ -53,10 +54,13 @@ public class Dialog {
     private ArrayList<String> mRowsList;
     private Activity activity;
     boolean old_casino_layout_state;
-    public native void DialogInit();
+
+    native void init();
+    native void sendResponse(int button, int id, int item, byte[] str);
 
     public Dialog(Activity aactivity) {
-        DialogInit();
+        init();
+
         activity = aactivity;
         casino_dice_main_layout = activity.findViewById(R.id.casino_dice_main_layout);
         this.mMainLayout = activity.findViewById(R.id.sd_dialog_main);
@@ -81,19 +85,7 @@ public class Dialog {
         for (int i = 0; i < mHeadersLayout.getChildCount(); i++) {
             this.mHeadersList.add((TextView) mHeadersLayout.getChildAt(i));
         }
-//        this.mInput.setOnEditorActionListener((textView, i, keyEvent) -> {
-//            Editable editableText;
-//            if ((i != 6 && i != 5) || (editableText = this.mInput.getText()) == null) {
-//                return false;
-//            }
-//            this.mCurrentInputText = editableText.toString();
-//            return false;
-//        });
-//        this.mInput.setOnClickListener(view ->
-//        {
-//            this.mInput.requestFocus();
-//            ((InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(this.mInput, 1);
-//        });
+
         Utils.HideLayout(this.mMainLayout, false);
     }
 
@@ -211,7 +203,7 @@ public class Dialog {
 
             ((InputMethodManager) NvEventQueueActivity.getInstance().getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(this.mInput.getWindowToken(), 0);
 
-            NvEventQueueActivity.getInstance().sendDialogResponse(btnId, this.mCurrentDialogId, this.mCurrentListItem, this.mCurrentInputText.getBytes("windows-1251"));
+            sendResponse(btnId, mCurrentDialogId, mCurrentListItem, mCurrentInputText.getBytes("windows-1251"));
 
 
             Utils.HideLayout(this.mMainLayout, false);

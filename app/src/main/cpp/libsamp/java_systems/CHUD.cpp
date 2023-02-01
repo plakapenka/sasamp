@@ -358,6 +358,7 @@ void CHUD::SetChatInput(const char ch[])
     jmethodID AddToChatInput = env->GetMethodID(clazz, "AddToChatInput", "(Ljava/lang/String;)V");
 
     env->CallVoidMethod(thiz, AddToChatInput, jch);
+    env->DeleteLocalRef(jch);
 }
 
 void CHUD::ToggleChatInput(bool toggle)
@@ -387,6 +388,7 @@ void CHUD::AddChatMessage(const char msg[])
     jmethodID AddChatMessage = env->GetMethodID(clazz, "AddChatMessage", "(Ljava/lang/String;)V");
 
     env->CallVoidMethod(thiz, AddChatMessage, jmsg);
+    env->DeleteLocalRef(jmsg);
 }
 
 void CHUD::addGiveDamageNotify(PLAYERID Id, int weaponId, float damage)
@@ -416,6 +418,8 @@ void CHUD::addGiveDamageNotify(PLAYERID Id, int weaponId, float damage)
     jmethodID method = env->GetMethodID(clazz, "addGiveDamageNotify", "(Ljava/lang/String;Ljava/lang/String;F)V");
 
     env->CallVoidMethod(thiz, method, jnick, jweap, fLastGiveDamage);
+    env->DeleteLocalRef(jnick);
+    env->DeleteLocalRef(jweap);
 }
 
 void CHUD::addTakeDamageNotify(char nick[], int weaponId, float damage)
@@ -431,6 +435,8 @@ void CHUD::addTakeDamageNotify(char nick[], int weaponId, float damage)
     jmethodID method = env->GetMethodID(clazz, "addTakeDamageNotify", "(Ljava/lang/String;Ljava/lang/String;F)V");
 
     env->CallVoidMethod(thiz, method, jnick, jweap, damage);
+    env->DeleteLocalRef(jnick);
+    env->DeleteLocalRef(jweap);
 }
 
 void CHUD::ToggleHpText(bool toggle)

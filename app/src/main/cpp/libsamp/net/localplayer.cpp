@@ -184,6 +184,7 @@ extern bool g_uiHeadMoveEnabled;
 #include "java_systems/CMedic.h"
 #include "java_systems/CTab.h"
 #include "java_systems/CDailyReward.h"
+#include "java_systems/CDialog.h"
 
 bool CLocalPlayer::Process()
 {
@@ -448,7 +449,7 @@ bool CLocalPlayer::Process()
 	}
 	////////////////////////////
 	bool needDrawableHud = true;
-	if(pGame->isDialogActive || pGame->isCasinoDiceActive || CTab::bIsShow || pGame->isAutoShopActive
+	if(CDialog::bIsShow || pGame->isCasinoDiceActive || CTab::bIsShow || pGame->isAutoShopActive
 	   || pGame->isCasinoWheelActive || !m_pPlayerPed || pGame->isRegistrationActive || pGame->isShopStoreActive ||
 	   CMedic::bIsShow || CInventory::bIsToggle || bFirstSpawn || CEditobject::bIsToggle || CChip::bIsShow
 	   || CAucContainer::bIsShow || CAdminRecon::bIsToggle || CHUD::bIsCamEditGui || CDailyReward::isShow)

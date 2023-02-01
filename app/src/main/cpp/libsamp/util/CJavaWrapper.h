@@ -116,8 +116,6 @@ public:
     void ShowUpdateTargetNotify(int type, char *text);
     void HideTargetNotify();
 
-	void MakeDialog(int dialogId, int dialogTypeId, char caption[], char info[], char button1[], char button2[]); // Диалоги
-
 	void ShowMenu();
 
 	void ShowAuthorization(char *nick, int id, bool ip_match, bool toggleAutoLogin, bool email_acvive);
@@ -152,7 +150,6 @@ public:
 	void ClearScreen();
 
 	jobject jCasinoDice;
-    jobject jDialog;
 	jobject jCasino_LuckyWheel;
 
     void ShowCasinoLuckyWheel(int count, int time);

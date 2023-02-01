@@ -22,6 +22,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.Animation;
 
 import com.liverussia.cr.R;
+import com.liverussia.cr.core.Samp;
 import com.liverussia.launcher.utils.MainUtils;
 import com.liverussia.cr.core.GTASA;
 import com.liverussia.launcher.async.task.CacheChecker;
@@ -337,7 +338,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             onClickMonitoring();
             return;
         }
-        startActivity(new Intent(this, GTASA.class));
+        startActivity(new Intent(this, Samp.class));
 
         this.finish();
     }

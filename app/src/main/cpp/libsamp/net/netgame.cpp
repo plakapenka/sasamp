@@ -1552,20 +1552,6 @@ void CNetGame::SendChatCommand(const char* szCommand)
 	m_pRakClient->RPC(&RPC_ServerCommand, &bsParams, HIGH_PRIORITY, RELIABLE, 0, false, UNASSIGNED_NETWORK_ID, NULL);
 }
 
-void CNetGame::SendDialogResponse(uint16_t wDialogID, uint8_t byteButtonID, uint16_t wListBoxItem, char* szInput)
-{
-	uint8_t respLen = strlen(szInput);
-
-	RakNet::BitStream bsSend;
-	bsSend.Write(wDialogID);
-	bsSend.Write(byteButtonID);
-	bsSend.Write(wListBoxItem);
-	bsSend.Write(respLen);
-	bsSend.Write(szInput, respLen);
-	m_pRakClient->RPC(&RPC_DialogResponse, &bsSend, HIGH_PRIORITY, RELIABLE, 0, false, UNASSIGNED_NETWORK_ID, NULL);
-
-}
-
 void CNetGame::SetMapIcon(uint8_t byteIndex, float fX, float fY, float fZ, uint8_t byteIcon, int iColor, int style)
 {
 	if(byteIndex >= 100) return;
