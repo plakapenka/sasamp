@@ -3,6 +3,7 @@ package com.liverussia.cr.gui;
 import android.app.Activity;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.TextView;
 
@@ -38,6 +39,7 @@ public class DailyReward {
         daily_exit_butt.setOnClickListener(view -> {
             activity.runOnUiThread(() -> {
                 daily_main_layout.setVisibility(View.GONE);
+                hide();
             });
         });
 
@@ -67,10 +69,10 @@ public class DailyReward {
                     parent.setAlpha(1.0f);
 
                     if(second == -1) {
-                        parent.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#66bb6a")));
+                        parent.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#fbc02d")));
 
-                        label.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#66bb6a")));
-                        labelText.setText("Получено");
+                        label.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#e57373")));
+                        labelText.setText("Недоступно");
                     }
                     else if(second == 0) {
                         parent.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#fbc02d")));
@@ -82,7 +84,7 @@ public class DailyReward {
                         parent.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#fbc02d")));
 
                         label.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#66bb6a")));
-                        labelText.setText( String.format("через %d", second) );
+                        labelText.setText( DateUtils.formatElapsedTime(second) );
                     }
 
                     label.setOnClickListener(view -> {

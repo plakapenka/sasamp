@@ -32,9 +32,10 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <View
+            android:alpha="0.7"
             android:id="@+id/daily_exit_butt"
-            android:layout_width="@dimen/_15sdp"
-            android:layout_height="@dimen/_15sdp"
+            android:layout_width="@dimen/_18sdp"
+            android:layout_height="@dimen/_18sdp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
             android:background="@drawable/cross"
@@ -109,6 +110,8 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/daily_item_status_bg_1"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
                     android:layout_width="@dimen/_44sdp"
                     android:layout_height="@dimen/_12sdp"
                     android:layout_marginBottom="8dp"
@@ -188,6 +191,8 @@
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/daily_item_status_bg_2"
+                        android:clickable="true"
+                        android:foreground="?android:attr/selectableItemBackgroundBorderless"
                         android:layout_width="@dimen/_44sdp"
                         android:layout_height="@dimen/_12sdp"
                         android:layout_marginBottom="8dp"
@@ -265,6 +270,8 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/daily_item_status_bg_3"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
                     android:layout_width="@dimen/_44sdp"
                     android:layout_height="@dimen/_12sdp"
                     android:layout_marginBottom="8dp"
@@ -343,6 +350,8 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/daily_item_status_bg_4"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
                     android:layout_width="@dimen/_44sdp"
                     android:layout_height="@dimen/_12sdp"
                     android:layout_marginBottom="8dp"
@@ -421,6 +430,8 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/daily_item_status_bg_5"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
                     android:layout_width="@dimen/_44sdp"
                     android:layout_height="@dimen/_12sdp"
                     android:layout_marginBottom="8dp"
@@ -499,6 +510,8 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/daily_item_status_bg_6"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
                     android:layout_width="@dimen/_44sdp"
                     android:layout_height="@dimen/_12sdp"
                     android:layout_marginBottom="8dp"
@@ -579,6 +592,8 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/daily_item_status_bg_7"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
                     android:layout_width="@dimen/_44sdp"
                     android:layout_height="@dimen/_12sdp"
                     android:layout_marginBottom="8dp"

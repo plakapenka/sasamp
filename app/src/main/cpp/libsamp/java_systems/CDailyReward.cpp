@@ -21,6 +21,8 @@ void CDailyReward::show(int day, int second)
     jmethodID method = env->GetMethodID(clazz, "show", "(II)V");
 
     env->CallVoidMethod(CDailyReward::thiz, method, day, second);
+
+    CDailyReward::isShow = true;
 }
 
 void CNetGame::packetDailyRewards(Packet* p)

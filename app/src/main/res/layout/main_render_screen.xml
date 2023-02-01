@@ -17,7 +17,8 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
-        <View android:id="@+id/dark_screen" android:background="#ff000000" android:visibility="visible" android:layout_width="fill_parent" android:layout_height="fill_parent" android:alpha="0.0" />
+<!--        <View android:id="@+id/dark_screen" android:background="#ff000000" android:visibility="visible" android:layout_width="fill_parent" android:layout_height="fill_parent" android:alpha="0.0" />-->
+        <include layout="@layout/dailyreward" />
         <include layout="@layout/hud" />
         <include layout="@layout/casino_dice" />
         <include layout="@layout/bspeed_layout"/>
@@ -47,7 +48,6 @@
         <include layout="@layout/auc_container" />
         <include layout="@layout/admin_recon" />
         <include layout="@layout/casino_bc" />
-        <include layout="@layout/dailyreward" />
 
     </FrameLayout>
 
