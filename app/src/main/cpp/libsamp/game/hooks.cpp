@@ -38,10 +38,11 @@ const cryptor::string_encryptor encrArch[MAX_ENCRYPTED_TXD] = {
         cryptor::create("texdb/gta_int/gta_int.txt", 27),
 };
 
-extern bool isTestMode;
+extern bool g_bIsTestMode;
+
 bool isEncrypted(const char *szArch)
 {
-    if(isTestMode)return false;
+    if(g_bIsTestMode)return false;
 	//return false;
     for (int i = 0; i < MAX_ENCRYPTED_TXD; i++)
     {
@@ -1891,20 +1892,14 @@ bool (*CGame__Shutdown)();
 bool CGame__Shutdown_hook()
 {
 	Log("Exiting game...");
-	CHook::NOP(g_libGTASA + 0x00341FCC, 2); // nop PauseOpenSLES
-	CHook::NOP(g_libGTASA + 0x0039B262, 2); // CGame::Process(void)
 
-	if (pNetGame)
+	if (pNetGame && pNetGame->GetRakClient())
 	{
-		if (pNetGame->GetRakClient())
-		{
-			pNetGame->GetRakClient()->Disconnect(500, 0);
-		}
+		pNetGame->GetRakClient()->Disconnect(500, 0);
 	}
 
 	g_pJavaWrapper->ExitGame();
-
-	//std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+	//
 
 	return false;
 	//return CGame__Shutdown();
@@ -3155,18 +3150,6 @@ void InstallHooks()
 	CHook::InlineHook(g_libGTASA, 0x5189C4, &CVehicle__GetVehicleLightsStatus_hook, &CVehicle__GetVehicleLightsStatus);
 	CHook::NOP(g_libGTASA + 0x408AAA, 2);
 
-	//
-	CHook::NOP(g_libGTASA + 0x003989C8, 2);//живность в воде WaterCreatureManager_c::Update
-
-	// дефолтный худ
-	CHook::NOP(g_libGTASA + 0x0027E21A, 2); // CWidgetPlayerInfo::DrawWeaponIcon
-	CHook::NOP(g_libGTASA + 0x0027E24E, 2); // CWidgetPlayerInfo::DrawWanted
-	CHook::NOP(g_libGTASA + 0x0027E1E8, 2); // CWidgetPlayerInfo::RenderBreathBar
-	CHook::NOP(g_libGTASA + 0x0027E1AE, 2); // CWidgetPlayerInfo::RenderArmorBar
-	CHook::NOP(g_libGTASA + 0x0027E188, 2); // CWidgetPlayerInfo::RenderHealthBar
-	CHook::NOP(g_libGTASA + 0x27E158, 2); // PrintMoney
-	CHook::NOP(g_libGTASA + 0x27E056, 2); // PrintTime
-
 	//RpMaterialDestroy fix ? не точно
 	CHook::InlineHook(g_libGTASA, 0x001E3C54, &RpMaterialDestroy_hook, &RpMaterialDestroy);
 	CHook::InlineHook(g_libGTASA, 0x1B1808, &_RwTextureDestroy_hook, &_RwTextureDestroy);
@@ -3178,10 +3161,7 @@ void InstallHooks()
 	CHook::InlineHook(g_libGTASA, 0x002F7910, &ProcessCommands300To399_hook, &ProcessCommands300To399);
 
 	//
-	CHook::NOP(g_libGTASA + 0x0039ADE6, 2);//CCoronas::RenderSunReflection crash
 
-	CHook::NOP(g_libGTASA + 0x0051018A, 2);// не давать ган при выходе из тачки
-	CHook::NOP(g_libGTASA + 0x005101A6, 2);// не давать ган при выходе из тачки
 
 	// Настройки
 	CHook::NOP(g_libGTASA + 0x266460, 2); // Game - TrafficMode

@@ -155,7 +155,6 @@ public:
 	void SendSpeedTurnPacket(uint8_t turnId, uint8_t state);
 	void SendRegisterPacket(char *password, char *mail, uint8_t sex, uint8_t skin);
 	void SendRegisterSkinPacket(uint32_t skinId);
-	void SendNotifyButtonPacket(uint16_t actionId, uint8_t buttonId);
 
 	void SetMapIcon(uint8_t byteIndex, float fX, float fY, float fZ, uint8_t byteIcon, int iColor, int style);
 	void DisableMapIcon(uint8_t byteIndex);
@@ -252,6 +251,8 @@ public:
 	static void packetDuelsKillsLeft(Packet *p);
 
 	static void packetDailyRewards(Packet *p);
+
+	static void packetNotification(Packet *p);
 };
 
 extern CNetGame *pNetGame;

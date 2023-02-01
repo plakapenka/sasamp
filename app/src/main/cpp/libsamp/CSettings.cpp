@@ -85,6 +85,7 @@ void CSettings::save(int iIgnoreCategory)
 	ini_table_destroy(config);
 }
 
+extern bool g_bIsTestMode;
 extern void ApplyFPSPatch(uint8_t fps);
 void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 {
@@ -128,6 +129,7 @@ void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 	m_Settings.szDL = ini_table_get_entry_as_int(config, "client", "dl", 0);
 	m_Settings.szTimeStamp = ini_table_get_entry_as_int(config, "client", "timestamp", 0);
 	m_Settings.isTestMode = ini_table_get_entry_as_int(config, "client", "test", 0);
+	g_bIsTestMode = (bool)m_Settings.isTestMode;
 
 	std::string szFontName = ini_table_get_entry(config, "gui", "Font");
 
@@ -192,15 +194,6 @@ Java_com_liverussia_cr_gui_AuthorizationManager_ToggleAutoLogin(JNIEnv *env, job
 }
 
 JNIEXPORT void JNICALL
-Java_com_nvidia_devtech_NvEventQueueActivity_setNativeHpArmourText(JNIEnv *pEnv, jobject thiz,
-																   jboolean b) {
-	CSettings::m_Settings.iHPArmourText = b;
-	CHUD::ToggleHpText(b);
-	CSettings::save();
-	//CInfoBarText::SetEnabled(b);
-}
-
-JNIEXPORT void JNICALL
 Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_ChatLineChanged(JNIEnv *env,
 																			   jobject thiz,
 																			   jint newcount) {
@@ -262,4 +255,58 @@ Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_setNativeFpsCount
 	CSettings::m_Settings.iFPS = fps;
 	CSettings::save();
 	ApplyFPSPatch(fps);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_setNativeFpsCounterSettings(
+        JNIEnv *env, jobject thiz, jboolean b) {
+	CSettings::m_Settings.szDebug = b;
+
+	CDebugInfo::SetDrawFPS(b);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_setNativeOutfitGunsSettings(
+		JNIEnv *env, jobject thiz, jboolean b) {
+	CSettings::m_Settings.iOutfitGuns = b;
+
+	CWeaponsOutFit::SetEnabled(b);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_core_DialogClientSettings_onSettingsWindowDefaults(JNIEnv *env, jobject thiz,
+																		  jint category) {
+	CSettings::toDefaults(category);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_core_DialogClientSettings_onSettingsWindowSave(JNIEnv *env, jobject thiz) {
+	CSettings::save();
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_setNativeHpArmourText(JNIEnv *env,
+																					 jobject thiz,
+																					 jboolean b) {
+	CSettings::m_Settings.iHPArmourText = b;
+	CHUD::ToggleHpText(b);
+	CSettings::save();
+}
+extern "C"
+JNIEXPORT jboolean JNICALL
+Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_getNativeFpsCounterSettings(
+		JNIEnv *env, jobject thiz) {
+	return CSettings::m_Settings.szDebug;
+}
+extern "C"
+JNIEXPORT jboolean JNICALL
+Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_getNativeOutfitGunsSettings(
+		JNIEnv *env, jobject thiz) {
+	return CSettings::m_Settings.iOutfitGuns;
+}
+extern "C"
+JNIEXPORT jboolean JNICALL
+Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_getNativeHpArmourText(JNIEnv *env,
+																					 jobject thiz) {
+	CSettings::m_Settings.iHPArmourText;
 }

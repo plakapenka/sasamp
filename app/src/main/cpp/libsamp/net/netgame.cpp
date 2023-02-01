@@ -534,6 +534,10 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			packetDailyRewards(p);
 			break;
 		}
+		case RPC_SHOW_ACTION_LABEL: {
+			packetNotification(p);
+			break;
+		}
 		case RPC_DUELS_SHOW_KILL_LEFT: {
 			packetDuelsKillsLeft(p);
 			break;
@@ -1302,78 +1306,6 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			pGUI->SetMeliage(mileage);
 			break;
 		}
-		case RPC_SHOW_ACTION_LABEL:
-		{
-			uint16_t type;
-			char str[256];
-			uint8_t len;
-			uint8_t time;
-			uint16_t actionId;
-			bs.Read(type);
-			bs.Read(len);
-			bs.Read(&str[0], len);
-			bs.Read(time);
-			bs.Read(actionId);
-
-			char text[256];
-			cp1251_to_utf8(text, str, len);
-
-			if (type != 65535)
-			{
-				g_pJavaWrapper->ShowNotification(type, (char*)text, time, (char*)"btnClick", (char*)"btn", actionId);
-			}
-			else
-			{
-				g_pJavaWrapper->HideNotification();
-			}
-			break;
-		}
-		/*
-		case RPC_SHOW_ACTION_LABEL : 
-		{
-			char szBuff[4096+1];
-			char text[64*54];
-			char actionBtn[64*54];
-			char textBtn[64*54];
-
-			int type;
-			bs.Read(type);
-
-			//текст
-			uint16_t lenText;
-			bs.Read(lenText);
-
-			memset(text, 0, sizeof(text));
-			memset(szBuff, 0, sizeof(szBuff));
-
-			bs.Read(szBuff, lenText);
-			cp1251_to_utf8(text, szBuff);
-			
-			int duration;
-			bs.Read(duration);
-
-			uint16_t lenActionBtn;
-			bs.Read(lenActionBtn);
-
-			memset(actionBtn, 0, sizeof(actionBtn));
-			memset(szBuff, 0, sizeof(szBuff));
-
-			bs.Read(szBuff, lenActionBtn);
-			cp1251_to_utf8(actionBtn, szBuff);
-
-			uint16_t lenBtnText;
-			bs.Read(lenBtnText);
-
-			memset(textBtn, 0, sizeof(textBtn));
-			memset(szBuff, 0, sizeof(szBuff));
-
-			bs.Read(szBuff, lenBtnText);
-			cp1251_to_utf8(textBtn, szBuff);
-
-			g_pJavaWrapper->ShowNotification(type, text, duration, actionBtn, textBtn);
-			return;
-		}
-		*/
 	}
 
 }
@@ -1538,18 +1470,6 @@ void CNetGame::SendCustomPacket(uint8_t packet, uint8_t RPC, uint8_t Quantity)
 	bsSend.Write(RPC);
 	bsSend.Write(Quantity);
 	GetRakClient()->Send(&bsSend, HIGH_PRIORITY, RELIABLE, 0);
-}
-
-void CNetGame::SendNotifyButtonPacket(uint16_t actionId, uint8_t buttonId)
-{
-	uint8_t packet = ID_CUSTOM_RPC;
-	uint8_t RPC = RPC_SHOW_ACTION_LABEL;
-	RakNet::BitStream bsSend;
-	bsSend.Write(packet);
-	bsSend.Write(RPC);
-	bsSend.Write(actionId);
-	bsSend.Write(buttonId);
-	GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE, 0);
 }
 
 void CNetGame::SendRegisterSkinPacket(uint32_t skinId)

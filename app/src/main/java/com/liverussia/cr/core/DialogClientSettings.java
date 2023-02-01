@@ -20,6 +20,9 @@ public class DialogClientSettings extends DialogFragment {
     TabLayout tabLayout;
     ViewPager viewPager;
 
+    native void onSettingsWindowDefaults(int category);
+    native void onSettingsWindowSave();
+
     static final int mSettingsComonStart = 14;
     static final int mSettingsComonEnd = 15;
     NvEventQueueActivity mContext = null;
@@ -46,7 +49,7 @@ public class DialogClientSettings extends DialogFragment {
         ((AppCompatButton)rootview.findViewById(R.id.dialog_settings_button_close)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mContext.onSettingsWindowSave();
+                onSettingsWindowSave();
                 getDialog().dismiss();
             }
         });
@@ -54,12 +57,12 @@ public class DialogClientSettings extends DialogFragment {
         ((AppCompatButton)rootview.findViewById(R.id.dialog_settings_button_reset)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mContext.onSettingsWindowDefaults(tabLayout.getSelectedTabPosition() + 1);
+                onSettingsWindowDefaults(tabLayout.getSelectedTabPosition() + 1);
 
                 ISaveableFragment fragment = (ISaveableFragment)adapter.getItem(tabLayout.getSelectedTabPosition());
                 fragment.getValues();
 
-                mContext.onSettingsWindowSave();
+                onSettingsWindowSave();
 
                 getDialog().dismiss();
 

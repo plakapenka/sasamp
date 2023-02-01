@@ -22,7 +22,7 @@
 #include "util/util.h"
 
 extern uintptr_t g_libGTASA;
-extern char g_pszStorage[255];
+extern char* g_pszStorage;
 
 void Log(const char *fmt, ...);
 

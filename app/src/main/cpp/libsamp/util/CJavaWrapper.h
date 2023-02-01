@@ -45,8 +45,6 @@ class CJavaWrapper
     jmethodID s_hideSpeed;
 	jmethodID s_updateSpeedInfo;
 
-	jmethodID s_showNotification;
-	jmethodID s_hideNotification;
 	jmethodID s_showMenu;
 
 	jmethodID s_showAuthorization;
@@ -119,8 +117,7 @@ public:
     void HideTargetNotify();
 
 	void MakeDialog(int dialogId, int dialogTypeId, char caption[], char info[], char button1[], char button2[]); // Диалоги
-	void ShowNotification(int type, char* text, int duration, char* actionforBtn, char* textBtn, int actionId);
-	void HideNotification();
+
 	void ShowMenu();
 
 	void ShowAuthorization(char *nick, int id, bool ip_match, bool toggleAutoLogin, bool email_acvive);

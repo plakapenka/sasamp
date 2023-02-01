@@ -153,21 +153,6 @@ extern "C"
 
 		//pEnv->ReleaseStringUTFChars(str, inputText);
 	}
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_sendCommand(JNIEnv* pEnv, jobject thiz, jbyteArray str)
-	{
-		jboolean isCopy = true;
-
-		jbyte* pMsg = pEnv->GetByteArrayElements(str, &isCopy);
-		jsize length = pEnv->GetArrayLength(str);
-
-		std::string szStr((char*)pMsg, length);
-
-		if(pNetGame) {
-			pNetGame->SendChatCommand((char*)szStr.c_str());
-		}
-
-		pEnv->ReleaseByteArrayElements(str, pMsg, JNI_ABORT);
-	}
 
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_sendRPC(JNIEnv* pEnv, jobject thiz, jint type, jbyteArray str, jint action)
 	{
@@ -229,88 +214,12 @@ extern "C"
 			pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->TogglePlayerControllable(true, true);
 	}
 
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onEventBackPressed(JNIEnv* pEnv, jobject thiz)
-	{
-		if (pKeyBoard)
-		{
-			if (pKeyBoard->IsOpen())
-			{
-				Log("Closing keyboard");
-				pKeyBoard->Close();
-			}
-		}
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_setNativeKeyboardSettings(JNIEnv* pEnv, jobject thiz, jboolean b)
-	{
-		CSettings::m_Settings.iAndroidKeyboard = b;
-
-		if (pKeyBoard && b)
-		{
-			pKeyBoard->EnableNewKeyboard();
-		}
-		else if(pKeyBoard)
-		{
-			pKeyBoard->EnableOldKeyboard();
-		}
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_setNativeFpsCounterSettings(JNIEnv* pEnv, jobject thiz, jboolean b)
-	{
-		CSettings::m_Settings.szDebug = b;
-
-		CDebugInfo::SetDrawFPS(b);
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_setNativeOutfitGunsSettings(JNIEnv* pEnv, jobject thiz, jboolean b)
-	{
-		CSettings::m_Settings.iOutfitGuns = b;
-
-		CWeaponsOutFit::SetEnabled(b);
-	}
-
-
-	JNIEXPORT jboolean JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_getNativeFpsCounterSettings(JNIEnv* pEnv, jobject thiz)
-	{
-		return CSettings::m_Settings.szDebug;
-	}
-
-	JNIEXPORT jboolean JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_getNativeHpArmourText(JNIEnv* pEnv, jobject thiz)
-	{
-		CSettings::m_Settings.iHPArmourText;
-	}
-
-	JNIEXPORT jboolean JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_getNativeOutfitGunsSettings(JNIEnv* pEnv, jobject thiz)
-	{
-		return CSettings::m_Settings.iOutfitGuns;
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onSettingsWindowSave(JNIEnv* pEnv, jobject thiz)
-	{
-		CSettings::save();
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onSettingsWindowDefaults(JNIEnv* pEnv, jobject thiz, jint category)
-	{
-        CSettings::toDefaults(category);
-
-			//CChatWindow::m_bPendingReInit = true;
-	}
-
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onSpeedEngineClick(JNIEnv *pEnv, jobject thiz) {
 		pNetGame->SendChatCommand("/e");
 	}
 
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onSpeedLightsClick(JNIEnv *pEnv, jobject thiz) {
 		pNetGame->SendChatCommand("/light");
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onNotifyFirstClick(JNIEnv *pEnv, jobject thiz, jint actionId) {
-		pNetGame->SendNotifyButtonPacket(actionId, 1);
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onNotifySecondClick(JNIEnv *pEnv, jobject thiz, jint actionId) {
-		pNetGame->SendNotifyButtonPacket(actionId, 0);
 	}
 
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onRegisterSkinBackClick(JNIEnv *pEnv, jobject thiz) {
@@ -432,11 +341,6 @@ extern "C"
 
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onGunShopClick(JNIEnv *pEnv, jobject thiz, jint weaponid) {
 		pNetGame->SendCustomPacket(251, 44, weaponid);
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onClientCheckHASH(JNIEnv *pEnv, jobject thiz, jstring text) {
-		const char *password = pEnv->GetStringUTFChars(text, nullptr);
-		pNetGame->SendCheckClientPacket((char*)password);
 	}
 
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onSpeedTurnRightClick(JNIEnv *pEnv, jobject thiz, jint state) {
@@ -816,48 +720,6 @@ void CJavaWrapper::UpdateSpeedInfo(int speed, int fuel, int hp, int mileage, int
 	env->CallVoidMethod(this->activity, this->s_updateSpeedInfo, speed, fuel, hp, mileage, engine, light, belt, lock);
 }
 
-void CJavaWrapper::ShowNotification(int type, char* text, int duration, char* actionforBtn, char* textBtn, int actionId) 
-{
-	JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-
-	jclass strClass = env->FindClass("java/lang/String");
-    jmethodID ctorID = env->GetMethodID(strClass, "<init>", "([BLjava/lang/String;)V");
-    jstring encoding = env->NewStringUTF("UTF-8");
-
-    jbyteArray bytes = env->NewByteArray(strlen(text));
-    env->SetByteArrayRegion(bytes, 0, strlen(text), (jbyte*)text);
-    jstring jtext = (jstring) env->NewObject(strClass, ctorID, bytes, encoding);
-
-	bytes = env->NewByteArray(strlen(actionforBtn));
-    env->SetByteArrayRegion(bytes, 0, strlen(actionforBtn), (jbyte*)actionforBtn);
-    jstring jactionforBtn = (jstring) env->NewObject(strClass, ctorID, bytes, encoding);
-
-	bytes = env->NewByteArray(strlen(textBtn));
-    env->SetByteArrayRegion(bytes, 0, strlen(textBtn), (jbyte*)textBtn);
-    jstring jtextBtn = (jstring) env->NewObject(strClass, ctorID, bytes, encoding);
-
-	env->CallVoidMethod(this->activity, this->s_showNotification, type, jtext, duration, jactionforBtn, jtextBtn, actionId);
-}
-
-void CJavaWrapper::HideNotification() 
-{
-	JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-
-	env->CallVoidMethod(this->activity, this->s_hideNotification);
-}
-
 void CJavaWrapper::ToggleAutoShop(bool toggle)
 {
 	JNIEnv* env = GetEnv();
@@ -1064,9 +926,7 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 	s_updateSpeedInfo = env->GetMethodID(nvEventClass, "updateSpeedInfo", "(IIIIIIII)V");
     s_showSpeed = env->GetMethodID(nvEventClass, "showSpeed", "()V");
     s_hideSpeed = env->GetMethodID(nvEventClass, "hideSpeed", "()V");
-	
-	s_showNotification = env->GetMethodID(nvEventClass, "showNotification","(ILjava/lang/String;ILjava/lang/String;Ljava/lang/String;I)V");
-	s_hideNotification = env->GetMethodID(nvEventClass, "hideNotification", "()V");
+
 	s_showMenu = env->GetMethodID(nvEventClass, "showMenu", "()V");
 
 	s_showAuthorization = env->GetMethodID(nvEventClass, "showAuthorization", "(Ljava/lang/String;IZZZ)V");

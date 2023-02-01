@@ -178,31 +178,20 @@ public abstract class NvEventQueueActivity
 
     private Dialog mDialog = null;
     private HudManager mHudManager = null;
-    private Inventory inventory = null;
-    private Casino_LuckyWheel mCasinoLuckyWheel = null;
     private SamwillManager mSamwillManager = null;
     private Speedometer mSpeedometer = null;
     private AutoShop mAutoShop = null;
-    private CasinoDice mCasinoDice = null;
-    private Notification mNotification = null;
     private AuthorizationManager mAuthorizationManager = null;
     private RegistrationManager mRegistrationManager = null;
     private FuelStationManager mFuelStationManager = null;
     private OilFactoryManager mOilFactoryManager = null;
     private Vibrator vibrator;
     private ArmyGameManager mArmyGameManager = null;
-    private AttachEdit mAttachEdit = null;
     private ShopStoreManager mShopStoreManager = null;
     private GunShopManager mGunShopManager = null;
     private ChooseSpawn mChooseSpawn = null;
-    private PreDeath mPreDeath = null;
-    private MineGame1 mine_1 = null;
-    private MineGame2 mine_2 = null;
-    private MineGame3 mine_3 = null;
     private Menu mMenu = null;
     private ChooseServer mChooseServer = null;
-    private Tab mTab = null;
-    private Casino mCasino = null;
     public SoundPool soundPool = null;
 
     /* *
@@ -213,28 +202,6 @@ public abstract class NvEventQueueActivity
     	fixedWidth = fw;
     	fixedHeight = fh;
     }
-
-    public native void onEventBackPressed();
-
-    public native void onSettingsWindowSave();
-    public native void onSettingsWindowDefaults(int category);
-
-    public native void setNativeKeyboardSettings(boolean b);
-    public native void setNativeFpsCounterSettings(boolean b);
-    public native void setNativeOutfitGunsSettings(boolean b);
-    public native void setNativeHpArmourText(boolean b);
-
-    public native boolean getNativeFpsCounterSettings();
-    public native boolean getNativeOutfitGunsSettings();
-    public native boolean getNativeHpArmourText();
-
-    public native void setNativeWidgetPositionAndScale(int id, int x, int y, int scale);
-    public native int[] getNativeWidgetPositionAndScale(int id);
-
-    public native void sendCommand(byte[] str);
-
-    public native void onNotifyFirstClick(int actionId);
-    public native void onNotifySecondClick(int actionId);
 
     public native void native_SendAutoShopButton(int buttonID);
     public native void onRegisterChooseSkinClick(int choosesex);
@@ -258,12 +225,6 @@ public abstract class NvEventQueueActivity
     // 1 - Меню
     // 2 - Сервер
     public native void sendRPC(int type, byte[] str, int action);
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        onEventBackPressed();
-    }
 
     private int mUseFullscreen = 0;
 
@@ -590,6 +551,7 @@ public abstract class NvEventQueueActivity
     {
         System.out.println("**** onCreate");
         super.onCreate(savedInstanceState);
+
         instance = this;
 		if(supportPauseResume)
 		{
@@ -616,12 +578,6 @@ public abstract class NvEventQueueActivity
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
-//        {
-//            // TODO: cutout
-//            //getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
-//        }
 
         systemInit();
 
@@ -847,11 +803,6 @@ public abstract class NvEventQueueActivity
     {
         boolean ret = false;
 
-        if(keyCode == KeyEvent.KEYCODE_BACK)
-        {
-            onEventBackPressed();
-        }
-
         if (keyCode == 24 || keyCode == 25) {
             return super.onKeyDown(keyCode, event);
         }
@@ -987,35 +938,35 @@ public abstract class NvEventQueueActivity
         new DuelsHud(this);
         // mInputManager = new InputManager(this);
         //mHeightProvider = new HeightProvider(this).init(mRootFrame).setHeightListener(this);
-        mNotification = new Notification(this);
+        new Notification(this);
         mAuthorizationManager = new AuthorizationManager(this);
         mRegistrationManager = new RegistrationManager(this);
         mFuelStationManager = new FuelStationManager(this);
         mOilFactoryManager = new OilFactoryManager(this);
         vibrator = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
         mArmyGameManager = new ArmyGameManager(this);
-        mAttachEdit = new AttachEdit(this);
+        new AttachEdit(this);
         mShopStoreManager = new ShopStoreManager(this);
         mGunShopManager = new GunShopManager(this);
         mChooseSpawn = new ChooseSpawn(this);
-        mPreDeath = new PreDeath(this);
+        new PreDeath(this);
         mDialog = new Dialog(this);
-        inventory = new Inventory(this);
-        mine_1 = new MineGame1(this);
-        mine_2 = new MineGame2(this);
-        mine_3 = new MineGame3(this);
+        new Inventory(this);
+        new MineGame1(this);
+        new MineGame2(this);
+        new MineGame3(this);
         mHudManager = new HudManager(this);
-        mCasinoLuckyWheel = new Casino_LuckyWheel(this);
+        new Casino_LuckyWheel(this);
 
         mSamwillManager = new SamwillManager(this);
         mSpeedometer = new Speedometer(this);
         mAutoShop = new AutoShop(this);
-        mCasinoDice = new CasinoDice(this);
+        new CasinoDice(this);
         new CasinoBaccarat(this);
         new AucContainer(this);
         new DailyReward(this);
-        mTab = new Tab(this);
-        mCasino = new Casino(this);
+        new Tab(this);
+        new Casino(this);
 
         mMenu = new Menu(this);
 
@@ -1550,10 +1501,6 @@ public abstract class NvEventQueueActivity
 
     public void hideSpeed() { runOnUiThread(() -> { mSpeedometer.HideSpeed(); }); }
 
-    public void showNotification(int type, String text, int duration, String actionforBtn, String textBtn, int actionId) { runOnUiThread(() -> mNotification.ShowNotification(type, text, duration, actionforBtn, textBtn, actionId)); }
-
-    public void hideNotification() { runOnUiThread(() -> mNotification.HideNotification(true)); }
-
     public void showAuthorization(String nick, int id, boolean ip_match, boolean toggle_autologin, boolean email_acvive) {
         runOnUiThread(() -> {
             mAuthorizationManager.Show(nick, id, ip_match, toggle_autologin, email_acvive);
@@ -1578,6 +1525,7 @@ public abstract class NvEventQueueActivity
 
     public void ExitGame(){
         finishAndRemoveTask();
+        System.exit(0);
     }
 
    // public void showSplash() { runOnUiThread(() -> { mChooseServer.Show(); } ); }

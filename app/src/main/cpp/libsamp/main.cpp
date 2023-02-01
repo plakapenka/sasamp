@@ -27,7 +27,7 @@
 #include <arpa/inet.h>
 
 uintptr_t g_libGTASA = 0;
-char g_pszStorage[255];
+char* g_pszStorage = new char[255];
 
 #include "CServerManager.h"
 #include "CLocalisation.h"
@@ -36,7 +36,7 @@ char g_pszStorage[255];
 
 const cryptor::string_encryptor encLib = cryptor::create("libsamp.so", 11);
 void CrashLog(const char* fmt, ...);
-bool isTestMode = false;
+bool g_bIsTestMode = false;
 CGame *pGame = nullptr;
 CNetGame *pNetGame = nullptr;
 CPlayerTags *pPlayerTags = nullptr;
@@ -49,12 +49,6 @@ void InitRenderWareFunctions();
 void ApplyInGamePatches();
 void ApplyPatches_level0();
 void MainLoop();
-
-void PrintBuildInfo()
-{
-	Log("SA:MP version: %d.%01d", SAMP_MAJOR_VERSION, SAMP_MINOR_VERSION);
-	Log("Build times: %s %s", __TIME__, __DATE__);
-}
 
 #ifdef GAME_EDITION_CR
 extern uint16_t g_usLastProcessedModelIndexAutomobile;
@@ -83,15 +77,11 @@ void PrintBuildCrashInfo()
 #include "cryptors/INITSAMP_result.h"
 #include "CDebugInfo.h"
 
-void InitSAMP(JNIEnv* pEnv, jobject thiz, const char path[])
+void InitSAMP(JNIEnv* pEnv, jobject thiz)
 {
 	Log("Initializing SAMP..");
 
-	CLoader::redirectDirection(path);
-
-	CSettings::LoadSettings(nullptr);
-
-	isTestMode = (bool)CSettings::m_Settings.isTestMode;
+	CLoader::loadSetting();
 
 	g_pJavaWrapper = new CJavaWrapper(pEnv, thiz);
 
@@ -118,7 +108,7 @@ void InitInMenu()
 }
 #include <unistd.h> // system api
 #include <sys/mman.h>
-#include <assert.h> // assert()
+#include <cassert> // assert()
 #include <dlfcn.h> // dlopen
 bool unique_library_handler(const char* library)
 {
@@ -617,7 +607,19 @@ Java_com_nvidia_devtech_NvEventQueueActivity_initSAMP(JNIEnv *env, jobject thiz,
 													  jstring game_path) {
 	const char *path = env->GetStringUTFChars(game_path, nullptr);
 
-	InitSAMP(env, thiz, path);
+	strcpy(g_pszStorage, path);
 
 	env->ReleaseStringUTFChars(game_path, path);
+
+	Log("Storage: %s", g_pszStorage);
+
+	if( !strlen(g_pszStorage) )
+	{
+		Log("Error: storage path not found! %s", g_pszStorage);
+		std::terminate();
+	}
+
+	InitSAMP(env, thiz);
+
+
 }

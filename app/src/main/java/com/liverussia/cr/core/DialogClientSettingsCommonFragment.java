@@ -29,6 +29,12 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
     native void setNativeDamageInformer(boolean state);
     native int getNativeFpsLimit();
     native void setNativeFpsCount(int fps);
+    native void setNativeFpsCounterSettings(boolean b);
+    native void setNativeOutfitGunsSettings(boolean b);
+    native void setNativeHpArmourText(boolean b);
+    native boolean getNativeFpsCounterSettings();
+    native boolean getNativeOutfitGunsSettings();
+    native boolean getNativeHpArmourText();
 
     native boolean getNativeShow3dText();
     native void setNativeShow3dText(boolean state);
@@ -186,14 +192,14 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
         mSwitchOutfit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                mContext.setNativeOutfitGunsSettings(b);
+                setNativeOutfitGunsSettings(b);
             }
         });
 
         mSwitchHpArmour.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                mContext.setNativeHpArmourText(b);
+                setNativeHpArmourText(b);
             }
         });
 
@@ -214,7 +220,7 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
         mSwitchFPSCounter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                mContext.setNativeFpsCounterSettings(b);
+                setNativeFpsCounterSettings(b);
             }
         });
 
@@ -228,11 +234,11 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
 
     @Override
     public void getValues() {
-        mSwitchFPSCounter.setChecked(mContext.getNativeFpsCounterSettings());
-        mSwitchHpArmour.setChecked(mContext.getNativeHpArmourText());
+        mSwitchFPSCounter.setChecked( getNativeFpsCounterSettings() );
+        mSwitchHpArmour.setChecked( getNativeHpArmourText() );
         switch_damageinformer.setChecked(getNativeDamageInformer());
         switch_3dtext_show.setChecked(getNativeShow3dText());
-        mSwitchOutfit.setChecked(mContext.getNativeOutfitGunsSettings());
+        mSwitchOutfit.setChecked( getNativeOutfitGunsSettings() );
         fps_text.setText(String.format("%d", getNativeFpsLimit()));
 
         bChangeAllowed = false;
