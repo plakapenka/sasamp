@@ -495,8 +495,8 @@
 
                     <ImageView
                         android:id="@+id/hud_logo_img_bg"
-                        android:layout_width="39dp"
-                        android:layout_height="39dp"
+                        android:layout_width="@dimen/_28sdp"
+                        android:layout_height="@dimen/_28sdp"
                         android:background="@drawable/hud_logo_img_bg"
                         app:layout_constraintBottom_toBottomOf="@+id/hud_logo_img"
                         app:layout_constraintEnd_toEndOf="@+id/hud_logo_img"
@@ -505,8 +505,8 @@
 
                     <ImageView
                         android:id="@+id/hud_logo_img"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
+                        android:layout_width="@dimen/_35sdp"
+                        android:layout_height="@dimen/_35sdp"
                         android:src="@drawable/hud_logo_img"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintLeft_toLeftOf="parent"
