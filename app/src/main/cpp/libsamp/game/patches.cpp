@@ -208,11 +208,6 @@ void ApplyPatches()
 {
 	Log("Installing patches..");
 
-	// ped ussles
-	CHook::RET(g_libGTASA + 0x003BFFBC); // CWanted::Initialise
-//	CHook::RET(g_libGTASA + 0x3AD84C); // CPlayerPedData::AllocateData
-//	CHook::RET(g_libGTASA + 0x3F0D8C); // CPedClothesDesc::SetTextureAndModel
-
 	ApplyShadowPatch();
 
 	// allocate Atomic models pool
@@ -247,6 +242,20 @@ void ApplyPatches()
 	// DefaultPCSaveFileName
 	char* DefaultPCSaveFileName = (char*)(g_libGTASA + 0x60EAE8);
 	memcpy((char*)DefaultPCSaveFileName, "GTASAMP", 8);
+
+	// live russia
+	CHook::RET(g_libGTASA + 0x0051DEC4);			// живность в воде WaterCreatureManager_c::Update
+	CHook::RET(g_libGTASA + 0x27DB98);				// Весь худ одной строкой?
+	//CHook::NOP(g_libGTASA + 0x0027E21A, 2); 	// CWidgetPlayerInfo::DrawWeaponIcon
+	//CHook::NOP(g_libGTASA + 0x0027E24E, 2); 	// CWidgetPlayerInfo::DrawWanted
+	//CHook::NOP(g_libGTASA + 0x0027E1E8, 2); 	// CWidgetPlayerInfo::RenderBreathBar
+	//CHook::NOP(g_libGTASA + 0x0027E1AE, 2); 	// CWidgetPlayerInfo::RenderArmorBar
+	//CHook::NOP(g_libGTASA + 0x0027E188, 2); 	// CWidgetPlayerInfo::RenderHealthBar
+	//CHook::NOP(g_libGTASA + 0x27E158, 2); 	// PrintMoney
+	//CHook::NOP(g_libGTASA + 0x27E056, 2); 	// PrintTime
+	CHook::NOP(g_libGTASA + 0x0039ADE6, 2);	// CCoronas::RenderSunReflection crash
+	CHook::NOP(g_libGTASA + 0x0051018A, 2);	// не давать ган при выходе из тачки 	( клюшка, дробовик and etc )
+	CHook::NOP(g_libGTASA + 0x005101A6, 2);	// не давать ган при выходе из тачки	( клюшка, дробовик and etc )
 
 	// CVehicleRecording::Load
 	CHook::RET(g_libGTASA + 0x2DC8E0);
@@ -320,7 +329,6 @@ void ApplyPatches()
 	CHook::WriteMemory(g_libGTASA + 0x293218, "\x01\x20\x70\x47", 4); 					// CStreaming::RemoveLoadedVehicle
 	CHook::WriteMemory(g_libGTASA + 0x1BDD4A, "\x10\x46\xA2\xF1\x04\x0B", 6); 			// TextureDatabaseRuntime::LoadFullTexture
 	CHook::WriteMemory(g_libGTASA + 0x3E1A2C, "\x67\xE0", 2);							// Interior_c::Init
-	CHook::WriteMemory(g_libGTASA + 0x27D8D0, "\x4F\xF0\x00\x08", 4);					// CWidgetPlayerInfo::DrawWanted
 	CHook::WriteMemory(g_libGTASA + 0x3C5B58, "\x02\x21", 2); 							// CWorld::Process
 	CHook::NOP(g_libGTASA + 0x45F74C, 16); // CPopulation::AddPedInCar - skip some wtf stuff
 
