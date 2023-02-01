@@ -26,16 +26,15 @@ jFurnitureFactory = env->NewGlobalRef(thiz);
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_Furniture_1factory_SendSucces(JNIEnv *env, jobject thiz,
         jint button_id) {
-uint8_t packet = ID_CUSTOM_RPC;
-uint8_t RPC = RPC_SHOW_FACTORY_GAME;
-uint8_t button = button_id;
+    uint8_t packet = ID_CUSTOM_RPC;
+    uint8_t RPC = RPC_SHOW_FACTORY_GAME;
+    uint8_t button = button_id;
 
-
-RakNet::BitStream bsSend;
-bsSend.Write(packet);
-bsSend.Write(RPC);
-bsSend.Write(button);
-pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
+    RakNet::BitStream bsSend;
+    bsSend.Write(packet);
+    bsSend.Write(RPC);
+    bsSend.Write(button);
+    pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
 }
 }
 
