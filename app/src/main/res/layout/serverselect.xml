@@ -21,7 +21,7 @@
         app:trackColor="#ffffff" />
 
     <TextView
-        android:id="@+id/loadscreen_loadtext"
+        android:id="@+id/loadscreen_percent_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -33,4 +33,18 @@
         app:layout_constraintTop_toTopOf="@+id/loadscreen_progressBar"
         app:layout_constraintLeft_toLeftOf="@+id/loadscreen_progressBar"
         app:layout_constraintRight_toRightOf="@+id/loadscreen_progressBar"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:fontFamily="@font/visby_round_cf_extra_bold"
+        android:text="Создание java классов .."
+        android:shadowColor="@color/black"
+        android:shadowRadius="5"
+        android:textSize="@dimen/_13sdp"
+        android:textColor="#e3f2fd"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
