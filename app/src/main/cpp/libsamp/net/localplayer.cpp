@@ -12,7 +12,6 @@
 #include "java_systems/CHUD.h"
 #include "java_systems/CInventory.h"
 
-extern CKeyBoard* pKeyBoard;
 extern CGame *pGame;
 
 bool bFirstSpawn = true;

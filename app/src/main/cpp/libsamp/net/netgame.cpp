@@ -151,7 +151,6 @@ CNetGame::~CNetGame()
 
 #include "CUDPSocket.h"
 #include "..//CServerManager.h"
-extern int g_iServer;
 
 int last_process_cnetgame = 0;
 void CNetGame::Process()
@@ -233,16 +232,16 @@ void CNetGame::Process()
 					data.Write("00000000", 8);
 					data.Write(ip, strlen(ip));
 					data.Write("00000000", 8);
-					data.Write(g_sEncryptedAddresses[g_iServer].decrypt(), strlen(g_sEncryptedAddresses[g_iServer].decrypt()));
+					data.Write(g_sEncryptedAddresses[CSettings::m_Settings.szServer].decrypt(), strlen(g_sEncryptedAddresses[CSettings::m_Settings.szServer].decrypt()));
 					data.Write("00112233445566778899FFFFFFFFFFFFFFFF", 36);
 				}
-				std::string ip = g_sEncryptedAddresses[g_iServer].decrypt();
+				std::string ip = g_sEncryptedAddresses[CSettings::m_Settings.szServer].decrypt();
 				std::stringstream s(ip);
 				int a, b, c, d;
 				char ch;
 				s >> a >> ch >> b >> ch >> c >> ch >> d;
 				CAddress dest(a, b, c, d);
-				dest.usPort = g_sEncryptedAddresses[g_iServer].getPort();
+				dest.usPort = g_sEncryptedAddresses[CSettings::m_Settings.szServer].getPort();
 
 				for (int j = 0; j < 3; j++)
 				{

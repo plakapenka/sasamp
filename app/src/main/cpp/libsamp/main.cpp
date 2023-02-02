@@ -42,7 +42,6 @@ CNetGame *pNetGame = nullptr;
 CPlayerTags *pPlayerTags = nullptr;
 
 CGUI *pGUI = nullptr;
-CKeyBoard *pKeyBoard = nullptr;
 
 void InstallSpecialHooks();
 void InitRenderWareFunctions();
@@ -99,7 +98,7 @@ void InitInMenu()
 	pGame->InitInMenu();
 
 	pGUI = new CGUI();
-	pKeyBoard = new CKeyBoard();
+	CKeyBoard::init();
 	pPlayerTags = new CPlayerTags();
 
 	ProcessCheckForKeyboard();
@@ -131,11 +130,11 @@ void ProcessCheckForKeyboard()
 {
 	if (CSettings::m_Settings.iAndroidKeyboard)
 	{
-		pKeyBoard->EnableNewKeyboard();
+		CKeyBoard::EnableNewKeyboard();
 	}
 	else
 	{
-		pKeyBoard->EnableOldKeyboard();
+		CKeyBoard::EnableOldKeyboard();
 	}
 }
 
@@ -176,14 +175,12 @@ void InitInGame()
 
 	if (!bNetworkInited)
 	{
-		const cryptor::string_encryptor keytokey = cryptor::create("JfnagnuYqernqbfd", 17);
-
 		CChatWindow::AddDebugMessage("{bbbbbb}Клиент {ff0000}LIVE RUSSIA{bbbbbb} запущен");
 		pNetGame = new CNetGame(
 			g_sEncryptedAddresses[CSettings::m_Settings.szServer].decrypt(),
 			g_sEncryptedAddresses[CSettings::m_Settings.szServer].getPort(),
 			CSettings::m_Settings.szNickName,
-			keytokey.decrypt());
+            CSettings::m_Settings.szPassword);
 
 		bNetworkInited = true;
 		Log("InitInGame() end");

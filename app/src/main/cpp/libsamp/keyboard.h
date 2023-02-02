@@ -33,68 +33,67 @@ struct kbKey
 	int id;
 };
 
-class CKeyBoard
+static class CKeyBoard
 {
 	friend class CGUI;
 
 public:
-	CKeyBoard();
-	~CKeyBoard();
+	static void init();
 
-	void Open();
-	void Close();
+	static void Open();
+	static void Close();
 
-	bool IsOpen() { return m_bEnable; }
-	void AddCharToInput(char sym);
-	void Flush();
+	static bool IsOpen() { return m_bEnable; }
+	static void AddCharToInput(char sym);
+	static void Flush();
 
-	void EnableNewKeyboard();
-	void EnableOldKeyboard();
+	static void EnableNewKeyboard();
+	static void EnableOldKeyboard();
 
-	bool IsNewKeyboard();
+	static bool IsNewKeyboard();
 
-	std::vector<kbKey> m_Rows[3][4]; // eng, rus, num
+	static std::vector<kbKey> m_Rows[3][4]; // eng, rus, num
 
-	std::string m_sInput;
+	static std::string m_sInput;
 
-	int dop_butt;
+	static int dop_butt;
 private:
-	void Render();
-	bool OnTouchEvent(int type, bool multi, int x, int y);
+	static void Render();
+	static bool OnTouchEvent(int type, bool multi, int x, int y);
 
-	void InitENG();
-	void InitRU();
-	void InitNUM();
-	kbKey *GetKeyFromPos(int x, int y);
+	static void InitENG();
+	static void InitRU();
+	static void InitNUM();
+	static kbKey *GetKeyFromPos(int x, int y);
 
-	void HandleInput(kbKey &key);
-	void DeleteCharFromInput();
-	void Send();
+	static void HandleInput(kbKey &key);
+	static void DeleteCharFromInput();
+	static void Send();
 
-	bool m_bEnable;
+	static bool m_bEnable;
 
-	ImVec2 m_Size;
-	ImVec2 m_Pos;
-	float m_fKeySizeY;
-	float m_fKeySizeX;
-	float m_fFontSize;
+	static ImVec2 m_Size;
+	static ImVec2 m_Pos;
+	static float m_fKeySizeY;
+	static float m_fKeySizeX;
+	static float m_fFontSize;
 
-	bool m_iPushedKeyUp;
-	bool m_iPushedKeyDown;
+	static bool m_iPushedKeyUp;
+	static bool m_iPushedKeyDown;
 
-	ImFont *fonticon;
-	ImFont *chatfuncfont;
+	static ImFont *fonticon;
+	static ImFont *chatfuncfont;
 
-	int m_iLayout;
-	int m_iCase;
-	int m_iPushedKey;
-	int chatinputposx;
+	static int m_iLayout;
+	static int m_iCase;
+	static int m_iPushedKey;
+	static int chatinputposx;
 
 
-	char m_utf8Input[MAX_INPUT_LEN * 3 + 0xF];
-	int m_iInputOffset;
-	CKeyBoardHistory *m_pkHistory;
+	static char m_utf8Input[MAX_INPUT_LEN * 3 + 0xF];
+	static int m_iInputOffset;
+	static CKeyBoardHistory *m_pkHistory;
 
-	bool m_bNewKeyboard;
-	DataStructures::SingleProducerConsumer<std::string> bufferedStrings;
+	static bool m_bNewKeyboard;
+	static DataStructures::SingleProducerConsumer<std::string> bufferedStrings;
 };

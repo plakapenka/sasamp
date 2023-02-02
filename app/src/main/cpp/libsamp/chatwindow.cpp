@@ -11,7 +11,6 @@
 #include "java_systems/CHUD.h"
 
 extern CGUI *pGUI;
-extern CKeyBoard *pKeyBoard;
 extern CNetGame *pNetGame;
 extern CAMERA_AIM * pcaInternalAim;
 extern CGame * pGame;

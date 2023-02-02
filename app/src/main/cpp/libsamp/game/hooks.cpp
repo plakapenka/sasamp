@@ -292,7 +292,7 @@ int bBlockCWidgetRegionLookUpdate = 0;
 
 /* ====================================================== */
 #include "..//keyboard.h"
-extern CKeyBoard* pKeyBoard;
+
 void (*TouchEvent)(int, int, int posX, int posY);
 void TouchEvent_hook(int type, int num, int posX, int posY)
 {
@@ -316,7 +316,7 @@ void TouchEvent_hook(int type, int num, int posX, int posY)
 
 	ImGuiIO& io = ImGui::GetIO();
 
-	if (pKeyBoard && pKeyBoard->IsOpen())
+	if (CKeyBoard::IsOpen())
 	{
 		if (posX >= io.DisplaySize.x - ImGui::GetFontSize() * 4 && posY >= io.DisplaySize.y / 2 - (ImGui::GetFontSize() * 2.5) * 3 && posY <= io.DisplaySize.y / 2) // keys
 		{
@@ -727,12 +727,9 @@ void CTimer__StartUserPause_hook()
 	// process pause event
 	if (g_pJavaWrapper)
 	{
-		if (pKeyBoard)
+		if (CKeyBoard::IsNewKeyboard())
 		{
-			if (pKeyBoard->IsNewKeyboard())
-			{
-				pKeyBoard->Close();
-			}
+			CKeyBoard::Close();
 		}
 		g_pJavaWrapper->SetPauseState(true);
 	}
@@ -1332,7 +1329,6 @@ VEHICLE_MODEL* CModelInfo_AddVehicleModel_hook(int id)
 }
 
 #include "..//keyboard.h"
-extern CKeyBoard* pKeyBoard;
 
 uint64_t(*CWorld_ProcessPedsAfterPreRender)();
 uint64_t CWorld_ProcessPedsAfterPreRender_hook()

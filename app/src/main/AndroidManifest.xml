@@ -62,7 +62,7 @@
             android:launchMode="singleTask"
             android:screenOrientation="landscape"
             android:fitsSystemWindows="true"
-            android:windowSoftInputMode="adjustResize"
+            android:windowSoftInputMode="adjustPan"
             android:hardwareAccelerated="true"
             android:largeHeap="true"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"/>

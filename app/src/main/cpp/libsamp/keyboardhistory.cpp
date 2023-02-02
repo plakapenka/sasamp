@@ -7,7 +7,6 @@
 #include "keyboard.h"
 
 extern CGUI* pGUI;
-extern CKeyBoard* pKeyBoard;
 
 CKeyBoardHistory::CKeyBoardHistory()
 {
@@ -43,7 +42,7 @@ void CKeyBoardHistory::PageUp()
 		m_iCounter = m_Buffer.size();
 		return;
 	}
-	pKeyBoard->Flush();
+	CKeyBoard::Flush();
 	AddTextToBuffer(m_Buffer[m_iCounter - 1]);
 }
 
@@ -53,10 +52,10 @@ void CKeyBoardHistory::PageDown()
 	if (m_iCounter <= 0)
 	{
 		m_iCounter = 0;
-		pKeyBoard->Flush();
+		CKeyBoard::Flush();
 		return;
 	}
-	pKeyBoard->Flush();
+	CKeyBoard::Flush();
 	AddTextToBuffer(m_Buffer[m_iCounter - 1]);
 }
 
@@ -67,9 +66,6 @@ void CKeyBoardHistory::ResetPointer()
 
 void CKeyBoardHistory::AddTextToBuffer(const std::string& msg)
 {
-	if (pKeyBoard)
-	{
-		for (int i = 0; i < msg.size(); i++)
-			pKeyBoard->AddCharToInput((char)msg[i]);
-	}
+	for (int i = 0; i < msg.size(); i++)
+		CKeyBoard::AddCharToInput((char)msg[i]);
 }

@@ -93,22 +93,22 @@ Java_com_liverussia_cr_gui_dialogs_Dialog_init(JNIEnv *env, jobject thiz) {
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_dialogs_Dialog_sendResponse(JNIEnv *env, jobject thiz, jint button,
-                                                       jint id, jint item, jbyteArray str)
-                                                       {
+Java_com_liverussia_cr_gui_dialogs_Dialog_sendResponse(JNIEnv *env, jobject thiz, jint button, jint id, jint item, jbyteArray str)
+{
     jbyte* pMsg = env->GetByteArrayElements(str, nullptr);
     jsize length = env->GetArrayLength(str);
 
     std::string szStr((char*)pMsg, length);
 
-    uint8_t respLen = strlen((char*)pMsg);
+    uint8_t respLen = strlen(szStr.c_str());
 
     RakNet::BitStream bsSend;
     bsSend.Write((uint16_t)id);
     bsSend.Write((uint8_t)button);
     bsSend.Write((uint16_t)item);
-    bsSend.Write(respLen);
-    bsSend.Write((char*)pMsg, respLen);
+
+    bsSend.Write((uint8_t)respLen);
+    bsSend.Write(const_cast<char *>(szStr.c_str()), respLen);
 
     pNetGame->m_pRakClient->RPC(&RPC_DialogResponse, &bsSend, HIGH_PRIORITY, RELIABLE, 0, false, UNASSIGNED_NETWORK_ID, NULL);
 

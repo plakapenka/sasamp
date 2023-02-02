@@ -15,7 +15,36 @@
 extern CGUI *pGUI;
 extern CGame *pGame;
 
-CKeyBoard::CKeyBoard()
+std::vector<kbKey> CKeyBoard::m_Rows[3][4];
+std::string CKeyBoard::m_sInput;
+int CKeyBoard::dop_butt;
+bool CKeyBoard::m_bEnable;
+ImVec2 CKeyBoard::m_Size;
+ImVec2 CKeyBoard::m_Pos;
+float CKeyBoard::m_fKeySizeY;
+float CKeyBoard::m_fKeySizeX;
+float CKeyBoard::m_fFontSize;
+
+bool CKeyBoard::m_iPushedKeyUp;
+bool CKeyBoard::m_iPushedKeyDown;
+
+ImFont *CKeyBoard::fonticon;
+ImFont *CKeyBoard::chatfuncfont;
+
+int CKeyBoard::m_iLayout;
+int CKeyBoard::m_iCase;
+int CKeyBoard::m_iPushedKey;
+int CKeyBoard::chatinputposx;
+
+
+char CKeyBoard::m_utf8Input[MAX_INPUT_LEN * 3 + 0xF];
+int CKeyBoard::m_iInputOffset;
+CKeyBoardHistory *CKeyBoard::m_pkHistory;
+
+bool CKeyBoard::m_bNewKeyboard;
+DataStructures::SingleProducerConsumer<std::string> CKeyBoard::bufferedStrings;
+
+void CKeyBoard::init()
 {
 	Log("Initalizing KeyBoard..");
 
@@ -58,10 +87,6 @@ CKeyBoard::CKeyBoard()
 	m_bNewKeyboard = true;
 
 	Log("KeyBoard inited");
-}
-
-CKeyBoard::~CKeyBoard()
-{
 }
 
 void CKeyBoard::Render()
@@ -2372,11 +2397,11 @@ bool ProcessLocalCommands(const char str[])
 
 	return false;
 }
-extern CKeyBoard *pKeyBoard;
+
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_HudManager_SendChatButton(JNIEnv *env, jobject thiz, jint button_id) {
-	pKeyBoard->dop_butt = button_id;
+	CKeyBoard::dop_butt = button_id;
 }
 extern "C"
 JNIEXPORT void JNICALL

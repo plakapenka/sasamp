@@ -313,7 +313,6 @@ void CNetGame::packetMafiaWar(Packet* p)
 
     CHUD::updateOpgWarLayout(time, attack_score, def_score);
 }
-extern CKeyBoard *pKeyBoard;
 
 void CHUD::updateOpgWarLayout(int time, int attack_score, int def_score)
 {
@@ -322,7 +321,7 @@ void CHUD::updateOpgWarLayout(int time, int attack_score, int def_score)
     jclass clazz = env->GetObjectClass(thiz);
     jmethodID UpdateOpgWarLayout = env->GetMethodID(clazz, "updateOpgWarLayout", "(III)V");
 
-    if(pKeyBoard->IsOpen())
+    if(CKeyBoard::IsOpen())
     {
         env->CallVoidMethod(thiz, UpdateOpgWarLayout, 0, 0, 0);
         return;
@@ -496,12 +495,10 @@ Java_com_liverussia_cr_gui_HudManager_SendChatMessage(JNIEnv *env, jobject thiz,
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_HudManager_ToggleKeyBoard(JNIEnv *env, jobject thiz, jboolean toggle) {
-    if (pKeyBoard) {
-        if (toggle) {
-            pKeyBoard->Open();
-        } else {
-            pKeyBoard->Close();
-        }
+    if (toggle) {
+        CKeyBoard::Open();
+    } else {
+        CKeyBoard::Close();
     }
 }
 extern "C"

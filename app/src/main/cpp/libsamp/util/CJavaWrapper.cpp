@@ -11,7 +11,6 @@ extern "C" JavaVM* javaVM;
 #include "java_systems/CTab.h"
 #include "java_systems/CHUD.h"
 
-extern CKeyBoard* pKeyBoard;
 extern CNetGame* pNetGame;
 extern CGame* pGame;
 

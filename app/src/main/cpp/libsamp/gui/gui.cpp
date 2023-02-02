@@ -12,7 +12,6 @@
 #include "../game/vehicle.h"
 
 extern CPlayerTags *pPlayerTags;
-extern CKeyBoard *pKeyBoard;
 extern CNetGame *pNetGame;
 extern CJavaWrapper *g_pJavaWrapper;
 
@@ -242,7 +241,7 @@ void CGUI::Render()
 		pNetGame->GetLabelPool()->Draw();
 	}
 
-	if(pGame->FindPlayerPed()->IsInVehicle() && !pGame->FindPlayerPed()->IsAPassenger() && !pKeyBoard->IsOpen() && !CDialog::bIsShow)
+	if(pGame->FindPlayerPed()->IsInVehicle() && !pGame->FindPlayerPed()->IsAPassenger() && !CKeyBoard::IsOpen() && !CDialog::bIsShow)
 	{
 		if(!showSpeedometr)
 		{
@@ -260,7 +259,7 @@ void CGUI::Render()
 		}
 	}
 
-	if (pKeyBoard) pKeyBoard->Render();
+	CKeyBoard::Render();
 
 	CDebugInfo::Draw();
 
@@ -273,7 +272,7 @@ void CGUI::Render()
 
 bool CGUI::OnTouchEvent(int type, bool multi, int x, int y)
 {
-	if(!pKeyBoard->OnTouchEvent(type, multi, x, y)) return false;
+	if(!CKeyBoard::OnTouchEvent(type, multi, x, y)) return false;
 
 	bool bFalse = true;
 
