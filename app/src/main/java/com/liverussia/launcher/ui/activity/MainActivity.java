@@ -23,6 +23,8 @@ import android.view.animation.Animation;
 
 import com.liverussia.cr.R;
 import com.liverussia.cr.core.Samp;
+import com.liverussia.launcher.domain.messages.InfoMessage;
+import com.liverussia.launcher.ui.dialogs.EnterLockedServerPasswordDialog;
 import com.liverussia.launcher.utils.MainUtils;
 import com.liverussia.cr.core.GTASA;
 import com.liverussia.launcher.async.task.CacheChecker;
@@ -64,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private final static String IS_AFTER_LOADING_KEY = "isAfterLoading";
     private final static int GAME_DIRECTORY_EMPTY_SIZE = 0;
     private final static int LAST_VERSION_WITHOUT_NEED_PERMS = 23;
+    private static final int SERVER_LOCKED_VALUE = 1;
 
     private Handler handler;
     private Animation animation;
@@ -91,6 +94,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private ServerImagesResponseDto possiblePrizesInfoResponseDto;
     private ServerImagesResponseDto donateServicesResponseDto;
+
+    private int lockedServerPosition;
+    private Servers lockedServerInfo;
 
     public MineGame3 gg;
 
@@ -288,16 +294,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClickPlay() {
         String isTestMode = NativeStorage.getClientProperty(NativeStorageElements.TEST, this);
 
-        if (StringUtils.isNotBlank(isTestMode) && Integer.parseInt(isTestMode) == 1) startGame();
-        else {
+        if (StringUtils.isNotBlank(isTestMode) && Integer.parseInt(isTestMode) == 1) {
+            startGame();
+        } else {
       //  startGame();
             File gameDirectory = new File(this.getExternalFilesDir(null).toString());
 
             if (gameDirectory.list() != null && gameDirectory.list().length > GAME_DIRECTORY_EMPTY_SIZE) {
                 CacheChecker cacheChecker = new CacheChecker(this);
                 cacheChecker.setOnAsyncSuccessListener(this::doAfterCacheChecked);
-                //TODO вернуть перед релизом
-                //  cacheChecker.checkIsAllCacheFilesExist();
                 cacheChecker.validateCache();
             } else {
                 MainUtils.setType(DownloadType.LOAD_ALL_CACHE);
@@ -338,9 +343,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             onClickMonitoring();
             return;
         }
+
+        int position = Integer.parseInt(selectedServer);
+
+        Servers servers = MainUtils.SERVERS.get(position);
+        String password = NativeStorage.getClientProperty(NativeStorageElements.LOCKED_SERVER_PASSWORD, this);
+
+        if (SERVER_LOCKED_VALUE == servers.getLock() && StringUtils.isBlank(password)) {
+            EnterLockedServerPasswordDialog dialog = new EnterLockedServerPasswordDialog(this);
+            dialog.setOnDialogCloseListener(this::saveServerPassword);
+            dialog.createDialog();
+            return;
+        }
+
+        if (SERVER_LOCKED_VALUE != servers.getLock()) {
+            NativeStorage.addClientProperty(NativeStorageElements.LOCKED_SERVER_PASSWORD, StringUtils.EMPTY, this);
+        }
+
         startActivity(new Intent(this, Samp.class));
 
         this.finish();
+    }
+
+    private void saveServerPassword(String password) {
+        if (StringUtils.isBlank(password)) {
+            activityService.showMessage(ErrorMessage.TEST_SERVER_PASSWORD_NOT_INPUT.getText(), this);
+            return;
+        }
+
+        NativeStorage.addClientProperty(NativeStorageElements.LOCKED_SERVER_PASSWORD, password, this);
     }
 
     private void onClickRoulette() {
