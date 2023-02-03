@@ -372,6 +372,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         NativeStorage.addClientProperty(NativeStorageElements.LOCKED_SERVER_PASSWORD, password, this);
+        startGame();
     }
 
     private void onClickRoulette() {

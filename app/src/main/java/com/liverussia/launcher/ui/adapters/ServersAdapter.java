@@ -35,8 +35,6 @@ import org.ini4j.Wini;
 
 public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersViewHolder> {
 
-	private static final int SERVER_LOCKED_VALUE = 1;
-
 	private Context context;
 	private List<Servers> servers;
 	private int selectedItem;
