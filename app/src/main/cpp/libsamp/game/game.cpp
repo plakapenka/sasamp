@@ -4,6 +4,7 @@
 #include "net/netgame.h"
 #include "java_systems/CHUD.h"
 #include "util/patch.h"
+#include "CGtaWidgets.h"
 
 void ApplyPatches();
 void ApplyInGamePatches();
@@ -129,6 +130,8 @@ void *Init(void *p)
 {
 	ApplyPatches();
 	InstallHooks();
+
+	CGtaWidgets::init();
 
 	pthread_exit(0);
 }

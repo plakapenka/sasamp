@@ -9,6 +9,7 @@
 #include "../java_systems/CHUD.h"
 #include "..///..//santrope-tea-gtasa/encryption/CTinyEncrypt.h"
 #include "..///..//santrope-tea-gtasa/encryption/encrypt.h"
+#include "CGtaWidgets.h"
 extern "C"
 {
 #include "..//santrope-tea-gtasa/encryption/aes.h"
@@ -1659,71 +1660,6 @@ int _rwFreeListFreeReal_hook(int a1, unsigned int a2)
 
 uintptr_t* CTouchInterface__m_bWidgets;
 
-static bool ShouldBeProcessedButton(int result)
-{
-	CTouchInterface__m_bWidgets = (uintptr_t*)(g_libGTASA + 0x00657E48);
-
-	if (result == CTouchInterface__m_bWidgets[26] || result == CTouchInterface__m_bWidgets[27])
-	{
-		if (pNetGame)
-		{
-			CLocalPlayer* pLocal = pNetGame->GetPlayerPool()->GetLocalPlayer();
-			if (pLocal)
-			{
-				if (pLocal->GetPlayerPed())
-				{
-					VEHICLE_TYPE* pVehicle = pLocal->GetPlayerPed()->GetGtaVehicle();
-					if (pVehicle)
-					{
-						uintptr_t this_vtable = pVehicle->entity.vtable;
-						this_vtable -= g_libGTASA;
-
-						if (this_vtable == 0x5CCE60)
-						{
-							return 1;
-						}
-					}
-				}
-			}
-		}
-		return 0;
-	}
-	return 1;
-}
-
-int (*CWidgetButton__Draw)(uintptr_t thiz);
-int CWidgetButton__Draw_hook(uintptr_t thiz)
-{
-	if(!CHUD::bIsShow)return 0;
-
-	return CWidgetButton__Draw(thiz);
-}
-
-int (*CWidgetButton__IsTouched)(CVector2D* a1);
-int CWidgetButton__IsTouched_hook(CVector2D* a1)
-{
-	//if(!CHUD::bIsShow)return 0;
-	return CWidgetButton__IsTouched(a1);
-}
-
-void (*CWidgetButton__Update)(int result, int a2, int a3, int a4);
-void CWidgetButton__Update_hook(int result, int a2, int a3, int a4)
-{
-	if (!result)
-	{
-		return;
-	}
-	CTouchInterface__m_bWidgets = (uintptr_t*)(g_libGTASA + 0x00657E48);
-
-	((void (*)(unsigned int, unsigned int)) (g_libGTASA + 0x00274178 + 1))(CTouchInterface__m_bWidgets[0], 0); // Кнопка сесть в тачку
-
-	if(pNetGame && pNetGame->m_GreenZoneState )
-	{
-		((void (*)(unsigned int, unsigned int)) (g_libGTASA + 0x00274178 + 1))(CTouchInterface__m_bWidgets[1], 0); // кулак
-	}
-	CWidgetButton__Update(result, a2, a3, a4);
-}
-
 
 std::list<std::pair<unsigned int*, unsigned int>> resetEntriesVehicle;
 
@@ -3072,10 +3008,9 @@ void InstallHooks()
 	CHook::InlineHook(g_libGTASA, 0x001B9D74, &_rwFreeListFreeReal_hook, &_rwFreeListFreeReal);
 
 	//SetUpHook(g_libGTASA + 0x0027548C, (DWORD)CWidgetButtonAttack_hook, (DWORD*)&CWidgetButtonAttack);
-	CHook::InlineHook(g_libGTASA, 0x00274AB4, &CWidgetButton__Update_hook, &CWidgetButton__Update);
 
-	CHook::SetUpHook(g_libGTASA + 0x00274748, (uintptr_t)CWidgetButton__Draw_hook, (uintptr_t*)&CWidgetButton__Draw);
-	CHook::InlineHook(g_libGTASA, 0x00274218, &CWidgetButton__IsTouched_hook, &CWidgetButton__IsTouched);
+
+
 	//SetUpHook(g_libGTASA + 0x0027455C, (uintptr_t)CWidget__IsTouched_hook, (uintptr_t*)& CWidget__IsTouched);
 
 	CHook::RET(g_libGTASA + 0x002C0304); // CDarkel__RegisterCarBlownUpByPlayer_hook

@@ -270,7 +270,7 @@ void handler3(int signum, siginfo_t* info, void* contextPtr)
 
 		//DumpLibraries();
 
-		exit(0);
+		//exit(0);
 	}
 
 	return;
@@ -326,13 +326,7 @@ void handler(int signum, siginfo_t *info, void* contextPtr)
 
 		CrashLog("1: libc.so + 0x%X", context->uc_mcontext.arm_pc - FindLibrary("libc.so"));
 		CrashLog("2: libc.so + 0x%X", context->uc_mcontext.arm_lr - FindLibrary("libc.so"));
-
-		//DumpLibraries();
-
-		exit(0);
 	}
-
-	return;
 }
 
 void handler2(int signum, siginfo_t* info, void* contextPtr)
@@ -386,9 +380,6 @@ void handler2(int signum, siginfo_t* info, void* contextPtr)
 		CrashLog("1: libc.so + 0x%X", context->uc_mcontext.arm_pc - FindLibrary("libc.so"));
 		CrashLog("2: libc.so + 0x%X", context->uc_mcontext.arm_lr - FindLibrary("libc.so"));
 
-		//DumpLibraries();
-
-		exit(0);
 	}
 
 	return;
@@ -447,10 +438,6 @@ void handler1(int signum, siginfo_t* info, void* contextPtr)
 		CrashLog("1: libc.so + 0x%X", context->uc_mcontext.arm_pc - FindLibrary("libc.so"));
 		CrashLog("2: libc.so + 0x%X", context->uc_mcontext.arm_lr - FindLibrary("libc.so"));
 
-
-		//DumpLibraries();
-
-		exit(0);
 	}
 
 	return;
@@ -458,7 +445,7 @@ void handler1(int signum, siginfo_t* info, void* contextPtr)
 
 extern "C"
 {
-	JavaVM* javaVM = NULL;
+	JavaVM* javaVM = nullptr;
 	JavaVM* alcGetJavaVM(void) {
 		return javaVM;
 	}
