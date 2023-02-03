@@ -748,10 +748,8 @@ VEHICLEID CPlayerPed::GetCurrentSampVehicleID()
 CVehicle* CPlayerPed::GetCurrentVehicle()
 {
 	if(!m_pPed) return nullptr;
-	if(!pNetGame)return nullptr;
 
 	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
-	if(!pVehiclePool)return nullptr;
 
 	for (size_t i = 0; i < MAX_VEHICLES; i++) {
 		if (pVehiclePool->GetSlotState(i)) {

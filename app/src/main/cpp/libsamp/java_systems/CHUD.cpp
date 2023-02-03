@@ -23,6 +23,7 @@ bool        CHUD::bIsShowPassengerButt = false;
 bool        CHUD::bIsShowEnterExitButt = false;
 bool        CHUD::bIsShowLockButt = false;
 bool        CHUD::bIsShowHornButt = false;
+bool        CHUD::bIsShowSirenButt = false;
 bool        CHUD::bIsShowChat = true;
 int         CHUD::iLocalMoney = 0;
 int         CHUD::iWantedLevel = 0;
@@ -146,6 +147,17 @@ void CHUD::toggleLockButton(bool toggle)
 
     jmethodID ToggleLockVehicleButton = env->GetMethodID(clazz, "toggleLockButton", "(Z)V");
     env->CallVoidMethod(thiz, ToggleLockVehicleButton, toggle);
+}
+
+void CHUD::toggleSirenButton(bool toggle)
+{
+    bIsShowSirenButt = toggle;
+
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+    jclass clazz = env->GetObjectClass(thiz);
+
+    jmethodID method = env->GetMethodID(clazz, "toggleSirenButton", "(Z)V");
+    env->CallVoidMethod(thiz, method, toggle);
 }
 
 void CHUD::toggleHornButton(bool toggle)
@@ -525,4 +537,23 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_HudManager_clickMultText(JNIEnv *env, jobject thiz) {
     pNetGame->SendChatCommand("/action");
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_HudManager_clickSiren(JNIEnv *env, jobject thiz) {
+    CLocalPlayer *pPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer();
+    if(!pPlayer)return;
+
+    CPlayerPed *pPed = pPlayer->GetPlayerPed();
+    if(!pPed) return;
+
+    if(pPed->IsInVehicle())
+    {
+        CVehicle* pVehicle = pPed->GetCurrentVehicle();
+        if(pVehicle)
+        {
+            pVehicle->m_bIsSirenOn = !pVehicle->m_bIsSirenOn;
+        }
+
+    }
 }

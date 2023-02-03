@@ -27,6 +27,7 @@ public:
     static bool bIsShowEnterExitButt;
     static bool bIsShowLockButt;
     static bool bIsShowHornButt;
+    static bool bIsShowSirenButt;
     static bool bIsShowChat;
     static bool bIsTouchCameraButt;
     static bool bIsCamEditGui;
@@ -37,6 +38,7 @@ public:
     static void UpdateMoney();
 
     static void toggleHornButton(bool toggle);
+    static void toggleSirenButton(bool toggle);
 
     static void updateOpgWarLayout(int time, int attack_score, int def_score);
 

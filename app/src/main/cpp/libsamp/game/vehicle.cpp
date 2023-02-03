@@ -9,7 +9,6 @@ extern CNetGame* pNetGame;
 CVehicle::CVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRotation, bool bSiren)
 {
 	Log("CVehicle(%d, %4.f, %4.f, %4.f, %4.f)", iType, fPosX, fPosY, fPosZ, fRotation);
-	uint32_t tickStart = GetTickCount();
 
 	CDebugInfo::uiStreamedVehicles++;
 	MATRIX4X4 mat;
@@ -34,14 +33,7 @@ CVehicle::CVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRota
 			pGame->LoadRequestedModels();
 			while (!pGame->IsModelLoaded(iType)) usleep(10);
 		}
-		if (bSiren)
-		{
-
-		}
-		else
-		{
-
-		}
+        m_bHasSiren = 0;
 		ScriptCommand(&create_car, iType, fPosX, fPosY, fPosZ, &dwRetID);
 		ScriptCommand(&set_car_z_angle, dwRetID, fRotation);
 		ScriptCommand(&car_gas_tank_explosion, dwRetID, 0);
@@ -156,8 +148,6 @@ CVehicle::CVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRota
 		memcpy(&m_vInitialWheelMatrix[2], (const void*)&(pWheelRB->modelling), sizeof(MATRIX4X4));
 		memcpy(&m_vInitialWheelMatrix[3], (const void*)&(pWheelLB->modelling), sizeof(MATRIX4X4));
 	}
-
-	//CChatWindow::AddDebugMessage("time for CVehicle::CVehicle %d", GetTickCount() - tickStart);
 }
 
 
@@ -680,17 +670,17 @@ void CVehicle::SetHandlingData(std::vector<SHandlingData>& vHandlingData)
 				break;
 			case E_HANDLING_PARAMS::hpGear:
 
-				if (i.fValue >= 0.0f && i.fValue <= 1.1f)
+				if (i.fValue == 1)
 				{
 					m_pCustomHandling->m_transmissionData.m_nDriveType = 'R';
 				}
 
-				if (i.fValue >= 1.2f && i.fValue <= 2.1f)
+				if (i.fValue == 2)
 				{
 					m_pCustomHandling->m_transmissionData.m_nDriveType = 'F';
 				}
 
-				if (i.fValue >= 2.2f && i.fValue <= 3.1f)
+				if (i.fValue == 3)
 				{
 					m_pCustomHandling->m_transmissionData.m_nDriveType = '4';
 				}

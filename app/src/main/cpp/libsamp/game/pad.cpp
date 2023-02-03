@@ -449,7 +449,7 @@ uint32_t CPad__GetHorn_hook(uintptr_t thiz)
 uint32_t (*CVehicle__UsesSiren)(uintptr_t thiz);
 uint32_t CVehicle__UsesSiren_hook(uintptr_t thiz)
 {
-	return 1;
+	return 0;
 }
 
 extern float * pfCameraExtZoom;
@@ -873,7 +873,7 @@ void HookCPad()
 	CHook::InlineHook(g_libGTASA, 0x39DB7C, &CPad__GetAccelerate_hook, &CPad__GetAccelerate);
 	CHook::InlineHook(g_libGTASA, 0x39D938, &CPad__GetBrake_hook, &CPad__GetBrake);
 	CHook::InlineHook(g_libGTASA, 0x39D754, &CPad__GetHandBrake_hook, &CPad__GetHandBrake);
-	//CHook::InlineHook(g_libGTASA, 0x39D4C8, &CPad__GetHorn_hook, &CPad__GetHorn);
+	CHook::InlineHook(g_libGTASA, 0x39D4C8, &CPad__GetHorn_hook, &CPad__GetHorn);
 	CHook::InlineHook(g_libGTASA, 0x00510B08, &CVehicle__UsesSiren_hook, &CVehicle__UsesSiren);
 
 	CHook::InlineHook(g_libGTASA, 0x39DD30, &CPad__CycleWeaponRightJustDown_hook, &CPad__CycleWeaponRightJustDown);

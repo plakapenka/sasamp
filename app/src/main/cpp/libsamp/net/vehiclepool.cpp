@@ -66,9 +66,6 @@ void CVehiclePool::Process()
 				pVehicle->SetEngineState(pVehicle->m_bEngineOn);
 				pVehicle->SetLightsState(pVehicle->m_bLightsOn);
 
-//                *((DWORD *)&pVehicle->m_pVehicle->m_nVehicleFlags + 1) |= 0x8000u;
-//                *((DWORD *)pVehicle->m_pVehicle + 0x10C) |= 0x8000u;
-
 //				*(bool*)(pVehicle->m_pVehicle + 0x13C + 0x0BF) = 1;
 //                *(bool*)(pVehicle->m_pVehicle + 0x13C + 0x0C8) = 1;
 

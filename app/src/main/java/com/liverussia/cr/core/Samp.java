@@ -11,7 +11,7 @@ public class Samp extends GTASA
     public void onCreate(Bundle bundle) {
 
         Log.i("java", "calling initSAMP");
-        initSAMP(getExternalFilesDir(null).toString()+"/");
+        initSAMP(getExternalFilesDir(null).toString() + "/");
 
         super.onCreate(bundle);
     }

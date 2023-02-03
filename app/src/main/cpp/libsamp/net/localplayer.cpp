@@ -364,6 +364,9 @@ bool CLocalPlayer::Process()
 				if (CHUD::bIsShowHornButt) {
 					CHUD::toggleHornButton(false);
 				}
+				if(CHUD::bIsShowSirenButt) {
+					CHUD::toggleSirenButton(false);
+				}
 				if (pVehiclePool) {
 					VEHICLEID ClosetVehicleID = pVehiclePool->FindNearestToLocalPlayerPed();
 
@@ -425,6 +428,9 @@ bool CLocalPlayer::Process()
 					if (CHUD::bIsShowHornButt) {
 						CHUD::toggleHornButton(false);
 					}
+					if(CHUD::bIsShowSirenButt) {
+						CHUD::toggleSirenButton(false);
+					}
 					if (CHUD::bIsShowPassengerButt) {
 						CHUD::togglePassengerButton(false);
 					}
@@ -438,6 +444,11 @@ bool CLocalPlayer::Process()
 					}
 					if (!CHUD::bIsShowHornButt) {
 						CHUD::toggleHornButton(true);
+					}
+					if(!CHUD::bIsShowSirenButt) {
+						if(m_pPlayerPed->GetCurrentVehicle()->m_bHasSiren) {
+							CHUD::toggleSirenButton(true);
+						}
 					}
 					if (CHUD::bIsShowPassengerButt) {
 						CHUD::togglePassengerButton(false);
@@ -893,7 +904,7 @@ void CLocalPlayer::SendInCarFullSyncData()
 	icSync.bytePlayerHealth = (uint8_t)m_pPlayerPed->GetHealth();
 	icSync.bytePlayerArmour = (uint8_t)m_pPlayerPed->GetArmour();
 
-	//icSync.byteSirenOn = pVehicle->IsSirenOn() != 0;
+	icSync.byteSirenOn = pVehicle->m_bIsSirenOn;
 	//icSync.byteLandingGearState = pVehicle->GetLandingGearState() != 0;
 
 	//uint8_t exKeys = GetPlayerPed()->GetExtendedKeys();

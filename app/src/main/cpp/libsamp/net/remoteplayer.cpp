@@ -863,9 +863,9 @@ void CRemotePlayer::StoreInCarFullSyncData(INCAR_SYNC_DATA *picSync, uint32_t dw
 
 	m_byteSpecialAction = 0;
 	m_pCurrentVehicle->SetHealth(picSync->fCarHealth);
-	//m_pCurrentVehicle->SetSirenState(picSync->byteSirenOn);
-	SetState(PLAYER_STATE_DRIVER);
+	m_pCurrentVehicle->m_bIsSirenOn = picSync->byteSirenOn;
 
+	SetState(PLAYER_STATE_DRIVER);
 }
 
 void CRemotePlayer::StorePassengerFullSyncData(PASSENGER_SYNC_DATA *ppsSync)

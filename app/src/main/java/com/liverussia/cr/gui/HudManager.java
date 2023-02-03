@@ -72,6 +72,7 @@ public class HudManager {
     private ImageView enterexit_driver;
     private ImageView lock_vehicle;
     private ImageView button_horn;
+    ImageView button_siren;
     private ConstraintLayout opg_war_layout;
     private TextView opg_attacker_score;
     private TextView opg_defender_score;
@@ -134,6 +135,7 @@ public class HudManager {
     native void ClickEnterExitVehicleButton();
     native void ClickLockVehicleButton();
     native void PressedHorn(boolean pressed);
+    native void clickSiren();
     native void SetRadarBgPos(float x1, float y1, float x2, float y2);
     native void SetRadarPos(float x1, float y1);
     native void ToggleKeyBoard(boolean toggle);
@@ -290,6 +292,13 @@ public class HudManager {
         opg_time_text = activity.findViewById(R.id.opg_time_text);
 
         opg_war_layout.setVisibility(View.GONE);
+
+        //Кнопка сирены
+        button_siren = activity.findViewById(R.id.button_siren);
+        button_siren.setVisibility(View.GONE);
+        button_siren.setOnClickListener(view -> {
+            clickSiren();
+        });
 
         // кнопка сигнала
         button_horn = activity.findViewById(R.id.button_horn);
@@ -539,6 +548,18 @@ public class HudManager {
         } );
 
     }
+    void toggleSirenButton(boolean toggle)
+    {
+        if(toggle)
+        {
+            activity.runOnUiThread(() -> Utils.ShowLayout(button_siren, true) );
+        }
+        else
+        {
+            activity.runOnUiThread(() -> Utils.HideLayout(button_siren, true) );
+        }
+    }
+
     void toggleHornButton(boolean toggle)
     {
         if(toggle)

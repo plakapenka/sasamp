@@ -144,6 +144,8 @@ private:
 	void CopyGlobalSuspensionLinesToPrivate();
 public:
 	VEHICLE_TYPE* 	m_pVehicle;
+	bool 			m_bHasSiren;
+	bool 			m_bIsSirenOn;
 	bool 			m_bIsLocked;
 	CVehicle* 		m_pTrailer;
 	uint32_t		m_dwMarkerID;

@@ -611,34 +611,34 @@ public:
 };
 
 struct tHandlingData {
-	int           m_nVehicleId;
-	float         m_fMass; // 1.0 to 50000.0
-	float field_8;
-	float         m_fTurnMass;
-	float         m_fDragMult;
-	VECTOR       m_vecCentreOfMass; // x, y, z - 1.0 to 50000.0
-	unsigned char m_nPercentSubmerged; // 10 to 120 (> 100% vehicle sinks)
+	int           	m_nVehicleId;
+	float         	m_fMass; // 1.0 to 50000.0
+	float 			field_8;
+	float         	m_fTurnMass;
+	float         	m_fDragMult;
+	VECTOR       	m_vecCentreOfMass; // x, y, z - 1.0 to 50000.0
+	unsigned char 	m_nPercentSubmerged; // 10 to 120 (> 100% vehicle sinks)
 	PADDING(pad_0, 3);
-	float         m_fBuoyancyConstant;
-	float         m_fTractionMultiplier; // 0.5 to 2.0
-	cTransmission m_transmissionData;
-	float         m_fBrakeDeceleration; // 0.1 to 10.0
-	float         m_fBrakeBias; // 0.0 > x > 1.0
-	char          m_bABS; // 0/1
-	char field_9D;
-	char field_9E;
-	char field_9F;
-	float         m_fSteeringLock; // 10.0 to 40.0
-	float         m_fTractionLoss;
-	float         m_fTractionBias;
-	float         m_fSuspensionForceLevel; // not [L/M/H]
-	float         m_fSuspensionDampingLevel; // not [L/M/H]
-	float         m_fSuspensionHighSpdComDamp; // often zero - 200.0 or more for bouncy vehicles
-	float         m_fSuspensionUpperLimit;
-	float         m_fSuspensionLowerLimit;
-	float         m_fSuspensionBiasBetweenFrontAndRear;
-	float         m_fSuspensionAntiDiveMultiplier;
-	float         m_fCollisionDamageMultiplier; // 0.2 to 5.0
+	float         	m_fBuoyancyConstant;
+	float         	m_fTractionMultiplier; // 0.5 to 2.0
+	cTransmission 	m_transmissionData;
+	float         	m_fBrakeDeceleration; // 0.1 to 10.0
+	float         	m_fBrakeBias; // 0.0 > x > 1.0
+	char          	m_bABS; // 0/1
+	char 			field_9D;
+	char 			field_9E;
+	char 			field_9F;
+	float         	m_fSteeringLock; // 10.0 to 40.0
+	float         	m_fTractionLoss;
+	float         	m_fTractionBias;
+	float         	m_fSuspensionForceLevel; // not [L/M/H]
+	float         	m_fSuspensionDampingLevel; // not [L/M/H]
+	float         	m_fSuspensionHighSpdComDamp; // often zero - 200.0 or more for bouncy vehicles
+	float         	m_fSuspensionUpperLimit;
+	float         	m_fSuspensionLowerLimit;
+	float         	m_fSuspensionBiasBetweenFrontAndRear;
+	float         	m_fSuspensionAntiDiveMultiplier;
+	float         	m_fCollisionDamageMultiplier; // 0.2 to 5.0
 	union {
 		eVehicleHandlingModelFlags m_nModelFlags;
 		struct {

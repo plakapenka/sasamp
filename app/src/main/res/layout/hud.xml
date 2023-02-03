@@ -519,6 +519,10 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <include
+                layout="@layout/duels_hud"
+                tools:layout_editor_absoluteY="1dp" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -569,6 +573,18 @@
             app:layout_constraintBottom_toTopOf="@+id/enterexit_driver"
             app:layout_constraintEnd_toEndOf="@+id/enterexit_driver"
             app:layout_constraintStart_toStartOf="@+id/enterexit_driver" />
+
+        <ImageView
+            android:id="@+id/button_siren"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/siren_butt"
+            app:layout_constraintBottom_toTopOf="@+id/enterexit_driver"
+            app:layout_constraintEnd_toStartOf="@+id/button_horn" />
 
         <ImageView
             android:id="@+id/enterexit_driver"
@@ -944,6 +960,5 @@
         tools:ignore="TouchTargetSizeCheck" />
 
 <!--    <include layout="@layout/gametext"/>-->
-    <include layout="@layout/duels_hud"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
