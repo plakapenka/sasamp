@@ -19,6 +19,7 @@ public enum ErrorMessage {
     PASSWORD_IS_EMPTY("Введите пароль"),
     PASSWORD_IS_TOO_LONG("Длина пароля должна быть меньше 17 символов"),
     PASSWORD_IS_TOO_SHORT("Длина пароля должна быть больше 5 символов"),
+    TEST_SERVER_PASSWORD_NOT_INPUT("Пароль для тестового севрера не был задан"),
 
     INPUT_NICKNAME_BEFORE_SERVER_CONNECT("Перед подключением к серверу введите никнейм"),
     CAPTCHA_NOT_PASSED("Перед входом подтвердите что вы не робот"),
