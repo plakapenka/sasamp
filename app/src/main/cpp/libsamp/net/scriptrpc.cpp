@@ -1452,7 +1452,7 @@ void ScrSetPlayerAttachedObject(RPCParameters* rpcParams)
 		return;
 	}
 	bsData.Read((char*)& info, sizeof(ATTACHED_OBJECT_INFO));
-	info.dwBone = GetInternalBoneIDFromSampID(info.dwBone);
+
 	pPed->AttachObject(&info, slot);
 }
 

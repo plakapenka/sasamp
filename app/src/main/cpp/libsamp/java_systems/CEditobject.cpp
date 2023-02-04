@@ -56,7 +56,7 @@ Java_com_liverussia_cr_gui_AttachEdit_Exit(JNIEnv *env, jobject thiz) {
             0,
             slot,
             pPlayer->m_aAttachedObjects[slot].dwModelId,
-            pPlayer->m_aAttachedObjects[slot].dwBone,
+            pPlayer->m_aAttachedObjects[slot].dwSampBone,
             pPlayer->m_aAttachedObjects[slot].vecOffset,
             pPlayer->m_aAttachedObjects[slot].vecRotation,
             pPlayer->m_aAttachedObjects[slot].vecScale
@@ -64,7 +64,9 @@ Java_com_liverussia_cr_gui_AttachEdit_Exit(JNIEnv *env, jobject thiz) {
 }
 
 void CEditobject::SendOnEditAttach(int response, int index, int modelid, int bone, VECTOR offset, VECTOR rot, VECTOR scale){
+
     RakNet::BitStream bsSend;
+
     bsSend.Write((uint32_t)response);
     bsSend.Write((uint32_t)index);
     bsSend.Write((uint32_t)modelid);
@@ -155,7 +157,7 @@ Java_com_liverussia_cr_gui_AttachEdit_Save(JNIEnv *env, jobject thiz) {
             1,
             slot,
             pPlayer->m_aAttachedObjects[slot].dwModelId,
-            pPlayer->m_aAttachedObjects[slot].dwBone,
+            pPlayer->m_aAttachedObjects[slot].dwSampBone,
             pPlayer->m_aAttachedObjects[slot].vecOffset,
             pPlayer->m_aAttachedObjects[slot].vecRotation,
             pPlayer->m_aAttachedObjects[slot].vecScale

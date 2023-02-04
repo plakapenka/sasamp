@@ -243,7 +243,7 @@ typedef struct _CVector2DFloat
 typedef struct _ATTACHED_OBJECT_INFO_INTERNAL
 {
 	uint32_t dwModelId;
-	uint32_t dwBone;
+	uint32_t dwSampBone;
 	VECTOR vecOffset;
 	VECTOR vecRotation;
 	VECTOR vecScale;
@@ -251,6 +251,7 @@ typedef struct _ATTACHED_OBJECT_INFO_INTERNAL
 
 	bool bState;
 	class CObject* pObject;
+	uint32_t dwBone;
 } ATTACHED_OBJECT_INFO_INTERNAL;
 
 #pragma pack(1)
