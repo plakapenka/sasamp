@@ -421,8 +421,8 @@ uint32_t CPad__GetHandBrake_hook(uintptr_t thiz)
 	}
 }
 
-uint32_t (*CPad__GetHorn)(uintptr_t thiz);
-uint32_t CPad__GetHorn_hook(uintptr_t thiz)
+uint32_t (*CPad__GetHorn)(uintptr_t* thiz);
+uint32_t CPad__GetHorn_hook(uintptr_t* thiz)
 {
    // NOP(g_libGTASA + 0x0026FAB6, 2);
 	if(byteCurDriver != 0)
@@ -446,8 +446,8 @@ uint32_t CPad__GetHorn_hook(uintptr_t thiz)
 
 }
 
-uint32_t (*CVehicle__UsesSiren)(uintptr_t thiz);
-uint32_t CVehicle__UsesSiren_hook(uintptr_t thiz)
+uint32_t (*CVehicle__UsesSiren)(uintptr_t* thiz);
+uint32_t CVehicle__UsesSiren_hook(uintptr_t* thiz)
 {
 	return 0;
 }
