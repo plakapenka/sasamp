@@ -39,9 +39,10 @@ public class AutoShop {
     ConstraintLayout autoshop_main_layout;
     TextView autoshop_modelname;
     TextView autoshop_pricevalue;
-    TextView autoshop_maxspeedvalue;
-    TextView autoshop_accelerationvalue;
-    TextView autoshop_availablevalue;
+    TextView autoshop_maxspeed_value;
+    TextView autoshop_acceleration_value;
+    TextView autoshop_available_value;
+    TextView autoshop_gear_value;
     DecimalFormat price_format;
 
 
@@ -60,11 +61,12 @@ public class AutoShop {
         autoshop_camerabutt = activity.findViewById(R.id.autoshop_camerabutt);
         autoshop_rightbutt = activity.findViewById(R.id.autoshop_rightbutt);
         autoshop_main_layout = activity.findViewById(R.id.autoshop_main_layout);
-        autoshop_availablevalue = activity.findViewById(R.id.autoshop_availablevalue);
-        autoshop_accelerationvalue = activity.findViewById(R.id.autoshop_accelerationvalue);
-        autoshop_maxspeedvalue = activity.findViewById(R.id.autoshop_maxspeedvalue);
+        autoshop_available_value = activity.findViewById(R.id.autoshop_available_value);
+        autoshop_acceleration_value = activity.findViewById(R.id.autoshop_acceleration_value);
+        autoshop_maxspeed_value = activity.findViewById(R.id.autoshop_maxspeed_value);
         autoshop_modelname = activity.findViewById(R.id.autoshop_modelname);
         autoshop_pricevalue = activity.findViewById(R.id.autoshop_pricevalue);
+        autoshop_gear_value = activity.findViewById(R.id.autoshop_gear_value);
 
         autoshop_colorleft.setOnClickListener(view -> {
             NvEventQueueActivity.getInstance().native_SendAutoShopButton(AUTOSHOP_BUTTON_COLOR_LEFT);
@@ -93,13 +95,27 @@ public class AutoShop {
         Utils.HideLayout(autoshop_main_layout, false);
     }
     @SuppressLint({"SetTextI18n", "DefaultLocale"})
-    public void Update(String name, int price, int count, float maxspeed, float acceleration)
+    public void Update(String name, int price, int count, float maxspeed, float acceleration, int gear)
     {
+        switch (gear){
+            case 1: {
+                autoshop_gear_value.setText("Задний");
+                break;
+            }
+            case 2: {
+                autoshop_gear_value.setText("Передний");
+                break;
+            }
+            default: {
+                autoshop_gear_value.setText("Полный");
+                break;
+            }
+        }
 
         autoshop_pricevalue.setText(price_format.format(price)+" руб.");
-        autoshop_availablevalue.setText(String.format("%d", count));
-        autoshop_accelerationvalue.setText(String.format("%.1f", acceleration)+" с.");
-        autoshop_maxspeedvalue.setText(String.format("%.0f", maxspeed)+" км/ч");
+        autoshop_available_value.setText(String.format("%d", count));
+        autoshop_acceleration_value.setText(String.format("%.1f", acceleration)+" с.");
+        autoshop_maxspeed_value.setText(String.format("%.0f", maxspeed)+" км/ч");
         autoshop_modelname.setText(name);
     }
     public void ToggleShow(boolean toggle)

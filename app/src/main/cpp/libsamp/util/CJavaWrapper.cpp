@@ -681,7 +681,7 @@ void CJavaWrapper::ToggleAutoShop(bool toggle)
 
 	env->CallVoidMethod(this->activity, this->j_toggleAutoShop, toggle);
 }
-void CJavaWrapper::UpdateAutoShop(const char name[], int price, int count, float maxspeed, float acceleration)
+void CJavaWrapper::UpdateAutoShop(const char name[], int price, int count, float maxspeed, float acceleration, int gear)
 {
 	JNIEnv* env = GetEnv();
 
@@ -692,7 +692,7 @@ void CJavaWrapper::UpdateAutoShop(const char name[], int price, int count, float
 	}
 	jstring j_name = env->NewStringUTF( name );
 
-	env->CallVoidMethod(this->activity, this->j_updateAutoShop, j_name, price, count, maxspeed, acceleration);
+	env->CallVoidMethod(this->activity, this->j_updateAutoShop, j_name, price, count, maxspeed, acceleration, gear);
 
 	env->DeleteLocalRef(j_name);
 }
@@ -882,7 +882,7 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 
 	j_toggleAutoShop = env->GetMethodID(nvEventClass, "toggleAutoShop", "(Z)V");
 
-	j_updateAutoShop = env->GetMethodID(nvEventClass, "updateAutoShop", "(Ljava/lang/String;IIFF)V");
+	j_updateAutoShop = env->GetMethodID(nvEventClass, "updateAutoShop", "(Ljava/lang/String;IIFFI)V");
 
 	s_showChooseSpawn = env->GetMethodID(nvEventClass, "showChooseSpawn", "(IIIII)V");
 	s_hideChooseSpawn = env->GetMethodID(nvEventClass, "hideChooseSpawn", "()V");

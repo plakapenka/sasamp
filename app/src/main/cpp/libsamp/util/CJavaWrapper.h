@@ -143,7 +143,7 @@ public:
 	CJavaWrapper(JNIEnv* env, jobject activity);
 	~CJavaWrapper();
 
-	void UpdateAutoShop(const char name[], int price, int count, float maxspeed, float acceleration);
+	void UpdateAutoShop(const char name[], int price, int count, float maxspeed, float acceleration, int gear);
 
 	void ToggleAutoShop(bool toggle);
 

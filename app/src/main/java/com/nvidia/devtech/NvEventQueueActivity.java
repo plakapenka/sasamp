@@ -1463,8 +1463,8 @@ public abstract class NvEventQueueActivity
         runOnUiThread(() -> mAutoShop.ToggleShow(toggle));
     }
 
-    public void updateAutoShop(String name, int price, int count, float maxspeed, float acceleration) {
-        runOnUiThread(() -> mAutoShop.Update(name, price, count, maxspeed, acceleration));
+    public void updateAutoShop(String name, int price, int count, float maxspeed, float acceleration, int gear) {
+        runOnUiThread(() -> mAutoShop.Update(name, price, count, maxspeed, acceleration, gear));
     }
 
     public void updateSpeedInfo(int speed, int fuel, int hp, int mileage, int engine, int light, int belt, int lock) { runOnUiThread(() -> { mSpeedometer.UpdateSpeedInfo(speed, fuel, hp, mileage, engine, light, belt, lock); }); }

@@ -958,6 +958,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			float maxspeed;
 			float acceleration;
 			uint8_t len;
+			uint8_t gear;
 
 
 			char name[256];
@@ -969,10 +970,11 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			bs.Read(count);
 			bs.Read(maxspeed);
 			bs.Read(acceleration);
+			bs.Read(gear);
 
 			char utf8[200];
 			cp1251_to_utf8(utf8, name);
-			g_pJavaWrapper->UpdateAutoShop(utf8, price, count, maxspeed, acceleration);
+			g_pJavaWrapper->UpdateAutoShop(utf8, price, count, maxspeed, acceleration, gear);
 			break;
 		}
 		case RPC_CUSTOM_HANDLING_DEFAULTS:
