@@ -1062,7 +1062,7 @@ void CPlayerPed::AttachObject(ATTACHED_OBJECT_INFO* pInfo, int iSlot)
 	m_aAttachedObjects[iSlot].pObject = new CObject(pInfo->dwModelId, matPos.pos.X, matPos.pos.Y, matPos.pos.Z, vecRot, 200.0f);
 	*(uint32_t*)((uintptr_t)m_aAttachedObjects[iSlot].pObject->m_pEntity + 28) &= 0xFFFFFFFE; // disable collision
 	m_aAttachedObjects[iSlot].bState = true;
-	m_aAttachedObjects[iSlot].dwBone = GetInternalBoneIDFromSampID(m_aAttachedObjects[iSlot].dwSampBone);
+
 }
 
 void CPlayerPed::SetAttachOffset(int iSlot, VECTOR pos, VECTOR rot)

@@ -184,6 +184,7 @@ extern bool g_uiHeadMoveEnabled;
 #include "java_systems/CTab.h"
 #include "java_systems/CDailyReward.h"
 #include "java_systems/CDialog.h"
+#include "java_systems/CTechInspect.h"
 
 bool CLocalPlayer::Process()
 {
@@ -462,7 +463,8 @@ bool CLocalPlayer::Process()
 	if(CDialog::bIsShow || pGame->isCasinoDiceActive || CTab::bIsShow || pGame->isAutoShopActive
 	   || pGame->isCasinoWheelActive || !m_pPlayerPed || pGame->isRegistrationActive || pGame->isShopStoreActive ||
 	   CMedic::bIsShow || CInventory::bIsToggle || bFirstSpawn || CEditobject::bIsToggle || CChip::bIsShow
-	   || CAucContainer::bIsShow || CAdminRecon::bIsToggle || CHUD::bIsCamEditGui || CDailyReward::isShow)
+	   || CAucContainer::bIsShow || CAdminRecon::bIsToggle || CHUD::bIsCamEditGui || CDailyReward::isShow ||
+	   CTechInspect::bIsShow)
 	{
 		needDrawableHud = false;
 	}
@@ -971,7 +973,7 @@ void CLocalPlayer::SendPassengerFullSyncData()
 	PASSENGER_SYNC_DATA psSync;
 	MATRIX4X4 mat;
 
-	psSync.VehicleID = pVehiclePool->FindIDFromGtaPtr(m_pPlayerPed->GetGtaVehicle());
+	psSync.VehicleID = m_pPlayerPed->GetCurrentSampVehicleID();
 
 	if(psSync.VehicleID == INVALID_VEHICLE_ID) return;
 
