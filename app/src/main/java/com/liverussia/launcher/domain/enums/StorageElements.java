@@ -15,6 +15,7 @@ public enum StorageElements {
     SERVER_MULTI("server_multi"),
     SERVER_NAME("server_name"),
     SERVER_COLOR("server_color"),
+    SERVER_LOCKED("server_lock"),
 
     ACCESS_TOKEN("access_token"),
     REFRESH_TOKEN("refresh_token"),

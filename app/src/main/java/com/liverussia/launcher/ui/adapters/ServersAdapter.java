@@ -116,6 +116,7 @@ public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersV
 		Storage.addProperty(StorageElements.SERVER_MULTI.getValue(), servers.getMult(), context);
 		Storage.addProperty(StorageElements.SERVER_COLOR.getValue(), servers.getColor(), context);
 		Storage.addProperty(StorageElements.SERVER_NAME.getValue(), servers.getname(), context);
+		Storage.addProperty(StorageElements.SERVER_LOCKED.getValue(), String.valueOf(servers.getLock()), context);
 	}
 
 	@Override
