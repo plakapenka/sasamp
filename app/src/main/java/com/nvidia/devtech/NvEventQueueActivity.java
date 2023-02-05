@@ -77,6 +77,7 @@ import com.liverussia.cr.gui.MineGame2;
 import com.liverussia.cr.gui.MineGame3;
 import com.liverussia.cr.gui.PreDeath;
 import com.liverussia.cr.gui.SamwillManager;
+import com.liverussia.cr.gui.TechIspect;
 import com.liverussia.cr.gui.dialogs.Dialog;
 import com.liverussia.cr.gui.Speedometer;
 import com.liverussia.cr.gui.Notification;
@@ -930,6 +931,7 @@ public abstract class NvEventQueueActivity
         new Furniture_factory(this);
         new AdminRecon(this);
         new DuelsHud(this);
+        new TechIspect(this);
         // mInputManager = new InputManager(this);
         //mHeightProvider = new HeightProvider(this).init(mRootFrame).setHeightListener(this);
         new Notification(this);

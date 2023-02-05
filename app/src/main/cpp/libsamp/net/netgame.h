@@ -101,6 +101,7 @@
 #define RPC_UPDATE_BACCARAT				65
 #define RPC_SET_MONEY				66
 #define RPC_DAILY_REWARDS	67
+#define RPC_TECH_INSPECT	68
 
 
 // Packet 252
@@ -253,6 +254,8 @@ public:
 	static void packetDailyRewards(Packet *p);
 
 	static void packetNotification(Packet *p);
+
+	static void packetTechInspect(Packet *p);
 };
 
 extern CNetGame *pNetGame;
