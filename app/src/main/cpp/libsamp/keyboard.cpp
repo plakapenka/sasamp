@@ -2348,6 +2348,59 @@ bool ProcessLocalCommands(const char str[])
 		CGame__Shutdown_hook();
 		return true;
 	}
+	if (strstr(str, "/save "))
+	{
+		std::string msg;
+		if (sscanf(str, "%*s%s", &msg) == -1)
+		{
+			CChatWindow::AddDebugMessage("Используйте: /fontsize [scale]");
+			return true;
+		}
+
+		CPlayerPed *pPlayer = pGame->FindPlayerPed();
+		FILE *fileOut;
+		uint32_t dwVehicleID;
+		float fZAngle = 0.0f;
+
+		char ff[0xFF];
+		sprintf(ff, "%sSAMP/savedposition.txt", g_pszStorage);
+		fileOut = fopen(ff, "a");
+		if(!fileOut)
+			CChatWindow::AddDebugMessage("Cant open savedposition.txt");
+
+		if(pPlayer->IsInVehicle())
+		{
+			//incar savepos
+			VEHICLE_TYPE *pVehicle = pPlayer->GetGtaVehicle();
+			VEHICLEID m_dwGTAId = GamePool_Vehicle_GetIndex(pVehicle);
+			ScriptCommand(&get_car_z_angle, m_dwGTAId, &fZAngle);
+			fprintf(fileOut, "%s = %.3f, %.3f, %.3f, %.3f\n",
+					msg.c_str(),
+					pVehicle->entity.mat->pos.X,
+					pVehicle->entity.mat->pos.Y,
+					pVehicle->entity.mat->pos.Z,
+					fZAngle
+			);
+			CChatWindow::AddInfoMessage("-> InCar position saved.");
+		}
+		else
+		{
+			//onfoot savepos
+			PED_TYPE *pActor = pPlayer->GetGtaActor();
+			ScriptCommand(&get_actor_z_angle, pPlayer->m_dwGTAId, &fZAngle);
+			fprintf(fileOut, "%s = %.3f, %.3f, %.3f, %.3f\n",
+					msg.c_str(),
+					pActor->entity.mat->pos.X,
+					pActor->entity.mat->pos.Y,
+					pActor->entity.mat->pos.Z,
+					fZAngle
+			);
+			CChatWindow::AddInfoMessage("-> OnFoot position saved.");
+		}
+
+		fclose(fileOut);
+		return true;
+	}
 	if (strcmp(str, "/cameditgui") == 0)
 	{
 		CHUD::bIsCamEditGui = !CHUD::bIsCamEditGui;
