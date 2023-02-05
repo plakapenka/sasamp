@@ -23,7 +23,9 @@ import android.view.animation.Animation;
 
 import com.liverussia.cr.R;
 import com.liverussia.cr.core.Samp;
+import com.liverussia.launcher.domain.enums.StorageElements;
 import com.liverussia.launcher.domain.messages.InfoMessage;
+import com.liverussia.launcher.storage.Storage;
 import com.liverussia.launcher.ui.dialogs.EnterLockedServerPasswordDialog;
 import com.liverussia.launcher.utils.MainUtils;
 import com.liverussia.cr.core.GTASA;
@@ -346,17 +348,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         int position = Integer.parseInt(selectedServer);
 
-        Servers servers = MainUtils.SERVERS.get(position);
+//        Servers servers = MainUtils.SERVERS.get(position);
+
+        int serverLockedValue = Integer.parseInt(Storage.getProperty(StorageElements.SERVER_LOCKED.getValue(), this));
+
         String password = NativeStorage.getClientProperty(NativeStorageElements.LOCKED_SERVER_PASSWORD, this);
 
-        if (SERVER_LOCKED_VALUE == servers.getLock() && StringUtils.isBlank(password)) {
+        if (SERVER_LOCKED_VALUE == serverLockedValue && StringUtils.isBlank(password)) {
             EnterLockedServerPasswordDialog dialog = new EnterLockedServerPasswordDialog(this);
             dialog.setOnDialogCloseListener(this::saveServerPassword);
             dialog.createDialog();
             return;
         }
 
-        if (SERVER_LOCKED_VALUE != servers.getLock()) {
+        if (SERVER_LOCKED_VALUE != serverLockedValue) {
             NativeStorage.addClientProperty(NativeStorageElements.LOCKED_SERVER_PASSWORD, StringUtils.EMPTY, this);
         }
 
