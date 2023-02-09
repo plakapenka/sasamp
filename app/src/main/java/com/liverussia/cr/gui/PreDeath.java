@@ -58,6 +58,7 @@ public class PreDeath {
             medicPreDeathExit(0);
         });
         toHospitalButton.setOnClickListener(view -> {
+            if(timeRemaining > 0)return;
             Utils.HideLayout(pre_death_layout, false);
             medicPreDeathExit(1);
         });
