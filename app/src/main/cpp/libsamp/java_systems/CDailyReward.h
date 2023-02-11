@@ -11,7 +11,7 @@
 
 static class CDailyReward {
 public:
-    static bool isShow;
+    static bool bIsShow;
     static jobject thiz;
 
     static void show(int day, int second);

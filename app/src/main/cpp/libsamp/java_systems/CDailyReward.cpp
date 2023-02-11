@@ -10,7 +10,7 @@
 #include "util/CJavaWrapper.h"
 
 jobject CDailyReward::thiz = nullptr;
-bool CDailyReward::isShow = false;
+bool CDailyReward::bIsShow = false;
 
 void CDailyReward::show(int day, int second)
 {
@@ -22,7 +22,7 @@ void CDailyReward::show(int day, int second)
 
     env->CallVoidMethod(CDailyReward::thiz, method, day, second);
 
-    CDailyReward::isShow = true;
+    CDailyReward::bIsShow = true;
 }
 
 void CNetGame::packetDailyRewards(Packet* p)
@@ -60,5 +60,5 @@ Java_com_liverussia_cr_gui_DailyReward_click(JNIEnv *env, jobject thiz) {
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_DailyReward_hide(JNIEnv *env, jobject thiz) {
-    CDailyReward::isShow = false;
+    CDailyReward::bIsShow = false;
 }
