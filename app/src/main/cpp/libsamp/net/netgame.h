@@ -245,7 +245,7 @@ public:
 
 	static void packetMedGame(Packet *p);
 
-	void packetCasinoBaccarat(Packet *p);
+	static void packetCasinoBaccarat(Packet *p);
 
     static void packetKillList(Packet *p);
 

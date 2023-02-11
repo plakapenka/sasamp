@@ -243,7 +243,7 @@ typedef struct _CVector2DFloat
 typedef struct _ATTACHED_OBJECT_INFO_INTERNAL
 {
 	uint32_t dwModelId;
-	uint32_t dwSampBone;
+	uint32_t dwBone;
 	VECTOR vecOffset;
 	VECTOR vecRotation;
 	VECTOR vecScale;
@@ -251,7 +251,7 @@ typedef struct _ATTACHED_OBJECT_INFO_INTERNAL
 
 	bool bState;
 	class CObject* pObject;
-	uint32_t dwBone;
+	uint32_t dwSampBone;
 } ATTACHED_OBJECT_INFO_INTERNAL;
 
 #pragma pack(1)
@@ -856,7 +856,17 @@ typedef struct _VEHICLE_TYPE
 	uint32_t dwTrailer;			// 1232 - 1236 - trailer
 	PADDING(_pad204, 48);		// 1236-1284
 	uint32_t dwDoorsLocked;
+	uint32_t m_nProjectileWeaponFiringTime; // manual-aimed projectiles for hunter, lock-on projectile for hydra
+	uint32_t m_nAdditionalProjectileWeaponFiringTime; // manual-aimed projectiles for hydra
+	uint32_t m_nTimeForMinigunFiring; // minigun on hunter
+	unsigned char m_nLastWeaponDamageType; // see eWeaponType, -1 if no damage
 } VEHICLE_TYPE;
+
+typedef struct _VEHICLE_MODEL
+{
+	uintptr_t 	vtable;
+	uint8_t		data[932];
+} VEHICLE_MODEL; // SIZE = 936
 
 typedef struct _RECT
 {

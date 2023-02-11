@@ -185,6 +185,7 @@ extern bool g_uiHeadMoveEnabled;
 #include "java_systems/CDailyReward.h"
 #include "java_systems/CDialog.h"
 #include "java_systems/CTechInspect.h"
+#include "java_systems/casino/CBaccarat.h"
 
 bool CLocalPlayer::Process()
 {
@@ -375,7 +376,7 @@ bool CLocalPlayer::Process()
 						CVehicle *pVehicle = pVehiclePool->GetAt(ClosetVehicleID);
 						if (pVehicle && pVehicle->GetDistanceFromLocalPlayerPed() < 4.0f  && !pVehicle->IsTrailer()) {
 							//if(!pVehicle->m_bIsLocked)
-							if (!pVehicle->m_bDoorsLocked) {// тачка открыта
+							if (!pVehicle->m_bIsLocked) {// тачка открыта
 								if (!CHUD::bIsShowPassengerButt) {
 									CHUD::togglePassengerButton(true);
 								}
@@ -463,8 +464,8 @@ bool CLocalPlayer::Process()
 	if(CDialog::bIsShow || pGame->isCasinoDiceActive || CTab::bIsShow || pGame->isAutoShopActive
 	   || pGame->isCasinoWheelActive || !m_pPlayerPed || pGame->isRegistrationActive || pGame->isShopStoreActive ||
 	   CMedic::bIsShow || CInventory::bIsToggle || bFirstSpawn || CEditobject::bIsToggle || CChip::bIsShow
-	   || CAucContainer::bIsShow || CAdminRecon::bIsToggle || CHUD::bIsCamEditGui || CDailyReward::isShow ||
-	   CTechInspect::bIsShow)
+	   || CAucContainer::bIsShow || CAdminRecon::bIsToggle || CHUD::bIsCamEditGui || CDailyReward::bIsShow ||
+	   CTechInspect::bIsShow || CBaccarat::bIsShow)
 	{
 		needDrawableHud = false;
 	}
@@ -907,11 +908,6 @@ void CLocalPlayer::SendInCarFullSyncData()
 	icSync.bytePlayerArmour = (uint8_t)m_pPlayerPed->GetArmour();
 
 	icSync.byteSirenOn = pVehicle->m_bIsSirenOn;
-	//icSync.byteLandingGearState = pVehicle->GetLandingGearState() != 0;
-
-	//uint8_t exKeys = GetPlayerPed()->GetExtendedKeys();
-	//icSync.byteCurrentWeapon = (exKeys << 6) | icSync.byteCurrentWeapon & 0x3F;
-	//icSync.byteCurrentWeapon ^= (icSync.byteCurrentWeapon ^ GetPlayerPed()->GetCurrentWeapon()) & 0x3F;
 
 	icSync.TrailerID = 0;
 
