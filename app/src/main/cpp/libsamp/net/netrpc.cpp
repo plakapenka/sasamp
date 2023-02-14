@@ -417,7 +417,7 @@ void DisableRaceCheckpoint(RPCParameters *rpcParams)
 	if(pGame->m_bRaceCheckpointsEnabled)
 	{
 		pGame->DisableRaceCheckpoint();
-		g_pJavaWrapper->HideGPS();
+		CHUD::toggleGps(false);
 	}
 }
 void WorldVehicleAdd(RPCParameters *rpcParams)

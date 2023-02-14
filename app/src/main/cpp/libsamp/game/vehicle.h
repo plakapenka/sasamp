@@ -143,14 +143,36 @@ private:
 
 	void CopyGlobalSuspensionLinesToPrivate();
 public:
+	enum eTurnState
+	{
+		TURN_OFF,
+		TURN_LEFT,
+		TURN_RIGHT,
+		TURN_ALL
+	};
 	VEHICLE_TYPE* 	m_pVehicle;
+
+	// поворотники
+	CObject*		m_pLeftFrontTurnLighter;
+	CObject*		m_pRightFrontTurnLighter;
+	CObject*		m_pLeftRearTurnLighter;
+	CObject*		m_pRightRearTurnLighter;
+	eTurnState 		m_iTurnState;
+	bool 			m_bIsOnRightTurnLight;
+	bool  			m_bIsOnAllurnLight;
+	bool 			m_bIsOnLeftTurnLight;
+	bool 			m_bIsOnAllTurnLight;
+
+	// задний ход
+	CObject*		m_pLeftReverseLight;
+	CObject*		m_pRightReverseLight;
+
 	bool 			m_bHasSiren;
 	bool 			m_bIsSirenOn;
 	bool 			m_bIsLocked;
 	CVehicle* 		m_pTrailer;
 	uint32_t		m_dwMarkerID;
 	bool 			m_bIsInvulnerable;
-	bool 			m_bDoorsLocked;
 	uint8_t			m_byteObjectiveVehicle; // Is this a special objective vehicle? 0/1
 	uint8_t			m_bSpecialMarkerEnabled;
 
@@ -252,6 +274,15 @@ public:
 
 	bool IsValidGameVehicle();
 
+	void toggleRightTurnLight(bool toggle);
+
+	VEHICLEID getSampId();
+
+	void toggleLeftTurnLight(bool toggle);
+
+	void toggleAllTurnLight(bool toggle);
+
+	void toggleReverseLight(bool toggle);
 };
 
 enum eVehicleOverrideLightsState {

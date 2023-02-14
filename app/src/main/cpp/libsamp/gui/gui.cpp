@@ -150,6 +150,7 @@ void CGUI::PostProcessInput()
 }
 #include "..//CDebugInfo.h"
 #include "java_systems/CDialog.h"
+#include "java_systems/CSpeedometr.h"
 
 extern CGame* pGame;
 
@@ -161,62 +162,12 @@ int CGUI::GetHealth(){
 	return 1;//static_cast<int>(pVehicle->GetHealth());
 }
 
-void CGUI::SetDoor(int door){
-	bDoor = door;
-}
-
-void CGUI::SetLights(int lights){
-	bLights = lights;
-}
-
-void CGUI::SetMeliage(float meliage){
-	bMeliage = static_cast<int>(meliage);
-}
-
 void CGUI::SetEat(float eate){
 	eat = static_cast<int>(eate);
 }
 
 int CGUI::GetEat(){
 	return eat;
-}
-
-void CGUI::SetFuel(float fuel){
-   m_fuel = static_cast<int>(fuel);
-}
-bool showSpeedometr = false;
-int speedUpdateTick;
-void CGUI::ShowSpeed()
-{
-	speedUpdateTick ++;
-	if(speedUpdateTick < 8)return;
-	speedUpdateTick=0;
-	int i_speed = 0;
-	bDoor =0;
-	bLights = 0;
-	float fHealth = 0;
-	CVehicle *pVehicle = nullptr;
-	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
-	CPlayerPed *pPlayerPed = pGame->FindPlayerPed();
-    VEHICLEID id = pVehiclePool->FindIDFromGtaPtr(pPlayerPed->GetGtaVehicle());
-    pVehicle = pVehiclePool->GetAt(id);
-    
-    if(pPlayerPed)
-    {
-        if(pVehicle)
-        {
-            VECTOR vecMoveSpeed;
-            pVehicle->GetMoveSpeedVector(&vecMoveSpeed);
-            i_speed = sqrt((vecMoveSpeed.X * vecMoveSpeed.X) + (vecMoveSpeed.Y * vecMoveSpeed.Y) + (vecMoveSpeed.Z * vecMoveSpeed.Z)) * 180;
-            bHealth = pVehicle->GetHealth();
-            bDoor = pVehicle->GetDoorState();
-        }
-    }
-	g_pJavaWrapper->UpdateSpeedInfo(i_speed, m_fuel, bHealth, bMeliage,
-									pVehicle->m_bEngineOn,
-									pVehicle->GetLightsState(),
-									0,
-									bDoor);
 }
 
 void CGUI::Render()
@@ -243,19 +194,16 @@ void CGUI::Render()
 
 	if(pGame->FindPlayerPed()->IsInVehicle() && !pGame->FindPlayerPed()->IsAPassenger() && !CKeyBoard::IsOpen() && !CDialog::bIsShow)
 	{
-		if(!showSpeedometr)
+		if(!CSpeedometr::bIsShow)
 		{
-			showSpeedometr = true;
-			g_pJavaWrapper->ShowSpeed();
+			CSpeedometr::show();
 		}
-		CGUI::ShowSpeed();
 	}
 	else
 	{
-		if(showSpeedometr)
+		if(CSpeedometr::bIsShow)
 		{
-			showSpeedometr = false;
-			g_pJavaWrapper->HideSpeed();
+			CSpeedometr::hide();
 		}
 	}
 

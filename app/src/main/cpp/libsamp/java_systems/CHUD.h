@@ -71,6 +71,22 @@ public:
     static float fLastGiveDamage;
 
     static void addTakeDamageNotify(char *nick, int weaponId, float damage);
+
+    static void toggleServerLogo(bool toggle);
+
+    static void toggleGreenZone(bool toggle);
+
+    static void toggleGps(bool toggle);
+
+    static void updateLevelInfo(int level, int currentexp, int maxexp);
+
+    static void showUpdateTargetNotify(int type, char *text);
+
+    static void hideTargetNotify();
+
+    static void showBusInfo(int time);
+
+    static void hideBusInfo();
 };
 
 

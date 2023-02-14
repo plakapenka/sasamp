@@ -21,21 +21,13 @@ public:
 	~CGUI();
 
 	void Render();
-	void ShowSpeed();
 	void SetHealth(float fHealth);
 	int GetHealth();
 	int bHealth;
-	void SetLights(int lights);
-	int bLights;
-	void SetDoor(int door);
-	int bDoor;
-	void SetMeliage(float meliage);
-    int bMeliage = 0;
+
     void SetEat(float eat);
     int GetEat();
     int eat;
-    void SetFuel(float fuel);
-	int m_fuel;
 
 	float ScaleX(float x) { return m_vecScale.x * x; }
 	float ScaleY(float y) { return m_vecScale.y * y; }

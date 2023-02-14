@@ -4,6 +4,8 @@
 extern CGame* pGame;
 #include "..//CDebugInfo.h"
 #include "..//net/netgame.h"
+#include "CVector.h"
+
 extern CNetGame* pNetGame;
 
 CVehicle::CVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRotation, bool bSiren)
@@ -15,6 +17,14 @@ CVehicle::CVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRota
 	uint32_t dwRetID = 0;
 
 	m_pCustomHandling = nullptr;
+
+	m_pLeftFrontTurnLighter = nullptr;
+	m_pRightFrontTurnLighter = nullptr;
+	m_pLeftRearTurnLighter = nullptr;
+	m_pRightRearTurnLighter = nullptr;
+
+	m_pLeftReverseLight = nullptr;
+	m_pRightReverseLight = nullptr;
 
 	m_pVehicle = nullptr;
 	m_dwGTAId = 0;
@@ -77,7 +87,7 @@ CVehicle::CVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRota
 
 	m_byteObjectiveVehicle = 0;
 	m_bSpecialMarkerEnabled = false;
-	m_bDoorsLocked = false;
+	m_bIsLocked = false;
 	m_dwMarkerID = 0;
 	m_bIsInvulnerable = false;
 	uint8_t defComp = 0;
@@ -221,6 +231,186 @@ CVehicle::~CVehicle()
 		m_pSuspensionLines = nullptr;
 		bHasSuspensionLines = false;
 	}
+
+	//
+	if(m_pLeftFrontTurnLighter != nullptr)
+	{
+		delete m_pLeftFrontTurnLighter;
+		m_pLeftFrontTurnLighter = nullptr;
+	}
+	if(m_pLeftRearTurnLighter != nullptr)
+	{
+		delete m_pLeftRearTurnLighter;
+		m_pLeftRearTurnLighter = nullptr;
+	}
+	if(m_pRightFrontTurnLighter != nullptr)
+	{
+		delete m_pRightFrontTurnLighter;
+		m_pRightFrontTurnLighter = nullptr;
+	}
+	if(m_pRightRearTurnLighter != nullptr)
+	{
+		delete m_pRightRearTurnLighter;
+		m_pRightRearTurnLighter = nullptr;
+	}
+
+	//
+	if(m_pLeftReverseLight != nullptr)
+	{
+		delete m_pLeftReverseLight;
+		m_pLeftReverseLight = nullptr;
+	}
+	if(m_pRightReverseLight != nullptr)
+	{
+		delete m_pRightReverseLight;
+		m_pRightReverseLight = nullptr;
+	}
+}
+
+void CVehicle::toggleRightTurnLight(bool toggle)
+{
+    m_bIsOnRightTurnLight = toggle;
+
+	uintptr_t* dwModelarray = (uintptr_t*)(g_libGTASA + 0x87BF48);
+	uint8_t* pModelInfoStart = (uint8_t*)dwModelarray[m_pVehicle->entity.nModelIndex];
+
+	uintptr_t* m_pVehicleStruct = (uintptr_t*)(pModelInfoStart + 0x74);
+
+	CVector* m_avDummyPos = (CVector*)(*m_pVehicleStruct + 0x0);
+
+	VECTOR vecFront;
+	// 0 - front light
+	vecFront.X = m_avDummyPos[0].x + 0.1;
+	vecFront.Y = m_avDummyPos[0].y;
+	vecFront.Z = m_avDummyPos[0].z;
+
+	VECTOR vecRear;
+	vecRear.X = m_avDummyPos[1].x + 0.1;
+	vecRear.Y = m_avDummyPos[1].y;
+	vecRear.Z = m_avDummyPos[1].z;
+
+	VECTOR vec;
+	vec.X = vec.Y = vec.Z = 0;
+
+	if(m_pRightFrontTurnLighter != nullptr)
+	{
+		delete m_pRightFrontTurnLighter;
+		m_pRightFrontTurnLighter = nullptr;
+	}
+	if(m_pRightRearTurnLighter != nullptr)
+	{
+		delete m_pRightRearTurnLighter;
+		m_pRightRearTurnLighter = nullptr;
+	}
+
+	if(!toggle) return;
+
+	m_pRightFrontTurnLighter = pGame->NewObject(19294, 0.0, 0.0, 0.0, vec, 300.0);
+    m_pRightFrontTurnLighter->AttachToVehicle(getSampId(), &vecFront, &vecFront);
+
+	m_pRightRearTurnLighter = pGame->NewObject(19294, 0.0, 0.0, 0.0, vec, 300.0);
+	m_pRightRearTurnLighter->AttachToVehicle(getSampId(), &vecRear, &vecRear);
+
+	m_pRightFrontTurnLighter->ProcessAttachToVehicle(this);
+	m_pRightRearTurnLighter->ProcessAttachToVehicle(this);
+}
+
+void CVehicle::toggleReverseLight(bool toggle)
+{
+	uintptr_t* dwModelarray = (uintptr_t*)(g_libGTASA + 0x87BF48);
+	uint8_t* pModelInfoStart = (uint8_t*)dwModelarray[m_pVehicle->entity.nModelIndex];
+
+	uintptr_t* m_pVehicleStruct = (uintptr_t*)(pModelInfoStart + 0x74);
+
+	CVector* m_avDummyPos = (CVector*)(*m_pVehicleStruct + 0x0);
+
+	VECTOR vecRight;
+	vecRight.X = m_avDummyPos[1].x;
+	vecRight.Y = m_avDummyPos[1].y;
+	vecRight.Z = m_avDummyPos[1].z;
+
+	VECTOR vecLeft;
+	vecLeft.X = -m_avDummyPos[1].x;
+	vecLeft.Y = m_avDummyPos[1].y;
+	vecLeft.Z = m_avDummyPos[1].z;
+
+	VECTOR vec;
+	vec.X = vec.Y = vec.Z = 0;
+
+	if(m_pLeftReverseLight != nullptr)
+	{
+		delete m_pLeftReverseLight;
+		m_pLeftReverseLight = nullptr;
+	}
+	if(m_pRightReverseLight != nullptr)
+	{
+		delete m_pRightReverseLight;
+		m_pRightReverseLight = nullptr;
+	}
+
+	if(!toggle) return;
+
+	m_pLeftReverseLight = pGame->NewObject(19281, 0.0, 0.0, 0.0, vec, 300.0);
+	m_pLeftReverseLight->AttachToVehicle(getSampId(), &vecLeft, &vecLeft);
+
+	m_pRightReverseLight = pGame->NewObject(19281, 0.0, 0.0, 0.0, vec, 300.0);
+	m_pRightReverseLight->AttachToVehicle(getSampId(), &vecRight, &vecRight);
+
+	m_pRightReverseLight->ProcessAttachToVehicle(this);
+	m_pLeftReverseLight->ProcessAttachToVehicle(this);
+}
+
+void CVehicle::toggleLeftTurnLight(bool toggle)
+{
+    m_bIsOnLeftTurnLight = toggle;
+
+    uintptr_t* dwModelarray = (uintptr_t*)(g_libGTASA + 0x87BF48);
+    uint8_t* pModelInfoStart = (uint8_t*)dwModelarray[m_pVehicle->entity.nModelIndex];
+
+    uintptr_t* m_pVehicleStruct = (uintptr_t*)(pModelInfoStart + 0x74);
+
+    CVector* m_avDummyPos = (CVector*)(*m_pVehicleStruct + 0x0);
+
+    VECTOR vecFront;
+    // 0 - front light
+    vecFront.X = -(m_avDummyPos[0].x + 0.1f);
+    vecFront.Y = m_avDummyPos[0].y;
+    vecFront.Z = m_avDummyPos[0].z;
+
+    VECTOR vecRear;
+    vecRear.X = -(m_avDummyPos[1].x + 0.1f);
+    vecRear.Y = m_avDummyPos[1].y;
+    vecRear.Z = m_avDummyPos[1].z;
+
+    VECTOR vec;
+    vec.X = vec.Y = vec.Z = 0;
+
+    if(m_pLeftFrontTurnLighter != nullptr)
+    {
+        delete m_pLeftFrontTurnLighter;
+        m_pLeftFrontTurnLighter = nullptr;
+    }
+    if(m_pLeftRearTurnLighter != nullptr)
+    {
+        delete m_pLeftRearTurnLighter;
+        m_pLeftRearTurnLighter = nullptr;
+    }
+
+    if(!toggle) return;
+
+    m_pLeftFrontTurnLighter = pGame->NewObject(19294, 0.0, 0.0, 0.0, vec, 300.0);
+    m_pLeftFrontTurnLighter->AttachToVehicle(getSampId(), &vecFront, &vecFront);
+
+    m_pLeftRearTurnLighter = pGame->NewObject(19294, 0.0, 0.0, 0.0, vec, 300.0);
+    m_pLeftRearTurnLighter->AttachToVehicle(getSampId(), &vecRear, &vecRear);
+
+    m_pLeftFrontTurnLighter->ProcessAttachToVehicle(this);
+    m_pLeftRearTurnLighter->ProcessAttachToVehicle(this);
+}
+
+VEHICLEID CVehicle::getSampId()
+{
+	return pNetGame->GetVehiclePool()->FindIDFromGtaPtr(m_pVehicle);
 }
 
 void CVehicle::LinkToInterior(int iInterior)
@@ -469,13 +659,13 @@ void CVehicle::SetDoorState(int iState)
 	if (iState)
 	{
 		m_pVehicle->dwDoorsLocked = 2;
-		m_bDoorsLocked = true;
+		m_bIsLocked = true;
 		CVehicle::fDoorState = 1;
 	}
 	else
 	{
 		m_pVehicle->dwDoorsLocked = 0;
-		m_bDoorsLocked = false;
+		m_bIsLocked = false;
 		CVehicle::fDoorState = 0;
 	}
 }
@@ -1361,10 +1551,6 @@ void CVehicle::SetEngineState(bool bEnable)
 	//m_pVehicle->m_nVehicleFlags.bEngineBroken = 1;
 	//m_bEngineOn = bEnable;
 	m_pVehicle->m_nVehicleFlags.bEngineOn = m_bEngineOn = bEnable;;
-}
-
-int CVehicle::GetEngineState(){
-	return m_bEngineOn;
 }
 
 bool CVehicle::HasDamageModel()
