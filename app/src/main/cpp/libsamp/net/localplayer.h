@@ -116,7 +116,12 @@ typedef struct _INCAR_SYNC_DATA
 	uint8_t byteSirenOn;			// +55
 	uint8_t byteLandingGearState;	// +56
 	VEHICLEID TrailerID;			// +57
-	float fTrainSpeed;				// +59
+
+	union
+	{
+		uint32_t HydraThrustAngle;
+		float fTrainSpeed;
+	};
 
 } INCAR_SYNC_DATA;					// size = 63
 

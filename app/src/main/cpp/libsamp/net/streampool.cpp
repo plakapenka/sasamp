@@ -15,6 +15,7 @@ CStreamPool::CStreamPool() // ready
 	m_hIndividualStream = NULL;
 	bShutdownThread = false;
 	m_bWasPaused = false;
+	m_bIndividualNeedReplay = 0;
 	m_szIndividualLastLink[0] = 0;
 	pThread = new std::thread([this]
 		{
@@ -123,6 +124,7 @@ void CStreamPool::PlayIndividualStream(const char* szUrl, int type) // ready
 	m_hIndividualStream = BASS_StreamCreateURL(szUrl, 0, type, nullptr, nullptr);
 
 	strcpy(&m_szIndividualLastLink[0], szUrl);
+	m_bIndividualNeedReplay = type;
 
 	BASS_ChannelPlay(m_hIndividualStream, false);
 }
@@ -134,6 +136,7 @@ void CStreamPool::StopIndividualStream() // ready
 		BASS_StreamFree(m_hIndividualStream);
 	}
 	m_szIndividualLastLink[0] = 0;
+	m_bIndividualNeedReplay = 0;
 	m_hIndividualStream = NULL;
 }
 
@@ -180,13 +183,16 @@ void CStreamPool::Process() // ready
 		if (m_szIndividualLastLink[0])
 		{
 			strcpy(&temp[0], &m_szIndividualLastLink[0]);
-			bCopied = true;
+
+			if(m_bIndividualNeedReplay != BASS_STREAM_AUTOFREE)
+				bCopied = true;
 		}
 		StopIndividualStream();
 		if (bCopied)
 		{
 			strcpy(&m_szIndividualLastLink[0], &temp[0]);
 		}
+
 		m_bWasPaused = true;
 	}
 	else
@@ -202,7 +208,7 @@ void CStreamPool::Process() // ready
 			}
 			if (m_szIndividualLastLink[0])
 			{
-				PlayIndividualStream(&m_szIndividualLastLink[0]);
+				PlayIndividualStream(&m_szIndividualLastLink[0], m_bIndividualNeedReplay);
 			}
 			m_bWasPaused = false;
 		}

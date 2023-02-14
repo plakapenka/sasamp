@@ -62,6 +62,59 @@ void CVehiclePool::Process()
 					pVehicle->SetMatrix(matrix4X4);
 					pVehicle->SetHealth(300.0f);
 				}
+				if(pVehicle->m_pVehicle->m_nCurrentGear == 0 && pVehicle->m_pVehicle->pHandling->m_transmissionData.m_fCurrentSpeed < -0.01 && pVehicle->m_bEngineOn)
+				{
+					if(pVehicle->m_pLeftReverseLight == nullptr) {
+						pVehicle->toggleReverseLight(true);
+					}
+				}
+				else {
+					if(pVehicle->m_pLeftReverseLight != nullptr) {
+						pVehicle->toggleReverseLight(false);
+					}
+				}
+				if(pVehicle->m_iTurnState == CVehicle::eTurnState::TURN_RIGHT)
+				{
+					if( !pVehicle->m_bIsOnRightTurnLight ) {
+						pVehicle->toggleLeftTurnLight(false);
+						pVehicle->toggleRightTurnLight(true);
+					}
+
+				}
+				else if(pVehicle->m_iTurnState == CVehicle::eTurnState::TURN_LEFT)
+				{
+					if( !pVehicle->m_bIsOnLeftTurnLight ) {
+						pVehicle->toggleRightTurnLight(false);
+						pVehicle->toggleLeftTurnLight(true);
+					}
+				}
+				else if(pVehicle->m_iTurnState == CVehicle::eTurnState::TURN_ALL)
+				{
+					if( !pVehicle->m_bIsOnAllTurnLight )
+					{
+						pVehicle->toggleLeftTurnLight(true);
+						pVehicle->toggleRightTurnLight(true);
+						pVehicle->m_bIsOnAllTurnLight = true;
+                        pVehicle->m_iTurnState = CVehicle::eTurnState::TURN_ALL;
+					}
+
+				}
+				else
+				{
+					if( pVehicle->m_bIsOnRightTurnLight )
+						pVehicle->toggleRightTurnLight(false);
+
+					if( pVehicle->m_bIsOnLeftTurnLight )
+						pVehicle->toggleLeftTurnLight(false);
+
+					if( pVehicle->m_bIsOnAllTurnLight ) {
+						pVehicle->toggleLeftTurnLight(false);
+						pVehicle->toggleRightTurnLight(false);
+
+					}
+					pVehicle->m_bIsOnAllTurnLight = false;
+					pVehicle->m_iTurnState = CVehicle::eTurnState::TURN_OFF;
+				}
 
 				pVehicle->SetEngineState(pVehicle->m_bEngineOn);
 				pVehicle->SetLightsState(pVehicle->m_bLightsOn);

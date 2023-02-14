@@ -909,6 +909,8 @@ void CLocalPlayer::SendInCarFullSyncData()
 
 	icSync.byteSirenOn = pVehicle->m_bIsSirenOn;
 
+	icSync.HydraThrustAngle = pVehicle->m_iTurnState;
+
 	icSync.TrailerID = 0;
 
 	VEHICLE_TYPE* vehTrailer = (VEHICLE_TYPE*)pVehicle->m_pVehicle->dwTrailer;

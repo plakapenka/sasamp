@@ -865,6 +865,8 @@ void CRemotePlayer::StoreInCarFullSyncData(INCAR_SYNC_DATA *picSync, uint32_t dw
 	m_pCurrentVehicle->SetHealth(picSync->fCarHealth);
 	m_pCurrentVehicle->m_bIsSirenOn = picSync->byteSirenOn;
 
+	m_pCurrentVehicle->m_iTurnState = static_cast<CVehicle::eTurnState>(picSync->HydraThrustAngle);
+
 	SetState(PLAYER_STATE_DRIVER);
 }
 

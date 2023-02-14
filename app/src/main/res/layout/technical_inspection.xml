@@ -62,10 +62,10 @@
 
             <ImageView
                 android:id="@+id/tech_inspect_veh_img"
-                android:adjustViewBounds="false"
+                android:adjustViewBounds="true"
                 android:layout_width="@dimen/_86sdp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_20sdp"
+                android:layout_marginTop="@dimen/_35sdp"
                 android:src="@drawable/auc_veh_400"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

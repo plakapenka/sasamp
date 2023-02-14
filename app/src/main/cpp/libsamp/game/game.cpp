@@ -320,7 +320,10 @@ void CGame::SetWorldTime(int iHour, int iMinute)
 // 0.3.7
 void CGame::SetWorldWeather(unsigned char byteWeatherID) const
 {
-	*(unsigned char*)(g_libGTASA+0x9DB98E) = byteWeatherID;
+	Log("SetWorldWeather");
+	//*(unsigned char*)(g_libGTASA+0x9DB98E) = byteWeatherID;
+
+	CHook::CallFunction<void>(g_libGTASA + 0x554CA0 + 1, byteWeatherID);
 
 	if(!m_bClockEnabled)
 	{

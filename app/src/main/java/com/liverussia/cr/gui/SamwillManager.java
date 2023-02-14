@@ -12,6 +12,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.liverussia.cr.R;
+import com.liverussia.cr.core.Samp;
 import com.liverussia.cr.gui.util.Utils;
 import com.nvidia.devtech.NvEventQueueActivity;
 
@@ -60,7 +61,7 @@ public class SamwillManager {
             view.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.button_click));
             if (samwill_progress.getProgress() > 2500 && samwill_progress.getProgress() < 4050 && samwill1!=0)
             {
-                NvEventQueueActivity.getInstance().soundPool.play(sawSound, 0.1f, 0.1f, 1, 0, 1.2f);
+                Samp.soundPool.play(sawSound, 0.1f, 0.1f, 1, 0, 1.2f);
 
                 samwillpacket++;
                 samwill1 = 1;
@@ -79,7 +80,7 @@ public class SamwillManager {
             }
             if (samwill_progress.getProgress() > 7100 && samwill_progress.getProgress() < 8650 && samwill2!=0)
             {
-                NvEventQueueActivity.getInstance().soundPool.play(sawSound, 0.1f, 0.1f, 1, 0, 1.2f);
+                Samp.soundPool.play(sawSound, 0.1f, 0.1f, 1, 0, 1.2f);
                 samwillpacket++;
                 samwill2 = 1;
                 samwill_2.setImageResource(R.drawable.samwill_green);
@@ -97,7 +98,7 @@ public class SamwillManager {
             }
             if (samwill_progress.getProgress() > 11720 && samwill_progress.getProgress() < 13250 && samwill3!=0)
             {
-                NvEventQueueActivity.getInstance().soundPool.play(sawSound, 0.1f, 0.1f, 1, 0, 1.2f);
+                Samp.soundPool.play(sawSound, 0.1f, 0.1f, 1, 0, 1.2f);
                 samwillpacket++;
                 samwill3 = 1;
                 samwill_3.setImageResource(R.drawable.samwill_green);
@@ -114,7 +115,7 @@ public class SamwillManager {
             }
             if (samwill_progress.getProgress() > 16330 && samwill_progress.getProgress() < 17870 && samwill4!=0)
             {
-                NvEventQueueActivity.getInstance().soundPool.play(sawSound, 0.1f, 0.1f, 1, 0, 1.2f);
+                Samp.soundPool.play(sawSound, 0.1f, 0.1f, 1, 0, 1.2f);
                 samwillpacket++;
                 samwill4 = 1;
                 samwill_4.setImageResource(R.drawable.samwill_green);
@@ -131,7 +132,7 @@ public class SamwillManager {
             }
             else if (samwill_progress.getProgress() > 20920 && samwill_progress.getProgress() < 22480 && samwill5!=0)
             {
-                NvEventQueueActivity.getInstance().soundPool.play(sawSound, 0.1f, 0.1f, 1, 0, 1.2f);
+                Samp.soundPool.play(sawSound, 0.1f, 0.1f, 1, 0, 1.2f);
                 samwillpacket++;
                 samwill5 = 1;
                 samwill_5.setImageResource(R.drawable.samwill_green);
@@ -157,7 +158,7 @@ public class SamwillManager {
 
 
     public void Show() {
-        sawSound = NvEventQueueActivity.getInstance().soundPool.load(NvEventQueueActivity.getInstance(), R.raw.saw, 0);
+        sawSound = Samp.soundPool.load(NvEventQueueActivity.getInstance(), R.raw.saw, 0);
         //sawSound = soundPool.load(this, soundID, 0);
         samwillpacket = 0;
         samwill1 = -1;
@@ -179,7 +180,7 @@ public class SamwillManager {
         NvEventQueueActivity.getInstance().onSamwillHideGame(samwillpacket);
         Utils.HideLayout(br_samwill_layout, true);
 
-        NvEventQueueActivity.getInstance().soundPool.unload(sawSound);
+        Samp.soundPool.unload(sawSound);
     }
 
     public void startCountdown() {

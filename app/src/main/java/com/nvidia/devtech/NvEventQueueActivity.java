@@ -97,6 +97,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
@@ -177,9 +180,8 @@ public abstract class NvEventQueueActivity
     //private HeightProvider mHeightProvider = null;
     private DialogClientSettings mDialogClientSettings = null;
 
-    private HudManager mHudManager = null;
     private SamwillManager mSamwillManager = null;
-    private Speedometer mSpeedometer = null;
+
     private AutoShop mAutoShop = null;
     private AuthorizationManager mAuthorizationManager = null;
     private RegistrationManager mRegistrationManager = null;
@@ -192,7 +194,6 @@ public abstract class NvEventQueueActivity
     private ChooseSpawn mChooseSpawn = null;
     private Menu mMenu = null;
     private ChooseServer mChooseServer = null;
-    public SoundPool soundPool = null;
 
     /* *
      * Helper function to select fixed window size.
@@ -330,10 +331,6 @@ public abstract class NvEventQueueActivity
 //            dialog.onHeightChanged(height);
 //        }
     }
-
-    public native void onSpeedEngineClick();
-    public native void onSpeedLightsClick();
-
     public native void onWeaponChanged();
 
     public native void togglePlayer(int toggle);
@@ -918,14 +915,9 @@ public abstract class NvEventQueueActivity
 
         mRootFrame.setOnTouchListener(this);
 
-        AudioAttributes attributes = new AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_GAME)
-                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                .build();
+        //
 
-        soundPool = new SoundPool.Builder()
-                .setAudioAttributes(attributes)
-                .build();
+        //
 
         mChooseServer = new ChooseServer(this);
         new Furniture_factory(this);
@@ -951,18 +943,10 @@ public abstract class NvEventQueueActivity
         new MineGame1(this);
         new MineGame2(this);
         new MineGame3(this);
-        mHudManager = new HudManager(this);
         new Casino_LuckyWheel(this);
 
         mSamwillManager = new SamwillManager(this);
-        mSpeedometer = new Speedometer(this);
         mAutoShop = new AutoShop(this);
-        new CasinoDice(this);
-        new CasinoBaccarat(this);
-        new AucContainer(this);
-        new DailyReward(this);
-        new Tab(this);
-        new Casino(this);
 
         mMenu = new Menu(this);
 
@@ -1444,16 +1428,6 @@ public abstract class NvEventQueueActivity
         return instance;
     }
 
-    public void updateLevelInfo(int level, int currentexp, int maxexp) { runOnUiThread(() -> { mHudManager.UpdateLevelInfo(level, currentexp, maxexp); }); }
-
-    public void showGreenZone() { runOnUiThread(() -> { mHudManager.ShowGreenZone(); }); }
-
-    public void hideGreenZone() { runOnUiThread(() -> { mHudManager.HideGreenZone(); }); }
-
-    public void showGPS() { runOnUiThread(() -> { mHudManager.ShowGPS(); }); }
-
-    public void hideGPS() { runOnUiThread(() -> { mHudManager.HideGPS(); }); }
-
     public void setPauseState(boolean z2) {
         if (mAndroidUI == null) {
             mAndroidUI = (FrameLayout) findViewById(R.id.ui_layout);
@@ -1468,12 +1442,6 @@ public abstract class NvEventQueueActivity
     public void updateAutoShop(String name, int price, int count, float maxspeed, float acceleration, int gear) {
         runOnUiThread(() -> mAutoShop.Update(name, price, count, maxspeed, acceleration, gear));
     }
-
-    public void updateSpeedInfo(int speed, int fuel, int hp, int mileage, int engine, int light, int belt, int lock) { runOnUiThread(() -> { mSpeedometer.UpdateSpeedInfo(speed, fuel, hp, mileage, engine, light, belt, lock); }); }
-
-    public void showSpeed() { runOnUiThread(() -> { mSpeedometer.ShowSpeed(); }); }
-
-    public void hideSpeed() { runOnUiThread(() -> { mSpeedometer.HideSpeed(); }); }
 
     public void showAuthorization(String nick, int id, boolean ip_match, boolean toggle_autologin, boolean email_acvive) {
         runOnUiThread(() -> {
@@ -1504,15 +1472,6 @@ public abstract class NvEventQueueActivity
 
    // public void showSplash() { runOnUiThread(() -> { mChooseServer.Show(); } ); }
 
-    public void hideServerLogo()
-    {
-        { runOnUiThread(() -> { mHudManager.HideServerLogo(); } ); }
-    }
-    public void showServerLogo()
-    {
-        { runOnUiThread(() -> { mHudManager.ShowServerLogo(); } ); }
-    }
-
     public void goVibrate(int milliseconds){
         if (vibrator.hasVibrator()) {
             vibrator.vibrate(milliseconds);
@@ -1529,10 +1488,6 @@ public abstract class NvEventQueueActivity
        // Toast.makeText(this,"Скопированно в буфер обмена ",Toast.LENGTH_SHORT).show();
     }
 
-    public void showUpdateTargetNotify(int type, String text) { runOnUiThread(() -> { mHudManager.ShowUpdateTargetNotify(type, text); } ); }
-
-    public void hideTargetNotify() { runOnUiThread(() -> { mHudManager.HideTargetNotify(); } ); }
-
     public void showOilFactoryGame() { runOnUiThread(() -> { mOilFactoryManager.Show(); } ); }
 
     public void showArmyGame(int quantity) { runOnUiThread(() -> { mArmyGameManager.Show(quantity); } ); }
@@ -1545,34 +1500,7 @@ public abstract class NvEventQueueActivity
 
     public void hideGunShopManager() { runOnUiThread(() -> { mGunShopManager.Hide(); } ); }
 
-    public void showBusInfo(int time) { runOnUiThread(() -> { mHudManager.ShowBusInfo(time); } ); }
-
-    public void hideBusInfo() { runOnUiThread(() -> { mHudManager.HideBusInfo(); } ); }
-
     public void showFuelStation(int type, int price1, int price2, int price3, int price4, int price5, int maxCount) { runOnUiThread(() -> { mFuelStationManager.Show(type, price1, price2, price3, price4, price5, maxCount); } ); }
 
-    public void playLocalSound(int soundID, float speed){
-        soundPool.load(this, soundID, 0);
 
-        soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
-            @Override
-            public void onLoadComplete(SoundPool soundPool, int i, int i1) {
-                AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-
-               // int sound = soundPool.load(this, soundID, 0);
-                float curVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-                float maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-                float leftVolume = curVolume / maxVolume;
-                float rightVolume = curVolume / maxVolume;
-                //int priority = 1;
-               // int no_loop = 0;
-               // float normal_playback_rate = 1f;
-
-                soundPool.play(i, leftVolume, rightVolume, 1, 0, speed);
-
-                soundPool.unload(i);
-            }
-        });
-
-    }
 }

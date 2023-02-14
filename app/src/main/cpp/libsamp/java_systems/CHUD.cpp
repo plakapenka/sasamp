@@ -13,6 +13,7 @@
 #include "keyboard.h"
 #include "CSettings.h"
 #include "chatwindow.h"
+#include "CSpeedometr.h"
 
 extern CJavaWrapper *g_pJavaWrapper;
 extern CGame *pGame;
@@ -73,7 +74,7 @@ Java_com_liverussia_cr_gui_HudManager_HudInit(JNIEnv *env, jobject thiz) {
     CHUD::ChangeChatTextSize(CSettings::m_Settings.iChatFontSize);
 
 }
-extern bool showSpeedometr;
+
 void CHUD::toggleAll(bool toggle, bool withchat)
 {
     if(toggle == bIsShow)
@@ -84,13 +85,17 @@ void CHUD::toggleAll(bool toggle, bool withchat)
     {
         if(!toggle)
         {
-            showSpeedometr = false;
-            g_pJavaWrapper->HideSpeed();
+            if(CSpeedometr::bIsShow)
+            {
+                CSpeedometr::tempToggle(false);
+            }
         }
         else
         {
-            showSpeedometr = true;
-            g_pJavaWrapper->ShowSpeed();
+            if(CSpeedometr::bIsShow)
+            {
+                CSpeedometr::tempToggle(true);
+            }
         }
     }
 
@@ -210,6 +215,134 @@ void CHUD::UpdateWanted()
     jmethodID method = env->GetMethodID(clazz, "UpdateWanted", "(I)V");
 
     env->CallVoidMethod(thiz, method, iWantedLevel);
+}
+
+void CHUD::updateLevelInfo(int level, int currentexp, int maxexp)
+{
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+
+    if (!env)
+    {
+        Log("No env");
+        return;
+    }
+    jclass clazz = env->GetObjectClass(thiz);
+    jmethodID method = env->GetMethodID(clazz, "updateLevelInfo", "(III)V");
+
+    env->CallVoidMethod(thiz, method, level, currentexp, maxexp);
+}
+
+void CHUD::showUpdateTargetNotify(int type, char *text)
+{
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+
+    if (!env)
+    {
+        Log("No env");
+        return;
+    }
+    jclass clazz = env->GetObjectClass(thiz);
+    jmethodID method = env->GetMethodID(clazz, "showUpdateTargetNotify", "(ILjava/lang/String;)V");
+
+    jclass strClass = env->FindClass("java/lang/String");
+    jmethodID ctorID = env->GetMethodID(strClass, "<init>", "([BLjava/lang/String;)V");
+    jstring encoding = env->NewStringUTF("UTF-8");
+
+    jbyteArray bytes = env->NewByteArray(strlen(text));
+    env->SetByteArrayRegion(bytes, 0, strlen(text), (jbyte*)text);
+    jstring jtext = (jstring) env->NewObject(strClass, ctorID, bytes, encoding);
+    env->CallVoidMethod(thiz, method, type, jtext);
+    env->DeleteLocalRef(encoding);
+}
+
+void CHUD::hideBusInfo()
+{
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+
+    if (!env)
+    {
+        Log("No env");
+        return;
+    }
+    jclass clazz = env->GetObjectClass(thiz);
+    jmethodID method = env->GetMethodID(clazz, "hideBusInfo", "()V");
+
+    env->CallVoidMethod(thiz, method);
+}
+
+void CHUD::showBusInfo(int time)
+{
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+
+    if (!env)
+    {
+        Log("No env");
+        return;
+    }
+    jclass clazz = env->GetObjectClass(thiz);
+    jmethodID method = env->GetMethodID(clazz, "showBusInfo", "(I)V");
+
+    env->CallVoidMethod(thiz, method, time);
+}
+
+void CHUD::hideTargetNotify()
+{
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+
+    if (!env)
+    {
+        Log("No env");
+        return;
+    }
+    jclass clazz = env->GetObjectClass(thiz);
+    jmethodID method = env->GetMethodID(clazz, "hideTargetNotify", "()V");
+
+    env->CallVoidMethod(thiz, method);
+}
+
+void CHUD::toggleGps(bool toggle)
+{
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+
+    if (!env)
+    {
+        Log("No env");
+        return;
+    }
+    jclass clazz = env->GetObjectClass(thiz);
+    jmethodID method = env->GetMethodID(clazz, "toggleGps", "(Z)V");
+
+    env->CallVoidMethod(thiz, method, toggle);
+}
+
+void CHUD::toggleServerLogo(bool toggle)
+{
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+
+    if (!env)
+    {
+        Log("No env");
+        return;
+    }
+    jclass clazz = env->GetObjectClass(thiz);
+    jmethodID method = env->GetMethodID(clazz, "toggleServerLogo", "(Z)V");
+
+    env->CallVoidMethod(thiz, method, toggle);
+}
+
+void CHUD::toggleGreenZone(bool toggle)
+{
+    JNIEnv* env = g_pJavaWrapper->GetEnv();
+
+    if (!env)
+    {
+        Log("No env");
+        return;
+    }
+    jclass clazz = env->GetObjectClass(thiz);
+    jmethodID method = env->GetMethodID(clazz, "toggleGreenZone", "(Z)V");
+
+    env->CallVoidMethod(thiz, method, toggle);
 }
 
 void CHUD::UpdateMoney()

@@ -24,6 +24,7 @@ class CStreamPool
 
 	bool m_bWasPaused;
 	char m_szIndividualLastLink[256];
+	int m_bIndividualNeedReplay;
 public:
 	CStreamPool();
 	~CStreamPool();

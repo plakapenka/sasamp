@@ -389,7 +389,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/currency_ruble/baseline_currency_ruble_24.xml" />
+                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material/icons/materialicons/volume_off/baseline_volume_off_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -399,8 +399,8 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="color" value="15b82a" />
-                            <entry key="outputName" value="ic_baseline_currency_ruble_24" />
+                            <entry key="color" value="b81515" />
+                            <entry key="outputName" value="casino_bc_off_sound_icon" />
                             <entry key="sourceFile" value="D:\players_icon.svg" />
                           </map>
                         </option>

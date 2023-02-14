@@ -97,6 +97,7 @@ void CJavaWrapper::ShowClientSettings()
 #include "..//CDebugInfo.h"
 #include "chatwindow.h"
 #include "java_systems/CMedic.h"
+#include "java_systems/CSpeedometr.h"
 
 extern "C"
 {
@@ -159,14 +160,6 @@ extern "C"
 			pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->TogglePlayerControllable(false, true);
 		else
 			pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->TogglePlayerControllable(true, true);
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onSpeedEngineClick(JNIEnv *pEnv, jobject thiz) {
-		pNetGame->SendChatCommand("/e");
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onSpeedLightsClick(JNIEnv *pEnv, jobject thiz) {
-		pNetGame->SendChatCommand("/light");
 	}
 
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onRegisterSkinBackClick(JNIEnv *pEnv, jobject thiz) {
@@ -268,10 +261,6 @@ extern "C"
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onSamwillHideGame(JNIEnv *pEnv, jobject thiz, jint samwillpacket) {
 		pNetGame->SendCustomPacket(251, 20, samwillpacket);
 		Log("onSamwillHideGame: Quantity - %d", samwillpacket);
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onTargetNotifyClose(JNIEnv *pEnv, jobject thiz) {
-		g_pJavaWrapper->HideTargetNotify();
 	}
 
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onArmyGameClose(JNIEnv *pEnv, jobject thiz) {
@@ -400,123 +389,6 @@ void CJavaWrapper::ShowOilFactoryGame()
     env->CallVoidMethod(this->activity, this->s_showOilFactoryGame);
 }
 
-void CJavaWrapper::ShowBusInfo(int time)
-{
-    JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-    env->CallVoidMethod(this->activity, this->s_showBusInfo, time);
-}
-
-void CJavaWrapper::HideBusInfo()
-{
-    JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-    env->CallVoidMethod(this->activity, this->s_hideBusInfo);
-}
-
-void CJavaWrapper::ShowUpdateTargetNotify(int type, char *text)
-{
-    JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-	jclass strClass = env->FindClass("java/lang/String");
-    jmethodID ctorID = env->GetMethodID(strClass, "<init>", "([BLjava/lang/String;)V");
-    jstring encoding = env->NewStringUTF("UTF-8");
-
-    jbyteArray bytes = env->NewByteArray(strlen(text));
-    env->SetByteArrayRegion(bytes, 0, strlen(text), (jbyte*)text);
-    jstring jtext = (jstring) env->NewObject(strClass, ctorID, bytes, encoding);
-    env->CallVoidMethod(this->activity, this->s_showUpdateTargetNotify, type, jtext);
-	env->DeleteLocalRef(encoding);
-}
-
-void CJavaWrapper::HideTargetNotify()
-{
-    JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-    env->CallVoidMethod(this->activity, this->s_hideTargetNotify);
-}
-
-void CJavaWrapper::ShowGreenZone()
-{
-    JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-    env->CallVoidMethod(this->activity, this->s_showGreenZone);
-}
-
-void CJavaWrapper::HideGreenZone()
-{
-    JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-    env->CallVoidMethod(this->activity, this->s_hideGreenZone);
-}
-
-void CJavaWrapper::ShowGPS()
-{
-    JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-    env->CallVoidMethod(this->activity, this->s_showGPS);
-}
-
-void CJavaWrapper::HideGPS()
-{
-    JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-    env->CallVoidMethod(this->activity, this->s_hideGPS);
-}
-
-void CJavaWrapper::UpdateLevelInfo(int level, int currentexp, int maxexp)
-{
-	JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-
-	env->CallVoidMethod(this->activity, this->s_updateLevelInfo, level, currentexp, maxexp);
-}
-
 void CJavaWrapper::ShowSamwill()
 {
     JNIEnv* env = GetEnv();
@@ -592,32 +464,6 @@ void CJavaWrapper::ExitGame() {
 	env->CallVoidMethod(this->activity, this->s_ExitGame);
 }
 
-void CJavaWrapper::ShowServerLogo() {
-
-	JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-
-	env->CallVoidMethod(this->activity, this->s_showServerLogo);
-}
-
-void CJavaWrapper::HideServerLogo() {
-
-	JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-
-	env->CallVoidMethod(this->activity, this->s_hideServerLogo);
-}
-
 void CJavaWrapper::ShowMenu() 
 {
 	JNIEnv* env = GetEnv();
@@ -629,43 +475,6 @@ void CJavaWrapper::ShowMenu()
 	}
 
 	env->CallVoidMethod(this->activity, this->s_showMenu);
-}
-
-void CJavaWrapper::ShowSpeed()
-{
-    JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-    env->CallVoidMethod(this->activity, this->s_showSpeed);
-}
-
-void CJavaWrapper::HideSpeed()
-{
-    JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-    env->CallVoidMethod(this->activity, this->s_hideSpeed);
-}
-
-void CJavaWrapper::UpdateSpeedInfo(int speed, int fuel, int hp, int mileage, int engine, int light, int belt, int lock)
-{
-	JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-
-	env->CallVoidMethod(this->activity, this->s_updateSpeedInfo, speed, fuel, hp, mileage, engine, light, belt, lock);
 }
 
 void CJavaWrapper::ToggleAutoShop(bool toggle)
@@ -787,16 +596,16 @@ void CJavaWrapper::ClearScreen()
 	ShowMiningGame2(false);
 	ShowMiningGame3(false);
 	ToggleShopStoreManager(false);
-	HideTargetNotify();
+	CHUD::hideTargetNotify();
 	HideAuthorization();
 	HideChooseSpawn();
 	HideRegistration();
-	HideSpeed();
+	CSpeedometr::hide();
 	HideArmyGame();
 	this->ToggleAutoShop(false);
-	HideBusInfo();
-	HideGPS();
-	HideGreenZone();
+	CHUD::hideBusInfo();
+	CHUD::toggleGps(false);
+	CHUD::toggleGreenZone(false);
 	CMedic::hide();
 
 	ShowCasinoDice(false, 0, 0, 0, 0, "--", 0, "--", 0, "--", 0, "--", 0, "--", 0);
@@ -840,13 +649,6 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 
 	s_ShowClientSettings = env->GetMethodID(nvEventClass, "showClientSettings", "()V");
 
-	s_updateLevelInfo = env->GetMethodID(nvEventClass, "updateLevelInfo", "(III)V");
-
-	s_showGreenZone = env->GetMethodID(nvEventClass, "showGreenZone", "()V");
-    s_hideGreenZone = env->GetMethodID(nvEventClass, "hideGreenZone", "()V");
-	s_showGPS = env->GetMethodID(nvEventClass, "showGPS", "()V");
-    s_hideGPS = env->GetMethodID(nvEventClass, "hideGPS", "()V");
-
 	s_showOilFactoryGame = env->GetMethodID(nvEventClass, "showOilFactoryGame", "()V");
 	s_showArmyGame = env->GetMethodID(nvEventClass, "showArmyGame", "(I)V");
 	s_hideArmyGame = env->GetMethodID(nvEventClass, "hideArmyGame", "()V");
@@ -858,19 +660,9 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 	s_showGunShopManager = env->GetMethodID(nvEventClass, "showGunShopManager", "()V");
 	s_hideGunShopManager = env->GetMethodID(nvEventClass, "hideGunShopManager", "()V");
 
-	s_showBusInfo = env->GetMethodID(nvEventClass, "showBusInfo", "(I)V");
-	s_hideBusInfo = env->GetMethodID(nvEventClass, "hideBusInfo", "()V");
-
-	s_showUpdateTargetNotify = env->GetMethodID(nvEventClass, "showUpdateTargetNotify", "(ILjava/lang/String;)V");
-	s_hideTargetNotify = env->GetMethodID(nvEventClass, "hideTargetNotify", "()V");
-
 	j_Vibrate = env->GetMethodID(nvEventClass, "goVibrate", "(I)V");
 
     s_showSamwill = env->GetMethodID(nvEventClass, "showSamwill", "()V");
-
-	s_updateSpeedInfo = env->GetMethodID(nvEventClass, "updateSpeedInfo", "(IIIIIIII)V");
-    s_showSpeed = env->GetMethodID(nvEventClass, "showSpeed", "()V");
-    s_hideSpeed = env->GetMethodID(nvEventClass, "hideSpeed", "()V");
 
 	s_showMenu = env->GetMethodID(nvEventClass, "showMenu", "()V");
 
@@ -892,10 +684,6 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 	s_updateSplash = env->GetMethodID(nvEventClass, "updateSplash", "(I)V");
 	s_ExitGame = env->GetMethodID(nvEventClass, "ExitGame", "()V");
 	//s_showSplash = env->GetMethodID(nvEventClass, "showSplash", "()V");
-
-	s_showServerLogo = env->GetMethodID(nvEventClass, "showServerLogo", "()V");
-	s_hideServerLogo = env->GetMethodID(nvEventClass, "hideServerLogo", "()V");
-
 
 	env->DeleteLocalRef(nvEventClass);
 }

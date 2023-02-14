@@ -16,6 +16,8 @@ public:
     static void *loadSettingThread(void *p);
 
     static void loadSetting();
+
+    static void initJavaClasses(JavaVM *pjvm);
 };
 
 

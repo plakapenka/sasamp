@@ -11,6 +11,8 @@
 #include "net/netgame.h"
 #include "java_systems/CHUD.h"
 #include "java_systems/CAdminRecon.h"
+#include "java_systems/casino/CBaccarat.h"
+#include "java_systems/CSpeedometr.h"
 
 extern CGUI *pGUI;
 extern CGame *pGame;
@@ -285,15 +287,17 @@ void CKeyBoard::Open()
 
 	//g_pJavaWrapper->HideVoice();
 
-	if(pNetGame->m_GreenZoneState)g_pJavaWrapper->HideGreenZone();
+	if(pNetGame->m_GreenZoneState) CHUD::toggleGreenZone(false);
 	if(CAdminRecon::bIsToggle) CAdminRecon::tempToggle(false);
 	if(pGame->isCasinoDiceActive)g_pJavaWrapper->TempToggleCasinoDice(false);
-	g_pJavaWrapper->HideServerLogo();
-	//g_pJavaWrapper->HideSamwillMoney();
-	g_pJavaWrapper->HideSpeed();
+	if(CBaccarat::bIsShow) CBaccarat::tempToggle(false);
+	CHUD::toggleServerLogo(false);
+
+	if(CSpeedometr::bIsShow) CSpeedometr::tempToggle(false);
+
 	if (pGame->m_bRaceCheckpointsEnabled)
 	{
-		g_pJavaWrapper->HideGPS();
+		CHUD::toggleGps(false);
 	}
 
 }
@@ -310,14 +314,15 @@ void CKeyBoard::Close()
 	m_iCase = LOWER_CASE;
 	m_iPushedKey = -1;
 
-	g_pJavaWrapper->ShowServerLogo();
+	CHUD::toggleServerLogo(true);
 	if (pGame->m_bRaceCheckpointsEnabled)
 	{
-		g_pJavaWrapper->ShowGPS();
+		CHUD::toggleGps(true);
 	}
 	if(pGame->isCasinoDiceActive)g_pJavaWrapper->TempToggleCasinoDice(true);
+	if(CBaccarat::bIsShow) CBaccarat::tempToggle(true);
 	if(CAdminRecon::bIsToggle) CAdminRecon::tempToggle(true);
-	if(pNetGame->m_GreenZoneState)g_pJavaWrapper->ShowGreenZone();
+	if(pNetGame->m_GreenZoneState) CHUD::toggleGreenZone(true);
 	//g_pJavaWrapper->ShowVoice();
 
 	return;
@@ -328,6 +333,7 @@ void CKeyBoard::Close()
 #include "java_systems/CTab.h"
 #include "java_systems/CDuelsGui.h"
 #include "util/patch.h"
+#include "game/CVector.h"
 
 bool CKeyBoard::OnTouchEvent(int type, bool multi, int x, int y)
 {
@@ -599,13 +605,14 @@ void CKeyBoard::Send()
 	m_bEnable = false;
 	CHUD::ToggleChatInput(false);
 
-	g_pJavaWrapper->ShowServerLogo();
-	if(pNetGame->m_GreenZoneState)g_pJavaWrapper->ShowGreenZone();
+	CHUD::toggleServerLogo(true);
+	if(pNetGame->m_GreenZoneState) CHUD::toggleGreenZone(true);
 	if(pGame->isCasinoDiceActive)g_pJavaWrapper->TempToggleCasinoDice(true);
+	if(CBaccarat::bIsShow) CBaccarat::tempToggle(true);
 	if(CAdminRecon::bIsToggle) CAdminRecon::tempToggle(true);
 	if (pGame->m_bRaceCheckpointsEnabled)
 	{
-		g_pJavaWrapper->ShowGPS();
+		CHUD::toggleGps(true);
 	}
 	//g_pJavaWrapper->ShowVoice();
 }
@@ -2405,6 +2412,67 @@ bool ProcessLocalCommands(const char str[])
 	{
 		CHUD::bIsCamEditGui = !CHUD::bIsCamEditGui;
 		CHUD::toggleAll( CHUD::bIsCamEditGui );
+		return true;
+	}
+
+	if (strstr(str, "/testveh "))
+	{
+		int size = 0;
+		if (sscanf(str, "%*s%d", &size) == -1)
+		{
+			CChatWindow::AddDebugMessage("Используйте: /fontsize [scale]");
+			return true;
+		}
+
+		CPlayerPed *pPlayer = pGame->FindPlayerPed();
+		CVehicle* pVehicle = pPlayer->GetCurrentVehicle();
+
+		uintptr_t* dwModelarray = (uintptr_t*)(g_libGTASA + 0x87BF48);
+		uint8_t* pModelInfoStart = (uint8_t*)dwModelarray[pVehicle->m_pVehicle->entity.nModelIndex];
+
+		if (!pModelInfoStart)
+		{
+			return true;
+		}
+
+		uintptr_t* m_pVehicleStruct = (uintptr_t*)(pModelInfoStart + 0x74);
+
+		CVector* m_avDummyPos = (CVector*)(*m_pVehicleStruct + 0x0);
+
+		VECTOR vec;
+		// 0 - front light
+		vec.X = m_avDummyPos[size].x;
+		vec.Y = m_avDummyPos[size].y;
+		vec.Z = m_avDummyPos[size].z;
+		//float x;
+
+
+//		RwFrame* pWheelLB = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x00335CEC + 1))(pVehicle->m_pVehicle->entity.m_pRwObject, "taillights"); // GetFrameFromname
+//
+//		MATRIX4X4 mat;
+//		memcpy(&mat, (const void*)&(pWheelLB->modelling), sizeof(MATRIX4X4));
+//
+//		//CHook::CallFunction<int>(g_libGTASA + 0x338698 + 1, pModelInfoStart, &vec, 1);
+//	//	(( int (*)(uint8_t*, CVector*, int32_t))(g_libGTASA + 0x338698 + 1))(pModelInfoStart, &vec, size);
+
+//		CText3DLabelsPool *pLabelsPool = pNetGame->GetLabelPool();
+//
+//		if(pLabelsPool)
+//		{
+//			pLabelsPool->CreateTextLabel((int)555, "x", 0xFFFFFFFF,
+//										 x, y, z, 30.0f, 0, INVALID_PLAYER_ID, pPlayer->GetCurrentSampVehicleID());
+//		}
+		CObjectPool* pObjectPool = pNetGame->GetObjectPool();
+		VECTOR vec11;
+		vec11.X = vec11.Y = vec11.Z = 0.0;
+		pObjectPool->New(555, 19294, vec11, vec11, 300.0f);
+
+		CObject* pObject = pObjectPool->GetAt(555);
+		if (!pObject) return true;
+		pObject->AttachToVehicle(pPlayer->GetCurrentSampVehicleID(), &vec, &vec11);
+
+
+		CChatWindow::AddInfoMessage("%.3f, %.3f, %.3f", vec.X, vec.Y, vec.Z);
 		return true;
 	}
 

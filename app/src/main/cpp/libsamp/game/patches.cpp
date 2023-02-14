@@ -103,8 +103,10 @@ void ApplyPatches_level0()
 {
 	Log("ApplyPatches_level0");
 
-	PLAYERS_REALLOC = new char[404*MAX_PLAYERS];
-	CHook::Write<char*>(g_libGTASA + 0x5D021C, PLAYERS_REALLOC);
+	PLAYERS_REALLOC = ((char* (*)(uint32_t))(g_libGTASA + 0x179B40))(404 * 257 * sizeof(char));
+	memset(PLAYERS_REALLOC, 0, 404 * 257);
+	CHook::UnFuck(g_libGTASA + 0x5D021C);
+	*(char**)(g_libGTASA + 0x5D021C) = PLAYERS_REALLOC;
 
 	// 3 touch begin
 	CHook::UnFuck(g_libGTASA + 0x005D1E8C);
@@ -314,9 +316,9 @@ void ApplyPatches()
 	CHook::NOP(g_libGTASA + 0x3AC8B2, 2); 	// CMessages::AddBigMessage from CPlayerInfo::KillPlayer
 	CHook::NOP(g_libGTASA + 0x4F75B4, 4);  // CBoat::ProcessControl
 
-	//CHook::NOP(g_libGTASA + 0x454A88, 2);  // CCamera::ClearPlayerWeaponMode from CPlayerPed::ClearWeaponTarget
+	CHook::NOP(g_libGTASA + 0x454A88, 2);  // CCamera::ClearPlayerWeaponMode from CPlayerPed::ClearWeaponTarget
 	CHook::NOP(g_libGTASA + 0x2FEE76, 2);	// CGarages::RespraysAreFree = true in CRunningScript::ProcessCommands800To899
-	//CHook::NOP(g_libGTASA + 0x50FF64, 2);	// skip playerGifts from CVehicle::SetDriver
+	CHook::NOP(g_libGTASA + 0x50FF64, 2);	// skip playerGifts from CVehicle::SetDriver
 	CHook::NOP(g_libGTASA + 0x39840A, 2);	// CStreaming::Shutdown from CGame::Shutdown
 	CHook::NOP(g_libGTASA + 0x4874E0, 5);  // CPedIntelligence::AddTaskPrimaryMaybeInGroup from CTaskComplexEnterCar::CreateNextSubTask
 	CHook::NOP(g_libGTASA + 0x2E1EDC, 2); 	// CUpsideDownCarCheck::UpdateTimers from CTheScripts::Process

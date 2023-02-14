@@ -19,6 +19,7 @@ extern "C"
 #include "..///..//santrope-tea-gtasa/CGameResourcesDecryptor.h"
 #include "chatwindow.h"
 #include "../util/patch.h"
+#include "java_systems/CSpeedometr.h"
 
 extern CGame* pGame;
 extern CPlayerPed *g_pCurrentFiredPed;
@@ -254,14 +255,18 @@ void InitialiseRenderWare_hook() {
 	Log("InitialiseRenderWare ..");
 
 	CHook::NOP(g_libGTASA + 0x40C546, 44);
+	CHook::NOP(g_libGTASA + 0x40C236, 2); // crash CCamera::ClearPlayerWeaponMode in CCamera::Init
 
-	TextureDatabaseRuntime::Load("samp", 0, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
+	TextureDatabaseRuntime::Load("samp", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
 
-	TextureDatabaseRuntime::Load("mobile", 0, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
-	TextureDatabaseRuntime::Load("txd", 0, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
-	TextureDatabaseRuntime::Load("gta3", 0, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
-	TextureDatabaseRuntime::Load("gta_int", 0, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
-	TextureDatabaseRuntime::Load("menu", 0, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
+	TextureDatabaseRuntime::Load("mobile", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
+	TextureDatabaseRuntime::Load("txd", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
+	TextureDatabaseRuntime::Load("gta3", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
+	TextureDatabaseRuntime::Load("gta_int", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
+	TextureDatabaseRuntime::Load("menu", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
+
+	TextureDatabaseRuntime::Load("skins", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
+	TextureDatabaseRuntime::Load("cars", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
 
 	InitialiseRenderWare();
 }
@@ -733,6 +738,8 @@ void CTimer__StartUserPause_hook()
 			CKeyBoard::Close();
 		}
 		g_pJavaWrapper->SetPauseState(true);
+
+		CSpeedometr::tempToggle(false);
 	}
 
 	*(uint8_t*)(g_libGTASA + 0x008C9BA3) = 1;
@@ -745,6 +752,7 @@ void CTimer__EndUserPause_hook()
 	if (g_pJavaWrapper)
 	{
 		g_pJavaWrapper->SetPauseState(false);
+		CSpeedometr::tempToggle(true);
 	}
 
 	*(uint8_t*)(g_libGTASA + 0x008C9BA3) = 0;
@@ -1046,6 +1054,15 @@ uintptr_t* CCustomRoadsignMgr_RenderRoadsignAtomic_hook(uintptr_t* atomic, VECTO
 
 void InstallSpecialHooks()
 {
+	//CHook::WriteMemory(g_libGTASA + 0x52F4C6, (uintptr_t)"\x00\x22\xC4\xF2\xC8\x32", 6); // CEntity::ProcessLightsForEntity
+	//CHook::JMPCode(g_libGTASA + 0x3A9B10 + 0x1, g_libGTASA + 0x3A98AC + 0x1);
+	// Fix sky multitude
+	//CHook::WriteMemory(CHook::getSym(g_libGTASA, "RunUVAnim"), (uintptr_t)"\x01", 1);
+
+
+	//CHook::WriteMemory(g_libGTASA + 0x519A7C, (uintptr_t)"\x02", 1);
+	//CHook::WriteMemory(g_libGTASA + 0x519AA0, (uintptr_t)"\x02", 1);
+
 	Log("InstallSpecialHooks");
 
 	// texture Краш если с текстурами какая-то хуйня
@@ -1302,11 +1319,7 @@ uintptr_t CModelInfo_AddAtomicModel_hook(int iModel)
 }
 
 /* ====================================================== */
-typedef struct _VEHICLE_MODEL
-{
-	uintptr_t 	vtable;
-	uint8_t		data[932];
-} VEHICLE_MODEL; // SIZE = 936
+
 
 VEHICLE_MODEL VehicleModels[370];
 int VehicleModelsCount = 0;
@@ -2921,6 +2934,17 @@ void CVehicle__ReduceVehicleDamage_hook(VEHICLE_TYPE* thiz, float *fDamage)
 	*fDamage = *fDamage/10;
 }
 
+int (*FindPlayerPed_ab_)(int a1);
+int FindPlayerPed_ab__hook(int a1)
+{
+	if ( a1 < 0 )
+		a1 = *(uint8_t*)(g_libGTASA + 0x008E864C); // CWorld::PlayerInFocus;
+
+	int *CWorld__Players = *(int**)(g_libGTASA + 0x5D021C);
+
+	return CWorld__Players[0x65 * a1];
+}
+
 void InstallHooks()
 {
 	Log("InstallHooks");
@@ -2928,7 +2952,7 @@ void InstallHooks()
 	PROTECT_CODE_INSTALLHOOKS;
 
 	//
-	//CHook::InlineHook(g_libGTASA, 0x0050F37C, &CVehicle__ReduceVehicleDamage_hook, &CVehicle__ReduceVehicleDamage);
+	CHook::InlineHook(g_libGTASA, 0x003AC5DC, &FindPlayerPed_ab__hook, &FindPlayerPed_ab_); // crash fix?
 
 	//CHook::NOP(g_libGTASA + 0x50F3A0, 6); // CVehicle::ReduceVehicleDamage
 	// не падать с мотоцикла

@@ -26,7 +26,6 @@
 #include "CWeaponsOutFit.h"
 #include "CRadarRect.h"
 #include "CFirstPersonCamera.h"
-#include "CSnow.h"
 #include "CStreaming.h"
 #include "TextureDatabaseRuntime.h"
 

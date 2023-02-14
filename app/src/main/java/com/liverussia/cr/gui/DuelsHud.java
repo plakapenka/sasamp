@@ -135,7 +135,9 @@ public class DuelsHud {
                     this.killertext.remove(0);
                     this.deathtext.remove(0);
                     this.gun.remove(0);
+                    this.teamColor.remove(0);
                     notifyItemRemoved(0);
+                    notifyItemRangeChanged(0, getItemCount());
                 }
                 this.killertext.add(killer);
                 this.deathtext.add(death);

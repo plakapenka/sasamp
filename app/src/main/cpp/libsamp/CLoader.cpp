@@ -2,19 +2,21 @@
 // Created by plaka on 24.01.2023.
 //
 
+#include <jni.h>
 #include "CLoader.h"
 #include "game/bass.h"
 #include "util/patch.h"
 #include "crashlytics.h"
 #include "CSettings.h"
-
+#include "java_systems/CSpeedometr.h"
 
 void InitBASSFuncs();
 void CLoader::loadBassLib()
 {
     InitBASSFuncs();
     BASS_Init(-1, 44100, BASS_DEVICE_3D, nullptr, nullptr);
-    BASS_Set3DFactors(0.2, 0.1, 0);
+    BASS_Set3DFactors(1, 0.10, 1);
+    BASS_Apply3D();
 }
 
 void CLoader::initCrashLytics()
@@ -53,5 +55,14 @@ void *CLoader::loadSettingThread(void *p)
     CSettings::LoadSettings(nullptr);
 
     pthread_exit(nullptr);
+}
+
+void CLoader::initJavaClasses(JavaVM* pjvm)
+{
+    JNIEnv* env = nullptr;
+    pjvm->GetEnv((void**)& env, JNI_VERSION_1_6);
+
+    CSpeedometr::clazz = env->FindClass("com/liverussia/cr/gui/Speedometer");
+    CSpeedometr::clazz = (jclass) env->NewGlobalRef( CSpeedometr::clazz );
 }
 

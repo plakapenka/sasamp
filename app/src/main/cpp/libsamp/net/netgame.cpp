@@ -151,6 +151,8 @@ CNetGame::~CNetGame()
 
 #include "CUDPSocket.h"
 #include "..//CServerManager.h"
+#include "java_systems/CSpeedometr.h"
+#include "game/CSkyBox.h"
 
 int last_process_cnetgame = 0;
 void CNetGame::Process()
@@ -161,8 +163,9 @@ void CNetGame::Process()
 	}else {
 		return;
 	}
+	//CSkyBox::Process();
+	CSpeedometr::update();
 
-	// todo: 30 fps fixed rate
 	UpdateNetwork();
 
 	// server checkpoints update
@@ -701,7 +704,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 
 			char text[256];
 			cp1251_to_utf8(text, str, len);
-			g_pJavaWrapper->ShowUpdateTargetNotify(value, (char *)text);
+			CHUD::showUpdateTargetNotify(value, (char *)text);
 
 			break;
 		}
@@ -731,11 +734,11 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 
 			if (toggle == 1)
 			{
-				g_pJavaWrapper->ShowBusInfo(time);
+				CHUD::showBusInfo((int)time);
 			}
 			else
 			{
-				g_pJavaWrapper->HideBusInfo();
+				CHUD::hideBusInfo();
 			}
 
 			break;
@@ -824,7 +827,8 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			bs.Read(current);
 			bs.Read(max);
 			bs.Read(level);
-			g_pJavaWrapper->UpdateLevelInfo(level, current, max);
+
+			CHUD::updateLevelInfo(level, current, max);
 			break;
 		}
 		case RPC_TOGGLE_GPS_INFO:
@@ -833,11 +837,11 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			bs.Read(value);
 			if (value == 1)
 			{
-				g_pJavaWrapper->ShowGPS();
+				CHUD::toggleGps(true);
 			}
 			else if (value == 0)
 			{
-				g_pJavaWrapper->HideGPS();
+				CHUD::toggleGps(false);
 			}
 			break;
 		}
@@ -848,12 +852,12 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 
 			if (value == 1)
 			{
-				g_pJavaWrapper->ShowGreenZone();
+				CHUD::toggleGreenZone(true);
 				m_GreenZoneState = true;
 			}
 			else if (value == 0)
 			{
-				g_pJavaWrapper->HideGreenZone();
+				CHUD::toggleGreenZone(false);
 				m_GreenZoneState = false;
 			}
 			break;
@@ -1307,8 +1311,8 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			bs.Read(fuel);
 			bs.Read(mileage);
 
-			pGUI->SetFuel(fuel);
-			pGUI->SetMeliage(mileage);
+            CSpeedometr::fFuel = (int) fuel;
+            CSpeedometr::iMilliage = (int) mileage;
 			break;
 		}
 	}
@@ -1881,9 +1885,11 @@ void CNetGame::Packet_VehicleSync(Packet* pkt)
 	// landinggear
 	bsSync.Read(bCheck);
 	if(bCheck) icSync.byteLandingGearState = 1;
+
 	// train speed
 	bsSync.Read(bCheck);
-	if(bCheck) bsSync.Read(icSync.fTrainSpeed);
+	if(bCheck) bsSync.Read(icSync.HydraThrustAngle);
+
 	// triler id
 	bsSync.Read(bCheck);
 	if(bCheck) bsSync.Read(icSync.TrailerID);

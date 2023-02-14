@@ -9,6 +9,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.material.button.MaterialButton;
 import com.liverussia.cr.R;
+import com.liverussia.cr.core.Samp;
 import com.skydoves.progressview.ProgressView;
 
 import java.text.DecimalFormat;
@@ -16,7 +17,6 @@ import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
 public class TechIspect {
-    DecimalFormat formatter;
     Activity activity;
 
     ConstraintLayout tech_inspect_main_layout;
@@ -66,10 +66,6 @@ public class TechIspect {
             sendClick();
         });
 
-        DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
-        otherSymbols.setGroupingSeparator('.');
-        formatter = new DecimalFormat("###,###.###", otherSymbols);
-
         tech_inspect_main_layout = activity.findViewById(R.id.tech_inspect_main_layout);
         tech_inspect_main_layout.setVisibility(View.GONE);
 
@@ -117,7 +113,7 @@ public class TechIspect {
             tech_inspect_nozzles_percent.setText( String.format("%d %%", 100 - nozzles) );
             tech_inspect_nozzles_progress.setProgress(100 - nozzles);
 
-            tech_inspect_price_text.setText( String.format("Госпошлина %s рублей", formatter.format(price)) );
+            tech_inspect_price_text.setText( String.format("Госпошлина %s рублей", Samp.formatter.format(price)) );
 
             tech_inspect_main_layout.setVisibility(View.VISIBLE);
         });

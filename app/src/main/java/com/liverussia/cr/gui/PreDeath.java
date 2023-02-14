@@ -156,6 +156,12 @@ public class PreDeath {
     private Runnable runTimeRemaining = () -> {
         for(int i = 0; i < 20; i++)
         {
+            if(Thread.currentThread().isInterrupted())
+            {
+                timeRemaining = 0;
+                setButtonText("В БОЛЬНИЦУ");
+                break;
+            }
             timeRemaining --;
             if(timeRemaining == 0)
             {
@@ -170,7 +176,9 @@ public class PreDeath {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                timeRemaining = 0;
+                setButtonText("В БОЛЬНИЦУ");
+                break;
             }
         }
     };

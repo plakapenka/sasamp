@@ -15,7 +15,6 @@ extern
 
 class CJavaWrapper
 {
-	jobject activity;
 
 	jmethodID s_GetClipboardText;
 	jmethodID j_Vibrate;
@@ -33,17 +32,7 @@ class CJavaWrapper
 	jmethodID s_showGunShopManager;
 	jmethodID s_hideGunShopManager;
 
-	jmethodID s_showGreenZone;
-    jmethodID s_hideGreenZone;
-	jmethodID s_showGPS;
-    jmethodID s_hideGPS;
-	jmethodID s_updateLevelInfo;
-
 	jmethodID s_showSamwill;
-
-	jmethodID s_showSpeed;
-    jmethodID s_hideSpeed;
-	jmethodID s_updateSpeedInfo;
 
 	jmethodID s_showMenu;
 
@@ -65,15 +54,6 @@ class CJavaWrapper
 	jmethodID s_updateSplash;
 	jmethodID s_ExitGame;
 
-	jmethodID s_hideServerLogo;
-	jmethodID s_showServerLogo;
-
-	jmethodID s_showBusInfo;
-	jmethodID s_hideBusInfo;
-
-	jmethodID s_showUpdateTargetNotify;
-	jmethodID s_hideTargetNotify;
-
 
 public:
 	JNIEnv* GetEnv();
@@ -81,17 +61,6 @@ public:
 	std::string GetClipboardString();
 
 	void ShowClientSettings();
-
-	void UpdateLevelInfo(int level, int currentexp, int maxexp);
-
-    void ToggleAllHud(bool toggle);
-
-	void ShowGreenZone();
-    void HideGreenZone();
-	void ShowGPS();
-    void HideGPS();
-	void HideServerLogo();
-	void ShowServerLogo();
 
 	void ShowOilFactoryGame();
 	void ShowArmyGame(int quantity);
@@ -105,16 +74,6 @@ public:
 	void HideGunShopManager();
 
 	void ShowSamwill();
-
-	void UpdateSpeedInfo(int speed, int fuel, int hp, int mileage, int engine, int light, int belt, int lock);
-	void ShowSpeed();
-    void HideSpeed();
-
-	void ShowBusInfo(int time);
-	void HideBusInfo();
-
-    void ShowUpdateTargetNotify(int type, char *text);
-    void HideTargetNotify();
 
 	void ShowMenu();
 
@@ -165,6 +124,8 @@ public:
 	void Vibrate(int milliseconds);
 
     void SendBuffer(const char string[]);
+
+	jobject activity;
 };
 
 extern CJavaWrapper* g_pJavaWrapper;

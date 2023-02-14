@@ -167,7 +167,7 @@ void InitInGame()
 
 		g_pJavaWrapper->UpdateSplash(101);
 
-		g_pJavaWrapper->ShowServerLogo();
+		CHUD::toggleServerLogo(true);
 		bGameInited = true;
 
 		return;
@@ -478,6 +478,8 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 		return 0;
 	}
 	Log("libGTASA.so image base address: 0x%X", g_libGTASA);
+
+	CLoader::initJavaClasses(vm);
 
 	CHook::InitHookStuff();
 
