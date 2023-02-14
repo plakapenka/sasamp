@@ -8,6 +8,7 @@
 #include "../game/game.h"
 #include "net/netgame.h"
 #include "util/CJavaWrapper.h"
+#include "java_systems/casino/CBaccarat.h"
 
 jobject CDialog::thiz = nullptr;
 bool    CDialog::bIsShow = false;
@@ -39,6 +40,8 @@ void CDialog::show(int id, int style, char caption[], char info[], char button1[
     env->DeleteLocalRef(j_button2);
 
     CDialog::bIsShow = true;
+
+    if(CBaccarat::bIsShow) CBaccarat::tempToggle(false);
 }
 
 void CDialog::rpcShowPlayerDialog(RPCParameters *rpcParams)
@@ -114,4 +117,6 @@ Java_com_liverussia_cr_gui_dialogs_Dialog_sendResponse(JNIEnv *env, jobject thiz
 
     env->ReleaseByteArrayElements(str, pMsg, JNI_ABORT);
     CDialog::bIsShow = false;
+
+    if(CBaccarat::bIsShow) CBaccarat::tempToggle(true);
 }
