@@ -46,4 +46,8 @@ public:
     bool GetCollisionChecking();
 
 	void Remove();
+
+    void RemovePhysical();
+
+	void AddPhysical();
 };

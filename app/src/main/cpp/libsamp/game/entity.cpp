@@ -52,6 +52,16 @@ void CEntity::UpdateRwMatrixAndFrame()
 	}
 }
 
+void CEntity::RemovePhysical()
+{
+	((void (*)(ENTITY_TYPE*))(*(void**)(m_pEntity->vtable + 16)))(m_pEntity); // CPhysical::Remove
+}
+
+void CEntity::AddPhysical()
+{
+	((void (*)(ENTITY_TYPE*))(*(void**)(m_pEntity->vtable + 8)))(m_pEntity); // CPhysical::Add
+}
+
 void CEntity::UpdateMatrix(MATRIX4X4 mat)
 {
 	if (m_pEntity)
