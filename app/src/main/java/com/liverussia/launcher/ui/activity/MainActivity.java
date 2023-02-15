@@ -354,7 +354,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         String password = NativeStorage.getClientProperty(NativeStorageElements.LOCKED_SERVER_PASSWORD, this);
 
-        if (SERVER_LOCKED_VALUE == serverLockedValue && StringUtils.isBlank(password)) {
+        if (SERVER_LOCKED_VALUE == serverLockedValue) {
             EnterLockedServerPasswordDialog dialog = new EnterLockedServerPasswordDialog(this);
             dialog.setOnDialogCloseListener(this::saveServerPassword);
             dialog.createDialog();
