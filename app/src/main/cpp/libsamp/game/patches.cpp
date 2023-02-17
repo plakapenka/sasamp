@@ -76,10 +76,10 @@ void readVehiclesAudioSettings()
 void DisableAutoAim()
 {
     // CPlayerPed::FindWeaponLockOnTarget
-	CHook::WriteMemory(g_libGTASA + 0x4568B0, (uintptr_t)"\x00\x20\xF7\x46", 4);
-    // CPlayerPed::FindNextWeaponLockOnTarget
-	CHook::WriteMemory(g_libGTASA + 0x4590E4, (uintptr_t)"\x00\x20\xF7\x46", 4);
-	CHook::WriteMemory(g_libGTASA + 0x438DB4, (uintptr_t)"\x00\x20\xF7\x46", 4);
+	CHook::RET(g_libGTASA + 0x4568B0);
+//    // CPlayerPed::FindNextWeaponLockOnTarget
+	CHook::RET(g_libGTASA + 0x4590E4);
+	CHook::RET(g_libGTASA + 0x438DB4);
 
 }
 
