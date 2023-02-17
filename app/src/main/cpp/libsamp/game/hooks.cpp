@@ -136,7 +136,7 @@ stFile* NvFOpen_hook(const char* r0, const char* r1, int r2, int r3)
 		goto open;
 	}
 
-	/*if (!strncmp(r1, "DATA/HANDLING.CFG", 17))
+	if (!strncmp(r1, "DATA/HANDLING.CFG", 17))
 	{
 		sprintf(path, "%s/SAMP/handling.cfg", g_pszStorage);
 		Log("Loading handling.cfg..");
@@ -148,7 +148,7 @@ stFile* NvFOpen_hook(const char* r0, const char* r1, int r2, int r3)
 		sprintf(path, "%s/SAMP/weapon.dat", g_pszStorage);
 		Log("Loading weapon.dat..");
 		goto open;
-	}*/
+	}
 
 orig:
 	return NvFOpen(r0, r1, r2, r3);
@@ -184,10 +184,10 @@ void Render2dStuff_hook()
 	if (CHUD::bIsShow) CHUD::UpdateHudInfo();
 
 	bGameStarted = true;
-	MAKE_PROFILE(test, test_time);
+//	MAKE_PROFILE(test, test_time);
 	MainLoop();
 	RenderBackgroundHud();
-	LOG_PROFILE(test, test_time);
+//	LOG_PROFILE(test, test_time);
 	Render2dStuff();
 
 	if (!bProcessedCleanStreamPool)
@@ -199,10 +199,6 @@ void Render2dStuff_hook()
 		CStreaming::RemoveAllUnusedModels();
 	}
 
-}
-
-void __fillArray()
-{
 }
 
 /* ====================================================== */
@@ -265,8 +261,13 @@ void InitialiseRenderWare_hook() {
 	TextureDatabaseRuntime::Load("gta_int", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
 	TextureDatabaseRuntime::Load("menu", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
 
-	TextureDatabaseRuntime::Load("skins", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
-	TextureDatabaseRuntime::Load("cars", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
+	//skins
+	TextureDatabase* skins = TextureDatabaseRuntime::Load("skins", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
+	TextureDatabaseRuntime::Register(skins);
+
+	// cars
+	TextureDatabase* cars = TextureDatabaseRuntime::Load("cars", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
+	TextureDatabaseRuntime::Register(cars);
 
 	InitialiseRenderWare();
 }
@@ -1230,14 +1231,14 @@ void CPedDamageResponseCalculator__ComputeDamageResponse_hook(stPedDamageRespons
 			PLAYERID byteLocalId = pPlayerPool->GetLocalPlayerID();
 
 			// give player damage
-			if((PED_TYPE*)thiz->pEntity == pGame->FindPlayerPed()->m_pPed && issuerid != INVALID_PLAYER_ID) {
+			if(damagedid == INVALID_PLAYER_ID && issuerid != INVALID_PLAYER_ID) {
 				CHUD::addGiveDamageNotify(issuerid, weaponid, fDamage);
 				pPlayerPool->GetLocalPlayer()->GiveTakeDamage(false, issuerid, fDamage, weaponid,
 															  bodypart);
 			}
 
 			// player take damage
-			else if((PED_TYPE*)pEntity == pGame->FindPlayerPed()->m_pPed) {
+			else if(damagedid != INVALID_PLAYER_ID && issuerid == INVALID_PLAYER_ID) {
 				pPlayerPool->GetLocalPlayer()->GiveTakeDamage(true, damagedid, fDamage, weaponid, bodypart);
 
 				char nick[MAX_PLAYER_NAME];
@@ -1833,18 +1834,20 @@ void CAutomobile__ProcessEntityCollision_hook(VEHICLE_TYPE* a1, ENTITY_TYPE* a2,
 	}
 }
 
+void MainMenuScreen__OnExit()
+{
+	g_pJavaWrapper->ExitGame();
+}
 bool (*CGame__Shutdown)();
 bool CGame__Shutdown_hook()
 {
 	Log("Exiting game...");
 
-	if (pNetGame && pNetGame->GetRakClient())
-	{
-		pNetGame->GetRakClient()->Disconnect(500, 0);
-	}
+	pGame->bIsGameExiting = true;
+
+	//delete pNetGame;
 
 	g_pJavaWrapper->ExitGame();
-	//
 
 	return false;
 	//return CGame__Shutdown();
@@ -2945,11 +2948,36 @@ int FindPlayerPed_ab__hook(int a1)
 	return CWorld__Players[0x65 * a1];
 }
 
+float *m_f3rdPersonCHairMultX, *m_f3rdPersonCHairMultY, *ms_fAspectRatio;
+
+// Fixing a crosshair by very stupid math ( JPATCH )
+static constexpr float ar43 = 4.0f / 3.0f;
+void (*DrawCrosshair)(uintptr_t* thiz);
+void DrawCrosshair_hook(uintptr_t* thiz)
+{
+	float save1 = *m_f3rdPersonCHairMultX;
+	*m_f3rdPersonCHairMultX = 0.530f - (*ms_fAspectRatio - ar43) * 0.01125f;
+
+	float save2 = *m_f3rdPersonCHairMultY;
+	*m_f3rdPersonCHairMultY = 0.400f + (*ms_fAspectRatio - ar43) * 0.03600f;
+
+	DrawCrosshair(thiz);
+
+	*m_f3rdPersonCHairMultX = save1;
+	*m_f3rdPersonCHairMultY = save2;
+}
+
 void InstallHooks()
 {
 	Log("InstallHooks");
 
 	PROTECT_CODE_INSTALLHOOKS;
+
+    // Fixing a crosshair by very stupid math ( JPATCH )
+	m_f3rdPersonCHairMultX = (float*)(g_libGTASA + 0x008B07FC);
+	m_f3rdPersonCHairMultY = (float*)(g_libGTASA + 0x008B07F8);
+	ms_fAspectRatio = (float*)(g_libGTASA + 0x0098525C);
+    CHook::InlineHook(g_libGTASA, 0x3D44CC, &DrawCrosshair_hook, &DrawCrosshair);
 
 	//
 	CHook::InlineHook(g_libGTASA, 0x003AC5DC, &FindPlayerPed_ab__hook, &FindPlayerPed_ab_); // crash fix?
@@ -3050,7 +3078,8 @@ void InstallHooks()
 
 	CHook::InlineHook(g_libGTASA, 0x004D4A6C, &CAutomobile__ProcessEntityCollision_hook, &CAutomobile__ProcessEntityCollision);
 
-	CHook::InlineHook(g_libGTASA, 0x00398334, &CGame__Shutdown_hook, &CGame__Shutdown);
+	CHook::MethodHook(g_libGTASA, 0x0025CB8C, &MainMenuScreen__OnExit);
+//	CHook::InlineHook(g_libGTASA, 0x00398334, &CGame__Shutdown_hook, &CGame__Shutdown);
 
 	CHook::WriteMemory(g_libGTASA + 0x003DA86C,
 		"\x80\xB4"\
@@ -3140,15 +3169,4 @@ void InstallHooks()
 	CHook::InlineHook(g_libGTASA, 0x003B0E6C, &CEntity__RegisterReference_hook, &CEntity__RegisterReference);
 
 	HookCPad();
-}
-
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_nvidia_devtech_NvEventQueueActivity_startPause(JNIEnv *env, jobject thiz) {
-	CTimer__StartUserPause_hook();
-}
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_nvidia_devtech_NvEventQueueActivity_endPause(JNIEnv *env, jobject thiz) {
-	CTimer__EndUserPause_hook();
 }
