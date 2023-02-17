@@ -14,7 +14,9 @@ public:
     CVector(float X, float Y, float Z);
     CVector(RwV3d rwVec) { x = rwVec.x; y = rwVec.y; z = rwVec.z; }
 public:
-    // Returns length of vector
+    CVector(float value);
+
+// Returns length of vector
     float Magnitude();
 
     // Returns length of 2d vector

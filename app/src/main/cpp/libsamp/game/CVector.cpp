@@ -10,6 +10,13 @@ CVector::CVector()
     x = 0.0f; y = 0.0f; z = 0.0f;
 }
 
+CVector::CVector(float value)
+{
+    x = value;
+    y = value;
+    z = value;
+}
+
 CVector::CVector(float X, float Y, float Z)
 {
     x = X;
