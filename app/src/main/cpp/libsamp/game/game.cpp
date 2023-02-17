@@ -377,24 +377,6 @@ void CGame::PlaySound(int iSound, float fX, float fY, float fZ)
 	ScriptCommand(&play_sound, fX, fY, fZ, iSound);
 }
 
-void CGame::ToggleRadar(bool iToggle)
-{
-	*(uint8_t*)(g_libGTASA+0x8EF36B) = (uint8_t)!iToggle;
-}
-
-void CGame::DisplayHUD(bool bDisp)
-{
-	if(bDisp)
-	{	
-		// CTheScripts11bDisplayHud
-		*(uint8_t*)(g_libGTASA+0x7165E8) = 1;
-		//ToggleRadar(1);
-	} else {
-		*(uint8_t*)(g_libGTASA+0x7165E8) = 0;
-		//ToggleRadar(0);
-	}
-}
-
 // 0.3.7
 void CGame::RequestModel(unsigned int iModelID, int iLoadingStream)
 {

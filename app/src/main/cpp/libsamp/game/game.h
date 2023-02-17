@@ -77,11 +77,6 @@ public:
 	void PlaySound(int iSound, float fX, float fY, float fZ);
 
 	// 0.3.7
-	void ToggleRadar(bool iToggle);
-	// 0.3.7
-	void DisplayHUD(bool bDisp);
-
-	// 0.3.7
 	void ToggleRaceCheckpoints(bool bEnabled) { m_bRaceCheckpointsEnabled = bEnabled; }
 	// 0.3.7
 	void SetCheckpointInformation(VECTOR *pos, VECTOR *extent);
@@ -130,8 +125,6 @@ public:
 
 	// 0.3.7
 	static void AddToLocalMoney(int iAmmount);
-	// 0.3.7
-	void ResetLocalMoney();
 
 	static void DrawGangZone(float fPos[], uint32_t dwColor);
 
@@ -154,7 +147,7 @@ public:
 	bool isShopStoreActive = false;
 	bool isHornActive = false;
 	bool isBanJump = false;
-	bool GameExiting = false;
+	bool bIsGameExiting = false;
 
 	bool 			m_bDl_enabled = false;
 private:
