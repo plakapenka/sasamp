@@ -111,6 +111,9 @@ public class Dialog {
 //            return;
 //        }
         activity.runOnUiThread(() -> {
+            if(content.length() < 2) {
+                return;
+            }
             clearDialogData();
             if (casino_dice_main_layout.getVisibility() == View.VISIBLE) {
                 old_casino_layout_state = true;
