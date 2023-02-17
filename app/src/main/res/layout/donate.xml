@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/donate_main_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="gone"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
+    android:background="@drawable/donate_main_bg">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/donate_left_area"
+        android:layout_width="@dimen/_200sdp"
+        android:layout_height="match_parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/donate_balance_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/din_pro_medium"
+            android:text="Баланс: 1.850 LC"
+            android:shadowColor="@color/black"
+            android:shadowRadius="5"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_11sdp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/donate_deposit_butt"
+            android:layout_width="@dimen/_80sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:includeFontPadding="false"
+            android:layout_marginTop="4dp"
+            android:backgroundTint="#66bb6a"
+            android:text="Пополнить"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_6sdp"
+            app:layout_constraintStart_toStartOf="@+id/donate_balance_text"
+            app:layout_constraintTop_toBottomOf="@+id/donate_balance_text" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/donate_check_butt"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_25sdp"
+            android:layout_marginStart="8dp"
+            android:backgroundTint="#bbdefb"
+            android:includeFontPadding="false"
+            android:text="Проверить"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_6sdp"
+            app:layout_constraintStart_toEndOf="@+id/donate_deposit_butt"
+            app:layout_constraintTop_toTopOf="@+id/donate_deposit_butt" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/donate_history_butt"
+            android:layout_width="@dimen/_80sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:backgroundTint="#ffca28"
+            android:includeFontPadding="false"
+            android:text="История"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_6sdp"
+            app:layout_constraintStart_toStartOf="@+id/donate_deposit_butt"
+            app:layout_constraintTop_toBottomOf="@+id/donate_deposit_butt" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/donate_change_butt"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_25sdp"
+            android:backgroundTint="#4db6ac"
+            android:includeFontPadding="false"
+            android:text="обменять"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_6sdp"
+            app:layout_constraintEnd_toEndOf="@+id/donate_check_butt"
+            app:layout_constraintTop_toBottomOf="@+id/donate_check_butt" />
+
+        <ScrollView
+            android:id="@+id/scrollView2"
+            android:layout_width="@dimen/_158sdp"
+            android:layout_height="@dimen/_200sdp"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="@+id/donate_balance_text"
+            app:layout_constraintTop_toBottomOf="@+id/donate_change_butt">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/donate_category_my_item"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_30sdp"
+                    android:background="@drawable/donate_category_item_bg"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:includeFontPadding="false"
+                        android:text="Мои предметы"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/donate_category_buy_all"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_marginTop="@dimen/_15sdp"
+                    android:background="@drawable/donate_category_item_bg"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:includeFontPadding="false"
+                        android:text="Магазин ( все )"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/donate_category_buy_cars"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_25sdp"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:background="@drawable/donate_category_item_bg"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:includeFontPadding="false"
+                        android:text="Транспорт"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_9sdp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/donate_category_buy_skins"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_25sdp"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:background="@drawable/donate_category_item_bg"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:includeFontPadding="false"
+                        android:text="Скины"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_9sdp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/donate_category_buy_acs"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_25sdp"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:background="@drawable/donate_category_item_bg"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:includeFontPadding="false"
+                        android:text="Аксессуары"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_9sdp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/donate_category_buy_vip"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_25sdp"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:background="@drawable/donate_category_item_bg"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:includeFontPadding="false"
+                        android:text="VIP-статусы"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_9sdp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/donate_category_buy_other"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_25sdp"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:background="@drawable/donate_category_item_bg"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:includeFontPadding="false"
+                        android:text="Прочее"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_9sdp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+
+        </ScrollView>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/donate_left_area">
+
+        <Spinner
+            android:id="@+id/donate_sort"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_30sdp"
+            app:layout_constraintBottom_toBottomOf="@+id/donate_search_latout"
+            app:layout_constraintStart_toStartOf="@+id/donate_recycle"
+            app:layout_constraintTop_toTopOf="@+id/donate_search_latout" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/donate_search_latout"
+            android:layout_width="@dimen/_200sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:layout_gravity="center"
+            android:layout_marginTop="24dp"
+            android:layout_weight="2"
+            app:layout_constraintEnd_toStartOf="@+id/donate_exit_button"
+            app:layout_constraintStart_toEndOf="@+id/donate_sort"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <EditText
+                android:id="@+id/donate_search_edit"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_25sdp"
+                android:autofillHints="no"
+                android:background="@drawable/players_list_border_search"
+                android:fontFamily="@font/din_pro_medium"
+                android:hint="Поиск"
+                android:imeOptions="actionGo|actionSend|actionDone|flagNoFullscreen|flagNoExtractUi"
+                android:importantForAutofill="no"
+                android:inputType="text"
+                android:paddingStart="@dimen/_10sdp"
+                android:paddingBottom="@dimen/_2sdp"
+                android:singleLine="true"
+                android:textColor="@color/white"
+                android:textColorHint="@color/progress_gray"
+                android:textSize="@dimen/_10sdp" />
+            /
+
+            <ImageView
+                android:id="@+id/donate_search_button"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_10sdp"
+                android:layout_marginEnd="8dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/ic_search"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.factor.bouncy.BouncyRecyclerView
+            android:id="@+id/donate_recycle"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/donate_search_latout" />
+
+        <ImageView
+            android:id="@+id/donate_exit_button"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:src="@drawable/cross"
+            android:textColor="@color/white"
+            app:layout_constraintEnd_toEndOf="@+id/donate_recycle"
+            app:layout_constraintTop_toTopOf="@+id/donate_search_latout" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    
+
+</androidx.constraintlayout.widget.ConstraintLayout>

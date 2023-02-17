@@ -634,16 +634,6 @@ void CRemotePlayer::StoreBulletSyncData(BULLET_SYNC* pBulletSync)
 
 	if(pBulletSync->byteHitType != 0)
 	{
-		if(	btData.vecOffset.X > 300.0f 	||
-			   btData.vecOffset.X < -300.0f 	||
-			   btData.vecOffset.Y > 300.0f 	||
-			   btData.vecOffset.Y < -300.0f 	||
-			   btData.vecOffset.Z > 300.0f 	||
-			   btData.vecOffset.Z < -300.0f
-				)
-		{
-			return;
-		}
 
 		if(pBulletSync->byteHitType == 1)
 		{

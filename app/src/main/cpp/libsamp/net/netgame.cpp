@@ -145,7 +145,8 @@ CNetGame::~CNetGame()
 		delete m_pStreamPool;
 		m_pStreamPool = nullptr;
 	}
-	g_pJavaWrapper->ClearScreen();
+
+    if(!pGame->bIsGameExiting) g_pJavaWrapper->ClearScreen();
 
 }
 
@@ -538,6 +539,14 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_DAILY_REWARDS: {
 			packetDailyRewards(p);
+			break;
+		}
+		case RPC_SHOW_DONATE: {
+			packetShowDonat(p);
+			break;
+		}
+		case RPC_UPDATE_SATIETY: {
+			packetUpdateSatiety(p);
 			break;
 		}
 		case RPC_SHOW_ACTION_LABEL: {

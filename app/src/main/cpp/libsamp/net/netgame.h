@@ -102,6 +102,8 @@
 #define RPC_SET_MONEY				66
 #define RPC_DAILY_REWARDS	67
 #define RPC_TECH_INSPECT	68
+#define RPC_UPDATE_SATIETY 	69
+#define RPC_SHOW_DONATE 	70
 
 
 // Packet 252
@@ -256,6 +258,10 @@ public:
 	static void packetNotification(Packet *p);
 
 	static void packetTechInspect(Packet *p);
+
+	static void packetUpdateSatiety(Packet *p);
+
+	static void packetShowDonat(Packet *p);
 };
 
 extern CNetGame *pNetGame;

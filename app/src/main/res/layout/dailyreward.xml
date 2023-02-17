@@ -572,7 +572,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:adjustViewBounds="true"
-                    android:src="@drawable/daily_item_vip"
+                    android:src="@drawable/silver_vip"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />

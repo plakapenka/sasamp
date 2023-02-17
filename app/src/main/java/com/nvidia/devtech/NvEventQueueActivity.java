@@ -538,8 +538,6 @@ public abstract class NvEventQueueActivity
      */
     public native void nvAcquireTimeExtension();
     public native long nvGetSystemTime();
-    public native void startPause();
-    public native void endPause();
 
     @SuppressLint("SuspiciousIndentation")
     @Override
@@ -1469,8 +1467,6 @@ public abstract class NvEventQueueActivity
         finishAndRemoveTask();
         System.exit(0);
     }
-
-   // public void showSplash() { runOnUiThread(() -> { mChooseServer.Show(); } ); }
 
     public void goVibrate(int milliseconds){
         if (vibrator.hasVibrator()) {

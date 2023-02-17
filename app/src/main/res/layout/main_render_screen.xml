@@ -32,12 +32,10 @@
         <include layout="@layout/fuelstation" />
         <include layout="@layout/shopstoreselect" />
         <include layout="@layout/gunshop" />
-        <include layout="@layout/sd_dialog" />
         <include layout="@layout/pre_death" />
         <include layout="@layout/autoshop" />
         <include layout="@layout/casino_lucky_wheel" />
         <include layout="@layout/hassle_tab"/>
-        <include layout="@layout/notification" />
         <include layout="@layout/furniture_factory" />
         <include layout="@layout/inventory" />
         <include layout="@layout/mine_1" />
@@ -49,6 +47,9 @@
         <include layout="@layout/admin_recon" />
         <include layout="@layout/casino_bc" />
             <include layout="@layout/technical_inspection" />
+            <include layout="@layout/donate"/>
+            <include layout="@layout/sd_dialog" />
+            <include layout="@layout/notification" />
 
     </FrameLayout>
 
