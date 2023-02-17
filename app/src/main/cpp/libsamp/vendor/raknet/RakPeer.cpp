@@ -2856,7 +2856,6 @@ RakNetTime RakPeer::GetBestClockDifferential( const PlayerID playerId ) const
 #include "../../main.h"
 #include "../../game/game.h"
 #include "../..//net/netgame.h"
-#include "../..//CClientInfo.h"
 extern CNetGame* pNetGame;
 
 #define WEAPON_SECURE 0x100

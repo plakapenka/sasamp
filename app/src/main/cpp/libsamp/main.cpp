@@ -13,7 +13,6 @@
 #include "playertags.h"
 #include "keyboard.h"
 #include "CSettings.h"
-#include "CClientInfo.h"
 #include "java_systems/CHUD.h"
 #include "CLoader.h"
 
@@ -69,7 +68,6 @@ void PrintBuildCrashInfo()
 }
 
 #include <sstream>
-#include "CClientInfo.h"
 #include "vendor/bass/bass.h"
 #include "gui/CFontRenderer.h"
 #include "util/CJavaWrapper.h"
