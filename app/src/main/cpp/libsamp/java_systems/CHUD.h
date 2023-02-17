@@ -87,6 +87,8 @@ public:
     static void showBusInfo(int time);
 
     static void hideBusInfo();
+
+    static int iSatiety;
 };
 
 

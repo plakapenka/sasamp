@@ -21,13 +21,6 @@ public:
 	~CGUI();
 
 	void Render();
-	void SetHealth(float fHealth);
-	int GetHealth();
-	int bHealth;
-
-    void SetEat(float eat);
-    int GetEat();
-    int eat;
 
 	float ScaleX(float x) { return m_vecScale.x * x; }
 	float ScaleY(float y) { return m_vecScale.y * y; }

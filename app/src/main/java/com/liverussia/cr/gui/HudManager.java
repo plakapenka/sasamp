@@ -66,6 +66,7 @@ public class HudManager {
     private ConstraintLayout hud_serverlogo;
     private ArrayList<ImageView> hud_wanted;
     private ProgressBar progressHP;
+    ProgressBar hud_satiety_pb;
     private ProgressBar progressArmor;
 
     private ImageView enter_passenger;
@@ -83,6 +84,7 @@ public class HudManager {
     private ConstraintLayout chat_input_layout;
     private TextView armour_text;
     private TextView hp_text;
+    TextView satiety_text;
     private TextView me_button;
     private TextView try_button;
     private TextView do_button;
@@ -177,6 +179,7 @@ public class HudManager {
 
         armour_text = activity.findViewById(R.id.armour_text);
         hp_text = activity.findViewById(R.id.hp_text);
+        satiety_text = activity.findViewById(R.id.satiety_text);
 
         // ================ CHAT
         chat_box = activity.findViewById(R.id.chat_box);
@@ -373,6 +376,7 @@ public class HudManager {
 
         progressArmor = aactivity.findViewById(R.id.hud_armor_pb);
         progressHP = aactivity.findViewById(R.id.hud_health_pb);
+        hud_satiety_pb = activity.findViewById(R.id.hud_satiety_pb);
 
         hud_money_textview = aactivity.findViewById(R.id.hud_money_textview);
         hud_money_dif = activity.findViewById(R.id.hud_money_dif);
@@ -500,9 +504,11 @@ public class HudManager {
             if(!toggle){
                 armour_text.setVisibility(View.GONE);
                 hp_text.setVisibility(View.GONE);
+                satiety_text.setVisibility(View.GONE);
             } else {
                 armour_text.setVisibility(View.VISIBLE);
                 hp_text.setVisibility(View.VISIBLE);
+                satiety_text.setVisibility(View.VISIBLE);
             }
         });
 
@@ -625,10 +631,12 @@ public class HudManager {
     {
         activity.runOnUiThread(() ->
         {
+            hud_satiety_pb.setProgress(hunger);
             progressHP.setProgress(health);
             progressArmor.setProgress(armour);
             armour_text.setText(String.format("%d", armour));
             hp_text.setText(String.format("%d", health));
+            satiety_text.setText( String.format("%d", hunger) );
 
             int id = activity.getResources().getIdentifier(String.format("weapon_%d", weaponid), "drawable", activity.getPackageName());
             if(id > 0)hud_weapon.setImageResource(id);
@@ -896,35 +904,47 @@ public class HudManager {
     };
 
 
-    void showUpdateTargetNotify(int type, String text) {
-        Utils.ShowLayout(target_notify, true);
-        if (type == 0)
+    void showUpdateTargetNotify(int type, String text)
+    {
+        activity.runOnUiThread(()->
         {
-            target_notify_text.setText(text);
-            target_notify_text.setTextColor(0xFFFFFFFF);
-            target_notify_status.setImageResource(R.drawable.target_notify_none);
-        }
-        else if (type == 1)
-        {
-            target_notify_text.setText(text);
-            target_notify_text.setTextColor(0xFF33C44F);
-            target_notify_status.setImageResource(R.drawable.target_notify_success);
-        }
-        target_notify_exit.setOnClickListener(view -> {
-            hideTargetNotify();
+            Utils.ShowLayout(target_notify, true);
+            if (type == 0) {
+                target_notify_text.setText(text);
+                target_notify_text.setTextColor(0xFFFFFFFF);
+                target_notify_status.setImageResource(R.drawable.target_notify_none);
+            } else if (type == 1) {
+                target_notify_text.setText(text);
+                target_notify_text.setTextColor(0xFF33C44F);
+                target_notify_status.setImageResource(R.drawable.target_notify_success);
+            }
+            target_notify_exit.setOnClickListener(view -> {
+                hideTargetNotify();
+            });
         });
     }
 
     void hideTargetNotify() {
-        Utils.HideLayout(target_notify, true);
+        activity.runOnUiThread(()->
+        {
+            Utils.HideLayout(target_notify, true);
+        });
     }
 
     void showBusInfo(int time) {
-        bus_text.setText(String.format("%d", time));
-        bus_layout.setVisibility(View.VISIBLE);
+        activity.runOnUiThread(()->
+        {
+            bus_text.setText(String.format("%d", time));
+            bus_layout.setVisibility(View.VISIBLE);
+        });
     }
 
-    void hideBusInfo() { bus_layout.setVisibility(View.GONE); }
+    void hideBusInfo() {
+        activity.runOnUiThread(()->
+        {
+            bus_layout.setVisibility(View.GONE);
+        });
+    }
 
     public void AddToChatInput(String msg){
         activity.runOnUiThread(() -> {

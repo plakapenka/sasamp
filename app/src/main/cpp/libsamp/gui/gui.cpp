@@ -154,22 +154,6 @@ void CGUI::PostProcessInput()
 
 extern CGame* pGame;
 
-void CGUI::SetHealth(float fhpcar){
-   bHealth = static_cast<int>(fhpcar);
-}
-
-int CGUI::GetHealth(){
-	return 1;//static_cast<int>(pVehicle->GetHealth());
-}
-
-void CGUI::SetEat(float eate){
-	eat = static_cast<int>(eate);
-}
-
-int CGUI::GetEat(){
-	return eat;
-}
-
 void CGUI::Render()
 {
 	PreProcessInput();

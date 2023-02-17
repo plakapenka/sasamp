@@ -32,6 +32,7 @@ bool        CHUD::bIsShowMafiaWar = false;
 float       CHUD::fLastGiveDamage = 0.0f;
 bool        CHUD::bIsTouchCameraButt = false;
 bool        CHUD::bIsCamEditGui = false;
+int         CHUD::iSatiety = 0;
 PLAYERID    CHUD::lastGiveDamagePlayerId = INVALID_PLAYER_ID;
 
 CVector2DFloat CHUD::radarBgPos1;
@@ -196,7 +197,7 @@ void CHUD::UpdateHudInfo()
     env->CallVoidMethod(thiz, jUpdateHudInfo,
                         (int)pPed->GetHealth(),
                         (int)pPed->GetArmour(),
-                        (int)pGUI->GetEat(),
+                        (int)CHUD::iSatiety,
                         (int)pPed->m_pPed->WeaponSlots[pPed->m_pPed->byteCurWeaponSlot].dwType,
                         (int)pPed->m_pPed->WeaponSlots[pPed->m_pPed->byteCurWeaponSlot].dwAmmo,
                         (int)pPed->m_pPed->WeaponSlots[pPed->m_pPed->byteCurWeaponSlot].dwAmmoInClip
@@ -689,4 +690,17 @@ Java_com_liverussia_cr_gui_HudManager_clickSiren(JNIEnv *env, jobject thiz) {
         }
 
     }
+}
+
+void CNetGame::packetUpdateSatiety(Packet* p)
+{
+    RakNet::BitStream bs((unsigned char*)p->data, p->length, false);
+
+    bs.IgnoreBits(40); // skip packet and rpc id
+
+    uint8_t value;
+
+    bs.Read(value);
+
+    CHUD::iSatiety = value;
 }
