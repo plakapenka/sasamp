@@ -6,6 +6,7 @@
 
 #include "..//CDebugInfo.h"
 #include "util/patch.h"
+#include "ePedState.h"
 
 extern CGame* pGame;
 extern CNetGame *pNetGame;
@@ -519,6 +520,7 @@ BYTE CPlayerPed::GetCurrentWeapon()
 // 0.3.7
 bool CPlayerPed::IsAPassenger()
 {
+	//if(m_pPed->dwAction == PEDSTATE_PASSENGER) return true;
 	if(m_pPed->pVehicle && IN_VEHICLE(m_pPed))
 	{
 		VEHICLE_TYPE *pVehicle = (VEHICLE_TYPE *)m_pPed->pVehicle;
@@ -778,19 +780,17 @@ uint32_t CPlayerPed::GetCurrentGTAVehicleID(){
 
 int CPlayerPed::GetVehicleSeatID()
 {
-	VEHICLE_TYPE *pVehicle;
+	auto *pVehicle = (VEHICLE_TYPE *)m_pPed->pVehicle;
 
-	if( GetActionTrigger() == ACTION_INCAR && (pVehicle = (VEHICLE_TYPE *)m_pPed->pVehicle) != 0 ) 
-	{
-		if(pVehicle->pDriver == m_pPed) return 0;
-		if(pVehicle->pPassengers[0] == m_pPed) return 1;
-		if(pVehicle->pPassengers[1] == m_pPed) return 2;
-		if(pVehicle->pPassengers[2] == m_pPed) return 3;
-		if(pVehicle->pPassengers[3] == m_pPed) return 4;
-		if(pVehicle->pPassengers[4] == m_pPed) return 5;
-		if(pVehicle->pPassengers[5] == m_pPed) return 6;
-		if(pVehicle->pPassengers[6] == m_pPed) return 7;
-	}
+	if( pVehicle->pDriver == m_pPed) return 0;
+
+	if(pVehicle->pPassengers[0] == m_pPed) return 1;
+	if(pVehicle->pPassengers[1] == m_pPed) return 2;
+	if(pVehicle->pPassengers[2] == m_pPed) return 3;
+	if(pVehicle->pPassengers[3] == m_pPed) return 4;
+	if(pVehicle->pPassengers[4] == m_pPed) return 5;
+	if(pVehicle->pPassengers[5] == m_pPed) return 6;
+	if(pVehicle->pPassengers[6] == m_pPed) return 7;
 
 	return (-1);
 }
@@ -1536,6 +1536,16 @@ void CPlayerPed::HideMarker()
 }
 
 // 0.3.7
+
+void CPlayerPed::ClearLook()
+{
+	CHook::CallFunction<bool>(g_libGTASA + 0x0043388C + 1, m_pPed);
+}
+
+void CPlayerPed::TurnBody()
+{
+	CHook::CallFunction<bool>(g_libGTASA + 0x43358C + 1, m_pPed);
+}
 
 void CPlayerPed::SetFightingStyle(int iStyle)
 {

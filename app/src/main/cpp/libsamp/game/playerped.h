@@ -173,4 +173,9 @@ public:
 	uint32_t GetCurrentGTAVehicleID();
 
 	VEHICLEID GetCurrentSampVehicleID();
+
+	void TurnBody();
+
+    void ClearLook();
+
 };
