@@ -13,7 +13,7 @@
             android:layout_marginTop="@dimen/_9sdp"
             android:layout_marginEnd="@dimen/_13sdp"
             android:layout_marginBottom="@dimen/_13sdp"
-            android:maxWidth="@dimen/_400sdp"
+            android:maxWidth="@dimen/_500sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_max="@dimen/_217sdp"
