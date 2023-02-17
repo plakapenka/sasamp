@@ -27,10 +27,6 @@ void CSpeedometr::show()
     CSpeedometr::thiz = env->NewObject(CSpeedometr::clazz, constructor, g_pJavaWrapper->activity);
     CSpeedometr::thiz = env->NewGlobalRef(CSpeedometr::thiz);
 
-    // call show
-    jmethodID method = env->GetMethodID(CSpeedometr::clazz, "show", "()V");
-    env->CallVoidMethod(CSpeedometr::thiz, method);
-
     CSpeedometr::bIsShow = true;
 }
 

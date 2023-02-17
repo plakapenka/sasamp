@@ -48,7 +48,6 @@ public class Speedometer {
     boolean turnlight_all_state;
 
     private ImageView mBelt;
-    private ConstraintLayout mInputLayout;
     private SeekArc mSpeedLine;
     ImageView speedometr_turn_right;
     ImageView speedometr_turn_left;
@@ -75,7 +74,6 @@ public class Speedometer {
         this.activity = activity;
 
         activity.runOnUiThread(() -> {
-            speedometer_main_layout = activity.findViewById(R.id.speedometer_main_layout);
             speedometr_blinker_icon = activity.findViewById(R.id.speedometr_blinker_icon);
             speedometr_speed_text = activity.findViewById(R.id.speedometr_speed_text);
             speedometr_fuel_text = activity.findViewById(R.id.speedometr_fuel_text);
@@ -114,6 +112,8 @@ public class Speedometer {
                 sendClick(BUTTON_LIGHT);
             });
 
+
+            speedometer_main_layout = activity.findViewById(R.id.speedometer_main_layout);
             speedometer_main_layout.setVisibility(View.VISIBLE);
             //   Utils.HideLayout(relativeLayout, false);
         });
@@ -204,18 +204,16 @@ public class Speedometer {
 
     void tempToggle(boolean toggle)
     {
+        if(speedometer_main_layout == null)return;
+
         if(toggle)
             activity.runOnUiThread(() -> speedometer_main_layout.setVisibility(View.VISIBLE));
         else {
-            activity.runOnUiThread(() -> speedometer_main_layout.setVisibility(View.GONE));
-            deleteThreads();
+            activity.runOnUiThread(() -> {
+                speedometer_main_layout.setVisibility(View.GONE);
+                deleteThreads();
+            });
         }
-    }
-
-    void show() {
-        activity.runOnUiThread(() -> {
-            Utils.ShowLayout(mInputLayout, false);
-        });
     }
 
     Runnable runnable_turnlight_all = new Runnable() {
