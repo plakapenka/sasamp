@@ -162,7 +162,7 @@ void CRemotePlayer::Process()
 			}
 			ProcessSpecialActions(m_ofSync.byteSpecialAction);
 			SlerpRotation();
-			HandleAnimations();
+		//	HandleAnimations();
 
 			if (m_byteWeaponShotID != 0xFF)
 			{

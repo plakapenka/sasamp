@@ -187,8 +187,15 @@ extern bool g_uiHeadMoveEnabled;
 #include "java_systems/CTechInspect.h"
 #include "java_systems/casino/CBaccarat.h"
 
+CAMERA_AIM* caAim = new CAMERA_AIM();
+
 bool CLocalPlayer::Process()
 {
+	m_pPlayerPed->SetCurrentAim(caAim);
+	caAim = m_pPlayerPed->GetCurrentAim();
+
+
+
 	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
 	uint32_t dwThisTick = GetTickCount();
 
@@ -206,7 +213,7 @@ bool CLocalPlayer::Process()
 			// reset tasks/anims
 			m_pPlayerPed->TogglePlayerControllable(true);
 
-			if (m_pPlayerPed->IsInVehicle() && !m_pPlayerPed->IsAPassenger()) {
+			if (m_pPlayerPed->IsAPassenger()) {
 
 				SendInCarFullSyncData();
 				m_LastVehicle = pNetGame->GetVehiclePool()->FindIDFromGtaPtr(
@@ -288,7 +295,6 @@ bool CLocalPlayer::Process()
 
 			if ((dwThisTick - m_dwLastSendTick) > (unsigned int) GetOptimumOnFootSendRate()) {
 				m_dwLastSendTick = GetTickCount();
-				// Log("[DEBUG] Send Packet SyncData RPC");
 				SendOnFootFullSyncData();
 			}
 
@@ -342,7 +348,7 @@ bool CLocalPlayer::Process()
 			}
 		}
 			// PASSENGER
-		if (m_pPlayerPed->IsInVehicle() && m_pPlayerPed->IsAPassenger()) {
+		if (m_pPlayerPed->IsAPassenger()) {
 			if ((dwThisTick - m_dwLastSendTick) > (unsigned int) GetOptimumInCarSendRate()) {
 				m_dwLastSendTick = GetTickCount();
 				SendPassengerFullSyncData();
@@ -505,6 +511,9 @@ void CLocalPlayer::GiveTakeDamage(bool bGiveOrTake, uint16_t wPlayerID, float da
 	bitStream.Write((uint16_t)wPlayerID);
 	bitStream.Write((float)damage_amount);
 	bitStream.Write((uint32_t)weapon_id);
+
+	if(bodypart < 3 || bodypart > 9) bodypart = 5; // omp fix?
+
 	bitStream.Write((uint32_t)bodypart);
 
 	FindDeathReasonPlayer = weapon_id;
@@ -828,7 +837,8 @@ void CLocalPlayer::SendOnFootFullSyncData()
 	ofSync.vecSurfOffsets.Z = 0.0f;
 	ofSync.wSurfInfo = 0;
 
-	ofSync.dwAnimation = GetCurrentAnimationIndexFlag();
+	ofSync.dwAnimation = 0;
+	//ofSync.dwAnimation = GetCurrentAnimationIndexFlag();
 //	ofSync.animation.flags.lockY = m_pPlayerPed->animFlagLockY;
 //	ofSync.animation.flags.lockX = m_pPlayerPed->animFlagLockX;
 //	ofSync.animation.flags.time = m_pPlayerPed->animFlagTime;
@@ -850,6 +860,54 @@ void CLocalPlayer::SendOnFootFullSyncData()
 
 		memcpy(&m_OnFootData, &ofSync, sizeof(ONFOOT_SYNC_DATA));
 	}
+}
+
+void CLocalPlayer::SendBulletSyncData(PLAYERID byteHitID, uint8_t byteHitType, VECTOR vecHitPos)
+{
+	if (!m_pPlayerPed) return;
+	switch (byteHitType)
+	{
+		case BULLET_HIT_TYPE_NONE:
+			break;
+		case BULLET_HIT_TYPE_PLAYER:
+			if (!pNetGame->GetPlayerPool()->GetSlotState((PLAYERID)byteHitID)) return;
+			break;
+
+	}
+	uint8_t byteCurrWeapon = m_pPlayerPed->GetCurrentWeapon(), byteShotWeapon;
+
+	MATRIX4X4 matPlayer;
+	BULLET_SYNC blSync;
+
+	m_pPlayerPed->GetMatrix(&matPlayer);
+
+	blSync.PlayerID = byteHitID;
+	blSync.byteHitType = byteHitType;
+
+	if (byteHitType == BULLET_HIT_TYPE_PLAYER)
+	{
+		float fDistance = pNetGame->GetPlayerPool()->GetAt((PLAYERID)byteHitID)->GetPlayerPed()->GetDistanceFromLocalPlayerPed();
+		if (byteCurrWeapon != 0 && fDistance < 1.0f)
+			byteShotWeapon = 0;
+		else
+			byteShotWeapon = byteCurrWeapon;
+	}
+	else
+	{
+		byteShotWeapon = m_pPlayerPed->GetCurrentWeapon();
+	}
+	blSync.byteWeaponID = byteShotWeapon;
+
+	blSync.vecOrigin.X = vecHitPos.X;
+	blSync.vecOrigin.Y = vecHitPos.Y;
+	blSync.vecOrigin.Z = vecHitPos.Z;
+
+	blSync.vecOffset.X = blSync.vecOffset.Y = blSync.vecOffset.Z = 0.0f;
+
+	RakNet::BitStream bsBulletSync;
+	bsBulletSync.Write((uint8_t)ID_BULLET_SYNC);
+	bsBulletSync.Write((const char*)& blSync, sizeof(BULLET_SYNC));
+	pNetGame->GetRakClient()->Send(&bsBulletSync, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0);
 }
 
 void CLocalPlayer::SendInCarFullSyncData()
@@ -964,7 +1022,6 @@ void CLocalPlayer::SendInCarFullSyncData()
 void CLocalPlayer::SendPassengerFullSyncData()
 {
 	RakNet::BitStream bsPassengerSync;
-	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
 
 	uint16_t lrAnalog, udAnalog;
 	uint16_t wKeys = m_pPlayerPed->GetKeys(&lrAnalog, &udAnalog);
@@ -982,6 +1039,7 @@ void CLocalPlayer::SendPassengerFullSyncData()
 	psSync.bytePlayerArmour = (uint8_t)m_pPlayerPed->GetArmour();
 
 	psSync.byteSeatFlags = m_pPlayerPed->GetVehicleSeatID();
+
 	psSync.byteDriveBy = 0;//m_bPassengerDriveByMode;
 
 	psSync.byteCurrentWeapon = 0;//m_pPlayerPed->GetCurrentWeapon();

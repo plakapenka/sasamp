@@ -14,6 +14,7 @@
 #include "CSettings.h"
 #include "chatwindow.h"
 #include "CSpeedometr.h"
+#include "util/patch.h"
 
 extern CJavaWrapper *g_pJavaWrapper;
 extern CGame *pGame;

@@ -1197,9 +1197,31 @@ struct stPedDamageResponse
 
 extern float m_fWeaponDamages[43 + 1];
 
+void onDamage(PED_TYPE* issuer, PED_TYPE* damaged)
+{
+	if (!pNetGame) return;
+	PED_TYPE* pPedPlayer = GamePool_FindPlayerPed();
+	if (damaged && (pPedPlayer == issuer))
+	{
+		if (pNetGame->GetPlayerPool()->FindRemotePlayerIDFromGtaPtr((PED_TYPE*)damaged) != INVALID_PLAYER_ID)
+		{
+			CPlayerPool* pPlayerPool = pNetGame->GetPlayerPool();
+			CAMERA_AIM* caAim = pPlayerPool->GetLocalPlayer()->GetPlayerPed()->GetCurrentAim();
+
+			VECTOR aim;
+			aim.X = caAim->f1x;
+			aim.Y = caAim->f1y;
+			aim.Z = caAim->f1z;
+
+			pPlayerPool->GetLocalPlayer()->SendBulletSyncData(pPlayerPool->FindRemotePlayerIDFromGtaPtr((PED_TYPE*)damaged), BULLET_HIT_TYPE_PLAYER, aim);
+		}
+	}
+}
+
 void (*CPedDamageResponseCalculator__ComputeDamageResponse)(stPedDamageResponse* thiz, ENTITY_TYPE* pEntity, uintptr_t pDamageResponse, bool bSpeak);
 void CPedDamageResponseCalculator__ComputeDamageResponse_hook(stPedDamageResponse* thiz, ENTITY_TYPE* pEntity, uintptr_t pDamageResponse, bool bSpeak)
 {
+	if (thiz && pEntity) onDamage((PED_TYPE*)*(uintptr_t*)thiz, (PED_TYPE*)pEntity);
 	int weaponid = thiz->iWeaponType;
 	float fDamage;
 	if( weaponid < 0 || weaponid > size(m_fWeaponDamages) )
@@ -1231,7 +1253,7 @@ void CPedDamageResponseCalculator__ComputeDamageResponse_hook(stPedDamageRespons
 			PLAYERID byteLocalId = pPlayerPool->GetLocalPlayerID();
 
 			// give player damage
-			if(damagedid == INVALID_PLAYER_ID && issuerid != INVALID_PLAYER_ID) {
+			if((PED_TYPE*)thiz->pEntity == pGame->FindPlayerPed()->m_pPed && issuerid != INVALID_PLAYER_ID ) {
 				CHUD::addGiveDamageNotify(issuerid, weaponid, fDamage);
 				pPlayerPool->GetLocalPlayer()->GiveTakeDamage(false, issuerid, fDamage, weaponid,
 															  bodypart);
@@ -1574,24 +1596,6 @@ void CWidgetRegionLook__Update_hook(uintptr_t thiz)
 	}
 }
 
-void (*ProcessCommands300To399)(uintptr_t* thiz, int a2);
-void ProcessCommands300To399_hook(uintptr_t* thiz, int a2)
-{
-	//Log("pedHandle = %d, local = %d", pedHandle, pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->m_dwGTAId);
-	if(!a2)return;
-
-	ProcessCommands300To399(thiz, a2);
-}
-
-void (*ProcessCommands1400To1499)(uintptr_t* thiz, int a2);
-void ProcessCommands1400To1499_hook(uintptr_t* thiz, int a2)
-{
-	//Log("pedHandle = %d, local = %d", pedHandle, pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->m_dwGTAId);
-	if(!a2)return;
-
-	ProcessCommands1400To1499(thiz, a2);
-}
-
 void (*GivePedScriptedTask)(uintptr_t* thiz, int pedHandle, uintptr_t* a3, int commandID);
 void GivePedScriptedTask_hook(uintptr_t* thiz, int pedHandle, uintptr_t* a3, int commandID)
 {
@@ -1834,7 +1838,7 @@ void CAutomobile__ProcessEntityCollision_hook(VEHICLE_TYPE* a1, ENTITY_TYPE* a2,
 	}
 }
 
-void MainMenuScreen__OnExit()
+void MainMenuScreen__OnExit(uintptr_t* thiz)
 {
 	g_pJavaWrapper->ExitGame();
 }
@@ -2967,11 +2971,21 @@ void DrawCrosshair_hook(uintptr_t* thiz)
 	*m_f3rdPersonCHairMultY = save2;
 }
 
+void (*CHud__DrawRadar)(uintptr_t* thiz);
+void CHud__DrawRadar_hook(uintptr_t* thiz)
+{
+	if(CHUD::bIsShow)
+		CHud__DrawRadar(thiz);
+}
+
 void InstallHooks()
 {
 	Log("InstallHooks");
 
 	PROTECT_CODE_INSTALLHOOKS;
+
+	//draw radar
+	CHook::InlineHook(g_libGTASA, 0x3D4ED8, &CHud__DrawRadar_hook, &CHud__DrawRadar);
 
     // Fixing a crosshair by very stupid math ( JPATCH )
 	m_f3rdPersonCHairMultX = (float*)(g_libGTASA + 0x008B07FC);
@@ -3135,17 +3149,11 @@ void InstallHooks()
 	CHook::NOP(g_libGTASA + 0x408AAA, 2);
 
 	//RpMaterialDestroy fix ? не точно
-	CHook::InlineHook(g_libGTASA, 0x001E3C54, &RpMaterialDestroy_hook, &RpMaterialDestroy);
-	CHook::InlineHook(g_libGTASA, 0x1B1808, &_RwTextureDestroy_hook, &_RwTextureDestroy);
+	//CHook::InlineHook(g_libGTASA, 0x001E3C54, &RpMaterialDestroy_hook, &RpMaterialDestroy);
+	//CHook::InlineHook(g_libGTASA, 0x1B1808, &_RwTextureDestroy_hook, &_RwTextureDestroy);
 
 	//CRunningScript fix ? не точно
-	CHook::InlineHook(g_libGTASA, 0x002E5400, &GivePedScriptedTask_hook, &GivePedScriptedTask);
-
-	CHook::InlineHook(g_libGTASA, 0x00308640, &ProcessCommands1400To1499_hook, &ProcessCommands1400To1499);
-	CHook::InlineHook(g_libGTASA, 0x002F7910, &ProcessCommands300To399_hook, &ProcessCommands300To399);
-
-	//
-
+	//CHook::InlineHook(g_libGTASA, 0x002E5400, &GivePedScriptedTask_hook, &GivePedScriptedTask);
 
 	// Настройки
 	CHook::NOP(g_libGTASA + 0x266460, 2); // Game - TrafficMode
@@ -3154,7 +3162,7 @@ void InstallHooks()
 	CHook::NOP(g_libGTASA + 0x2665EE, 2); // Game - SocialClub
 
 	//
-	CHook::InlineHook(g_libGTASA, 0x004904AC, &CTaskSimpleCarSetPedInAsDriver__ProcessPed_hook, &CTaskSimpleCarSetPedInAsDriver__ProcessPed);
+//	CHook::InlineHook(g_libGTASA, 0x004904AC, &CTaskSimpleCarSetPedInAsDriver__ProcessPed_hook, &CTaskSimpleCarSetPedInAsDriver__ProcessPed);
 
 	// fix разрешения экрана
 	CHook::InlineHook(g_libGTASA, 0x0026CE30, &MobileSettings__GetMaxResWidth_hook, &MobileSettings__GetMaxResWidth);
@@ -3166,7 +3174,7 @@ void InstallHooks()
 	CHook::InlineHook(g_libGTASA, 0x005311D0, &CDraw__SetFOV_hook, &CDraw__SetFOV);
 
 	//
-	CHook::InlineHook(g_libGTASA, 0x003B0E6C, &CEntity__RegisterReference_hook, &CEntity__RegisterReference);
+	//CHook::InlineHook(g_libGTASA, 0x003B0E6C, &CEntity__RegisterReference_hook, &CEntity__RegisterReference);
 
 	HookCPad();
 }

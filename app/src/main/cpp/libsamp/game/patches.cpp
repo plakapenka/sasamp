@@ -206,11 +206,32 @@ void ApplyShadowPatch()
 	CHook::NOP(g_libGTASA + 0x39B2C0, 2);	// CRealTimeShadowManager::Update from Idle
 }
 
+void ApplyDefaultPlatePatch()
+{
+	//CCustomCarPlateMgr all meth
+	// убрать дефолтные номера
+	CHook::RET(g_libGTASA + 0x0052FF5C); //CCustomCarPlateMgr::GeneratePlateText
+
+	CHook::RET(g_libGTASA + 0x0052FE90);
+	CHook::RET(g_libGTASA + 0x00530098);
+	CHook::RET(g_libGTASA + 0x00530104);
+	CHook::RET(g_libGTASA + 0x0053012C);
+	CHook::RET(g_libGTASA + 0x00530158);
+	CHook::RET(g_libGTASA + 0x00530190);
+
+	CHook::RET(g_libGTASA + 0x0053021C);
+	CHook::RET(g_libGTASA + 0x0053038C);
+	CHook::RET(g_libGTASA + 0x00530420);
+
+	CHook::RET(g_libGTASA + 0x0050E37C);
+}
+
 void ApplyPatches()
 {
 	Log("Installing patches..");
 
 	ApplyShadowPatch();
+    ApplyDefaultPlatePatch();
 
 	// allocate Atomic models pool
 	ATOMIC_MODELS = new _ATOMIC_MODEL[120000];

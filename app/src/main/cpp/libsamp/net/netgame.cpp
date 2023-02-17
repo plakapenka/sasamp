@@ -13,7 +13,6 @@ extern CNetGame *pNetGame;
 
 #include "../chatwindow.h"
 
-#include "..//CClientInfo.h"
 #include "..//CLocalisation.h"
 #include "../vendor/hash/sha256.h"
 
@@ -213,8 +212,9 @@ void CNetGame::Process()
 
 			pCamera->SetPosition(-314.0f, 160.0f, 39.0f, 0.0f, 0.0f, 0.0f);
 			pCamera->LookAtPoint(-310.0f, 157.0f, 39.0f, 2);
-			pGame->SetWorldWeather(m_byteWeather);
-			pGame->DisplayWidgets(false);
+            CHUD::toggleAll(false);
+		//	pGame->SetWorldWeather(m_byteWeather);
+		//	pGame->DisplayWidgets(false);
 		}
 	}
 
@@ -222,40 +222,6 @@ void CNetGame::Process()
 		(GetTickCount() - m_dwLastConnectAttempt) > 3000)
 	{
 		CChatWindow::AddDebugMessageNonFormatted(CLocalisation::GetMessage(E_MSG::CONNECTING));
-		static bool sent = false;
-		CUDPSocket sock;
-		for (int i = 0; i < 100; i++)
-		{
-			const char* ip = m_pRakClient->GetPlayerID().ToString();
-			if (sock.Bind(5000 + i * 10 + (rand() % 100)))
-			{
-				CRawData data(250);
-				while (data.GetWriteOffset() < 170)
-				{
-					data.Write("SAMP", 4);
-					data.Write("00000000", 8);
-					data.Write(ip, strlen(ip));
-					data.Write("00000000", 8);
-					data.Write(g_sEncryptedAddresses[CSettings::m_Settings.szServer].decrypt(), strlen(g_sEncryptedAddresses[CSettings::m_Settings.szServer].decrypt()));
-					data.Write("00112233445566778899FFFFFFFFFFFFFFFF", 36);
-				}
-				std::string ip = g_sEncryptedAddresses[CSettings::m_Settings.szServer].decrypt();
-				std::stringstream s(ip);
-				int a, b, c, d;
-				char ch;
-				s >> a >> ch >> b >> ch >> c >> ch >> d;
-				CAddress dest(a, b, c, d);
-				dest.usPort = g_sEncryptedAddresses[CSettings::m_Settings.szServer].getPort();
-
-				for (int j = 0; j < 3; j++)
-				{
-					sock.Send(dest, data);
-					usleep(5);
-				}
-
-				break;
-			}
-		}
 
 		m_pRakClient->Connect(m_szHostOrIp, m_iPort, 0, 0, 5);
 		m_dwLastConnectAttempt = GetTickCount();
@@ -1717,8 +1683,6 @@ void CNetGame::Packet_ConnectionSucceeded(Packet* pkt)
 	bsSend.Write(byteClientverLen);
 	bsSend.Write(SAMP_VERSION, byteClientverLen);
 
-	CClientInfo::WriteClientInfoToBitStream(bsSend);
-
 	m_pRakClient->RPC(&RPC_ClientJoin, &bsSend, HIGH_PRIORITY, RELIABLE, 0, false, UNASSIGNED_NETWORK_ID, NULL);
 	Log("Packet_ConnectionSucceeded");
 }
@@ -1799,18 +1763,6 @@ void CNetGame::Packet_PlayerSync(Packet* pkt)
     } 
     else
     	ofSync.wSurfInfo = INVALID_VEHICLE_ID;
-
-	bool bHasAnimInfo;
-	ofSync.dwAnimation = 0;
-	bsPlayerSync.Read(bHasAnimInfo);
-	if (bHasAnimInfo)
-	{
-		bsPlayerSync.Read(ofSync.dwAnimation);
-	}
-	else
-	{
-		ofSync.dwAnimation = 0b10000000000000000000000000000000;
-	}
 
 	//uint8_t key = 0;
 
