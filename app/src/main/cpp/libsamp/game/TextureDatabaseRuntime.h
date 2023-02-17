@@ -5,6 +5,9 @@
 #ifndef LIVERUSSIA_TEXTUREDATABASERUNTIME_H
 #define LIVERUSSIA_TEXTUREDATABASERUNTIME_H
 
+#include <cstdint>
+
+typedef uintptr_t TextureDatabase;
 
 static class TextureDatabaseRuntime {
 
@@ -22,7 +25,9 @@ public:
     };
 
    // static unsigned int *storedTexels;
-    static void Load(const char *withName, bool fullyLoad, TextureDatabaseFormat forcedFormat);
+    static TextureDatabase* Load(const char *withName, bool fullyLoad, TextureDatabaseFormat forcedFormat);
+
+    static void Register(TextureDatabase *thiz);
 };
 
 
