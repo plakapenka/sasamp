@@ -16,4 +16,17 @@ public:
 
 	static void SetEnabled(bool bEnabled);
 	static void Process();
+
+    static void Initialise();
+
+    static CObject *m_pSkyObject;
+
+	enum eAxis
+	{
+		X = 0,
+		Y,
+		Z
+	};
+	static bool m_bNeedRender;
+	static float m_fRotSpeed;
 };

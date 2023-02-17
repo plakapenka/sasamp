@@ -9,6 +9,7 @@
 #include "crashlytics.h"
 #include "CSettings.h"
 #include "java_systems/CSpeedometr.h"
+#include "java_systems/CDonate.h"
 
 void InitBASSFuncs();
 void CLoader::loadBassLib()
@@ -64,5 +65,8 @@ void CLoader::initJavaClasses(JavaVM* pjvm)
 
     CSpeedometr::clazz = env->FindClass("com/liverussia/cr/gui/Speedometer");
     CSpeedometr::clazz = (jclass) env->NewGlobalRef( CSpeedometr::clazz );
+
+    CDonate::clazz = env->FindClass("com/liverussia/cr/gui/donate/Donate");
+    CDonate::clazz = (jclass) env->NewGlobalRef( CDonate::clazz );
 }
 
