@@ -120,8 +120,7 @@ void CHUD::toggleAll(bool toggle, bool withchat)
     env->CallVoidMethod(thiz, method, toggle);
 
     *(uint8_t*)(g_libGTASA+0x7165E8) = 0;//дефолт худ офф
-    ScriptCommand(&toggle_radar_blank, (int)toggle); // радар офф
-
+  //  ScriptCommand(&toggle_radar_blank, (int)toggle); // радар офф
 }
 
 void CHUD::togglePassengerButton(bool toggle)

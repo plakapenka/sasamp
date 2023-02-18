@@ -54,6 +54,20 @@ CGame::CGame()
 	memset(&bUsedPlayerSlots[0], 0, PLAYER_PED_SLOTS);
 }
 
+void CGame::exitGame()
+{
+    Log("Exiting game...");
+
+	bIsGameExiting = true;
+
+	//delete pNetGame;
+    //exit(0);
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+	g_pJavaWrapper->ExitGame();
+}
+
 // 0.3.7
 uint8_t CGame::FindFirstFreePlayerPedSlot()
 {

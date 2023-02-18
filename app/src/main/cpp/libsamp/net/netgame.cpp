@@ -103,6 +103,7 @@ CNetGame::~CNetGame()
 	UnRegisterRPCs(m_pRakClient);
 	UnRegisterScriptRPCs(m_pRakClient);
 	RakNetworkFactory::DestroyRakClientInterface(m_pRakClient);
+	m_pRakClient = nullptr;
 
 	if(m_pPlayerPool) 
 	{

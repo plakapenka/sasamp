@@ -2333,7 +2333,6 @@ bool CKeyBoard::IsNewKeyboard()
 	return m_bNewKeyboard;
 }
 
-extern bool CGame__Shutdown_hook();
 extern void ApplyFPSPatch(uint8_t fps);
 bool ProcessLocalCommands(const char str[])
 {
@@ -2352,7 +2351,7 @@ bool ProcessLocalCommands(const char str[])
 
 	if (strcmp(str, "/q") == 0)
 	{
-		CGame__Shutdown_hook();
+		pGame->exitGame();
 		return true;
 	}
 	if (strstr(str, "/save "))

@@ -189,6 +189,8 @@ void InitInGame()
 #include "CDebugInfo.h"
 void MainLoop()
 {
+	if(pGame->bIsGameExiting)return;
+
 	InitInGame();
 
 	if(pNetGame) pNetGame->Process();

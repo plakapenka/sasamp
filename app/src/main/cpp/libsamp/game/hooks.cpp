@@ -1778,6 +1778,8 @@ void CGame__Process_hook()
 {
 	CGame__Process();
 
+	if(pGame->bIsGameExiting)return;
+
 	static bool once = false;
 	if (!once)
 	{
@@ -1838,22 +1840,21 @@ void CAutomobile__ProcessEntityCollision_hook(VEHICLE_TYPE* a1, ENTITY_TYPE* a2,
 	}
 }
 
-void MainMenuScreen__OnExit(uintptr_t* thiz)
+//void MainMenuScreen__OnExit(uintptr_t* thiz)
+//{
+//	pGame->bIsGameExiting = true;
+//
+//	//delete pNetGame;
+//
+//	//g_pJavaWrapper->ExitGame();
+//}
+void (*MainMenuScreen__OnExit)();
+void MainMenuScreen__OnExit_hook()
 {
-	g_pJavaWrapper->ExitGame();
-}
-bool (*CGame__Shutdown)();
-bool CGame__Shutdown_hook()
-{
-	Log("Exiting game...");
+	pGame->exitGame();
 
-	pGame->bIsGameExiting = true;
+	//g_pJavaWrapper->ExitGame();
 
-	//delete pNetGame;
-
-	g_pJavaWrapper->ExitGame();
-
-	return false;
 	//return CGame__Shutdown();
 }
 
@@ -3092,7 +3093,7 @@ void InstallHooks()
 
 	CHook::InlineHook(g_libGTASA, 0x004D4A6C, &CAutomobile__ProcessEntityCollision_hook, &CAutomobile__ProcessEntityCollision);
 
-	CHook::MethodHook(g_libGTASA, 0x0025CB8C, &MainMenuScreen__OnExit);
+	CHook::InlineHook(g_libGTASA, 0x0025CB8C, &MainMenuScreen__OnExit_hook, &MainMenuScreen__OnExit);
 //	CHook::InlineHook(g_libGTASA, 0x00398334, &CGame__Shutdown_hook, &CGame__Shutdown);
 
 	CHook::WriteMemory(g_libGTASA + 0x003DA86C,

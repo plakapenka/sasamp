@@ -150,6 +150,9 @@ public:
 	bool bIsGameExiting = false;
 
 	bool 			m_bDl_enabled = false;
+
+	void exitGame();
+
 private:
 	bool aToggleStatusHUD[HUD_MAX];
 	CCamera* 		m_pGameCamera;
@@ -163,4 +166,5 @@ private:
 	VECTOR			m_vecRaceCheckpointNext;
 
 	bool 			m_bClockEnabled;
+
 };
