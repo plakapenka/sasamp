@@ -522,6 +522,8 @@ public abstract class NvEventQueueActivity
 			int x0, int y0, int x1, int y1, MotionEvent event);
 		public native boolean keyEvent(int action, int keycode, int unicodeChar, int metaState, KeyEvent event);
 
+    public native boolean multiTouchEvent4(int i, int i2, int i3, int i4, int i5, int i6, int i7, int i8, int i9, int i10, MotionEvent motionEvent);
+
     public native boolean customMultiTouchEvent(int action, int count, int x1, int y1, int x2, int y2,
                                                 int x3, int y3);
 	/**

@@ -238,6 +238,18 @@ public class WarMedia extends WarGamepad
         System.out.println("**** SendStatEvent");
     }
 
+    public void SendStatEvent(String eventId, boolean timedEvent) {
+        System.out.println("**** SendStatEvent");
+    }
+
+    public void SendStatEvent(String eventId, String paramName, String paramValue, boolean timedEvent) {
+        System.out.println("**** SendStatEvent");
+    }
+
+    public void SendTimedStatEventEnd(String eventId) {
+        System.out.println("**** SendTimedStatEventEnd");
+    }
+
     public void SendStatEvent(String str, String str2, String str3) {
         System.out.println("**** SendStatEvent1");
     }
@@ -280,5 +292,46 @@ public class WarMedia extends WarGamepad
     public int ServiceAppCommandValue(String str, String str2) {
         System.out.println("**** ServiceAppCommandValue " + str + " " + str2);
         return 0;
+    }
+
+    public boolean ServiceAppCommandInt(String cmd, int args) {
+        System.out.println("**** ServiceAppCommandInt " + cmd + " " + args);
+        return false;
+    }
+
+    public boolean isWiFiAvailable() {
+        System.out.println("**** isWiFiAvailable ");
+        return false;
+    }
+
+    public boolean isNetworkAvailable() {
+        System.out.println("**** isNetworkAvailable ");
+        return false;
+    }
+
+    public boolean isTV() {
+        System.out.println("**** isTV ");
+        return false;
+    }
+
+    public void CreateTextBox(int id, int x, int y, int x2, int y2) {
+        System.out.println("**** CreateTextBox ");
+    }
+
+    public boolean ConvertToBitmap(byte[] data, int length) {
+        System.out.println("**** ConvertToBitmap ");
+        return false;
+    }
+
+    public void VibratePhone(int numMilliseconds) {
+        System.out.println("**** VibratePhone ");
+    }
+
+    public void VibratePhoneEffect(int effect) {
+        System.out.println("**** VibratePhoneEffect ");
+    }
+
+    public void PlayMovieInWindow(String inFilename, int x, int y, int width, int height, float inVolume, int inOffset, int inLength, int looping, boolean forceSize) {
+        System.out.println("**** PlayMovieInWindow ");
     }
 }
