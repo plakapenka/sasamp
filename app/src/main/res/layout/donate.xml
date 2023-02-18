@@ -102,6 +102,7 @@
                     android:layout_height="@dimen/_30sdp"
                     android:background="@drawable/donate_category_item_bg"
                     android:clickable="true"
+                    android:visibility="gone"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless">
 
                     <TextView

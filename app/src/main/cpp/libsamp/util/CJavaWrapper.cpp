@@ -122,7 +122,7 @@ extern "C"
 						break;
 					}
 					case 5:
-						pNetGame->SendChatCommand("/donate");
+						pNetGame->SendChatCommand("/donat");
 						break;
 					case 6:
 						pNetGame->SendChatCommand("/car");

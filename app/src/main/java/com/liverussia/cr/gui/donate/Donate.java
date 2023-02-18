@@ -119,12 +119,12 @@ public class Donate {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                  //   Log.d("safd", "item = " + i);
-                    if( i == 1 )
+                    if( i == 2 )
                     {
                         //donateAdapter.items.sort( new DonateComparators.DonateComparatorByHighPrice());
                         Collections.sort(donateAdapter.items, new DonateComparators.DonateComparatorByPrice());
                     }
-                    if( i == 2 )
+                    if( i == 1 )
                     {
                         Collections.sort(donateAdapter.items, new DonateComparators.DonateComparatorByPrice().reversed());
                     }
@@ -355,7 +355,7 @@ public class Donate {
         allItems.add( new DonateItem("Слот для Бизнеса", CATEGORY_OTHER, 5000, getResId("biz_slot"), DONATE_OTHER_BIZ_SLOT) );
         allItems.add( new DonateItem("Снять варн", CATEGORY_OTHER, 100, getResId("donate_warn"), DONATE_OTHER_WARN) );
         allItems.add( new DonateItem("Все лицензии", CATEGORY_OTHER, 150, getResId("licenses_pack"), DONATE_OTHER_LICENSES) );
-        allItems.add( new DonateItem("Изменить имя семьи", CATEGORY_OTHER, 100, getResId("donate_warn"), DONATE_OTHER_CHANGE_FAM_NAME) );
+        allItems.add( new DonateItem("Изменить имя семьи", CATEGORY_OTHER, 100, getResId("donate_change_family_name"), DONATE_OTHER_CHANGE_FAM_NAME) );
         allItems.add( new DonateItem("4-х значный номер", CATEGORY_OTHER, 70, getResId("donate_sim"), DONATE_OTHER_CHANGE_SIM) );
         allItems.add( new DonateItem("Военный билет", CATEGORY_OTHER, 100, getResId("donate_voen"), DONATE_OTHER_VOEN) );
         allItems.add( new DonateItem("Законопослушность\n( + 10 )", CATEGORY_OTHER, 5, getResId("donate_zakon"), DONATE_OTHER_ZAKON) );
