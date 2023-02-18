@@ -5,6 +5,7 @@
 #ifndef LIVERUSSIA_CLOADER_H
 #define LIVERUSSIA_CLOADER_H
 
+#include <jni.h>
 
 static class CLoader {
 

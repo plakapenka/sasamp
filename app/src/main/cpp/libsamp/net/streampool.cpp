@@ -300,15 +300,3 @@ void CStreamPool::Process() // ready
 
 	BASS_Apply3D();
 }
-
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_nvidia_devtech_NvEventQueueActivity_PlaySound(JNIEnv *env, jobject thiz, jstring url) {
-	const char *_url = env->GetStringUTFChars(url, nullptr);
-
-	pNetGame->GetStreamPool()->PlayIndividualStream(_url, BASS_STREAM_AUTOFREE);
-
-	env->ReleaseStringUTFChars(url, _url);
-
-
-}

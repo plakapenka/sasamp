@@ -212,7 +212,6 @@ public abstract class NvEventQueueActivity
     public native void onLoginClick(String password);
     public native void onChooseSpawnClick(int spawnid);
 
-    public native void PlaySound(String url);
     public native void onSamwillHideGame(int samwillpacket);
 
     public native void onTargetNotifyClose();

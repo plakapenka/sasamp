@@ -22,6 +22,7 @@ import java.util.Locale;
 
 public class Samp extends GTASA
 {
+    public static native void playUrlSound(String url);
     public static DecimalFormat formatter = null;
     public static SoundPool soundPool = null;
 

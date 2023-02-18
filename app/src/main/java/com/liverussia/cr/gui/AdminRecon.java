@@ -54,7 +54,7 @@ public class AdminRecon {
     public AdminRecon(Activity activity){
         init();
 
-        this.activity = NvEventQueueActivity.getInstance();
+        this.activity = activity;
         re_main_layout = activity.findViewById(R.id.re_main_layout);
         re_main_layout.setVisibility(View.GONE);
 

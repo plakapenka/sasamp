@@ -285,11 +285,11 @@ public class CasinoBaccarat
                 if(!bOffSound) {
                     switch (new Random().nextInt(2)) {
                         case 0: {
-                            NvEventQueueActivity.getInstance().PlaySound("http://files.liverussia.online/sounds/casino/go_bet_1.wav");
+                            Samp.playUrlSound("http://files.liverussia.online/sounds/casino/go_bet_1.wav");
                             break;
                         }
                         default: {
-                            NvEventQueueActivity.getInstance().PlaySound("http://files.liverussia.online/sounds/casino/go_bet_2.wav");
+                            Samp.playUrlSound("http://files.liverussia.online/sounds/casino/go_bet_2.wav");
                             break;
                         }
                     }
@@ -385,15 +385,15 @@ public class CasinoBaccarat
         if(bOffSound) return;
         switch (new Random().nextInt(3)) {
             case 0:{
-                NvEventQueueActivity.getInstance().PlaySound("http://files.liverussia.online/sounds/casino/no_bet_1.wav");
+                Samp.playUrlSound("http://files.liverussia.online/sounds/casino/no_bet_1.wav");
                 break;
             }
             case 1:{
-                NvEventQueueActivity.getInstance().PlaySound("http://files.liverussia.online/sounds/casino/no_bet_2.wav");
+                Samp.playUrlSound("http://files.liverussia.online/sounds/casino/no_bet_2.wav");
                 break;
             }
             default: {
-                NvEventQueueActivity.getInstance().PlaySound("http://files.liverussia.online/sounds/casino/no_bet_3.wav");
+                Samp.playUrlSound("http://files.liverussia.online/sounds/casino/no_bet_3.wav");
                 break;
             }
         }
@@ -403,9 +403,9 @@ public class CasinoBaccarat
     {
         if(!bOffSound) {
             if (you_win) {
-                NvEventQueueActivity.getInstance().PlaySound("http://files.liverussia.online/sounds/casino/chip_win.mp3");
+                Samp.playUrlSound("http://files.liverussia.online/sounds/casino/chip_win.mp3");
             } else {
-                NvEventQueueActivity.getInstance().PlaySound("http://files.liverussia.online/sounds/casino/cards_clear.mp3");
+                Samp.playUrlSound("http://files.liverussia.online/sounds/casino/cards_clear.mp3");
             }
         }
         last_bets.clear();
@@ -435,7 +435,7 @@ public class CasinoBaccarat
     String[] card_color = {"#000000", "#F24E1E", "#F24E1E", "#000000"};
 
     void updateYellowCard(int cardNum) {
-        if(!bOffSound) NvEventQueueActivity.getInstance().PlaySound("http://files.liverussia.online/sounds/casino/cards.mp3");
+        if(!bOffSound) Samp.playUrlSound("http://files.liverussia.online/sounds/casino/cards.mp3");
 
         int rnd = new Random().nextInt(4);
         TextView textTop = (TextView)casino_bc_yellow_card.getChildAt(0);
@@ -455,7 +455,7 @@ public class CasinoBaccarat
     }
 
     void updateRedCard(int cardNum) {
-        if(!bOffSound) NvEventQueueActivity.getInstance().PlaySound("http://files.liverussia.online/sounds/casino/cards.mp3");
+        if(!bOffSound) Samp.playUrlSound("http://files.liverussia.online/sounds/casino/cards.mp3");
 
         int rnd = new Random().nextInt(4);
 
@@ -492,15 +492,15 @@ public class CasinoBaccarat
                 if(!bOffSound) {
                     switch (new Random().nextInt(3)) {
                         case 0: {
-                            NvEventQueueActivity.getInstance().PlaySound("http://files.liverussia.online/sounds/casino/win_1.wav");
+                            Samp.playUrlSound("http://files.liverussia.online/sounds/casino/win_1.wav");
                             break;
                         }
                         case 1: {
-                            NvEventQueueActivity.getInstance().PlaySound("http://files.liverussia.online/sounds/casino/win_2.wav");
+                            Samp.playUrlSound("http://files.liverussia.online/sounds/casino/win_2.wav");
                             break;
                         }
                         default: {
-                            NvEventQueueActivity.getInstance().PlaySound("http://files.liverussia.online/sounds/casino/win_3.wav");
+                            Samp.playUrlSound("http://files.liverussia.online/sounds/casino/win_3.wav");
                             break;
                         }
                     }
@@ -592,11 +592,11 @@ public class CasinoBaccarat
         if(!bOffSound) {
             switch (new Random().nextInt(2)) {
                 case 0: {
-                    NvEventQueueActivity.getInstance().PlaySound("http://files.liverussia.online/sounds/casino/exit_2.wav");
+                    Samp.playUrlSound("http://files.liverussia.online/sounds/casino/exit_2.wav");
                     break;
                 }
                 default: {
-                    NvEventQueueActivity.getInstance().PlaySound("http://files.liverussia.online/sounds/casino/exit_1.wav");
+                    Samp.playUrlSound("http://files.liverussia.online/sounds/casino/exit_1.wav");
                     break;
                 }
             }
