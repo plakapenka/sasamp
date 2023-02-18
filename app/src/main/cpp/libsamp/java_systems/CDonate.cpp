@@ -25,9 +25,7 @@ void CDonate::show(int balance)
                                        balance);
         CDonate::thiz = env->NewGlobalRef(CDonate::thiz);
     }
-    else {
 
-    }
 }
 
 void CDonate::updateBalance(int balance)

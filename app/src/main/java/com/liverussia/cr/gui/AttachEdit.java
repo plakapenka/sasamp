@@ -43,93 +43,86 @@ public class AttachEdit {
     private ConstraintLayout attach_left_butt;
     private ConstraintLayout attach_right_button;
 
-    public native void Init();
-    public native void Exit();
-    public native void AttachClick(int buttonType, boolean buttonID);
-    public native void Save();
+    native void Exit();
+    native void AttachClick(int buttonType, boolean buttonID);
+    native void Save();
 
     @SuppressLint("ClickableViewAccessibility")
-    public AttachEdit(Activity activity){
-        Init();
+    public AttachEdit(Activity activity)
+    {
+        activity.runOnUiThread(()-> {
+            this.activity = activity;
+            attach_left_butt = activity.findViewById(R.id.attach_left_butt);
+            attach_left_butt.setOnTouchListener(touchListener);
 
-        this.activity = activity;
-        attach_left_butt = activity.findViewById(R.id.attach_left_butt);
-        attach_left_butt.setOnTouchListener(touchListener);
+            attach_right_button = activity.findViewById(R.id.attach_right_button);
+            attach_right_button.setOnTouchListener(touchListener);
 
-        attach_right_button = activity.findViewById(R.id.attach_right_button);
-        attach_right_button.setOnTouchListener(touchListener);
+            attach_text_description = activity.findViewById(R.id.attach_text_description);
 
-        attach_text_description = activity.findViewById(R.id.attach_text_description);
-        attach_main_layot = activity.findViewById(R.id.attach_main_layot);
-        Utils.HideLayout(attach_main_layot, false);
+            attach_save_butt = activity.findViewById(R.id.attach_save_butt);
+            attach_save_butt.setOnClickListener(view -> {
+                Utils.HideLayout(attach_main_layot, true);
+                Save();
+            });
 
-        attach_save_butt = activity.findViewById(R.id.attach_save_butt);
-        attach_save_butt.setOnClickListener(view -> {
-            Utils.HideLayout(attach_main_layot, true);
-            Save();
-        });
+            attach_exit_butt = activity.findViewById(R.id.attach_exit_butt);
+            attach_exit_butt.setOnClickListener(view -> {
+                Utils.HideLayout(attach_main_layot, true);
+                Exit();
+            });
 
-        attach_exit_butt = activity.findViewById(R.id.attach_exit_butt);
-        attach_exit_butt.setOnClickListener(view -> {
-            Utils.HideLayout(attach_main_layot, true);
-            Exit();
-        });
+            attach_leftright = activity.findViewById(R.id.attach_leftright);
+            attach_leftright.setOnClickListener(view -> {
+                active_button = BUTTON_LEFT_RIGHT;
+                attach_text_description.setText("Установите смещение по оси Y");
+                SelectetItem(view);
+            });
 
-        attach_leftright = activity.findViewById(R.id.attach_leftright);
-        attach_leftright.setOnClickListener(view -> {
-            active_button = BUTTON_LEFT_RIGHT;
-            attach_text_description.setText("Установите смещение по оси Y");
-            SelectetItem(view);
-        });
+            attach_topbott = activity.findViewById(R.id.attach_topbott);
+            attach_topbott.setOnClickListener(view -> {
+                active_button = BUTTON_UP_DOWN;
+                attach_text_description.setText("Установите смещение по оси Z");
+                SelectetItem(view);
+            });
 
-        attach_topbott = activity.findViewById(R.id.attach_topbott);
-        attach_topbott.setOnClickListener(view -> {
-            active_button = BUTTON_UP_DOWN;
-            attach_text_description.setText("Установите смещение по оси Z");
-            SelectetItem(view);
-        });
+            attach_pushpull = activity.findViewById(R.id.attach_pushpull);
+            attach_pushpull.setOnClickListener(view -> {
+                active_button = BUTTON_PUSH_PULL;
+                attach_text_description.setText("Установите смещение по оси X");
+                SelectetItem(view);
+            });
 
-        attach_pushpull = activity.findViewById(R.id.attach_pushpull);
-        attach_pushpull.setOnClickListener(view -> {
-            active_button = BUTTON_PUSH_PULL;
-            attach_text_description.setText("Установите смещение по оси X");
-            SelectetItem(view);
-        });
+            attach_scale = activity.findViewById(R.id.attach_scale);
+            attach_scale.setOnClickListener(view -> {
+                attach_text_description.setText("Установите размер");
+                active_button = BUTTON_SCALE;
+                SelectetItem(view);
+            });
 
-        attach_scale = activity.findViewById(R.id.attach_scale);
-        attach_scale.setOnClickListener(view -> {
-            attach_text_description.setText("Установите размер");
-            active_button = BUTTON_SCALE;
-            SelectetItem(view);
-        });
+            attach_rotX = activity.findViewById(R.id.attach_rotX);
+            attach_rotX.setOnClickListener(view -> {
+                attach_text_description.setText("Установите поворот");
+                active_button = BUTTON_ROT_X;
+                SelectetItem(view);
+            });
 
-        attach_rotX = activity.findViewById(R.id.attach_rotX);
-        attach_rotX.setOnClickListener(view -> {
-            attach_text_description.setText("Установите поворот");
-            active_button = BUTTON_ROT_X;
-            SelectetItem(view);
-        });
+            attach_rotY = activity.findViewById(R.id.attach_rotY);
+            attach_rotY.setOnClickListener(view -> {
+                attach_text_description.setText("Установите поворот");
+                active_button = BUTTON_ROT_Y;
+                SelectetItem(view);
+            });
 
-        attach_rotY = activity.findViewById(R.id.attach_rotY);
-        attach_rotY.setOnClickListener(view -> {
-            attach_text_description.setText("Установите поворот");
-            active_button = BUTTON_ROT_Y;
-            SelectetItem(view);
-        });
+            attach_rotZ = activity.findViewById(R.id.attach_rotZ);
+            attach_rotZ.setOnClickListener(view -> {
+                attach_text_description.setText("Установите поворот");
+                active_button = BUTTON_ROT_Z;
+                SelectetItem(view);
+            });
 
-        attach_rotZ = activity.findViewById(R.id.attach_rotZ);
-        attach_rotZ.setOnClickListener(view -> {
-            attach_text_description.setText("Установите поворот");
-            active_button = BUTTON_ROT_Z;
-            SelectetItem(view);
-        });
-    }
-
-    public void Toggle(boolean toggle){
-        activity.runOnUiThread(() -> {
-            if(toggle) {
-                Utils.ShowLayout(attach_main_layot, true);
-            }
+            attach_main_layot = activity.findViewById(R.id.attach_main_layot);
+            Utils.ShowLayout(attach_main_layot, true);
         });
     }
 
@@ -190,7 +183,6 @@ public class AttachEdit {
                     break;
                 }
             }
-            // furniture_factory_main_layout.invalidate();
             return true;
         }
     };

@@ -16,7 +16,9 @@
 
 bool CEditobject::bIsToggle = false;
 int CEditobject::iEditedSlot = INVALID_EDITED_SLOT;
-jobject jObjEditor;
+jobject CEditobject::thiz = nullptr;
+jclass CEditobject::clazz = nullptr;
+
 extern CJavaWrapper *g_pJavaWrapper;
 
 void CEditobject::StartEditAttachedObject(int slot)
@@ -29,28 +31,23 @@ void CEditobject::StartEditAttachedObject(int slot)
 
     JNIEnv* env = g_pJavaWrapper->GetEnv();
 
-    jclass clazz = env->GetObjectClass(jObjEditor);
-    jmethodID Toggle = env->GetMethodID(clazz, "Toggle", "(Z)V");
-
-    env->CallVoidMethod(jObjEditor, Toggle, true);
+    if(CEditobject::thiz == nullptr)
+    {
+        jmethodID constructor = env->GetMethodID(CEditobject::clazz, "<init>","(Landroid/app/Activity;)V");
+        CEditobject::thiz = env->NewObject(CEditobject::clazz, constructor, g_pJavaWrapper->activity);
+        CEditobject::thiz = env->NewGlobalRef(CEditobject::thiz);
+    }
 
     bIsToggle = true;
 }
 
-CEditobject::CEditobject(){ }
 
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_AttachEdit_Init(JNIEnv *env, jobject thiz) {
-    jObjEditor = env->NewGlobalRef(thiz);
-}
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_AttachEdit_Exit(JNIEnv *env, jobject thiz) {
     CPlayerPed* pPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed();
     int slot = CEditobject::iEditedSlot;
 
-    CEditobject::bIsToggle = false;
     CEditobject::iEditedSlot = INVALID_EDITED_SLOT;
     CEditobject::SendOnEditAttach(
             0,
@@ -61,6 +58,10 @@ Java_com_liverussia_cr_gui_AttachEdit_Exit(JNIEnv *env, jobject thiz) {
             pPlayer->m_aAttachedObjects[slot].vecRotation,
             pPlayer->m_aAttachedObjects[slot].vecScale
             );
+
+    CEditobject::bIsToggle = false;
+    env->DeleteGlobalRef( CEditobject::thiz );
+    CEditobject::thiz = nullptr;
 }
 
 void CEditobject::SendOnEditAttach(int response, int index, int modelid, int bone, VECTOR offset, VECTOR rot, VECTOR scale){
@@ -151,7 +152,6 @@ Java_com_liverussia_cr_gui_AttachEdit_Save(JNIEnv *env, jobject thiz) {
     CPlayerPed* pPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed();
     int slot = CEditobject::iEditedSlot;
 
-    CEditobject::bIsToggle = false;
     CEditobject::iEditedSlot = INVALID_EDITED_SLOT;
     CEditobject::SendOnEditAttach(
             1,
@@ -162,4 +162,9 @@ Java_com_liverussia_cr_gui_AttachEdit_Save(JNIEnv *env, jobject thiz) {
             pPlayer->m_aAttachedObjects[slot].vecRotation,
             pPlayer->m_aAttachedObjects[slot].vecScale
     );
+
+    CEditobject::bIsToggle = false;
+
+    env->DeleteGlobalRef( CEditobject::thiz );
+    CEditobject::thiz = nullptr;
 }

@@ -5,20 +5,21 @@
 #ifndef LIVERUSSIA_CEDITOBJECT_H
 #define LIVERUSSIA_CEDITOBJECT_H
 
+#include <jni.h>
 #include "game/common.h"
 
 #define INVALID_EDITED_SLOT -1
 
 static class CEditobject {
 public:
-    CEditobject();
+    static jobject thiz;
+    static jclass clazz;
     static void StartEditAttachedObject(int slot);
     static bool bIsToggle;
     static int iEditedSlot;
 
     static void
-    SendOnEditAttach(int response, int index, int modelid, int bone, _VECTOR offset, _VECTOR rot,
-                     _VECTOR scale);
+    SendOnEditAttach(int response, int index, int modelid, int bone, VECTOR offset, VECTOR rot, VECTOR scale);
 };
 
 

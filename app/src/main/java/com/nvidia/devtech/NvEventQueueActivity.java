@@ -931,7 +931,6 @@ public abstract class NvEventQueueActivity
         mOilFactoryManager = new OilFactoryManager(this);
         vibrator = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
         mArmyGameManager = new ArmyGameManager(this);
-        new AttachEdit(this);
         mShopStoreManager = new ShopStoreManager(this);
         mGunShopManager = new GunShopManager(this);
         mChooseSpawn = new ChooseSpawn(this);
