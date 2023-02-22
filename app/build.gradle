@@ -63,6 +63,7 @@ android {
             multiDexEnabled true
         }
         all{
+            debuggable false
             multiDexEnabled true
         }
     }
