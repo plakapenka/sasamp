@@ -52,16 +52,17 @@ void CWidgetButton__Update_hook(int result, int a2, int a3, int a4)
     {
         CGtaWidgets::setEnabled(CGtaWidgets::pWidgets[WIDGET_POSITION_CAR_SHOOT], false);
     }
+
     CWidgetButton__Update(result, a2, a3, a4);
 }
 
 void CGtaWidgets::init()
 {
-    CGtaWidgets::pWidgets = (uintptr_t*)(g_libGTASA + 0x00657E48);
+    CGtaWidgets::pWidgets = (uintptr_t*)(g_libGTASA + 0x006F379C);
 
    // CHook::InlineHook(g_libGTASA, 0x00274218, &CWidget__IsTouched_hook, &CWidget__IsTouched);
-    CHook::InlineHook(g_libGTASA, 0x00274AB4, &CWidgetButton__Update_hook, &CWidgetButton__Update);
-    CHook::SetUpHook(g_libGTASA + 0x00274748, (uintptr_t)CWidgetButton__Draw_hook, (uintptr_t*)&CWidgetButton__Draw);
+    CHook::InlineHook(g_libGTASA, 0x002B41BC, &CWidgetButton__Update_hook, &CWidgetButton__Update);
+    CHook::SetUpHook(g_libGTASA + 0x002B420C, (uintptr_t)CWidgetButton__Draw_hook, (uintptr_t*)&CWidgetButton__Draw);
 }
 
 
