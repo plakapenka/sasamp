@@ -23,8 +23,8 @@ void CText3DLabelsPool::DrawNonAttached(TEXT_LABELS* pLabel)
 	{
 		return;
 	}
-	VECTOR pos;
-	memcpy((void*)&pos, (const void*)&(pLabel->pos), sizeof(VECTOR));
+	CVector pos;
+	memcpy((void*)&pos, (const void*)&(pLabel->pos), sizeof(CVector));
 	DrawTextLabel(pLabel, &pos);
 }
 
@@ -48,8 +48,8 @@ void CText3DLabelsPool::DrawAttachedToPlayer(TEXT_LABELS* pLabel)
 	{
 		return;
 	}
-	VECTOR pos;
-	memset((void*)&pos, 0, sizeof(VECTOR));
+	CVector pos;
+	memset((void*)&pos, 0, sizeof(CVector));
 
 	PLAYERID playerId = pLabel->attachedToPlayerID;
 
@@ -82,18 +82,18 @@ void CText3DLabelsPool::DrawAttachedToPlayer(TEXT_LABELS* pLabel)
 	{
 		return;
 	}
-	VECTOR boneOut;
+	CVector boneOut;
 	pPlayerPed->GetBonePosition(5, &boneOut);
 
-	memcpy((void*)&pos, (const void*)&boneOut, sizeof(VECTOR));
+	memcpy((void*)&pos, (const void*)&boneOut, sizeof(CVector));
 
-	pos.X += pLabel->offsetCoords.X;
-	pos.Y += pLabel->offsetCoords.Y;
-	pos.Z += pLabel->offsetCoords.Z;
+	pos.x += pLabel->offsetCoords.x;
+	pos.y += pLabel->offsetCoords.y;
+	pos.z += pLabel->offsetCoords.z;
 
    // CPlayerPed* pPed = pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed();
     float fDist = pPlayerPed->GetDistanceFromCamera();
-    pos.Z += (fDist * 0.055);
+    pos.z += (fDist * 0.055);
 
 	DrawTextLabel(pLabel, &pos);
 }
@@ -104,8 +104,8 @@ void CText3DLabelsPool::DrawAttachedToVehicle(TEXT_LABELS* pLabel)
 	{
 		return;
 	}
-	VECTOR pos;
-	memset((void*)&pos, 0, sizeof(VECTOR));
+	CVector pos;
+	memset((void*)&pos, 0, sizeof(CVector));
 
 	VEHICLEID vehId = pLabel->attachedToVehicleID;
 
@@ -138,11 +138,11 @@ void CText3DLabelsPool::DrawAttachedToVehicle(TEXT_LABELS* pLabel)
 
 	pVehicle->GetMatrix(&mat);
 
-	memcpy((void*)& pos, (const void*)& mat.pos, sizeof(VECTOR));
+	memcpy((void*)& pos, (const void*)& mat.pos, sizeof(CVector));
 
-	pos.X += pLabel->offsetCoords.X;
-	pos.Y += pLabel->offsetCoords.Y;
-	pos.Z += pLabel->offsetCoords.Z;
+	pos.x += pLabel->offsetCoords.x;
+	pos.y += pLabel->offsetCoords.y;
+	pos.z += pLabel->offsetCoords.z;
 
 	DrawTextLabel(pLabel, &pos);
 }
@@ -167,28 +167,28 @@ void CText3DLabelsPool::DrawVehiclesInfo()
 			if(distance < 20){
 				CVehicle* pVehicle = pVehiclePool->GetAt(i);
 
-				VECTOR pos;
-				memset((void*)&pos, 0, sizeof(VECTOR));
+				CVector pos;
+				memset((void*)&pos, 0, sizeof(CVector));
 
 				MATRIX4X4 mat;
 				memset((void*)& mat, 0, sizeof(MATRIX4X4));
 
 				pVehicle->GetMatrix(&mat);
 
-				memcpy((void*)& pos, (const void*)& mat.pos, sizeof(VECTOR));
+				memcpy((void*)& pos, (const void*)& mat.pos, sizeof(CVector));
 
-				//memcpy((void*)& pos, (const void*)& mat.pos, sizeof(VECTOR));
+				//memcpy((void*)& pos, (const void*)& mat.pos, sizeof(CVector));
 
-				VECTOR Out;
-				memset((void*)&Out, 0, sizeof(VECTOR));
+				CVector Out;
+				memset((void*)&Out, 0, sizeof(CVector));
 				// CSprite::CalcScreenCoors
-				((void (*)(VECTOR*, VECTOR*, float*, float*, bool, bool))(g_libGTASA + 0x54EEC0 + 1))(&pos, &Out, 0, 0, 0, 0);
-				if (Out.Z < 1.0f)
+				((void (*)(CVector*, CVector*, float*, float*, bool, bool))(g_libGTASA + 0x005C57E8 + 1))(&pos, &Out, 0, 0, 0, 0);
+				if (Out.z < 1.0f)
 				{
 					return;
 				}
 
-				ImVec2 vpos = ImVec2(Out.X, Out.Y);
+				ImVec2 vpos = ImVec2(Out.x, Out.y);
 
 
 				sprintf(inf, "id: %d, type: %d\nHealth: %.2f\nDistance: %dm\n Immun: %d",
@@ -206,9 +206,8 @@ void CText3DLabelsPool::DrawVehiclesInfo()
 	}
 }
 
-void CText3DLabelsPool::DrawTextLabel(TEXT_LABELS* pLabel, VECTOR* pPos)
+void CText3DLabelsPool::DrawTextLabel(TEXT_LABELS* pLabel, CVector* pPos)
 {
-	int hitEntity = 0;
 	if (!pNetGame->GetPlayerPool()->GetLocalPlayer())
 	{
 		return;
@@ -231,26 +230,25 @@ void CText3DLabelsPool::DrawTextLabel(TEXT_LABELS* pLabel, VECTOR* pPos)
 			return;
 		}
 
-		hitEntity = ScriptCommand(&get_line_of_sight,
-			pPos->X, pPos->Y, pPos->Z,
+		ScriptCommand(&get_line_of_sight,
+			pPos->x, pPos->y, pPos->z,
 			pCam->pos1x, pCam->pos1y, pCam->pos1z,
 			1, 0, 0, 0, 0);
 	}
-
-	if (!pLabel->useLineOfSight || hitEntity)
+	else
 	{
-		if (pPed->GetDistanceFromPoint(pPos->X, pPos->Y, pPos->Z) <= pLabel->drawDistance)
+		if (pPed->GetDistanceFromPoint(pPos->x, pPos->y, pPos->z) <= pLabel->drawDistance)
 		{
-			VECTOR Out;
-			memset((void*)&Out, 0, sizeof(VECTOR));
+			CVector Out;
+			memset((void*)&Out, 0, sizeof(CVector));
 			// CSprite::CalcScreenCoors
-			((void (*)(VECTOR*, VECTOR*, float*, float*, bool, bool))(g_libGTASA + 0x54EEC0 + 1))(pPos, &Out, 0, 0, 0, 0);
-			if (Out.Z < 1.0f)
+			((void (*)(CVector*, CVector*, float*, float*, bool, bool))(g_libGTASA + 0x005C57E8 + 1))(pPos, &Out, 0, 0, 0, 0);
+			if (Out.z < 1.0f)
 			{
 				return;
 			}
 
-			ImVec2 pos = ImVec2(Out.X, Out.Y);
+			ImVec2 pos = ImVec2(Out.x, Out.y);
 
 			if (pLabel->m_fTrueX < 0.0f)
 			{
@@ -361,9 +359,9 @@ void CText3DLabelsPool::CreateTextLabel(int labelID, char* text, uint32_t color,
 		FilterColors(pTextLabel->textWithoutColors);
 
 		pTextLabel->color = color;
-		pTextLabel->pos.X = posX;
-		pTextLabel->pos.Y = posY;
-		pTextLabel->pos.Z = posZ;
+		pTextLabel->pos.x = posX;
+		pTextLabel->pos.y = posY;
+		pTextLabel->pos.z = posZ;
 		pTextLabel->drawDistance = drawDistance;
 		pTextLabel->useLineOfSight = useLOS;
 		pTextLabel->attachedToPlayerID = attachedToPlayerID;
@@ -373,9 +371,9 @@ void CText3DLabelsPool::CreateTextLabel(int labelID, char* text, uint32_t color,
 
 		if (attachedToVehicleID != INVALID_VEHICLE_ID || attachedToPlayerID != INVALID_PLAYER_ID)
 		{
-			pTextLabel->offsetCoords.X = posX;
-			pTextLabel->offsetCoords.Y = posY;
-			pTextLabel->offsetCoords.Z = posZ;
+			pTextLabel->offsetCoords.x = posX;
+			pTextLabel->offsetCoords.y = posY;
+			pTextLabel->offsetCoords.z = posZ;
 		}
 
 		m_pTextLabels[labelID] = pTextLabel;
@@ -397,7 +395,7 @@ void CText3DLabelsPool::Delete(int labelID)
 	}
 }
 
-void CText3DLabelsPool::AttachToPlayer(int labelID, PLAYERID playerID, VECTOR pos)
+void CText3DLabelsPool::AttachToPlayer(int labelID, PLAYERID playerID, CVector pos)
 {
 	if (labelID < 0 || labelID >= TEXT_LABEL_POOL_SIZE)
 	{
@@ -412,7 +410,7 @@ void CText3DLabelsPool::AttachToPlayer(int labelID, PLAYERID playerID, VECTOR po
 	}
 }
 
-void CText3DLabelsPool::AttachToVehicle(int labelID, VEHICLEID vehicleID, VECTOR pos)
+void CText3DLabelsPool::AttachToVehicle(int labelID, VEHICLEID vehicleID, CVector pos)
 {
 	if (labelID < 0 || labelID >= TEXT_LABEL_POOL_SIZE)
 	{

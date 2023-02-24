@@ -27,7 +27,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/oil_info">
+            android:background="@drawable/oil_info">
 
             <ImageView
                 android:id="@+id/imageView51"
@@ -68,7 +68,7 @@
                 app:layout_constraintEnd_toEndOf="@+id/imageView24"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/oil_water" />
+                android:src="@drawable/oil_water" />
 
             <ImageView
                 android:adjustViewBounds="true"
@@ -79,7 +79,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageView29"
-                app:srcCompat="@drawable/oil_bar" />
+                android:src="@drawable/oil_bar" />
 
             <ProgressBar
                 android:id="@+id/oil_water_progress"
@@ -116,7 +116,7 @@
                 android:layout_height="@dimen/_200sdp"
                 app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
                 app:layout_constraintTop_toBottomOf="@+id/imageView30"
-                app:srcCompat="@drawable/oil_bar" />
+                android:src="@drawable/oil_bar" />
 
             <ProgressBar
                 android:id="@+id/oil_oil_progress"
@@ -153,7 +153,7 @@
                 app:layout_constraintEnd_toEndOf="@+id/imageView26"
                 app:layout_constraintStart_toStartOf="@+id/imageView26"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/oil_oil" />
+                android:src="@drawable/oil_oil" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -167,7 +167,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/constraintLayout"
             app:layout_constraintEnd_toStartOf="@+id/constraintLayout"
             app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@drawable/oil_waterbtn" />
+            android:src="@drawable/oil_waterbtn" />
 
         <ImageView
             android:id="@+id/oil_oil_btn"
@@ -176,6 +176,6 @@
             app:layout_constraintBottom_toBottomOf="@+id/constraintLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/constraintLayout"
-            app:srcCompat="@drawable/oil_oilbtn" />
+            android:src="@drawable/oil_oilbtn" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

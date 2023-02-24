@@ -2,6 +2,7 @@
 #include "RW/RenderWare.h"
 #include <sstream>
 #include "game.h"
+#include "ePedState.h"
 
 #include "../net/netgame.h"
 #include "../gui/gui.h"
@@ -27,11 +28,7 @@ extern BULLET_DATA *g_pCurrentBulletData;
 
 static uint32_t dwRLEDecompressSourceSize = 0;
 
-char(*CStreaming__ConvertBufferToObject)(int, int, int);
-int __attribute__((noinline)) g_unobfuscate(int a)
-{
-	return UNOBFUSCATE_DATA(a);
-}
+
 #include "..//str_obfuscator_no_template.hpp"
 #define MAX_ENCRYPTED_TXD 3
 const cryptor::string_encryptor encrArch[MAX_ENCRYPTED_TXD] = {
@@ -70,7 +67,7 @@ void InitCTX(AES_ctx& ctx, const uint8_t* pKey)
     AES_init_ctx_iv(&ctx, &key[0], &iv[0]);
 }
 
-static int lastOpenedFile = 0;
+int lastOpenedFile;
 
 extern CNetGame *pNetGame;
 extern CGUI *pGUI;
@@ -99,67 +96,62 @@ struct stFile
 stFile* (*NvFOpen)(const char*, const char*, int, int);
 stFile* NvFOpen_hook(const char* r0, const char* r1, int r2, int r3)
 {
+	//return NvFOpen(r0, r1, r2, r3);
+
 	char path[0xFF] = { 0 };
-	// ----------------------------
+
+	sprintf(path, "%s%s", g_pszStorage, r1);
+
+//	// ----------------------------
 	if(!strncmp(r1+12, "mainV1.scm", 10))
 	{
 		sprintf(path, "%sSAMP/main.scm", g_pszStorage);
 		Log("Loading %s", path);
-		goto open;
 	}
 	// ----------------------------
 	if(!strncmp(r1+12, "SCRIPTV1.IMG", 12))
 	{
 		sprintf(path, "%sSAMP/script.img", g_pszStorage);
 		Log("Loading script.img..");
-		goto open;
 	}
-	// ----------------------------
+//	// ----------------------------
 	if(!strncmp(r1, "DATA/PEDS.IDE", 13))
 	{
-		sprintf(path, "%s/SAMP/peds.ide", g_pszStorage);
+		sprintf(path, "%sSAMP/peds.ide", g_pszStorage);
 		Log("Loading peds.ide..");
-		goto open;
 	}
-	// ----------------------------
+//	// ----------------------------
 	if(!strncmp(r1, "DATA/VEHICLES.IDE", 17))
 	{
-		sprintf(path, "%s/SAMP/vehicles.ide", g_pszStorage);
+		sprintf(path, "%sSAMP/vehicles.ide", g_pszStorage);
 		Log("Loading vehicles.ide..");
-		goto open;
 	}
 
 	if (!strncmp(r1, "DATA/GTA.DAT", 12))
 	{
-		sprintf(path, "%s/SAMP/gta.dat", g_pszStorage);
+		sprintf(path, "%sSAMP/gta.dat", g_pszStorage);
 		Log("Loading gta.dat..");
-		goto open;
 	}
 
 	if (!strncmp(r1, "DATA/HANDLING.CFG", 17))
 	{
-		sprintf(path, "%s/SAMP/handling.cfg", g_pszStorage);
+		sprintf(path, "%sSAMP/handling.cfg", g_pszStorage);
 		Log("Loading handling.cfg..");
-		goto open;
 	}
 
 	if (!strncmp(r1, "DATA/WEAPON.DAT", 15))
 	{
-		sprintf(path, "%s/SAMP/weapon.dat", g_pszStorage);
+		sprintf(path, "%sSAMP/weapon.dat", g_pszStorage);
 		Log("Loading weapon.dat..");
-		goto open;
 	}
 
-orig:
-	return NvFOpen(r0, r1, r2, r3);
-
-open:
 	stFile *st = (stFile*)malloc(8);
 	st->isFileExist = false;
 
 	FILE *f  = fopen(path, "rb");
 	if(f)
 	{
+		Log("NvFOpen_hook %s ", path );
 		st->isFileExist = true;
 		st->f = f;
 		return st;
@@ -176,54 +168,20 @@ open:
 /* ====================================================== */
 bool bGameStarted = false;
 uint32_t bProcessedCleanStreamPool = 0;
-void RenderBackgroundHud();
 
 void (*Render2dStuff)();
 void Render2dStuff_hook()
 {
+   // Log("Render2dStuff_hook");
 	if (CHUD::bIsShow) CHUD::UpdateHudInfo();
 
 	bGameStarted = true;
 //	MAKE_PROFILE(test, test_time);
 	MainLoop();
-	RenderBackgroundHud();
+
 //	LOG_PROFILE(test, test_time);
+	if (pGUI) pGUI->Render();
 	Render2dStuff();
-
-	if (!bProcessedCleanStreamPool)
-		bProcessedCleanStreamPool = GetTickCount();
-
-	uint32_t result = GetTickCount() - bProcessedCleanStreamPool;
-	if (result >= 5000)
-	{
-		CStreaming::RemoveAllUnusedModels();
-	}
-
-}
-
-/* ====================================================== */
-
-void (*Render2dStuffAfterFade)();
-void Render2dStuffAfterFade_hook()
-{
-	Render2dStuffAfterFade();
-	if (pGUI && bGameStarted) pGUI->Render();
-	return;
-}
-
-void MainMenu_OnStartSAMP()
-{
-
-	if(g_bPlaySAMP) return;
-
-	InitInMenu();
-
-	// StartGameScreen::OnNewGameCheck()
-	(( void (*)())(g_libGTASA+0x261C8C+1))();
-
-	//*(uint32_t*)(g_libGTASA + 0x009E75B8) = 8;
-
-	g_bPlaySAMP = true;
 }
 
 // OsArray<FlowScreen::MenuItem>::Add
@@ -250,8 +208,14 @@ void (*InitialiseRenderWare)();
 void InitialiseRenderWare_hook() {
 	Log("InitialiseRenderWare ..");
 
-	CHook::NOP(g_libGTASA + 0x40C546, 44);
-	CHook::NOP(g_libGTASA + 0x40C236, 2); // crash CCamera::ClearPlayerWeaponMode in CCamera::Init
+	CHook::NOP(g_libGTASA + 0x0046F576, 2);
+	CHook::NOP(g_libGTASA + 0x0046F588, 2); // mobile
+	CHook::NOP(g_libGTASA + 0x0046F592, 2); // txd
+	CHook::NOP(g_libGTASA + 0x0046F59C, 2); // gta3
+	CHook::NOP(g_libGTASA + 0x0046F5A6, 2); // gta_int
+	//CHook::NOP(g_libGTASA + 0x0046F5B0, 2); // cutscene
+	//CHook::NOP(g_libGTASA + 0x0046F5C6, 2); // player
+	CHook::NOP(g_libGTASA + 0x0046F5D2, 2); // menu
 
 	TextureDatabaseRuntime::Load("samp", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
 
@@ -259,15 +223,15 @@ void InitialiseRenderWare_hook() {
 	TextureDatabaseRuntime::Load("txd", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
 	TextureDatabaseRuntime::Load("gta3", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
 	TextureDatabaseRuntime::Load("gta_int", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
-	TextureDatabaseRuntime::Load("menu", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
+	TextureDatabaseRuntime::Load("menu", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_PVR);
 
 	//skins
-	TextureDatabase* skins = TextureDatabaseRuntime::Load("skins", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
-	TextureDatabaseRuntime::Register(skins);
-
-	// cars
-	TextureDatabase* cars = TextureDatabaseRuntime::Load("cars", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
-	TextureDatabaseRuntime::Register(cars);
+//	TextureDatabase* skins = TextureDatabaseRuntime::Load("skins", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
+//	TextureDatabaseRuntime::Register(skins);
+//
+//	// cars
+//	TextureDatabase* cars = TextureDatabaseRuntime::Load("cars", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
+//	TextureDatabaseRuntime::Register(cars);
 
 	InitialiseRenderWare();
 }
@@ -285,7 +249,7 @@ void CLoadingScreen_DisplayPCScreen_hook()
 //		RwRenderStateSet(rwRENDERSTATETEXTUREADDRESS, (void *)rwTEXTUREADDRESSCLAMP);
 //		((void (*)(bool))(g_libGTASA + 0x198010 + 1))(false); // emu_GammaSet()
 
-		const float percent = *(float*)(g_libGTASA + 0x8F08C0)*2;
+		const float percent = *(float*)(g_libGTASA + 0x009920C0)*2;
 		if (percent <= 0.0f) return;
 
 		g_pJavaWrapper->UpdateSplash((int)percent);
@@ -303,9 +267,7 @@ int bBlockCWidgetRegionLookUpdate = 0;
 void (*TouchEvent)(int, int, int posX, int posY);
 void TouchEvent_hook(int type, int num, int posX, int posY)
 {
-	//Log("TOUCH EVENT HOOK");
-
-	if (*(uint8_t*)(g_libGTASA + 0x008C9BA3) == 1)
+	if (*(bool*)(g_libGTASA + 0x0096B514))
 	{
 		return TouchEvent(type, num, posX, posY);
 	}
@@ -331,39 +293,17 @@ void TouchEvent_hook(int type, int num, int posX, int posY)
 		}
 	}
 
-	/*
-	if (g_pWidgetManager)
-	{
-		g_pWidgetManager->OnTouchEvent(type, num, posX, posY);
-		if (g_pWidgetManager->GetWidget(WIDGET_MICROPHONE))
-		{
-			if (g_pWidgetManager->GetWidget(WIDGET_MICROPHONE)->GetState() == 1)
-			{
-				bBlockCWidgetRegionLookUpdate = 1;
-			}
-			if (g_pWidgetManager->GetWidget(WIDGET_MICROPHONE)->GetState() == 2)
-			{
-				bBlockCWidgetRegionLookUpdate = 0;
-			}
-		}
-	}
-	*/
 	if(bRet) 
 		return TouchEvent(type, num, posX, posY);
 }
 
 /* ====================================================== */
 
-unsigned int (*TextureDatabaseRuntime__Load)(uintptr_t *thiz, const char *a2, const char *a3, bool a4);
-unsigned int TextureDatabaseRuntime__Load_hook(uintptr_t *thiz, const char *a2, const char *a3, bool a4)
-{
-	Log("TextureDatabaseRuntime__Load = %s, %s, %s, %d", (char*)thiz, a2, a3, a4);
-	return TextureDatabaseRuntime__Load(thiz, a2, a3, a4);
-}
 void (*CStreaming_InitImageList)();
 void CStreaming_InitImageList_hook()
 {
-	char* ms_files = (char*)(g_libGTASA+0x6702FC);
+	char* ms_files = (char*)(g_libGTASA + 0x00792D80);
+
 	ms_files[0] = 0;
 	*(uint32_t*)&ms_files[44] = 0;
 	ms_files[48] = 0;
@@ -382,39 +322,17 @@ void CStreaming_InitImageList_hook()
 	*(uint32_t*)&ms_files[380] = 0;
 
 	CStreaming::AddImageToList("TEXDB\\GTA3.IMG", true);
-	CStreaming::AddImageToList("TEXDB\\SKINS.IMG", true);
-    CStreaming::AddImageToList("TEXDB\\CARS.IMG", true);
-	CStreaming::AddImageToList("TEXDB\\SAMP.IMG", true);
+	//CStreaming::AddImageToList("TEXDB\\SKINS.IMG", true);
+   // CStreaming::AddImageToList("TEXDB\\CARS.IMG", true);
 	CStreaming::AddImageToList("TEXDB\\SAMPCOL.IMG", true);
+	CStreaming::AddImageToList("TEXDB\\SAMP.IMG", true);
 }
 
 /* ====================================================== */
-typedef struct _PED_MODEL
-{
-	uintptr_t 	vtable;
-	uint8_t		data[88];
-} PED_MODEL; // SIZE = 92
 
-PED_MODEL PedsModels[370];
-int PedsModelsCount = 0;
+#include "CModelInfo.h"
 
-PED_MODEL* (*CModelInfo_AddPedModel)(int id);
-PED_MODEL* CModelInfo_AddPedModel_hook(int id)
-{
-	PED_MODEL* model = &PedsModels[PedsModelsCount];
-	memset(model, 0, sizeof(PED_MODEL));								// initialize by zero
 
-	((void(*)(void* thiz))(g_libGTASA + 0x0033559C + 1))((void*)model); // CBaseModelInfo::CBaseModelInfo();
-
-    model->vtable = (uintptr_t)(g_libGTASA+0x5C6E90);					// assign CPedModelInfo vmt
-
-    (( uintptr_t (*)(PED_MODEL*))(*(void**)(model->vtable+0x1C)))(model);  // CClumpModelInfo::Init()
-
-    *(PED_MODEL**)(g_libGTASA+0x87BF48+(id*4)) = model; // CModelInfo::ms_modelInfoPtrs
-
-	PedsModelsCount++;
-	return model;
-}
 /* ====================================================== */
 
 uint32_t (*CRadar__GetRadarTraceColor)(uint32_t color, uint8_t bright, uint8_t friendly);
@@ -428,7 +346,7 @@ int CRadar__SetCoordBlip_hook(int r0, float X, float Y, float Z, int r4, int r5,
 {
 	if (pNetGame && !strncmp(name, "CODEWAY", 7))
 	{
-		float findZ = ((float (*)(float, float))(g_libGTASA + 0x3C3DD8 + 1))(X, Y);
+		float findZ = ((float (*)(float, float))(g_libGTASA + 0x0042A7C4 + 1))(X, Y);
 		findZ += 1.5f;
 
 		Log("OnPlayerClickMap: %f, %f, %f", X, Y, Z);
@@ -493,18 +411,15 @@ __attribute__((naked)) void PickupPickUp_hook()
 					"cmp r1, #6\n\t"
 					"pop {pc}\n\t");
 }
-
+extern bool g_customFire;
 // fire weapon hooks
-uint32_t (*CWeapon__FireInstantHit)(WEAPON_SLOT_TYPE * thiz, PED_TYPE * pFiringEntity, VECTOR * vecOrigin, VECTOR * muzzlePosn, ENTITY_TYPE * targetEntity, VECTOR * target, VECTOR * originForDriveBy, int arg6, int muzzle);
-uint32_t CWeapon__FireInstantHit_hook(WEAPON_SLOT_TYPE * thiz, PED_TYPE * pFiringEntity, VECTOR * vecOrigin, VECTOR * muzzlePosn, ENTITY_TYPE * targetEntity, VECTOR * target, VECTOR * originForDriveBy, int arg6, int muzzle)
+uint32_t (*CWeapon__FireInstantHit)(CWeaponGta* thiz, CPedGta * pFiringEntity, CVector * vecOrigin, CVector * muzzlePosn, CEntityGta * targetEntity, CVector * target, CVector * originForDriveBy, int arg6, int muzzle);
+uint32_t CWeapon__FireInstantHit_hook(CWeaponGta* thiz, CPedGta * pFiringEntity, CVector * vecOrigin, CVector * muzzlePosn, CEntityGta * targetEntity, CVector * target, CVector * originForDriveBy, int arg6, int muzzle)
 {
-	uintptr_t dwRetAddr = 0;
-	__asm__ volatile ("mov %0, lr":"=r" (dwRetAddr));
 
-	dwRetAddr -= g_libGTASA;
-	if(dwRetAddr == 0x00569A84 + 1 || dwRetAddr == 0x00569616 + 1 || dwRetAddr == 0x0056978A + 1 || dwRetAddr == 0x00569C06 + 1)
+	if(!g_customFire)
 	{
-		PED_TYPE *pLocalPed = pGame->FindPlayerPed()->GetGtaActor();
+		CPedGta *pLocalPed = pGame->FindPlayerPed()->GetGtaActor();
 		if(pLocalPed)
 		{
 			if(pFiringEntity != pLocalPed)
@@ -534,21 +449,30 @@ uint32_t CWeapon__FireInstantHit_hook(WEAPON_SLOT_TYPE * thiz, PED_TYPE * pFirin
 			return muzzle;
 		}
 	}
-
+	g_customFire = false;
 	return CWeapon__FireInstantHit(thiz, pFiringEntity, vecOrigin, muzzlePosn, targetEntity, target, originForDriveBy, arg6, muzzle);
 }
 
-unsigned int (*MainMenuScreen__Update)(uintptr_t thiz, float a2);
-unsigned int MainMenuScreen__Update_hook(uintptr_t thiz, float a2)
+void (*MainMenuScreen__Update)(uintptr_t* thiz, float deltaTime);
+void MainMenuScreen__Update_hook(uintptr_t* thiz, float deltaTime)
 {
-	unsigned int ret = MainMenuScreen__Update(thiz, a2);
-	MainMenu_OnStartSAMP();
-	return ret;
+	MainMenuScreen__Update(thiz, deltaTime);
+
+	if(g_bPlaySAMP) return;
+
+	InitInMenu();
+
+	// StartGameScreen::OnNewGameCheck()
+	(( void (*)())(g_libGTASA + 0x002A7270 + 1))();
+
+	//*(uint32_t*)(g_libGTASA + 0x009E75B8) = 8;
+
+	g_bPlaySAMP = true;
 }
 
 static char szLastBufferedName[40];
-int (*cHandlingDataMgr__FindExactWord)(uintptr_t thiz, char* line, char* nameTable, int entrySize, int entryCount);
-int cHandlingDataMgr__FindExactWord_hook(uintptr_t thiz, char* line, char* nameTable, int entrySize, int entryCount)
+int (*cHandlingDataMgr__FindExactWord)(uintptr_t *thiz, char* line, char* nameTable, int entrySize, int entryCount);
+int cHandlingDataMgr__FindExactWord_hook(uintptr_t *thiz, char* line, char* nameTable, int entrySize, int entryCount)
 {
 	strncpy(&szLastBufferedName[0], line, entrySize);
 	return cHandlingDataMgr__FindExactWord(thiz, line, nameTable, entrySize, entryCount);
@@ -557,7 +481,7 @@ int cHandlingDataMgr__FindExactWord_hook(uintptr_t thiz, char* line, char* nameT
 void (*cHandlingDataMgr__ConvertDataToGameUnits)(uintptr_t thiz, tHandlingData* handling);
 void cHandlingDataMgr__ConvertDataToGameUnits_hook(uintptr_t thiz, tHandlingData* handling)
 {
-	int iHandling = ((int(*)(uintptr_t, char*))(g_libGTASA + 0x004FBC4C + 1))(thiz, &szLastBufferedName[0]);
+	int iHandling = ((int(*)(uintptr_t, char*))(g_libGTASA + 0x00570D28 + 1))(thiz, &szLastBufferedName[0]);
 
 	CHandlingDefault::FillDefaultHandling((uint16_t)iHandling, handling);
 
@@ -646,62 +570,49 @@ void(*CStreaming__Init2)();
 void CStreaming__Init2_hook()
 {
 	CStreaming__Init2();
-	CHook::UnFuck(g_libGTASA + 0x5DE734);
-	*(uint32_t*)(g_libGTASA + 0x5DE734) = 0x20000000;
-}
-
-void (*NvUtilInit)(void);
-void NvUtilInit_hook(void)
-{	
-	NvUtilInit();
-
-
+	CHook::UnFuck(g_libGTASA + 0x00685FA0);
+	*(uint32_t*)(g_libGTASA + 0x00685FA0) = 0x20000000;
 }
 
 signed int (*OS_FileOpen)(unsigned int a1, int *a2, const char *a3, int a4);
 signed int OS_FileOpen_hook(unsigned int a1, int *a2, const char *a3, int a4)
 {
-	//if (strstr(a3, ".unc") ) return 0;
+	uintptr_t calledFrom = 0;
+	__asm__ volatile("mov %0, lr"
+			: "=r"(calledFrom));
+	calledFrom -= g_libGTASA;
+	signed int retn = OS_FileOpen(a1, a2, a3, a4);
 
-  //  Log("%s", a3);
-    uintptr_t calledFrom = 0;
-    __asm__ volatile("mov %0, lr"
-    : "=r"(calledFrom));
-    calledFrom -= g_libGTASA;
-    signed int retn = OS_FileOpen(a1, a2, a3, a4);
-
-    //if (calledFrom == 0x1BCE9A + 1)
-    //{
-        if (isEncrypted(a3))
-        {
-            lastOpenedFile = *a2;
-        }
-  //  }
-    return retn;
+	//if (calledFrom == 0x1BCE9A + 1)
+	//{
+	if (isEncrypted(a3))
+	{
+		lastOpenedFile = *a2;
+	}
+	//  }
+	return retn;
 }
 
-size_t (*OS_FileRead)(FILE *a1, void *a2, size_t a3);
-size_t OS_FileRead_hook(FILE *a1, void *a2, size_t a3)
+size_t (*OS_FileRead)(FILE *file, void *a2, size_t numBytes);
+size_t OS_FileRead_hook(FILE *file, void *a2, size_t numBytes)
 {
+
     uintptr_t calledFrom = 0;
     __asm__ volatile("mov %0, lr"
     : "=r"(calledFrom));
     calledFrom -= g_libGTASA;
 
-    if (!a3)
-    {
-        return 0;
-    }
 
-    if (calledFrom == 0x1BCEE0 + 1 && a1 == (void *)lastOpenedFile)
+    if (calledFrom == 0x1E8142 + 1 && file == (void*)lastOpenedFile)
     {
+		Log("encrypt");
         lastOpenedFile = 0;
 
         AES_ctx ctx;
 		InitCTX(ctx, &g_iEncryptionKeyTXD[0]);
 
-        size_t retv = OS_FileRead(a1, a2, a3);
-        int fileSize = a3;
+        size_t retv = OS_FileRead(file, a2, numBytes);
+        int fileSize = numBytes;
         int iters = fileSize / PART_SIZE_TXD;
         uintptr_t pointer = (uintptr_t)a2;
         for (int i = 0; i < iters; i++)
@@ -711,9 +622,9 @@ size_t OS_FileRead_hook(FILE *a1, void *a2, size_t a3)
         }
         return retv;
     }
-    if (calledFrom == 0x001BDD34 + 1)
+    if (calledFrom == 0x001E91AE + 1)
     {
-        int retn = OS_FileRead(a1, a2, a3);
+        int retn = OS_FileRead(file, a2, numBytes);
 
         dwRLEDecompressSourceSize = *(uint32_t*)a2;
 
@@ -721,7 +632,7 @@ size_t OS_FileRead_hook(FILE *a1, void *a2, size_t a3)
     }
     else
     {
-        int retn = OS_FileRead(a1, a2, a3);
+        int retn = OS_FileRead(file, a2, numBytes);
 
         return retn;
     }
@@ -756,14 +667,14 @@ void CTimer__EndUserPause_hook()
 		CSpeedometr::tempToggle(true);
 	}
 
-	*(uint8_t*)(g_libGTASA + 0x008C9BA3) = 0;
+	*(uint8_t*)(g_libGTASA + 0x0096B514) = 0;
 }
 
 extern char g_iLastBlock[512];
-int *(*LoadFullTexture)(uintptr_t *thiz, unsigned int a2);
-int *LoadFullTexture_hook(uintptr_t *thiz, unsigned int a2)
+unsigned int(*LoadFullTexture)(uintptr_t *thiz, unsigned int entryIndex);
+unsigned int LoadFullTexture_hook(uintptr_t *thiz, unsigned int entryIndex)
 {
-	strcpy(g_iLastBlock, *(const char **)(*((DWORD *)thiz + 7) + 0x17 * a2));
+	strcpy(g_iLastBlock, *(const char **)(*((DWORD *)thiz + 7) + 0x17 * entryIndex));
     //*((DWORD *)thiz + 0x1A) = 0;
     //Log("LoadFullTexture_hook %s", *(const char **)(*((DWORD *)thiz + 7) + 0x17 * a2));
 //	Log("%d", *((DWORD *)thiz + 0x1A));
@@ -771,7 +682,7 @@ int *LoadFullTexture_hook(uintptr_t *thiz, unsigned int a2)
 //    if(strcmp(*(const char **)(*((DWORD *)thiz + 7) + 0x17 * a2), "hud_bg") == 0){
 //
 //    }
-    return LoadFullTexture(thiz, a2);
+    return LoadFullTexture(thiz, entryIndex);
 }
 //
 uint8_t* (*RLEDecompress)(uint8_t* pDest, size_t uiDestSize, uint8_t const* pSrc, size_t uiSegSize, uint32_t uiEscape);
@@ -909,29 +820,29 @@ void CPools_Initialise_hook(void)
 	// 15104 / 64 = 236
 	static auto ms_pPedAttractorPool = PoolAllocator::Allocate(200, 236);	// 64
 
-	*(PoolAllocator::Pool**)(g_libGTASA + 0x8B93E0) = ms_pPtrNodeSingleLinkPool;
-	*(PoolAllocator::Pool**)(g_libGTASA + 0x8B93DC) = ms_pPtrNodeDoubleLinkPool;
-	*(PoolAllocator::Pool**)(g_libGTASA + 0x8B93D8) = ms_pEntryInfoNodePool;
-	*(PoolAllocator::Pool**)(g_libGTASA + 0x8B93D4) = ms_pPedPool;
-	*(PoolAllocator::Pool**)(g_libGTASA + 0x8B93D0) = ms_pVehiclePool;
-	*(PoolAllocator::Pool**)(g_libGTASA + 0x8B93CC) = ms_pBuildingPool;
-	*(PoolAllocator::Pool**)(g_libGTASA + 0x8B93C8) = ms_pObjectPool;
-	*(PoolAllocator::Pool**)(g_libGTASA + 0x8B93C4) = ms_pDummyPool;
-	*(PoolAllocator::Pool**)(g_libGTASA + 0x8B93C0) = ms_pColModelPool;
-	*(PoolAllocator::Pool**)(g_libGTASA + 0x8B93BC) = ms_pTaskPool;
-	*(PoolAllocator::Pool**)(g_libGTASA + 0x8B93B8) = ms_pEventPool;
-	*(PoolAllocator::Pool**)(g_libGTASA + 0x8B93B4) = ms_pPointRoutePool;
-	*(PoolAllocator::Pool**)(g_libGTASA + 0x8B93B0) = ms_pPatrolRoutePool;
-	*(PoolAllocator::Pool**)(g_libGTASA + 0x8B93AC) = ms_pNodeRoutePool;
-	*(PoolAllocator::Pool**)(g_libGTASA + 0x8B93A8) = ms_pTaskAllocatorPool;
-	*(PoolAllocator::Pool**)(g_libGTASA + 0x8B93A4) = ms_pPedIntelligencePool;
-	*(PoolAllocator::Pool**)(g_libGTASA + 0x8B93A0) = ms_pPedAttractorPool;
+	*(PoolAllocator::Pool**)(g_libGTASA + 0x0095AC38) = ms_pPtrNodeSingleLinkPool;
+	*(PoolAllocator::Pool**)(g_libGTASA + 0x0095AC3C) = ms_pPtrNodeDoubleLinkPool;
+	*(PoolAllocator::Pool**)(g_libGTASA + 0x0095AC40) = ms_pEntryInfoNodePool;
+	*(PoolAllocator::Pool**)(g_libGTASA + 0x0095AC44) = ms_pPedPool;
+	*(PoolAllocator::Pool**)(g_libGTASA + 0x0095AC48) = ms_pVehiclePool;
+	*(PoolAllocator::Pool**)(g_libGTASA + 0x0095AC4C) = ms_pBuildingPool;
+	*(PoolAllocator::Pool**)(g_libGTASA + 0x0095AC50) = ms_pObjectPool;
+	*(PoolAllocator::Pool**)(g_libGTASA + 0x0095AC54) = ms_pDummyPool;
+	*(PoolAllocator::Pool**)(g_libGTASA + 0x0095AC58) = ms_pColModelPool;
+	*(PoolAllocator::Pool**)(g_libGTASA + 0x0095AC5C) = ms_pTaskPool;
+	*(PoolAllocator::Pool**)(g_libGTASA + 0x0095AC60) = ms_pEventPool;
+	*(PoolAllocator::Pool**)(g_libGTASA + 0x0095AC64) = ms_pPointRoutePool;
+	*(PoolAllocator::Pool**)(g_libGTASA + 0x0095AC68) = ms_pPatrolRoutePool;
+	*(PoolAllocator::Pool**)(g_libGTASA + 0x0095AC6C) = ms_pNodeRoutePool;
+	*(PoolAllocator::Pool**)(g_libGTASA + 0x0095AC70) = ms_pTaskAllocatorPool;
+	*(PoolAllocator::Pool**)(g_libGTASA + 0x0095AC74) = ms_pPedIntelligencePool;
+	*(PoolAllocator::Pool**)(g_libGTASA + 0x0095AC78) = ms_pPedAttractorPool;
 }
 
 void (*CPlaceable_InitMatrixArray)();
 void CPlaceable_InitMatrixArray_hook()
 {
-	CHook::CallFunction<void>(g_libGTASA + 0x3AB2D8 + 1, g_libGTASA + 0x8B90A8, 10000);
+	CHook::CallFunction<void>(g_libGTASA + 0x00407FD4 + 1, g_libGTASA + 0x0095A988, 10000);
 }
 
 
@@ -1028,128 +939,113 @@ uintptr_t GetMeshPriority_hook(uintptr_t rpMesh)
 	return GetMeshPriority(rpMesh);
 }
 
-int (*CTextureDatabaseRuntime__GetEntry)(unsigned int a1, const char *a2, bool *a3, int a4);
-int CTextureDatabaseRuntime__GetEntry_hook(unsigned int a1, const char *a2, bool *a3, int a4)
+int (*CTextureDatabaseRuntime__GetEntry)(unsigned int *thiz, const char *name, bool *hasSibling);
+int CTextureDatabaseRuntime__GetEntry_hook(unsigned int *thiz, const char *name, bool *hasSibling)
 {
 	//Log("GetEntry = %s", (char*)a1);
 	int result; // r0
 
-	if (a1)
-		result = CTextureDatabaseRuntime__GetEntry(a1, a2, a3, a4);
+	if (thiz)
+		result = CTextureDatabaseRuntime__GetEntry(thiz, name, hasSibling);
 	else
 		result = -1;
+
 	return result;
 }
 
-int (*CGame__Init2)(uintptr_t *thiz, const char *a2);
-int CGame__Init2_hook(uintptr_t *thiz, const char *a2)
+void (*CBaseModelInfo__SetColModel)(uintptr_t* thiz, uintptr_t* pColModel, bool bOwnColModel);
+void CBaseModelInfo__SetColModel_hook(uintptr_t* thiz, uintptr_t* pColModel, bool bOwnColModel)
 {
+	if(!thiz || !pColModel)
+		return;
 
+	CBaseModelInfo__SetColModel(thiz, pColModel, bOwnColModel);
 }
 
-uintptr_t* (*CCustomRoadsignMgr_RenderRoadsignAtomic)(uintptr_t*, VECTOR const&);
-uintptr_t* CCustomRoadsignMgr_RenderRoadsignAtomic_hook(uintptr_t* atomic, VECTOR const& a2)
-{
-	return atomic;
-}
 
 void InstallSpecialHooks()
 {
-	//CHook::WriteMemory(g_libGTASA + 0x52F4C6, (uintptr_t)"\x00\x22\xC4\xF2\xC8\x32", 6); // CEntity::ProcessLightsForEntity
-	//CHook::JMPCode(g_libGTASA + 0x3A9B10 + 0x1, g_libGTASA + 0x3A98AC + 0x1);
-	// Fix sky multitude
-	//CHook::WriteMemory(CHook::getSym(g_libGTASA, "RunUVAnim"), (uintptr_t)"\x01", 1);
-
-
-	//CHook::WriteMemory(g_libGTASA + 0x519A7C, (uintptr_t)"\x02", 1);
-	//CHook::WriteMemory(g_libGTASA + 0x519AA0, (uintptr_t)"\x02", 1);
-
 	Log("InstallSpecialHooks");
 
-	// texture Краш если с текстурами какая-то хуйня
-	CHook::InlineHook(g_libGTASA, 0x1bdc3c, &CTextureDatabaseRuntime__GetEntry_hook, &CTextureDatabaseRuntime__GetEntry);
+//	// texture Краш если с текстурами какая-то хуйня
+	CHook::InlineHook(g_libGTASA, 0x001E8FF8, &CTextureDatabaseRuntime__GetEntry_hook, &CTextureDatabaseRuntime__GetEntry);
 
-	//CHook::InlineHook(g_libGTASA, 0x0055B968, &TextureDatabaseRuntime__Load_hook, (uintptr_t*)&TextureDatabaseRuntime__Load);
-	//IMG
-	CHook::InlineHook(g_libGTASA, 0x28E83C, &CStreaming_InitImageList_hook, (uintptr_t*)&CStreaming_InitImageList);
-
-	CHook::InlineHook(g_libGTASA, 0x001E4AE4, &GetMeshPriority_hook, &GetMeshPriority);
-	//new fix
-	CHook::InlineHook(g_libGTASA, 0x1EEC90, &rxOpenGLDefaultAllInOneRenderCB_hook, &rxOpenGLDefaultAllInOneRenderCB);
-	CHook::InlineHook(g_libGTASA, 0x28AAAC, &CustomPipeRenderCB_hook, &CustomPipeRenderCB);
-
-	//
-	// CPlaceable::InitMatrixArray
-	CHook::WriteMemory(g_libGTASA + 0x3ABB0A, "\x4F\xF4\x7A\x61", 4); // MOV.W R1, #4000
-	CHook::InlineHook(g_libGTASA, 0x3ABB08, &CPlaceable_InitMatrixArray_hook, &CPlaceable_InitMatrixArray);
-
+//	//IMG
+	//CHook::InlineHook(g_libGTASA, 0x3850E4, &CBaseModelInfo__DeleteCollisionModel_hook, &CBaseModelInfo__DeleteCollisionModel);
+	//CHook::InlineHook(g_libGTASA, 0x3850E4, &CBaseModelInfo__SetColModel_hook, &CBaseModelInfo__SetColModel);
+	 CHook::InlineHook(g_libGTASA, 0x002CF680, &CStreaming_InitImageList_hook, (uintptr_t*)&CStreaming_InitImageList);
+//
+	CHook::InlineHook(g_libGTASA, 0x0021829C, &GetMeshPriority_hook, &GetMeshPriority);
+//	//new fix
+//	CHook::InlineHook(g_libGTASA, 0x1EEC90, &rxOpenGLDefaultAllInOneRenderCB_hook, &rxOpenGLDefaultAllInOneRenderCB);
+//	CHook::InlineHook(g_libGTASA, 0x28AAAC, &CustomPipeRenderCB_hook, &CustomPipeRenderCB);
+//
+//	//
+//	// CPlaceable::InitMatrixArray
+//	CHook::WriteMemory(g_libGTASA + 0x3ABB0A, "\x4F\xF4\x7A\x61", 4); // MOV.W R1, #4000
+	CHook::InlineHook(g_libGTASA, 0x00408B20, &CPlaceable_InitMatrixArray_hook, &CPlaceable_InitMatrixArray);
+//
 	// RLEDecompress fix
-	CHook::InlineHook(g_libGTASA, 0x001BC314, &RLEDecompress_hook, &RLEDecompress);
-
-	//
-	CHook::InlineHook(g_libGTASA, 0x001BDCC4, &LoadFullTexture_hook, &LoadFullTexture);
-
-	CHook::NOP(g_libGTASA + 0x00185DE8, 2);//_rwOpenGLNativeTextureReadXBOXPvS_
-	//
-	CHook::NOP(g_libGTASA + 0x002F9E5C, 10); 	//LoadCutsceneData
-	CHook::NOP(g_libGTASA + 0x0040E536, 2);		//CCutsceneMgr::Initialise
-
-	CHook::InlineHook(g_libGTASA, 0x003BF784, &CTimer__StartUserPause_hook, &CTimer__StartUserPause);
-	CHook::InlineHook(g_libGTASA, 0x003BF7A0, &CTimer__EndUserPause_hook, &CTimer__EndUserPause);
-
-	CHook::NOP(g_libGTASA + 0x00398972, 2); // get out fucking roadblocks
-
-	//crash
-	if ( !*(uintptr_t *)(g_libGTASA + 0x61B298) && !((int (*)(const char *))(g_libGTASA + 0x179A20))("glAlphaFuncQCOM") )
-	{
-		CHook::NOP(g_libGTASA + 0x1A6164, 4);
-		CHook::WriteMemory(g_libGTASA + 0x1A6164, "\x70\x47", 2);
-	}
-
-	//pvr
-	CHook::UnFuck(g_libGTASA + 0x00573670);
-	*(char*)(g_libGTASA + 0x00573670 + 12) = 'd';
-	*(char*)(g_libGTASA + 0x00573670 + 13) = 'x';
-	*(char*)(g_libGTASA + 0x00573670 + 14) = 't';
-
-	CHook::UnFuck(g_libGTASA + 0x005736CC);
-	*(char*)(g_libGTASA + 0x005736CC + 12) = 'd';
-	*(char*)(g_libGTASA + 0x005736CC + 13) = 'x';
-	*(char*)(g_libGTASA + 0x005736CC + 14) = 't';
-
-	//etc
-	CHook::UnFuck(g_libGTASA + 0x00573684);
-	*(char*)(g_libGTASA + 0x00573684 + 12) = 'd';
-	*(char*)(g_libGTASA + 0x00573684 + 13) = 'x';
-	*(char*)(g_libGTASA + 0x00573684 + 14) = 't';
-
-	CHook::UnFuck(g_libGTASA + 0x005736DC);
-	*(char*)(g_libGTASA + 0x005736DC + 12) = 'd';
-	*(char*)(g_libGTASA + 0x005736DC + 13) = 'x';
-	*(char*)(g_libGTASA + 0x005736DC + 14) = 't';
-
-	//CHook::InlineHook(g_libGTASA, 0x0052B810, &VolumetricCloudsInit_hook, &VolumetricCloudsInit);
-
-	CHook::WriteMemory(g_libGTASA + 0x0023BEDC, "\xF8\xB5", 2);
-	CHook::WriteMemory(g_libGTASA + 0x0023BEDE, "\x00\x46\x00\x46", 4);
-
-	CHook::InlineHook(g_libGTASA, 0x0023BEDC, &OS_FileRead_hook, &OS_FileRead);
-	CHook::InlineHook(g_libGTASA, 0x23B3DC, &NvFOpen_hook, & NvFOpen);
-	//CHook::InlineHook(g_libGTASA, 0x241D94, &NvUtilInit_hook, &NvUtilInit);
-
-	CHook::InlineHook(g_libGTASA, 0x269974, &MenuItem_add_hook, &MenuItem_add);
-	CHook::InlineHook(g_libGTASA, 0x40C530, &InitialiseRenderWare_hook, &InitialiseRenderWare);
-	CHook::InlineHook(g_libGTASA, 0x0025E660, &MainMenuScreen__Update_hook, &MainMenuScreen__Update);
-	CHook::InlineHook(g_libGTASA, 0x0023BB84, &OS_FileOpen_hook, &OS_FileOpen);
-
-	CHook::InlineHook(g_libGTASA, 0x004FBBB0, &cHandlingDataMgr__FindExactWord_hook, &cHandlingDataMgr__FindExactWord);
-	CHook::InlineHook(g_libGTASA, 0x004FBCF4, cHandlingDataMgr__ConvertDataToGameUnits_hook, &cHandlingDataMgr__ConvertDataToGameUnits);
-	CHook::InlineHook(g_libGTASA, 0x0023ACC4, NVEventGetNextEvent_hook, &NVEventGetNextEvent_hooked);
-	CHook::InlineHook(g_libGTASA, 0x004042A8, CStreaming__Init2_hook, &CStreaming__Init2);	// increase stream memory value
-	CHook::InlineHook(g_libGTASA, 0x3AF1A0, &CPools_Initialise_hook, &CPools_Initialise);
-	CHook::InlineHook(g_libGTASA, 0x531118, &CCustomRoadsignMgr_RenderRoadsignAtomic_hook, &CCustomRoadsignMgr_RenderRoadsignAtomic);
-
-//	JMPCode(g_libGTASA + 0x1A1ED8, (uintptr_t)rqVertexBufferSelect_HOOK);
+	//CHook::InlineHook(g_libGTASA, 0x001E7316, &RLEDecompress_hook, &RLEDecompress);
+//
+//	//
+	CHook::InlineHook(g_libGTASA, 0x001E9148, &LoadFullTexture_hook, &LoadFullTexture);
+//
+//	CHook::NOP(g_libGTASA + 0x00185DE8, 2);//_rwOpenGLNativeTextureReadXBOXPvS_
+//	//
+//	CHook::NOP(g_libGTASA + 0x002F9E5C, 10); 	//LoadCutsceneData
+	//CHook::NOP(g_libGTASA + 0x00471EE2, 2);		//CCutsceneMgr::Initialise
+//
+	CHook::InlineHook(g_libGTASA, 0x00421118, &CTimer__StartUserPause_hook, &CTimer__StartUserPause);
+	CHook::InlineHook(g_libGTASA, 0x00421128, &CTimer__EndUserPause_hook, &CTimer__EndUserPause);
+//
+//	CHook::NOP(g_libGTASA + 0x00398972, 2); // get out fucking roadblocks
+//
+//	//crash
+//	if ( !*(uintptr_t *)(g_libGTASA + 0x61B298) && !((int (*)(const char *))(g_libGTASA + 0x179A20))("glAlphaFuncQCOM") )
+//	{
+//		CHook::NOP(g_libGTASA + 0x1A6164, 4);
+//		CHook::WriteMemory(g_libGTASA + 0x1A6164, "\x70\x47", 2);
+//	}
+//
+//	//pvr
+	CHook::UnFuck(g_libGTASA + 0x001E87A0);
+	*(char*)(g_libGTASA + 0x1E87A0 + 12) = 'd';
+	*(char*)(g_libGTASA + 0x1E87A0 + 13) = 'x';
+	*(char*)(g_libGTASA + 0x1E87A0 + 14) = 't';
+//
+	CHook::UnFuck(g_libGTASA + 0x001E8C04);
+	*(char*)(g_libGTASA + 0x001E8C04 + 12) = 'd';
+	*(char*)(g_libGTASA + 0x001E8C04 + 13) = 'x';
+	*(char*)(g_libGTASA + 0x001E8C04 + 14) = 't';
+//
+//	//etc
+	CHook::UnFuck(g_libGTASA + 0x001E878C);
+	*(char*)(g_libGTASA + 0x001E878C + 12) = 'd';
+	*(char*)(g_libGTASA + 0x001E878C + 13) = 'x';
+	*(char*)(g_libGTASA + 0x001E878C + 14) = 't';
+//
+	CHook::UnFuck(g_libGTASA + 0x001E8BF4);
+	*(char*)(g_libGTASA + 0x001E8BF4 + 12) = 'd';
+	*(char*)(g_libGTASA + 0x001E8BF4 + 13) = 'x';
+	*(char*)(g_libGTASA + 0x001E8BF4 + 14) = 't';
+//
+//	CHook::WriteMemory(g_libGTASA + 0x0023BEDC, "\xF8\xB5", 2);
+//	CHook::WriteMemory(g_libGTASA + 0x0023BEDE, "\x00\x46\x00\x46", 4);
+//
+	CHook::InlineHook(g_libGTASA, 0x002671E2, &OS_FileRead_hook, &OS_FileRead);
+	//CHook::NOP(g_libGTASA + 0x3F3694, 2);
+	CHook::InlineHook(g_libGTASA, 0x00266DB4, &NvFOpen_hook, & NvFOpen);
+//
+	CHook::InlineHook(g_libGTASA, 0x0046F570, &InitialiseRenderWare_hook, &InitialiseRenderWare);
+	CHook::InlineHook(g_libGTASA, 0x0029C06C, &MainMenuScreen__Update_hook, &MainMenuScreen__Update);
+	CHook::InlineHook(g_libGTASA, 0x00266A68, &OS_FileOpen_hook, &OS_FileOpen);
+//
+	CHook::InlineHook(g_libGTASA, 0x00570C70, &cHandlingDataMgr__FindExactWord_hook, &cHandlingDataMgr__FindExactWord);
+	CHook::InlineHook(g_libGTASA, 0x00570DC8, cHandlingDataMgr__ConvertDataToGameUnits_hook, &cHandlingDataMgr__ConvertDataToGameUnits);
+	//CHook::InlineHook(g_libGTASA, 0x00269634, NVEventGetNextEvent_hook, &NVEventGetNextEvent_hooked);
+	CHook::InlineHook(g_libGTASA, 0x0046BB04, CStreaming__Init2_hook, &CStreaming__Init2);	// increase stream memory value
+	CHook::InlineHook(g_libGTASA, 0x0040C900, &CPools_Initialise_hook, &CPools_Initialise);
 }
 
 /* =========================================== Ped damage handler =========================================== */
@@ -1178,7 +1074,7 @@ struct CPedDamageResponseInterface
 
 struct CPedDamageResponseCalculatorInterface
 {
-	ENTITY_TYPE *pEntity;
+	CEntityGta *pEntity;
 	float fDamage;
 	ePedPieceTypes bodyPart;
 	unsigned int weaponType;
@@ -1188,7 +1084,7 @@ struct CPedDamageResponseCalculatorInterface
 // thanks Codeesar
 struct stPedDamageResponse
 {
-	ENTITY_TYPE* pEntity;
+	CEntityGta* pEntity;
 	float fDamage;
 	int iBodyPart;
 	int iWeaponType;
@@ -1197,31 +1093,31 @@ struct stPedDamageResponse
 
 extern float m_fWeaponDamages[43 + 1];
 
-void onDamage(PED_TYPE* issuer, PED_TYPE* damaged)
+void onDamage(CPedGta* issuer, CPedGta* damaged)
 {
 	if (!pNetGame) return;
-	PED_TYPE* pPedPlayer = GamePool_FindPlayerPed();
+	CPedGta* pPedPlayer = GamePool_FindPlayerPed();
 	if (damaged && (pPedPlayer == issuer))
 	{
-		if (pNetGame->GetPlayerPool()->FindRemotePlayerIDFromGtaPtr((PED_TYPE*)damaged) != INVALID_PLAYER_ID)
+		if (pNetGame->GetPlayerPool()->FindRemotePlayerIDFromGtaPtr((CPedGta*)damaged) != INVALID_PLAYER_ID)
 		{
 			CPlayerPool* pPlayerPool = pNetGame->GetPlayerPool();
 			CAMERA_AIM* caAim = pPlayerPool->GetLocalPlayer()->GetPlayerPed()->GetCurrentAim();
 
-			VECTOR aim;
-			aim.X = caAim->f1x;
-			aim.Y = caAim->f1y;
-			aim.Z = caAim->f1z;
+			CVector aim;
+			aim.x = caAim->f1x;
+			aim.y = caAim->f1y;
+			aim.z = caAim->f1z;
 
-			pPlayerPool->GetLocalPlayer()->SendBulletSyncData(pPlayerPool->FindRemotePlayerIDFromGtaPtr((PED_TYPE*)damaged), BULLET_HIT_TYPE_PLAYER, aim);
+			pPlayerPool->GetLocalPlayer()->SendBulletSyncData(pPlayerPool->FindRemotePlayerIDFromGtaPtr((CPedGta*)damaged), BULLET_HIT_TYPE_PLAYER, aim);
 		}
 	}
 }
 
-void (*CPedDamageResponseCalculator__ComputeDamageResponse)(stPedDamageResponse* thiz, ENTITY_TYPE* pEntity, uintptr_t pDamageResponse, bool bSpeak);
-void CPedDamageResponseCalculator__ComputeDamageResponse_hook(stPedDamageResponse* thiz, ENTITY_TYPE* pEntity, uintptr_t pDamageResponse, bool bSpeak)
+void (*CPedDamageResponseCalculator__ComputeDamageResponse)(stPedDamageResponse* thiz, CEntityGta* pEntity, uintptr_t pDamageResponse, bool bSpeak);
+void CPedDamageResponseCalculator__ComputeDamageResponse_hook(stPedDamageResponse* thiz, CEntityGta* pEntity, uintptr_t pDamageResponse, bool bSpeak)
 {
-	if (thiz && pEntity) onDamage((PED_TYPE*)*(uintptr_t*)thiz, (PED_TYPE*)pEntity);
+	if (thiz && pEntity) onDamage((CPedGta*)*(uintptr_t*)thiz, (CPedGta*)pEntity);
 	int weaponid = thiz->iWeaponType;
 	float fDamage;
 	if( weaponid < 0 || weaponid > size(m_fWeaponDamages) )
@@ -1247,13 +1143,13 @@ void CPedDamageResponseCalculator__ComputeDamageResponse_hook(stPedDamageRespons
 			else if(weaponid == 35 || weaponid == 16)
 				weaponid = 51; // explosion
 
-			PLAYERID damagedid = pPlayerPool->FindRemotePlayerIDFromGtaPtr((PED_TYPE*)thiz->pEntity); // отправитель урона
-			PLAYERID issuerid = pPlayerPool->FindRemotePlayerIDFromGtaPtr((PED_TYPE*)pEntity); // получатель
+			PLAYERID damagedid = pPlayerPool->FindRemotePlayerIDFromGtaPtr((CPedGta*)thiz->pEntity); // отправитель урона
+			PLAYERID issuerid = pPlayerPool->FindRemotePlayerIDFromGtaPtr((CPedGta*)pEntity); // получатель
 
 			PLAYERID byteLocalId = pPlayerPool->GetLocalPlayerID();
 
 			// give player damage
-			if((PED_TYPE*)thiz->pEntity == pGame->FindPlayerPed()->m_pPed && issuerid != INVALID_PLAYER_ID ) {
+			if((CPedGta*)thiz->pEntity == pGame->FindPlayerPed()->m_pPed && issuerid != INVALID_PLAYER_ID ) {
 				CHUD::addGiveDamageNotify(issuerid, weaponid, fDamage);
 				pPlayerPool->GetLocalPlayer()->GiveTakeDamage(false, issuerid, fDamage, weaponid,
 															  bodypart);
@@ -1321,48 +1217,23 @@ int CAnimBlendNode__FindKeyFrame_hook(int a1, float a2, int a3, int a4)
 
 
 /* ====================================================== */
-struct _ATOMIC_MODEL
-{
-	uintptr_t func_tbl;
-	char data[56];
-};
-extern struct _ATOMIC_MODEL* ATOMIC_MODELS;
-
-uintptr_t(*CModelInfo_AddAtomicModel)(int iModel);
-uintptr_t CModelInfo_AddAtomicModel_hook(int iModel)
-{
-	uint32_t iCount = *(uint32_t*)(g_libGTASA + 0x7802C4);
-	_ATOMIC_MODEL* model = &ATOMIC_MODELS[iCount];
-	*(uint32_t*)(g_libGTASA + 0x7802C4) = iCount + 1;
-
-	((void(*)(_ATOMIC_MODEL*))(*(uintptr_t*)(model->func_tbl + 0x1C)))(model);
-	_ATOMIC_MODEL** ms_modelInfoPtrs = (_ATOMIC_MODEL**)(g_libGTASA + 0x87BF48);
-	ms_modelInfoPtrs[iModel] = model;
-	return (uintptr_t)model;
-}
+#include "CAtomicModelInfo.h"
 
 /* ====================================================== */
 
+#include "CVehicleModelInfo.h"
 
-VEHICLE_MODEL VehicleModels[370];
-int VehicleModelsCount = 0;
+CStore<CVehicleModelInfo, 250> ms_vehicleModelInfoStore;
 
-VEHICLE_MODEL* (*CModelInfo_AddVehicleModel)(int id);
-VEHICLE_MODEL* CModelInfo_AddVehicleModel_hook(int id)
+CVehicleModelInfo* (*CModelInfo_AddVehicleModel)(int index);
+CVehicleModelInfo* CModelInfo_AddVehicleModel_hook(int index)
 {
-	VEHICLE_MODEL* model = &VehicleModels[VehicleModelsCount];
-	memset(model, 0, sizeof(VEHICLE_MODEL));
+	Log("CModelInfo_AddVehicleModel_hook");
 
-	((void(*)(void* thiz))(g_libGTASA + 0x00337AA0 + 1))((void*)model); // CVehicleModelInfo::CVehicleModelInfo();
-
-	model->vtable = (uintptr_t)(g_libGTASA + 0x005C6EE0);			// assign CVehicleModelInfo vmt
-
-	((uintptr_t(*)(VEHICLE_MODEL*))(*(void**)(model->vtable + 0x1C)))(model); // CVehicleModelInfo::Init()
-
-	*(VEHICLE_MODEL * *)(g_libGTASA + 0x87BF48 + (id * 4)) = model; // CModelInfo::ms_modelInfoPtrs
-
-	VehicleModelsCount++;
-	return model;
+//	auto& pInfo = ms_vehicleModelInfoStore.AddItem();
+//	pInfo.Init();
+//	CModelInfo::SetModelInfo(index, &pInfo);
+//	return &pInfo;
 }
 
 #include "..//keyboard.h"
@@ -1399,7 +1270,7 @@ uint64_t CWorld_ProcessPedsAfterPreRender_hook()
 }
 
 int RemoveModelIDs[MAX_REMOVE_MODELS];
-VECTOR RemovePos[MAX_REMOVE_MODELS];
+CVector RemovePos[MAX_REMOVE_MODELS];
 float RemoveRad[MAX_REMOVE_MODELS];
 int iTotalRemovedObjects = 0;
 
@@ -1413,10 +1284,10 @@ int CFileLoader__LoadObjectInstance_hook(uintptr_t thiz, uintptr_t name)
 	{
 		if (RemoveModelIDs[i] == *(uint32_t*)(thiz + 28))
 		{
-			VECTOR pos;
-			pos.X = *(float*)(thiz);
-			pos.Y = *(float*)(thiz + 4);
-			pos.Z = *(float*)(thiz + 8);
+			CVector pos;
+			pos.x = *(float*)(thiz);
+			pos.y = *(float*)(thiz + 4);
+			pos.z = *(float*)(thiz + 8);
 			if (GetDistanceBetween3DPoints(&pos, &RemovePos[i]) <= RemoveRad[i])
 			{
 				*(int*)(thiz + 28) = 19300;
@@ -1509,21 +1380,21 @@ uintptr_t RwFrameForAllObjectsCALLBACK1(uintptr_t object, CObject* pObject)
 
 int g_iLastRenderedObject;
 
-uintptr_t(*GetTexture_orig)(const char*);
-uintptr_t GetTexture_hook(const char* a1)
+RwTexture* (*GetTexture_orig)(const char* name);
+RwTexture* GetTexture_hook(const char* name)
 {
-	//001BE990
-	uintptr_t tex = ((uintptr_t(*)(const char*))(g_libGTASA + 0x001BE990 + 1))(a1);
-	if (!tex)
+	RwTexture* result = TextureDatabaseRuntime::GetTexture(name);
+
+	if (!result)
 	{
-		Log("Texture %s was not found", a1);
-		return 0;
+		Log("Texture %s was not found", name);
+		return nullptr;
 	}
 	else
 	{
-		Log("Texture %s", a1);
-		++* (uintptr_t*)(tex + 84);
-		return tex;
+		Log("Texture %s", name);
+		++*(int32_t *)(result + 0x54); // ++result->refCount;
+		return result;
 	}
 }
 
@@ -1537,7 +1408,7 @@ int CPlayerInfo__Process_hook(uintptr_t *thiz, uintptr_t *a2)
 	}
 	return CPlayerInfo__Process(thiz, a2);
 }
-typedef uintptr_t RpClump;
+
 RwFrame* CClumpModelInfo_GetFrameFromId_Post(RwFrame* pFrameResult, RpClump* pClump, int id)
 {
 	if (pFrameResult)
@@ -1608,7 +1479,7 @@ void GivePedScriptedTask_hook(uintptr_t* thiz, int pedHandle, uintptr_t* a3, int
 	//if(!(pedHandle>>8))return;
 	uintptr_t tmp = *(uintptr_t*)(g_libGTASA + 0x008B93D4);
 
-	if(  !(*(const PED_TYPE**) tmp + 0x4 ) ) return; // CPools::ms_pPedPool
+	if(  !(*(const CPedGta**) tmp + 0x4 ) ) return; // CPools::ms_pPedPool
 
 	GivePedScriptedTask(thiz, pedHandle, a3, commandID);
 }
@@ -1723,7 +1594,7 @@ uintptr_t CVehicle__SetupRenderCB(uintptr_t atomic, void* data)
 	return atomic;
 }
 #include "..//cryptors/MODELINFO_EDITABLE_result.h"
-typedef uintptr_t RpClump;
+
 void (*CVehicleModelInfo__SetEditableMaterials)(uintptr_t);
 void CVehicleModelInfo__SetEditableMaterials_hook(uintptr_t clump)
 {
@@ -1795,12 +1666,12 @@ void CGame__Process_hook()
 
 uint16_t g_usLastProcessedModelIndexAutomobile = 0;
 int g_iLastProcessedModelIndexAutoEnt = 0;
-void (*CAutomobile__ProcessEntityCollision)(VEHICLE_TYPE* a1, ENTITY_TYPE* a2, int a3);
-void CAutomobile__ProcessEntityCollision_hook(VEHICLE_TYPE* a1, ENTITY_TYPE* a2, int a3)
+void (*CAutomobile__ProcessEntityCollision)(CVehicleGta* a1, CEntityGta* a2, int a3);
+void CAutomobile__ProcessEntityCollision_hook(CVehicleGta* a1, CEntityGta* a2, int a3)
 {
 	PROTECT_CODE_AUTOMOBILE_COLLISION;
 
-	g_usLastProcessedModelIndexAutomobile = a1->entity.nModelIndex;
+	g_usLastProcessedModelIndexAutomobile = a1->nModelIndex;
 	g_iLastProcessedModelIndexAutoEnt = a2->nModelIndex;
 
 	bool bReplace = false;
@@ -1819,7 +1690,7 @@ void CAutomobile__ProcessEntityCollision_hook(VEHICLE_TYPE* a1, ENTITY_TYPE* a2,
 			{
 				if (pVeh->bHasSuspensionLines && pVeh->GetVehicleSubtype() == VEHICLE_SUBTYPE_CAR)
 				{
-					pColData = GetCollisionDataFromModel(a1->entity.nModelIndex);
+					pColData = GetCollisionDataFromModel(a1->nModelIndex);
 					if (pColData && pVeh->m_pSuspensionLines)
 					{
 						if (*(void**)(pColData + 16))
@@ -1859,8 +1730,8 @@ void MainMenuScreen__OnExit_hook()
 }
 
 // TODO: VEHICLE RESET SUSPENSION
-void (*CShadows__StoreCarLightShadow)(VEHICLE_TYPE* vehicle, int id, RwTexture* texture, VECTOR* posn, float frontX, float frontY, float sideX, float sideY, unsigned char red, unsigned char green, unsigned char blue, float maxViewAngle);
-void CShadows__StoreCarLightShadow_hook(VEHICLE_TYPE* vehicle, int id, RwTexture* texture, VECTOR* posn, float frontX, float frontY, float sideX, float sideY, unsigned char red, unsigned char green, unsigned char blue, float maxViewAngle)
+void (*CShadows__StoreCarLightShadow)(CVehicleGta* vehicle, int id, RwTexture* texture, CVector* posn, float frontX, float frontY, float sideX, float sideY, unsigned char red, unsigned char green, unsigned char blue, float maxViewAngle);
+void CShadows__StoreCarLightShadow_hook(CVehicleGta* vehicle, int id, RwTexture* texture, CVector* posn, float frontX, float frontY, float sideX, float sideY, unsigned char red, unsigned char green, unsigned char blue, float maxViewAngle)
 {
 	uint8_t r, g, b;
 	r = red;
@@ -1884,7 +1755,7 @@ void CShadows__StoreCarLightShadow_hook(VEHICLE_TYPE* vehicle, int id, RwTexture
 
 void CVehicle__DoHeadLightReflectionTwin(CVehicle* pVeh, MATRIX4X4* a2)
 {
-	VEHICLE_TYPE* v2; // r4
+	CVehicleGta* v2; // r4
 	int v3; // r2
 	MATRIX4X4* v4; // r5
 	float* v5; // r3
@@ -1903,12 +1774,11 @@ void CVehicle__DoHeadLightReflectionTwin(CVehicle* pVeh, MATRIX4X4* a2)
 	float v18; // s15
 	float v19; // ST08_4
 
-	uintptr_t* dwModelarray = (uintptr_t*)(g_libGTASA + 0x87BF48);
 
 	v2 = pVeh->m_pVehicle;
 	v3 = *((uintptr_t*)v2 + 5);
 	v4 = a2;
-	v5 = *(float**)(dwModelarray[v2->entity.nModelIndex] + 116);
+	v5 = *(float**)(CModelInfo::ms_modelInfoPtrs[v2->nModelIndex] + 116);
 	v6 = *v5;
 	v7 = v5[1];
 	if (v3)
@@ -1930,9 +1800,9 @@ void CVehicle__DoHeadLightReflectionTwin(CVehicle* pVeh, MATRIX4X4* a2)
 
 	v19 = v15 * v18;
 
-	VECTOR pos;
-	memcpy(&pos, &(v2->entity.mat->pos), sizeof(VECTOR));
-	pos.Z += 2.0f;
+	CVector pos;
+	memcpy(&pos, &(v2->mat->pos), sizeof(CVector));
+	pos.z += 2.0f;
 
 	CShadows__StoreCarLightShadow(
 		v2,
@@ -1947,8 +1817,8 @@ void CVehicle__DoHeadLightReflectionTwin(CVehicle* pVeh, MATRIX4X4* a2)
 		7.0f);
 }
 
-void (*CVehicle__DoHeadLightBeam)(VEHICLE_TYPE* vehicle, int arg0, MATRIX4X4& matrix, unsigned char arg2);
-void CVehicle__DoHeadLightBeam_hook(VEHICLE_TYPE* vehicle, int arg0, MATRIX4X4& matrix, unsigned char arg2)
+void (*CVehicle__DoHeadLightBeam)(CVehicleGta* vehicle, int arg0, MATRIX4X4& matrix, unsigned char arg2);
+void CVehicle__DoHeadLightBeam_hook(CVehicleGta* vehicle, int arg0, MATRIX4X4& matrix, unsigned char arg2)
 {
 	uint8_t r, g, b;
 	r = 0xFF;
@@ -2047,8 +1917,8 @@ void CMatrix__SetScale_hook(void* thiz, float x, float y, float z)
 	CMatrix__SetScale(thiz, x, y, z);
 }
 
-void (*CAutomobile__UpdateWheelMatrix)(VEHICLE_TYPE* thiz, int, int);
-void CAutomobile__UpdateWheelMatrix_hook(VEHICLE_TYPE* thiz, int nodeIndex, int flags)
+void (*CAutomobile__UpdateWheelMatrix)(CVehicleGta* thiz, int, int);
+void CAutomobile__UpdateWheelMatrix_hook(CVehicleGta* thiz, int nodeIndex, int flags)
 {
 	if (g_pLastProcessedVehicleMatrix)
 	{
@@ -2058,11 +1928,10 @@ void CAutomobile__UpdateWheelMatrix_hook(VEHICLE_TYPE* thiz, int nodeIndex, int 
 	CAutomobile__UpdateWheelMatrix(thiz, nodeIndex, flags);
 }
 
-void (*CAutomobile__PreRender)(VEHICLE_TYPE* thiz);
-void CAutomobile__PreRender_hook(VEHICLE_TYPE* thiz)
+void (*CAutomobile__PreRender)(CVehicleGta* thiz);
+void CAutomobile__PreRender_hook(CVehicleGta* thiz)
 {
-	uintptr_t* dwModelarray = (uintptr_t*)(g_libGTASA + 0x87BF48);
-	uint8_t* pModelInfoStart = (uint8_t*)dwModelarray[thiz->entity.nModelIndex];
+	uint8_t* pModelInfoStart = reinterpret_cast<uint8_t *>(CModelInfo::ms_modelInfoPtrs[thiz->nModelIndex]);
 
 	float fOldFront = *(float*)(pModelInfoStart + 88);
 	float fOldRear = *(float*)(pModelInfoStart + 92);
@@ -2085,7 +1954,7 @@ void CAutomobile__PreRender_hook(VEHICLE_TYPE* thiz)
 				}
 				if (pVeh->m_bShadow && pVeh->m_Shadow.pTexture)
 				{
-					CVehicle__DoHeadLightReflectionTwin(pVeh, pVeh->m_pVehicle->entity.mat);
+					CVehicle__DoHeadLightReflectionTwin(pVeh, pVeh->m_pVehicle->mat);
 				}
 			}
 		}
@@ -2156,8 +2025,8 @@ void CSprite2d__Draw_hook(CSprite2d* a1, CRect* a2, CRGBA* a3)
 		return CSprite2d__Draw(a1, a2, a3);
 	}
 
-	if (dwRetAddr == 0x003D3796 + 1 || dwRetAddr == 0x003D376C + 1 || dwRetAddr == 0x003D373E + 1 || dwRetAddr == 0x003D3710 + 1)
-	{
+	//if (dwRetAddr == 0x003D3796 + 1 || dwRetAddr == 0x003D376C + 1 || dwRetAddr == 0x003D373E + 1 || dwRetAddr == 0x003D3710 + 1)
+	///{
 		if(!CHUD::bIsShow)return;
 		if (CRadarRect::m_pDiscTexture == nullptr)
 		{
@@ -2174,41 +2043,18 @@ void CSprite2d__Draw_hook(CSprite2d* a1, CRect* a2, CRGBA* a3)
 			//CChatWindow::AddDebugMessage("Replacing for disc");
 		}
 
-		float* thiz = (float*) * (uintptr_t*)(g_libGTASA + 0x6580C8);
 
-		//thiz[0] = (float)100;
-		if (thiz)
-		{
-
-			thiz[3] = CHUD::radarPos.X;
-			thiz[4] = CHUD::radarPos.Y;
-
-			thiz[5] = 38.0f;
-			thiz[6] = 38.0f;
-		}
 		
-	}
+	//}
 
 	CSprite2d__Draw(a1, a2, a3);
-}
-
-void(*CHud__Draw)();
-void CHud__Draw_hook()
-{
-	float* thiz = (float*) * (uintptr_t*)(g_libGTASA + 0x6580C8);
-	if (thiz)
-	{
-		thiz[5] = 45.0f;
-		thiz[6] = 45.0f;
-	}
-	CHud__Draw();
 }
 
 void (*CCam__Process)(uintptr_t);
 void CCam__Process_hook(uintptr_t thiz)
 {
 
-	VECTOR vecSpeed;
+	CVector vecSpeed;
 	CVehicle* pVeh = nullptr;
 	float pOld = *(float*)(g_libGTASA + 0x00608558);
 	if (pNetGame && (*(uint16_t*)(thiz + 14) == 18 || *(uint16_t*)(thiz + 14) == 16) && CFirstPersonCamera::IsEnabled())
@@ -2222,10 +2068,10 @@ void CCam__Process_hook(uintptr_t thiz)
 				if (pVeh)
 				{
 					pVeh->GetMoveSpeedVector(&vecSpeed);
-					VECTOR vec;
-					vec.X = vecSpeed.X * 6.0f;
-					vec.Y = vecSpeed.Y * 6.0f;
-					vec.Z = vecSpeed.Z * 6.0f;
+					CVector vec;
+					vec.x = vecSpeed.x * 6.0f;
+					vec.y = vecSpeed.y * 6.0f;
+					vec.z = vecSpeed.z * 6.0f;
 					pVeh->SetMoveSpeedVector(vec);
 					*(float*)(g_libGTASA + 0x00608558) = 200.0f;
 				}
@@ -2289,7 +2135,7 @@ int CPad__CycleCameraModeDownJustDown_hook(void* thiz)
 		return 0;
 	}
 
-	PED_TYPE* pPed = GamePool_FindPlayerPed();
+	CPedGta* pPed = GamePool_FindPlayerPed();
 	if (!pPed)
 	{
 		return 0;
@@ -2304,7 +2150,7 @@ int CPad__CycleCameraModeDownJustDown_hook(void* thiz)
 		lastTick = GetTickCount();
 	}
 
-	if (IN_VEHICLE(pPed))
+	if (pPed->dwAction == ePedState::PEDSTATE_DRIVING || pPed->dwAction == ePedState::PEDSTATE_PASSENGER)
 	{
 		if (bPressed)
 		{
@@ -2347,17 +2193,17 @@ void FxEmitterBP_c__Render_hook(uintptr_t* a1, int a2, int a3, float a4, char a5
 int g_iLastProcessedSkinCollision = 228;
 int g_iLastProcessedEntityCollision = 228;
 
-void (*CPed__ProcessEntityCollision)(PED_TYPE* thiz, ENTITY_TYPE* ent, void* colPoint);
-void CPed__ProcessEntityCollision_hook(PED_TYPE* thiz, ENTITY_TYPE* ent, void* colPoint)
+void (*CPed__ProcessEntityCollision)(CPedGta* thiz, CEntityGta* ent, void* colPoint);
+void CPed__ProcessEntityCollision_hook(CPedGta* thiz, CEntityGta* ent, void* colPoint)
 {
-	g_iLastProcessedSkinCollision = thiz->entity.nModelIndex;
+	g_iLastProcessedSkinCollision = thiz->nModelIndex;
 	g_iLastProcessedEntityCollision = ent->nModelIndex;
 
 	CPed__ProcessEntityCollision(thiz, ent, colPoint);
 }
 
-int (*CTaskSimpleGetUp__ProcessPed)(uintptr_t* thiz, PED_TYPE* ped);
-int CTaskSimpleGetUp__ProcessPed_hook(uintptr_t* thiz, PED_TYPE* ped)
+int (*CTaskSimpleGetUp__ProcessPed)(uintptr_t* thiz, CPedGta* ped);
+int CTaskSimpleGetUp__ProcessPed_hook(uintptr_t* thiz, CPedGta* ped)
 {
 	if(!ped)return 0;
 
@@ -2421,15 +2267,16 @@ int SetCompAlphaCB_hook(int a1, char a2)
 	return result;
 }
 
-int (*CEntity__RegisterReference)(ENTITY_TYPE *thiz, ENTITY_TYPE **a2);
-int CEntity__RegisterReference_hook(ENTITY_TYPE *thiz, ENTITY_TYPE **a2)
+void (*CEntity__RegisterReference)(CEntityGta *thiz, CEntityGta **a2);
+void CEntity__RegisterReference_hook(CEntityGta *thiz, CEntityGta **a2)
 {
-	if(!thiz)return false;
-	if(!a2)return false;
+	Log("CEntity__RegisterReference");
+	if(!thiz)return;
+	if(!a2)return;
 //    if( !*((DWORD *)thiz + 4)  )return false;
 //	if(! thiz + 0x36)return false;
 
-	return CEntity__RegisterReference(thiz, a2);
+	CEntity__RegisterReference(thiz, a2);
 }
 
 float (*CDraw__SetFOV)(float thiz, float a2);
@@ -2466,8 +2313,12 @@ char **CPhysical__Add_hook(uintptr_t thiz)
 						if ((uintptr_t)pPlayerPed->m_aAttachedObjects[i].pObject->m_pEntity == thiz)
 						{
 							CObject *pObject = pPlayerPed->m_aAttachedObjects[i].pObject;
-							if (pObject->m_pEntity->mat->pos.X > 20000.0f || pObject->m_pEntity->mat->pos.Y > 20000.0f || pObject->m_pEntity->mat->pos.Z > 20000.0f ||
-								pObject->m_pEntity->mat->pos.X < -20000.0f || pObject->m_pEntity->mat->pos.Y < -20000.0f || pObject->m_pEntity->mat->pos.Z < -20000.0f)
+							if (pObject->m_pEntity->mat->pos.x > 20000.0f ||
+							pObject->m_pEntity->mat->pos.y > 20000.0f ||
+							pObject->m_pEntity->mat->pos.z > 20000.0f ||
+								pObject->m_pEntity->mat->pos.x < -20000.0f ||
+								pObject->m_pEntity->mat->pos.y < -20000.0f ||
+								pObject->m_pEntity->mat->pos.z < -20000.0f)
 							{
 								/*if(pChatWindow)
 								{
@@ -2493,11 +2344,11 @@ char **CPhysical__Add_hook(uintptr_t thiz)
 					CVehicle *pVehicle = pVehiclePool->GetAt(i);
 					if (pVehicle && pVehicle->IsAdded())
 					{
-						/*CObject* pObject = pVehicle->Att((ENTITY_TYPE*)thiz);
+						/*CObject* pObject = pVehicle->Att((CEntityGta*)thiz);
 						if (pObject != nullptr)
 						{
-							if (pObject->m_pEntity->mat->pos.X > 20000.0f || pObject->m_pEntity->mat->pos.Y > 20000.0f || pObject->m_pEntity->mat->pos.Z > 20000.0f ||
-								pObject->m_pEntity->mat->pos.X < -20000.0f || pObject->m_pEntity->mat->pos.Y < -20000.0f || pObject->m_pEntity->mat->pos.Z < -20000.0f)
+							if (pObject->m_pEntity->mat->pos.x > 20000.0f || pObject->m_pEntity->mat->pos.y > 20000.0f || pObject->m_pEntity->mat->pos.z > 20000.0f ||
+								pObject->m_pEntity->mat->pos.x < -20000.0f || pObject->m_pEntity->mat->pos.y < -20000.0f || pObject->m_pEntity->mat->pos.z < -20000.0f)
 							{
 								/*if(pChatWindow)
 								{
@@ -2532,8 +2383,12 @@ char **CPhysical__Add_hook(uintptr_t thiz)
 									if ((uintptr_t)pPlayerPed->m_aAttachedObjects[i].pObject->m_pEntity == thiz)
 									{
 										CObject *pObject = pPlayerPed->m_aAttachedObjects[i].pObject;
-										if (pObject->m_pEntity->mat->pos.X > 20000.0f || pObject->m_pEntity->mat->pos.Y > 20000.0f || pObject->m_pEntity->mat->pos.Z > 20000.0f ||
-											pObject->m_pEntity->mat->pos.X < -20000.0f || pObject->m_pEntity->mat->pos.Y < -20000.0f || pObject->m_pEntity->mat->pos.Z < -20000.0f)
+										if (pObject->m_pEntity->mat->pos.x > 20000.0f
+											||	pObject->m_pEntity->mat->pos.y > 20000.0f
+											|| pObject->m_pEntity->mat->pos.z > 20000.0f
+											||	pObject->m_pEntity->mat->pos.x < -20000.0f
+											|| pObject->m_pEntity->mat->pos.y < -20000.0f
+											|| pObject->m_pEntity->mat->pos.z < -20000.0f)
 										{
 											/*if(pChatWindow)
 											{
@@ -2542,7 +2397,7 @@ char **CPhysical__Add_hook(uintptr_t thiz)
 											return 0;
 										}
 										// Log("Processing remote attached object. Player: %d", i);
-										// Log("is added: %d | model index: %d | gta id: %d | x: %.2f | y: %.2f | z: %.2f | flags: %d | vtable: %d | unk: %d", pObject->IsAdded(), pObject->GetModelIndex(), pObject->m_dwGTAId, pObject->m_pEntity->mat->pos.X, pObject->m_pEntity->mat->pos.Y, pObject->m_pEntity->mat->pos.Z, pObject->m_pEntity->dwProcessingFlags, pObject->m_pEntity->vtable, pObject->m_pEntity->dwUnkModelRel);
+										// Log("is added: %d | model index: %d | gta id: %d | x: %.2f | y: %.2f | z: %.2f | flags: %d | vtable: %d | unk: %d", pObject->IsAdded(), pObject->GetModelIndex(), pObject->m_dwGTAId, pObject->m_pEntity->mat->pos.x, pObject->m_pEntity->mat->pos.y, pObject->m_pEntity->mat->pos.z, pObject->m_pEntity->dwProcessingFlags, pObject->m_pEntity->vtable, pObject->m_pEntity->dwUnkModelRel);
 										// result = CPhysical__Add(thiz);
 									}
 								}
@@ -2579,8 +2434,8 @@ int CCollision__ProcessVerticalLine_hook(float *a1, float *a2, int a3, int a4, i
 }
 
 
-int (*CWeapon__GenerateDamageEvent)(PED_TYPE *victim, ENTITY_TYPE *creator, unsigned int weaponType, int damageFactor, ePedPieceTypes pedPiece, int direction);
-int CWeapon__GenerateDamageEvent_hook(PED_TYPE *victim, ENTITY_TYPE *creator, unsigned int weaponType, int damageFactor, ePedPieceTypes pedPiece, int direction)
+int (*CWeapon__GenerateDamageEvent)(CPedGta *victim, CEntityGta *creator, unsigned int weaponType, int damageFactor, ePedPieceTypes pedPiece, int direction);
+int CWeapon__GenerateDamageEvent_hook(CPedGta *victim, CEntityGta *creator, unsigned int weaponType, int damageFactor, ePedPieceTypes pedPiece, int direction)
 {
 	if (pedPiece != PED_PIECE_HEAD)
 	{
@@ -2605,7 +2460,7 @@ int CTaskSimpleUseGun__SetPedPosition_hook(uintptr_t thiz, uintptr_t a2)
 	unsigned char v1 = *((unsigned char*)thiz + 13);
 	bool bChangeTheResult = false;
 
-	PED_TYPE* pPedPlayer = (PED_TYPE*)a2;
+	CPedGta* pPedPlayer = (CPedGta*)a2;
 	if(pPedPlayer && pNetGame)
 	{
 		if(v1 == 0)
@@ -2645,9 +2500,9 @@ int CTaskSimpleUseGun__SetPedPosition_hook(uintptr_t thiz, uintptr_t a2)
 										pVehicle->GetMatrix(&vehicleMat);
 										pPlayerPed->GetMatrix(&playerMat);
 
-										float fSX = (vehicleMat.pos.X - playerMat.pos.X) * (vehicleMat.pos.X - playerMat.pos.X);
-										float fSY = (vehicleMat.pos.Y - playerMat.pos.Y) * (vehicleMat.pos.Y - playerMat.pos.Y);
-										float fSZ = (vehicleMat.pos.Z - playerMat.pos.Z) * (vehicleMat.pos.Z - playerMat.pos.Z);
+										float fSX = (vehicleMat.pos.x - playerMat.pos.x) * (vehicleMat.pos.x - playerMat.pos.x);
+										float fSY = (vehicleMat.pos.y - playerMat.pos.y) * (vehicleMat.pos.y - playerMat.pos.y);
+										float fSZ = (vehicleMat.pos.z - playerMat.pos.z) * (vehicleMat.pos.z - playerMat.pos.z);
 
 										float fDistance = (float)sqrt(fSX + fSY + fSZ);
 
@@ -2666,8 +2521,8 @@ int CTaskSimpleUseGun__SetPedPosition_hook(uintptr_t thiz, uintptr_t a2)
 	return CTaskSimpleUseGun__SetPedPosition(thiz, a2);
 }
 
-int (*CTaskSimpleCarSetPedInAsDriver__ProcessPed)(uintptr_t *thiz, PED_TYPE *a2);
-int CTaskSimpleCarSetPedInAsDriver__ProcessPed_hook(uintptr_t *thiz, PED_TYPE *a2)
+int (*CTaskSimpleCarSetPedInAsDriver__ProcessPed)(uintptr_t *thiz, CPedGta *a2);
+int CTaskSimpleCarSetPedInAsDriver__ProcessPed_hook(uintptr_t *thiz, CPedGta *a2)
 {
 	if(!a2)return false;
     if( !*((DWORD *)thiz + 4)  )return false;
@@ -2675,8 +2530,8 @@ int CTaskSimpleCarSetPedInAsDriver__ProcessPed_hook(uintptr_t *thiz, PED_TYPE *a
 	return CTaskSimpleCarSetPedInAsDriver__ProcessPed(thiz, a2);
 }
 
-uint32_t (*CVehicle__GetVehicleLightsStatus)(VEHICLE_TYPE *_pVehicle);
-uint32_t CVehicle__GetVehicleLightsStatus_hook(VEHICLE_TYPE *_pVehicle)
+uint32_t (*CVehicle__GetVehicleLightsStatus)(CVehicleGta *_pVehicle);
+uint32_t CVehicle__GetVehicleLightsStatus_hook(CVehicleGta *_pVehicle)
 {
 //	*(bool*)(g_libGTASA + 0x97180D) = false;
 //	//unsigned int v6; // r2
@@ -2720,8 +2575,8 @@ void RenderEffects_hook()
 //	}
 }
 
-uint32_t (*CWeapon__FireSniper)(WEAPON_SLOT_TYPE *pWeaponSlot, PED_TYPE *pFiringEntity, ENTITY_TYPE *a3, VECTOR *vecOrigin);
-uint32_t CWeapon__FireSniper_hook(WEAPON_SLOT_TYPE *pWeaponSlot, PED_TYPE *pFiringEntity, ENTITY_TYPE *a3, VECTOR *vecOrigin)
+uint32_t (*CWeapon__FireSniper)(CWeaponGta* pWeaponSlot, CPedGta *pFiringEntity, CEntityGta *a3, CVector *vecOrigin);
+uint32_t CWeapon__FireSniper_hook(CWeaponGta* pWeaponSlot, CPedGta *pFiringEntity, CEntityGta *a3, CVector *vecOrigin)
 {
 	if(GamePool_FindPlayerPed() == pFiringEntity)
 	{
@@ -2736,8 +2591,8 @@ uint32_t CWeapon__FireSniper_hook(WEAPON_SLOT_TYPE *pWeaponSlot, PED_TYPE *pFiri
 	return 1;
 }
 
-VECTOR& (*FindPlayerSpeed)(int a1);
-VECTOR& FindPlayerSpeed_hook(int a1)
+CVector& (*FindPlayerSpeed)(int a1);
+CVector& FindPlayerSpeed_hook(int a1)
 {
 	uintptr_t dwRetAddr = 0;
 	__asm__ volatile ("mov %0, lr":"=r" (dwRetAddr));
@@ -2752,7 +2607,7 @@ VECTOR& FindPlayerSpeed_hook(int a1)
 			   pPlayerPed->IsInVehicle() &&
 			   pPlayerPed->IsAPassenger())
 			{
-				VECTOR vec = {0.1f, 0.1f, 0.1f};
+				CVector vec = {0.1f, 0.1f, 0.1f};
 				return vec;
 			}
 		}
@@ -2761,22 +2616,22 @@ VECTOR& FindPlayerSpeed_hook(int a1)
 	return FindPlayerSpeed(a1);
 }
 
-void SendBulletSync(VECTOR *vecOrigin, VECTOR *vecEnd, VECTOR *vecPos, ENTITY_TYPE **ppEntity)
+void SendBulletSync(CVector *vecOrigin, CVector *vecEnd, CVector *vecPos, CEntityGta **ppEntity)
 {
 	BULLET_DATA bulletData;
 	memset(&bulletData, 0, sizeof(BULLET_DATA));
 
-	bulletData.vecOrigin.X = vecOrigin->X;
-	bulletData.vecOrigin.Y = vecOrigin->Y;
-	bulletData.vecOrigin.Z = vecOrigin->Z;
+	bulletData.vecOrigin.x = vecOrigin->x;
+	bulletData.vecOrigin.y = vecOrigin->y;
+	bulletData.vecOrigin.z = vecOrigin->z;
 
-	bulletData.vecPos.X = vecPos->X;
-	bulletData.vecPos.Y = vecPos->Y;
-	bulletData.vecPos.Z = vecPos->Z;
+	bulletData.vecPos.x = vecPos->x;
+	bulletData.vecPos.y = vecPos->y;
+	bulletData.vecPos.z = vecPos->z;
 
 	if(ppEntity)
 	{
-		static ENTITY_TYPE *pEntity;
+		static CEntityGta *pEntity;
 		pEntity = *ppEntity;
 		if(pEntity)
 		{
@@ -2784,9 +2639,9 @@ void SendBulletSync(VECTOR *vecOrigin, VECTOR *vecEnd, VECTOR *vecPos, ENTITY_TY
 			{
 				if(pNetGame->m_iLagCompensation)
 				{
-					bulletData.vecOffset.X = vecPos->X - pEntity->mat->pos.X;
-					bulletData.vecOffset.Y = vecPos->Y - pEntity->mat->pos.Y;
-					bulletData.vecOffset.Z = vecPos->Z - pEntity->mat->pos.Z;
+					bulletData.vecOffset.x = vecPos->x - pEntity->mat->pos.x;
+					bulletData.vecOffset.y = vecPos->y - pEntity->mat->pos.y;
+					bulletData.vecOffset.z = vecPos->z - pEntity->mat->pos.z;
 				}
 				else
 				{
@@ -2811,8 +2666,8 @@ void SendBulletSync(VECTOR *vecOrigin, VECTOR *vecEnd, VECTOR *vecPos, ENTITY_TY
 }
 
 bool g_bForceWorldProcessLineOfSight = false;
-uint32_t (*CWeapon__ProcessLineOfSight)(VECTOR *vecOrigin, VECTOR *vecEnd, VECTOR *vecPos, PED_TYPE **ppEntity, WEAPON_SLOT_TYPE *pWeaponSlot, PED_TYPE **ppEntity2, bool b1, bool b2, bool b3, bool b4, bool b5, bool b6, bool b7);
-uint32_t CWeapon__ProcessLineOfSight_hook(VECTOR *vecOrigin, VECTOR *vecEnd, VECTOR *vecPos, PED_TYPE **ppEntity, WEAPON_SLOT_TYPE *pWeaponSlot, PED_TYPE **ppEntity2, bool b1, bool b2, bool b3, bool b4, bool b5, bool b6, bool b7)
+uint32_t (*CWeapon__ProcessLineOfSight)(CVector *vecOrigin, CVector *vecEnd, CVector *vecPos, CPedGta **ppEntity, CWeaponGta *pWeaponSlot, CPedGta **ppEntity2, bool b1, bool b2, bool b3, bool b4, bool b5, bool b6, bool b7);
+uint32_t CWeapon__ProcessLineOfSight_hook(CVector *vecOrigin, CVector *vecEnd, CVector *vecPos, CPedGta **ppEntity, CWeaponGta *pWeaponSlot, CPedGta **ppEntity2, bool b1, bool b2, bool b3, bool b4, bool b5, bool b6, bool b7)
 {
 	uintptr_t dwRetAddr = 0;
 	__asm__ volatile ("mov %0, lr":"=r" (dwRetAddr));
@@ -2824,8 +2679,8 @@ uint32_t CWeapon__ProcessLineOfSight_hook(VECTOR *vecOrigin, VECTOR *vecEnd, VEC
 	return CWeapon__ProcessLineOfSight(vecOrigin, vecEnd, vecPos, ppEntity, pWeaponSlot, ppEntity2, b1, b2, b3, b4, b5, b6, b7);
 }
 
-uint32_t (*CWorld__ProcessLineOfSight)(VECTOR *vecOrigin, VECTOR *vecEnd, VECTOR *vecPos, PED_TYPE **ppEntity, bool b1, bool b2, bool b3, bool b4, bool b5, bool b6, bool b7, bool b8);
-uint32_t CWorld__ProcessLineOfSight_hook(VECTOR *vecOrigin, VECTOR *vecEnd, VECTOR *vecPos, PED_TYPE **ppEntity, bool b1, bool b2, bool b3, bool b4, bool b5, bool b6, bool b7, bool b8)
+uint32_t (*CWorld__ProcessLineOfSight)(CVector *vecOrigin, CVector *vecEnd, CVector *vecPos, CPedGta **ppEntity, bool b1, bool b2, bool b3, bool b4, bool b5, bool b6, bool b7, bool b8);
+uint32_t CWorld__ProcessLineOfSight_hook(CVector *vecOrigin, CVector *vecEnd, CVector *vecPos, CPedGta **ppEntity, bool b1, bool b2, bool b3, bool b4, bool b5, bool b6, bool b7, bool b8)
 {
 	uintptr_t dwRetAddr = 0;
 	__asm__ volatile ("mov %0, lr":"=r" (dwRetAddr));
@@ -2835,9 +2690,9 @@ uint32_t CWorld__ProcessLineOfSight_hook(VECTOR *vecOrigin, VECTOR *vecEnd, VECT
 	{
 		g_bForceWorldProcessLineOfSight = false;
 
-		ENTITY_TYPE *pEntity = nullptr;
+		CEntityGta *pEntity = nullptr;
 		MATRIX4X4 *pMatrix = nullptr;
-		VECTOR vecPosPlusOffset;
+		CVector vecPosPlusOffset;
 
 		if(pNetGame->m_iLagCompensation != 2)
 		{
@@ -2854,15 +2709,15 @@ uint32_t CWorld__ProcessLineOfSight_hook(VECTOR *vecOrigin, VECTOR *vecEnd, VECT
 							{
 								if(pNetGame->m_iLagCompensation)
 								{
-									vecPosPlusOffset.X = pMatrix->pos.X + g_pCurrentBulletData->vecOffset.X;
-									vecPosPlusOffset.Y = pMatrix->pos.Y + g_pCurrentBulletData->vecOffset.Y;
-									vecPosPlusOffset.Z = pMatrix->pos.Z + g_pCurrentBulletData->vecOffset.Z;
+									vecPosPlusOffset.x = pMatrix->pos.x + g_pCurrentBulletData->vecOffset.x;
+									vecPosPlusOffset.y = pMatrix->pos.y + g_pCurrentBulletData->vecOffset.y;
+									vecPosPlusOffset.z = pMatrix->pos.z + g_pCurrentBulletData->vecOffset.z;
 								}
 								else ProjectMatrix(&vecPosPlusOffset, pMatrix, &g_pCurrentBulletData->vecOffset);
 
-								vecEnd->X = vecPosPlusOffset.X - vecOrigin->X + vecPosPlusOffset.X;
-								vecEnd->Y = vecPosPlusOffset.Y - vecOrigin->Y + vecPosPlusOffset.Y;
-								vecEnd->Z = vecPosPlusOffset.Z - vecOrigin->Z + vecPosPlusOffset.Z;
+								vecEnd->x = vecPosPlusOffset.x - vecOrigin->x + vecPosPlusOffset.x;
+								vecEnd->y = vecPosPlusOffset.y - vecOrigin->y + vecPosPlusOffset.y;
+								vecEnd->z = vecPosPlusOffset.z - vecOrigin->z + vecPosPlusOffset.z;
 							}
 						}
 					}
@@ -2878,7 +2733,7 @@ uint32_t CWorld__ProcessLineOfSight_hook(VECTOR *vecOrigin, VECTOR *vecEnd, VECT
 			if(g_pCurrentFiredPed)
 			{
 				if(g_pCurrentFiredPed == pGame->FindPlayerPed())
-					SendBulletSync(vecOrigin, vecEnd, vecPos, (ENTITY_TYPE**)ppEntity);
+					SendBulletSync(vecOrigin, vecEnd, vecPos, (CEntityGta**)ppEntity);
 			}
 
 			return result;
@@ -2892,13 +2747,13 @@ uint32_t CWorld__ProcessLineOfSight_hook(VECTOR *vecOrigin, VECTOR *vecEnd, VECT
 				{
 					if(!g_pCurrentBulletData->pEntity)
 					{
-						PED_TYPE *pLocalPed = pGame->FindPlayerPed()->GetGtaActor();
-						if(*ppEntity == pLocalPed || (IN_VEHICLE(pLocalPed) && *(uintptr_t *)ppEntity == pLocalPed->pVehicle))
+						CPedGta *pLocalPed = pGame->FindPlayerPed()->GetGtaActor();
+						if(*ppEntity == pLocalPed || (CVehicleGta*)ppEntity == pLocalPed->pVehicle)
 						{
 							*ppEntity = nullptr;
-							vecPos->X = 0.0f;
-							vecPos->Y = 0.0f;
-							vecPos->Z = 0.0f;
+							vecPos->x = 0.0f;
+							vecPos->y = 0.0f;
+							vecPos->z = 0.0f;
 							return 0;
 						}
 					}
@@ -2909,7 +2764,7 @@ uint32_t CWorld__ProcessLineOfSight_hook(VECTOR *vecOrigin, VECTOR *vecEnd, VECT
 		if(g_pCurrentFiredPed)
 		{
 			if(g_pCurrentFiredPed == pGame->FindPlayerPed())
-				SendBulletSync(vecOrigin, vecEnd, vecPos, (ENTITY_TYPE **)ppEntity);
+				SendBulletSync(vecOrigin, vecEnd, vecPos, (CEntityGta **)ppEntity);
 		}
 
 		return result;
@@ -2918,39 +2773,22 @@ uint32_t CWorld__ProcessLineOfSight_hook(VECTOR *vecOrigin, VECTOR *vecEnd, VECT
 	return CWorld__ProcessLineOfSight(vecOrigin, vecEnd, vecPos, ppEntity, b1, b2, b3, b4, b5, b6, b7, b8);
 }
 
-signed int (*CBulletInfo_AddBullet)(ENTITY_TYPE* pEntity, WEAPON_SLOT_TYPE* pWeapon, VECTOR vec1, VECTOR vec2);
-signed int CBulletInfo_AddBullet_hook(ENTITY_TYPE* pEntity, WEAPON_SLOT_TYPE* pWeapon, VECTOR vec1, VECTOR vec2)
+signed int (*CBulletInfo_AddBullet)(CEntityGta* pEntity, CWeaponGta* pWeapon, CVector vec1, CVector vec2);
+signed int CBulletInfo_AddBullet_hook(CEntityGta* pEntity, CWeaponGta* pWeapon, CVector vec1, CVector vec2)
 {
-	vec2.X *= 50.0f;
-	vec2.Y *= 50.0f;
-	vec2.Z *= 50.0f;
+	vec2.x *= 50.0f;
+	vec2.y *= 50.0f;
+	vec2.z *= 50.0f;
 	CBulletInfo_AddBullet(pEntity, pWeapon, vec1, vec2);
 	// CBulletInfo::Update
 	(( void (*)())(g_libGTASA+0x55E170+1))();
 	return 1;
 }
 
-bool (*CEventKnockOffBike__AffectsPed)(uintptr_t *thiz, PED_TYPE *a2);
-bool CEventKnockOffBike__AffectsPed_hook(uintptr_t *thiz, PED_TYPE *a2)
+bool (*CEventKnockOffBike__AffectsPed)(uintptr_t *thiz, CPedGta *a2);
+bool CEventKnockOffBike__AffectsPed_hook(uintptr_t *thiz, CPedGta *a2)
 {
 	return false;
-}
-
-void (*CVehicle__ReduceVehicleDamage)(VEHICLE_TYPE* thiz, float *fDamage);
-void CVehicle__ReduceVehicleDamage_hook(VEHICLE_TYPE* thiz, float *fDamage)
-{
-	*fDamage = *fDamage/10;
-}
-
-int (*FindPlayerPed_ab_)(int a1);
-int FindPlayerPed_ab__hook(int a1)
-{
-	if ( a1 < 0 )
-		a1 = *(uint8_t*)(g_libGTASA + 0x008E864C); // CWorld::PlayerInFocus;
-
-	int *CWorld__Players = *(int**)(g_libGTASA + 0x5D021C);
-
-	return CWorld__Players[0x65 * a1];
 }
 
 float *m_f3rdPersonCHairMultX, *m_f3rdPersonCHairMultY, *ms_fAspectRatio;
@@ -2976,7 +2814,25 @@ void (*CHud__DrawRadar)(uintptr_t* thiz);
 void CHud__DrawRadar_hook(uintptr_t* thiz)
 {
 	if(CHUD::bIsShow)
+	{
+		float* radar = (float*) CGtaWidgets::pWidgets[0xA1];
+
+		//thiz[0] = (float)100;
+		if (radar)
+		{
+
+			radar[3] = CHUD::radarPos.X;
+			radar[4] = CHUD::radarPos.Y;
+
+			radar[5] = 38.0f;
+			radar[6] = 38.0f;
+
+//			thiz[5] = 45.0f;
+//			thiz[6] = 45.0f;
+		}
 		CHud__DrawRadar(thiz);
+	}
+
 }
 
 void InstallHooks()
@@ -2986,196 +2842,191 @@ void InstallHooks()
 	PROTECT_CODE_INSTALLHOOKS;
 
 	//draw radar
-	CHook::InlineHook(g_libGTASA, 0x3D4ED8, &CHud__DrawRadar_hook, &CHud__DrawRadar);
-
-    // Fixing a crosshair by very stupid math ( JPATCH )
-	m_f3rdPersonCHairMultX = (float*)(g_libGTASA + 0x008B07FC);
-	m_f3rdPersonCHairMultY = (float*)(g_libGTASA + 0x008B07F8);
-	ms_fAspectRatio = (float*)(g_libGTASA + 0x0098525C);
-    CHook::InlineHook(g_libGTASA, 0x3D44CC, &DrawCrosshair_hook, &DrawCrosshair);
-
-	//
-	CHook::InlineHook(g_libGTASA, 0x003AC5DC, &FindPlayerPed_ab__hook, &FindPlayerPed_ab_); // crash fix?
-
-	//CHook::NOP(g_libGTASA + 0x50F3A0, 6); // CVehicle::ReduceVehicleDamage
+	CHook::InlineHook(g_libGTASA, 0x00437B0C, &CHud__DrawRadar_hook, &CHud__DrawRadar);
+//
+//    // Fixing a crosshair by very stupid math ( JPATCH )
+//	m_f3rdPersonCHairMultX = (float*)(g_libGTASA + 0x008B07FC);
+//	m_f3rdPersonCHairMultY = (float*)(g_libGTASA + 0x008B07F8);
+//	ms_fAspectRatio = (float*)(g_libGTASA + 0x0098525C);
+//    CHook::InlineHook(g_libGTASA, 0x3D44CC, &DrawCrosshair_hook, &DrawCrosshair);
+//
+//	//
+//	CHook::InlineHook(g_libGTASA, 0x003AC5DC, &FindPlayerPed_ab__hook, &FindPlayerPed_ab_); // crash fix?
+//
+//	//CHook::NOP(g_libGTASA + 0x50F3A0, 6); // CVehicle::ReduceVehicleDamage
 	// не падать с мотоцикла
-	CHook::InlineHook(g_libGTASA, 0x00322FBC, &CEventKnockOffBike__AffectsPed_hook, &CEventKnockOffBike__AffectsPed);
+	CHook::InlineHook(g_libGTASA, 0x0037573C, &CEventKnockOffBike__AffectsPed_hook, &CEventKnockOffBike__AffectsPed);
+//
+//	// Стрельба
+//	CHook::InlineHook(g_libGTASA, 0x564E28, &CWeapon__ProcessLineOfSight_hook, &CWeapon__ProcessLineOfSight);
+//	CHook::InlineHook(g_libGTASA, 0x55E090, &CBulletInfo_AddBullet_hook, &CBulletInfo_AddBullet);
+//	CHook::InlineHook(g_libGTASA, 0x56668C, &CWeapon__FireSniper_hook, &CWeapon__FireSniper);
+//	CHook::InlineHook(g_libGTASA, 0x327528, &CPedDamageResponseCalculator__ComputeDamageResponse_hook, &CPedDamageResponseCalculator__ComputeDamageResponse);
+	CHook::InlineHook(g_libGTASA, 0x005DC178, &CWeapon__FireInstantHit_hook, &CWeapon__FireInstantHit);
+//	CHook::InlineHook(g_libGTASA, 0x3C70C0, &CWorld__ProcessLineOfSight_hook, &CWorld__ProcessLineOfSight);
+//
+//	// audio
+////	CHook::InlineHook(g_libGTASA, 0x368850, &CAudioEngine__Service_hook, &CAudioEngine__Service);
+//	//CHook::InlineHook(g_libGTASA, 0x35AC44, &CAEVehicleAudioEntity__GetAccelAndBrake_hook, &CAEVehicleAudioEntity__GetAccelAndBrake);
+//
+	//CHook::InlineHook(g_libGTASA, 0x002DCA54, &CCollision__ProcessVerticalLine_hook, &CCollision__ProcessVerticalLine);
+//	CHook::InlineHook(g_libGTASA, 0x5669D8, &CWeapon__GenerateDamageEvent_hook, &CWeapon__GenerateDamageEvent);
+//	// Fire extingusher fix
+//	CHook::InlineHook(g_libGTASA, 0x46D6AC, &CTaskSimpleUseGun__SetPedPosition_hook, &CTaskSimpleUseGun__SetPedPosition);
+//
+//	CHook::InlineHook(g_libGTASA, 0x0032217C, &CEventHandler__HandleEvents_hook, &CEventHandler__HandleEvents);
+//	CHook::InlineHook(g_libGTASA, 0x00281398, &CWidgetRegionLook__Update_hook, &CWidgetRegionLook__Update);
+//
+	CHook::InlineHook(g_libGTASA, 0x0043AF28, &CLoadingScreen_DisplayPCScreen_hook, &CLoadingScreen_DisplayPCScreen);
+//
+	CHook::InlineHook(g_libGTASA, 0x003F646C, &Render2dStuff_hook, &Render2dStuff);
+	CHook::InlineHook(g_libGTASA, 0x00269740, &TouchEvent_hook, &TouchEvent);
+//    //
+//
 
-	// Стрельба
-	CHook::InlineHook(g_libGTASA, 0x564E28, &CWeapon__ProcessLineOfSight_hook, &CWeapon__ProcessLineOfSight);
-	CHook::InlineHook(g_libGTASA, 0x55E090, &CBulletInfo_AddBullet_hook, &CBulletInfo_AddBullet);
-	CHook::InlineHook(g_libGTASA, 0x56668C, &CWeapon__FireSniper_hook, &CWeapon__FireSniper);
-	CHook::InlineHook(g_libGTASA, 0x327528, &CPedDamageResponseCalculator__ComputeDamageResponse_hook, &CPedDamageResponseCalculator__ComputeDamageResponse);
-	CHook::InlineHook(g_libGTASA, 0x567964, &CWeapon__FireInstantHit_hook, &CWeapon__FireInstantHit);
-	CHook::InlineHook(g_libGTASA, 0x3C70C0, &CWorld__ProcessLineOfSight_hook, &CWorld__ProcessLineOfSight);
+	CHook::InlineHook(g_libGTASA, 0x0044137C, &CRadar__GetRadarTraceColor_hook, &CRadar__GetRadarTraceColor); // dangerous
+	CHook::InlineHook(g_libGTASA, 0x00442770, &CRadar__SetCoordBlip_hook, &CRadar__SetCoordBlip);
+	CHook::InlineHook(g_libGTASA, 0x00443F30, &CRadar__DrawRadarGangOverlay_hook, &CRadar__DrawRadarGangOverlay);
+//
+//	CHook::CodeInject(g_libGTASA + 0x2D99F4, (uintptr_t)PickupPickUp_hook, 1);
+//
+//
 
-	// audio
-//	CHook::InlineHook(g_libGTASA, 0x368850, &CAudioEngine__Service_hook, &CAudioEngine__Service);
-	//CHook::InlineHook(g_libGTASA, 0x35AC44, &CAEVehicleAudioEntity__GetAccelAndBrake_hook, &CAEVehicleAudioEntity__GetAccelAndBrake);
+	CModelInfo::InstallHooks();
 
-	CHook::InlineHook(g_libGTASA, 0x29947C, &CCollision__ProcessVerticalLine_hook, &CCollision__ProcessVerticalLine);
-	CHook::InlineHook(g_libGTASA, 0x5669D8, &CWeapon__GenerateDamageEvent_hook, &CWeapon__GenerateDamageEvent);
-	// Fire extingusher fix
-	CHook::InlineHook(g_libGTASA, 0x46D6AC, &CTaskSimpleUseGun__SetPedPosition_hook, &CTaskSimpleUseGun__SetPedPosition);
-
-	//SetUpHook(g_libGTASA+0x291104, (uintptr_t)CStreaming__ConvertBufferToObject_hook, (uintptr_t*)&CStreaming__ConvertBufferToObject);
-	//SetUpHook(g_libGTASA+0x3961C8, (uintptr_t)CFileMgr__ReadLine_hook, (uintptr_t*)&CFileMgr__ReadLine);
-
-	CHook::InlineHook(g_libGTASA, 0x0032217C, &CEventHandler__HandleEvents_hook, &CEventHandler__HandleEvents);
-	CHook::InlineHook(g_libGTASA, 0x00281398, &CWidgetRegionLook__Update_hook, &CWidgetRegionLook__Update);
-
-	CHook::InlineHook(g_libGTASA, 0x3D7CA8, &CLoadingScreen_DisplayPCScreen_hook, &CLoadingScreen_DisplayPCScreen);
-
-	CHook::InlineHook(g_libGTASA, 0x39AEF4, &Render2dStuff_hook, &Render2dStuff);
-	CHook::InlineHook(g_libGTASA, 0x39B098, &Render2dStuffAfterFade_hook, &Render2dStuffAfterFade);
-	CHook::InlineHook(g_libGTASA, 0x239D5C, &TouchEvent_hook, &TouchEvent);
-    //
-
-	CHook::InlineHook(g_libGTASA, 0x336690, &CModelInfo_AddPedModel_hook, &CModelInfo_AddPedModel); // hook is dangerous
-	CHook::InlineHook(g_libGTASA, 0x3DBA88, &CRadar__GetRadarTraceColor_hook, &CRadar__GetRadarTraceColor); // dangerous
-	CHook::InlineHook(g_libGTASA, 0x3DAF84, &CRadar__SetCoordBlip_hook, &CRadar__SetCoordBlip);
-	CHook::InlineHook(g_libGTASA, 0x3DE9A8, &CRadar__DrawRadarGangOverlay_hook, &CRadar__DrawRadarGangOverlay);
-
-	CHook::CodeInject(g_libGTASA + 0x2D99F4, (uintptr_t)PickupPickUp_hook, 1);
-
-
-	CHook::InlineHook(g_libGTASA, 0x00336268, &CModelInfo_AddAtomicModel_hook, &CModelInfo_AddAtomicModel);
-
-	CHook::InlineHook(g_libGTASA, 0x00336618, &CModelInfo_AddVehicleModel_hook, &CModelInfo_AddVehicleModel); // dangerous
-
-	CHook::InlineHook(g_libGTASA, 0x0033DA5C, &CAnimManager__UncompressAnimation_hook, &CAnimManager__UncompressAnimation);
-	CHook::InlineHook(g_libGTASA, 0x001AECC0, &RwFrameAddChild_hook, &RwFrameAddChild);
-	CHook::InlineHook(g_libGTASA, 0x002DFD30, &CUpsideDownCarCheck__IsCarUpsideDown_hook, &CUpsideDownCarCheck__IsCarUpsideDown);
-	CHook::InlineHook(g_libGTASA, 0x0033AD78, &CAnimBlendNode__FindKeyFrame_hook, &CAnimBlendNode__FindKeyFrame);
-
-	// TextDraw render
-	//SetUpHook(g_libGTASA + 0x003D5894, (uintptr_t)CHud__DrawScriptText_hook, (uintptr_t*)& CHud__DrawScriptText);
-
+//
+	//CHook::InlineHook(g_libGTASA, 0x003860DC, &CModelInfo_AddVehicleModel_hook, &CModelInfo_AddVehicleModel); // dangerous
+//
+//	CHook::InlineHook(g_libGTASA, 0x0033DA5C, &CAnimManager__UncompressAnimation_hook, &CAnimManager__UncompressAnimation);
+//	CHook::InlineHook(g_libGTASA, 0x001AECC0, &RwFrameAddChild_hook, &RwFrameAddChild);
+//	CHook::InlineHook(g_libGTASA, 0x002DFD30, &CUpsideDownCarCheck__IsCarUpsideDown_hook, &CUpsideDownCarCheck__IsCarUpsideDown);
+//	CHook::InlineHook(g_libGTASA, 0x0033AD78, &CAnimBlendNode__FindKeyFrame_hook, &CAnimBlendNode__FindKeyFrame);
+//
 	// attached objects
-	CHook::InlineHook(g_libGTASA, 0x003C1BF8, &CWorld_ProcessPedsAfterPreRender_hook, &CWorld_ProcessPedsAfterPreRender);
-
-	//remove building
-	//SetUpHook(g_libGTASA + 0x00395994, (uintptr_t)CFileLoader__LoadObjectInstance_hook, (uintptr_t*)& CFileLoader__LoadObjectInstance);
-
-	// retexture
-	//SetUpHook(g_libGTASA + 0x00391E20, (uintptr_t)CObject__Render_hook, (uintptr_t*)& CObject__Render);
-
-	// gettexture fix crash
-	CHook::InlineHook(g_libGTASA, 0x00258910, &GetTexture_hook, &GetTexture_orig);
-
-	// steal objects fix
-	CHook::InlineHook(g_libGTASA, 0x003AD8E0, &CPlayerInfo__Process_hook, &CPlayerInfo__Process);
-
-	// GetFrameFromID fix
-	CHook::InlineHook(g_libGTASA, 0x00335CC0, &CClumpModelInfo_GetFrameFromId_hook, &CClumpModelInfo_GetFrameFromId);
-
-	// random crash fix
-	CHook::InlineHook(g_libGTASA, 0x001A8530, &RenderQueue__ProcessCommand_hook, &RenderQueue__ProcessCommand);
-	// fix
-	CHook::InlineHook(g_libGTASA, 0x001B9D74, &_rwFreeListFreeReal_hook, &_rwFreeListFreeReal);
-
-	//SetUpHook(g_libGTASA + 0x0027548C, (DWORD)CWidgetButtonAttack_hook, (DWORD*)&CWidgetButtonAttack);
-
-
-
-	//SetUpHook(g_libGTASA + 0x0027455C, (uintptr_t)CWidget__IsTouched_hook, (uintptr_t*)& CWidget__IsTouched);
-
-	CHook::RET(g_libGTASA + 0x002C0304); // CDarkel__RegisterCarBlownUpByPlayer_hook
-	CHook::RET(g_libGTASA + 0x002C072C); // CDarkel__ResetModelsKilledByPlayer_hook
-	CHook::RET(g_libGTASA + 0x002C0758); // CDarkel__QueryModelsKilledByPlayer_hook
-	CHook::RET(g_libGTASA + 0x002C0778); // CDarkel__FindTotalPedsKilledByPlayer_hook
-	CHook::RET(g_libGTASA + 0x002C0D04); // CDarkel__RegisterKillByPlayer_hook
-
-	CHook::InlineHook(g_libGTASA, 0x338CBC, &CVehicleModelInfo__SetEditableMaterials_hook, &CVehicleModelInfo__SetEditableMaterials);
-	CHook::InlineHook(g_libGTASA, 0x0050DEF4, &CVehicle__ResetAfterRender_hook, &CVehicle__ResetAfterRender);
-
-	CHook::InlineHook(g_libGTASA, 0x3986CC, &CGame__Process_hook, &CGame__Process);
-
-	CHook::InlineHook(g_libGTASA, 0x004D4A6C, &CAutomobile__ProcessEntityCollision_hook, &CAutomobile__ProcessEntityCollision);
-
-	CHook::InlineHook(g_libGTASA, 0x0025CB8C, &MainMenuScreen__OnExit_hook, &MainMenuScreen__OnExit);
-//	CHook::InlineHook(g_libGTASA, 0x00398334, &CGame__Shutdown_hook, &CGame__Shutdown);
-
-	CHook::WriteMemory(g_libGTASA + 0x003DA86C,
-		"\x80\xB4"\
-		"\x00\xAF"\
-		"\x1B\x4B"\
-		"\x7B\x44"\
-		"\x1B\x68", 10); // CRadar::LimitRadarPoint
-
-	CHook::NOP(g_libGTASA + 0x003DA876, 3); // CRadar::LimitRadarPoint
-
-	// headlights color, wheel size, wheel align
-	CHook::InlineHook(g_libGTASA, 0x005466EC, &CShadows__StoreCarLightShadow_hook, &CShadows__StoreCarLightShadow);
-	CHook::InlineHook(g_libGTASA, 0x00518EC4, &CVehicle__DoHeadLightBeam_hook, &CVehicle__DoHeadLightBeam);
-
-	CHook::InlineHook(g_libGTASA, 0x004E671C, &CAutomobile__PreRender_hook, &CAutomobile__PreRender);
-	CHook::InlineHook(g_libGTASA, 0x004DC6E8, &CAutomobile__UpdateWheelMatrix_hook, &CAutomobile__UpdateWheelMatrix);
-	CHook::InlineHook(g_libGTASA, 0x003E8D48, &CMatrix__Rotate_hook, &CMatrix__Rotate);
-	CHook::InlineHook(g_libGTASA, 0x003E8884, &CMatrix__SetScale_hook, &CMatrix__SetScale);
-
-	CHook::InlineHook(g_libGTASA, 0x0046CEF4, &CTaskSimpleUseGun__RemoveStanceAnims_hook, &CTaskSimpleUseGun__RemoveStanceAnims);
-
-	CHook::InlineHook(g_libGTASA, 0x003DA86C, &CRadar__LimitRadarPoint_hook, &CRadar__LimitRadarPoint); // TO FIX
-	//CHook::InlineHook(g_libGTASA, 0x005529FC, &CSprite2d__DrawBarChart_hook, &CSprite2d__DrawBarChart);
-	//SetUpHook(g_libGTASA + 0x005353B4, (uintptr_t)CFont__PrintString_hook, (uintptr_t*)& CFont__PrintString);
-	CHook::InlineHook(g_libGTASA, 0x0055265C, &CSprite2d__Draw_hook, &CSprite2d__Draw);
-
-	//SetUpHook(g_libGTASA + 0x0027D8A8, (uintptr_t)CWidgetPlayerInfo__DrawWanted_hook, (uintptr_t*)& CWidgetPlayerInfo__DrawWanted);
-
-	//SetUpHook(g_libGTASA + 0x0027CE88, (uintptr_t)CWidgetPlayerInfo__DrawWeaponIcon_hook, (uintptr_t*)& CWidgetPlayerInfo__DrawWeaponIcon);
-	CHook::InlineHook(g_libGTASA, 0x00389D74, (uintptr_t)CCam__Process_hook, (uintptr_t*)& CCam__Process);
-
-	CHook::InlineHook(g_libGTASA, 0x003D6E6C, (uintptr_t)CHud__Draw_hook, (uintptr_t*)& CHud__Draw);
-	CHook::InlineHook(g_libGTASA, 0x0039DC68, (uintptr_t)CPad__CycleCameraModeDownJustDown_hook, (uintptr_t*)& CPad__CycleCameraModeDownJustDown);
-
-	CHook::InlineHook(g_libGTASA, 0x0031B164, (uintptr_t)FxEmitterBP_c__Render_hook, (uintptr_t*)& FxEmitterBP_c__Render);
-	CHook::InlineHook(g_libGTASA, 0x0043A17C, (uintptr_t)CPed__ProcessEntityCollision_hook, (uintptr_t*)&CPed__ProcessEntityCollision);
-	CHook::InlineHook(g_libGTASA, 0x3AA3C0, (uintptr_t)CPhysical__Add_hook, (uintptr_t*)&CPhysical__Add);
-
-	CHook::InlineHook(g_libGTASA, 0x004B97FC, &CTaskSimpleGetUp__ProcessPed_hook, &CTaskSimpleGetUp__ProcessPed); // CTaskSimpleGetUp::ProcessPed
-
-	//==================
-	CHook::InlineHook(g_libGTASA, 0x194B04, &emu_ArraysDelete_hook, &emu_ArraysDelete);
-	CHook::InlineHook(g_libGTASA, 0x1BA580, &RwResourcesFreeResEntry_hook, &RwResourcesFreeResEntry);
-	CHook::InlineHook(g_libGTASA, 0x194B20, &emu_ArraysGetID_hook, &emu_ArraysGetID);
-	CHook::InlineHook(g_libGTASA, 0x50C5F8, &SetCompAlphaCB_hook, &SetCompAlphaCB);
-
-	//================================
-	// ================== plaka ======
-	//================================
-
-	// vehicle light processing
-	CHook::InlineHook(g_libGTASA, 0x5189C4, &CVehicle__GetVehicleLightsStatus_hook, &CVehicle__GetVehicleLightsStatus);
-	CHook::NOP(g_libGTASA + 0x408AAA, 2);
-
-	//RpMaterialDestroy fix ? не точно
-	//CHook::InlineHook(g_libGTASA, 0x001E3C54, &RpMaterialDestroy_hook, &RpMaterialDestroy);
-	//CHook::InlineHook(g_libGTASA, 0x1B1808, &_RwTextureDestroy_hook, &_RwTextureDestroy);
-
-	//CRunningScript fix ? не точно
-	//CHook::InlineHook(g_libGTASA, 0x002E5400, &GivePedScriptedTask_hook, &GivePedScriptedTask);
-
-	// Настройки
-	CHook::NOP(g_libGTASA + 0x266460, 2); // Game - TrafficMode
-	CHook::NOP(g_libGTASA + 0x266496, 2); // Game - AimMode
-	CHook::NOP(g_libGTASA + 0x261A50, 2); // Main - Language
-	CHook::NOP(g_libGTASA + 0x2665EE, 2); // Game - SocialClub
-
-	//
-//	CHook::InlineHook(g_libGTASA, 0x004904AC, &CTaskSimpleCarSetPedInAsDriver__ProcessPed_hook, &CTaskSimpleCarSetPedInAsDriver__ProcessPed);
-
-	// fix разрешения экрана
-	CHook::InlineHook(g_libGTASA, 0x0026CE30, &MobileSettings__GetMaxResWidth_hook, &MobileSettings__GetMaxResWidth);
-
-	//
-	//CHook::InlineHook(g_libGTASA, 0x39AE28, &RenderEffects_hook, &RenderEffects);
-
-	//размытие на скорости
-	CHook::InlineHook(g_libGTASA, 0x005311D0, &CDraw__SetFOV_hook, &CDraw__SetFOV);
-
-	//
-	//CHook::InlineHook(g_libGTASA, 0x003B0E6C, &CEntity__RegisterReference_hook, &CEntity__RegisterReference);
-
+	CHook::InlineHook(g_libGTASA, 0x00428410, &CWorld_ProcessPedsAfterPreRender_hook, &CWorld_ProcessPedsAfterPreRender);
+//
+//	//remove building
+//	//SetUpHook(g_libGTASA + 0x00395994, (uintptr_t)CFileLoader__LoadObjectInstance_hook, (uintptr_t*)& CFileLoader__LoadObjectInstance);
+//
+//	// retexture
+//	//SetUpHook(g_libGTASA + 0x00391E20, (uintptr_t)CObject__Render_hook, (uintptr_t*)& CObject__Render);
+//
+//	// gettexture fix crash
+	CHook::InlineHook(g_libGTASA, 0x00297280, &GetTexture_hook, &GetTexture_orig);
+//
+//	// steal objects fix
+//	CHook::InlineHook(g_libGTASA, 0x003AD8E0, &CPlayerInfo__Process_hook, &CPlayerInfo__Process);
+//
+//	// GetFrameFromID fix
+//	CHook::InlineHook(g_libGTASA, 0x00335CC0, &CClumpModelInfo_GetFrameFromId_hook, &CClumpModelInfo_GetFrameFromId);
+//
+//	// random crash fix
+//	CHook::InlineHook(g_libGTASA, 0x001A8530, &RenderQueue__ProcessCommand_hook, &RenderQueue__ProcessCommand);
+//	// fix
+//	CHook::InlineHook(g_libGTASA, 0x001B9D74, &_rwFreeListFreeReal_hook, &_rwFreeListFreeReal);
+//
+//	//SetUpHook(g_libGTASA + 0x0027548C, (DWORD)CWidgetButtonAttack_hook, (DWORD*)&CWidgetButtonAttack);
+//
+//
+//
+//	//SetUpHook(g_libGTASA + 0x0027455C, (uintptr_t)CWidget__IsTouched_hook, (uintptr_t*)& CWidget__IsTouched);
+//
+//	CHook::RET(g_libGTASA + 0x002C0304); // CDarkel__RegisterCarBlownUpByPlayer_hook
+//	CHook::RET(g_libGTASA + 0x002C072C); // CDarkel__ResetModelsKilledByPlayer_hook
+//	CHook::RET(g_libGTASA + 0x002C0758); // CDarkel__QueryModelsKilledByPlayer_hook
+//	CHook::RET(g_libGTASA + 0x002C0778); // CDarkel__FindTotalPedsKilledByPlayer_hook
+//	CHook::RET(g_libGTASA + 0x002C0D04); // CDarkel__RegisterKillByPlayer_hook
+//
+//	CHook::InlineHook(g_libGTASA, 0x338CBC, &CVehicleModelInfo__SetEditableMaterials_hook, &CVehicleModelInfo__SetEditableMaterials);
+//	CHook::InlineHook(g_libGTASA, 0x0050DEF4, &CVehicle__ResetAfterRender_hook, &CVehicle__ResetAfterRender);
+//
+	//CHook::InlineHook(g_libGTASA, 0x003F4000, &CGame__Process_hook, &CGame__Process);
+//
+//	CHook::InlineHook(g_libGTASA, 0x004D4A6C, &CAutomobile__ProcessEntityCollision_hook, &CAutomobile__ProcessEntityCollision);
+//
+//	CHook::InlineHook(g_libGTASA, 0x0025CB8C, &MainMenuScreen__OnExit_hook, &MainMenuScreen__OnExit);
+////	CHook::InlineHook(g_libGTASA, 0x00398334, &CGame__Shutdown_hook, &CGame__Shutdown);
+//
+//	CHook::WriteMemory(g_libGTASA + 0x003DA86C,
+//		"\x80\xB4"\
+//		"\x00\xAF"\
+//		"\x1B\x4B"\
+//		"\x7B\x44"\
+//		"\x1B\x68", 10); // CRadar::LimitRadarPoint
+//
+//	CHook::NOP(g_libGTASA + 0x003DA876, 3); // CRadar::LimitRadarPoint
+//
+//	// headlights color, wheel size, wheel align
+//	CHook::InlineHook(g_libGTASA, 0x005466EC, &CShadows__StoreCarLightShadow_hook, &CShadows__StoreCarLightShadow);
+//	CHook::InlineHook(g_libGTASA, 0x00518EC4, &CVehicle__DoHeadLightBeam_hook, &CVehicle__DoHeadLightBeam);
+//
+//	CHook::InlineHook(g_libGTASA, 0x004E671C, &CAutomobile__PreRender_hook, &CAutomobile__PreRender);
+//	CHook::InlineHook(g_libGTASA, 0x004DC6E8, &CAutomobile__UpdateWheelMatrix_hook, &CAutomobile__UpdateWheelMatrix);
+//	CHook::InlineHook(g_libGTASA, 0x003E8D48, &CMatrix__Rotate_hook, &CMatrix__Rotate);
+//	CHook::InlineHook(g_libGTASA, 0x003E8884, &CMatrix__SetScale_hook, &CMatrix__SetScale);
+//
+//	CHook::InlineHook(g_libGTASA, 0x0046CEF4, &CTaskSimpleUseGun__RemoveStanceAnims_hook, &CTaskSimpleUseGun__RemoveStanceAnims);
+//
+//	CHook::InlineHook(g_libGTASA, 0x003DA86C, &CRadar__LimitRadarPoint_hook, &CRadar__LimitRadarPoint); // TO FIX
+//	//CHook::InlineHook(g_libGTASA, 0x005529FC, &CSprite2d__DrawBarChart_hook, &CSprite2d__DrawBarChart);
+//	//SetUpHook(g_libGTASA + 0x005353B4, (uintptr_t)CFont__PrintString_hook, (uintptr_t*)& CFont__PrintString);
+	//CHook::InlineHook(g_libGTASA, 0x005C9170, &CSprite2d__Draw_hook, &CSprite2d__Draw);
+//
+//	//SetUpHook(g_libGTASA + 0x0027D8A8, (uintptr_t)CWidgetPlayerInfo__DrawWanted_hook, (uintptr_t*)& CWidgetPlayerInfo__DrawWanted);
+//
+//	//SetUpHook(g_libGTASA + 0x0027CE88, (uintptr_t)CWidgetPlayerInfo__DrawWeaponIcon_hook, (uintptr_t*)& CWidgetPlayerInfo__DrawWeaponIcon);
+//	CHook::InlineHook(g_libGTASA, 0x00389D74, (uintptr_t)CCam__Process_hook, (uintptr_t*)& CCam__Process);
+//
+//	CHook::InlineHook(g_libGTASA, 0x003D6E6C, (uintptr_t)CHud__Draw_hook, (uintptr_t*)& CHud__Draw);
+//	CHook::InlineHook(g_libGTASA, 0x0039DC68, (uintptr_t)CPad__CycleCameraModeDownJustDown_hook, (uintptr_t*)& CPad__CycleCameraModeDownJustDown);
+//
+//	CHook::InlineHook(g_libGTASA, 0x0031B164, (uintptr_t)FxEmitterBP_c__Render_hook, (uintptr_t*)& FxEmitterBP_c__Render);
+	CHook::InlineHook(g_libGTASA, 0x004A339C, (uintptr_t)CPed__ProcessEntityCollision_hook, (uintptr_t*)&CPed__ProcessEntityCollision);
+//	CHook::InlineHook(g_libGTASA, 0x3AA3C0, (uintptr_t)CPhysical__Add_hook, (uintptr_t*)&CPhysical__Add);
+//
+//	CHook::InlineHook(g_libGTASA, 0x004B97FC, &CTaskSimpleGetUp__ProcessPed_hook, &CTaskSimpleGetUp__ProcessPed); // CTaskSimpleGetUp::ProcessPed
+//
+//	//==================
+//	CHook::InlineHook(g_libGTASA, 0x194B04, &emu_ArraysDelete_hook, &emu_ArraysDelete);
+//	CHook::InlineHook(g_libGTASA, 0x1BA580, &RwResourcesFreeResEntry_hook, &RwResourcesFreeResEntry);
+//	CHook::InlineHook(g_libGTASA, 0x194B20, &emu_ArraysGetID_hook, &emu_ArraysGetID);
+//	CHook::InlineHook(g_libGTASA, 0x50C5F8, &SetCompAlphaCB_hook, &SetCompAlphaCB);
+//
+//	//================================
+//	// ================== plaka ======
+//	//================================
+//
+//	// vehicle light processing
+//	CHook::InlineHook(g_libGTASA, 0x5189C4, &CVehicle__GetVehicleLightsStatus_hook, &CVehicle__GetVehicleLightsStatus);
+//	CHook::NOP(g_libGTASA + 0x408AAA, 2);
+//
+//	//RpMaterialDestroy fix ? не точно
+//	//CHook::InlineHook(g_libGTASA, 0x001E3C54, &RpMaterialDestroy_hook, &RpMaterialDestroy);
+//	//CHook::InlineHook(g_libGTASA, 0x1B1808, &_RwTextureDestroy_hook, &_RwTextureDestroy);
+//
+//	//CRunningScript fix ? не точно
+//	//CHook::InlineHook(g_libGTASA, 0x002E5400, &GivePedScriptedTask_hook, &GivePedScriptedTask);
+//
+//	// Настройки
+//	CHook::NOP(g_libGTASA + 0x266460, 2); // Game - TrafficMode
+//	CHook::NOP(g_libGTASA + 0x266496, 2); // Game - AimMode
+//	CHook::NOP(g_libGTASA + 0x261A50, 2); // Main - Language
+//	CHook::NOP(g_libGTASA + 0x2665EE, 2); // Game - SocialClub
+//
+//	//
+////	CHook::InlineHook(g_libGTASA, 0x004904AC, &CTaskSimpleCarSetPedInAsDriver__ProcessPed_hook, &CTaskSimpleCarSetPedInAsDriver__ProcessPed);
+//
+//	// fix разрешения экрана
+//	CHook::InlineHook(g_libGTASA, 0x0026CE30, &MobileSettings__GetMaxResWidth_hook, &MobileSettings__GetMaxResWidth);
+//
+//	//
+//	//CHook::InlineHook(g_libGTASA, 0x39AE28, &RenderEffects_hook, &RenderEffects);
+//
+//	//размытие на скорости
+//	CHook::InlineHook(g_libGTASA, 0x005311D0, &CDraw__SetFOV_hook, &CDraw__SetFOV);
+//
+//	//
+	//CHook::InlineHook(g_libGTASA, 0x0040E870, &CEntity__RegisterReference_hook, &CEntity__RegisterReference);
+//
 	HookCPad();
 }

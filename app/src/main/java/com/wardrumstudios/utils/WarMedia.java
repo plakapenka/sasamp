@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 
+import com.liverussia.cr.BuildConfig;
 import com.nvidia.devtech.NvUtil;
 
 import java.io.File;
@@ -16,6 +17,7 @@ public class WarMedia extends WarGamepad
 {
     private String baseDirectory;
     private String baseDirectoryRoot;
+    private String apkFileName;
 
     public String GetGameBaseDirectory() {
         if (Environment.getExternalStorageState().equals("mounted"))
@@ -35,6 +37,8 @@ public class WarMedia extends WarGamepad
 
     public void onCreate(Bundle bundle)
     {
+        apkFileName = getApplicationContext().getPackageName();
+
         this.baseDirectory = GetGameBaseDirectory();
 
         NvUtil.getInstance().setActivity(this);
@@ -161,15 +165,14 @@ public class WarMedia extends WarGamepad
         return "no id";
     }
 
-    public String FileGetArchiveName(int i) {
-        System.out.println("**** FileGetArchiveName");
-        switch (i) {
+    public String FileGetArchiveName(int type) {
+        switch (type) {
             case 0:
-                return ""; // apkFileName
+                return this.apkFileName;
             case 1:
-                return ""; // expansionFileName
+                return "main.8.com.rockstargames.gtasa.obb";
             case 2:
-                return ""; // this.patchFileName;
+                return "patch.8.com.rockstargames.gtasa.obb";
             default:
                 return "";
         }
@@ -284,8 +287,12 @@ public class WarMedia extends WarGamepad
         System.out.println("**** ScreenSetWakeLock");
     }
 
-    public boolean ServiceAppCommand(String str, String str2) {
-        System.out.println("**** ServiceAppCommand " + str + " " + str2);
+    public boolean ServiceAppCommand(String cmd, String str2) {
+        System.out.println("**** ServiceAppCommand " + cmd + " " + str2);
+
+        if (cmd.equalsIgnoreCase("ForceGermanBuild")) {
+            return true;
+        }
         return false;
     }
 

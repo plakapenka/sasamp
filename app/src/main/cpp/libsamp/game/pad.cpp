@@ -2,6 +2,7 @@
 #include "game.h"
 #include "../net/netgame.h"
 #include "util/patch.h"
+#include "CWorld.h"
 
 #include <jni.h>
 
@@ -372,7 +373,7 @@ uint16_t CPad__GetAccelerate_hook(uintptr_t thiz)
 		{
 			if (pPlayerPed)
 			{
-				VEHICLE_TYPE* pGtaVehicle = pPlayerPed->GetGtaVehicle();
+				CVehicleGta* pGtaVehicle = pPlayerPed->GetGtaVehicle();
 				if (pGtaVehicle)
 				{
 					if (pGtaVehicle->m_nVehicleFlags.bEngineOn == 0)
@@ -424,7 +425,6 @@ uint32_t CPad__GetHandBrake_hook(uintptr_t thiz)
 uint32_t (*CPad__GetHorn)(uintptr_t* thiz);
 uint32_t CPad__GetHorn_hook(uintptr_t* thiz)
 {
-   // NOP(g_libGTASA + 0x0026FAB6, 2);
 	if(byteCurDriver != 0)
 	{
 		// remote player
@@ -473,23 +473,22 @@ void CPed__ProcessControl_hook(uintptr_t thiz)
 		GameStoreLocalPlayerCameraExtZoom();
 		GameSetRemotePlayerCameraExtZoom(byteCurPlayer);
 
-		/*uint16_t wSavedCameraMode2 = *((uint16_t*)g_libGTASA + 0x8B0FBC);
-		*((uint16_t*)g_libGTASA + 0x8B0FBC) = GameGetPlayerCameraMode(byteCurPlayer);
-		if(*((uint16_t*)g_libGTASA + 0x8B0FBC) == 4) *((uint16_t*)g_libGTASA + 0x8B0FBC) = 0;*/
 		uint16_t wSavedCameraMode2 = *wCameraMode2;
 		*wCameraMode2 = GameGetPlayerCameraMode(byteCurPlayer);
 		if (*wCameraMode2 == 4)* wCameraMode2 = 0;
+
 		// CPed::UpdatePosition nulled from CPed::ProcessControl
-		CHook::NOP(g_libGTASA + 0x439B7A, 2);
-		*(uint8_t*)(g_libGTASA + 0x008E864C) = byteCurPlayer;
+		//CHook::NOP(g_libGTASA + 0x004A2A92, 2);
+
+		CWorld::PlayerInFocus = byteCurPlayer;
 		// call original
 		
 		CPed__ProcessControl(thiz);
 		// restore
-		CHook::WriteMemory(g_libGTASA + 0x439B7A, "\xFA\xF7\x1D\xF8", 4);
-		*(uint8_t*)(g_libGTASA + 0x008E864C) = 0;
+		//CHook::WriteMemory(g_libGTASA + 0x004A2A92, "\xFA\xF7\x1D\xF8", 4);
+		CWorld::PlayerInFocus = 0;
 		*pbyteCameraMode = byteSavedCameraMode;
-		//*((uint16_t*)g_libGTASA + 0x8B0FBC) = wSavedCameraMode2;
+
 		GameSetLocalPlayerCameraExtZoom();
 		GameSetLocalPlayerAim();
 		*wCameraMode2 = wSavedCameraMode2;
@@ -498,12 +497,12 @@ void CPed__ProcessControl_hook(uintptr_t thiz)
 	{
 		// LOCAL PLAYER
 
-		CHook::WriteMemory(g_libGTASA + 0x4BED92, "\x10\x60", 2);
+		//CHook::WriteMemory(g_libGTASA + 0x4BED92, "\x10\x60", 2);
 		
 		(*CPed__ProcessControl)(thiz);
 
 		// Reapply the no ped rots from Cam patch
-		CHook::WriteMemory(g_libGTASA + 0x4BED92, "\x00\x46", 2);
+		//CHook::WriteMemory(g_libGTASA + 0x4BED92, "\x00\x46", 2);
 	}
 
 	return;
@@ -511,8 +510,8 @@ void CPed__ProcessControl_hook(uintptr_t thiz)
 
 void AllVehicles__ProcessControl_hook(uintptr_t thiz)
 {
-	VEHICLE_TYPE *pVehicle = (VEHICLE_TYPE*)thiz;
-	uintptr_t this_vtable = pVehicle->entity.vtable;
+	CVehicleGta *pVehicle = (CVehicleGta*)thiz;
+	uintptr_t this_vtable = pVehicle->vtable;
 	this_vtable -= g_libGTASA;
 
 	uintptr_t call_addr = 0;
@@ -520,48 +519,48 @@ void AllVehicles__ProcessControl_hook(uintptr_t thiz)
 	switch(this_vtable)
 	{
 		// CAutomobile
-		case 0x5CC9F0:
-		call_addr = 0x4E314C;
+		case 0x0066D6A4:
+		call_addr = 0x00553E44;
 		break;
 
 		// CBoat
-		case 0x5CCD48:
-		call_addr = 0x4F7408;
+		case 0x0066DA4C:
+		call_addr = 0x0056BEC0;
 		break;
 
 		// CBike
-		case 0x5CCB18:
-		call_addr = 0x4EE790;
+		case 0x0066D81C:
+		call_addr = 0x00561A90;
 		break;
 
 		// CPlane
-		case 0x5CD0B0:
-		call_addr = 0x5031E8;
+		case 0x0066DDB0:
+		call_addr = 0x00575CF8;
 		break;
 
 		// CHeli
-		case 0x5CCE60:
-		call_addr = 0x4FE62C;
+		case 0x0066DB60:
+		call_addr = 0x005712A8;
 		break;
 
 		// CBmx
-		case 0x5CCC30:
-		call_addr = 0x4F3CE8;
+		case 0x0066D934:
+		call_addr = 0x00568B84;
 		break;
 
 		// CMonsterTruck
-		case 0x5CCF88:
-		call_addr = 0x500A34;
+		case 0x0066DC88:
+		call_addr = 0x00574864;
 		break;
 
 		// CQuadBike
-		case 0x5CD1D8:
-		call_addr = 0x505840;
+		case 0x0066DED8:
+		call_addr = 0x0057A2F0;
 		break;
 
 		// CTrain
-		case 0x5CD428:
-		call_addr = 0x50AB24;
+		case 0x0066E128:
+		call_addr = 0x0057D0A0;
 		break;
 	}
 
@@ -572,18 +571,18 @@ void AllVehicles__ProcessControl_hook(uintptr_t thiz)
 
 	if(pVehicle->pDriver && pVehicle->pDriver->dwPedType == 0 &&
 		pVehicle->pDriver != GamePool_FindPlayerPed() && 
-		*(uint8_t*)(g_libGTASA+0x8E864C) == 0) // CWorld::PlayerInFocus
+		CWorld::PlayerInFocus == 0) // CWorld::PlayerInFocus
 	{
-		*(uint8_t*)(g_libGTASA+0x8E864C) = 0;
+		CWorld::PlayerInFocus = 0;
 
-		pVehicle->pDriver->dwPedType = 4;
+	//	pVehicle->pDriver->dwPedType = 4;
 		//CAEVehicleAudioEntity::Service
-		(( void (*)(uintptr_t))(g_libGTASA+0x364B64+1))(thiz+0x138);
-		pVehicle->pDriver->dwPedType = 0;
+	//	(( void (*)(uintptr_t))(g_libGTASA+0x003ACE04+1))(thiz+0x138);
+	//	pVehicle->pDriver->dwPedType = 0;
 	}
 	else
 	{
-		(( void (*)(uintptr_t))(g_libGTASA+0x364B64+1))(thiz+0x138);
+	//	(( void (*)(uintptr_t))(g_libGTASA+0x003ACE04+1))(thiz+0x138);
 	}
 
 	// Tyre burst fix
@@ -605,7 +604,7 @@ void AllVehicles__ProcessControl_hook(uintptr_t thiz)
 	}
 
 	// VEHTYPE::ProcessControl()
-    (( void (*)(VEHICLE_TYPE*))(g_libGTASA+call_addr+1))(pVehicle);
+    (( void (*)(CVehicleGta*))(g_libGTASA + call_addr + 1))(pVehicle);
 }
 
 
@@ -618,11 +617,11 @@ uint32_t CPad__GetWeapon_hook(uintptr_t thiz, uintptr_t ped, bool unk)
 	}
 	else
 	{
-		uint8_t old = *(uint8_t*)(g_libGTASA + 0x008E864C);
-		*(uint8_t*)(g_libGTASA + 0x008E864C) = byteCurPlayer;
+		uint8_t old = CWorld::PlayerInFocus;
+		CWorld::PlayerInFocus = byteCurPlayer;
 		uintptr_t value = CPad__GetWeapon(thiz, ped, unk);
 		LocalPlayerKeys.bKeys[ePadKeys::KEY_FIRE] = value;
-		*(uint8_t*)(g_libGTASA + 0x008E864C) = old;
+		CWorld::PlayerInFocus = old;
 		return value;
 	}
 }
@@ -671,13 +670,13 @@ uint32_t CPad__GetEnterTargeting_hook(uintptr_t thiz)
 		{
 			return 0;
 		}
-		uint8_t old = *(uint8_t*)(g_libGTASA + 0x008E864C);
-		*(uint8_t*)(g_libGTASA + 0x008E864C) = byteCurPlayer;
+		uint8_t old = CWorld::PlayerInFocus;
+		CWorld::PlayerInFocus = byteCurPlayer;
 		uintptr_t result = CPad__GetEnterTargeting(thiz);
 		LocalPlayerKeys.bKeys[ePadKeys::KEY_HANDBRAKE] = result;
 
 
-		*(uint8_t*)(g_libGTASA + 0x008E864C) = old;
+		CWorld::PlayerInFocus = old;
 		return result;
 	}
 }
@@ -706,39 +705,40 @@ uint32_t TaskUseGun(uintptr_t thiz, uintptr_t ped)
 		// aim switching
 		GameStoreLocalPlayerAim();
 		GameSetRemotePlayerAim(byteCurPlayer);
-		*(uint8_t*)(g_libGTASA + 0x008E864C) = byteCurPlayer;
+		CWorld::PlayerInFocus = byteCurPlayer;
 
-		result = ((uint32_t(*)(uintptr_t, uintptr_t))(g_libGTASA + 0x0046D6AC + 1))(thiz, ped);
+		result = ((uint32_t(*)(uintptr_t, uintptr_t))(g_libGTASA + 0x004DDB70 + 1))(thiz, ped);
 
 		// restore the camera modes, internal id and local player's aim
 		*pbyteCameraMode = byteSavedCameraMode;
-		//*((uint16_t*)g_libGTASA + 0x8B0FBC) = wSavedCameraMode2;
 
 		// remote the local player's camera zoom factor
 		GameSetLocalPlayerCameraExtZoom();
 
-		*(uint8_t*)(g_libGTASA + 0x008E864C) = 0;
+		CWorld::PlayerInFocus = 0;
 		GameSetLocalPlayerAim();
 		*wCameraMode2 = wSavedCameraMode2;
 	}
 	else
 	{
-		result = ((uint32_t(*)(uintptr_t, uintptr_t))(g_libGTASA + 0x0046D6AC + 1))(thiz, ped);
+		result = ((uint32_t(*)(uintptr_t, uintptr_t))(g_libGTASA + 0x004DDB70 + 1))(thiz, ped);
 	}
 
 	return result;
 }
 
 
-uint32_t CPad__TaskProcess(uintptr_t thiz, uintptr_t ped, int unk, int unk1)
+// CTaskSimplePlayerOnFoot::ProcessPed
+bool CPad__TaskProcess(uintptr_t *thiz, uintptr_t pPed)
 {
-	dwCurPlayerActor = ped;
+	dwCurPlayerActor = pPed;
 	byteCurPlayer = FindPlayerNumFromPedPtr(dwCurPlayerActor);
-	uint8_t old = *(uint8_t*)(g_libGTASA + 0x008E864C);
-	*(uint8_t*)(g_libGTASA + 0x008E864C) = byteCurPlayer;
+	uint8_t old = CWorld::PlayerInFocus;
+	CWorld::PlayerInFocus = byteCurPlayer;
 
-	uint32_t result =  ((uint32_t(*)(uintptr_t, uintptr_t, int, int))(g_libGTASA + 0x004C2F7C + 1))(thiz, ped, unk, unk1);
-	*(uint8_t*)(g_libGTASA + 0x008E864C) = old;
+	bool result =  ((bool(*)(uintptr_t*, uintptr_t))(g_libGTASA + 0x00539F9C + 1))(thiz, pPed);
+
+	CWorld::PlayerInFocus = old;
 	return result;
 }
 
@@ -780,25 +780,7 @@ uint32_t (*CCamera_IsTargetingActive)(uintptr_t thiz);
 uint32_t CCamera_IsTargetingActive_hook(uintptr_t thiz)
 {
 	return 1;
-//	uintptr_t dwRetAddr = 0;
-//	__asm__ volatile ("mov %0, lr" : "=r" (dwRetAddr));
-//	dwRetAddr -= g_libGTASA;
-//
-//	if(dwRetAddr == 0x003ADAD7) {
-//		return CCamera_IsTargetingActive(thiz);
-//	}
-//
-//	if(dwRetAddr == 0x00387455) {
-//		return CCamera_IsTargetingActive(thiz);
-//	}
-//
-//	if(dwCurPlayerActor && (byteCurPlayer != 0)) {
-//		return RemotePlayerKeys[byteCurPlayer].bKeys[ePadKeys::KEY_HANDBRAKE] ? 1 : 0;
-//	} else {
-//		*(uint8_t*)(g_libGTASA + 0x008E864C) = 0;
-//		LocalPlayerKeys.bKeys[ePadKeys::KEY_HANDBRAKE] = CCamera_IsTargetingActive(thiz);
-//		return LocalPlayerKeys.bKeys[ePadKeys::KEY_HANDBRAKE];
-//	}
+
 }
 
 void HookCPad()
@@ -809,74 +791,74 @@ void HookCPad()
 	//memcpy((void*)(g_libGTASA + 0x008C3E20), , )
 
 	// CPed::ProcessControl
-	CHook::InlineHook(g_libGTASA, 0x45A280, &CPed__ProcessControl_hook, &CPed__ProcessControl);
+	CHook::InlineHook(g_libGTASA, 0x004C47E8, &CPed__ProcessControl_hook, &CPed__ProcessControl);
 
-	// all vehicles ProcessControl
-	CHook::MethodHook(g_libGTASA, 0x5CCA1C, &AllVehicles__ProcessControl_hook); // CAutomobile::ProcessControl
-	CHook::MethodHook(g_libGTASA, 0x5CCD74, &AllVehicles__ProcessControl_hook); // CBoat::ProcessControl
-	CHook::MethodHook(g_libGTASA, 0x5CCB44, &AllVehicles__ProcessControl_hook); // CBike::ProcessControl
-	CHook::MethodHook(g_libGTASA, 0x5CD0DC, &AllVehicles__ProcessControl_hook); // CPlane::ProcessControl
-	CHook::MethodHook(g_libGTASA, 0x5CCE8C, &AllVehicles__ProcessControl_hook); // CHeli::ProcessControl
-	CHook::MethodHook(g_libGTASA, 0x5CCC5C, &AllVehicles__ProcessControl_hook); // CBmx::ProcessControl
-	CHook::MethodHook(g_libGTASA, 0x5CCFB4, &AllVehicles__ProcessControl_hook); // CMonsterTruck::ProcessControl
-	CHook::MethodHook(g_libGTASA, 0x5CD204, &AllVehicles__ProcessControl_hook); // CQuadBike::ProcessControl
-	CHook::MethodHook(g_libGTASA, 0x5CD454, &AllVehicles__ProcessControl_hook); // CTrain::ProcessControl
-	CHook::MethodHook(g_libGTASA, 0x005C8610, &TaskUseGun);
-	CHook::MethodHook(g_libGTASA, 0x5CC1D4, &CPad__TaskProcess);
-
-	// lr/ud (onfoot)
-	CHook::InlineHook(g_libGTASA, 0x39D08C, &CPad__GetPedWalkLeftRight_hook, &CPad__GetPedWalkLeftRight);
-	CHook::InlineHook(g_libGTASA, 0x39D110, &CPad__GetPedWalkUpDown_hook, &CPad__GetPedWalkUpDown);
-
-	// look
-//	SetUpHook(g_libGTASA+0x0039D194, (uintptr_t)CPad__GetLookLeft_hook, (uintptr_t*)&CPad__GetLookLeft);
-//	SetUpHook(g_libGTASA+0x0039D26C, (uintptr_t)CPad__GetLookRight_hook, (uintptr_t*)&CPad__GetLookRight);
-
-	CHook::InlineHook(g_libGTASA, 0x0039D344, &CPad__GetTurretLeft_hook, &CPad__GetTurretLeft);
-	CHook::InlineHook(g_libGTASA, 0x0039D368, &CPad__GetTurretRight_hook, &CPad__GetTurretRight);
-
-//	SetUpHook(g_libGTASA+0x0039E64C, (uintptr_t)CPad__ShiftTargetLeftJustDown_hook, (uintptr_t*)&CPad__ShiftTargetLeftJustDown);
-//	SetUpHook(g_libGTASA+0x0039E6CC, (uintptr_t)CPad__ShiftTargetRightJustDown_hook, (uintptr_t*)&CPad__ShiftTargetRightJustDown);
-	//SetUpHook(g_libGTASA+0x39D110, (uintptr_t)CPad__GetPedWalkUpDown_hook, (uintptr_t*)&CPad__GetPedWalkUpDown);
-	//SetUpHook(g_libGTASA + 0x)
-
-	// sprint/jump stuff
-	CHook::InlineHook(g_libGTASA, 0x0039EB50, &CPad__SprintJustDown_hook, &CPad__SprintJustDown);// ускоренныйбег
-
-
-	CHook::InlineHook(g_libGTASA, 0x39EAA4, &CPad__GetSprint_hook, &CPad__GetSprint);
-	CHook::InlineHook(g_libGTASA, 0x39E9B8, &CPad__JumpJustDown_hook, &CPad__JumpJustDown);
-	CHook::InlineHook(g_libGTASA, 0x39E96C, &CPad__GetJump_hook, &CPad__GetJump);
-	CHook::InlineHook(g_libGTASA, 0x39E824, &CPad__GetAutoClimb_hook, &CPad__GetAutoClimb);
-	CHook::InlineHook(g_libGTASA, 0x39E8C0, &CPad__GetAbortClimb_hook, &CPad__GetAbortClimb);
-	//SetUpHook(g_libGTASA+0x0037440C, (uintptr_t)CCamera_IsTargetingActive_hook, (uintptr_t*)&CCamera_IsTargetingActive);
-
-	// swimm
-	CHook::InlineHook(g_libGTASA, 0x39EA0C, &CPad__DiveJustDown_hook, (uintptr_t*)&CPad__DiveJustDown);
-	CHook::InlineHook(g_libGTASA, 0x39EA4C, &CPad__SwimJumpJustDown_hook, (uintptr_t*)&CPad__SwimJumpJustDown);
-
-	CHook::InlineHook(g_libGTASA, 0x39DD9C, &CPad__MeleeAttackJustDown_hook, (uintptr_t*)&CPad__MeleeAttackJustDown);
-
-	CHook::InlineHook(g_libGTASA, 0x0039E038, &CPad__GetWeapon_hook, &CPad__GetWeapon);
-	CHook::InlineHook(g_libGTASA, 0x0039E498, &CPad__GetEnterTargeting_hook, &CPad__GetEnterTargeting);
-	CHook::InlineHook(g_libGTASA, 0x0039E418, &GetTarget_hook, &GetTarget);
-	CHook::InlineHook(g_libGTASA, 0x004C1748, &ProcessPlayerWeapon_hook, &ProcessPlayerWeapon);
-
-	//SetUpHook(g_libGTASA+0x39E7B0, (uintptr_t)CPad__DuckJustDown_hook, (uintptr_t*)&CPad__DuckJustDown);
-	CHook::InlineHook(g_libGTASA, 0x39E7B0, &CPad__DuckJustDown_hook, &CPad__DuckJustDown);
-
-
-	// steering lr/ud (incar)
-	CHook::InlineHook(g_libGTASA, 0x39C9E4, &CPad__GetSteeringLeftRight_hook, &CPad__GetSteeringLeftRight);
-	CHook::InlineHook(g_libGTASA, 0x39CBF0, &CPad__GetSteeringUpDown_hook, &CPad__GetSteeringUpDown);
-
-	CHook::InlineHook(g_libGTASA, 0x39DB7C, &CPad__GetAccelerate_hook, &CPad__GetAccelerate);
-	CHook::InlineHook(g_libGTASA, 0x39D938, &CPad__GetBrake_hook, &CPad__GetBrake);
-	CHook::InlineHook(g_libGTASA, 0x39D754, &CPad__GetHandBrake_hook, &CPad__GetHandBrake);
-	CHook::InlineHook(g_libGTASA, 0x39D4C8, &CPad__GetHorn_hook, &CPad__GetHorn);
-	CHook::InlineHook(g_libGTASA, 0x00510B08, &CVehicle__UsesSiren_hook, &CVehicle__UsesSiren);
-
-	CHook::InlineHook(g_libGTASA, 0x39DD30, &CPad__CycleWeaponRightJustDown_hook, &CPad__CycleWeaponRightJustDown);
+//	// all vehicles ProcessControl
+//	CHook::MethodHook(g_libGTASA, 0x0066D6A4, &AllVehicles__ProcessControl_hook); // CAutomobile::ProcessControl
+//	CHook::MethodHook(g_libGTASA, 0x0066DA4C, &AllVehicles__ProcessControl_hook); // CBoat::ProcessControl
+//	CHook::MethodHook(g_libGTASA, 0x0066D81C, &AllVehicles__ProcessControl_hook); // CBike::ProcessControl
+//	CHook::MethodHook(g_libGTASA, 0x0066DDB0, &AllVehicles__ProcessControl_hook); // CPlane::ProcessControl
+//	CHook::MethodHook(g_libGTASA, 0x0066DB60, &AllVehicles__ProcessControl_hook); // CHeli::ProcessControl
+//	CHook::MethodHook(g_libGTASA, 0x0066D934, &AllVehicles__ProcessControl_hook); // CBmx::ProcessControl
+//	CHook::MethodHook(g_libGTASA, 0x0066DC88, &AllVehicles__ProcessControl_hook); // CMonsterTruck::ProcessControl
+//	CHook::MethodHook(g_libGTASA, 0x0066DED8, &AllVehicles__ProcessControl_hook); // CQuadBike::ProcessControl
+//	CHook::MethodHook(g_libGTASA, 0x0066E128, &AllVehicles__ProcessControl_hook); // CTrain::ProcessControl
+//	CHook::MethodHook(g_libGTASA, 0x0066968C, &TaskUseGun);
+	CHook::MethodHook(g_libGTASA, 0x0066CF4C, &CPad__TaskProcess);
+//
+//	// lr/ud (onfoot)
+	CHook::InlineHook(g_libGTASA, 0x003FA218, &CPad__GetPedWalkLeftRight_hook, &CPad__GetPedWalkLeftRight);
+	CHook::InlineHook(g_libGTASA, 0x003FA298, &CPad__GetPedWalkUpDown_hook, &CPad__GetPedWalkUpDown);
+//
+//	// look
+////	SetUpHook(g_libGTASA+0x0039D194, (uintptr_t)CPad__GetLookLeft_hook, (uintptr_t*)&CPad__GetLookLeft);
+////	SetUpHook(g_libGTASA+0x0039D26C, (uintptr_t)CPad__GetLookRight_hook, (uintptr_t*)&CPad__GetLookRight);
+//
+//	CHook::InlineHook(g_libGTASA, 0x003FA4A0, &CPad__GetTurretLeft_hook, &CPad__GetTurretLeft);
+//	CHook::InlineHook(g_libGTASA, 0x003FA4B6, &CPad__GetTurretRight_hook, &CPad__GetTurretRight);
+//
+////	SetUpHook(g_libGTASA+0x0039E64C, (uintptr_t)CPad__ShiftTargetLeftJustDown_hook, (uintptr_t*)&CPad__ShiftTargetLeftJustDown);
+////	SetUpHook(g_libGTASA+0x0039E6CC, (uintptr_t)CPad__ShiftTargetRightJustDown_hook, (uintptr_t*)&CPad__ShiftTargetRightJustDown);
+//	//SetUpHook(g_libGTASA+0x39D110, (uintptr_t)CPad__GetPedWalkUpDown_hook, (uintptr_t*)&CPad__GetPedWalkUpDown);
+//	//SetUpHook(g_libGTASA + 0x)
+//
+//	// sprint/jump stuff
+//	CHook::InlineHook(g_libGTASA, 0x003FBE64, &CPad__SprintJustDown_hook, &CPad__SprintJustDown);// ускоренныйбег
+//
+//
+//	CHook::InlineHook(g_libGTASA, 0x3FBDB0, &CPad__GetSprint_hook, &CPad__GetSprint);
+//	CHook::InlineHook(g_libGTASA, 0x003FBCAC, &CPad__JumpJustDown_hook, &CPad__JumpJustDown);
+//	CHook::InlineHook(g_libGTASA, 0x003FBC58, &CPad__GetJump_hook, &CPad__GetJump);
+//	CHook::InlineHook(g_libGTASA, 0x003FBB0C, &CPad__GetAutoClimb_hook, &CPad__GetAutoClimb);
+//	CHook::InlineHook(g_libGTASA, 0x003FBBB8, &CPad__GetAbortClimb_hook, &CPad__GetAbortClimb);
+//	//SetUpHook(g_libGTASA+0x0037440C, (uintptr_t)CCamera_IsTargetingActive_hook, (uintptr_t*)&CCamera_IsTargetingActive);
+//
+//	// swimm
+//	CHook::InlineHook(g_libGTASA, 0x003FBD10, &CPad__DiveJustDown_hook, (uintptr_t*)&CPad__DiveJustDown);
+//	CHook::InlineHook(g_libGTASA, 0x003FBD58, &CPad__SwimJumpJustDown_hook, (uintptr_t*)&CPad__SwimJumpJustDown);
+//
+//	CHook::InlineHook(g_libGTASA, 0x003FB00C, &CPad__MeleeAttackJustDown_hook, (uintptr_t*)&CPad__MeleeAttackJustDown);
+//
+//	CHook::InlineHook(g_libGTASA, 0x003FABA8, &CPad__GetWeapon_hook, &CPad__GetWeapon);
+//	CHook::InlineHook(g_libGTASA, 0x003FB4EC, &CPad__GetEnterTargeting_hook, &CPad__GetEnterTargeting);
+//	CHook::InlineHook(g_libGTASA, 0x003FB704, &GetTarget_hook, &GetTarget);
+//	CHook::InlineHook(g_libGTASA, 0x00537808, &ProcessPlayerWeapon_hook, &ProcessPlayerWeapon);
+//
+//	//SetUpHook(g_libGTASA+0x39E7B0, (uintptr_t)CPad__DuckJustDown_hook, (uintptr_t*)&CPad__DuckJustDown);
+//	CHook::InlineHook(g_libGTASA, 0x003FBA9C, &CPad__DuckJustDown_hook, &CPad__DuckJustDown);
+//
+//
+//	// steering lr/ud (incar)
+	CHook::InlineHook(g_libGTASA, 0x003F9B54, &CPad__GetSteeringLeftRight_hook, &CPad__GetSteeringLeftRight);
+	CHook::InlineHook(g_libGTASA, 0x003F9D24, &CPad__GetSteeringUpDown_hook, &CPad__GetSteeringUpDown);
+//
+	CHook::InlineHook(g_libGTASA, 0x003FB350, &CPad__GetAccelerate_hook, &CPad__GetAccelerate);
+	CHook::InlineHook(g_libGTASA, 0x003FA9AC, &CPad__GetBrake_hook, &CPad__GetBrake);
+//	CHook::InlineHook(g_libGTASA, 0x003FA7E0, &CPad__GetHandBrake_hook, &CPad__GetHandBrake);
+//	CHook::InlineHook(g_libGTASA, 0x003FA618, &CPad__GetHorn_hook, &CPad__GetHorn);
+//	CHook::InlineHook(g_libGTASA, 0x00584CEC, &CVehicle__UsesSiren_hook, &CVehicle__UsesSiren);
+//
+//	CHook::InlineHook(g_libGTASA, 0x003FB2AC, &CPad__CycleWeaponRightJustDown_hook, &CPad__CycleWeaponRightJustDown);
 
 	//SetUpHook(g_libGTASA+0x00351C40, (uintptr_t)IsVehicleRadioActive_hook, (uintptr_t*)&IsVehicleRadioActive);
 

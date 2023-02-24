@@ -11,6 +11,8 @@
 #include "java_systems/CSpeedometr.h"
 #include "java_systems/CDonate.h"
 #include "java_systems/CEditobject.h"
+#include "java_systems/CAuthorization.h"
+#include "java_systems/CChooseSpawn.h"
 
 void InitBASSFuncs();
 void CLoader::loadBassLib()
@@ -29,8 +31,8 @@ void CLoader::initCrashLytics()
     firebase::crashlytics::SetUserId(CSettings::m_Settings.szNickName);
     firebase::crashlytics::SetCustomKey("Nick", CSettings::m_Settings.szNickName);
 
-    uintptr_t libsamp = FindLibrary("libsamp.so");
-    uintptr_t libc = FindLibrary("libc.so");
+    uintptr_t libsamp = CUtil::FindLibrary("libsamp.so");
+    uintptr_t libc = CUtil::FindLibrary("libc.so");
 
     char str[100];
 
@@ -72,5 +74,11 @@ void CLoader::initJavaClasses(JavaVM* pjvm)
 
     CEditobject::clazz = env->FindClass("com/liverussia/cr/gui/AttachEdit");
     CEditobject::clazz = (jclass) env->NewGlobalRef( CEditobject::clazz );
+
+    CAuthorization::clazz = env->FindClass("com/liverussia/cr/gui/AuthorizationManager");
+    CAuthorization::clazz = (jclass) env->NewGlobalRef(CAuthorization::clazz);
+
+    CChooseSpawn::clazz = env->FindClass("com/liverussia/cr/gui/ChooseSpawn");
+    CChooseSpawn::clazz = (jclass) env->NewGlobalRef(CChooseSpawn::clazz);
 }
 

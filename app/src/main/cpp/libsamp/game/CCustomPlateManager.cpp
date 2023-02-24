@@ -62,7 +62,7 @@ RwTexture* CCustomPlateManager::ProcessUaPlate(SCustomPlate& plate)
 		return nullptr;
 	}
 
-	pText->m_pRwTexture = ((struct RwTexture* (*)(struct RwRaster*))(g_libGTASA + 0x1B1B4C + 1))(pTextRaster); // RwTextureCreate
+	pText->m_pRwTexture = ((struct RwTexture* (*)(struct RwRaster*))(g_libGTASA + 0x001DB7BC + 1))(pTextRaster); // RwTextureCreate
 
 	CRGBA white;
 	white.A = 255;
@@ -116,7 +116,7 @@ RwTexture* CCustomPlateManager::ProcessBuPlate(SCustomPlate& plate)
 		return nullptr;
 	}
 
-	pText->m_pRwTexture = ((struct RwTexture* (*)(struct RwRaster*))(g_libGTASA + 0x1B1B4C + 1))(pTextRaster); // RwTextureCreate
+	pText->m_pRwTexture = ((struct RwTexture* (*)(struct RwRaster*))(g_libGTASA + 0x001DB7BC + 1))(pTextRaster); // RwTextureCreate
 
 	CRGBA white;
 	white.A = 255;
@@ -200,8 +200,8 @@ RwTexture* CCustomPlateManager::ProcessKzPlate(SCustomPlate& plate)
 		return nullptr;
 	}
 
-	pText->m_pRwTexture = ((struct RwTexture* (*)(struct RwRaster*))(g_libGTASA + 0x1B1B4C + 1))(pTextRaster); // RwTextureCreate
-	pRegion->m_pRwTexture = ((struct RwTexture* (*)(struct RwRaster*))(g_libGTASA + 0x1B1B4C + 1))(pRegionRaster); // RwTextureCreate
+	pText->m_pRwTexture = ((struct RwTexture* (*)(struct RwRaster*))(g_libGTASA + 0x001DB7BC + 1))(pTextRaster); // RwTextureCreate
+	pRegion->m_pRwTexture = ((struct RwTexture* (*)(struct RwRaster*))(g_libGTASA + 0x001DB7BC + 1))(pRegionRaster); // RwTextureCreate
 
 	CRGBA white;
 	white.A = 255;
@@ -278,8 +278,8 @@ RwTexture* CCustomPlateManager::ProcessRuPolicePlate(SCustomPlate& plate)
 		return nullptr;
 	}
 
-	pText->m_pRwTexture = ((struct RwTexture* (*)(struct RwRaster*))(g_libGTASA + 0x1B1B4C + 1))(pTextRaster); // RwTextureCreate
-	pRegion->m_pRwTexture = ((struct RwTexture* (*)(struct RwRaster*))(g_libGTASA + 0x1B1B4C + 1))(pRegionRaster); // RwTextureCreate
+	pText->m_pRwTexture = ((struct RwTexture* (*)(struct RwRaster*))(g_libGTASA + 0x001DB7BC + 1))(pTextRaster); // RwTextureCreate
+	pRegion->m_pRwTexture = ((struct RwTexture* (*)(struct RwRaster*))(g_libGTASA + 0x001DB7BC + 1))(pRegionRaster); // RwTextureCreate
 
 	CRGBA white;
 	white.A = 255;
@@ -365,8 +365,8 @@ RwTexture* CCustomPlateManager::ProcessRuPlate(SCustomPlate& plate)
 		return nullptr;
 	}
 
-	pText->m_pRwTexture = ((struct RwTexture* (*)(struct RwRaster*))(g_libGTASA + 0x1B1B4C + 1))(pTextRaster); // RwTextureCreate
-	pRegion->m_pRwTexture = ((struct RwTexture* (*)(struct RwRaster*))(g_libGTASA + 0x1B1B4C + 1))(pRegionRaster); // RwTextureCreate
+	pText->m_pRwTexture = ((struct RwTexture* (*)(struct RwRaster*))(g_libGTASA + 0x001DB7BC + 1))(pTextRaster); // RwTextureCreate
+	pRegion->m_pRwTexture = ((struct RwTexture* (*)(struct RwRaster*))(g_libGTASA + 0x001DB7BC + 1))(pRegionRaster); // RwTextureCreate
 
 	CRGBA white;
 	white.A = 255;
@@ -410,11 +410,11 @@ void CCustomPlateManager::Initialise()
 //
 //	m_pNoPlateSprite = new CSprite2d();
 
-	m_pUaSprite->m_pRwTexture = (RwTexture*)LoadTextureFromDB("samp", "plate_ua");
-	m_pRuSprite->m_pRwTexture = (RwTexture*)LoadTextureFromDB("samp", "plate_ru");
-	m_pBuSprite->m_pRwTexture = (RwTexture*)LoadTextureFromDB("samp", "plate_bu");
-	m_pKzSprite->m_pRwTexture = (RwTexture*)LoadTextureFromDB("samp", "plate_kz");
-	m_pRuPoliceSprite->m_pRwTexture = (RwTexture*)LoadTextureFromDB("samp", "plate_ru_police");
+	m_pUaSprite->m_pRwTexture = CUtil::LoadTextureFromDB("samp", "plate_ua");
+	m_pRuSprite->m_pRwTexture = CUtil::LoadTextureFromDB("samp", "plate_ru");
+	m_pBuSprite->m_pRwTexture = CUtil::LoadTextureFromDB("samp", "plate_bu");
+	m_pKzSprite->m_pRwTexture = CUtil::LoadTextureFromDB("samp", "plate_kz");
+	m_pRuPoliceSprite->m_pRwTexture = CUtil::LoadTextureFromDB("samp", "plate_ru_police");
 //	m_pTaxiSprite->m_pRwTexture = (RwTexture*)LoadTextureFromDB("samp", "plate_taxi");
 //	m_pRuGosSprite->m_pRwTexture = (RwTexture*)LoadTextureFromDB("samp", "plate_gos");
 //	m_pNoPlateSprite->m_pRwTexture = (RwTexture*)LoadTextureFromDB("samp", "plate_outside");

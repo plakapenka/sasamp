@@ -1,5 +1,7 @@
 #pragma once
 
+#include "CEntityGta.h"
+
 class CEntity
 {
 public:
@@ -19,12 +21,12 @@ public:
 	// 0.3.7
 	void SetMatrix(MATRIX4X4 Matrix);
 	// 0.3.7
-	void GetMoveSpeedVector(PVECTOR Vector);
+	void GetMoveSpeedVector(CVector *vec);
 	// 0.3.7
-	void SetMoveSpeedVector(VECTOR Vector);
+	void SetMoveSpeedVector(CVector Vector);
 
-	void GetTurnSpeedVector(PVECTOR Vector);
-	void SetTurnSpeedVector(VECTOR Vector);
+	void GetTurnSpeedVector(CVector *Vector);
+	void SetTurnSpeedVector(CVector Vector);
 	
 	// 0.3.7
 	uint16_t GetModelIndex();
@@ -40,7 +42,7 @@ public:
 	float GetDistanceFromPoint(float x, float y, float z);
 
 public:
-	ENTITY_TYPE		*m_pEntity;
+	CPhysicalGta	*m_pEntity;
 	uint32_t		m_dwGTAId;
 
     bool GetCollisionChecking();

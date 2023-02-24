@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
     android:id="@+id/br_authorization_layout"
+    android:visibility="gone"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -10,7 +11,6 @@
 
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -44,10 +44,10 @@
                 android:layout_height="0dp"
                 android:layout_marginStart="25dp"
                 android:layout_marginTop="50dp"
+                android:src="@drawable/auth_skin"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView9"
-                app:srcCompat="@drawable/auth_skin" />
+                app:layout_constraintTop_toBottomOf="@+id/textView9" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="250dp"

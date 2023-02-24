@@ -36,25 +36,25 @@ public class ShopStoreManager {
 
         shopstore_left.setOnClickListener(view -> {
             view.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.button_click));
-            NvEventQueueActivity.getInstance().onShopStoreClick(0);
+            //NvEventQueueActivity.getInstance().onShopStoreClick(0);
         });
 
         shopstore_right.setOnClickListener(view -> {
             view.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.button_click));
-            NvEventQueueActivity.getInstance().onShopStoreClick(3);
+           // NvEventQueueActivity.getInstance().onShopStoreClick(3);
         });
 
         shopstore_buy.setOnClickListener(view -> {
             view.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.button_click));
-            NvEventQueueActivity.getInstance().onShopStoreClick(1);
+          //  NvEventQueueActivity.getInstance().onShopStoreClick(1);
         });
 
         shopstore_exit.setOnClickListener(view -> {
-            NvEventQueueActivity.getInstance().onShopStoreClick(2);
+          //  NvEventQueueActivity.getInstance().onShopStoreClick(2);
         });
 
         shopstore_camera.setOnClickListener(view -> {
-            NvEventQueueActivity.getInstance().onShopStoreClick(4);
+          //  NvEventQueueActivity.getInstance().onShopStoreClick(4);
         });
 
         br_shopstroreselect_layout.setVisibility(View.GONE);

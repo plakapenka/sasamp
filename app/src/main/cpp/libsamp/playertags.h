@@ -15,7 +15,7 @@ public:
 	void Render();
 	void AddChatBubble(PLAYERID playerId, char* szText, uint32_t dwColor, float fDistance, uint32_t dwTime);
 	void ResetChatBubble(PLAYERID playerId);
-	void DrawChatBubble(PLAYERID playerId, VECTOR* vec, float fDistance);
+	void DrawChatBubble(PLAYERID playerId, CVector* vec, float fDistance);
 
 private:
 	ImVec2 HealthBarBDR1;
@@ -46,6 +46,6 @@ private:
 	uint32_t m_iLastVoiceTimeUpdated[MAX_PLAYERS];
 	PLAYERID m_iPlayerIDs[MAX_PLAYERS];
 
-	void Draw(VECTOR* vec, char* szNick, uint32_t dwColor, 
+	void Draw(CVector* vec, char* szNick, uint32_t dwColor,
 	float fDist, float fHealth, float fArmour, bool bAfk, bool bVoice, bool bKeyboard);
 };

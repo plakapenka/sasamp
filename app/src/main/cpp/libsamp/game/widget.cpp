@@ -11,7 +11,7 @@ CWidget::CWidget(const char* szTexture)
 {
 	m_dwLastTickClicked = 0;
 	m_pSprite = new CSprite2d();
-	m_pSprite->m_pRwTexture = (RwTexture*)LoadTextureFromDB("mobile", szTexture);
+	m_pSprite->m_pRwTexture = CUtil::LoadTextureFromDB("mobile", szTexture);
 	m_bShouldBeDrawn = false;
 	m_bColoured = false;
 }
@@ -51,7 +51,7 @@ void CWidget::SetPosWithoutScale(float x, float y)
 
 void CWidget::SetTexture(const char* szDB, const char* szTexture)
 {
-	m_pSprite->m_pRwTexture = (RwTexture*)LoadTextureFromDB(szDB, szTexture);
+	m_pSprite->m_pRwTexture = CUtil::LoadTextureFromDB(szDB, szTexture);
 }
 
 void CWidget::Draw()

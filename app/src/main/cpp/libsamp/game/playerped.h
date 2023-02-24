@@ -1,17 +1,17 @@
 #pragma once
 #include "aimstuff.h"
 #include "bass.h"
+#include "eWeaponType.h"
+#include "CWeaponGta.h"
+#include "CVehicleGta.h"
 #include "vehicle.h"
 
-class CPlayerPed
-	: public CEntity
+class CPlayerPed: public CEntity
 {
 public:
 	CPlayerPed();	// local
 	CPlayerPed(uint8_t bytePlayerNumber, int iSkin, float fX, float fY, float fZ, float fRotation); // remote
 	~CPlayerPed();
-
-	void Destroy();
 
 	CAMERA_AIM * GetCurrentAim();
 	void SetCurrentAim(CAMERA_AIM *pAim);
@@ -36,12 +36,12 @@ public:
 	// 0.3.7
 	bool IsAPassenger();
 	// 0.3.7
-	void ApplyCommandTask(char* a2, int a4, int a5, int a6, VECTOR* a7, char a8, float a9, int a10, int a11, char a12);
-	VEHICLE_TYPE* GetGtaVehicle();
+	void ApplyCommandTask(char* a2, int a4, int a5, int a6, CVector* a7, char a8, float a9, int a10, int a11, char a12);
+	CVehicleGta* GetGtaVehicle();
 	// 0.3.7
 	void RemoveFromVehicleAndPutAt(float fX, float fY, float fZ);
 	// 0.3.7
-	int SetInitialState();
+	void SetInitialState();
 	// 0.3.7
 	void SetHealth(float fHealth);
 	void SetArmour(float fArmour);
@@ -65,17 +65,17 @@ public:
 	// 0.3.7
 	int GetVehicleSeatID();
 
-	ENTITY_TYPE* GetEntityUnderPlayer();
+	CEntityGta* GetEntityUnderPlayer();
 
 	void GiveWeapon(int iWeaponID, int iAmmo);
 	uint8_t GetCurrentWeapon();
-	void SetArmedWeapon(int iWeaponID);
+	void SetCurrentWeapon(eWeaponType iWeaponID);
 
 	void SetPlayerAimState();
 	void ClearPlayerAimState();
 	void SetAimZ(float fAimZ);
 	float GetAimZ();
-	WEAPON_SLOT_TYPE * GetCurrentWeaponSlot();
+	CWeaponGta* GetCurrentWeaponSlot();
 	//CAMERA_AIM* GetCurrentAim();
 
 	void ClearAllWeapons();
@@ -83,7 +83,7 @@ public:
 	void ResetDamageEntity();
 
 	// 0.3.7
-	void RestartIfWastedAt(VECTOR *vecRestart, float fRotation);
+	void RestartIfWastedAt(CVector *vecRestart, float fRotation);
 	// 0.3.7
 	void ForceTargetRotation(float fRotation);
 	// 0.3.7
@@ -103,15 +103,15 @@ public:
 	// 0.3.7
 	void ApplyAnimation( char *szAnimName, char *szAnimFile, float fT, bool opt1, bool opt2, bool opt3, bool opt4, int iUnk );
 	// 0.3.7
-	void GetBonePosition(int iBoneID, VECTOR* vecOut);
+	void GetBonePosition(int iBoneID, CVector* vecOut);
 	// roflan
 	//BYTE FindDeathReasonAndResponsiblePlayer(PLAYERID *nPlayer);
 	PLAYERID FindDeathResponsiblePlayer();
 	void SetActionTrigger(uint8_t action);
-	PED_TYPE * GetGtaActor() { return m_pPed; };
+	CPedGta * GetGtaActor() { return m_pPed; };
 
 	void AttachObject(ATTACHED_OBJECT_INFO* pInfo, int iSlot);
-	void SetAttachOffset(int iSlot, VECTOR pos, VECTOR rot);
+	void SetAttachOffset(int iSlot, CVector pos, CVector rot);
 	void DeattachObject(int iSlot);
 	bool IsHasAttach();
 	void FlushAttach();
@@ -126,7 +126,7 @@ public:
 	void SetMoveAnim(int iAnimGroup);
 
 public:
-	PED_TYPE*	m_pPed;
+	CPedGta*	m_pPed;
 	uint8_t		m_bytePlayerNumber;
 	uint32_t	m_dwArrow;
 	bool lToggle;
@@ -162,13 +162,13 @@ public:
     bool m_bHaveBulletData;
 	BULLET_DATA 		m_bulletData;
 
-	void GetWeaponInfoForFire(int bLeft, VECTOR *vecBone, VECTOR *vecOut);
+	void GetWeaponInfoForFire(int bLeft, CVector *vecBone, CVector *vecOut);
 
-	VECTOR *GetCurrentWeaponFireOffset();
+	CVector *GetCurrentWeaponFireOffset();
 
 	CVehicle *GetCurrentVehicle();
 
-	VEHICLE_TYPE *GetCurrentGtaVehicle();
+	CVehicleGta *GetCurrentGtaVehicle();
 
 	uint32_t GetCurrentGTAVehicleID();
 
@@ -178,4 +178,5 @@ public:
 
     void ClearLook();
 
+    void GiveWeapon(eWeaponType weaponType, uint32_t ammoQuantity, bool GenerateOldWeaponPickup);
 };

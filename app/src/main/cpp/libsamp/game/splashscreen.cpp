@@ -51,50 +51,7 @@ unsigned int color_scheme = 0;
 void LoadSplashTexture()
 {
 	Log("Loading hud bg texture..");
-	splashTexture = (RwTexture*)LoadTextureFromDB("txd", "hud_bg");
-}
-
-void Draw(stRect* rect, uint32_t color, RwRaster* raster = nullptr, stfRect* uv = nullptr)
-{
-	/*static RwIm2DVertex vert[4];
-	const RwReal nearScreenZ = *(RwReal*)(g_libGTASA + 0x9DAA60);	// CSprite2d::NearScreenZ
-	const RwReal recipNearClip = *(RwReal*)(g_libGTASA + 0x9DAA64);	// CSprite2d::RecipNearClip
-
-	RwIm2DVertexSetScreenX(&vert[0], rect->x1);
-	RwIm2DVertexSetScreenY(&vert[0], rect->y2);
-	RwIm2DVertexSetScreenZ(&vert[0], nearScreenZ);
-	RwIm2DVertexSetRecipCameraZ(&vert[0], recipNearClip);
-	vert[0].emissiveColor = color;
-	RwIm2DVertexSetU(&vert[0], uv ? uv->x1 : 0.0f, recipNearClip);
-	RwIm2DVertexSetV(&vert[0], uv ? uv->y2 : 0.0f, recipNearClip);
-
-	RwIm2DVertexSetScreenX(&vert[1], rect->x2);
-	RwIm2DVertexSetScreenY(&vert[1], rect->y2);
-	RwIm2DVertexSetScreenZ(&vert[1], nearScreenZ);
-	RwIm2DVertexSetRecipCameraZ(&vert[1], recipNearClip);
-	vert[1].emissiveColor = color;
-	RwIm2DVertexSetU(&vert[1], uv ? uv->x2 : 0.0f, recipNearClip);
-	RwIm2DVertexSetV(&vert[1], uv ? uv->y2 : 0.0f, recipNearClip);
-
-	RwIm2DVertexSetScreenX(&vert[2], rect->x1);
-	RwIm2DVertexSetScreenY(&vert[2], rect->y1);
-	RwIm2DVertexSetScreenZ(&vert[2], nearScreenZ);
-	RwIm2DVertexSetRecipCameraZ(&vert[2], recipNearClip);
-	vert[2].emissiveColor = color;
-	RwIm2DVertexSetU(&vert[2], uv ? uv->x1 : 0.0f, recipNearClip);
-	RwIm2DVertexSetV(&vert[2], uv ? uv->y1 : 0.0f, recipNearClip);
-
-	RwIm2DVertexSetScreenX(&vert[3], rect->x2);
-	RwIm2DVertexSetScreenY(&vert[3], rect->y1);
-	RwIm2DVertexSetScreenZ(&vert[3], nearScreenZ);
-	RwIm2DVertexSetRecipCameraZ(&vert[3], recipNearClip);
-	vert[3].emissiveColor = color;
-	RwIm2DVertexSetU(&vert[3], uv ? uv->x2 : 0.0f, recipNearClip);
-	RwIm2DVertexSetV(&vert[3], uv ? uv->y1 : 0.0f, recipNearClip);
-
-	RwRenderStateSet(rwRENDERSTATETEXTURERASTER, (void*)raster);
-	RwIm2DRenderPrimitive(rwPRIMTYPETRISTRIP, vert, 4);
-	RwRenderStateSet(rwRENDERSTATETEXTURERASTER, (void*)0);*/
+	splashTexture = CUtil::LoadTextureFromDB("txd", "hud_bg");
 }
 
 void ImGui_ImplRenderWare_RenderDrawData(ImDrawData* draw_data);
@@ -102,13 +59,6 @@ void ImGui_ImplRenderWare_NewFrame();
 
 void RenderBackgroundHud()
 {
-	// бэкграунд радара
-	if (!pGUI)
-		return;
-
-	ImGui_ImplRenderWare_NewFrame();
-	ImGui::NewFrame();
-		
 	if (CHUD::bIsShow)
 	{
 
@@ -121,7 +71,4 @@ void RenderBackgroundHud()
 		}
 	}
 
-	ImGui::EndFrame();
-	ImGui::Render();
-	ImGui_ImplRenderWare_RenderDrawData(ImGui::GetDrawData());
 }

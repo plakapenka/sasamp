@@ -297,18 +297,20 @@ void SetTimeEx(RPCParameters *rpcParams)
 
 void WorldPlayerAdd(RPCParameters *rpcParams)
 {
+	Log("WorldPlayerAdd");
+
 	unsigned char * Data = reinterpret_cast<unsigned char *>(rpcParams->input);
 	int iBitLength = rpcParams->numberOfBitsOfData;
 
 	RakNet::BitStream bsData(Data,(iBitLength/8)+1,false);
-	CRemotePlayer *pRemotePlayer;
+
 	CPlayerPool *pPlayerPool = pNetGame->GetPlayerPool();
 
 	PLAYERID playerId;
 	uint8_t byteFightingStyle=4;
 	uint8_t byteTeam=0;
 	unsigned int iSkin=0;
-	VECTOR vecPos;
+	CVector vecPos;
 	float fRotation=0;
 	uint32_t dwColor=0;
 	bool bVisible;
@@ -316,9 +318,9 @@ void WorldPlayerAdd(RPCParameters *rpcParams)
 	bsData.Read(playerId);
 	bsData.Read(byteTeam);
 	bsData.Read(iSkin);
-	bsData.Read(vecPos.X);
-	bsData.Read(vecPos.Y);
-	bsData.Read(vecPos.Z);
+	bsData.Read(vecPos.x);
+	bsData.Read(vecPos.y);
+	bsData.Read(vecPos.z);
 	bsData.Read(fRotation);
 	bsData.Read(dwColor);
 	bsData.Read(byteFightingStyle);
@@ -329,6 +331,7 @@ void WorldPlayerAdd(RPCParameters *rpcParams)
 		CRemotePlayer* pRemotePlayer = pPlayerPool->GetAt(playerId);
 		if(pRemotePlayer) pRemotePlayer->Spawn(byteTeam, iSkin, &vecPos, fRotation, dwColor, byteFightingStyle, bVisible);
 	}
+
 }
 
 void WorldPlayerRemove(RPCParameters *rpcParams)
@@ -364,14 +367,14 @@ void SetCheckpoint(RPCParameters *rpcParams)
 	bsData.Read(fZ);
 	bsData.Read(fSize);
 
-	VECTOR pos, Extent;
+	CVector pos, Extent;
 
-	pos.X = fX;
-	pos.Y = fY;
-	pos.Z = fZ;
-	Extent.X = fSize;
-	Extent.Y = fSize;
-	Extent.Z = fSize;
+	pos.x = fX;
+	pos.y = fY;
+	pos.z = fZ;
+	Extent.x = fSize;
+	Extent.y = fSize;
+	Extent.z = fSize;
 
 	pGame->SetCheckpointInformation(&pos, &Extent);
 	pGame->CreateCheckPoint();
@@ -390,22 +393,22 @@ void SetRaceCheckpoint(RPCParameters *rpcParams)
 	RakNet::BitStream bsData(Data, (iBitLength / 8) + 1, false);
 	float fX, fY, fZ;
 	uint8_t byteType;
-	VECTOR pos, next;
+	CVector pos, next;
 
 	bsData.Read(byteType);
 	bsData.Read(fX);
 	bsData.Read(fY);
 	bsData.Read(fZ);
-	pos.X = fX;
-	pos.Y = fY;
-	pos.Z = fZ;
+	pos.x = fX;
+	pos.y = fY;
+	pos.z = fZ;
 
 	bsData.Read(fX);
 	bsData.Read(fY);
 	bsData.Read(fZ);
-	next.X = fX;
-	next.Y = fY;
-	next.Z = fZ;
+	next.x = fX;
+	next.y = fY;
+	next.z = fZ;
 
 	bsData.Read(fX);
 
@@ -467,7 +470,7 @@ void WorldVehicleAdd(RPCParameters *rpcParams)
 //		{
 //			{
 //				ScriptCommand(&change_car_skin, iVehicle, (NewVehicle.bytePaintjob - 1));
-//				VEHICLE_TYPE* pVeh = GamePool_Vehicle_GetAt(iVehicle);
+//				CVehicleGta* pVeh = GamePool_Vehicle_GetAt(iVehicle);
 //				if (pVeh)
 //				{
 //					uintptr_t this_vtable = pVeh->entity.vtable;
@@ -636,7 +639,7 @@ void Create3DTextLabel(RPCParameters *rpcParams)
 
 	uint16_t LabelID;
 	uint32_t color;
-	VECTOR pos;
+	CVector pos;
 	float dist;
 	uint8_t testLOS;
 	PLAYERID PlayerID;
@@ -647,9 +650,9 @@ void Create3DTextLabel(RPCParameters *rpcParams)
 
 	bsData.Read(LabelID);
 	bsData.Read(color);
-	bsData.Read(pos.X);
-	bsData.Read(pos.Y);
-	bsData.Read(pos.Z);
+	bsData.Read(pos.x);
+	bsData.Read(pos.y);
+	bsData.Read(pos.z);
 	bsData.Read(dist);
 	bsData.Read(testLOS);
 	bsData.Read(PlayerID);
@@ -662,7 +665,7 @@ void Create3DTextLabel(RPCParameters *rpcParams)
 	if(pLabelsPool)
 	{
 		pLabelsPool->CreateTextLabel((int)LabelID, szBuff, color, 
-			pos.X, pos.Y, pos.Z, dist, testLOS, PlayerID, VehicleID);
+			pos.x, pos.y, pos.z, dist, testLOS, PlayerID, VehicleID);
 	}
 }
 
@@ -792,13 +795,13 @@ void ScmEvent(RPCParameters* rpcParams)
 
 void RemoveBuildingByPtr(uintptr_t pBuild)
 {
-	VECTOR* vecObjectPos = (VECTOR*)(pBuild + 4);
-	vecObjectPos->Z -= 2000.0f;
+	CVector* vecObjectPos = (CVector*)(pBuild + 4);
+	vecObjectPos->z -= 2000.0f;
 	*(uint8_t*)(pBuild + 47) = 1;
 	if (*(uintptr_t*)(pBuild + 20))
 	{
 		MATRIX4X4* matt = (MATRIX4X4*) * (uintptr_t*)(pBuild + 20);
-		matt->pos.Z -= 2000.0f;
+		matt->pos.z -= 2000.0f;
 		//*(uint32_t*)((uintptr_t)matt + 12) &= 0xFFFDFFFC;
 	}
 }
@@ -830,8 +833,8 @@ void RemoveOccluders(float X, float Y, float Z, float fRad)
 			double v6 = (double) * (int16_t*)v5 * 0.25;
 			double v7 = (double) * ((int16_t*)v5 - 1) * 0.25;
 			double v8 = (double) * ((int16_t*)v5 - 2) * 0.25;
-			VECTOR f = { (float)v8, (float)v7, (float)v6 };
-			VECTOR s = { X, Y, Z };
+			CVector f = { (float)v8, (float)v7, (float)v6 };
+			CVector s = { X, Y, Z };
 			if (GetDistanceBetween3DPoints(&f, &s) < fRad)
 			{
 				*((int16_t*)v5 - 2) = 0;
@@ -870,7 +873,7 @@ void ResetPoolsMatrix()
 	}
 }
 
-void ProcessRemoveBuilding(int uModelID, VECTOR pos, float fRad)
+void ProcessRemoveBuilding(int uModelID, CVector pos, float fRad)
 {
 	uintptr_t pBuild = *(uintptr_t*)GetBuildingPool();
 	uintptr_t pState = *(uintptr_t*)((uintptr_t)GetBuildingPool() + 4);
@@ -879,7 +882,7 @@ void ProcessRemoveBuilding(int uModelID, VECTOR pos, float fRad)
 	// pBuild + 4 - CSimpleTransform
 	// pBuild + 20 - MATRIX4X4*
 
-	RemoveOccluders(pos.X, pos.Y, pos.Z, 500.0);
+	RemoveOccluders(pos.x, pos.y, pos.z, 500.0);
 
 	for (int i = 0; i < 14000; i++)
 	{
@@ -904,7 +907,7 @@ void ProcessRemoveBuilding(int uModelID, VECTOR pos, float fRad)
 			}
 			else
 			{
-				VECTOR* vecObjectPos = (VECTOR*)(pBuild + 4);
+				CVector* vecObjectPos = (CVector*)(pBuild + 4);
 				if (GetDistanceBetween3DPoints(&pos, vecObjectPos) <= fRad)
 				{
 					RemoveBuildingByPtr(pBuild);
@@ -939,7 +942,7 @@ void ProcessRemoveBuilding(int uModelID, VECTOR pos, float fRad)
 			}
 			else
 			{
-				VECTOR* vecObjectPos = (VECTOR*)(pBuild + 4);
+				CVector* vecObjectPos = (CVector*)(pBuild + 4);
 				if (GetDistanceBetween3DPoints(&pos, vecObjectPos) <= fRad)
 				{
 					RemoveBuildingByPtr(pBuild);
@@ -975,7 +978,7 @@ void ProcessRemoveBuilding(int uModelID, VECTOR pos, float fRad)
 			}
 			else
 			{
-				VECTOR* vecObjectPos = (VECTOR*)(pBuild + 4);
+				CVector* vecObjectPos = (CVector*)(pBuild + 4);
 				if (GetDistanceBetween3DPoints(&pos, vecObjectPos) <= fRad)
 				{
 					RemoveBuildingByPtr(pBuild);
@@ -988,7 +991,7 @@ void ProcessRemoveBuilding(int uModelID, VECTOR pos, float fRad)
 }
 
 extern int RemoveModelIDs[1200];
-extern VECTOR RemovePos[1200];
+extern CVector RemovePos[1200];
 extern float RemoveRad[1200];
 extern int iTotalRemovedObjects;
 
@@ -1001,11 +1004,11 @@ void RemoveBuilding(RPCParameters* rpcParams)
 	RakNet::BitStream bsData(Data, (iBitLength / 8) + 1, false);
 
 	int uModelID;
-	VECTOR pos;
+	CVector pos;
 	float fRad;
 
 	bsData.Read(uModelID);
-	bsData.Read((char*)& pos, sizeof(VECTOR));
+	bsData.Read((char*)& pos, sizeof(CVector));
 	bsData.Read(fRad);
 	RemoveModelIDs[iTotalRemovedObjects] = uModelID;
 	RemovePos[iTotalRemovedObjects] = pos;
@@ -1100,16 +1103,16 @@ void WorldActorAdd(RPCParameters* rpcParams)
 
 	uint16_t actorId;
 	uint32_t iSkinId;
-	VECTOR vecPos;
+	CVector vecPos;
 	float fRotation;
 	float fHealth;
 	bool bInvulnerable;
 
 	bsData.Read(actorId);
 	bsData.Read(iSkinId);
-	bsData.Read(vecPos.X);
-	bsData.Read(vecPos.Y);
-	bsData.Read(vecPos.Z);
+	bsData.Read(vecPos.x);
+	bsData.Read(vecPos.y);
+	bsData.Read(vecPos.z);
 	bsData.Read(fRotation);
 	bsData.Read(fHealth);
 	bsData.Read(bInvulnerable);
@@ -1174,18 +1177,18 @@ void SetActorPos(RPCParameters* rpcParams)
 	RakNet::BitStream bsData(rpcParams->input, (rpcParams->numberOfBitsOfData / 8) + 1, false);
 
 	uint16_t actorId;
-	VECTOR pos;
+	CVector pos;
 	bsData.Read(actorId);
-	bsData.Read((char*)& pos, sizeof(VECTOR));
+	bsData.Read((char*)& pos, sizeof(CVector));
 	CActorPool* pActorPool = pNetGame->GetActorPool();
 #ifdef _CDEBUG
-	CChatWindow::AddDebugMessage("Set actor pos %d %f %f %f", actorId, pos.X, pos.Y, pos.Z);
+	CChatWindow::AddDebugMessage("Set actor pos %d %f %f %f", actorId, pos.x, pos.y, pos.z);
 #endif
 	if (pActorPool)
 	{
 		if (pActorPool->GetAt(actorId))
 		{
-			pActorPool->GetAt(actorId)->TeleportTo(pos.X, pos.Y, pos.Z);
+			pActorPool->GetAt(actorId)->TeleportTo(pos.x, pos.y, pos.z);
 		}
 	}
 }
@@ -1277,7 +1280,7 @@ void ClearActorAnimations(RPCParameters* rpcParams)
 		{
 			MATRIX4X4 mat;
 			pActorPool->GetAt(actorId)->GetMatrix(&mat);
-			pActorPool->GetAt(actorId)->TeleportTo(mat.pos.X, mat.pos.Y, mat.pos.Z);
+			pActorPool->GetAt(actorId)->TeleportTo(mat.pos.x, mat.pos.y, mat.pos.z);
 		}
 	}
 }

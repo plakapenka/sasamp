@@ -11,6 +11,7 @@ extern "C"
 }
 
 #define SET_TO(__a1, __a2) *(void**)&(__a1) = (void*)(__a2)
+#define SET_TO_REV(__a2, __a1) *(void**)&(__a1) = (void*)(__a2)
 
 class CHook {
 public:
@@ -43,7 +44,7 @@ public:
 
     template <typename Src>
     static void WriteMemory(uintptr_t dest, Src src, size_t size)
-    {   
+    {
         dest += CRYPT_MASK;
         size += CRYPT_MASK;
 
@@ -105,6 +106,14 @@ public:
         *orig = NULL;
         addr += CRYPT_MASK;
         registerInlineHook(lib + addr + 1, (uint32_t)func, (uint32_t**)orig);
+        inlineHook(lib + addr + 1);
+    }
+
+    template <typename Addr, typename Func>
+    static void Redirect(uintptr_t lib, Addr addr, Func func)
+    {
+        addr += CRYPT_MASK;
+        registerInlineHook(lib + addr + 1, (uint32_t)func, (uint32_t**) nullptr);
         inlineHook(lib + addr + 1);
     }
 };

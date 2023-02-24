@@ -7,10 +7,10 @@
 
 int CStreaming::AddImageToList(const char * name, bool b)
 {
-    return CHook::CallFunction<int>(g_libGTASA + 0x28E7B0 + 1, name, b);
+    return CHook::CallFunction<int>(g_libGTASA + 0x002CF7D0 + 1, name, b);
 }
 
 void CStreaming::RemoveAllUnusedModels()
 {
-    ((void (*) ())(g_libGTASA + 0x293325))();
+   // ((void (*) ())(g_libGTASA + 0x002CFEF0))();
 }

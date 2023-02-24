@@ -7,12 +7,36 @@ import android.media.SoundPool;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.liverussia.cr.gui.AdminRecon;
+import com.liverussia.cr.gui.ArmyGameManager;
 import com.liverussia.cr.gui.AucContainer;
+import com.liverussia.cr.gui.AuthorizationManager;
+import com.liverussia.cr.gui.AutoShop;
 import com.liverussia.cr.gui.Casino;
 import com.liverussia.cr.gui.CasinoBaccarat;
 import com.liverussia.cr.gui.CasinoDice;
+import com.liverussia.cr.gui.Casino_LuckyWheel;
+import com.liverussia.cr.gui.ChooseServer;
+import com.liverussia.cr.gui.ChooseSpawn;
 import com.liverussia.cr.gui.DailyReward;
+import com.liverussia.cr.gui.DuelsHud;
+import com.liverussia.cr.gui.FuelStationManager;
+import com.liverussia.cr.gui.Furniture_factory;
+import com.liverussia.cr.gui.GunShopManager;
 import com.liverussia.cr.gui.HudManager;
+import com.liverussia.cr.gui.Inventory;
+import com.liverussia.cr.gui.Menu;
+import com.liverussia.cr.gui.MineGame1;
+import com.liverussia.cr.gui.MineGame2;
+import com.liverussia.cr.gui.MineGame3;
+import com.liverussia.cr.gui.Notification;
+import com.liverussia.cr.gui.OilFactoryManager;
+import com.liverussia.cr.gui.PreDeath;
+import com.liverussia.cr.gui.RegistrationManager;
+import com.liverussia.cr.gui.SamwillManager;
+import com.liverussia.cr.gui.ShopStoreManager;
+import com.liverussia.cr.gui.TechIspect;
+import com.liverussia.cr.gui.dialogs.Dialog;
 import com.liverussia.cr.gui.donate.Donate;
 import com.liverussia.cr.gui.tab.Tab;
 
@@ -29,7 +53,8 @@ public class Samp extends GTASA
     native void initSAMP(String game_path);
 
     @Override
-    public void onCreate(Bundle bundle) {
+    public void onCreate(Bundle bundle)
+    {
 
         Log.i("java", "calling initSAMP");
         initSAMP(getExternalFilesDir(null).toString() + "/");
@@ -58,6 +83,36 @@ public class Samp extends GTASA
         new DailyReward(this);
         new Tab(this);
         new Casino(this);
+
+        //
+//        new ChooseServer(this);
+//        new Furniture_factory(this);
+//        new AdminRecon(this);
+//        new DuelsHud(this);
+//        new TechIspect(this);
+//        // mInputManager = new InputManager(this);
+//        //mHeightProvider = new HeightProvider(this).init(mRootFrame).setHeightListener(this);
+//        new Notification(this);
+//        new AuthorizationManager(this);
+//        new RegistrationManager(this);
+//        new FuelStationManager(this);
+//        new OilFactoryManager(this);
+//       // vibrator = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
+//        new ArmyGameManager(this);
+//        new ShopStoreManager(this);
+//        new GunShopManager(this);
+//        new PreDeath(this);
+//        new Dialog(this);
+//        new Inventory(this);
+//        new MineGame1(this);
+//        new MineGame2(this);
+//        new MineGame3(this);
+//        new Casino_LuckyWheel(this);
+//
+//        new SamwillManager(this);
+//        new AutoShop(this);
+//
+//        new Menu(this);
     }
 
     public void playLocalSound(int soundID, float speed){

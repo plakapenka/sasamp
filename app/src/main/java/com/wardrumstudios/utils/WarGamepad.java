@@ -13,17 +13,17 @@ public class WarGamepad extends WarBilling {
         return 0;
     }
     public int GetGamepadType(int index) {
-        System.out.println("**** GetGamepadType()");
+      //  System.out.println("**** GetGamepadType()");
         return 0;
     }
 
     public int GetGamepadButtons(int index) {
-        System.out.println("**** GetGamepadButtons()");
+       // System.out.println("**** GetGamepadButtons()");
         return 0;
     }
 
     public float GetGamepadAxis(int index, int axisId) {
-        System.out.println("**** GetGamepadAxis()");
+      //  System.out.println("**** GetGamepadAxis()");
         return 0.0f;
     }
 

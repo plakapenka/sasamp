@@ -7,6 +7,24 @@
  * application may wish to write to the raster, read from the raster or
  * simultaneously write and read a raster (rwRASTERLOCKWRITE | rwRASTERLOCKREAD).
  */
+
+#include "rwlpcore.h"
+
+#define RwFrameGetMatrixMacro(_f)   (&(_f)->modelling)
+#if (! ( defined(RWDEBUG) || defined(RWSUPPRESSINLINE) ))
+#define RwFrameGetMatrix(_f)    RwFrameGetMatrixMacro(_f)
+#endif
+
+/* Hierarchy */
+#define rwObjectGetParent(object)           (((const RwObject *)(object))->parent)
+#define rwObjectSetParent(c,p)              (((RwObject *)(c))->parent) = (void *)(p)
+
+#define RpClumpGetFrameMacro(_clump)                                    \
+    ((RwFrame *) rwObjectGetParent(_clump))
+
+#define RpClumpGetFrame(_clump) \
+    RpClumpGetFrameMacro(_clump)
+
 enum RwRasterLockMode
 {
     rwRASTERLOCKWRITE = 0x01,   /**<Lock for writing */

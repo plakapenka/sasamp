@@ -15,9 +15,9 @@ void CEntity::Add()
 		return;
 	}
 
-	if (!m_pEntity->dwUnkModelRel)
+	if (!m_pEntity->m_nStatus)
 	{
-		VECTOR vec = { 0.0f,0.0f,0.0f };
+		CVector vec = { 0.0f,0.0f,0.0f };
 		SetMoveSpeedVector(vec);
 		SetTurnSpeedVector(vec);
 
@@ -25,12 +25,45 @@ void CEntity::Add()
 
 		MATRIX4X4 mat;
 		GetMatrix(&mat);
-		TeleportTo(mat.pos.X, mat.pos.Y, mat.pos.Z);
+		TeleportTo(mat.pos.x, mat.pos.y, mat.pos.z);
 	}
 }
 
 void CEntity::SetGravityProcessing(bool bProcess)
 {
+}
+
+// 0.3.7
+void CEntity::SetMoveSpeedVector(CVector vec)
+{
+	if (!m_pEntity) return;
+	m_pEntity->vecMoveSpeed.x = vec.x;
+	m_pEntity->vecMoveSpeed.y = vec.y;
+	m_pEntity->vecMoveSpeed.z = vec.z;
+}
+
+void CEntity::SetTurnSpeedVector(CVector vec)
+{
+	if (!m_pEntity) return;
+	m_pEntity->m_vecTurnSpeed.x = vec.x;
+	m_pEntity->m_vecTurnSpeed.y = vec.y;
+	m_pEntity->m_vecTurnSpeed.z = vec.z;
+}
+
+void CEntity::GetMoveSpeedVector(CVector *vec)
+{
+	if (!m_pEntity) return;
+	vec->x = m_pEntity->vecMoveSpeed.x;
+	vec->y = m_pEntity->vecMoveSpeed.y;
+	vec->z = m_pEntity->vecMoveSpeed.z;
+}
+
+void CEntity::GetTurnSpeedVector(CVector *vec)
+{
+	if (!m_pEntity) return;
+	vec->x = m_pEntity->m_vecTurnSpeed.x;
+	vec->y = m_pEntity->m_vecTurnSpeed.y;
+	vec->z = m_pEntity->m_vecTurnSpeed.z;
 }
 
 void CEntity::UpdateRwMatrixAndFrame()
@@ -43,10 +76,10 @@ void CEntity::UpdateRwMatrixAndFrame()
 			{
 				uintptr_t pRwMatrix = *(uintptr_t*)(m_pEntity->m_pRwObject + 4) + 0x10;
 				// CMatrix::UpdateRwMatrix
-				((void (*) (MATRIX4X4*, uintptr_t))(g_libGTASA + 0x3E862C + 1))(m_pEntity->mat, pRwMatrix);
+				((void (*) (MATRIX4X4*, uintptr_t))(g_libGTASA + 0x0044EE3E + 1))(m_pEntity->mat, pRwMatrix);
 
 				// CEntity::UpdateRwFrame
-				((void (*) (ENTITY_TYPE*))(g_libGTASA + 0x39194C + 1))(m_pEntity);
+				((void (*) (CEntityGta*))(g_libGTASA + 0x003EC038 + 1))(m_pEntity);
 			}
 		}
 	}
@@ -54,12 +87,12 @@ void CEntity::UpdateRwMatrixAndFrame()
 
 void CEntity::RemovePhysical()
 {
-	((void (*)(ENTITY_TYPE*))(*(void**)(m_pEntity->vtable + 16)))(m_pEntity); // CPhysical::Remove
+	((void (*)(CEntityGta*))(*(void**)(m_pEntity->vtable + 16)))(m_pEntity); // CPhysical::Remove
 }
 
 void CEntity::AddPhysical()
 {
-	((void (*)(ENTITY_TYPE*))(*(void**)(m_pEntity->vtable + 8)))(m_pEntity); // CPhysical::Add
+	((void (*)(CEntityGta*))(*(void**)(m_pEntity->vtable + 8)))(m_pEntity); // CPhysical::Add
 }
 
 void CEntity::UpdateMatrix(MATRIX4X4 mat)
@@ -69,13 +102,13 @@ void CEntity::UpdateMatrix(MATRIX4X4 mat)
 		if (m_pEntity->mat)
 		{
 			// CPhysical::Remove
-			((void (*)(ENTITY_TYPE*))(*(uintptr_t*)(m_pEntity->vtable + 0x10)))(m_pEntity);
+			((void (*)(CEntityGta*))(*(uintptr_t*)(m_pEntity->vtable + 0x10)))(m_pEntity);
 
 			SetMatrix(mat);
 			UpdateRwMatrixAndFrame();
 
 			// CPhysical::Add
-			((void (*)(ENTITY_TYPE*))(*(uintptr_t*)(m_pEntity->vtable + 0x8)))(m_pEntity);
+			((void (*)(CEntityGta*))(*(uintptr_t*)(m_pEntity->vtable + 0x8)))(m_pEntity);
 		}
 	}
 }
@@ -104,19 +137,19 @@ void CEntity::Render()
 	if(iModel >= 400 && iModel <= 611 && pRwObject)
 	{
 		// CVisibilityPlugins::SetupVehicleVariables
-		((void (*)(uintptr_t))(g_libGTASA+0x55D4EC+1))(pRwObject);
+		((void (*)(uintptr_t))(g_libGTASA + 0x005D4B90 + 1))(pRwObject);
 	}
 
 	// CEntity::PreRender
-	(( void (*)(ENTITY_TYPE*))(*(void**)(m_pEntity->vtable+0x48)))(m_pEntity);
+	(( void (*)(CEntityGta*))(*(void**)(m_pEntity->vtable+0x48)))(m_pEntity);
 
 	// CRenderer::RenderOneNonRoad
-	(( void (*)(ENTITY_TYPE*))(g_libGTASA+0x3B1690+1))(m_pEntity);
+	(( void (*)(CEntityGta*))(g_libGTASA + 0x0041030C + 1))(m_pEntity);
 }
 
 void CEntity::Remove()
 {
-    if(!m_pEntity || CUtil::IsGameEntityArePlaceable(m_pEntity) || !m_pEntity->dwUnkModelRel)
+    if(!m_pEntity || CUtil::IsGameEntityArePlaceable(m_pEntity) )
         return;
 
     CUtil::WorldRemoveEntity((uintptr_t)m_pEntity);
@@ -127,21 +160,21 @@ void CEntity::GetMatrix(PMATRIX4X4 Matrix)
 {
 	if (!m_pEntity || !m_pEntity->mat) return;
 
-	Matrix->right.X = m_pEntity->mat->right.X;
-	Matrix->right.Y = m_pEntity->mat->right.Y;
-	Matrix->right.Z = m_pEntity->mat->right.Z;
+	Matrix->right.x = m_pEntity->mat->right.x;
+	Matrix->right.y = m_pEntity->mat->right.y;
+	Matrix->right.z = m_pEntity->mat->right.z;
 
-	Matrix->up.X = m_pEntity->mat->up.X;
-	Matrix->up.Y = m_pEntity->mat->up.Y;
-	Matrix->up.Z = m_pEntity->mat->up.Z;
+	Matrix->up.x = m_pEntity->mat->up.x;
+	Matrix->up.y = m_pEntity->mat->up.y;
+	Matrix->up.z = m_pEntity->mat->up.z;
 
-	Matrix->at.X = m_pEntity->mat->at.X;
-	Matrix->at.Y = m_pEntity->mat->at.Y;
-	Matrix->at.Z = m_pEntity->mat->at.Z;
+	Matrix->at.x = m_pEntity->mat->at.x;
+	Matrix->at.y = m_pEntity->mat->at.y;
+	Matrix->at.z = m_pEntity->mat->at.z;
 
-	Matrix->pos.X = m_pEntity->mat->pos.X;
-	Matrix->pos.Y = m_pEntity->mat->pos.Y;
-	Matrix->pos.Z = m_pEntity->mat->pos.Z;
+	Matrix->pos.x = m_pEntity->mat->pos.x;
+	Matrix->pos.y = m_pEntity->mat->pos.y;
+	Matrix->pos.z = m_pEntity->mat->pos.z;
 }
 
 // 0.3.7
@@ -150,55 +183,21 @@ void CEntity::SetMatrix(MATRIX4X4 Matrix)
 	if (!m_pEntity) return;
 	if (!m_pEntity->mat) return;
 
-	m_pEntity->mat->right.X = Matrix.right.X;
-	m_pEntity->mat->right.Y = Matrix.right.Y;
-	m_pEntity->mat->right.Z = Matrix.right.Z;
+	m_pEntity->mat->right.x = Matrix.right.x;
+	m_pEntity->mat->right.y = Matrix.right.y;
+	m_pEntity->mat->right.z = Matrix.right.z;
 
-	m_pEntity->mat->up.X = Matrix.up.X;
-	m_pEntity->mat->up.Y = Matrix.up.Y;
-	m_pEntity->mat->up.Z = Matrix.up.Z;
+	m_pEntity->mat->up.x = Matrix.up.x;
+	m_pEntity->mat->up.y = Matrix.up.y;
+	m_pEntity->mat->up.z = Matrix.up.z;
 
-	m_pEntity->mat->at.X = Matrix.at.X;
-	m_pEntity->mat->at.Y = Matrix.at.Y;
-	m_pEntity->mat->at.Z = Matrix.at.Z;
+	m_pEntity->mat->at.x = Matrix.at.x;
+	m_pEntity->mat->at.y = Matrix.at.y;
+	m_pEntity->mat->at.z = Matrix.at.z;
 
-	m_pEntity->mat->pos.X = Matrix.pos.X;
-	m_pEntity->mat->pos.Y = Matrix.pos.Y;
-	m_pEntity->mat->pos.Z = Matrix.pos.Z;
-}
-
-// 0.3.7
-void CEntity::GetMoveSpeedVector(PVECTOR Vector)
-{
-	if (!m_pEntity) return;
-	Vector->X = m_pEntity->vecMoveSpeed.X;
-	Vector->Y = m_pEntity->vecMoveSpeed.Y;
-	Vector->Z = m_pEntity->vecMoveSpeed.Z;
-}
-
-// 0.3.7
-void CEntity::SetMoveSpeedVector(VECTOR Vector)
-{
-	if (!m_pEntity) return;
-	m_pEntity->vecMoveSpeed.X = Vector.X;
-	m_pEntity->vecMoveSpeed.Y = Vector.Y;
-	m_pEntity->vecMoveSpeed.Z = Vector.Z;
-}
-
-void CEntity::GetTurnSpeedVector(PVECTOR Vector)
-{
-	if (!m_pEntity) return;
-	Vector->X = m_pEntity->vecTurnSpeed.X;
-	Vector->Y = m_pEntity->vecTurnSpeed.Y;
-	Vector->Z = m_pEntity->vecTurnSpeed.Z;
-}
-
-void CEntity::SetTurnSpeedVector(VECTOR Vector)
-{
-	if (!m_pEntity) return;
-	m_pEntity->vecTurnSpeed.X = Vector.X;
-	m_pEntity->vecTurnSpeed.Y = Vector.Y;
-	m_pEntity->vecTurnSpeed.Z = Vector.Z;
+	m_pEntity->mat->pos.x = Matrix.pos.x;
+	m_pEntity->mat->pos.y = Matrix.pos.y;
+	m_pEntity->mat->pos.z = Matrix.pos.z;
 }
 
 // 0.3.7
@@ -214,16 +213,13 @@ uint16_t CEntity::GetModelIndex()
 // 0.3.7
 bool CEntity::IsAdded()
 {
-	if(m_pEntity)
-	{
-		if(m_pEntity->vtable == g_libGTASA+0x5C7358) // CPlaceable
-			return false;
+	if(!m_pEntity)
+		return false;
 
-		if(m_pEntity->dwUnkModelRel)
-			return true;
-	}
+	if(CUtil::IsGameEntityArePlaceable(m_pEntity))
+		return false;
 
-	return false;
+	return true;
 }
 
 // 0.3.7
@@ -250,10 +246,12 @@ bool CEntity::SetModelIndex(unsigned int uiModel)
 	}
 
 	// CEntity::DeleteRWObject()
-	(( void (*)(ENTITY_TYPE*))(*(void**)(m_pEntity->vtable+0x24)))(m_pEntity);
+	(( void (*)(CEntityGta*))(*(void**)(m_pEntity->vtable+0x24)))(m_pEntity);
+
 	m_pEntity->nModelIndex = uiModel;
+
 	// CEntity::SetModelIndex()
-	(( void (*)(ENTITY_TYPE*, unsigned int))(*(void**)(m_pEntity->vtable+0x18)))(m_pEntity, uiModel);
+	(( void (*)(CEntityGta*, unsigned int))(*(void**)(m_pEntity->vtable+0x18)))(m_pEntity, uiModel);
 
 	return true;
 }
@@ -261,20 +259,20 @@ bool CEntity::SetModelIndex(unsigned int uiModel)
 // 0.3.7
 void CEntity::TeleportTo(float fX, float fY, float fZ)
 {
-	if(m_pEntity && m_pEntity->vtable != (g_libGTASA+0x5C7358)) /* CPlaceable */
+	if(m_pEntity && !CUtil::IsGameEntityArePlaceable(m_pEntity)) /* CPlaceable */
 	{
 		uint16_t modelIndex = m_pEntity->nModelIndex;
 		if(	modelIndex != TRAIN_PASSENGER_LOCO &&
 			modelIndex != TRAIN_FREIGHT_LOCO &&
 			modelIndex != TRAIN_TRAM)
-			(( void (*)(ENTITY_TYPE*, float, float, float, bool))(*(void**)(m_pEntity->vtable+0x3C)))(m_pEntity, fX, fY, fZ, 0);
+			(( void (*)(CEntityGta*, float, float, float, bool))(*(void**)(m_pEntity->vtable+0x3C)))(m_pEntity, fX, fY, fZ, 0);
 		else
 			ScriptCommand(&put_train_at, m_dwGTAId, fX, fY, fZ);
 	}
 }
 
 float CEntity::GetDistanceFromCamera()
-{
+{ // not v2.1
 	MATRIX4X4 matEnt;
 
 	if(!m_pEntity || CUtil::IsGameEntityArePlaceable(m_pEntity))
@@ -282,9 +280,9 @@ float CEntity::GetDistanceFromCamera()
 
 	this->GetMatrix(&matEnt);
 	
-	float tmpX = (matEnt.pos.X - *(float*)(g_libGTASA+0x8B1134));
-	float tmpY = (matEnt.pos.Y - *(float*)(g_libGTASA+0x8B1138));
-	float tmpZ = (matEnt.pos.Z - *(float*)(g_libGTASA+0x8B113C));
+	float tmpX = (matEnt.pos.x - *(float*)(g_libGTASA+0x8B1134));
+	float tmpY = (matEnt.pos.y - *(float*)(g_libGTASA+0x8B1138));
+	float tmpZ = (matEnt.pos.z - *(float*)(g_libGTASA+0x8B113C));
 
 	return sqrt( tmpX*tmpX + tmpY*tmpY + tmpZ*tmpZ );
 }
@@ -319,9 +317,9 @@ float CEntity::GetDistanceFromLocalPlayerPed()
 		pLocalPlayerPed->GetMatrix(&matFromPlayer);
 	}
 
-	fSX = (matThis.pos.X - matFromPlayer.pos.X) * (matThis.pos.X - matFromPlayer.pos.X);
-	fSY = (matThis.pos.Y - matFromPlayer.pos.Y) * (matThis.pos.Y - matFromPlayer.pos.Y);
-	fSZ = (matThis.pos.Z - matFromPlayer.pos.Z) * (matThis.pos.Z - matFromPlayer.pos.Z);
+	fSX = (matThis.pos.x - matFromPlayer.pos.x) * (matThis.pos.x - matFromPlayer.pos.x);
+	fSY = (matThis.pos.y - matFromPlayer.pos.y) * (matThis.pos.y - matFromPlayer.pos.y);
+	fSZ = (matThis.pos.z - matFromPlayer.pos.z) * (matThis.pos.z - matFromPlayer.pos.z);
 
 	return (float)sqrt(fSX + fSY + fSZ);
 }
@@ -332,9 +330,9 @@ float CEntity::GetDistanceFromPoint(float X, float Y, float Z)
 	float		fSX,fSY,fSZ;
 
 	GetMatrix(&matThis);
-	fSX = (matThis.pos.X - X) * (matThis.pos.X - X);
-	fSY = (matThis.pos.Y - Y) * (matThis.pos.Y - Y);
-	fSZ = (matThis.pos.Z - Z) * (matThis.pos.Z - Z);
+	fSX = (matThis.pos.x - X) * (matThis.pos.x - X);
+	fSY = (matThis.pos.y - Y) * (matThis.pos.y - Y);
+	fSZ = (matThis.pos.z - Z) * (matThis.pos.z - Z);
 	
 	return (float)sqrt(fSX + fSY + fSZ);
 }

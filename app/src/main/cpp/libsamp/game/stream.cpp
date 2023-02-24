@@ -28,7 +28,7 @@ void CStream::CreateStream() // ready 50%
 	}
 	m_hStream = BASS_StreamCreateURL(m_szUrl, 0, BASS_SAMPLE_3D | BASS_SAMPLE_MONO | BASS_SAMPLE_LOOP, nullptr, nullptr);
 	BASS_ChannelPlay(m_hStream, false);
-	BASS_3DVECTOR vec(m_vPos.X, m_vPos.Y, m_vPos.Z);
+	BASS_3DVECTOR vec(m_vPos.x, m_vPos.y, m_vPos.z);
 	BASS_3DVECTOR orient(0.0f, 0.0f, 0.0f);
 	BASS_3DVECTOR vel(0.0f, 0.0f, 0.0f);
 	BASS_ChannelSet3DPosition(m_hStream, &vec, &orient, &vel);
@@ -63,7 +63,7 @@ void CStream::ProcessAttached() // todo
 		}
 		MATRIX4X4 mat;
 		pVeh->GetMatrix(&mat);
-		memcpy(&m_vPos, &mat.pos, sizeof(VECTOR));
+		memcpy(&m_vPos, &mat.pos, sizeof(CVector));
 		//CChatWindow::AddDebugMessage("processed for vehicle %d", m_iAttachedTo);
 	}
 	if (m_iAttachType == 2) // player
@@ -79,18 +79,18 @@ void CStream::ProcessAttached() // todo
 		}
 		MATRIX4X4 mat;
 		pPed->GetMatrix(&mat);
-		memcpy(&m_vPos, &mat.pos, sizeof(VECTOR));
+		memcpy(&m_vPos, &mat.pos, sizeof(CVector));
 		//CChatWindow::AddDebugMessage("processed for player %d", m_iAttachedTo);
 	}
 
-	BASS_3DVECTOR vec(m_vPos.X, m_vPos.Y, m_vPos.Z);
+	BASS_3DVECTOR vec(m_vPos.x, m_vPos.y, m_vPos.z);
 	BASS_3DVECTOR orient(0.0f, 0.0f, 0.0f);
 	BASS_3DVECTOR vel(0.0f, 0.0f, 0.0f);
 
 	BASS_ChannelSet3DPosition(m_hStream, &vec, &orient, &vel);
 }
 
-CStream::CStream(VECTOR* pPos, int iVirtualWorld, int iInterior, float fDistance, const char* szUrl) // ready
+CStream::CStream(CVector* pPos, int iVirtualWorld, int iInterior, float fDistance, const char* szUrl) // ready
 {
 	m_bIsDeactivated = false;
 	m_bIsAttached = false;
@@ -100,7 +100,7 @@ CStream::CStream(VECTOR* pPos, int iVirtualWorld, int iInterior, float fDistance
 	m_hStream = NULL;
 
 	strcpy(&m_szUrl[0], szUrl);
-	memcpy(&m_vPos, pPos, sizeof(VECTOR));
+	memcpy(&m_vPos, pPos, sizeof(CVector));
 
 	m_iVirtualWorld = iVirtualWorld;
 	m_iInterior = iInterior;
@@ -157,15 +157,15 @@ void CStream::Process(MATRIX4X4* pMatListener) // todo
 	}
 }
 
-void CStream::SetPosition(VECTOR vvec)
+void CStream::SetPosition(CVector vvec)
 {
-	BASS_3DVECTOR vec(vvec.X, vvec.Y, vvec.Z);
+	BASS_3DVECTOR vec(vvec.x, vvec.y, vvec.z);
 	BASS_3DVECTOR orient(0.0f, 0.0f, 0.0f);
 	BASS_3DVECTOR vel(0.0f, 0.0f, 0.0f);
 
-	m_vPos.X = vvec.X;
-	m_vPos.Y = vvec.Y;
-	m_vPos.Z = vvec.Z;
+	m_vPos.x = vvec.x;
+	m_vPos.y = vvec.y;
+	m_vPos.z = vvec.z;
 
 	BASS_ChannelSet3DPosition(m_hStream, &vec, &orient, &vel);
 	BASS_ChannelSet3DAttributes(m_hStream, BASS_3DMODE_OFF, 1.0f, m_fDistance, 360, 360, 1.0f);

@@ -43,42 +43,6 @@ JNIEnv* CJavaWrapper::GetEnv()
 	return env;
 }
 
-std::string CJavaWrapper::GetClipboardString()
-{
-	JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return std::string("");
-	}
-
-	jbyteArray retn = (jbyteArray)env->CallObjectMethod(activity, s_GetClipboardText);
-
-	if ((env)->ExceptionCheck())
-	{
-		(env)->ExceptionDescribe();
-		(env)->ExceptionClear();
-		return std::string("");
-	}
-
-	if (!retn)
-	{
-		return std::string("");
-	}
-
-	jboolean isCopy = true;
-
-	jbyte* pText = env->GetByteArrayElements(retn, &isCopy);
-	jsize length = env->GetArrayLength(retn);
-
-	std::string str((char*)pText, length);
-
-	env->ReleaseByteArrayElements(retn, pText, JNI_ABORT);
-	
-	return str;
-}
-
 void CJavaWrapper::ShowClientSettings()
 {
 	JNIEnv* env = GetEnv();
@@ -98,6 +62,8 @@ void CJavaWrapper::ShowClientSettings()
 #include "chatwindow.h"
 #include "java_systems/CMedic.h"
 #include "java_systems/CSpeedometr.h"
+#include "java_systems/CAuthorization.h"
+#include "java_systems/CChooseSpawn.h"
 
 extern "C"
 {
@@ -239,23 +205,6 @@ extern "C"
 
 		pEnv->ReleaseStringUTFChars(password, inputPassword);
 		pEnv->ReleaseStringUTFChars(mail, inputMail);
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onLoginClick(JNIEnv *pEnv, jobject thiz, jstring password) {
-		const char *inputPassword = pEnv->GetStringUTFChars(password, nullptr);
-
-		if(pNetGame) {
-			pNetGame->SendLoginPacket(inputPassword);
-		}
-
-		Log("onAuthPlayClick: inputPassword - %s", inputPassword);
-
-		pEnv->ReleaseStringUTFChars(password, inputPassword);
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onChooseSpawnClick(JNIEnv *pEnv, jobject thiz, jint spawnid) {
-		pNetGame->SendCustomPacket(253, 2, spawnid);
-		Log("SendChooseSpawn: SpawnId - %d", spawnid);
 	}
 
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onSamwillHideGame(JNIEnv *pEnv, jobject thiz, jint samwillpacket) {
@@ -538,57 +487,6 @@ void CJavaWrapper::HideRegistration()
 	env->CallVoidMethod(this->activity, this->s_hideRegistration);
 }
 
-void CJavaWrapper::ShowAuthorization(char *nick, int id, bool ip_match, bool toggleAutoLogin, bool email_acvive)
-{
-	JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-	jstring jnick = env->NewStringUTF( nick );
-
-	env->CallVoidMethod(this->activity, this->s_showAuthorization, jnick, id, ip_match, toggleAutoLogin, email_acvive);
-	env->DeleteLocalRef(jnick);
-}
-
-void CJavaWrapper::HideAuthorization() 
-{
-	JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-	env->CallVoidMethod(this->activity, this->s_hideAuthorization);
-}
-
-void CJavaWrapper::ShowChooseSpawn(int organization, int station, int exit, int garage, int house) 
-{
-	JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-	env->CallVoidMethod(this->activity, this->s_showChooseSpawn, organization, station, exit, garage, house);
-}
-
-void CJavaWrapper::HideChooseSpawn() 
-{
-	JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-	env->CallVoidMethod(this->activity, this->s_hideChooseSpawn);
-}
-
 void CJavaWrapper::ClearScreen()
 {
 	Log("ClearScreen");
@@ -597,8 +495,8 @@ void CJavaWrapper::ClearScreen()
 	ShowMiningGame3(false);
 	ToggleShopStoreManager(false);
 	CHUD::hideTargetNotify();
-	HideAuthorization();
-	HideChooseSpawn();
+	CAuthorization::hide();
+	CChooseSpawn::hide();
 	HideRegistration();
 	CSpeedometr::hide();
 	HideArmyGame();
@@ -645,8 +543,6 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 		return;
 	}
 
-	s_GetClipboardText = env->GetMethodID(nvEventClass, "getClipboardText", "()[B");
-
 	s_ShowClientSettings = env->GetMethodID(nvEventClass, "showClientSettings", "()V");
 
 	s_showOilFactoryGame = env->GetMethodID(nvEventClass, "showOilFactoryGame", "()V");
@@ -666,18 +562,12 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 
 	s_showMenu = env->GetMethodID(nvEventClass, "showMenu", "()V");
 
-	s_showAuthorization = env->GetMethodID(nvEventClass, "showAuthorization", "(Ljava/lang/String;IZZZ)V");
-	s_hideAuthorization = env->GetMethodID(nvEventClass, "hideAuthorization", "()V");
-
 	s_showRegistration = env->GetMethodID(nvEventClass, "showRegistration", "(Ljava/lang/String;I)V");
 	s_hideRegistration = env->GetMethodID(nvEventClass, "hideRegistration", "()V");
 
 	j_toggleAutoShop = env->GetMethodID(nvEventClass, "toggleAutoShop", "(Z)V");
 
 	j_updateAutoShop = env->GetMethodID(nvEventClass, "updateAutoShop", "(Ljava/lang/String;IIFFI)V");
-
-	s_showChooseSpawn = env->GetMethodID(nvEventClass, "showChooseSpawn", "(IIIII)V");
-	s_hideChooseSpawn = env->GetMethodID(nvEventClass, "hideChooseSpawn", "()V");
 
 	s_setPauseState = env->GetMethodID(nvEventClass, "setPauseState", "(Z)V");
 
@@ -824,19 +714,6 @@ Java_com_liverussia_cr_gui_Casino_1LuckyWheel_ClickButt(JNIEnv *env, jobject thi
 	pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
 }
 
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_AuthorizationManager_ClickRecoveryPass(JNIEnv *env, jobject thiz) {
-
-	uint8_t packet = ID_CUSTOM_RPC;
-	uint8_t RPC = RPC_RESTORE_PASS;
-
-	RakNet::BitStream bsSend;
-	bsSend.Write(packet);
-	bsSend.Write(RPC);
-
-	pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
-}
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_nvidia_devtech_NvEventQueueActivity_onOilFactoryGameClose(JNIEnv *env, jobject thiz,

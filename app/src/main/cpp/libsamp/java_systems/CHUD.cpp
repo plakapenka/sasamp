@@ -119,7 +119,7 @@ void CHUD::toggleAll(bool toggle, bool withchat)
     jmethodID method = env->GetMethodID(clazz, "toggleAll", "(Z)V");
     env->CallVoidMethod(thiz, method, toggle);
 
-    *(uint8_t*)(g_libGTASA+0x7165E8) = 0;//дефолт худ офф
+ //   *(uint8_t*)(g_libGTASA+0x7165E8) = 0;//дефолт худ офф
   //  ScriptCommand(&toggle_radar_blank, (int)toggle); // радар офф
 }
 

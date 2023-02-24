@@ -22,6 +22,7 @@
 package com.nvidia.devtech;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -121,9 +122,7 @@ are also made available to the native code for ease of application porting.
 Please see the external SDK documentation for an introduction to the use of
 this class and its paired native library.
 */
-public abstract class NvEventQueueActivity
-    extends AppCompatActivity
-        implements SensorEventListener, View.OnTouchListener, HeightProvider.HeightListener {
+public abstract class NvEventQueueActivity extends Activity implements SensorEventListener {
 
     private static NvEventQueueActivity instance = null;
     protected Handler handler = null;
@@ -134,7 +133,7 @@ public abstract class NvEventQueueActivity
    // private boolean inputPaused = false;
 
     protected boolean wantsMultitouch = false;
-
+    private boolean inputPaused = false;
 	protected boolean supportPauseResume = true;
     protected boolean ResumeEventDone = false;
 
@@ -146,7 +145,6 @@ public abstract class NvEventQueueActivity
 	protected Display display = null;
 
 	FrameLayout mAndroidUI = null;
-
     private static final int EGL_RENDERABLE_TYPE = 0x3040;
     private static final int EGL_OPENGL_ES2_BIT = 0x0004;
     private static final int EGL_OPENGL_ES3_BIT = 64;
@@ -183,7 +181,6 @@ public abstract class NvEventQueueActivity
     private SamwillManager mSamwillManager = null;
 
     private AutoShop mAutoShop = null;
-    private AuthorizationManager mAuthorizationManager = null;
     private RegistrationManager mRegistrationManager = null;
     private FuelStationManager mFuelStationManager = null;
     private OilFactoryManager mOilFactoryManager = null;
@@ -248,7 +245,7 @@ public abstract class NvEventQueueActivity
                     mDialogClientSettings = null;
                 }
                 mDialogClientSettings = new DialogClientSettings();
-                mDialogClientSettings.show(getSupportFragmentManager(), "test");
+             //   mDialogClientSettings.show(getSupportFragmentManager(), "test");
             }
         });
     }
@@ -278,58 +275,6 @@ public abstract class NvEventQueueActivity
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
-    @Override
-    public boolean onTouch(View view, MotionEvent event)
-    {
-        if(view == mRootFrame)
-        {
-            if (wantsMultitouch)
-            {
-                int x1 = 0, y1 = 0, x2 = 0, y2 = 0, x3 = 0, y3 = 0;
-                // marshal up the data.
-                int numEvents = event.getPointerCount();
-                for (int i=0; i<numEvents; i++)
-                {
-                    // only use pointers 0 and 1, 2, 3
-                    int pointerId = event.getPointerId(i);
-                    if (pointerId == 0)
-                    {
-                        x1 = (int)event.getX(i);
-                        y1 = (int)event.getY(i);
-                    }
-                    else if (pointerId == 1)
-                    {
-                        x2 = (int)event.getX(i);
-                        y2 = (int)event.getY(i);
-                    }
-                    else if (pointerId == 2)
-                    {
-                        x3 = (int)event.getX(i);
-                        y3 = (int)event.getY(i);
-                    }
-                }
-
-                int pointerId = event.getPointerId(event.getActionIndex());
-                int action = event.getActionMasked();
-                customMultiTouchEvent(action, pointerId, x1, y1, x2, y2,
-                        x3, y3);
-            }
-            else // old style input.*/
-            {
-                touchEvent(event.getAction(), (int)event.getX(), (int)event.getY(), event);
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public void onHeightChanged(int orientation, int height)
-    {
-//        Dialog dialog = mDialog;
-//        if (dialog != null) {
-//            dialog.onHeightChanged(height);
-//        }
-    }
     public native void onWeaponChanged();
 
     public native void togglePlayer(int toggle);
@@ -641,7 +586,7 @@ public abstract class NvEventQueueActivity
         this.paused = false;
 
         super.onResume();
-       // this.inputPaused = false;
+        this.inputPaused = false;
     }
 
     /**
@@ -660,12 +605,12 @@ public abstract class NvEventQueueActivity
      * And remaps as needed into the native calls exposed by nv_event.h
      */
     public void onPause() {
-       // if (this.ResumeEventDone) {
-           // pauseEvent();
-       // }
-        //this.paused = true;
         super.onPause();
-       // this.inputPaused = true;
+        if (this.ResumeEventDone) {
+            pauseEvent();
+        }
+        this.paused = true;
+        this.inputPaused = true;
     }
     
     /**
@@ -779,9 +724,39 @@ public abstract class NvEventQueueActivity
      * And remaps as needed into the native calls exposed by nv_event.h
      */
     @Override
-    public boolean onTouchEvent(MotionEvent event)
-    {
-        return super.onTouchEvent(event);
+    public boolean onTouchEvent(MotionEvent event) {
+        boolean ret = super.onTouchEvent(event);
+
+        if (!ret) {
+            if (this.wantsMultitouch) {
+                int count = 0;
+                int x1 = 0;
+                int y1 = 0;
+                int x2 = 0;
+                int y2 = 0;
+                int x3 = 0;
+                int y3 = 0;
+                int x4 = 0;
+                int y4 = 0;
+                int numEvents = event.getPointerCount();
+                for (int i = 0; i < numEvents; i++) {
+                    if (count == 0) {
+                        x1 = (int) event.getX(i);
+                        y1 = (int) event.getY(i);
+                        count++;
+                    } else if (count == 1) {
+                        x2 = (int) event.getX(i);
+                        y2 = (int) event.getY(i);
+                        count++;
+                    }
+                }
+                ret = multiTouchEvent(event.getAction(), count, x1, y1, x2, y2, event);
+            } else {
+                ret = touchEvent(event.getAction(), (int) event.getX(), (int) event.getY(), event);
+            }
+        }
+        boolean z2 = ret;
+        return ret;
     }
 
     /**
@@ -912,8 +887,6 @@ public abstract class NvEventQueueActivity
         view.setFocusable(true);
         view.setFocusableInTouchMode(true);
 
-        mRootFrame.setOnTouchListener(this);
-
         //
 
         //
@@ -926,7 +899,6 @@ public abstract class NvEventQueueActivity
         // mInputManager = new InputManager(this);
         //mHeightProvider = new HeightProvider(this).init(mRootFrame).setHeightListener(this);
         new Notification(this);
-        mAuthorizationManager = new AuthorizationManager(this);
         mRegistrationManager = new RegistrationManager(this);
         mFuelStationManager = new FuelStationManager(this);
         mOilFactoryManager = new OilFactoryManager(this);
@@ -934,7 +906,6 @@ public abstract class NvEventQueueActivity
         mArmyGameManager = new ArmyGameManager(this);
         mShopStoreManager = new ShopStoreManager(this);
         mGunShopManager = new GunShopManager(this);
-        mChooseSpawn = new ChooseSpawn(this);
         new PreDeath(this);
         new Dialog(this);
         new Inventory(this);
@@ -1441,21 +1412,9 @@ public abstract class NvEventQueueActivity
         runOnUiThread(() -> mAutoShop.Update(name, price, count, maxspeed, acceleration, gear));
     }
 
-    public void showAuthorization(String nick, int id, boolean ip_match, boolean toggle_autologin, boolean email_acvive) {
-        runOnUiThread(() -> {
-            mAuthorizationManager.Show(nick, id, ip_match, toggle_autologin, email_acvive);
-        });
-    }
-
-    public void hideAuthorization() { runOnUiThread(() -> { mAuthorizationManager.Hide(); }); }
-
     public void showRegistration(String nick, int id) { runOnUiThread(() -> { mRegistrationManager.Show(nick, id); }); }
 
     public void hideRegistration() { runOnUiThread(() -> { mRegistrationManager.Hide(); }); }
-
-    public void showChooseSpawn(int organization, int station, int exit, int garage, int house) { runOnUiThread(() -> { mChooseSpawn.Show(organization, station, exit, garage, house); }); }
-
-    public void hideChooseSpawn() { runOnUiThread(() -> { mChooseSpawn.Hide(); }); }
 
     public void showMenu() { runOnUiThread(() -> { mMenu.ShowMenu(); }); }
 

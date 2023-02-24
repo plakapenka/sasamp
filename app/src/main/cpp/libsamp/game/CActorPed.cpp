@@ -9,7 +9,7 @@
 
 extern CGame* pGame;
 
-CActorPed::CActorPed(uint16_t usModel, VECTOR vecPosition, float fRotation, float fHealth, bool bInvulnerable)
+CActorPed::CActorPed(uint16_t usModel, CVector vecPosition, float fRotation, float fHealth, bool bInvulnerable)
 {
 	
 
@@ -23,20 +23,15 @@ CActorPed::CActorPed(uint16_t usModel, VECTOR vecPosition, float fRotation, floa
 		pGame->LoadRequestedModels();
 	}
 
-	if (!IsPedModel(usModel)) 
-	{
-		usModel = 0;
-	}
-
 	uint32_t actorGTAId = 0;
-	ScriptCommand(&create_actor, 22, usModel, vecPosition.X, vecPosition.Y, vecPosition.Z, &actorGTAId);
+	ScriptCommand(&create_actor, 22, usModel, vecPosition.x, vecPosition.y, vecPosition.z, &actorGTAId);
 
 	m_dwGTAId = actorGTAId;
-	m_pPed = GamePool_Ped_GetAt(m_dwGTAId);
-	m_pEntity = (ENTITY_TYPE*)m_pPed;
+	m_pPed = CUtil::GetPoolPed(m_dwGTAId);
+	m_pEntity = static_cast<CPhysicalGta *>( m_pPed );
 
 	ForceTargetRotation(fRotation);
-	TeleportTo(vecPosition.X, vecPosition.Y, vecPosition.Z);
+	TeleportTo(vecPosition.x, vecPosition.y, vecPosition.z);
 
 	if (fHealth < 1.0f) 
 	{
@@ -65,11 +60,11 @@ CActorPed::~CActorPed()
 	Destroy();
 }
 
-bool IsValidGamePed(PED_TYPE* pPed) 
+bool IsValidGamePed(CPedGta* pPed)
 {
 	
 	//IsPedPointerValid(CPed *) � 0x00435614
-	if (((bool (*)(PED_TYPE*))(g_libGTASA + 0x00435614 + 1))(pPed)) {
+	if (((bool (*)(CPedGta*))(g_libGTASA + 0x004A72C4 + 1))(pPed)) {
 		return true;
 	}
 	return false;
@@ -79,12 +74,12 @@ void CActorPed::Destroy()
 {
 	
 	if (!m_pPed) return;
-	if (!GamePool_Ped_GetAt(m_dwGTAId)) return;
+	if (!CUtil::GetPoolPed(m_dwGTAId)) return;
 
 	if (IsValidGamePed(m_pPed)) 
 	{
 		// CPed::entity.vtable + 0x4 destructor
-		((void (*)(PED_TYPE*))(*(void**)(m_pPed->entity.vtable + 0x4)))(m_pPed);
+		((void (*)(CPedGta*))(*(void**)(m_pPed->vtable + 0x4)))(m_pPed);
 	}
 
 	m_pPed = nullptr;
@@ -96,7 +91,7 @@ void CActorPed::SetHealth(float fHealth)
 {
 	
 	if (!m_pPed) return;
-	if (!GamePool_Ped_GetAt(m_dwGTAId)) return;
+	if (!CUtil::GetPoolPed(m_dwGTAId)) return;
 
 	if (!IsValidGamePed(m_pPed)) 
 	{
@@ -110,7 +105,7 @@ void CActorPed::SetDead()
 {
 	
 	if (!m_pPed) return;
-	if (!GamePool_Ped_GetAt(m_dwGTAId)) return;
+	if (!CUtil::GetPoolPed(m_dwGTAId)) return;
 
 	if (!IsValidGamePed(m_pPed)) 
 	{
@@ -119,7 +114,7 @@ void CActorPed::SetDead()
 
 	MATRIX4X4 matEntity;
 	GetMatrix(&matEntity);
-	TeleportTo(matEntity.pos.X, matEntity.pos.Y, matEntity.pos.Z);
+	TeleportTo(matEntity.pos.x, matEntity.pos.y, matEntity.pos.z);
 
 	SetHealth(0.0f);
 	ScriptCommand(&kill_actor, m_dwGTAId);
@@ -129,7 +124,7 @@ void CActorPed::ForceTargetRotation(float fRotation)
 {
 	
 	if (!m_pPed) return;
-	if (!GamePool_Ped_GetAt(m_dwGTAId)) return;
+	if (!CUtil::GetPoolPed(m_dwGTAId)) return;
 
 	if (!IsValidGamePed(m_pPed)) 
 	{
@@ -145,7 +140,7 @@ void CActorPed::ForceTargetRotation(float fRotation)
 void CActorPed::ApplyAnimation(char* szAnimName, char* szAnimFile, float fDelta, int bLoop, int bLockX, int bLockY, int bFreeze, int uiTime)
 {
 	if (!m_pPed) return;
-	if (!GamePool_Ped_GetAt(m_dwGTAId)) return;
+	if (!CUtil::GetPoolPed(m_dwGTAId)) return;
 
 	if(!pGame->IsAnimationLoaded(szAnimFile))
 	{
@@ -160,9 +155,9 @@ void CActorPed::ApplyAnimation(char* szAnimName, char* szAnimFile, float fDelta,
 //{
 //	if (!m_pPed) return;
 //	if (!GamePool_Vehicle_GetAt(iVehicleID)) return;
-//	if (!GamePool_Ped_GetAt(m_dwGTAId)) return;
+//	if (!CUtil::GetPoolPed(m_dwGTAId)) return;
 //
-//	VEHICLE_TYPE* pVehicle = GamePool_Vehicle_GetAt(iVehicleID);
+//	CVehicleGta* pVehicle = GamePool_Vehicle_GetAt(iVehicleID);
 //
 //	if (pVehicle->fHealth == 0.0f) return;
 //	if (pVehicle->entity.vtable == g_libGTASA + 0x5C7358) return;
@@ -179,26 +174,3 @@ void CActorPed::ApplyAnimation(char* szAnimName, char* szAnimFile, float fDelta,
 //		ScriptCommand(&put_actor_in_car2, m_dwGTAId, iVehicleID, iSeat);
 //	}
 //}
-
-void CActorPed::RemoveFromVehicle()
-{
-	if (!m_pPed) return;
-	if (!GamePool_Ped_GetAt(m_dwGTAId)) return;
-
-	MATRIX4X4 mat;
-
-	if (IN_VEHICLE(m_pPed))
-	{
-		GetMatrix(&mat);
-		RemoveFromVehicleAndPutAt(mat.pos.X, mat.pos.Y, mat.pos.Z);
-	}
-}
-
-void CActorPed::RemoveFromVehicleAndPutAt(float fX, float fY, float fZ)
-{
-	if (!GamePool_Ped_GetAt(m_dwGTAId)) return;
-	if (m_pPed && IN_VEHICLE(m_pPed))
-	{
-		ScriptCommand(&remove_actor_from_car_and_put_at, m_dwGTAId, fX, fY, fZ);
-	}
-}

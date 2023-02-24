@@ -6,7 +6,6 @@
 #include "aimstuff.h"
 #include "pad.h"
 #include "quaternion.h"
-#include "entity.h"
 #include "playerped.h"
 #include "vehicle.h"
 #include "object.h"
@@ -58,7 +57,7 @@ public:
 	// 0.3.7
 	static void RemovePlayer(CPlayerPed* pPlayer);
 	// 0.3.7
-	CObject* NewObject(int iModel, float fPosX, float fPosY, float fPosZ, VECTOR vecRot, float fDrawDistastatic);
+	CObject* NewObject(int iModel, float fPosX, float fPosY, float fPosZ, CVector vecRot, float fDrawDistastatic);
 	uint32_t CreatePickup(int iModel, int iType, float fX, float fY, float fZ, int *unk);
 
 	static float FindGroundZForCoord(float x, float y, float z);
@@ -68,20 +67,17 @@ public:
 	static void SetWorldTime(int iHour, int iMinute);
 	// 0.3.7
 	void SetWorldWeather(unsigned char byteWeatherID) const;
-	// 0.3.7
-	void EnableClock(bool bEnable);
-	static void ToggleThePassingOfTime(bool bOnOff);
+
 	// 0.3.7
 	void EnableZoneNames(bool bEnable);
-	void DisplayWidgets(bool bDisp);
 	void PlaySound(int iSound, float fX, float fY, float fZ);
 
 	// 0.3.7
 	void ToggleRaceCheckpoints(bool bEnabled) { m_bRaceCheckpointsEnabled = bEnabled; }
 	// 0.3.7
-	void SetCheckpointInformation(VECTOR *pos, VECTOR *extent);
+	void SetCheckpointInformation(CVector *pos, CVector *extent);
 	// 0.3.7
-	void SetRaceCheckpointInformation(uint8_t byteType, VECTOR *pos, VECTOR *next, float fSize);
+	void SetRaceCheckpointInformation(uint8_t byteType, CVector *pos, CVector *next, float fSize);
 	// 0.3.7
 	void UpdateCheckpoints();
 	// 0.3.7
@@ -127,7 +123,7 @@ public:
 	static void AddToLocalMoney(int iAmmount);
 
 	static void DrawGangZone(float fPos[], uint32_t dwColor);
-
+	static bool bIsGameInited;
 
 	// race checkpoint
 	bool			m_bRaceCheckpointsEnabled;
@@ -137,8 +133,8 @@ public:
 	void CreateCheckPoint();
 
 	uint32_t		m_dwCheckpointMarker;
-	VECTOR			m_vecCheckpointPos;
-	VECTOR			m_vecCheckpointExtent;
+	CVector			m_vecCheckpointPos;
+	CVector			m_vecCheckpointExtent;
 	bool isCasinoDiceActive = false;
 	bool isAutoShopActive = false;
 	bool isCasinoWheelActive = false;
@@ -162,8 +158,8 @@ private:
 	uint32_t		m_dwRaceCheckpointMarker;
 	float			m_fRaceCheckpointSize;
 	uint8_t			m_byteRaceType;
-	VECTOR 			m_vecRaceCheckpointPos;
-	VECTOR			m_vecRaceCheckpointNext;
+	CVector 			m_vecRaceCheckpointPos;
+	CVector			m_vecRaceCheckpointNext;
 
 	bool 			m_bClockEnabled;
 

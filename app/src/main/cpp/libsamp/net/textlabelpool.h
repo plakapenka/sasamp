@@ -14,13 +14,13 @@ public:
 	char text[2048+1];
 	char textWithoutColors[2048+1];
 	uint32_t color;
-	VECTOR pos;
+	CVector pos;
 	float drawDistance;
 	int virtualWorld;
 	bool useLineOfSight;
 	PLAYERID attachedToPlayerID;
 	VEHICLEID attachedToVehicleID;
-	VECTOR offsetCoords;
+	CVector offsetCoords;
 	float m_fTrueX;
 };
 
@@ -34,7 +34,7 @@ private:
 	void DrawAttachedToPlayer(TEXT_LABELS* pLabel);
 	void DrawAttachedToVehicle(TEXT_LABELS* pLabel);
 
-	void DrawTextLabel(TEXT_LABELS* pLabel, VECTOR* pPos);
+	void DrawTextLabel(TEXT_LABELS* pLabel, CVector* pPos);
 
 public:
 	CText3DLabelsPool();
@@ -44,8 +44,8 @@ public:
 		float posX, float posY, float posZ, float drawDistance,
 		 bool useLOS, PLAYERID attachedToPlayerID, VEHICLEID attachedToVehicleID);
 	void Delete(int labelID);
-	void AttachToPlayer(int labelID, PLAYERID playerID, VECTOR pos);
-	void AttachToVehicle(int labelID, VEHICLEID vehicleID, VECTOR pos);
+	void AttachToPlayer(int labelID, PLAYERID playerID, CVector pos);
+	void AttachToVehicle(int labelID, VEHICLEID vehicleID, CVector pos);
 	void Update3DLabel(int labelID, uint32_t color, char* text);
 	void Draw();
 

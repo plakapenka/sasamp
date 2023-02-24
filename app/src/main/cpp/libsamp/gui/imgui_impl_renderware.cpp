@@ -17,8 +17,8 @@ ImVec4 g_ScissorRect;
 
 void ImGui_ImplRenderWare_RenderDrawData(ImDrawData* draw_data)
 {
-	const RwReal nearScreenZ = 		*(RwReal*)(g_libGTASA+0x9DAA60);	// CSprite2d::NearScreenZ 009DAA60
-	const RwReal recipNearClip = 	*(RwReal*)(g_libGTASA+0x9DAA64);	// CSprite2d::RecipNearClip 009DAA64
+	const RwReal nearScreenZ = 		*(RwReal*)(g_libGTASA+0x00A7C348);	// CSprite2d::NearScreenZ
+	const RwReal recipNearClip = 	*(RwReal*)(g_libGTASA+0x00A7C344);	// CSprite2d::RecipNearClip
 	if (g_VertexBufferSize < MAX_VERTEXS)
 	{
 		if (!g_pVB || g_VertexBufferSize < draw_data->TotalVtxCount)
@@ -184,6 +184,4 @@ void ImGui_ImplRenderWare_NewFrame()
 {
 	if(!g_FontRaster)
 		ImGui_ImplRenderWare_CreateDeviceObjects();
-
-
 }

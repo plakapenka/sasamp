@@ -10,6 +10,7 @@
 #include "../util/CJavaWrapper.h"
 #include "../util/util.h"
 #include "../game/vehicle.h"
+#include "CFontRenderer.h"
 
 extern CPlayerTags *pPlayerTags;
 extern CNetGame *pNetGame;
@@ -151,23 +152,19 @@ void CGUI::PostProcessInput()
 #include "..//CDebugInfo.h"
 #include "java_systems/CDialog.h"
 #include "java_systems/CSpeedometr.h"
-
+void RenderBackgroundHud();
 extern CGame* pGame;
 
 void CGUI::Render()
 {
-	PreProcessInput();
 
-	//ProcessPushedTextdraws();
-	CChatWindow::ProcessPushedCommands();
+	PreProcessInput();
 
 	ImGui_ImplRenderWare_NewFrame();
 	ImGui::NewFrame();
 
-	
-
-	RenderVersion();
 	//RenderRakNetStatistics();
+	RenderBackgroundHud();
 
 	if (pPlayerTags) pPlayerTags->Render();
 	
@@ -178,6 +175,7 @@ void CGUI::Render()
 
 	if(pGame->FindPlayerPed()->IsInVehicle() && !pGame->FindPlayerPed()->IsAPassenger() && !CKeyBoard::IsOpen() && !CDialog::bIsShow)
 	{
+		Log("CSpeedometr::show");
 		if(!CSpeedometr::bIsShow)
 		{
 			CSpeedometr::show();
@@ -193,7 +191,7 @@ void CGUI::Render()
 
 	CKeyBoard::Render();
 
-	CDebugInfo::Draw();
+	//CDebugInfo::Draw();
 
 	ImGui::EndFrame();
 	ImGui::Render();
@@ -238,27 +236,6 @@ bool CGUI::OnTouchEvent(int type, bool multi, int x, int y)
 	}
 	return true;
 }
-
-void CGUI::RenderVersion()
-{
-	return;
-
-	ImGui::GetOverlayDrawList()->AddText(
-		ImVec2(ScaleX(10), ScaleY(10)), 
-		ImColor(IM_COL32_BLACK), PORT_VERSION);
-}
-
-//void CGUI::ProcessPushedTextdraws()
-//{
-//	BUFFERED_COMMAND_TEXTDRAW* pCmd = nullptr;
-//	while (pCmd = m_BufferedCommandTextdraws.ReadLock())
-//	{
-//		RakNet::BitStream bs;
-//		bs.Write(pCmd->textdrawId);
-//		pNetGame->GetRakClient()->RPC(&RPC_ClickTextDraw, &bs, HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, false, UNASSIGNED_NETWORK_ID, 0);
-//		m_BufferedCommandTextdraws.ReadUnlock();
-//	}
-//}
 
 void CGUI::RenderRakNetStatistics()
 {

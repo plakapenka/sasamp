@@ -1,5 +1,7 @@
 #pragma once
 
+#include "entity.h"
+
 enum E_CUSTOM_COMPONENTS
 {
 	ccBumperF = 0,
@@ -150,7 +152,7 @@ public:
 		TURN_RIGHT,
 		TURN_ALL
 	};
-	VEHICLE_TYPE* 	m_pVehicle;
+	CVehicleGta* 	m_pVehicle;
 
 	// поворотники
 	CObject*		m_pLeftFrontTurnLighter;

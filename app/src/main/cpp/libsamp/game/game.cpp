@@ -5,6 +5,7 @@
 #include "java_systems/CHUD.h"
 #include "util/patch.h"
 #include "CGtaWidgets.h"
+#include "CModelInfo.h"
 
 void ApplyPatches();
 void ApplyInGamePatches();
@@ -14,6 +15,7 @@ void InitScripting();
 
 uint16_t *szGameTextMessage;
 bool bUsedPlayerSlots[PLAYER_PED_SLOTS];
+bool CGame::bIsGameInited = false;
 
 void CGame::RemoveModel(int iModel, bool bFromStreaming)
 {
@@ -23,7 +25,7 @@ void CGame::RemoveModel(int iModel, bool bFromStreaming)
 		{
 			if (ScriptCommand(&is_model_available, iModel))
 				// CStreaming::RemoveModel
-				((void(*)(int))(g_libGTASA + 0x290C4C + 1))(iModel);
+				((void(*)(int))(g_libGTASA + 0x002D0128 + 1))(iModel);
 		}
 		else
 		{
@@ -33,7 +35,6 @@ void CGame::RemoveModel(int iModel, bool bFromStreaming)
 	}
 }
 
-extern char* PLAYERS_REALLOC;
 CGame::CGame()
 {
 	for (int i = 0; i < HUD_MAX; i++)
@@ -105,7 +106,7 @@ void CGame::RemovePlayer(CPlayerPed* pPlayer)
 	}
 }
 
-CObject *CGame::NewObject(int iModel, float fPosX, float fPosY, float fPosZ, VECTOR vecRot, float fDrawDistance)
+CObject *CGame::NewObject(int iModel, float fPosX, float fPosY, float fPosZ, CVector vecRot, float fDrawDistance)
 {
 	CObject *pObjectNew = new CObject(iModel, fPosX, fPosY, fPosZ, vecRot, fDrawDistance);
 	return pObjectNew;
@@ -117,8 +118,7 @@ uint32_t CGame::CreatePickup(int iModel, int iType, float fX, float fY, float fZ
 
 	if(iModel > 0 && iModel < 20000)
 	{
-		uintptr_t *dwModelArray = (uintptr_t*)(g_libGTASA+0x87BF48);
-    	if(dwModelArray[iModel] == 0)
+    	if(CModelInfo::ms_modelInfoPtrs[iModel] == 0)
     		iModel = 18631;
 	}
 	else iModel = 18631;
@@ -144,11 +144,15 @@ void *Init(void *p)
 {
 	ApplyPatches();
 	InstallHooks();
+	LoadSplashTexture();
+	GameAimSyncInit();
 
 	CGtaWidgets::init();
 
 	pthread_exit(0);
 }
+
+extern void apply_v2();
 
 void CGame::InitInMenu()
 {
@@ -156,11 +160,6 @@ void CGame::InitInMenu()
 
 	pthread_t thread;
 	pthread_create(&thread, nullptr, Init, nullptr);
-
-	//ApplyPatches();
-	//InstallHooks();
-	GameAimSyncInit();
-	LoadSplashTexture();
 
 	szGameTextMessage = new uint16_t[1076];
 }
@@ -172,7 +171,7 @@ void CGame::InitInGame()
 	ApplyInGamePatches();
 	InitScripting();
 	
-	GameResetRadarColors();
+	//GameResetRadarColors();
 }
 
 
@@ -208,17 +207,17 @@ float CGame::FindGroundZForCoord(float x, float y, float z)
 }
 
 // 0.3.7
-void CGame::SetCheckpointInformation(VECTOR *pos, VECTOR *extent)
+void CGame::SetCheckpointInformation(CVector *pos, CVector *extent)
 {
-	memcpy(&m_vecCheckpointPos,pos,sizeof(VECTOR));
-	memcpy(&m_vecCheckpointExtent,extent,sizeof(VECTOR));
+	memcpy(&m_vecCheckpointPos,pos,sizeof(CVector));
+	memcpy(&m_vecCheckpointExtent,extent,sizeof(CVector));
 }
 
 // 0.3.7
-void CGame::SetRaceCheckpointInformation(uint8_t byteType, VECTOR *pos, VECTOR *next, float fSize)
+void CGame::SetRaceCheckpointInformation(uint8_t byteType, CVector *pos, CVector *next, float fSize)
 {
-	memcpy(&m_vecRaceCheckpointPos,pos,sizeof(VECTOR));
-	memcpy(&m_vecRaceCheckpointNext,next,sizeof(VECTOR));
+	memcpy(&m_vecRaceCheckpointPos,pos,sizeof(CVector));
+	memcpy(&m_vecRaceCheckpointNext,next,sizeof(CVector));
 	m_fRaceCheckpointSize = fSize;
 	m_byteRaceType = byteType;
 
@@ -234,12 +233,12 @@ void CGame::MakeRaceCheckpoint()
 	}
 
 	ScriptCommand(&create_racing_checkpoint, (int)m_byteRaceType,
-				m_vecRaceCheckpointPos.X, m_vecRaceCheckpointPos.Y, m_vecRaceCheckpointPos.Z,
-				m_vecRaceCheckpointNext.X, m_vecRaceCheckpointNext.Y, m_vecRaceCheckpointNext.Z,
+				m_vecRaceCheckpointPos.x, m_vecRaceCheckpointPos.y, m_vecRaceCheckpointPos.z,
+				m_vecRaceCheckpointNext.x, m_vecRaceCheckpointNext.y, m_vecRaceCheckpointNext.z,
 				m_fRaceCheckpointSize, &m_dwRaceCheckpointHandle);
 
-	m_dwRaceCheckpointMarker = CreateRadarMarkerIcon(0, m_vecRaceCheckpointPos.X,
-													 m_vecRaceCheckpointPos.Y, m_vecRaceCheckpointPos.Z, 1005, 0);
+	m_dwRaceCheckpointMarker = CreateRadarMarkerIcon(0, m_vecRaceCheckpointPos.x,
+													 m_vecRaceCheckpointPos.y, m_vecRaceCheckpointPos.z, 1005, 0);
 
 	m_bRaceCheckpointsEnabled = true;
 }
@@ -277,9 +276,9 @@ void CGame::CreateCheckPoint()
 
 	m_dwCheckpointMarker =
 			CreateRadarMarkerIcon(0,
-								  m_vecCheckpointPos.X,
-								  m_vecCheckpointPos.Y,
-								  m_vecCheckpointPos.Z, 1005, 0);
+								  m_vecCheckpointPos.x,
+								  m_vecCheckpointPos.y,
+								  m_vecCheckpointPos.z, 1005, 0);
 
 	m_bCheckpointsEnabled = true;
 }
@@ -326,8 +325,8 @@ uint8_t CGame::GetActiveInterior()
 // 0.3.7
 void CGame::SetWorldTime(int iHour, int iMinute)
 {
-	*(uint8_t*)(g_libGTASA+0x8B18A4) = (uint8_t)iMinute;
-	*(uint8_t*)(g_libGTASA+0x8B18A5) = (uint8_t)iHour;
+	*(uint8_t*)(g_libGTASA+0x00953143) = (uint8_t)iMinute;
+	*(uint8_t*)(g_libGTASA+0x00953142) = (uint8_t)iHour;
 	ScriptCommand(&set_current_time, iHour, iMinute);
 }
 
@@ -337,52 +336,19 @@ void CGame::SetWorldWeather(unsigned char byteWeatherID) const
 	Log("SetWorldWeather");
 	//*(unsigned char*)(g_libGTASA+0x9DB98E) = byteWeatherID;
 
-	CHook::CallFunction<void>(g_libGTASA + 0x554CA0 + 1, byteWeatherID);
+	CHook::CallFunction<void>(g_libGTASA + 0x005CDF88 + 1, byteWeatherID);
 
-	if(!m_bClockEnabled)
-	{
-		*(uint16_t*)(g_libGTASA+0x9DB990) = byteWeatherID;
-		*(uint16_t*)(g_libGTASA+0x9DB992) = byteWeatherID;
-	}
-}
-
-void CGame::ToggleThePassingOfTime(bool bOnOff)
-{
-	if(bOnOff)
-		CHook::WriteMemory(g_libGTASA + 0x38C154, (uintptr_t)"\x2D\xE9", 2);
-	else
-		CHook::WriteMemory(g_libGTASA + 0x38C154, (uintptr_t)"\xF7\x46", 2);
-}
-
-// 0.3.7
-void CGame::EnableClock(bool bEnable)
-{
-	char byteClockData[] = { '%', '0', '2', 'd', ':', '%', '0', '2', 'd', 0 };
-	CHook::UnFuck(g_libGTASA + 0x599504);
-
-	if(bEnable)
-	{
-		ToggleThePassingOfTime(true);
-		m_bClockEnabled = true;
-		memcpy((void*)(g_libGTASA+0x599504), byteClockData, 10);
-	}
-	else
-	{
-		ToggleThePassingOfTime(false);
-		m_bClockEnabled = false;
-		memset((void*)(g_libGTASA+0x599504), 0, 10);
-	}
+//	if(!m_bClockEnabled)
+//	{
+//		*(uint16_t*)(g_libGTASA+0x9DB990) = byteWeatherID;
+//		*(uint16_t*)(g_libGTASA+0x9DB992) = byteWeatherID;
+//	}
 }
 
 // 0.3.7
 void CGame::EnableZoneNames(bool bEnable)
 {
 	ScriptCommand(&enable_zone_names, bEnable);
-}
-
-void CGame::DisplayWidgets(bool bDisp)
-{
-	*(uint16_t*)(g_libGTASA+0x8B82A0+0x10C) = !bDisp;
 }
 
 // ��������
@@ -425,13 +391,13 @@ void CGame::DisableTrainTraffic()
 void CGame::SetMaxStats()
 {
 	// CCheat::VehicleSkillsCheat
-	(( int (*)())(g_libGTASA+0x2BAED0+1))();
+	(( int (*)())(g_libGTASA+0x002FE690 + 1))();
 
 	// CCheat::WeaponSkillsCheat
-	(( int (*)())(g_libGTASA+0x2BAE68+1))();
+	(( int (*)())(g_libGTASA+0x002FE62A + 1))();
 
 	// CStats::SetStatValue nop
-	CHook::WriteMemory(g_libGTASA + 0x3B9074, (uintptr_t)"\xF7\x46", 2);
+	CHook::RET(g_libGTASA + 0x0041557C);
 }
 
 void CGame::SetWantedLevel(uint8_t byteLevel)
@@ -451,22 +417,22 @@ void CGame::DisplayGameText(char* szStr, int iTime, int iType)
 	CFont::AsciiToGxtChar(szStr, szGameTextMessage);
 
 	// CMessages::AddBigMesssage
-	(( void (*)(uint16_t*, int, int))(g_libGTASA+0x4D18C0+1))(szGameTextMessage, iTime, iType);
+	(( void (*)(uint16_t*, int, int))(g_libGTASA+0x0054C62C + 1))(szGameTextMessage, iTime, iType);
 }
 
 // 0.3.7
 void CGame::SetGravity(float fGravity)
 {
-	CHook::UnFuck(g_libGTASA + 0x3A0B64);
-	*(float*)(g_libGTASA+0x3A0B64) = fGravity;
+//	CHook::UnFuck(g_libGTASA + 0x3A0B64);
+//	*(float*)(g_libGTASA+0x3A0B64) = fGravity;
 }
 
 void CGame::ToggleCJWalk(bool bUseCJWalk)
 {
-	if(bUseCJWalk)
-		CHook::WriteMemory(g_libGTASA + 0x45477E, (uintptr_t)"\xC4\xF8\xDC\x64", 4);
-	else
-		CHook::NOP(g_libGTASA + 0x45477E, 2);
+//	if(bUseCJWalk)
+//		CHook::WriteMemory(g_libGTASA + 0x45477E, (uintptr_t)"\xC4\xF8\xDC\x64", 4);
+//	else
+//		CHook::NOP(g_libGTASA + 0x45477E, 2);
 }
 
 void CGame::DisableMarker(uint32_t dwMarkerID)
@@ -486,7 +452,7 @@ void CGame::AddToLocalMoney(int iAmmount)
 // 0.3.7
 void CGame::DisableInteriorEnterExits()
 {
-	uintptr_t addr = *(uintptr_t*)(g_libGTASA+0x700120);
+	uintptr_t addr = *(uintptr_t*)(g_libGTASA+0x007A1E20);
 	int count = *(uint32_t*)(addr+8);
 
 	addr = *(uintptr_t*)addr;
@@ -501,7 +467,7 @@ void CGame::DisableInteriorEnterExits()
 extern uint8_t bGZ;
 void CGame::DrawGangZone(float fPos[], uint32_t dwColor)
 {
-    (( void (*)(float*, uint32_t*, uint8_t))(g_libGTASA+0x3DE7F8+1))(fPos, &dwColor, bGZ);
+    (( void (*)(float*, uint32_t*, uint8_t))(g_libGTASA+0x00443C60 + 1))(fPos, &dwColor, bGZ);
 }
 
 

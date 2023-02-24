@@ -13,7 +13,7 @@ public:
 	CActorPool();
 	~CActorPool();
 
-	bool Spawn(uint16_t actorId, int iSkin, VECTOR vecPos, float fRotation, float fHealth, float bInvulnerable);
+	bool Spawn(uint16_t actorId, int iSkin, CVector vecPos, float fRotation, float fHealth, float bInvulnerable);
 	bool Delete(uint16_t actorId);
 
 	bool IsValidActorId(uint16_t actorId) 

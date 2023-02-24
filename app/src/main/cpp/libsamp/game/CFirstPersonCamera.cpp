@@ -9,7 +9,7 @@ extern CNetGame* pNetGame;
 
 bool CFirstPersonCamera::m_bEnabled = false;
 
-MATRIX4X4* RwMatrixMultiplyByVector(VECTOR* out, MATRIX4X4* a2, VECTOR* in);
+MATRIX4X4* RwMatrixMultiplyByVector(CVector* out, MATRIX4X4* a2, CVector* in);
 void CFirstPersonCamera::ProcessCameraOnFoot(uintptr_t pCam, CPlayerPed* pPed)
 {
 	if (!m_bEnabled || *(uint8_t*)(g_libGTASA + 0x8B147E) || *(uint8_t*)(g_libGTASA + 0x8B147F))
@@ -17,35 +17,35 @@ void CFirstPersonCamera::ProcessCameraOnFoot(uintptr_t pCam, CPlayerPed* pPed)
 		return;
 	}
 
-	VECTOR* pVec = (VECTOR*)(pCam + 372);
+	CVector* pVec = (CVector*)(pCam + 372);
 
-	VECTOR vecOffset;
-	vecOffset.X = 0.35f;
-	vecOffset.Y = 0.1f;
-	vecOffset.Z = 0.1f;
+	CVector vecOffset;
+	vecOffset.x = 0.35f;
+	vecOffset.y = 0.1f;
+	vecOffset.z = 0.1f;
 
 
-	VECTOR vecOut;
+	CVector vecOut;
 	RwMatrixMultiplyByVector(&vecOut, &(pPed->m_HeadBoneMatrix), &vecOffset);
 
-	if (vecOut.X != vecOut.X || vecOut.Y != vecOut.Y || vecOut.Z != vecOut.Z)
+	if (vecOut.x != vecOut.x || vecOut.y != vecOut.y || vecOut.z != vecOut.z)
 	{
 		pPed->GetBonePosition(4, &vecOut);
 	}
-	if (vecOut.X != vecOut.X || vecOut.Y != vecOut.Y || vecOut.Z != vecOut.Z)
+	if (vecOut.x != vecOut.x || vecOut.y != vecOut.y || vecOut.z != vecOut.z)
 	{
 		return;
 	}
 
-	pVec->X = vecOut.X;
-	pVec->Y = vecOut.Y;
-	pVec->Z = vecOut.Z;
+	pVec->x = vecOut.x;
+	pVec->y = vecOut.y;
+	pVec->z = vecOut.z;
 
 	((RwCamera*(*)(RwCamera*, float))(g_libGTASA + 0x001AD6F4 + 1))(*(RwCamera**)(g_libGTASA + 0x95B064), 0.2f);
 }
 
-VECTOR vecAtSaved;
-VECTOR vecUpSaved;
+CVector vecAtSaved;
+CVector vecUpSaved;
 bool bsaved = false;
 
 void CFirstPersonCamera::ProcessCameraInVeh(uintptr_t pCam, CPlayerPed* pPed, CVehicle* pVeh)
@@ -55,21 +55,21 @@ void CFirstPersonCamera::ProcessCameraInVeh(uintptr_t pCam, CPlayerPed* pPed, CV
 		return;
 	}
 
-	VECTOR* pVec = (VECTOR*)(pCam + 372);
+	CVector* pVec = (CVector*)(pCam + 372);
 
-	VECTOR vecOffset;
-	vecOffset.X = 0.0f;
-	vecOffset.Y = 0.0f;
-	vecOffset.Z = 0.6f;
+	CVector vecOffset;
+	vecOffset.x = 0.0f;
+	vecOffset.y = 0.0f;
+	vecOffset.z = 0.6f;
 
-	uint16_t modelIndex = pPed->GetGtaVehicle()->entity.nModelIndex;
+	uint16_t modelIndex = pPed->GetGtaVehicle()->nModelIndex;
 
 	if (modelIndex == 581 || modelIndex == 509 || modelIndex == 481 || modelIndex == 462 || modelIndex == 521 || modelIndex == 463 || modelIndex == 510 ||
 		modelIndex == 522 || modelIndex == 461 || modelIndex == 468 || modelIndex == 448 || modelIndex == 586)
 	{
-		vecOffset.X = 0.05f;
-		vecOffset.Y = 0.3f;
-		vecOffset.Z = 0.45f;
+		vecOffset.x = 0.05f;
+		vecOffset.y = 0.3f;
+		vecOffset.z = 0.45f;
 		((RwCamera * (*)(RwCamera*, float))(g_libGTASA + 0x001AD6F4 + 1))(*(RwCamera * *)(g_libGTASA + 0x95B064), 0.3f);
 	}
 	else
@@ -77,27 +77,27 @@ void CFirstPersonCamera::ProcessCameraInVeh(uintptr_t pCam, CPlayerPed* pPed, CV
 		((RwCamera * (*)(RwCamera*, float))(g_libGTASA + 0x001AD6F4 + 1))(*(RwCamera * *)(g_libGTASA + 0x95B064), 0.01f);
 	}
 
-	VECTOR vecOut;
+	CVector vecOut;
 	MATRIX4X4 mat;
 
-	memcpy(&mat, pPed->m_pPed->entity.mat, sizeof(MATRIX4X4));
+	memcpy(&mat, pPed->m_pPed->mat, sizeof(MATRIX4X4));
 
 	RwMatrixMultiplyByVector(&vecOut, &mat, &vecOffset);
 
-	if (vecOut.X != vecOut.X || vecOut.Y != vecOut.Y || vecOut.Z != vecOut.Z)
+	if (vecOut.x != vecOut.x || vecOut.y != vecOut.y || vecOut.z != vecOut.z)
 	{
 		pPed->GetBonePosition(4, &vecOut);
 	}
-	if (vecOut.X != vecOut.X || vecOut.Y != vecOut.Y || vecOut.Z != vecOut.Z)
+	if (vecOut.x != vecOut.x || vecOut.y != vecOut.y || vecOut.z != vecOut.z)
 	{
 		return;
 	}
 
-	pVec->X = vecOut.X;
-	pVec->Y = vecOut.Y;
-	pVec->Z = vecOut.Z;
+	pVec->x = vecOut.x;
+	pVec->y = vecOut.y;
+	pVec->z = vecOut.z;
 
-	//pPed->SetArmedWeapon(0);
+	//pPed->SetCurrentWeapon(0);
 
 	if (!pVeh)
 	{
@@ -110,9 +110,9 @@ void CFirstPersonCamera::ProcessCameraInVeh(uintptr_t pCam, CPlayerPed* pPed, CV
 
 	if (!pPed->IsAPassenger())
 	{
-		VECTOR vecSpeed;
+		CVector vecSpeed;
 		pVeh->GetMoveSpeedVector(&vecSpeed);
-		float speed = sqrt((vecSpeed.X * vecSpeed.X) + (vecSpeed.Y * vecSpeed.Y) + (vecSpeed.Z * vecSpeed.Z)) * 2.0f * 100.0f;
+		float speed = sqrt((vecSpeed.x * vecSpeed.y) + (vecSpeed.y * vecSpeed.y) + (vecSpeed.z * vecSpeed.z)) * 2.0f * 100.0f;
 
 		
 		

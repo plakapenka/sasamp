@@ -2,6 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
     android:id="@+id/br_choosespawn_layout"
+    android:visibility="gone"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/spawn_bg">
@@ -26,35 +27,35 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/spawn_fraction" />
+                android:src="@drawable/spawn_fraction" />
 
             <ImageView
                 android:id="@+id/spawn_station"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/spawn_station" />
+                android:src="@drawable/spawn_station" />
 
             <ImageView
                 android:id="@+id/spawn_exit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/spawn_exit" />
+                android:src="@drawable/spawn_exit" />
 
             <ImageView
                 android:id="@+id/spawn_garage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/spawn_garage" />
+                android:src="@drawable/spawn_garage" />
 
             <ImageView
                 android:id="@+id/spawn_house"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/spawn_house" />
+                android:src="@drawable/spawn_house" />
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButton

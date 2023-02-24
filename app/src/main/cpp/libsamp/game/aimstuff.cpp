@@ -1,10 +1,10 @@
 #include "../main.h"
 #include "game.h"
 
-
+//v_2.1
 CAMERA_AIM* GameGetInternalAim()
 {
-	return (CAMERA_AIM*)(g_libGTASA + 0x008B0808 + 528 * *((unsigned char*)(g_libGTASA + 0x008B085F)) + 728);
+	return (CAMERA_AIM*)(g_libGTASA + 0x00951FA8 + 528 * *((unsigned char*)(g_libGTASA + 0x951FFF)) + 728);
 }
 
 CAMERA_AIM caLocalPlayerAim;
@@ -109,11 +109,11 @@ void GameSetLocalPlayerCameraMode(uint16_t mode)
 
 void GameAimSyncInit()
 {
-	pbyteCameraMode = (uint16_t*)(g_libGTASA + 0x008B0808 + 528 * *((unsigned char*)(g_libGTASA + 0x008B085F)) + 382);
+	pbyteCameraMode = (uint16_t*)(g_libGTASA + 0x00951FA8 + 528 * *((unsigned char*)(g_libGTASA + 0x951FFF)) + 382);
 	pcaInternalAim = GameGetInternalAim();
-	pfCameraExtZoom = (float*)(g_libGTASA + 0x008B0808 + 528 * *((unsigned char*)(g_libGTASA + 0x008B085F)) + 508);
-	pfAspectRatio = (float*)(g_libGTASA + 0x0098525C);
-	wCameraMode2 = (uint16_t*)(g_libGTASA + 0x008B0808 + 0x7B4);
+	pfCameraExtZoom = (float*)(g_libGTASA + 0x00951FA8 + 528 * *((unsigned char*)(g_libGTASA + 0x951FFF)) + 508);
+	pfAspectRatio = (float*)(g_libGTASA + 0x00A26A90);
+	wCameraMode2 = (uint16_t*)(g_libGTASA + 0x00951FA8 + 0x7B4);
 
 	memset(&caLocalPlayerAim, 0, sizeof(CAMERA_AIM));
 	memset(caRemotePlayerAim, 0, sizeof(CAMERA_AIM) * MAX_PLAYERS);

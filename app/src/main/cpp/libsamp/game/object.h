@@ -25,30 +25,30 @@ public:
 	MaterialInfo m_MaterialTextTexture[MAX_MATERIALS];
     bool		m_bMaterialsText;
 
-	VECTOR m_vecAttachedOffset;
-	VECTOR m_vecAttachedRotation;
+	CVector m_vecAttachedOffset;
+	CVector m_vecAttachedRotation;
 	uint16_t m_usAttachedVehicle;
 	uint8_t m_bAttachedType;
 
-	VECTOR 		m_vecRot;
-	VECTOR		m_vecTargetRot;
-	VECTOR		m_vecTargetRotTar;
-	VECTOR		m_vecRotationTarget;
-	VECTOR		m_vecSubRotationTarget;
+	CVector 		m_vecRot;
+	CVector		m_vecTargetRot;
+	CVector		m_vecTargetRotTar;
+	CVector		m_vecRotationTarget;
+	CVector		m_vecSubRotationTarget;
 	float		m_fDistanceToTargetPoint;
 	uint32_t		m_dwMoveTick;
 
-	CObject(int iModel, float fPosX, float fPosY, float fPosZ, VECTOR vecRot, float fDrawDistance);
+	CObject(int iModel, float fPosX, float fPosY, float fPosZ, CVector vecRot, float fDrawDistance);
 	~CObject();
 
 	void Process(float fElapsedTime);
 	float DistanceRemaining(MATRIX4X4 *matPos);
-	float RotaionRemaining(VECTOR matPos);
+	float RotaionRemaining(CVector matPos);
 
 	void SetPos(float x, float y, float z);
 	void MoveTo(float x, float y, float z, float speed, float rX, float rY, float rZ);
 
-	void AttachToVehicle(uint16_t usVehID, VECTOR* pVecOffset, VECTOR* pVecRot);
+	void AttachToVehicle(uint16_t usVehID, CVector* pVecOffset, CVector* pVecRot);
 	void ProcessAttachToVehicle(CVehicle* pVehicle);
 
 	void InstantRotate(float x, float y, float z);

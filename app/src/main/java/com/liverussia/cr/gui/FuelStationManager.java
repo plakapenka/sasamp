@@ -208,7 +208,7 @@ public class FuelStationManager {
     }
 
     public void Hide(int typefuel, int literfuel) {
-        NvEventQueueActivity.getInstance().onFuelStationClick(typefuel, literfuel);
+       // NvEventQueueActivity.getInstance().onFuelStationClick(typefuel, literfuel);
         Utils.HideLayout(br_fuelstation_layout, true);
     }
 }

@@ -87,8 +87,6 @@ void CKeyBoard::init()
 	InitNUM();
 
 	m_bNewKeyboard = true;
-
-	Log("KeyBoard inited");
 }
 
 void CKeyBoard::Render()
@@ -96,6 +94,7 @@ void CKeyBoard::Render()
 	if (!m_bEnable || m_bNewKeyboard)
 		return;
 
+	Log("CKeyBoard::Render()");
 	ImGuiIO &io = ImGui::GetIO();
 	ImVec2 vecButSize = ImVec2(ImGui::GetFontSize() * 6, ImGui::GetFontSize() * 3.5);
 
@@ -334,6 +333,7 @@ void CKeyBoard::Close()
 #include "java_systems/CDuelsGui.h"
 #include "util/patch.h"
 #include "game/CVector.h"
+#include "game/CModelInfo.h"
 
 bool CKeyBoard::OnTouchEvent(int type, bool multi, int x, int y)
 {
@@ -2377,14 +2377,14 @@ bool ProcessLocalCommands(const char str[])
 		if(pPlayer->IsInVehicle())
 		{
 			//incar savepos
-			VEHICLE_TYPE *pVehicle = pPlayer->GetGtaVehicle();
+			CVehicleGta *pVehicle = pPlayer->GetGtaVehicle();
 			VEHICLEID m_dwGTAId = GamePool_Vehicle_GetIndex(pVehicle);
 			ScriptCommand(&get_car_z_angle, m_dwGTAId, &fZAngle);
 			fprintf(fileOut, "%s = %.3f, %.3f, %.3f, %.3f\n",
 					msg.c_str(),
-					pVehicle->entity.mat->pos.X,
-					pVehicle->entity.mat->pos.Y,
-					pVehicle->entity.mat->pos.Z,
+					pVehicle->mat->pos.x,
+					pVehicle->mat->pos.y,
+					pVehicle->mat->pos.z,
 					fZAngle
 			);
 			CChatWindow::AddInfoMessage("-> InCar position saved.");
@@ -2392,13 +2392,13 @@ bool ProcessLocalCommands(const char str[])
 		else
 		{
 			//onfoot savepos
-			PED_TYPE *pActor = pPlayer->GetGtaActor();
+			CPedGta *pActor = pPlayer->GetGtaActor();
 			ScriptCommand(&get_actor_z_angle, pPlayer->m_dwGTAId, &fZAngle);
 			fprintf(fileOut, "%s = %.3f, %.3f, %.3f, %.3f\n",
 					msg.c_str(),
-					pActor->entity.mat->pos.X,
-					pActor->entity.mat->pos.Y,
-					pActor->entity.mat->pos.Z,
+					pActor->mat->pos.x,
+					pActor->mat->pos.y,
+					pActor->mat->pos.z,
 					fZAngle
 			);
 			CChatWindow::AddInfoMessage("-> OnFoot position saved.");
@@ -2411,67 +2411,6 @@ bool ProcessLocalCommands(const char str[])
 	{
 		CHUD::bIsCamEditGui = !CHUD::bIsCamEditGui;
 		CHUD::toggleAll( CHUD::bIsCamEditGui );
-		return true;
-	}
-
-	if (strstr(str, "/testveh "))
-	{
-		int size = 0;
-		if (sscanf(str, "%*s%d", &size) == -1)
-		{
-			CChatWindow::AddDebugMessage("Используйте: /fontsize [scale]");
-			return true;
-		}
-
-		CPlayerPed *pPlayer = pGame->FindPlayerPed();
-		CVehicle* pVehicle = pPlayer->GetCurrentVehicle();
-
-		uintptr_t* dwModelarray = (uintptr_t*)(g_libGTASA + 0x87BF48);
-		uint8_t* pModelInfoStart = (uint8_t*)dwModelarray[pVehicle->m_pVehicle->entity.nModelIndex];
-
-		if (!pModelInfoStart)
-		{
-			return true;
-		}
-
-		uintptr_t* m_pVehicleStruct = (uintptr_t*)(pModelInfoStart + 0x74);
-
-		CVector* m_avDummyPos = (CVector*)(*m_pVehicleStruct + 0x0);
-
-		VECTOR vec;
-		// 0 - front light
-		vec.X = m_avDummyPos[size].x;
-		vec.Y = m_avDummyPos[size].y;
-		vec.Z = m_avDummyPos[size].z;
-		//float x;
-
-
-//		RwFrame* pWheelLB = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x00335CEC + 1))(pVehicle->m_pVehicle->entity.m_pRwObject, "taillights"); // GetFrameFromname
-//
-//		MATRIX4X4 mat;
-//		memcpy(&mat, (const void*)&(pWheelLB->modelling), sizeof(MATRIX4X4));
-//
-//		//CHook::CallFunction<int>(g_libGTASA + 0x338698 + 1, pModelInfoStart, &vec, 1);
-//	//	(( int (*)(uint8_t*, CVector*, int32_t))(g_libGTASA + 0x338698 + 1))(pModelInfoStart, &vec, size);
-
-//		CText3DLabelsPool *pLabelsPool = pNetGame->GetLabelPool();
-//
-//		if(pLabelsPool)
-//		{
-//			pLabelsPool->CreateTextLabel((int)555, "x", 0xFFFFFFFF,
-//										 x, y, z, 30.0f, 0, INVALID_PLAYER_ID, pPlayer->GetCurrentSampVehicleID());
-//		}
-		CObjectPool* pObjectPool = pNetGame->GetObjectPool();
-		VECTOR vec11;
-		vec11.X = vec11.Y = vec11.Z = 0.0;
-		pObjectPool->New(555, 19294, vec11, vec11, 300.0f);
-
-		CObject* pObject = pObjectPool->GetAt(555);
-		if (!pObject) return true;
-		pObject->AttachToVehicle(pPlayer->GetCurrentSampVehicleID(), &vec, &vec11);
-
-
-		CChatWindow::AddInfoMessage("%.3f, %.3f, %.3f", vec.X, vec.Y, vec.Z);
 		return true;
 	}
 

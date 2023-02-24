@@ -21,7 +21,7 @@ CActorPool::~CActorPool()
 	}
 }
 
-bool CActorPool::Spawn(uint16_t actorId, int iSkin, VECTOR vecPos, float fRotation, float fHealth, float bInvulnerable) 
+bool CActorPool::Spawn(uint16_t actorId, int iSkin, CVector vecPos, float fRotation, float fHealth, float bInvulnerable)
 {
 	
 	if (!IsValidActorId(actorId)) 

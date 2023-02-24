@@ -1,62 +1,90 @@
 #include "../main.h"
+#include "game/TextureDatabaseRuntime.h"
 #include <vector>
 
-bool CUtil::IsValidGameVehicle(VEHICLE_TYPE *pVehicle)
+bool CUtil::IsValidGameVehicle(CVehicleGta *pVehicle)
 {
 	// IsVehiclePointerValid
-	return (((bool (*)(VEHICLE_TYPE *))(g_libGTASA+0x5109E8+1))(pVehicle));
+	return (((bool (*)(CVehicleGta *))(g_libGTASA+0x5109E8+1))(pVehicle));
 }
 
-bool CUtil::IsValidGamePed(PED_TYPE * pPed)
+bool CUtil::IsValidGamePed(CPedGta * pPed)
 {
 	// IsPedPointerValid(CPed *) — 0x00435614
-	return ((bool(*)(PED_TYPE *)) (g_libGTASA + 0x00435614 + 1)) (pPed);
+	return ((bool(*)(CPedGta *)) (g_libGTASA + 0x004A72C4 + 1)) (pPed);
 }
 
-bool CUtil::IsGameEntityArePlaceable(ENTITY_TYPE *pEntity)
+bool CUtil::IsGameEntityArePlaceable(CEntityGta *pEntity)
 {
 	if(pEntity)
 	{
-		if(pEntity->vtable == g_libGTASA + 0x005C7358)
+		if(pEntity->vtable == g_libGTASA + 0x00667D14)
 			return true;
 	}
 
 	return false;
 }
 
+extern RwTexture* GetTexture_hook(const char* name);
+
+RwTexture* CUtil::LoadTextureFromDB(const char* dbname, const char* texture)
+{
+	// TextureDatabaseRuntime::GetDatabase(dbname)
+	TextureDatabase* db_handle = (( TextureDatabase* (*)(const char*))(g_libGTASA + 0x001EAC0C + 1))(dbname);
+
+	if(!db_handle)
+	{
+		Log("Error: Database not found! (%s)", dbname);
+		return nullptr;
+	}
+
+	TextureDatabaseRuntime::Register(db_handle);
+
+	RwTexture* tex = GetTexture_hook(texture);
+
+	if(!tex)
+		Log("Error: Texture (%s) not found in database (%s)", dbname, texture);
+
+	TextureDatabaseRuntime::Unregister(db_handle);
+
+	return tex;
+}
+
+#include "../game/eWeaponType.h"
+
 const char* CUtil::GetWeaponName(int iWeaponID)
 {
 	switch (iWeaponID)
 	{
-		case WEAPON_FIST:
+		case WEAPON_UNARMED:
 			return "Fist";
 		case WEAPON_BRASSKNUCKLE:
 			return "Brass Knuckles";
 		case WEAPON_GOLFCLUB:
 			return "Golf Club";
-		case WEAPON_NITESTICK:
+		case WEAPON_NIGHTSTICK:
 			return "Nite Stick";
 		case WEAPON_KNIFE:
 			return "Knife";
-		case WEAPON_BAT:
+		case WEAPON_BASEBALLBAT:
 			return "Baseball Bat";
 		case WEAPON_SHOVEL:
 			return "Shovel";
-		case WEAPON_POOLSTICK:
+		case WEAPON_POOL_CUE:
 			return "Pool Cue";
 		case WEAPON_KATANA:
 			return "Katana";
 		case WEAPON_CHAINSAW:
 			return "Chainsaw";
-		case WEAPON_DILDO:
+		case WEAPON_DILDO1:
 			return "Dildo";
 		case WEAPON_DILDO2:
 			return "Dildo";
-		case WEAPON_VIBRATOR:
+		case WEAPON_VIBE1:
 			return "Vibrator";
-		case WEAPON_VIBRATOR2:
+		case WEAPON_VIBE2:
 			return "Vibrator";
-		case WEAPON_FLOWER:
+		case WEAPON_FLOWERS:
 			return "Flowers";
 		case WEAPON_CANE:
 			return "Cane";
@@ -64,21 +92,21 @@ const char* CUtil::GetWeaponName(int iWeaponID)
 			return "Grenade";
 		case WEAPON_TEARGAS:
 			return "Teargas";
-		case WEAPON_MOLTOV:
+		case WEAPON_MOLOTOV:
 			return "Molotov";
-		case WEAPON_COLT45:
+		case WEAPON_PISTOL:
 			return "Colt 45";
-		case WEAPON_SILENCED:
+		case WEAPON_PISTOL_SILENCED:
 			return "Silenced Pistol";
-		case WEAPON_DEAGLE:
+		case WEAPON_DESERT_EAGLE:
 			return "Desert Eagle";
 		case WEAPON_SHOTGUN:
 			return "Shotgun";
-		case WEAPON_SAWEDOFF:
+		case WEAPON_SAWNOFF_SHOTGUN:
 			return "Sawn-off Shotgun";
-		case WEAPON_SHOTGSPA: // wtf?
+		case WEAPON_SPAS12_SHOTGUN: // wtf?
 			return "Combat Shotgun";
-		case WEAPON_UZI:
+		case WEAPON_MICRO_UZI:
 			return "UZI";
 		case WEAPON_MP5:
 			return "MP5";
@@ -88,46 +116,45 @@ const char* CUtil::GetWeaponName(int iWeaponID)
 			return "M4";
 		case WEAPON_TEC9:
 			return "TEC9";
-		case WEAPON_RIFLE:
+		case WEAPON_COUNTRYRIFLE:
 			return "Rifle";
-		case WEAPON_SNIPER:
+		case WEAPON_SNIPERRIFLE:
 			return "Sniper Rifle";
-		case WEAPON_ROCKETLAUNCHER:
+		case WEAPON_RLAUNCHER:
 			return "Rocket Launcher";
-		case WEAPON_HEATSEEKER:
+		case WEAPON_RLAUNCHER_HS:
 			return "Heat Seaker";
 		case WEAPON_FLAMETHROWER:
 			return "Flamethrower";
 		case WEAPON_MINIGUN:
 			return "Minigun";
-		case WEAPON_SATCHEL:
+		case WEAPON_REMOTE_SATCHEL_CHARGE:
 			return "Satchel Explosives";
-		case WEAPON_BOMB:
+		case WEAPON_DETONATOR:
 			return "Bomb";
 		case WEAPON_SPRAYCAN:
 			return "Spray Can";
-		case WEAPON_FIREEXTINGUISHER:
+		case WEAPON_EXTINGUISHER:
 			return "Fire Extinguisher";
 		case WEAPON_CAMERA:
 			return "Camera";
 		case WEAPON_PARACHUTE:
 			return "Parachute";
-		case WEAPON_VEHICLE:
+		case WEAPON_RAMMEDBYCAR:
 			return "Vehicle";
-		case WEAPON_HELIBLADES:
-			return "Heli blades";
+
 		case WEAPON_EXPLOSION:
 			return "Explosion";
-		case WEAPON_DROWN:
+		case WEAPON_DROWNING:
 			return "Drowned";
-		case WEAPON_COLLISION:
+		case WEAPON_FALL:
 			return "Collision";
 		default:
 			return "unknown";
 	}
 }
 
-uintptr_t FindLibrary(const char* library)
+uintptr_t CUtil::FindLibrary(const char* library)
 {
 	char filename[0xFF] = { 0 },
 		buffer[2048] = { 0 };

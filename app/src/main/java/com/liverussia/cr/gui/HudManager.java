@@ -150,7 +150,6 @@ public class HudManager {
 
     ArrayList<String> chat_lines = new ArrayList<>();
 
-    @SuppressLint("ClickableViewAccessibility")
     public HudManager(Activity aactivity) {
         activity = aactivity;
 
@@ -395,7 +394,7 @@ public class HudManager {
         }
 
         hud_menu.setOnClickListener( view -> {
-            NvEventQueueActivity.getInstance().showMenu();
+         //   NvEventQueueActivity.getInstance().showMenu();
          //   NvEventQueueActivity.getInstance().togglePlayer(1);
         });
 
@@ -405,7 +404,7 @@ public class HudManager {
             clickMultText();
         });
 
-        hud_weapon.setOnClickListener(v -> NvEventQueueActivity.getInstance().onWeaponChanged());
+       // hud_weapon.setOnClickListener(v -> NvEventQueueActivity.getInstance().onWeaponChanged());
 
         hud_bg.post(() -> {
             if(isHudSetPos)return;

@@ -69,28 +69,28 @@ public class AutoShop {
         autoshop_gear_value = activity.findViewById(R.id.autoshop_gear_value);
 
         autoshop_colorleft.setOnClickListener(view -> {
-            NvEventQueueActivity.getInstance().native_SendAutoShopButton(AUTOSHOP_BUTTON_COLOR_LEFT);
+           // NvEventQueueActivity.getInstance().native_SendAutoShopButton(AUTOSHOP_BUTTON_COLOR_LEFT);
         });
         autoshop_colorright.setOnClickListener(view -> {
-            NvEventQueueActivity.getInstance().native_SendAutoShopButton(AUTOSHOP_BUTTON_COLOR_RIGHT);
+           // NvEventQueueActivity.getInstance().native_SendAutoShopButton(AUTOSHOP_BUTTON_COLOR_RIGHT);
         });
         autoshop_leftbutt.setOnClickListener(view -> {
-            NvEventQueueActivity.getInstance().native_SendAutoShopButton(AUTOSHOP_BUTTON_LEFT);
+          //  NvEventQueueActivity.getInstance().native_SendAutoShopButton(AUTOSHOP_BUTTON_LEFT);
         });
         testdrive_butt.setOnClickListener(view -> {
-            NvEventQueueActivity.getInstance().native_SendAutoShopButton(AUTOSHOP_BUTTON_TESTDRIVE);
+          //  NvEventQueueActivity.getInstance().native_SendAutoShopButton(AUTOSHOP_BUTTON_TESTDRIVE);
         });
         autoshop_buybutt.setOnClickListener(view -> {
-            NvEventQueueActivity.getInstance().native_SendAutoShopButton(AUTOSHOP_BUTTON_BUY);
+           // NvEventQueueActivity.getInstance().native_SendAutoShopButton(AUTOSHOP_BUTTON_BUY);
         });
         autoshop_exitbutt.setOnClickListener(view -> {
-            NvEventQueueActivity.getInstance().native_SendAutoShopButton(AUTOSHOP_BUTTON_EXIT);
+           // NvEventQueueActivity.getInstance().native_SendAutoShopButton(AUTOSHOP_BUTTON_EXIT);
         });
         autoshop_rightbutt.setOnClickListener(view -> {
-            NvEventQueueActivity.getInstance().native_SendAutoShopButton(AUTOSHOP_BUTTON_RIGHT);
+           // NvEventQueueActivity.getInstance().native_SendAutoShopButton(AUTOSHOP_BUTTON_RIGHT);
         });
         autoshop_camerabutt.setOnClickListener(view -> {
-            NvEventQueueActivity.getInstance().native_SendAutoShopButton(AUTOSHOP_BUTTON_CAMERA);
+           // NvEventQueueActivity.getInstance().native_SendAutoShopButton(AUTOSHOP_BUTTON_CAMERA);
         });
         Utils.HideLayout(autoshop_main_layout, false);
     }

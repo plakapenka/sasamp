@@ -12,8 +12,7 @@ extern CGUI *pGUI;
 
 CPlayerTags::CPlayerTags()
 {
-	Log("Loading afk_icon..");
-	m_pAfk_icon = (RwTexture*)LoadTextureFromDB("samp", "afk_icon");
+	m_pAfk_icon = CUtil::LoadTextureFromDB("samp", "afk_icon");
 //	m_pVoice_icon = (RwTexture*)LoadTextureFromDB("samp", "micro_icon");
 
 //	m_pKeyboard_icon = (RwTexture*)LoadTextureFromDB("samp", "keyboard_icon");
@@ -35,7 +34,7 @@ CPlayerTags::~CPlayerTags() {}
 #include <algorithm>
 void CPlayerTags::Render()
 {
-	VECTOR VecPos;
+	CVector VecPos;
 	MATRIX4X4 matLocal, matPlayer;
 	int dwHitEntity;
 	char szNickBuf[50];
@@ -60,9 +59,9 @@ void CPlayerTags::Render()
 						}
 						if (pPlayerPed->GetDistanceFromCamera() <= m_fDistance[playerId]) {
 							if (!pPlayerPed->IsAdded()) continue;
-							VecPos.X = 0.0f;
-							VecPos.Y = 0.0f;
-							VecPos.Z = 0.0f;
+							VecPos.x = 0.0f;
+							VecPos.y = 0.0f;
+							VecPos.z = 0.0f;
 							pPlayerPed->GetBonePosition(8, &VecPos);
 							DrawChatBubble(playerId, &VecPos, pPlayerPed->GetDistanceFromCamera());
 						}
@@ -75,9 +74,9 @@ void CPlayerTags::Render()
 
 						{
 							if (!pPlayerPed->IsAdded()) continue;
-							VecPos.X = 0.0f;
-							VecPos.Y = 0.0f;
-							VecPos.Z = 0.0f;
+							VecPos.x = 0.0f;
+							VecPos.y = 0.0f;
+							VecPos.z = 0.0f;
 							pPlayerPed->GetBonePosition(8, &VecPos);
 						}
 
@@ -86,7 +85,7 @@ void CPlayerTags::Render()
 
 						if (pNetGame->m_bNameTagLOS) {
 							dwHitEntity = ScriptCommand(&get_line_of_sight,
-														VecPos.X, VecPos.Y, VecPos.Z,
+														VecPos.x, VecPos.y, VecPos.z,
 														pCam->pos1x, pCam->pos1y, pCam->pos1z,
 														1, 0, 0, 1, 0);
 						}
@@ -173,25 +172,25 @@ void CPlayerTags::ResetChatBubble(PLAYERID playerId)
 	m_bChatBubbleStatus[playerId] = 0;
 }
 
-void CPlayerTags::DrawChatBubble(PLAYERID playerId, VECTOR* vec, float fDistance)
+void CPlayerTags::DrawChatBubble(PLAYERID playerId, CVector* vec, float fDistance)
 {
-	VECTOR TagPos;
+	CVector TagPos;
 
-	TagPos.X = vec->X;
-	TagPos.Y = vec->Y;
-	TagPos.Z = vec->Z;
-	//TagPos.Z = vec->Z;
-	TagPos.Z += 0.45f + (fDistance * 0.0675f) + ((float)m_iOffset[playerId] * pGUI->ScaleY(0.35f));
+	TagPos.x = vec->x;
+	TagPos.y = vec->y;
+	TagPos.z = vec->z;
+	//TagPos.z = vec->Z;
+	TagPos.z += 0.45f + (fDistance * 0.0675f) + ((float)m_iOffset[playerId] * pGUI->ScaleY(0.35f));
 
-	VECTOR Out;
+	CVector Out;
 	// CSprite::CalcScreenCoors
-	((void (*)(VECTOR*, VECTOR*, float*, float*, bool, bool))(g_libGTASA + 0x54EEC0 + 1))(&TagPos, &Out, 0, 0, 0, 0);
+	((void (*)(CVector*, CVector*, float*, float*, bool, bool))(g_libGTASA + 0x005C57E8 + 1))(&TagPos, &Out, nullptr, nullptr, false, false);
 
-	if (Out.Z < 1.0f)
+	if (Out.z < 1.0f)
 		return;
 
 	// name (id)
-	ImVec2 pos = ImVec2(Out.X, Out.Y);
+	ImVec2 pos = ImVec2(Out.x, Out.y);
 
 	if (m_fTrueX[playerId] < 0)
 	{
@@ -225,29 +224,29 @@ void CPlayerTags::DrawChatBubble(PLAYERID playerId, VECTOR* vec, float fDistance
 	TextWithColors(pos, __builtin_bswap32(m_dwColors[playerId]), m_pSzText[playerId]);
 }
 
-void CPlayerTags::Draw(VECTOR* vec, char* szName, uint32_t dwColor,
+void CPlayerTags::Draw(CVector* vec, char* szName, uint32_t dwColor,
 	float fDist, float fHealth, float fArmour, bool bAfk, bool bVoice, bool bKeyboard)
 {
 	if (!pGame->IsToggledHUDElement(HUD_ELEMENT_TAGS)) return;
-	VECTOR TagPos;
+	CVector TagPos;
 
-	TagPos.X = vec->X;
-	TagPos.Y = vec->Y;
-	TagPos.Z = vec->Z;
-	TagPos.Z += 0.25f + (fDist * 0.0475f);
+	TagPos.x = vec->x;
+	TagPos.y = vec->y;
+	TagPos.z = vec->z;
+	TagPos.z += 0.25f + (fDist * 0.0475f);
 
-	VECTOR Out;
+	CVector Out;
 	// CSprite::CalcScreenCoors
-	(( void (*)(VECTOR*, VECTOR*, float*, float*, bool, bool))(g_libGTASA+0x54EEC0+1))(&TagPos, &Out, 0, 0, 0, 0);
+	(( void (*)(CVector*, CVector*, float*, float*, bool, bool))(g_libGTASA+0x005C57E8+1))(&TagPos, &Out, nullptr, nullptr, false, false);
 
-	if(Out.Z < 1.0f)
+	if(Out.z < 1.0f)
 		return;
 
 	char tempBuff[300];
 	cp1251_to_utf8(tempBuff, szName);
 
 	// name (id)
-	ImVec2 pos = ImVec2(Out.X, Out.Y);
+	ImVec2 pos = ImVec2(Out.x, Out.y);
 	pos.x -= ImGui::CalcTextSize(tempBuff).x/2;
 
 
@@ -257,8 +256,8 @@ void CPlayerTags::Draw(VECTOR* vec, char* szName, uint32_t dwColor,
 	if(fHealth < 0.0f) return;
 
 	// округляем
-	Out.X = (float)((int)Out.X);
-	Out.Y = (float)((int)Out.Y);
+	Out.x = (float)((int)Out.x);
+	Out.y = (float)((int)Out.y);
 
 	HealthBarColor = ImColor( 0xB9, 0x22, 0x28, 0xFF );
 	HealthBarBGColor = ImColor( 0x4B, 0x0B, 0x14, 0xFF );
@@ -268,31 +267,31 @@ void CPlayerTags::Draw(VECTOR* vec, char* szName, uint32_t dwColor,
 	float fOutline = (float)CSettings::m_Settings.iFontOutline;
 
 	// top left
-	HealthBarBDR1.x = Out.X - ((fWidth/2) + fOutline);
-	HealthBarBDR1.y = Out.Y + (pGUI->GetFontSize()*1.2f);//35.0f;
+	HealthBarBDR1.x = Out.x - ((fWidth/2) + fOutline);
+	HealthBarBDR1.y = Out.x + (pGUI->GetFontSize()*1.2f);//35.0f;
 	// bottom right
-	HealthBarBDR2.x = Out.X + ((fWidth/2) + fOutline);
-	HealthBarBDR2.y = Out.Y + (pGUI->GetFontSize()*1.2f) + fHeight;//48.0f;
+	HealthBarBDR2.x = Out.x + ((fWidth/2) + fOutline);
+	HealthBarBDR2.y = Out.x + (pGUI->GetFontSize()*1.2f) + fHeight;//48.0f;
 
 	// top left
-	HealthBarBG1.x = HealthBarBDR1.x + fOutline;//Out.X - 40.0f;
-	HealthBarBG1.y = HealthBarBDR1.y + fOutline;//Out.Y + 37.0f;
+	HealthBarBG1.x = HealthBarBDR1.x + fOutline;//Out.x - 40.0f;
+	HealthBarBG1.y = HealthBarBDR1.y + fOutline;//Out.y + 37.0f;
 	// bottom right
-	HealthBarBG2.x = HealthBarBDR2.x - fOutline;//Out.X + 40.0f;
-	HealthBarBG2.y = HealthBarBDR2.y - fOutline;//Out.Y + 46.0f;
+	HealthBarBG2.x = HealthBarBDR2.x - fOutline;//Out.x + 40.0f;
+	HealthBarBG2.y = HealthBarBDR2.y - fOutline;//Out.y + 46.0f;
 
 	// top left
-	HealthBar1.x = HealthBarBG1.x;//Out.X - 40.0f;
-	HealthBar1.y = HealthBarBG1.y;//Out.Y + 37.0f;
+	HealthBar1.x = HealthBarBG1.x;//Out.x - 40.0f;
+	HealthBar1.y = HealthBarBG1.y;//Out.y + 37.0f;
 	// bottom right
-	HealthBar2.y = HealthBarBG2.y;//Out.Y + 46.0f;
+	HealthBar2.y = HealthBarBG2.y;//Out.y + 46.0f;
 
 	if (fHealth > 100.0f)
 		fHealth = 100.0f;
 
 	fHealth *= fWidth/100.0f;
 	fHealth -= (fWidth/2);
-	HealthBar2.x = Out.X + fHealth;
+	HealthBar2.x = Out.x + fHealth;
 
 	if(fArmour > 0.0f)
 	{
@@ -326,7 +325,7 @@ void CPlayerTags::Draw(VECTOR* vec, char* szName, uint32_t dwColor,
 
 		fArmour *= fWidth/100.0f;
 		fArmour -= (fWidth/2);
-		HealthBar2.x = Out.X + fArmour;
+		HealthBar2.x = Out.x + fArmour;
 		ImGui::GetOverlayDrawList()->AddRectFilled(HealthBarBDR1, HealthBarBDR2, HealthBarBDRColor);
 		ImGui::GetOverlayDrawList()->AddRectFilled(HealthBarBG1, HealthBarBG2, HealthBarBGColor);
 		ImGui::GetOverlayDrawList()->AddRectFilled(HealthBar1, HealthBar2, HealthBarColor);
@@ -340,26 +339,18 @@ void CPlayerTags::Draw(VECTOR* vec, char* szName, uint32_t dwColor,
 		ImGui::GetOverlayDrawList()->AddImage((ImTextureID)m_pAfk_icon->raster, a, b);
 	}
 
-	VECTOR TagPos_voice;
+	CVector TagPos_voice;
 
-	TagPos_voice.X = vec->X;
-	TagPos_voice.Y = vec->Y;
-	TagPos_voice.Z = vec->Z;
-	TagPos_voice.Z += 0.65f + (fDist * 0.0475f);
+	TagPos_voice.x = vec->x;
+	TagPos_voice.y = vec->y;
+	TagPos_voice.z = vec->z;
+	TagPos_voice.z += 0.65f + (fDist * 0.0475f);
 
-	VECTOR Out_voice;
+	CVector Out_voice;
 	// CSprite::CalcScreenCoors
-	((void (*)(VECTOR*, VECTOR*, float*, float*, bool, bool))(g_libGTASA + 0x54EEC0 + 1))(&TagPos_voice, &Out_voice, 0, 0, 0, 0);
+	((void (*)(CVector*, CVector*, float*, float*, bool, bool))(g_libGTASA + 0x005C57E8 + 1))(&TagPos_voice, &Out_voice, 0, 0, 0, 0);
 
-	if (Out_voice.Z < 1.0f)
+	if (Out_voice.z < 1.0f)
 		return;
 
-#ifdef GAME_EDITION_CR
-	if (bKeyboard && m_pKeyboard_icon)
-	{
-		ImVec2 a = ImVec2(pos.x + ImGui::CalcTextSize(szName).x + pGUI->GetFontSize() * 0.5f, pos.y);
-		ImVec2 b = ImVec2(a.x + (pGUI->GetFontSize() * 1.3f), a.y + (pGUI->GetFontSize() * 1.3f));
-		ImGui::GetOverlayDrawList()->AddImage((ImTextureID)m_pKeyboard_icon->raster, a, b);
-	}
-#endif
 }

@@ -145,7 +145,7 @@ public class Dialog {
                     this.mCurrentInputText = str;
                 });
                 adapter.setOnDoubleClickListener(() -> sendDialogResponse(1));
-                this.mCustomRecyclerView.setLayoutManager(new LinearLayoutManager((Context) NvEventQueueActivity.getInstance()));
+             //   this.mCustomRecyclerView.setLayoutManager(new LinearLayoutManager((Context) NvEventQueueActivity.getInstance()));
                 this.mCustomRecyclerView.setAdapter(adapter);
 
                 mMainLayout.post(() ->{
@@ -204,7 +204,7 @@ public class Dialog {
         }
         try {
 
-            ((InputMethodManager) NvEventQueueActivity.getInstance().getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(this.mInput.getWindowToken(), 0);
+           // ((InputMethodManager) NvEventQueueActivity.getInstance().getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(this.mInput.getWindowToken(), 0);
 
             sendResponse(btnId, mCurrentDialogId, mCurrentListItem, mCurrentInputText.getBytes("windows-1251"));
 

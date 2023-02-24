@@ -216,7 +216,7 @@ void SetRadarColor(int nIndex, uint32_t dwColor)
 
 void GameResetRadarColors()
 {
-	//memcpy(&dwUseHudColors[0], &dwHudColors[0], sizeof(uint32_t)*NUM_RADAR_COLORS);
+	memcpy(&dwUseHudColors[0], &dwHudColors[0], sizeof(uint32_t)*NUM_RADAR_COLORS);
 }
 
 uint32_t TranslateColorCodeToRGBA(int iCode)

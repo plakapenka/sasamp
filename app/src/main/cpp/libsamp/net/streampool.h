@@ -33,7 +33,7 @@ public:
 	void Activate();
 
 	CStream* GetStream(int iID);
-	CStream* AddStream(int iID, VECTOR* pPos, int iVirtualWorld, int iInterior, float fDistance, const char* szUrl);
+	CStream* AddStream(int iID, CVector* pPos, int iVirtualWorld, int iInterior, float fDistance, const char* szUrl);
 	void DeleteStreamByID(int iID);
 
 	void PlayIndividualStream(const char* szUrl, int type = BASS_SAMPLE_LOOP);

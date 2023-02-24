@@ -64,13 +64,9 @@ public class Menu {
                     if (false == true) {
                         Update(true);
                     } else {
-                        try {
-                            NvEventQueueActivity.getInstance().sendRPC(1, String.valueOf(index).getBytes("windows-1251"), index);
-                          //  Toast.makeText(activity, String.valueOf(index), Toast.LENGTH_SHORT).show();
-                            close();
-                        } catch (UnsupportedEncodingException e) {
-                            e.printStackTrace();
-                        }
+                        //  NvEventQueueActivity.getInstance().sendRPC(1, String.valueOf(index).getBytes("windows-1251"), index);
+                        //  Toast.makeText(activity, String.valueOf(index), Toast.LENGTH_SHORT).show();
+                        close();
                     }
                 }, 300);
             }, this.dataDialogMenuArrayList, recyclerView, mRootView, 4);
@@ -85,12 +81,8 @@ public class Menu {
                 if (index == 13) {
                     Update(false);
                 } else {
-                    try {
-                        NvEventQueueActivity.getInstance().sendRPC(1, String.valueOf(index).getBytes("windows-1251"), index);
-                        close();
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
+                    //  NvEventQueueActivity.getInstance().sendRPC(1, String.valueOf(index).getBytes("windows-1251"), index);
+                    close();
                 }
 
             }, 300);

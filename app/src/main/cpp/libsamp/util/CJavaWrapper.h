@@ -15,8 +15,6 @@ extern
 
 class CJavaWrapper
 {
-
-	jmethodID s_GetClipboardText;
 	jmethodID j_Vibrate;
 
 	jmethodID s_ShowClientSettings;
@@ -36,17 +34,11 @@ class CJavaWrapper
 
 	jmethodID s_showMenu;
 
-	jmethodID s_showAuthorization;
-	jmethodID s_hideAuthorization;
-
 	jmethodID s_showRegistration;
 	jmethodID s_hideRegistration;
 
 	jmethodID j_toggleAutoShop;
 	jmethodID j_updateAutoShop;
-
-	jmethodID s_showChooseSpawn;
-	jmethodID s_hideChooseSpawn;
 
 	jmethodID s_setPauseState;
 
@@ -57,8 +49,6 @@ class CJavaWrapper
 
 public:
 	JNIEnv* GetEnv();
-
-	std::string GetClipboardString();
 
 	void ShowClientSettings();
 
@@ -77,16 +67,10 @@ public:
 
 	void ShowMenu();
 
-	void ShowAuthorization(char *nick, int id, bool ip_match, bool toggleAutoLogin, bool email_acvive);
-	void HideAuthorization();
-
 	void ShowRegistration(char *nick, int id);
 	void HideRegistration();
 	void TempToggleCasinoDice(bool toggle);
 	void ShowCasinoDice(bool show, int tableID, int tableBet, int tableBank, int money, char player1name[], int player1stat, char player2name[], int player2stat, char player3name[], int player3stat, char player4name[], int player4stat, char player5name[], int player5stat);
-
-	void ShowChooseSpawn(int organization, int station, int exit, int garage, int house);
-	void HideChooseSpawn();
 
 	void SetPauseState(bool a1);
 

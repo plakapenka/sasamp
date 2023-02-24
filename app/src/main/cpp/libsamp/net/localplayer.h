@@ -45,7 +45,7 @@ typedef struct _PLAYER_SPAWN_INFO
 	uint8_t byteTeam;
 	int iSkin;
 	uint8_t unk;
-	VECTOR vecPos;
+	CVector vecPos;
 	float fRotation;
 	int iSpawnWeapons[3];
 	int iSpawnWeaponsAmmo[3];
@@ -56,14 +56,14 @@ typedef struct _ONFOOT_SYNC_DATA
 	uint16_t lrAnalog;				// +0
 	uint16_t udAnalog;				// +2
 	uint16_t wKeys;					// +4
-	VECTOR vecPos;					// +6
+	CVector vecPos;					// +6
 	CQuaternion quat;				// +18
 	uint8_t byteHealth;				// +34
 	uint8_t byteArmour;				// +35
 	uint8_t byteCurrentWeapon;		// +36
 	uint8_t byteSpecialAction;		// +37
-	VECTOR vecMoveSpeed;			// +38
-	VECTOR vecSurfOffsets;			// +50
+	CVector vecMoveSpeed;			// +38
+	CVector vecSurfOffsets;			// +50
 	uint16_t wSurfInfo;				// +62
 	union {
 		struct {
@@ -94,10 +94,10 @@ typedef struct _ONFOOT_SYNC_DATA
 typedef struct _TRAILER_SYNC_DATA
 {
 	VEHICLEID trailerID;
-	VECTOR vecPos;
+	CVector vecPos;
 	CQuaternion quat;
-	VECTOR vecMoveSpeed;
-	VECTOR vecTurnSpeed;
+	CVector vecMoveSpeed;
+	CVector vecTurnSpeed;
 } TRAILER_SYNC_DATA;
 
 typedef struct _INCAR_SYNC_DATA
@@ -107,8 +107,8 @@ typedef struct _INCAR_SYNC_DATA
 	uint16_t udAnalog;				// +4
 	uint16_t wKeys;					// +6
 	CQuaternion quat;				// +8
-	VECTOR vecPos;					// +24
-	VECTOR vecMoveSpeed;			// +36
+	CVector vecPos;					// +24
+	CVector vecMoveSpeed;			// +36
 	float fCarHealth;				// +48
 	uint8_t bytePlayerHealth;		// +52
 	uint8_t bytePlayerArmour;		// +53
@@ -136,7 +136,7 @@ typedef struct _PASSENGER_SYNC_DATA
 	uint16_t lrAnalog;				// +6
 	uint16_t udAnalog;				// +8
 	uint16_t wKeys;					// +10
-	VECTOR vecPos;					// +12
+	CVector vecPos;					// +12
 } PASSENGER_SYNC_DATA;				// size = 24
 
 enum eWeaponState
@@ -153,7 +153,7 @@ typedef struct _SPECTATOR_SYNC_DATA
 	uint16_t lrAnalog;
 	uint16_t udAnalog;
 	uint16_t wKeys;
-	VECTOR vecPos;
+	CVector vecPos;
 } SPECTATOR_SYNC_DATA;
 
 class CLocalPlayer
@@ -215,7 +215,7 @@ public:
 	GiveTakeDamage(bool bGiveOrTake, uint16_t wPlayerID, float damage_amount, uint32_t weapon_id,
 				   uint32_t bodypart);
 
-	void SendBulletSyncData(PLAYERID byteHitID, uint8_t byteHitType, VECTOR vecHitPos);
+	void SendBulletSyncData(PLAYERID byteHitID, uint8_t byteHitType, CVector vecHitPos);
 
 public:
 	bool				m_bWaitingForSpawnRequestReply;

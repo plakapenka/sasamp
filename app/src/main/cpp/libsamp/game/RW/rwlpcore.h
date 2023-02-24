@@ -60,6 +60,7 @@ typedef RwInt32 RwBool;
 
 /*****************/
 
+
 typedef struct RwV2d RwV2d;
 /**
  * \ingroup rwv2d
@@ -710,3 +711,5 @@ struct RpGeometry
 
 	struct RpMorphTarget* morphTarget;    /* The Morph Target */
 };
+
+typedef struct RwStream RwStream;

@@ -146,7 +146,7 @@ bool CPlayerPool::Delete(PLAYERID playerId, uint8_t byteReason)
 	return true;
 }
 
-PLAYERID CPlayerPool::FindRemotePlayerIDFromGtaPtr(PED_TYPE * pActor)
+PLAYERID CPlayerPool::FindRemotePlayerIDFromGtaPtr(CPedGta * pActor)
 {
 	CPlayerPed *pPlayerPed;
 
@@ -157,7 +157,7 @@ PLAYERID CPlayerPool::FindRemotePlayerIDFromGtaPtr(PED_TYPE * pActor)
 			pPlayerPed = m_pPlayers[playerId]->GetPlayerPed();
 
 			if(pPlayerPed) {
-				PED_TYPE *pTestActor = pPlayerPed->GetGtaActor();
+				CPedGta *pTestActor = pPlayerPed->GetGtaActor();
 				if((pTestActor != NULL) && (pActor == pTestActor)) // found it
 					return m_pPlayers[playerId]->GetID();
 			}

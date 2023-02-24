@@ -19,7 +19,7 @@ public:
     static int iEditedSlot;
 
     static void
-    SendOnEditAttach(int response, int index, int modelid, int bone, VECTOR offset, VECTOR rot, VECTOR scale);
+    SendOnEditAttach(int response, int index, int modelid, int bone, CVector offset, CVector rot, CVector scale);
 };
 
 

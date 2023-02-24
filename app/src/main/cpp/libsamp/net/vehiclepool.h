@@ -4,7 +4,7 @@ typedef struct _NEW_VEHICLE
 {
 	VEHICLEID 	VehicleID;
 	int 		iVehicleType;
-	VECTOR		vecPos;
+	CVector		vecPos;
 	float 		fRotation;
 	uint8_t		aColor1;
 	uint8_t		aColor2;
@@ -46,7 +46,7 @@ public:
 		return m_bVehicleSlotState[VehicleID];
 	}
 
-	VEHICLEID FindIDFromGtaPtr(VEHICLE_TYPE * pGtaVehicle);
+	VEHICLEID FindIDFromGtaPtr(CVehicleGta * pGtaVehicle);
 	VEHICLEID FindIDFromRwObject(RwObject* pRWObject);
 	int FindGtaIDFromID(int ID);
 	
@@ -63,7 +63,7 @@ public:
 
 	CVehicle *GetVehicleFromTrailer(CVehicle *pTrailer);
 
-	CVehicle *FindVehicle(VEHICLE_TYPE *pGtaVehicle);
+	CVehicle *FindVehicle(CVehicleGta *pGtaVehicle);
 
 private:
 	bool			m_bVehicleSlotState[MAX_VEHICLES];

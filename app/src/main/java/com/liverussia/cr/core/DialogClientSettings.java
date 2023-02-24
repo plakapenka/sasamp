@@ -44,7 +44,7 @@ public class DialogClientSettings extends DialogFragment {
         getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         getDialog().getWindow().setDimAmount(.0f);
 
-        mContext = (NvEventQueueActivity) getActivity();
+       // mContext = (NvEventQueueActivity) getActivity();
 
         ((AppCompatButton)rootview.findViewById(R.id.dialog_settings_button_close)).setOnClickListener(new View.OnClickListener() {
             @Override

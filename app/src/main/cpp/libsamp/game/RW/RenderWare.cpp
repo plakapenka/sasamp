@@ -65,63 +65,63 @@ void InitRenderWareFunctions()
 	Log("Initializing RenderWare..");
 
 	/* skeleton.h */
-	RsGlobal = (RsGlobalType*)(g_libGTASA+0x95B068);
+	RsGlobal = (RsGlobalType*)(g_libGTASA+0x009FC8FC);
 
 	/* rwCore.h */
-	*(void**)(&RwCameraBeginUpdate) 			= (void*)(g_libGTASA+0x1AD6C8+1);
-	*(void**)(&RwCameraEndUpdate) 				= (void*)(g_libGTASA+0x1AD6B8+1);
-	*(void**)(&RwCameraShowRaster)				= (void*)(g_libGTASA+0x1AD8C4+1);
+	*(void**)(&RwCameraBeginUpdate) 			= (void*)(g_libGTASA+0x001D5A18+1);
+	*(void**)(&RwCameraEndUpdate) 				= (void*)(g_libGTASA+0x001D5A14+1);
+	*(void**)(&RwCameraShowRaster)				= (void*)(g_libGTASA+0x001D5D14+1);
 
-	*(void **)(&RwRasterCreate) 				= (void*)(g_libGTASA+0x1B0778+1);
-	*(void **)(&RwRasterDestroy) 				= (void*)(g_libGTASA+0x1B059C+1);
-	*(void **)(&RwRasterGetOffset) 				= (void*)(g_libGTASA+0x1B0460+1);
-	*(void **)(&RwRasterGetNumLevels) 			= (void*)(g_libGTASA+0x1B06B4+1);
-	*(void **)(&RwRasterSubRaster) 				= (void*)(g_libGTASA+0x1B0724+1);
-	*(void **)(&RwRasterRenderFast)				= (void*)(g_libGTASA+0x1B0500+1);
-	*(void **)(&RwRasterRender)					= (void*)(g_libGTASA+0x1B054C+1);
-	*(void **)(&RwRasterRenderScaled)			= (void*)(g_libGTASA+0x1B0440+1);
-	*(void **)(&RwRasterPushContext)			= (void*)(g_libGTASA+0x1B05E4+1);
-	*(void **)(&RwRasterPopContext)				= (void*)(g_libGTASA+0x1B0674+1);
-	*(void **)(&RwRasterGetCurrentContext)		= (void*)(g_libGTASA+0x1B0414+1);
-	*(void **)(&RwRasterClear)					= (void*)(g_libGTASA+0x1B0498+1);
-	*(void **)(&RwRasterClearRect)				= (void*)(g_libGTASA+0x1B052C+1);
-	*(void **)(&RwRasterShowRaster)				= (void*)(g_libGTASA+0x1B06F0+1);
-	*(void **)(&RwRasterLock)					= (void*)(g_libGTASA+0x1B0814+1);
-	*(void **)(&RwRasterUnlock)					= (void*)(g_libGTASA+0x1B0474+1);
-	*(void **)(&RwRasterLockPalette)			= (void*)(g_libGTASA+0x1B0648+1);
-	*(void **)(&RwRasterUnlockPalette)			= (void*)(g_libGTASA+0x1B0578+1);
-	*(void **)(&RwImageCreate)					= (void*)(g_libGTASA+0x1AF338+1);
-	*(void **)(&RwImageDestroy)					= (void*)(g_libGTASA+0x1AF44C+1);
-	*(void **)(&RwImageAllocatePixels)			= (void*)(g_libGTASA+0x1AF38C+1);
-	*(void **)(&RwImageFreePixels)				= (void*)(g_libGTASA+0x1AF420+1);
-	*(void **)(&RwImageCopy)					= (void*)(g_libGTASA+0x1AFA50+1);
-	*(void **)(&RwImageResize)					= (void*)(g_libGTASA+0x1AF490+1);
-	*(void **)(&RwImageApplyMask)				= (void*)(g_libGTASA+0x1AFBB0+1);
-	*(void **)(&RwImageMakeMask)				= (void*)(g_libGTASA+0x1AF5CC+1);
-	*(void **)(&RwImageReadMaskedImage)			= (void*)(g_libGTASA+0x1AFCF8+1);
-	*(void **)(&RwImageRead)					= (void*)(g_libGTASA+0x1AF74C+1);
-	*(void **)(&RwImageWrite)					= (void*)(g_libGTASA+0x1AF980+1);
-	*(void **)(&RwImageSetFromRaster)			= (void*)(g_libGTASA+0x1B023C+1);
-	*(void **)(&RwRasterSetFromImage)			= (void*)(g_libGTASA+0x1B0260+1);
-	*(void **)(&RwRasterRead)					= (void*)(g_libGTASA+0x1B035C+1);
-	*(void **)(&RwRasterReadMaskedRaster)		= (void*)(g_libGTASA+0x1B03CC+1);
-	*(void **)(&RwImageFindRasterFormat)		= (void*)(g_libGTASA+0x1B0284+1);
+	*(void **)(&RwRasterCreate) 				= (void*)(g_libGTASA+0x001DA9D0+1);
+	*(void **)(&RwRasterDestroy) 				= (void*)(g_libGTASA+0x001DA7D0+1);
+	*(void **)(&RwRasterGetOffset) 				= (void*)(g_libGTASA+0x001DA6AC+1);
+	*(void **)(&RwRasterGetNumLevels) 			= (void*)(g_libGTASA+0x001DA900+1);
+	*(void **)(&RwRasterSubRaster) 				= (void*)(g_libGTASA+0x001DA974+1);
+	*(void **)(&RwRasterRenderFast)				= (void*)(g_libGTASA+0x001DA734+1);
+	*(void **)(&RwRasterRender)					= (void*)(g_libGTASA+0x001DA780+1);
+	*(void **)(&RwRasterRenderScaled)			= (void*)(g_libGTASA+0x001DA68C+1);
+	*(void **)(&RwRasterPushContext)			= (void*)(g_libGTASA+0x001DA818+1);
+	*(void **)(&RwRasterPopContext)				= (void*)(g_libGTASA+0x001DA8B8+1);
+	*(void **)(&RwRasterGetCurrentContext)		= (void*)(g_libGTASA+0x001DA66C+1);
+	*(void **)(&RwRasterClear)					= (void*)(g_libGTASA+0x001DA6DC+1);
+	*(void **)(&RwRasterClearRect)				= (void*)(g_libGTASA+0x001DA760+1);
+	*(void **)(&RwRasterShowRaster)				= (void*)(g_libGTASA+0x001DA93C+1);
+	*(void **)(&RwRasterLock)					= (void*)(g_libGTASA+0x001DAA74+1);
+	*(void **)(&RwRasterUnlock)					= (void*)(g_libGTASA+0x001DA6B8+1);
+	*(void **)(&RwRasterLockPalette)			= (void*)(g_libGTASA+0x001DA88C+1);
+	*(void **)(&RwRasterUnlockPalette)			= (void*)(g_libGTASA+0x001DA7AC+1);
+	*(void **)(&RwImageCreate)					= (void*)(g_libGTASA+0x001D8E20+1);
+	*(void **)(&RwImageDestroy)					= (void*)(g_libGTASA+0x001D8E78+1);
+	*(void **)(&RwImageAllocatePixels)			= (void*)(g_libGTASA+0x001D8F04+1);
+	*(void **)(&RwImageFreePixels)				= (void*)(g_libGTASA+0x001D8ED8+1);
+	*(void **)(&RwImageCopy)					= (void*)(g_libGTASA+0x001D9560+1);
+	*(void **)(&RwImageResize)					= (void*)(g_libGTASA+0x001D8FA0+1);
+	*(void **)(&RwImageApplyMask)				= (void*)(g_libGTASA+0x001D9280+1);
+	*(void **)(&RwImageMakeMask)				= (void*)(g_libGTASA+0x001D90C8+1);
+	*(void **)(&RwImageReadMaskedImage)			= (void*)(g_libGTASA+0x001D9DDC+1);
+	*(void **)(&RwImageRead)					= (void*)(g_libGTASA+0x001D97AC+1);
+	*(void **)(&RwImageWrite)					= (void*)(g_libGTASA+0x001D9D40+1);
+	*(void **)(&RwImageSetFromRaster)			= (void*)(g_libGTASA+0x001DA454+1);
+	*(void **)(&RwRasterSetFromImage)			= (void*)(g_libGTASA+0x001DA478+1);
+	*(void **)(&RwRasterRead)					= (void*)(g_libGTASA+0x001DA574+1);
+	*(void **)(&RwRasterReadMaskedRaster)		= (void*)(g_libGTASA+0x001DA614+1);
+	*(void **)(&RwImageFindRasterFormat)		= (void*)(g_libGTASA+0x001DA49C+1);
 
 	/* rwlpcore.h */
-	*(void **)(&RwIm2DGetNearScreenZ)			= (void*)(g_libGTASA+0x1B8038+1);
-	*(void **)(&RwIm2DGetFarScreenZ)			= (void*)(g_libGTASA+0x1B8054+1);
-	*(void **)(&RwRenderStateGet)				= (void*)(g_libGTASA+0x1B80A8+1);
-	*(void **)(&RwRenderStateSet)				= (void*)(g_libGTASA+0x1B8070+1);
-	*(void **)(&RwIm2DRenderLine)				= (void*)(g_libGTASA+0x1B80C4+1);
-	*(void **)(&RwIm2DRenderTriangle)			= (void*)(g_libGTASA+0x1B80E0+1);
-	*(void **)(&RwIm2DRenderPrimitive)			= (void*)(g_libGTASA+0x1B80FC+1);
-	*(void **)(&RwIm2DRenderIndexedPrimitive)	= (void*)(g_libGTASA+0x1B8118+1);
+	*(void **)(&RwIm2DGetNearScreenZ)			= (void*)(g_libGTASA+0x001E2874+1);
+	*(void **)(&RwIm2DGetFarScreenZ)			= (void*)(g_libGTASA+0x001E2884+1);
+	*(void **)(&RwRenderStateGet)				= (void*)(g_libGTASA+0x001E28C8+1);
+	*(void **)(&RwRenderStateSet)				= (void*)(g_libGTASA+0x001E2894+1);
+	*(void **)(&RwIm2DRenderLine)				= (void*)(g_libGTASA+0x001E28D8+1);
+	*(void **)(&RwIm2DRenderTriangle)			= (void*)(g_libGTASA+0x001E28F0+1);
+	*(void **)(&RwIm2DRenderPrimitive)			= (void*)(g_libGTASA+0x001E2908+1);
+	*(void **)(&RwIm2DRenderIndexedPrimitive)	= (void*)(g_libGTASA+0x001E2918+1);
 
 	/* rtpng.h */
-	*(void **)(&RtPNGImageWrite)				= (void*)(g_libGTASA+0x1D6CEC+1);
-	*(void **)(&RtPNGImageRead)					= (void*)(g_libGTASA+0x1D6F84+1);
+	*(void **)(&RtPNGImageWrite)				= (void*)(g_libGTASA+0x0020A144+1);
+	*(void **)(&RtPNGImageRead)					= (void*)(g_libGTASA+0x0020A3F4+1);
 
-	*(void**)(&RwTextureDestroy) = (void*)(g_libGTASA + 0x001B1808 + 1);
+	*(void**)(&RwTextureDestroy) = (void*)(g_libGTASA + 0x001DB6E4 + 1);
 
 //	CHook::WriteMemory(g_libGTASA + 0x001A7EF2, "\x4F\xF4\x40\x10\x4F\xF4\x40\x10", 8);
 //	CHook::WriteMemory(g_libGTASA + 0x001A7F34, "\x4F\xF4\x40\x10\x4F\xF4\x40\x10", 8);

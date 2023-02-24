@@ -2,7 +2,7 @@
 class CStream
 {
 	HSTREAM m_hStream;
-	VECTOR m_vPos;
+	CVector m_vPos;
 	int m_iVirtualWorld;
 	int m_iInterior;
 	float m_fDistance;
@@ -20,7 +20,7 @@ class CStream
 
 	//friend void CALLBACK MyDownloadProc(const void* buffer, DWORD length, void* user);
 public:
-	CStream(VECTOR* pPos, int iVirtualWorld, int iInterior, float fDistance, const char* szUrl);
+	CStream(CVector* pPos, int iVirtualWorld, int iInterior, float fDistance, const char* szUrl);
 	~CStream();
 
 	void AttachToVehicle(int iVehicleID);
@@ -32,5 +32,5 @@ public:
 
 	void Process(MATRIX4X4* pMatListener);
 
-	void SetPosition(VECTOR vec);
+	void SetPosition(CVector vec);
 };

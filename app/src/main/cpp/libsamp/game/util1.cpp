@@ -1,5 +1,8 @@
 #include "../main.h"
 #include "game.h"
+#include "CPlayerInfoGta.h"
+#include "CWorld.h"
+#include "CModelInfo.h"
 
 #define PI 3.14159265
 
@@ -1854,68 +1857,85 @@ const char g_szAnimBlockNames[][40] = {
 
 uintptr_t dwPlayerPedPtrs[PLAYER_PED_SLOTS];
 
-extern char* PLAYERS_REALLOC;
+//CPedGta* GamePool_FindPlayerPed()
+//{
+//	return *(CPedGta**)CWorld__Players;
+//}
 
-PED_TYPE* GamePool_FindPlayerPed()
+CPedGta *GamePool_FindPlayerPed()
 {
-	return *(PED_TYPE**)PLAYERS_REALLOC;
+    return *(CPedGta **) CWorld::Players;
 }
 
-PED_TYPE* GamePool_Ped_GetAt(int iID)
+CPedGta* CUtil::FindPlayerPed(int32_t Player)
 {
-	return (( PED_TYPE* (*)(int))(g_libGTASA+0x41DD7C+1))(iID);
+    return (CPedGta*)&CWorld::Players;
+    Log("asdfsdfsdfadsf = %x", CWorld::Players);
+    int32_t v2; // r1
+
+    if (  (int)(g_libGTASA + 0x006E002C) == 1 ) { // CHID::currentInstanceIndex
+        Log("FindPlayerPed %x", *CWorld::Players[1].m_pPed);
+        return CWorld::Players[1].m_pPed;
+    }
+
+    v2 = CWorld::PlayerInFocus;
+
+    if ( Player >= 0 )
+        v2 = Player;
+
+    Log("FindPlayerPed %x", *CWorld::Players[v2].m_pPed);
+    return CWorld::Players[v2].m_pPed;
 }
 
-int GamePool_Ped_GetIndex(PED_TYPE *pActor)
+int32_t CUtil::FindPlayerSlotWithPedPointer(CPedGta* pPlayersPed)
 {
-    return (( int (*)(PED_TYPE*))(g_libGTASA+0x41DD60+1))(pActor);
+    for(int i = 0; i < MAX_PLAYERS; ++i)
+    {
+        if(CWorld::Players[i].m_pPed == pPlayersPed)
+            return i;
+    }
+    return -1;
 }
 
-VEHICLE_TYPE *GamePool_Vehicle_GetAt(int iID)
+CPedGta* CUtil::GetPoolPed(int slot)
 {
-	return (( VEHICLE_TYPE* (*)(int))(g_libGTASA+0x41DD44+1))(iID);
+    return (( CPedGta* (*)(int))(g_libGTASA + 0x00483DB8 + 1))(slot);
 }
 
-int GamePool_Vehicle_GetIndex(VEHICLE_TYPE *pVehicle)
+int GamePool_Ped_GetIndex(CPedGta *pActor)
 {
-    return (( int (*)(VEHICLE_TYPE*))(g_libGTASA+0x41DD28+1))(pVehicle);
+    return (( int (*)(CPedGta*))(g_libGTASA+0x00483DAA + 1))(pActor);
 }
 
-ENTITY_TYPE *GamePool_Object_GetAt(int iID)
+CVehicleGta* GamePool_Vehicle_GetAt(int iID)
 {
-	ENTITY_TYPE* (*GetPoolObj)(int iID);
-	*(void **) (&GetPoolObj) = (void*)(g_libGTASA+0x41DDB4+1);
-	return (GetPoolObj)(iID);
+	return (( CVehicleGta* (*)(int32_t))(g_libGTASA + 0x00483D9E + 1))(iID);
+}
+
+int GamePool_Vehicle_GetIndex(CVehicleGta *pVehicle)
+{
+    return (( int (*)(CVehicleGta*))(g_libGTASA+0x00483D90 + 1))(pVehicle);
+}
+
+CPhysicalGta* CUtil::GetPoolObj(int slot)
+{
+	return (( CPhysicalGta* (*)(int))(g_libGTASA+0x00483DD2 + 1))(slot);
 } 
 
-int LineOfSight(VECTOR* start, VECTOR* end, void* colpoint, uintptr_t ent,
+int LineOfSight(CVector* start, CVector* end, void* colpoint, uintptr_t ent,
 	char buildings, char vehicles, char peds, char objects, char dummies, bool seeThrough, bool camera, bool unk)
 {
-	return (( int (*)(VECTOR*, VECTOR*, void*, uintptr_t,
-		char, char, char, char, char, char, char, char))(g_libGTASA+0x3C70C0+1))(start, end, colpoint, ent,
+	return (( int (*)(CVector*, CVector*, void*, uintptr_t,
+		char, char, char, char, char, char, char, char))(g_libGTASA+0x00424B94+1))(start, end, colpoint, ent,
 		buildings, vehicles, peds, objects, dummies, seeThrough, camera, unk);
-}
-
-// 0.3.7
-bool IsPedModel(unsigned int iModelID)
-{
-	if(iModelID < 0 || iModelID > 20000) return false;
-    uintptr_t *dwModelArray = (uintptr_t*)(g_libGTASA+0x87BF48);
-    
-    uintptr_t ModelInfo = dwModelArray[iModelID];
-    if(ModelInfo && *(uintptr_t*)ModelInfo == (uintptr_t)(g_libGTASA+0x5C6E90/*CPedModelInfo vtable*/))
-        return true;
-
-    return false;
 }
 
 // 0.3.7
 bool IsValidModel(unsigned int uiModelID)
 {
     if(uiModelID < 0 || uiModelID > 20000) return false;
-    uintptr_t *dwModelArray = (uintptr_t*)(g_libGTASA+0x87BF48);
 
-    uintptr_t dwModelInfo = dwModelArray[uiModelID];
+    uintptr_t dwModelInfo = reinterpret_cast<uintptr_t>(CModelInfo::ms_modelInfoPtrs[uiModelID]);
     if(dwModelInfo && *(uintptr_t*)(dwModelInfo+0x34/*pRwObject*/))
         return true;
 
@@ -1924,8 +1944,7 @@ bool IsValidModel(unsigned int uiModelID)
 
 uint16_t GetModelReferenceCount(int nModelIndex)
 {
-	uintptr_t *dwModelarray = (uintptr_t*)(g_libGTASA+0x87BF48);
-	uint8_t *pModelInfoStart = (uint8_t*)dwModelarray[nModelIndex];
+	uint8_t *pModelInfoStart = reinterpret_cast<uint8_t *>(CModelInfo::ms_modelInfoPtrs[nModelIndex]);
 	
 	return *(uint16_t*)(pModelInfoStart+0x1E);
 }
@@ -1952,40 +1971,17 @@ uint8_t FindPlayerNumFromPedPtr(uintptr_t dwPedPtr)
 	return 0;
 }
 #include <thread>
-uintptr_t GetTexture(const char* texture)
-{
-	return (( uintptr_t (*)(const char*))(g_libGTASA+0x258910+1))(texture);
-}
 
-uintptr_t LoadTextureFromDB(const char* dbname, const char* texture)
-{
-	// TextureDatabaseRuntime::GetDatabase(dbname)
-	uintptr_t db_handle = (( uintptr_t (*)(const char*))(g_libGTASA+0x1BF530+1))(dbname);
-	if(!db_handle)
-	{
-		Log("Error: Database not found! (%s)", dbname);
-		return 0;
-	}
-	// TextureDatabaseRuntime::Register(db)
-	(( void (*)(uintptr_t))(g_libGTASA+0x1BE898+1))(db_handle);
-	uintptr_t tex = GetTexture(texture);
 
-	if(!tex) Log("Error: Texture (%s) not found in database (%s)", dbname, texture);
-
-	// TextureDatabaseRuntime::Unregister(db)
-	(( void (*)(uintptr_t))(g_libGTASA+0x1BE938+1))(db_handle);
-
-	return tex;
-}
 
 void DefinedState2d()
 {
-	return (( void (*)())(g_libGTASA+0x5590B0+1))();
+	return (( void (*)())(g_libGTASA+0x005D0CB4+1))();
 }
 
 void SetScissorRect(void* pRect)
 {
-	return ((void (*)(void*))(g_libGTASA + 0x00273E8C + 1))(pRect);
+	return ((void (*)(void*))(g_libGTASA + 0x00002B3EC4 + 1))(pRect);
 }
 
 float DegToRad(float fDegrees)
@@ -2003,9 +1999,9 @@ float FloatOffset(float f1, float f2)
     else return (f2 - f1);
 }
 #include <cmath>
-float GetDistanceBetween3DPoints(VECTOR* f, VECTOR* s)
+float GetDistanceBetween3DPoints(CVector* f, CVector* s)
 {
-	return sqrt(pow(s->X - f->X, 2) + pow(s->Y - f->Y, 2) + pow(s->Z - f->Z, 2));
+	return sqrt(pow(s->x - f->x, 2) + pow(s->y - f->y, 2) + pow(s->z - f->z, 2));
 }
 
 const char* GetAnimByIdx(int idx)
@@ -2046,7 +2042,7 @@ struct RwRaster* GetRWRasterFromBitmapPalette(uint8_t* pBitmap, size_t dwStride,
 		return nullptr;
 	}
 
-	CHook::WriteMemory(g_libGTASA + 0x001D6F9A, "\x03\x20", 2); // rwSTREAMMEMORY
+	CHook::WriteMemory(g_libGTASA + 0x0020A404, "\x03\x20", 2); // rwSTREAMMEMORY
 
 	RwMemory memoryImage;
 	RwInt32 width, height, depth, flags;
@@ -2095,7 +2091,7 @@ struct RwRaster* GetRWRasterFromBitmapPalette(uint8_t* pBitmap, size_t dwStride,
 	RwImageDestroy(pImage);
 	STBIW_FREE(png);
 
-    CHook::WriteMemory(g_libGTASA + 0x001D6F9A, "\x02\x20", 2); // rwSTREAMFILENAME
+    CHook::WriteMemory(g_libGTASA + 0x0020A404, "\x02\x20", 2); // rwSTREAMFILENAME
 
 	return pRaster;
 }
@@ -2113,7 +2109,7 @@ struct RwRaster* GetRWRasterFromBitmap(uint8_t* pBitmap, size_t dwStride, size_t
 		return nullptr;
 	}
 
-    CHook::WriteMemory(g_libGTASA + 0x001D6F9A, "\x03\x20", 2); // rwSTREAMMEMORY
+    CHook::WriteMemory(g_libGTASA + 0x0020A404, "\x03\x20", 2); // rwSTREAMMEMORY
 
 	RwMemory memoryImage;
 	RwInt32 width, height, depth, flags;
@@ -2145,26 +2141,26 @@ struct RwRaster* GetRWRasterFromBitmap(uint8_t* pBitmap, size_t dwStride, size_t
 	RwImageDestroy(pImage);
 	STBIW_FREE(png);
 
-    CHook::WriteMemory(g_libGTASA + 0x001D6F9A, "\x02\x20", 2); // rwSTREAMFILENAME
+    CHook::WriteMemory(g_libGTASA + 0x0020A404, "\x02\x20", 2); // rwSTREAMFILENAME
 
 	return pRaster;
 }
 
 void RwMatrixOrthoNormalize(MATRIX4X4 *matIn, MATRIX4X4 *matOut)
 {
-    ((void (*)(MATRIX4X4*, MATRIX4X4*))(g_libGTASA+0x1B8CC8+1))(matIn, matOut);
+    ((void (*)(MATRIX4X4*, MATRIX4X4*))(g_libGTASA+0x001E3420+1))(matIn, matOut);
 }
 
 void RwMatrixInvert(MATRIX4X4 *matOut, MATRIX4X4 *matIn)
 {
-    ((void (*)(MATRIX4X4*, MATRIX4X4*))(g_libGTASA+0x1B91CC+1))(matOut, matIn);
+    ((void (*)(MATRIX4X4*, MATRIX4X4*))(g_libGTASA+0x001B91CC+1))(matOut, matIn);
 }
 
-void ProjectMatrix(VECTOR* vecOut, MATRIX4X4* mat, VECTOR* vecPos)
+void ProjectMatrix(CVector* vecOut, MATRIX4X4* mat, CVector* vecPos)
 {
-	vecOut->X = mat->at.X * vecPos->Z + mat->up.X * vecPos->Y + mat->right.X * vecPos->X + mat->pos.X;
-	vecOut->Y = mat->at.Y * vecPos->Z + mat->up.Y * vecPos->Y + mat->right.Y * vecPos->X + mat->pos.Y;
-	vecOut->Z = mat->at.Z * vecPos->Z + mat->up.Z * vecPos->Y + mat->right.Z * vecPos->X + mat->pos.Z;
+	vecOut->x = mat->at.x * vecPos->z + mat->up.x * vecPos->y + mat->right.x * vecPos->x + mat->pos.x;
+	vecOut->y = mat->at.y * vecPos->z + mat->up.y * vecPos->y + mat->right.y * vecPos->x + mat->pos.y;
+	vecOut->z = mat->at.z * vecPos->z + mat->up.z * vecPos->y + mat->right.z * vecPos->x + mat->pos.z;
 }
 
 void RwMatrixRotate(MATRIX4X4* mat, int axis, float angle)
@@ -2176,56 +2172,34 @@ void RwMatrixRotate(MATRIX4X4* mat, int axis, float angle)
 		{ 0.0f, 0.0f, 1.0f }
 	};
 
-	((void (*)(MATRIX4X4*, float*, float, int))(g_libGTASA + 0x1B9118 + 1))(mat, matt[axis], angle, 1);
+	((void (*)(MATRIX4X4*, float*, float, int))(g_libGTASA + 0x001E38F4 + 1))(mat, matt[axis], angle, 1);
 }
 
-void RwMatrixScale(MATRIX4X4* matrix, VECTOR* vecScale)
+void RwMatrixScale(MATRIX4X4* matrix, CVector* vecScale)
 {
-	matrix->right.X *= vecScale->X;
-	matrix->right.Y *= vecScale->X;
-	matrix->right.Z *= vecScale->X;
+	matrix->right.x *= vecScale->x;
+	matrix->right.y *= vecScale->x;
+	matrix->right.z *= vecScale->x;
 
-	matrix->up.X *= vecScale->Y;
-	matrix->up.Y *= vecScale->Y;
-	matrix->up.Z *= vecScale->Y;
+	matrix->up.x *= vecScale->y;
+	matrix->up.y *= vecScale->y;
+	matrix->up.z *= vecScale->y;
 
-	matrix->at.X *= vecScale->Z;
-	matrix->at.Y *= vecScale->Z;
-	matrix->at.Z *= vecScale->Z;
+	matrix->at.x *= vecScale->z;
+	matrix->at.y *= vecScale->z;
+	matrix->at.z *= vecScale->z;
 
 	matrix->flags &= 0xFFFDFFFC;
 }
 
 void WorldAddEntity(uintptr_t pEnt)
 {
-	((void(*)(uintptr_t))(g_libGTASA + 0x3C14B0 + 1))(pEnt);
+	((void(*)(uintptr_t))(g_libGTASA + 0x00423418 + 1))(pEnt);
 }
 
 void CUtil::WorldRemoveEntity(uintptr_t pEnt)
 {
-    ((void (*)(uintptr_t))(g_libGTASA + 0x3C1500 + 1)) (pEnt);
-}
-
-uintptr_t GetModelInfoByID(int iModelID)
-{
-	if (iModelID < 0 || iModelID > 20000) {
-		return false;
-	}
-
-	uintptr_t* dwModelArray = (uintptr_t*)(g_libGTASA + 0x87BF48);
-	return dwModelArray[iModelID];
-}
-
-
-uintptr_t ModelInfoCreateInstance(int iModel)
-{
-	uintptr_t modelInfo = GetModelInfoByID(iModel);
-	if (modelInfo)
-	{
-		return ((uintptr_t(*)(uintptr_t)) * (uintptr_t*)(*(uintptr_t*)modelInfo + 0x2C))(modelInfo);
-	}
-
-	return 0;
+    ((void (*)(uintptr_t))(g_libGTASA + 0x0042330C + 1)) (pEnt);
 }
 
 void RenderClumpOrAtomic(uintptr_t rwObject)
@@ -2240,68 +2214,7 @@ void RenderClumpOrAtomic(uintptr_t rwObject)
 		else if (*(uint8_t*)rwObject == 2)
 		{
 			// rpClumpRender
-			((void(*)(uintptr_t))(g_libGTASA + 0x1E0E60 + 1))(rwObject);
-		}
-	}
-}
-
-
-float GetModelColSphereRadius(int iModel)
-{
-	uintptr_t modelInfo = GetModelInfoByID(iModel);
-
-	if (modelInfo)
-	{
-		uintptr_t colModel = *(uintptr_t*)(modelInfo + 0x2C);
-		if (colModel != 0) {
-			return *(float*)(colModel + 0x24);
-		}
-	}
-
-	return 0.0f;
-}
-
-
-void GetModelColSphereVecCenter(int iModel, VECTOR* vec)
-{
-	uintptr_t modelInfo = GetModelInfoByID(iModel);
-
-	if (modelInfo)
-	{
-		uintptr_t colModel = *(uintptr_t*)(modelInfo + 0x2C);
-		if (colModel != 0) {
-			VECTOR* v = (VECTOR*)(colModel + 0x18);
-
-			vec->X = v->X;
-			vec->Y = v->Y;
-			vec->Z = v->Z;
-		}
-	}
-}
-
-void DestroyAtomicOrClump(uintptr_t rwObject)
-{
-	if (rwObject)
-	{
-		int type = *(int*)(rwObject);
-
-		if (type == 1)
-		{
-			// RpAtomicDestroy
-			((void(*)(uintptr_t))(g_libGTASA + 0x1E10D4 + 1))(rwObject);
-
-			uintptr_t parent = *(uintptr_t*)(rwObject + 4);
-			if (parent)
-			{
-				// RwFrameDestroy
-				((void(*)(uintptr_t))(g_libGTASA + 0x1AEC84 + 1))(parent);
-			}
-
-		}
-		else if (type == 2)
-		{
-			// RpClumpDestroy
-			((void(*)(uintptr_t))(g_libGTASA + 0x1E1224 + 1))(rwObject);
+			((void(*)(uintptr_t))(g_libGTASA + 0x0021425C + 1))(rwObject);
 		}
 	}
 }
@@ -2330,34 +2243,23 @@ void DestroyTextDrawTexture(int index)
 		TextDrawTexture[index] = 0x0;
 	}
 }
-
-uintptr_t LoadTexture(const char* texname)
-{
-	static char* texdb[] = { "samp", "gta3", "gta_int", "player", "txd" };
-
-	for (int i = 0; i < 5; i++)
-	{
-		uintptr_t texture = LoadTextureFromDB(texdb[i], texname);
-		if (texture != 0) {
-			Log("%s loaded from %s", texname, texdb[i]);
-			return texture;
-		}
-	}
-
-	Log("Texture %s not found!", texname);
-	return 0;
-}
-
-void DrawTextureUV(uintptr_t texture, RECT* rect, uint32_t dwColor, float* uv)
-{
-	if (texture)
-	{
-		RwRenderStateSet(rwRENDERSTATETEXTUREFILTER, (void*)rwFILTERLINEAR);
-		// CSprite2d::Draw(CRect  const& posn, CRGBA  const& color, float u1, float v1, float u2, float v2, float u3, float v3, float u4, float v4);
-		((void(*)(uintptr_t, RECT*, uint32_t*, float, float, float, float, float, float, float, float))
-			(g_libGTASA + 0x5526CC + 1))(texture, rect, &dwColor, uv[0], uv[1], uv[2], uv[3], uv[4], uv[5], uv[6], uv[7]);
-	}
-}
+//
+//uintptr_t LoadTexture(const char* texname)
+//{
+//	static char* texdb[] = { "samp", "gta3", "gta_int", "player", "txd" };
+//
+//	for (int i = 0; i < 5; i++)
+//	{
+//		uintptr_t texture = LoadTextureFromDB(texdb[i], texname);
+//		if (texture != 0) {
+//			Log("%s loaded from %s", texname, texdb[i]);
+//			return texture;
+//		}
+//	}
+//
+//	Log("Texture %s not found!", texname);
+//	return 0;
+//}
 
 bool IsPointInRect(float x, float y, RECT* rect)
 {

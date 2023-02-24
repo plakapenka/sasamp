@@ -1,5 +1,7 @@
 #pragma once
 
+#include "CMatrix.h"
+
 class CQuaternion
 {
 public:

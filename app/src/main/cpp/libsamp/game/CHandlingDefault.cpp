@@ -4,24 +4,20 @@
 #include "../chatwindow.h"
 
 tHandlingData CHandlingDefault::m_aDefaultModelHandlings[MAX_VEHICLE_MODELS];
+bool CHandlingDefault::bIsSlotUsed[MAX_VEHICLE_MODELS]{false};
 
 void CHandlingDefault::GetDefaultHandling(uint16_t usHandlingID, tHandlingData* tDest)
 {
 	Log("copy handling %d", usHandlingID);
 
-	if (usHandlingID >= MAX_VEHICLE_MODELS)
-	{
-		return;
-	}
 	memcpy((void*)tDest, &m_aDefaultModelHandlings[usHandlingID], sizeof(tHandlingData));
 }
 
 void CHandlingDefault::FillDefaultHandling(uint16_t usHandlingID, tHandlingData* pSrc)
 {
-	if (usHandlingID >= MAX_VEHICLE_MODELS)
-	{
-		return;
-	}
+	if(bIsSlotUsed[usHandlingID]) return;
+
+    bIsSlotUsed[usHandlingID] = true;
 
 	memset(&m_aDefaultModelHandlings[usHandlingID], 0, sizeof(tHandlingData));
 

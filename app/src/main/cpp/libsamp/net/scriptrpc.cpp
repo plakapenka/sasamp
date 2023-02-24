@@ -60,12 +60,12 @@ void ScrSetPlayerPos(RPCParameters *rpcParams)
 
 	CLocalPlayer *pLocalPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer();
 
-	VECTOR vecPos;
-	bsData.Read(vecPos.X);
-	bsData.Read(vecPos.Y);
-	bsData.Read(vecPos.Z);
+	CVector vecPos;
+	bsData.Read(vecPos.x);
+	bsData.Read(vecPos.y);
+	bsData.Read(vecPos.z);
 
-	if(pLocalPlayer) pLocalPlayer->GetPlayerPed()->TeleportTo(vecPos.X,vecPos.Y,vecPos.Z);
+	if(pLocalPlayer) pLocalPlayer->GetPlayerPed()->TeleportTo(vecPos.x,vecPos.y,vecPos.z);
 }
 
 void ScrSetCameraPos(RPCParameters *rpcParams)
@@ -75,11 +75,11 @@ void ScrSetCameraPos(RPCParameters *rpcParams)
 	int iBitLength = rpcParams->numberOfBitsOfData;
 
 	RakNet::BitStream bsData((unsigned char*)Data,(iBitLength/8)+1,false);
-	VECTOR vecPos;
-	bsData.Read(vecPos.X);
-	bsData.Read(vecPos.Y);
-	bsData.Read(vecPos.Z);
-	pGame->GetCamera()->SetPosition(vecPos.X, vecPos.Y, vecPos.Z, 0.0f, 0.0f, 0.0f);
+	CVector vecPos;
+	bsData.Read(vecPos.x);
+	bsData.Read(vecPos.y);
+	bsData.Read(vecPos.z);
+	pGame->GetCamera()->SetPosition(vecPos.x, vecPos.y, vecPos.z, 0.0f, 0.0f, 0.0f);
 }
 
 void ScrSetCameraLookAt(RPCParameters *rpcParams)
@@ -89,11 +89,11 @@ void ScrSetCameraLookAt(RPCParameters *rpcParams)
 	int iBitLength = rpcParams->numberOfBitsOfData;
 
 	RakNet::BitStream bsData((unsigned char*)Data,(iBitLength/8)+1,false);
-	VECTOR vecPos;
-	bsData.Read(vecPos.X);
-	bsData.Read(vecPos.Y);
-	bsData.Read(vecPos.Z);
-	pGame->GetCamera()->LookAtPoint(vecPos.X,vecPos.Y,vecPos.Z,2);	
+	CVector vecPos;
+	bsData.Read(vecPos.x);
+	bsData.Read(vecPos.y);
+	bsData.Read(vecPos.z);
+	pGame->GetCamera()->LookAtPoint(vecPos.x,vecPos.y,vecPos.z,2);
 }
 
 void ScrSetPlayerFacingAngle(RPCParameters *rpcParams)
@@ -137,7 +137,7 @@ void ScrSetFightingStyle(RPCParameters *rpcParams)
 
 void ScrSetPlayerSkin(RPCParameters *rpcParams)
 {
-	//Log("RPC: ScrSetPlayerSkin");
+	Log("RPC: ScrSetPlayerSkin");
 	unsigned char * Data = reinterpret_cast<unsigned char *>(rpcParams->input);
 	int iBitLength = rpcParams->numberOfBitsOfData;
 
@@ -238,7 +238,7 @@ void ScrClearPlayerAnimations(RPCParameters *rpcParams)
 		{
 			pPlayerPed->ClearAnimations();
 			//pPlayerPed->GetMatrix(&mat);
-			//pPlayerPed->TeleportTo(mat.pos.X, mat.pos.Y, mat.pos.Z);
+			//pPlayerPed->TeleportTo(mat.pos.x, mat.pos.y, mat.pos.z);
 		}
 	}
 }
@@ -414,16 +414,16 @@ void ScrSetPlayerPosFindZ(RPCParameters *rpcParams)
 
 	CLocalPlayer *pLocalPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer();
 
-	VECTOR vecPos;
+	CVector vecPos;
 
-	bsData.Read(vecPos.X);
-	bsData.Read(vecPos.Y);
-	bsData.Read(vecPos.Z);
+	bsData.Read(vecPos.x);
+	bsData.Read(vecPos.y);
+	bsData.Read(vecPos.z);
 
-	vecPos.Z = pGame->FindGroundZForCoord(vecPos.X, vecPos.Y, vecPos.Z);
-	vecPos.Z += 1.5f;
+	vecPos.z = pGame->FindGroundZForCoord(vecPos.x, vecPos.y, vecPos.z);
+	vecPos.z += 1.5f;
 
-	pLocalPlayer->GetPlayerPed()->TeleportTo(vecPos.X, vecPos.Y, vecPos.Z);
+	pLocalPlayer->GetPlayerPed()->TeleportTo(vecPos.x, vecPos.y, vecPos.z);
 }
 
 void ScrSetPlayerInterior(RPCParameters *rpcParams)
@@ -611,7 +611,7 @@ void ScrPutPlayerInVehicle(RPCParameters *rpcParams)
 	if(pPed->IsInVehicle()) {
 		MATRIX4X4 mat;
 		pPed->GetMatrix(&mat);
-		pPed->RemoveFromVehicleAndPutAt(mat.pos.X, mat.pos.Y, mat.pos.Z);
+		pPed->RemoveFromVehicleAndPutAt(mat.pos.x, mat.pos.y, mat.pos.z);
 	}
 	CVehicle *pVehicle = pNetGame->GetVehiclePool()->GetAt(vehicleid);
 	if(!pVehicle)return;
@@ -780,12 +780,12 @@ void ScrSetVehicleVelocity(RPCParameters *rpcParams)
 	RakNet::BitStream bsData((unsigned char*)Data,(iBitLength/8)+1,false);
 
 	uint8_t turn = false;
-	VECTOR vecMoveSpeed;
+	CVector vecMoveSpeed;
 	bsData.Read(turn);
-	bsData.Read(vecMoveSpeed.X);
-	bsData.Read(vecMoveSpeed.Y);
-	bsData.Read(vecMoveSpeed.Z);
-	Log("X: %f, Y: %f, Z: %f", vecMoveSpeed.X, vecMoveSpeed.Y, vecMoveSpeed.Z);
+	bsData.Read(vecMoveSpeed.x);
+	bsData.Read(vecMoveSpeed.y);
+	bsData.Read(vecMoveSpeed.z);
+	Log("X: %f, Y: %f, Z: %f", vecMoveSpeed.x, vecMoveSpeed.y, vecMoveSpeed.z);
 
 	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
 	CPlayerPed *pPlayerPed = pGame->FindPlayerPed();
@@ -826,17 +826,17 @@ void ScrInterpolateCamera(RPCParameters *rpcParams)
 
 	RakNet::BitStream bsData((unsigned char*)Data,(iBitLength/8)+1,false);
 	bool bSetPos = true;
-	VECTOR vecFrom, vecDest;
+	CVector vecFrom, vecDest;
 	int time;
 	uint8_t mode;
 
 	bsData.Read(bSetPos);
-	bsData.Read(vecFrom.X);
-	bsData.Read(vecFrom.Y);
-	bsData.Read(vecFrom.Z);
-	bsData.Read(vecDest.X);
-	bsData.Read(vecDest.Y);
-	bsData.Read(vecDest.Z);
+	bsData.Read(vecFrom.x);
+	bsData.Read(vecFrom.y);
+	bsData.Read(vecFrom.z);
+	bsData.Read(vecDest.x);
+	bsData.Read(vecDest.y);
+	bsData.Read(vecDest.z);
 	bsData.Read(time);
 	bsData.Read(mode);
 
@@ -943,26 +943,26 @@ void ScrCreateObject(RPCParameters* rpcParams)
 	uint16_t wObjectID;
 	unsigned long ModelID;
 	float fDrawDistance;
-	VECTOR vecPos, vecRot;
+	CVector vecPos, vecRot;
 
 	uint8_t bNoCameraCol;
 	int16_t attachedVehicleID;
 	int16_t attachedObjectID;
-	VECTOR vecAttachedOffset;
-	VECTOR vecAttachedRotation;
+	CVector vecAttachedOffset;
+	CVector vecAttachedRotation;
 	uint8_t bSyncRot;
 	uint8_t iMaterialCount;
 
 	RakNet::BitStream bsData(Data, (iBitLength / 8) + 1, false);
 	bsData.Read(wObjectID);
 	bsData.Read(ModelID);
-	bsData.Read(vecPos.X);
-	bsData.Read(vecPos.Y);
-	bsData.Read(vecPos.Z);
+	bsData.Read(vecPos.x);
+	bsData.Read(vecPos.y);
+	bsData.Read(vecPos.z);
 
-	bsData.Read(vecRot.X);
-	bsData.Read(vecRot.Y);
-	bsData.Read(vecRot.Z);
+	bsData.Read(vecRot.x);
+	bsData.Read(vecRot.y);
+	bsData.Read(vecRot.z);
 
 	bsData.Read(fDrawDistance);
 
@@ -978,7 +978,7 @@ void ScrCreateObject(RPCParameters* rpcParams)
 	bsData.Read(iMaterialCount);
 
 	iTotalObjects++;
-	//Log("ID: %d, model: %d. iTotalObjects = %d", wObjectID, ModelID, iTotalObjects);
+	Log("ID: %d, model: %d. iTotalObjects = %d", wObjectID, ModelID, iTotalObjects);
 
 	CObjectPool* pObjectPool = pNetGame->GetObjectPool();
 	pObjectPool->New(wObjectID, ModelID, vecPos, vecRot, fDrawDistance);
@@ -1059,7 +1059,7 @@ void ScrCreateObject(RPCParameters* rpcParams)
 			if (!pObject->m_pMaterials[slot].pTex && strncmp(tex, "none", sizeof("none"))
 				&& strncmp(tex, "wall8", sizeof("wall8")))
 			{
-				pObject->m_pMaterials[slot].pTex = (RwTexture*)LoadTextureFromDB("samp", tex);
+				pObject->m_pMaterials[slot].pTex = CUtil::LoadTextureFromDB("samp", tex);
 			}
 			if (!GetModelReferenceCount(modelId) && pGame->IsModelLoaded(modelId))
 			{
@@ -1074,8 +1074,8 @@ void ScrCreateObject(RPCParameters* rpcParams)
 		}
 	}
 
-	//LOGI("id: %d model: %d x: %f y: %f z: %f", wObjectID, ModelID, vecPos.X, vecPos.Y, vecPos.Z);
-	//LOGI("vecRot: %f %f %f", vecRot.X, vecRot.Y, vecRot.Z);
+	//LOGI("id: %d model: %d x: %f y: %f z: %f", wObjectID, ModelID, vecPos.x, vecPos.y, vecPos.z);
+	//LOGI("vecRot: %f %f %f", vecRot.x, vecRot.y, vecRot.z);
 
 }
 
@@ -1106,22 +1106,22 @@ void ScrSetObjectPos(RPCParameters *rpcParams)
 
 	uint16_t wObjectID;
 	float fRotation;
-	VECTOR vecPos, vecRot;
+	CVector vecPos, vecRot;
 	RakNet::BitStream bsData(Data,(iBitLength/8)+1,false);
 	bsData.Read(wObjectID);
-	bsData.Read(vecPos.X);
-	bsData.Read(vecPos.Y);
-	bsData.Read(vecPos.Z);
+	bsData.Read(vecPos.x);
+	bsData.Read(vecPos.y);
+	bsData.Read(vecPos.z);
 	bsData.Read(fRotation);
 
-	//LOGI("id: %d x: %.2f y: %.2f z: %.2f", wObjectID, vecPos.X, vecPos.Y, vecPos.Z);
-	//LOGI("VecRot x: %.2f y: %.2f z: %.2f", vecRot.X, vecRot.Y, vecRot.Z);
+	//LOGI("id: %d x: %.2f y: %.2f z: %.2f", wObjectID, vecPos.x, vecPos.y, vecPos.z);
+	//LOGI("VecRot x: %.2f y: %.2f z: %.2f", vecRot.x, vecRot.y, vecRot.z);
 
 	CObjectPool*	pObjectPool =	pNetGame->GetObjectPool();
 	CObject*		pObject		=	pObjectPool->GetAt(wObjectID);
 	if(pObject)
 	{
-		pObject->SetPos(vecPos.X, vecPos.Y, vecPos.Z);
+		pObject->SetPos(vecPos.x, vecPos.y, vecPos.z);
 	}
 }
 
@@ -1205,6 +1205,8 @@ void ScrSetPlayerWantedLevel(RPCParameters *rpcParams)
 
 void ScrGivePlayerWeapon(RPCParameters* rpcParams)
 {
+	Log("ScrGivePlayerWeapon");
+
 	unsigned char * Data = reinterpret_cast<unsigned char *>(rpcParams->input);
 	int iBitLength = rpcParams->numberOfBitsOfData;
 
@@ -1270,6 +1272,8 @@ void ScrTogglePlayerControllable(RPCParameters *rpcParams)
 
 void ScrSetPlayerSkillLevel(RPCParameters *rpcParams)
 {
+	Log("ScrSetPlayerSkillLevel");
+
 	int iBitLength = rpcParams->numberOfBitsOfData;
 	PLAYERID bytePlayerID;
 	unsigned int ucSkillType;
@@ -1342,6 +1346,8 @@ void ScrSetPlayerSkillLevel(RPCParameters *rpcParams)
 
 void ScrResetPlayerWeapons(RPCParameters* rpcParams)
 {
+	Log("ScrResetPlayerWeapons");
+
 	uint8_t* Data = reinterpret_cast<uint8_t*>(rpcParams->input);
 	int iBitLength = rpcParams->numberOfBitsOfData;
 	PlayerID sender = rpcParams->sender;
@@ -1415,6 +1421,7 @@ int GetInternalBoneIDFromSampID(int sampid)
 
 void ScrSetPlayerAttachedObject(RPCParameters* rpcParams)
 {
+	Log("ScrSetPlayerAttachedObject");
 	unsigned char* Data = reinterpret_cast<unsigned char*>(rpcParams->input);
 	int iBitLength = rpcParams->numberOfBitsOfData;
 	RakNet::BitStream bsData(Data, (iBitLength / 8) + 1, false);
@@ -1551,7 +1558,7 @@ void ScrSetPlayerObjectMaterial(RPCParameters* rpcParams)
 	if (!pObj->m_pMaterials[matId].pTex && strncmp(tex, "none", sizeof("none"))
 		&& strncmp(tex, "wall8", sizeof("wall8")))
 	{
-		pObj->m_pMaterials[matId].pTex = (RwTexture*)LoadTextureFromDB("samp", tex);
+		pObj->m_pMaterials[matId].pTex = CUtil::LoadTextureFromDB("samp", tex);
 	}
 	if (!GetModelReferenceCount(modelId) && pGame->IsModelLoaded(modelId))
 	{
@@ -1690,14 +1697,14 @@ void ScrSetObjectRotation(RPCParameters* rpcParams)
 	RakNet::BitStream bsData(Data, (iBitLength / 8) + 1, false);
 
 	uint16_t objectId;
-	VECTOR vecRot;
+	CVector vecRot;
 	
 	bsData.Read(objectId);
-	bsData.Read((char*)&vecRot, sizeof(VECTOR));
+	bsData.Read((char*)&vecRot, sizeof(CVector));
 
 	if (pNetGame->GetObjectPool()->GetAt(objectId))
 	{
-		pNetGame->GetObjectPool()->GetAt(objectId)->InstantRotate(vecRot.X, vecRot.Y, vecRot.Z);
+		pNetGame->GetObjectPool()->GetAt(objectId)->InstantRotate(vecRot.x, vecRot.y, vecRot.z);
 	}
 }
 

@@ -37,12 +37,12 @@ bool CObjectPool::Delete(uint16_t ObjectID)
 	return true;
 }
 
-bool CObjectPool::New(uint16_t ObjectID, int iModel, VECTOR vecPos, VECTOR vecRot, float fDrawDistance)
+bool CObjectPool::New(uint16_t ObjectID, int iModel, CVector vecPos, CVector vecRot, float fDrawDistance)
 {
 	if(m_pObjects[ObjectID] != 0)
 		Delete(ObjectID);
 
-	m_pObjects[ObjectID] = pGame->NewObject(iModel, vecPos.X, vecPos.Y, vecPos.Z, vecRot, fDrawDistance);
+	m_pObjects[ObjectID] = pGame->NewObject(iModel, vecPos.x, vecPos.y, vecPos.z, vecRot, fDrawDistance);
 
 	if(m_pObjects[ObjectID])
 	{
@@ -54,7 +54,7 @@ bool CObjectPool::New(uint16_t ObjectID, int iModel, VECTOR vecPos, VECTOR vecRo
 	return false;
 }
 
-CObject *CObjectPool::GetObjectFromGtaPtr(ENTITY_TYPE *pGtaObject)
+CObject *CObjectPool::GetObjectFromGtaPtr(CEntityGta *pGtaObject)
 {
 	uint16_t x=1;
 
@@ -69,7 +69,7 @@ CObject *CObjectPool::GetObjectFromGtaPtr(ENTITY_TYPE *pGtaObject)
 	return 0;
 }
 
-uint16_t CObjectPool::FindIDFromGtaPtr(ENTITY_TYPE* pGtaObject)
+uint16_t CObjectPool::FindIDFromGtaPtr(CEntityGta* pGtaObject)
 {
 	uint16_t x=1;
 

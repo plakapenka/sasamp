@@ -168,7 +168,7 @@ void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 
 	m_Settings.iFPS = ini_table_get_entry_as_int(config, "gui", "fps", 60);
 	if( m_Settings.iFPS < 20 ) m_Settings.iFPS = 60;
-	ApplyFPSPatch(m_Settings.iFPS);
+//	ApplyFPSPatch(m_Settings.iFPS);
 
 	m_Settings.iAndroidKeyboard = ini_table_get_entry_as_int(config, "gui", "androidKeyboard", 0);
 
@@ -185,13 +185,6 @@ void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 
 extern "C"
 {
-
-JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_AuthorizationManager_ToggleAutoLogin(JNIEnv *env, jobject thiz,
-																jboolean toggle) {
-	CSettings::m_Settings.szAutoLogin = toggle;
-	CSettings::save();
-}
 
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_ChatLineChanged(JNIEnv *env,

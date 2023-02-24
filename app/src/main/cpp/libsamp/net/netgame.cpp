@@ -51,14 +51,14 @@ CNetGame::CNetGame(const char* szHostOrIp, int iPort, const char* szPlayerName, 
 
 	m_pPlayerPool = new CPlayerPool();
 	m_pPlayerPool->SetLocalPlayerName(szPlayerName);
-	
+//
 	m_pVehiclePool = new CVehiclePool();
 	m_pObjectPool = new CObjectPool();
 	m_pPickupPool = new CPickupPool();
 	m_pGangZonePool = new CGangZonePool();
 	m_pLabelPool = new CText3DLabelsPool();
-
-	//m_pTextDrawPool = new CTextDrawPool();
+//
+//	m_pTextDrawPool = new CTextDrawPool();
 	g_pWidgetManager = new CWidgetManager();
 	m_pStreamPool = new CStreamPool();
 	m_pActorPool = new CActorPool();
@@ -91,10 +91,8 @@ CNetGame::CNetGame(const char* szHostOrIp, int iPort, const char* szPlayerName, 
 	for(int i=0; i<100; i++)
 		m_dwMapIcons[i] = 0;
 
-	pGame->EnableClock(false);
-	pGame->EnableZoneNames(false);
-
-	Log("CNetGame createt obj");
+//	pGame->EnableClock(false);
+//	pGame->EnableZoneNames(false);
 }
 
 CNetGame::~CNetGame()
@@ -153,7 +151,6 @@ CNetGame::~CNetGame()
 #include "CUDPSocket.h"
 #include "..//CServerManager.h"
 #include "java_systems/CSpeedometr.h"
-#include "game/CSkyBox.h"
 
 int last_process_cnetgame = 0;
 void CNetGame::Process()
@@ -165,6 +162,7 @@ void CNetGame::Process()
 		return;
 	}
 	//CSkyBox::Process();
+
 	CSpeedometr::update();
 
 	UpdateNetwork();
@@ -175,12 +173,12 @@ void CNetGame::Process()
 		if (pPlayerDed)
 		{
 			ScriptCommand(&is_actor_near_point_3d,pPlayerDed->m_dwGTAId,
-						  pGame->m_vecCheckpointPos.X,
-						  pGame->m_vecCheckpointPos.Y,
-						  pGame->m_vecCheckpointPos.Z,
-						  pGame->m_vecCheckpointExtent.X,
-						  pGame->m_vecCheckpointExtent.Y,
-						  pGame->m_vecCheckpointExtent.Z,
+						  pGame->m_vecCheckpointPos.x,
+						  pGame->m_vecCheckpointPos.y,
+						  pGame->m_vecCheckpointPos.z,
+						  pGame->m_vecCheckpointExtent.x,
+						  pGame->m_vecCheckpointExtent.y,
+						  pGame->m_vecCheckpointExtent.z,
 						  1);
 		}
 	}
@@ -219,10 +217,9 @@ void CNetGame::Process()
 		}
 	}
 
-	if(GetGameState() == GAMESTATE_WAIT_CONNECT &&
-		(GetTickCount() - m_dwLastConnectAttempt) > 3000)
+	if(GetGameState() == GAMESTATE_WAIT_CONNECT && (GetTickCount() - m_dwLastConnectAttempt) > 3000)
 	{
-		CChatWindow::AddDebugMessageNonFormatted(CLocalisation::GetMessage(E_MSG::CONNECTING));
+		CChatWindow::AddDebugMessageNonFormatted("{bbbbbb}Соединение к LIVE RUSSIA{ffffff}");
 
 		m_pRakClient->Connect(m_szHostOrIp, m_iPort, 0, 0, 5);
 		m_dwLastConnectAttempt = GetTickCount();
@@ -233,8 +230,7 @@ void CNetGame::Process()
 
 void CNetGame::UpdateNetwork()
 {
-	
-	Packet* pkt = nullptr;
+	Packet* pkt;
 	unsigned char packetIdentifier;
 
 	while(pkt = m_pRakClient->Receive())
@@ -279,7 +275,7 @@ void CNetGame::UpdateNetwork()
 				break;
 
 			case ID_INVALID_PASSWORD:
-				CChatWindow::AddDebugMessage("Куда мы лезим? Дождись открытия");
+				CChatWindow::AddDebugMessage("Неверный пароль!");
 				m_pRakClient->Disconnect(0);
 				break;
 
@@ -304,7 +300,7 @@ void CNetGame::UpdateNetwork()
 				break;
 
 			case ID_BULLET_SYNC:
-				Packet_BulletSync(pkt);
+				//Packet_BulletSync(pkt);
 				break;
 
 			case ID_TRAILER_SYNC:
@@ -354,6 +350,8 @@ void CNetGame::Packet_TrailerSync(Packet* p)
 
 #include "..//game/CCustomPlateManager.h"
 #include "java_systems/CDuelsGui.h"
+#include "java_systems/CAuthorization.h"
+#include "java_systems/CChooseSpawn.h"
 
 
 void CNetGame::Packet_AuthRPC(Packet *p)
@@ -378,7 +376,7 @@ void CNetGame::Packet_AuthRPC(Packet *p)
 			if (toggle == 1) {
 				CPlayerPool *pPlayerPool = GetPlayerPool();
 				if (pPlayerPool) {
-					g_pJavaWrapper->ShowAuthorization(pPlayerPool->GetLocalPlayerName(),
+					CAuthorization::show(pPlayerPool->GetLocalPlayerName(),
 													  pPlayerPool->GetLocalPlayerID(),
 													  (bool) ip_match,
 													  (bool) CSettings::m_Settings.szAutoLogin,
@@ -392,7 +390,7 @@ void CNetGame::Packet_AuthRPC(Packet *p)
 			}
 			else if (toggle == 0)
 			{
-				g_pJavaWrapper->HideAuthorization();
+				CAuthorization::hide();
 			}
 			break;
 		}
@@ -449,11 +447,11 @@ void CNetGame::Packet_SpecialCustomRPC(Packet *p)
 
 			if (toggle == 1)
 			{
-				g_pJavaWrapper->ShowChooseSpawn(organization, station, exit, garage, house);
+				CChooseSpawn::show(organization, station, exit, garage, house);
 			}
 			else if (toggle == 0)
 			{
-				g_pJavaWrapper->HideChooseSpawn();
+				CChooseSpawn::hide();
 			}
 			break;
 		}
@@ -717,19 +715,6 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 				CHUD::hideBusInfo();
 			}
 
-			break;
-		}
-		case 444:
-		{
-			uint16_t targetID;
-			bs.Read(targetID);
-
-			CPlayerPool *pPlayerPool = GetPlayerPool();
-			pPlayerPool = pNetGame->GetPlayerPool();
-
-			CPlayerPed *localPed = pPlayerPool->GetLocalPlayer()->GetPlayerPed();
-			CPlayerPed *toPed = pPlayerPool->GetAt(targetID)->GetPlayerPed();
-			ScriptCommand(&TASK_CHAR_ARREST_CHAR, localPed->m_dwGTAId, toPed->m_dwGTAId);
 			break;
 		}
 		case RPC_SHOW_MINING_GAME:
@@ -1167,19 +1152,19 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			char str[255];
 			uint8_t len;
 			uint16_t id, vw, interior;
-			VECTOR pos;
+			CVector pos;
 			float fDistance;
 			bs.Read(id);
-			bs.Read(pos.X);
-			bs.Read(pos.Y);
-			bs.Read(pos.Z);
+			bs.Read(pos.x);
+			bs.Read(pos.y);
+			bs.Read(pos.z);
 			bs.Read(fDistance);
 			bs.Read(vw);
 			bs.Read(interior);
 			bs.Read(len);
 			bs.Read(&str[0], len);
 			str[len] = '\0';
-			//CChatWindow::AddDebugMessage("%d %f %f %f %f %d %d %d %s", id, pos.X, pos.Y, pos.Z, fDistance, vw, interior, len, str);
+			//CChatWindow::AddDebugMessage("%d %f %f %f %f %d %d %d %s", id, pos.x, pos.y, pos.z, fDistance, vw, interior, len, str);
 			GetStreamPool()->AddStream(id, &pos, vw, interior, fDistance, (const char*)&str[0]);
 			break;
 		}
@@ -1206,11 +1191,11 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		case RPC_STREAM_POS:
 		{
 			uint16_t id;
-			VECTOR pos;
+			CVector pos;
 			bs.Read(id);
-			bs.Read(pos.X);
-			bs.Read(pos.Y);
-			bs.Read(pos.Z);
+			bs.Read(pos.x);
+			bs.Read(pos.y);
+			bs.Read(pos.z);
 			if (GetStreamPool()->GetStream(id))
 			{
 				GetStreamPool()->GetStream(id)->SetPosition(pos);
@@ -1351,7 +1336,7 @@ void CNetGame::ResetActorPool()
 
 
 extern int RemoveModelIDs[1200];
-extern VECTOR RemovePos[1200];
+extern CVector RemovePos[1200];
 extern float RemoveRad[1200];
 extern int iTotalRemovedObjects;
 
@@ -1418,7 +1403,6 @@ void CNetGame::ShutDownForGameRestart()
 	m_bZoneNames = false;
 	GameResetRadarColors();
 	pGame->SetGravity(m_fGravity);
-	pGame->EnableClock(false);
 }
 
 void CNetGame::SendCheckClientPacket(const char password[])
@@ -1716,8 +1700,8 @@ void CNetGame::Packet_PlayerSync(Packet* pkt)
 	// GENERAL KEYS
 	bsPlayerSync.Read(ofSync.wKeys);
 
-	// VECTOR POS
-	bsPlayerSync.Read((char*)&ofSync.vecPos,sizeof(VECTOR));
+	// CVector POS
+	bsPlayerSync.Read((char*)&ofSync.vecPos,sizeof(CVector));
 
 	// QUATERNION
 	float tw, tx, ty, tz;
@@ -1750,17 +1734,17 @@ void CNetGame::Packet_PlayerSync(Packet* pkt)
 
     // READ MOVESPEED VECTORS
     bsPlayerSync.ReadVector(tx, ty, tz);
-    ofSync.vecMoveSpeed.X = tx;
-    ofSync.vecMoveSpeed.Y = ty;
-    ofSync.vecMoveSpeed.Z = tz;
+    ofSync.vecMoveSpeed.x = tx;
+    ofSync.vecMoveSpeed.y = ty;
+    ofSync.vecMoveSpeed.z = tz;
 
     bsPlayerSync.Read(bHasVehicleSurfingInfo);
     if (bHasVehicleSurfingInfo) 
     {
         bsPlayerSync.Read(ofSync.wSurfInfo);
-        bsPlayerSync.Read(ofSync.vecSurfOffsets.X);
-        bsPlayerSync.Read(ofSync.vecSurfOffsets.Y);
-        bsPlayerSync.Read(ofSync.vecSurfOffsets.Z);
+        bsPlayerSync.Read(ofSync.vecSurfOffsets.x);
+        bsPlayerSync.Read(ofSync.vecSurfOffsets.y);
+        bsPlayerSync.Read(ofSync.vecSurfOffsets.z);
     } 
     else
     	ofSync.wSurfInfo = INVALID_VEHICLE_ID;
@@ -1805,13 +1789,13 @@ void CNetGame::Packet_VehicleSync(Packet* pkt)
 		icSync.quat.z);
 
 	// position
-	bsSync.Read((char*)&icSync.vecPos, sizeof(VECTOR));
+	bsSync.Read((char*)&icSync.vecPos, sizeof(CVector));
 
 	// speed
 	bsSync.ReadVector(
-		icSync.vecMoveSpeed.X,
-		icSync.vecMoveSpeed.Y,
-		icSync.vecMoveSpeed.Z);
+		icSync.vecMoveSpeed.x,
+		icSync.vecMoveSpeed.y,
+		icSync.vecMoveSpeed.z);
 
 	// vehicle health
 	uint16_t wTempVehicleHealth;

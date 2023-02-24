@@ -1,10 +1,6 @@
 package com.liverussia.launcher.utils;
 
-import android.app.Application;
-import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
-
+import com.liverussia.cr.core.GTASA;
 import com.liverussia.launcher.async.dto.response.FileInfo;
 import com.liverussia.launcher.async.dto.response.LatestVersionInfoDto;
 import com.liverussia.launcher.async.dto.response.News;
@@ -16,7 +12,7 @@ import java.util.List;
 
 
 public class MainUtils {
-    public static AppCompatActivity currentContext;
+    public static GTASA currentContext;
     public static DownloadType TYPE = DownloadType.LOAD_ALL_CACHE;
     public static List<FileInfo> FILES_TO_RELOAD;
     public static LatestVersionInfoDto LATEST_APK_INFO;

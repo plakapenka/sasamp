@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 
 import com.liverussia.launcher.utils.MainUtils;
 import com.wardrumstudios.utils.WarMedia;
@@ -21,11 +22,12 @@ public class GTASA extends WarMedia {
             vmVersion = System.getProperty("java.vm.version");
             System.out.println("vmVersion " + vmVersion);
             System.loadLibrary("ImmEmulatorJ");
+            System.loadLibrary("GTASA");
+            System.loadLibrary("samp");
         }
         catch (ExceptionInInitializerError | UnsatisfiedLinkError e) {
         }
-        System.loadLibrary("GTASA");
-        System.loadLibrary("samp");
+
     }
 
     public static void staticEnterSocialClub()

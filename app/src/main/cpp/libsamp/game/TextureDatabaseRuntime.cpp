@@ -3,17 +3,26 @@
 //
 
 #include "TextureDatabaseRuntime.h"
-#include "../util/patch.h"
+
 
 //unsigned int *TextureDatabaseRuntime::storedTexels = (g_libGTASA + 0x61B8C0);
 
 TextureDatabase* TextureDatabaseRuntime::Load(const char *withName, bool fullyLoad, TextureDatabaseFormat forcedFormat)
 {
-    return ((TextureDatabase* (*)(const char*, int, int))(g_libGTASA + 0x1BF244 + 1))(withName, fullyLoad, forcedFormat);
-   // CHook::CallFunction<void>(g_libGTASA + 0x1BF244 + 1, a1, a2, a3);
+    return ((TextureDatabase* (*)(const char*, int, int))(g_libGTASA + 0x001EA864 + 1))(withName, fullyLoad, forcedFormat);
 }
 
-void TextureDatabaseRuntime::Register(TextureDatabase *thiz)
+void TextureDatabaseRuntime::Register(TextureDatabase *toRegister)
 {
-    ((void (*)(TextureDatabase*))(g_libGTASA + 0x1BE898 + 1))(thiz);
+    ((void (*)(TextureDatabase*))(g_libGTASA + 0x001E9B48 + 1))(toRegister);
+}
+
+void TextureDatabaseRuntime::Unregister(TextureDatabase *toUnregister)
+{
+    ((void (*)(TextureDatabase*))(g_libGTASA + 0x001E9C00 + 1))(toUnregister);
+}
+
+RwTexture* TextureDatabaseRuntime::GetTexture(const char *name)
+{
+    return ((RwTexture* (*)(const char*))(g_libGTASA + 0x1E9C64 + 1))(name);
 }

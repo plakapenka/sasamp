@@ -294,7 +294,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void onClickPlay() {
-        String isTestMode = NativeStorage.getClientProperty(NativeStorageElements.TEST, this);
+        // String isTestMode = NativeStorage.getClientProperty(NativeStorageElements.TEST, this);
+        String isTestMode = "1";
 
         if (StringUtils.isNotBlank(isTestMode) && Integer.parseInt(isTestMode) == 1) {
             startGame();

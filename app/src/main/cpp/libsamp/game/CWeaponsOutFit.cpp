@@ -54,19 +54,19 @@ void CWeaponsOutFit::OnWeaponAdded(CPlayerPed* pPed, int iWeaponID)
 	info.dwModelId = (uint32_t)iModelID;
 	info.dwBone = (uint32_t)m_Settings[iWeaponID].iBone;
 
-	info.vecOffset.X = m_Settings[iWeaponID].vOffset.X;
-	info.vecOffset.Y = m_Settings[iWeaponID].vOffset.Y;
-	info.vecOffset.Z = m_Settings[iWeaponID].vOffset.Z;
-	info.vecRotation.X = m_Settings[iWeaponID].vRotation.X;
-	info.vecRotation.Y = m_Settings[iWeaponID].vRotation.Y;
-	info.vecRotation.Z = m_Settings[iWeaponID].vRotation.Z;
+	info.vecOffset.x = m_Settings[iWeaponID].vOffset.x;
+	info.vecOffset.y = m_Settings[iWeaponID].vOffset.y;
+	info.vecOffset.z = m_Settings[iWeaponID].vOffset.z;
+	info.vecRotation.x = m_Settings[iWeaponID].vRotation.x;
+	info.vecRotation.y = m_Settings[iWeaponID].vRotation.y;
+	info.vecRotation.z = m_Settings[iWeaponID].vRotation.z;
 
-	info.vecScale.X = 1.0f;
-	info.vecScale.Y = 1.0f;
-	info.vecScale.Z = 1.0f;
+	info.vecScale.x = 1.0f;
+	info.vecScale.y = 1.0f;
+	info.vecScale.z = 1.0f;
 
 	pPed->AttachObject(&info, iSlot + 10);
-	//CChatWindow::AddDebugMessage("ATTACH slot %d %f %f %f %d", iSlot + 10, info.vecOffset.X, info.vecOffset.Y, info.vecOffset.Z, info.dwBone);
+	//CChatWindow::AddDebugMessage("ATTACH slot %d %f %f %f %d", iSlot + 10, info.vecOffset.x, info.vecOffset.y, info.vecOffset.z, info.dwBone);
 }
 
 void CWeaponsOutFit::OnWeaponRemoved(CPlayerPed* pPed, int iWeaponID)
@@ -143,13 +143,13 @@ void CWeaponsOutFit::ParseDatFile()
 
 		m_Settings[iWeaponId].iSlot = iSlot;
 		m_Settings[iWeaponId].iBone = iBone;
-		m_Settings[iWeaponId].vOffset.X = fPosX;
-		m_Settings[iWeaponId].vOffset.Y = fPosY;
-		m_Settings[iWeaponId].vOffset.Z = fPosZ;
+		m_Settings[iWeaponId].vOffset.x = fPosX;
+		m_Settings[iWeaponId].vOffset.y = fPosY;
+		m_Settings[iWeaponId].vOffset.z = fPosZ;
 
-		m_Settings[iWeaponId].vRotation.X = fRotX;
-		m_Settings[iWeaponId].vRotation.Y = fRotY;
-		m_Settings[iWeaponId].vRotation.Z = fRotZ;
+		m_Settings[iWeaponId].vRotation.x = fRotX;
+		m_Settings[iWeaponId].vRotation.y = fRotY;
+		m_Settings[iWeaponId].vRotation.z = fRotZ;
 
 		if (iSlot != -1)
 		{
@@ -157,13 +157,13 @@ void CWeaponsOutFit::ParseDatFile()
 		}
 
 		m_Settings[iWeaponId].iBoneSecondary = iBone;
-		m_Settings[iWeaponId].vOffsetSecondary.X = fSecondaryPosX;
-		m_Settings[iWeaponId].vOffsetSecondary.Y = fSecondaryPosY;
-		m_Settings[iWeaponId].vOffsetSecondary.Z = fSecondaryPosZ;
+		m_Settings[iWeaponId].vOffsetSecondary.x = fSecondaryPosX;
+		m_Settings[iWeaponId].vOffsetSecondary.y = fSecondaryPosY;
+		m_Settings[iWeaponId].vOffsetSecondary.z = fSecondaryPosZ;
 
-		m_Settings[iWeaponId].vRotationSecondary.X = fSecondaryRotX;
-		m_Settings[iWeaponId].vRotationSecondary.Y = fSecondaryRotY;
-		m_Settings[iWeaponId].vRotationSecondary.Z = fSecondaryRotZ;
+		m_Settings[iWeaponId].vRotationSecondary.x = fSecondaryRotX;
+		m_Settings[iWeaponId].vRotationSecondary.y = fSecondaryRotY;
+		m_Settings[iWeaponId].vRotationSecondary.z = fSecondaryRotZ;
 		
 
 		memset(buff, 0, sizeof(buff));
@@ -201,7 +201,7 @@ void CWeaponsOutFit::ProcessLocalPlayer(CPlayerPed* pPed)
 		for (int i = 0; i < 10; i++)
 		{
 			int iWeaponID = GetWeaponModelIDFromSlot(i);
-			VECTOR vecPos, vecRot;
+			CVector vecPos, vecRot;
 			if (i >= MAX_ATTACHED_OBJECTS || iWeaponID == 0)
 			{
 				continue;

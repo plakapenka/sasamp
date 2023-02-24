@@ -25,7 +25,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/army_infostate_game" />
+                android:src="@drawable/army_infostate_game" />
 
             <TextView
                 android:id="@+id/army_quantity_infotext"

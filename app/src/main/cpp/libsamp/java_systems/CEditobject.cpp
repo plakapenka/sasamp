@@ -64,7 +64,7 @@ Java_com_liverussia_cr_gui_AttachEdit_Exit(JNIEnv *env, jobject thiz) {
     CEditobject::thiz = nullptr;
 }
 
-void CEditobject::SendOnEditAttach(int response, int index, int modelid, int bone, VECTOR offset, VECTOR rot, VECTOR scale){
+void CEditobject::SendOnEditAttach(int response, int index, int modelid, int bone, CVector offset, CVector rot, CVector scale){
 
     RakNet::BitStream bsSend;
 
@@ -93,55 +93,55 @@ Java_com_liverussia_cr_gui_AttachEdit_AttachClick(JNIEnv *env, jobject thiz, jin
     {
         if(button_type == 1) {
             if(button_id) {
-                pPlayer->m_aAttachedObjects[slot].vecOffset.X +=0.005;
+                pPlayer->m_aAttachedObjects[slot].vecOffset.x +=0.005;
             }else {
-                pPlayer->m_aAttachedObjects[slot].vecOffset.X -=0.005;
+                pPlayer->m_aAttachedObjects[slot].vecOffset.x -=0.005;
             }
         }
         if(button_type == 0) {
             if(button_id) {
-                pPlayer->m_aAttachedObjects[slot].vecOffset.Z +=0.005;
+                pPlayer->m_aAttachedObjects[slot].vecOffset.z +=0.005;
             }else {
-                pPlayer->m_aAttachedObjects[slot].vecOffset.Z -=0.005;
+                pPlayer->m_aAttachedObjects[slot].vecOffset.z -=0.005;
             }
         }
         if(button_type == 2) {
             if(button_id) {
-                pPlayer->m_aAttachedObjects[slot].vecOffset.Y +=0.005;
+                pPlayer->m_aAttachedObjects[slot].vecOffset.y +=0.005;
             }else {
-                pPlayer->m_aAttachedObjects[slot].vecOffset.Y -=0.005;
+                pPlayer->m_aAttachedObjects[slot].vecOffset.y -=0.005;
             }
         }
         if(button_type == 3) {
             if(button_id) {
-                pPlayer->m_aAttachedObjects[slot].vecScale.X += 0.005;
-                pPlayer->m_aAttachedObjects[slot].vecScale.Y += 0.005;
-                pPlayer->m_aAttachedObjects[slot].vecScale.Z += 0.005;
+                pPlayer->m_aAttachedObjects[slot].vecScale.x += 0.005;
+                pPlayer->m_aAttachedObjects[slot].vecScale.y += 0.005;
+                pPlayer->m_aAttachedObjects[slot].vecScale.z += 0.005;
             }else {
-                pPlayer->m_aAttachedObjects[slot].vecScale.X -= 0.005;
-                pPlayer->m_aAttachedObjects[slot].vecScale.Y -= 0.005;
-                pPlayer->m_aAttachedObjects[slot].vecScale.Z -= 0.005;
+                pPlayer->m_aAttachedObjects[slot].vecScale.x -= 0.005;
+                pPlayer->m_aAttachedObjects[slot].vecScale.y -= 0.005;
+                pPlayer->m_aAttachedObjects[slot].vecScale.z -= 0.005;
             }
         }
         if(button_type == 4) {
             if(button_id) {
-                pPlayer->m_aAttachedObjects[slot].vecRotation.X +=1;
+                pPlayer->m_aAttachedObjects[slot].vecRotation.x +=1;
             }else {
-                pPlayer->m_aAttachedObjects[slot].vecRotation.X -=1;
+                pPlayer->m_aAttachedObjects[slot].vecRotation.x -=1;
             }
         }
         if(button_type == 5) {
             if(button_id) {
-                pPlayer->m_aAttachedObjects[slot].vecRotation.Y +=1;
+                pPlayer->m_aAttachedObjects[slot].vecRotation.y +=1;
             }else {
-                pPlayer->m_aAttachedObjects[slot].vecRotation.Y -=1;
+                pPlayer->m_aAttachedObjects[slot].vecRotation.y -=1;
             }
         }
         if(button_type == 6) {
             if(button_id) {
-                pPlayer->m_aAttachedObjects[slot].vecRotation.Z +=1;
+                pPlayer->m_aAttachedObjects[slot].vecRotation.z +=1;
             }else {
-                pPlayer->m_aAttachedObjects[slot].vecRotation.Z -=1;
+                pPlayer->m_aAttachedObjects[slot].vecRotation.z -=1;
             }
         }
     }
