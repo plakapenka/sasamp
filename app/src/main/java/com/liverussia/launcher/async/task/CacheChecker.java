@@ -76,6 +76,7 @@ public class CacheChecker implements Listener<FileInfo[]> {
         NOT_CHECK_BY_HASH_FILES.add("files/gtasatelem.set");
         NOT_CHECK_BY_HASH_FILES.add("files/SAMP/samp_log.txt");
         NOT_CHECK_BY_HASH_FILES.add("files/SAMP/crash_log.log");
+        NOT_CHECK_BY_HASH_FILES.add("files/Adjustable.cfg");
     }
 
     public void checkIsAllCacheFilesExist() {
