@@ -71,7 +71,7 @@ public class AucContainer {
                 imgres = activity.getResources().getIdentifier("auc_veh_"+id, "drawable", activity.getPackageName());
             }else {
                 auc_caption.setText("Одежда");
-                imgres = activity.getResources().getIdentifier("auc_skin_"+id, "drawable", activity.getPackageName());
+                imgres = activity.getResources().getIdentifier("skin_"+id, "drawable", activity.getPackageName());
             }
             auc_item_img.setImageResource(imgres);
 
