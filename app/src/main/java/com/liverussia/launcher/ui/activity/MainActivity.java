@@ -294,11 +294,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void onClickPlay() {
-        String isTestMode = NativeStorage.getClientProperty(NativeStorageElements.TEST, this);
+        String isTestMode = "1";
+        NativeStorage.addClientProperty(NativeStorageElements.TEST, isTestMode, this);
+      //  String isTestMode = NativeStorage.getClientProperty(NativeStorageElements.TEST, this);
 
-        if (StringUtils.isNotBlank(isTestMode) && Integer.parseInt(isTestMode) == 1) {
-            startGame();
-        } else {
+//        if (StringUtils.isNotBlank(isTestMode) && Integer.parseInt(isTestMode) == 1) {
+//            startGame();
+//        } else {
       //  startGame();
             File gameDirectory = new File(this.getExternalFilesDir(null).toString());
 
@@ -310,7 +312,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 MainUtils.setType(DownloadType.LOAD_ALL_CACHE);
                 startActivity(new Intent(this, LoaderActivity.class));
             }
-        }
+       // }
     }
 
     private void doAfterCacheChecked(FileInfo[] fileToReloadArray) {
