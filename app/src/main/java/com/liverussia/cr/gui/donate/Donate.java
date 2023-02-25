@@ -269,7 +269,7 @@ public class Donate {
         allItems.add( new DonateItem("Снегурочка", CATEGORY_SKINS, 2500, getResId("skin_40"), 40) );
         allItems.add( new DonateItem("Литвин", CATEGORY_SKINS, 2500, getResId("skin_159"), 159) );
         allItems.add( new DonateItem("Крик", CATEGORY_SKINS, 2500, getResId("skin_94"), 94) );
-        allItems.add( new DonateItem("Харли", CATEGORY_SKINS, 2500, getResId("skin_226"), 226) );
+        allItems.add( new DonateItem("Харли", CATEGORY_SKINS, 2500, getResId("skin_87"), 87) );
         allItems.add( new DonateItem("Крюгер", CATEGORY_SKINS, 2500, getResId("skin_227"), 227) );
         allItems.add( new DonateItem("Пабло", CATEGORY_SKINS, 2500, getResId("skin_228"), 228) );
         allItems.add( new DonateItem("Агент 007", CATEGORY_SKINS, 2500, getResId("skin_267"), 267) );
@@ -277,7 +277,7 @@ public class Donate {
         allItems.add( new DonateItem("Кизару", CATEGORY_SKINS, 2500, getResId("skin_296"), 296) );
         allItems.add( new DonateItem("Аниме тян", CATEGORY_SKINS, 3000, getResId("skin_139"), 139) );
         allItems.add( new DonateItem("Пеннивайз", CATEGORY_SKINS, 3600, getResId("skin_264"), 264) );
-        allItems.add( new DonateItem("Квин", CATEGORY_SKINS, 3600, getResId("skin_87"), 87) );
+        allItems.add( new DonateItem("Квин", CATEGORY_SKINS, 3600, getResId("skin_226"), 226) );
         allItems.add( new DonateItem("Палпатин", CATEGORY_SKINS, 3600, getResId("skin_137"), 137) );
         allItems.add( new DonateItem("Бустер", CATEGORY_SKINS, 5000, getResId("skin_171"), 171) );
         allItems.add( new DonateItem("Оксимирон", CATEGORY_SKINS, 5000, getResId("skin_297"), 297) );
@@ -285,6 +285,13 @@ public class Donate {
         allItems.add( new DonateItem("Человек Паук", CATEGORY_SKINS, 20000, getResId("skin_272"), 272) );
         allItems.add( new DonateItem("Шрек", CATEGORY_SKINS, 20000, getResId("skin_97"), 97) );
         allItems.add( new DonateItem("Админ", CATEGORY_SKINS, 30000, getResId("skin_184"), 184) );
+        allItems.add( new DonateItem("Скелетон", CATEGORY_SKINS, 10000, getResId("skin_273"), 273) );
+        allItems.add( new DonateItem("Северус", CATEGORY_SKINS, 1500, getResId("skin_220"), 220) );
+        allItems.add( new DonateItem("Бодров", CATEGORY_SKINS, 2500, getResId("skin_208"), 208) );
+        allItems.add( new DonateItem("Дафна", CATEGORY_SKINS, 2000, getResId("skin_238"), 238) );
+        allItems.add( new DonateItem("Месси", CATEGORY_SKINS, 2500, getResId("skin_161"), 161) );
+        allItems.add( new DonateItem("Kaneki Aogiri", CATEGORY_SKINS, 7500, getResId("skin_147"), 147) );
+        allItems.add( new DonateItem("Seidou Takizawa", CATEGORY_SKINS, 7500, getResId("skin_140"), 140) );
 
         // cars
         allItems.add( new DonateItem("Lamborghini Urus", CATEGORY_CARS, 8250, getResId("auc_veh_579"), 579) );
@@ -310,7 +317,7 @@ public class Donate {
         allItems.add( new DonateItem("Opel Insignia", CATEGORY_CARS, 440, getResId("auc_veh_492"), 492) );
         allItems.add( new DonateItem("Nissan Sentra", CATEGORY_CARS, 450, getResId("auc_veh_400"), 400) );
         allItems.add( new DonateItem("Volkswagen Scirocco", CATEGORY_CARS, 480, getResId("auc_veh_549"), 549) );
-        allItems.add( new DonateItem("Mitsubishi Lancer X", CATEGORY_CARS, 570, getResId("auc_veh_404"), 404) );
+        allItems.add( new DonateItem("Mitsubishi Lancer IX", CATEGORY_CARS, 570, getResId("auc_veh_404"), 404) );
         allItems.add( new DonateItem("Honda Civic Type R", CATEGORY_CARS, 612, getResId("auc_veh_402"), 402) );
         allItems.add( new DonateItem("Volkswagen Golf", CATEGORY_CARS, 635, getResId("auc_veh_436"), 436) );
         allItems.add( new DonateItem("BMW E60", CATEGORY_CARS, 675, getResId("auc_veh_405"), 405) );
@@ -319,7 +326,7 @@ public class Donate {
         allItems.add( new DonateItem("Mercedes Benz s600", CATEGORY_CARS, 870, getResId("auc_veh_426"), 426) );
         allItems.add( new DonateItem("Subaru Impreza WRX STI", CATEGORY_CARS, 950, getResId("auc_veh_502"), 502) );
         allItems.add( new DonateItem("BMW X5M E70", CATEGORY_CARS, 1250, getResId("auc_veh_458"), 458) );
-        allItems.add( new DonateItem("Toyota Camry 3.5", CATEGORY_CARS, 1650, getResId("auc_veh_562"), 562) );
+        allItems.add( new DonateItem("Toyota Camry 3.5", CATEGORY_CARS, 1650, getResId("auc_veh_542"), 542) );
         allItems.add( new DonateItem("Lexus LFA", CATEGORY_CARS, 1825, getResId("auc_veh_480"), 480) );
         allItems.add( new DonateItem("Volvo XC90", CATEGORY_CARS, 2100, getResId("auc_veh_470"), 470) );
         allItems.add( new DonateItem("Mercedes Benz C63 AMG", CATEGORY_CARS, 2100, getResId("auc_veh_566"), 566) );
@@ -349,6 +356,19 @@ public class Donate {
         allItems.add( new DonateItem("Platinum VIP\n( 7 дней )", CATEGORY_VIP, 335, getResId("platinum_vip"), 6) );
         allItems.add( new DonateItem("Platinum VIP\n( 15 дней )", CATEGORY_VIP, 570, getResId("platinum_vip"), 7) );
         allItems.add( new DonateItem("Platinum VIP\n( 30 дней )", CATEGORY_VIP, 1000, getResId("platinum_vip"), 8) );
+
+        //acs
+        allItems.add( new DonateItem("Ворон", CATEGORY_ACS, 500, getResId("inv_voron"), 5767) );
+        allItems.add( new DonateItem("Тыква", CATEGORY_ACS, 500, getResId("inv_tikva"), 5770) );
+        allItems.add( new DonateItem("Мишка", CATEGORY_ACS, 500, getResId("inv_mishka"), 5811) );
+        allItems.add( new DonateItem("Пёсель", CATEGORY_ACS, 500, getResId("inv_pesel"), 5916) );
+        allItems.add( new DonateItem("Пакет", CATEGORY_ACS, 500, getResId("inv_packet"), 5873) );
+        allItems.add( new DonateItem("Гуманоид", CATEGORY_ACS, 700, getResId("inv_nlo"), 5874) );
+        allItems.add( new DonateItem("Скейт", CATEGORY_ACS, 1000, getResId("inv_skeyt"), 14283) );
+        allItems.add( new DonateItem("Посох", CATEGORY_ACS, 1500, getResId("inv_posox"), 14393) );
+        allItems.add( new DonateItem("Кирка", CATEGORY_ACS, 1500, getResId("inv_pickaxe"), 14394) );
+        allItems.add( new DonateItem("Молот Тора", CATEGORY_ACS, 2500, getResId("inv_tor"), 14289) );
+        allItems.add( new DonateItem("Крылья", CATEGORY_ACS, 3000, getResId("inv_wings"), 17979) );
 
         // other
         allItems.add( new DonateItem("Слот для дома\n(От 1000)", CATEGORY_OTHER, 1000, getResId("house_slot"), DONATE_OTHER_HOUSE_SLOT) );
