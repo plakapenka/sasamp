@@ -64,9 +64,13 @@ public class Menu {
                     if (false == true) {
                         Update(true);
                     } else {
-                        //  NvEventQueueActivity.getInstance().sendRPC(1, String.valueOf(index).getBytes("windows-1251"), index);
-                        //  Toast.makeText(activity, String.valueOf(index), Toast.LENGTH_SHORT).show();
-                        close();
+                        try {
+                            NvEventQueueActivity.getInstance().sendRPC(1, String.valueOf(index).getBytes("windows-1251"), index);
+                            //  Toast.makeText(activity, String.valueOf(index), Toast.LENGTH_SHORT).show();
+                            close();
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }, 300);
             }, this.dataDialogMenuArrayList, recyclerView, mRootView, 4);
@@ -78,13 +82,17 @@ public class Menu {
             index = dataDialogMenu.getId();
             view.startAnimation(anim);
             new Handler().postDelayed(() -> {
-                if (index == 13) {
-                    Update(false);
+                if (false == true) {
+                    Update(true);
                 } else {
-                    //  NvEventQueueActivity.getInstance().sendRPC(1, String.valueOf(index).getBytes("windows-1251"), index);
-                    close();
+                    try {
+                        NvEventQueueActivity.getInstance().sendRPC(1, String.valueOf(index).getBytes("windows-1251"), index);
+                        //  Toast.makeText(activity, String.valueOf(index), Toast.LENGTH_SHORT).show();
+                        close();
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
                 }
-
             }, 300);
         }, this.dataDialogMenuArrayList, recyclerView, mRootView, 3);
     }
@@ -138,6 +146,6 @@ public class Menu {
 
     public void close() {
         Utils.HideLayout(menu_layout, true);
-      //  NvEventQueueActivity.getInstance().togglePlayer(0);
+        NvEventQueueActivity.getInstance().togglePlayer(0);
     }
 }

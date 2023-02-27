@@ -12,7 +12,7 @@ bool CFirstPersonCamera::m_bEnabled = false;
 MATRIX4X4* RwMatrixMultiplyByVector(CVector* out, MATRIX4X4* a2, CVector* in);
 void CFirstPersonCamera::ProcessCameraOnFoot(uintptr_t pCam, CPlayerPed* pPed)
 {
-	if (!m_bEnabled || *(uint8_t*)(g_libGTASA + 0x8B147E) || *(uint8_t*)(g_libGTASA + 0x8B147F))
+	if (!m_bEnabled || *(uint8_t*)(g_libGTASA + 0x00951FA8 + 0xC76) || *(uint8_t*)(g_libGTASA + 0x00951FA8 + 0xC77))
 	{
 		return;
 	}
@@ -30,7 +30,7 @@ void CFirstPersonCamera::ProcessCameraOnFoot(uintptr_t pCam, CPlayerPed* pPed)
 
 	if (vecOut.x != vecOut.x || vecOut.y != vecOut.y || vecOut.z != vecOut.z)
 	{
-		pPed->GetBonePosition(4, &vecOut);
+		pPed->GetBonePosition(4, vecOut);
 	}
 	if (vecOut.x != vecOut.x || vecOut.y != vecOut.y || vecOut.z != vecOut.z)
 	{
@@ -41,7 +41,7 @@ void CFirstPersonCamera::ProcessCameraOnFoot(uintptr_t pCam, CPlayerPed* pPed)
 	pVec->y = vecOut.y;
 	pVec->z = vecOut.z;
 
-	((RwCamera*(*)(RwCamera*, float))(g_libGTASA + 0x001AD6F4 + 1))(*(RwCamera**)(g_libGTASA + 0x95B064), 0.2f);
+	((RwCamera*(*)(RwCamera*, float))(g_libGTASA + 0x001D5A38 + 1))(*(RwCamera**)(g_libGTASA + 0x009FC938 + 4), 0.2f);
 }
 
 CVector vecAtSaved;
@@ -70,11 +70,11 @@ void CFirstPersonCamera::ProcessCameraInVeh(uintptr_t pCam, CPlayerPed* pPed, CV
 		vecOffset.x = 0.05f;
 		vecOffset.y = 0.3f;
 		vecOffset.z = 0.45f;
-		((RwCamera * (*)(RwCamera*, float))(g_libGTASA + 0x001AD6F4 + 1))(*(RwCamera * *)(g_libGTASA + 0x95B064), 0.3f);
+		((RwCamera * (*)(RwCamera*, float))(g_libGTASA + 0x001D5A38 + 1))(*(RwCamera * *)(g_libGTASA + 0x009FC938 + 4), 0.3f);
 	}
 	else
 	{
-		((RwCamera * (*)(RwCamera*, float))(g_libGTASA + 0x001AD6F4 + 1))(*(RwCamera * *)(g_libGTASA + 0x95B064), 0.01f);
+		((RwCamera * (*)(RwCamera*, float))(g_libGTASA + 0x001D5A38 + 1))(*(RwCamera * *)(g_libGTASA + 0x009FC938 + 4), 0.01f);
 	}
 
 	CVector vecOut;
@@ -86,7 +86,7 @@ void CFirstPersonCamera::ProcessCameraInVeh(uintptr_t pCam, CPlayerPed* pPed, CV
 
 	if (vecOut.x != vecOut.x || vecOut.y != vecOut.y || vecOut.z != vecOut.z)
 	{
-		pPed->GetBonePosition(4, &vecOut);
+		pPed->GetBonePosition(4, vecOut);
 	}
 	if (vecOut.x != vecOut.x || vecOut.y != vecOut.y || vecOut.z != vecOut.z)
 	{

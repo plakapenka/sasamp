@@ -6,7 +6,7 @@
 
 extern CGUI *pGUI;
 
-RwRaster* g_FontRaster = nullptr;
+
 
 #define MAX_VERTEXS 30000
 
@@ -122,20 +122,10 @@ void ImGui_ImplRenderWare_RenderDrawData(ImDrawData* draw_data)
 	return;
 }
 
-bool ImGui_ImplRenderWare_Init()
-{
-	ImGuiIO &io = ImGui::GetIO();
-
-	io.DisplaySize = ImVec2((float)RsGlobal->maximumWidth, RsGlobal->maximumHeight);
-	Log("GUI | Display size: %f, %f", io.DisplaySize.x, io.DisplaySize.y);
-
-	return true;
-}
-
-bool ImGui_ImplRenderWare_CreateDeviceObjects()
+void ImGui_ImplRenderWare_CreateDeviceObjects()
 {
 	Log("GUI | CreateDeviceObjects.");
-	if(g_FontRaster) Log("GUI | Warning: Font raster != 0");
+	if(pGUI->g_FontRaster) Log("GUI | Warning: Font raster != 0");
 
 	// Build texture atlas
 	ImGuiIO &io = ImGui::GetIO();
@@ -156,11 +146,20 @@ bool ImGui_ImplRenderWare_CreateDeviceObjects()
 
 	RwInt32 w, h, d, flags;
 	RwImageFindRasterFormat(font_img, rwRASTERTYPETEXTURE, &w, &h, &d, &flags);
-	g_FontRaster = RwRasterCreate(w, h, d, flags);
-	g_FontRaster = RwRasterSetFromImage(g_FontRaster, font_img);
+	pGUI->g_FontRaster = RwRasterCreate(w, h, d, flags);
+	pGUI->g_FontRaster = RwRasterSetFromImage(pGUI->g_FontRaster, font_img);
 	RwImageDestroy(font_img);
 
-	io.Fonts->TexID = (ImTextureID*)g_FontRaster;
+	io.Fonts->TexID = (ImTextureID*)pGUI->g_FontRaster;
+
+}
+
+bool ImGui_ImplRenderWare_Init()
+{
+	ImGuiIO &io = ImGui::GetIO();
+
+	io.DisplaySize = ImVec2((float)RsGlobal->maximumWidth, RsGlobal->maximumHeight);
+	Log("GUI | Display size: %f, %f", io.DisplaySize.x, io.DisplaySize.y);
 	return true;
 }
 
@@ -171,17 +170,10 @@ void ImGui_ImplRenderWare_ShutDown()
 	ImGuiIO &io = ImGui::GetIO();
 
 	// destroy raster
-	RwRasterDestroy(g_FontRaster);
-	g_FontRaster = nullptr;
+	RwRasterDestroy(pGUI->g_FontRaster);
+	pGUI->g_FontRaster = nullptr;
 	io.Fonts->TexID = nullptr;
 
 	// destroy vertex buffer
 	if(g_pVB) { delete g_pVB; g_pVB = nullptr; }
-	return;
-}
-
-void ImGui_ImplRenderWare_NewFrame()
-{
-	if(!g_FontRaster)
-		ImGui_ImplRenderWare_CreateDeviceObjects();
 }

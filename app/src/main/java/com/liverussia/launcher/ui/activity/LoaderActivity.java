@@ -1,6 +1,7 @@
 package com.liverussia.launcher.ui.activity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -14,7 +15,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -62,7 +62,7 @@ import static com.liverussia.launcher.config.Config.DOWNLOAD_DIRECTORY_NAME;
 import static com.liverussia.launcher.config.Config.LIVE_RUSSIA_RESOURCE_SERVER_URL;
 import static com.liverussia.launcher.config.Config.UPDATED_APK_PATH;
 
-public class LoaderActivity extends AppCompatActivity {
+public class LoaderActivity extends Activity {
 
     private final static String IS_AFTER_LOADING_KEY = "isAfterLoading";
     private final static String APK_DATA_TYPE = "application/vnd.android.package-archive";

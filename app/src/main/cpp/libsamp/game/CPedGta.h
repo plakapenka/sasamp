@@ -170,7 +170,7 @@ struct CPedGta : CPhysicalGta
         unsigned int m_nThirdPedFlags;
         unsigned int m_nFourthPedFlags;
     };
-    uint8_t m_aPedFrames[76];
+    uintptr_t m_apBones[19];
     uint32_t m_motionAnimGroup;
     CVector2D m_extractedVelocity;
     uint8_t m_acquaintances[20];
@@ -182,7 +182,7 @@ struct CPedGta : CPhysicalGta
     uint16_t m_nGunFlashBlendOutRate;
     uint16_t m_nGunFlashBlendAmount2;
     uint16_t m_nGunFlashBlendOutRate2;
-    uint8_t m_ik[32];
+    uint8_t m_ik[33];
     uint32_t m_nAntiSpazTimer;
     uint32_t m_eMoveStateAnim;
     uint32_t m_eStoredMoveState;
@@ -194,8 +194,14 @@ struct CPedGta : CPhysicalGta
     CVector2D m_vecCurrentVelocity;
     float m_fCurrentRotation;			// 1368-1372	;Rotation1
     float m_fAimingRotation;			// 1372-1376	;Rotation2
-    uint8_t skip1[44];
-    CVehicleGta *pVehicle;			// 1420-1424	;pVehicle
+    float m_fHeadingChangeRate;
+    float m_fHeadingChangeRateAccel;
+    uintptr_t *m_pGroundPhysical;
+    CVector m_vecGroundOffset;
+    CVector m_vecGroundNormal;
+    uintptr_t *m_pEntityStandingOn;
+    float m_fHitHeadHeight;
+    uintptr_t *pVehicle;			// 1420-1424	;pVehicle
     uint8_t skip2[8];
     uint32_t dwPedType;			// 1432-1436	;dwPedType
     uint32_t dwUnk1;	 // 1436-1440

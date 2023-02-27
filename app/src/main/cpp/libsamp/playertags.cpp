@@ -38,7 +38,7 @@ void CPlayerTags::Render()
 	MATRIX4X4 matLocal, matPlayer;
 	int dwHitEntity;
 	char szNickBuf[50];
-	int iVoiceCounter = 0;
+
 	ImVec2 basePos = ImVec2(pGUI->ScaleX(10.0f), pGUI->ScaleY(600.0f));
 	if(pNetGame && pNetGame->m_bShowPlayerTags)
 	{
@@ -62,7 +62,7 @@ void CPlayerTags::Render()
 							VecPos.x = 0.0f;
 							VecPos.y = 0.0f;
 							VecPos.z = 0.0f;
-							pPlayerPed->GetBonePosition(8, &VecPos);
+							pPlayerPed->GetBonePosition(8, VecPos);
 							DrawChatBubble(playerId, &VecPos, pPlayerPed->GetDistanceFromCamera());
 						}
 						if (GetTickCount() - m_dwStartTime[playerId] >= m_dwTime[playerId]) {
@@ -77,7 +77,7 @@ void CPlayerTags::Render()
 							VecPos.x = 0.0f;
 							VecPos.y = 0.0f;
 							VecPos.z = 0.0f;
-							pPlayerPed->GetBonePosition(8, &VecPos);
+							pPlayerPed->GetBonePosition(8, VecPos);
 						}
 
 						CAMERA_AIM *pCam = GameGetInternalAim();
@@ -228,7 +228,8 @@ void CPlayerTags::Draw(CVector* vec, char* szName, uint32_t dwColor,
 	float fDist, float fHealth, float fArmour, bool bAfk, bool bVoice, bool bKeyboard)
 {
 	if (!pGame->IsToggledHUDElement(HUD_ELEMENT_TAGS)) return;
-	CVector TagPos;
+
+	RwV3d TagPos;
 
 	TagPos.x = vec->x;
 	TagPos.y = vec->y;
@@ -237,7 +238,7 @@ void CPlayerTags::Draw(CVector* vec, char* szName, uint32_t dwColor,
 
 	CVector Out;
 	// CSprite::CalcScreenCoors
-	(( void (*)(CVector*, CVector*, float*, float*, bool, bool))(g_libGTASA+0x005C57E8+1))(&TagPos, &Out, nullptr, nullptr, false, false);
+	(( void (*)(RwV3d*, RwV3d*, float*, float*, bool, bool))(g_libGTASA+0x005C57E8+1))(&TagPos, &Out, nullptr, nullptr, false, false);
 
 	if(Out.z < 1.0f)
 		return;
@@ -256,8 +257,8 @@ void CPlayerTags::Draw(CVector* vec, char* szName, uint32_t dwColor,
 	if(fHealth < 0.0f) return;
 
 	// округляем
-	Out.x = (float)((int)Out.x);
-	Out.y = (float)((int)Out.y);
+//	Out.x = (float)((int)Out.x);
+//	Out.y = (float)((int)Out.y);
 
 	HealthBarColor = ImColor( 0xB9, 0x22, 0x28, 0xFF );
 	HealthBarBGColor = ImColor( 0x4B, 0x0B, 0x14, 0xFF );
@@ -268,10 +269,10 @@ void CPlayerTags::Draw(CVector* vec, char* szName, uint32_t dwColor,
 
 	// top left
 	HealthBarBDR1.x = Out.x - ((fWidth/2) + fOutline);
-	HealthBarBDR1.y = Out.x + (pGUI->GetFontSize()*1.2f);//35.0f;
+	HealthBarBDR1.y = Out.y + (pGUI->GetFontSize()*1.2f);//35.0f;
 	// bottom right
 	HealthBarBDR2.x = Out.x + ((fWidth/2) + fOutline);
-	HealthBarBDR2.y = Out.x + (pGUI->GetFontSize()*1.2f) + fHeight;//48.0f;
+	HealthBarBDR2.y = Out.y + (pGUI->GetFontSize()*1.2f) + fHeight;//48.0f;
 
 	// top left
 	HealthBarBG1.x = HealthBarBDR1.x + fOutline;//Out.x - 40.0f;
@@ -339,18 +340,5 @@ void CPlayerTags::Draw(CVector* vec, char* szName, uint32_t dwColor,
 		ImGui::GetOverlayDrawList()->AddImage((ImTextureID)m_pAfk_icon->raster, a, b);
 	}
 
-	CVector TagPos_voice;
-
-	TagPos_voice.x = vec->x;
-	TagPos_voice.y = vec->y;
-	TagPos_voice.z = vec->z;
-	TagPos_voice.z += 0.65f + (fDist * 0.0475f);
-
-	CVector Out_voice;
-	// CSprite::CalcScreenCoors
-	((void (*)(CVector*, CVector*, float*, float*, bool, bool))(g_libGTASA + 0x005C57E8 + 1))(&TagPos_voice, &Out_voice, 0, 0, 0, 0);
-
-	if (Out_voice.z < 1.0f)
-		return;
 
 }

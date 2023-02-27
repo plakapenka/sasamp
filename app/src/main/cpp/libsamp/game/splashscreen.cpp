@@ -54,9 +54,6 @@ void LoadSplashTexture()
 	splashTexture = CUtil::LoadTextureFromDB("txd", "hud_bg");
 }
 
-void ImGui_ImplRenderWare_RenderDrawData(ImDrawData* draw_data);
-void ImGui_ImplRenderWare_NewFrame();
-
 void RenderBackgroundHud()
 {
 	if (CHUD::bIsShow)

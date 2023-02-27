@@ -1,7 +1,7 @@
 package com.liverussia.launcher.ui.activity;
 
+import android.app.Activity;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
 import com.liverussia.cr.R;
 import com.liverussia.launcher.config.Config;
 import com.liverussia.launcher.domain.enums.BillingParameters;
@@ -14,7 +14,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 @SuppressLint("SetJavaScriptEnabled")
-public class BillingActivity extends AppCompatActivity {
+public class BillingActivity extends Activity {
 
 
 //    @SuppressLint("ResourceAsColor")

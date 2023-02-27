@@ -1,6 +1,7 @@
 package com.liverussia.launcher.ui.activity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -10,7 +11,6 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.liverussia.cr.R;
@@ -27,7 +27,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.liverussia.launcher.config.Config.LIVE_RUSSIA_RESOURCE_SERVER_URL;
 
-public class PolicyActivity extends AppCompatActivity {
+public class PolicyActivity extends Activity {
 
     private final static int EXIT_SUCCESS_STATUS = 0;
     private final static int LAST_VERSION_WITHOUT_NEED_PERMS = 23;

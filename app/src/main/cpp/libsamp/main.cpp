@@ -139,6 +139,7 @@ void ProcessCheckForKeyboard()
 
 #include "CDebugInfo.h"
 #include "game/CModelInfo.h"
+#include "java_systems/LoadingScreen.h"
 
 void MainLoop()
 {
@@ -151,9 +152,9 @@ void MainLoop()
         pGame->InitInGame();
         pGame->SetMaxStats();
 
-        g_pJavaWrapper->UpdateSplash(101);
 
-        //	CHUD::toggleServerLogo(true);
+		LoadingScreen::hide();
+
         CGame::bIsGameInited = true;
 
         return;
@@ -450,8 +451,12 @@ void ANDRunThread_hook(void* a1)
 jint JNI_OnLoad(JavaVM *vm, void *reserved)
 {
 	javaVM = vm;
+    auto dlllll = dlopen("libGTASA.so", RTLD_NOLOAD);
+    uintptr_t ttt = (uintptr_t)dlsym(dlllll, "_ZN17CVehicleModelInfo21ms_vehicleColourTableE");
 
-	g_libGTASA = CUtil::FindLibrary("libGTASA.so");
+    g_libGTASA = ttt-0x00931560;
+
+//	g_libGTASA = CUtil::FindLibrary("libGTASA.so");
 	if(g_libGTASA == 0)
 	{
 		Log("ERROR: libGTASA.so address not found!");

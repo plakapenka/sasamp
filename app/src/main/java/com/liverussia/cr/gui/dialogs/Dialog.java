@@ -105,15 +105,12 @@ public class Dialog {
                 break;
             }
         }
-//        if(content.length() < 3)
-//        {
-//            activity.runOnUiThread(() -> mMainLayout.setVisibility(View.GONE) );
-//            return;
-//        }
+        if(content.length() < 2)
+        {
+            activity.runOnUiThread(() -> mMainLayout.setVisibility(View.GONE) );
+            return;
+        }
         activity.runOnUiThread(() -> {
-            if(content.length() < 2) {
-                return;
-            }
             clearDialogData();
             if (casino_dice_main_layout.getVisibility() == View.VISIBLE) {
                 old_casino_layout_state = true;
@@ -145,7 +142,7 @@ public class Dialog {
                     this.mCurrentInputText = str;
                 });
                 adapter.setOnDoubleClickListener(() -> sendDialogResponse(1));
-             //   this.mCustomRecyclerView.setLayoutManager(new LinearLayoutManager((Context) NvEventQueueActivity.getInstance()));
+                this.mCustomRecyclerView.setLayoutManager(new LinearLayoutManager((Context) NvEventQueueActivity.getInstance()));
                 this.mCustomRecyclerView.setAdapter(adapter);
 
                 mMainLayout.post(() ->{

@@ -5,9 +5,10 @@
 class CHandlingDefault
 {
 	static tHandlingData m_aDefaultModelHandlings[MAX_VEHICLE_MODELS];
-	static bool bIsSlotUsed[MAX_VEHICLE_MODELS];
 public:
 	static void GetDefaultHandling(uint16_t usHandlingID, tHandlingData* tDest);
 
 	static void FillDefaultHandling(uint16_t usHandlingID, tHandlingData* pSrc);
+
+	static bool bIsSlotUsed[MAX_VEHICLE_MODELS];
 };

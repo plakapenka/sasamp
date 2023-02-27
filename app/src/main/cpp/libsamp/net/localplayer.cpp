@@ -258,7 +258,7 @@ bool CLocalPlayer::Process()
 		}
 
 		// IN VEHICLE
-		if (m_pPlayerPed->IsInVehicle())
+		if (m_pPlayerPed->m_pPed->bInVehicle)
 		{
 			if(m_pPlayerPed->IsAPassenger()) {
 				if ((dwThisTick - m_dwLastSendTick) > (unsigned int) GetOptimumInCarSendRate()) {

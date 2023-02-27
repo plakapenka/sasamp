@@ -1,6 +1,7 @@
 package com.liverussia.launcher.ui.activity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -10,8 +11,6 @@ import android.os.Bundle;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.view.View;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.liverussia.cr.R;
 
@@ -36,7 +35,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.liverussia.launcher.config.Config.LIVE_RUSSIA_RESOURCE_SERVER_URL;
 
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends Activity {
 
 	private final static String IS_AFTER_LOADING_KEY = "isAfterLoading";
 	private final static int EXIT_SUCCESS_STATUS = 0;

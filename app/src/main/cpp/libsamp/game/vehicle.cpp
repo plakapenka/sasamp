@@ -58,7 +58,6 @@ CVehicle::CVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRota
 
 		if (m_pVehicle)
 		{
-            Log("new model = %d", m_pVehicle->nModelIndex);
 			//m_pVehicle->m_nOverrideLights = eVehicleOverrideLightsState::NO_CAR_LIGHT_OVERRIDE;
 			m_pVehicle->dwDoorsLocked = 0;
 			m_pVehicle->fHealth = 1000.0;
@@ -778,21 +777,20 @@ void* GetSuspensionLinesFromModel(int nModelIndex, int& numWheels)
 
 uint8_t* GetCollisionDataFromModel(int nModelIndex)
 {
-	auto pModelInfoStart = CModelInfo::GetModelInfo(nModelIndex);
+	CVehicleModelInfo* pModelInfoStart = static_cast<CVehicleModelInfo *>(CModelInfo::GetModelInfo(
+			nModelIndex));
 
 	if (!pModelInfoStart)
 	{
 		return nullptr;
 	}
 
-	uint8_t* pColModel = *(uint8_t * *)(pModelInfoStart + 44);
-
-	if (!pColModel)
+	if (!pModelInfoStart->m_pColModel)
 	{
 		return nullptr;
 	}
 
-	uint8_t* pCollisionData = *(uint8_t * *)(pColModel + 44);
+	uint8_t* pCollisionData = *(uint8_t * *)(pModelInfoStart->m_pColModel + 44);
 
 	return pCollisionData;
 }
@@ -818,14 +816,15 @@ void CVehicle::SetHandlingData(std::vector<SHandlingData>& vHandlingData)
 		m_pCustomHandling = new tHandlingData;
 	}
 
-	auto pModelInfoStart = CModelInfo::GetModelInfo(m_pVehicle->nModelIndex);
+	CVehicleModelInfo* pModelInfoStart = static_cast<CVehicleModelInfo *>(CModelInfo::GetModelInfo(
+			m_pVehicle->nModelIndex));
 
 	Log("model = %d, pointer = %x, v = %x, e = %x, model = %d",
 		m_pVehicle->nModelIndex,
 		pModelInfoStart,
 		m_pVehicle,
 		m_pVehicle,
-		m_pVehicle+0x026);
+		m_pVehicle + 0x026);
 	if (!pModelInfoStart)
 	{
 		return;
@@ -833,7 +832,7 @@ void CVehicle::SetHandlingData(std::vector<SHandlingData>& vHandlingData)
 
 	//CChatWindow::AddDebugMessage("handling id %d", *(uint16_t*)(pModelInfoStart + 98));
 
-	CHandlingDefault::GetDefaultHandling(*(uint16_t*)(pModelInfoStart + 0x62), m_pCustomHandling);
+	CHandlingDefault::GetDefaultHandling(pModelInfoStart->m_nHandlingId, m_pCustomHandling);
 
 	/*CChatWindow::AddDebugMessage("mass %f", m_pCustomHandling->m_fMass);
 	CChatWindow::AddDebugMessage("turn %f", m_pCustomHandling->m_fTurnMass);
@@ -930,11 +929,11 @@ void CVehicle::SetHandlingData(std::vector<SHandlingData>& vHandlingData)
 
 	if (m_bWheelSize)
 	{
-		fOldFrontWheelSize = *(float*)(pModelInfoStart + 88);
-		*(float*)(pModelInfoStart + 88) = m_fWheelSize;
+		fOldFrontWheelSize = pModelInfoStart->m_fWheelSizeFront;
+		pModelInfoStart->m_fWheelSizeFront = m_fWheelSize;
 
-		fOldRearWheelSize = *(float*)(pModelInfoStart + 92);
-		*(float*)(pModelInfoStart + 92) = m_fWheelSize;
+		fOldRearWheelSize = pModelInfoStart->m_fWheelSizeRear;
+		pModelInfoStart->m_fWheelSizeRear = m_fWheelSize;
 	}
 
 	/*CChatWindow::AddDebugMessage("AFTER");
@@ -956,13 +955,13 @@ void CVehicle::SetHandlingData(std::vector<SHandlingData>& vHandlingData)
 
 	if (m_bWheelSize)
 	{
-		*(float*)(pModelInfoStart + 88) = fOldFrontWheelSize;
-		*(float*)(pModelInfoStart + 92) = fOldRearWheelSize;
+		pModelInfoStart->m_fWheelSizeFront = fOldFrontWheelSize;
+		pModelInfoStart->m_fWheelSizeRear = fOldRearWheelSize;
 	}
 
 	if (bNeedRecalculate)
 	{
-		((void (*)(CVehicleGta*))(g_libGTASA + 0x004D6078 + 1))(m_pVehicle); // process suspension
+		((void (*)(CVehicleGta*))(g_libGTASA + 0x0055F430 + 1))(m_pVehicle); // process suspension
 	}
 	//ScriptCommand(&set_car_heavy, m_dwGTAId, 1);
 }

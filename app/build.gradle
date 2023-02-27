@@ -5,28 +5,26 @@ plugins{
 }
 
 android {
-    compileSdkVersion 33
+    compileSdk 33
 
     compileOptions {
-        targetCompatibility JavaVersion.VERSION_11
-        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
     }
     aaptOptions {
         noCompress 'mp3'
     }
 
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 24
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 28
     //    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         applicationId "com.liverussia.cr"
-        versionName "171"
-        versionCode 171
+        versionName "174"
+        versionCode 174
         vectorDrawables.useSupportLibrary = true
-
-        multiDexEnabled = true
 
         lintOptions {
             checkReleaseBuilds false
@@ -60,19 +58,19 @@ android {
             debuggable true
             jniDebuggable true
             minifyEnabled false
-            multiDexEnabled true
         }
         all{
             debuggable false
-            multiDexEnabled true
         }
     }
+    buildToolsVersion '33.0.1'
 }
 
 dependencies {
+
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
-    implementation 'androidx.appcompat:appcompat:1.6.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'com.tuyenmonkey:mkloader:1.4.0'
     implementation group: 'org.ini4j', name: 'ini4j', version: '0.5.4'
@@ -89,7 +87,7 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.13.0'
 
     //CrashLytics
-    implementation 'com.google.firebase:firebase-crashlytics:18.3.3'
+    implementation 'com.google.firebase:firebase-crashlytics:18.3.5'
     implementation platform('com.google.firebase:firebase-bom:31.1.0')
 
     implementation 'com.google.firebase:firebase-crashlytics-ndk'
@@ -114,7 +112,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.3.2'
     implementation 'org.springframework.android:spring-android-rest-template:1.0.1.RELEASE'
     implementation 'com.jakewharton.threetenabp:threetenabp:1.2.1'
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5' //
+   // coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5' //
 
     implementation 'com.techyourchance:threadposter:1.0.1'
 

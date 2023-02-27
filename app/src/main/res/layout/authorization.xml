@@ -124,7 +124,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/auth_right1"
             android:layout_width="0dp"
-
+            android:visibility="gone"
             android:layout_height="match_parent"
             android:background="@drawable/authreg_bg_right"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -155,7 +155,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView7"
-                app:srcCompat="@drawable/auth_btn" />
+                android:background="@drawable/auth_btn" />
 
             <TextView
                 android:id="@+id/textView5"
@@ -180,7 +180,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView5"
-                app:srcCompat="@drawable/auth_vk" />
+                android:background="@drawable/auth_vk" />
 
             <ImageView
                 android:tint="@color/gray"
@@ -193,7 +193,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageView10"
-                app:srcCompat="@drawable/auth_google" />
+                android:background="@drawable/auth_google" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -203,7 +203,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:background="@drawable/authreg_bg_right"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/constraintLayout3">
 
@@ -255,7 +255,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/auth_key" />
+                    android:src="@drawable/auth_key" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -274,7 +274,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/authreg_back" />
+                    android:src="@drawable/authreg_back" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -323,7 +323,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/textView8"
                 app:layout_constraintStart_toEndOf="@+id/textView8"
                 app:layout_constraintTop_toTopOf="@+id/textView8"
-                app:srcCompat="@drawable/auth_circle" />
+                android:src="@drawable/auth_circle" />
 
 
             <com.google.android.material.switchmaterial.SwitchMaterial
@@ -334,7 +334,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/textView8"
                 app:layout_constraintEnd_toEndOf="@+id/constraintLayout4"
                 app:layout_constraintTop_toTopOf="@+id/textView8"
-                app:srcCompat="@drawable/toggle_off" />
+                />
 
             <com.google.android.material.button.MaterialButton
                 style="@style/Widget.MaterialComponents.Button.TextButton"

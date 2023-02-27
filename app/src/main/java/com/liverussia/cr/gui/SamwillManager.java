@@ -158,8 +158,7 @@ public class SamwillManager {
 
 
     public void Show() {
-       // sawSound = Samp.soundPool.load(NvEventQueueActivity.getInstance(), R.raw.saw, 0);
-        //sawSound = soundPool.load(this, soundID, 0);
+        sawSound = Samp.soundPool.load(NvEventQueueActivity.getInstance(), R.raw.saw, 0);
         samwillpacket = 0;
         samwill1 = -1;
         samwill2 = -1;
@@ -177,7 +176,7 @@ public class SamwillManager {
     }
 
     public void Hide() {
-       // NvEventQueueActivity.getInstance().onSamwillHideGame(samwillpacket);
+        NvEventQueueActivity.getInstance().onSamwillHideGame(samwillpacket);
         Utils.HideLayout(br_samwill_layout, true);
 
         Samp.soundPool.unload(sawSound);

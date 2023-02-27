@@ -35,6 +35,10 @@ public:
 	void RenderTextForChatWindow(ImVec2& pos, ImU32 col, bool bOutline, const char* text_begin, const char* text_end = nullptr);
 
 	void PushToBufferedQueueTextDrawPressed(uint16_t textdrawId);
+
+	RwRaster* g_FontRaster = nullptr;
+
+
 private:
 	void PreProcessInput();
 	void PostProcessInput();
@@ -58,4 +62,5 @@ private:
 	bool		m_bNextClear;
 
 	bool 		m_bKeysStatus;
+
 };

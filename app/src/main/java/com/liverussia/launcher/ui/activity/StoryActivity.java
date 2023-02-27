@@ -1,7 +1,6 @@
 package com.liverussia.launcher.ui.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -17,7 +16,7 @@ import com.liverussia.launcher.utils.MainUtils;
 import com.smarteist.autoimageslider.SliderAnimations;
 import com.smarteist.autoimageslider.SliderView;
 
-public class StoryActivity extends AppCompatActivity {
+public class StoryActivity extends Activity {
 
     private RoundCornerProgressBar progressStory;
     private SliderStoriesAdapter sliderStoriesAdapter;

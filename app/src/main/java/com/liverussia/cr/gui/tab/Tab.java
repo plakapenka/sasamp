@@ -116,7 +116,7 @@ public class Tab {
             this.mOnline.setText(this.mPlayerData.size() + "/1000");
 
             mTabAdapter = new TabAdapter(this.mPlayerData);
-           // mPlayersList.setLayoutManager(new LinearLayoutManagerWrapper(NvEventQueueActivity.getInstance()));
+            mPlayersList.setLayoutManager(new LinearLayoutManagerWrapper(NvEventQueueActivity.getInstance()));
             mPlayersList.setAdapter(this.mTabAdapter);
             mSearch.setText("");
             setVisibleIconInSearchView("");

@@ -3,8 +3,6 @@ package com.liverussia.launcher.service;
 import android.app.Activity;
 import android.content.Context;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 public interface ActivityService {
 
     void showMessage(String message, Context context);

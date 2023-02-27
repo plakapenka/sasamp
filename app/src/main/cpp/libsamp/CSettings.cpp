@@ -168,7 +168,7 @@ void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 
 	m_Settings.iFPS = ini_table_get_entry_as_int(config, "gui", "fps", 60);
 	if( m_Settings.iFPS < 20 ) m_Settings.iFPS = 60;
-//	ApplyFPSPatch(m_Settings.iFPS);
+	ApplyFPSPatch(m_Settings.iFPS);
 
 	m_Settings.iAndroidKeyboard = ini_table_get_entry_as_int(config, "gui", "androidKeyboard", 0);
 

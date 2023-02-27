@@ -60,7 +60,7 @@ public class GunShopManager {
 
         gunshop_weaponbuy.setOnClickListener(view -> {
             view.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.button_click));
-           // NvEventQueueActivity.getInstance().onGunShopClick(weaponselectid);
+            NvEventQueueActivity.getInstance().onGunShopClick(weaponselectid);
         });
 
         gunshop_golfclub.setOnClickListener(view -> {
@@ -158,7 +158,7 @@ public class GunShopManager {
     }
 
     public void Hide() {
-      //  NvEventQueueActivity.getInstance().onGunShopClick(0);
+        NvEventQueueActivity.getInstance().onGunShopClick(0);
         Utils.HideLayout(br_gunshop_layout, true);
     }
 }

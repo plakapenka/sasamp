@@ -10,13 +10,14 @@ void CHandlingDefault::GetDefaultHandling(uint16_t usHandlingID, tHandlingData* 
 {
 	Log("copy handling %d", usHandlingID);
 
-	memcpy((void*)tDest, &m_aDefaultModelHandlings[usHandlingID], sizeof(tHandlingData));
+	if(bIsSlotUsed[usHandlingID] == true)
+		memcpy((void*)tDest, &m_aDefaultModelHandlings[usHandlingID], sizeof(tHandlingData));
+	else
+		Log("Warning. No handling slon n = %d", usHandlingID);
 }
 
 void CHandlingDefault::FillDefaultHandling(uint16_t usHandlingID, tHandlingData* pSrc)
 {
-	if(bIsSlotUsed[usHandlingID]) return;
-
     bIsSlotUsed[usHandlingID] = true;
 
 	memset(&m_aDefaultModelHandlings[usHandlingID], 0, sizeof(tHandlingData));

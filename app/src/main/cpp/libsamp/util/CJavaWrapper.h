@@ -42,8 +42,6 @@ class CJavaWrapper
 
 	jmethodID s_setPauseState;
 
-	//jmethodID s_showSplash;
-	jmethodID s_updateSplash;
 	jmethodID s_ExitGame;
 
 
@@ -73,9 +71,6 @@ public:
 	void ShowCasinoDice(bool show, int tableID, int tableBet, int tableBank, int money, char player1name[], int player1stat, char player2name[], int player2stat, char player3name[], int player3stat, char player4name[], int player4stat, char player5name[], int player5stat);
 
 	void SetPauseState(bool a1);
-
-	//void ShowSplash();
-	void UpdateSplash(int progress);	
 
 	uint32_t ChangeRegisterSkin(int skin);
 

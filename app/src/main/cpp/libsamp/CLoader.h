@@ -10,6 +10,7 @@
 static class CLoader {
 
 public:
+    static int tick;
     static void loadBassLib();
 
     static void initCrashLytics();
@@ -19,6 +20,8 @@ public:
     static void loadSetting();
 
     static void initJavaClasses(JavaVM *pjvm);
+
+    void loaderTick();
 };
 
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.liverussia.cr">
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -32,7 +32,6 @@
         android:smallScreens="true" />
 
     <application
-
         android:icon="@drawable/ic_launcher"
         android:isGame="true"
         android:appCategory="game"
@@ -67,7 +66,7 @@
             android:windowSoftInputMode="adjustPan"
             android:hardwareAccelerated="true"
             android:largeHeap="true"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"/>
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity
             android:name="com.liverussia.launcher.ui.activity.SplashActivity"

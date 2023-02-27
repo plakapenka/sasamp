@@ -41,6 +41,7 @@ public:
     {
         x = right.x; y = right.y; z = right.z;
     }
+
     void operator=(const CVector& right);
     void operator+=(const CVector& right);
     void operator-=(const CVector& right);

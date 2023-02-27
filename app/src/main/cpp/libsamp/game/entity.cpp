@@ -37,17 +37,13 @@ void CEntity::SetGravityProcessing(bool bProcess)
 void CEntity::SetMoveSpeedVector(CVector vec)
 {
 	if (!m_pEntity) return;
-	m_pEntity->vecMoveSpeed.x = vec.x;
-	m_pEntity->vecMoveSpeed.y = vec.y;
-	m_pEntity->vecMoveSpeed.z = vec.z;
+	m_pEntity->vecMoveSpeed = vec;
 }
 
 void CEntity::SetTurnSpeedVector(CVector vec)
 {
 	if (!m_pEntity) return;
-	m_pEntity->m_vecTurnSpeed.x = vec.x;
-	m_pEntity->m_vecTurnSpeed.y = vec.y;
-	m_pEntity->m_vecTurnSpeed.z = vec.z;
+	m_pEntity->m_vecTurnSpeed = vec;
 }
 
 void CEntity::GetMoveSpeedVector(CVector *vec)
@@ -279,10 +275,12 @@ float CEntity::GetDistanceFromCamera()
 		return 100000.0f;
 
 	this->GetMatrix(&matEnt);
-	
-	float tmpX = (matEnt.pos.x - *(float*)(g_libGTASA+0x8B1134));
-	float tmpY = (matEnt.pos.y - *(float*)(g_libGTASA+0x8B1138));
-	float tmpZ = (matEnt.pos.z - *(float*)(g_libGTASA+0x8B113C));
+	MATRIX4X4 matCam;
+	pGame->GetCamera()->GetMatrix(&matCam);
+
+	float tmpX = (matEnt.pos.x - matCam.pos.x);
+	float tmpY = (matEnt.pos.y - matCam.pos.y);
+	float tmpZ = (matEnt.pos.z - matCam.pos.z);
 
 	return sqrt( tmpX*tmpX + tmpY*tmpY + tmpZ*tmpZ );
 }

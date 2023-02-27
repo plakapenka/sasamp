@@ -86,8 +86,8 @@ public class Speedometer {
             speedometr_turn_right = activity.findViewById(R.id.speedometr_turn_right);
             speedometr_turn_left = activity.findViewById(R.id.speedometr_turn_left);
 
-         //   turnlight_tick_sound_1 = Samp.soundPool.load(NvEventQueueActivity.getInstance(), R.raw.turnlight_tick_1, 0);
-          //  turnlight_tick_sound_2 = Samp.soundPool.load(NvEventQueueActivity.getInstance(), R.raw.turnlight_tick_2, 0);
+            turnlight_tick_sound_1 = Samp.soundPool.load(NvEventQueueActivity.getInstance(), R.raw.turnlight_tick_1, 0);
+            turnlight_tick_sound_2 = Samp.soundPool.load(NvEventQueueActivity.getInstance(), R.raw.turnlight_tick_2, 0);
 
             speedometr_blinker_icon.setOnClickListener(view -> {
                 sendClick(BUTTON_TURN_ALL);

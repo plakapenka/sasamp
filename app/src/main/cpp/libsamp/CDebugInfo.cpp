@@ -17,7 +17,6 @@ extern CGame *pGame;
 uint32_t CDebugInfo::uiStreamedPeds = 0;
 uint32_t CDebugInfo::uiStreamedVehicles = 0;
 uint32_t CDebugInfo::m_uiDrawDebug = 0;
-uint32_t CDebugInfo::m_uiDrawFPS = 0;
 uint32_t CDebugInfo::m_dwSpeedMode = 0;
 uint32_t CDebugInfo::m_dwSpeedStart = 0;
 
@@ -26,9 +25,10 @@ void CDebugInfo::ToggleDebugDraw()
 	m_uiDrawDebug ^= 1;
 }
 
-void CDebugInfo::SetDrawFPS(uint32_t bDraw)
+void CDebugInfo::SetDrawFPS(bool toggle)
 {
-	m_uiDrawFPS = bDraw;
+	m_uiDrawDebug = toggle;
+	//*(bool*)(g_libGTASA + 0x00959907) = toggle;
 }
 
 void CDebugInfo::Draw()
@@ -39,16 +39,17 @@ void CDebugInfo::Draw()
 	char szStrMem[256];
 	char szStrPos[256];
 	ImVec2 pos;
-	if (m_uiDrawDebug || m_uiDrawFPS)
+	if (m_uiDrawDebug)
 	{
-		float* pFPS = (float*)(g_libGTASA + 0x00608E00);
-		snprintf(&szStr[0], 30, "FPS: %.0f", *pFPS);
+		float fps = *(float*)(g_libGTASA + 0x0096B50C);
+	//	Log("%.3f", *pFPS);
+		snprintf(&szStr[0], 30, "FPS: %.0f / %d", fps, *(uint32_t*)(g_libGTASA + 0x009FC8FC + 0x0C));
 		pos = ImVec2(pGUI->ScaleX(40.0f), pGUI->ScaleY(1080.0f - pGUI->GetFontSize() * 10));
 
 		pGUI->RenderText(pos, (ImU32)0xFFFFFFFF, true, &szStr[0]);
 
-		uint32_t msUsed = *(uint32_t*)(g_libGTASA + 0x0067067C);
-		uint32_t msAvailable = *(uint32_t*)(g_libGTASA + 0x005DE734);
+		uint32_t msUsed = *(uint32_t*)(g_libGTASA + 0x00792B7C);
+		uint32_t msAvailable = *(uint32_t*)(g_libGTASA + 0x00685FA0);
 		float percentUsed = ((float)msUsed/(float)msAvailable)*100;
 		snprintf(&szStrMem[0], 256, "MEM: %.1f/%.1f (%.1f %%)",
 				 (float)msUsed/100000,

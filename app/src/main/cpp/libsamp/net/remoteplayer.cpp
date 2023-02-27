@@ -76,7 +76,6 @@ void CRemotePlayer::ProcessSpecialActions(BYTE byteSpecialAction)
 void CRemotePlayer::Process()
 {
 	CPlayerPool *pPool = pNetGame->GetPlayerPool();
-	CLocalPlayer *pLocalPlayer = pPool->GetLocalPlayer();
 	MATRIX4X4 matPlayer, matVehicle;
 	CVector vecMoveSpeed;
 
@@ -86,9 +85,8 @@ void CRemotePlayer::Process()
 		if((GetTickCount() - m_dwLastRecvTick) > 3500)
 			m_bIsAFK = true;
 
-		// ---- ONFOOT NETWORK PROCESSING ----
-		if(GetState() == PLAYER_STATE_ONFOOT &&
-			m_byteUpdateFromNetwork == UPDATE_TYPE_ONFOOT && !m_pPlayerPed->IsInVehicle())
+		// ---- NETWORK PROCESSING ----
+		if(GetState() == PLAYER_STATE_ONFOOT && m_byteUpdateFromNetwork == UPDATE_TYPE_ONFOOT)
 		{
 			if (GetPlayerPed()->GetCurrentWeapon() != m_ofSync.byteCurrentWeapon)
 			{
@@ -100,8 +98,7 @@ void CRemotePlayer::Process()
 			UpdateOnFootTargetPosition();
 		}
 
-		if(GetState() == PLAYER_STATE_DRIVER &&
-			m_byteUpdateFromNetwork == UPDATE_TYPE_INCAR && m_pPlayerPed->IsInVehicle())
+		if(GetState() == PLAYER_STATE_DRIVER && m_byteUpdateFromNetwork == UPDATE_TYPE_INCAR)
 		{
 			if(!m_pCurrentVehicle || !GamePool_Vehicle_GetAt(m_pCurrentVehicle->m_dwGTAId))
 				return;
@@ -124,8 +121,7 @@ void CRemotePlayer::Process()
 				UpdateInCarTargetPosition();
 			}
 		}
-		else if(GetState() == PLAYER_STATE_PASSENGER &&
-			m_byteUpdateFromNetwork == UPDATE_TYPE_PASSENGER)
+		else if(GetState() == PLAYER_STATE_PASSENGER && m_byteUpdateFromNetwork == UPDATE_TYPE_PASSENGER)
 		{
 			if(!m_pCurrentVehicle) return;
 
@@ -789,7 +785,7 @@ void CRemotePlayer::StoreOnFootFullSyncData(ONFOOT_SYNC_DATA *pofSync, uint32_t 
 		m_fCurrentHealth = pofSync->byteHealth;
 		m_fCurrentArmor = pofSync->byteArmour;
 
-		if(m_pPlayerPed->IsInVehicle())
+		if(m_pPlayerPed->m_pPed->bInVehicle)
 		{
 			MATRIX4X4 mat;
 			m_pPlayerPed->GetMatrix(&mat);

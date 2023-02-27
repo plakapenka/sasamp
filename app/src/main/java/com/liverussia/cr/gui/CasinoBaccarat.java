@@ -264,7 +264,7 @@ public class CasinoBaccarat
         casino_bc_yellow_chip = activity.findViewById(R.id.casino_bc_yellow_chip);
         casino_bc_green_chip = activity.findViewById(R.id.casino_bc_green_chip);
 
-      //  betsound = Samp.soundPool.load(NvEventQueueActivity.getInstance(), R.raw.betchip, 0);
+        betsound = Samp.soundPool.load(NvEventQueueActivity.getInstance(), R.raw.betchip, 0);
     }
 
     @SuppressLint({"DefaultLocale", "SetTextI18n"})

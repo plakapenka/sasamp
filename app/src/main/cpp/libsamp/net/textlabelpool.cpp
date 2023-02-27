@@ -83,7 +83,7 @@ void CText3DLabelsPool::DrawAttachedToPlayer(TEXT_LABELS* pLabel)
 		return;
 	}
 	CVector boneOut;
-	pPlayerPed->GetBonePosition(5, &boneOut);
+	pPlayerPed->GetBonePosition(5, boneOut);
 
 	memcpy((void*)&pos, (const void*)&boneOut, sizeof(CVector));
 

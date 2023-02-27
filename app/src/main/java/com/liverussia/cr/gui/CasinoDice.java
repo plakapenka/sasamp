@@ -81,13 +81,13 @@ public class CasinoDice {
         dice_butt_exit = activity.findViewById(R.id.dice_butt_exit);
 
         dice_butt_bet.setOnClickListener(view -> {
-          //  NvEventQueueActivity.getInstance().SendCasinoButt(CASINO_DICE_BUTTON_BET);
+            NvEventQueueActivity.getInstance().SendCasinoButt(CASINO_DICE_BUTTON_BET);
         });
         dice_butt_dice.setOnClickListener(view -> {
-            //NvEventQueueActivity.getInstance().SendCasinoButt(CASINO_DICE_BUTTON_DICE);
+            NvEventQueueActivity.getInstance().SendCasinoButt(CASINO_DICE_BUTTON_DICE);
         });
         dice_butt_exit.setOnClickListener(view -> {
-          //  NvEventQueueActivity.getInstance().SendCasinoButt(CASINO_DICE_BUTTON_EXIT);
+            NvEventQueueActivity.getInstance().SendCasinoButt(CASINO_DICE_BUTTON_EXIT);
         });
     }
 

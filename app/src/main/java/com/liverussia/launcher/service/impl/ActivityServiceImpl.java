@@ -2,18 +2,11 @@ package com.liverussia.launcher.service.impl;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import com.liverussia.launcher.config.Config;
 import com.liverussia.launcher.service.ActivityService;
 
 import java.io.File;
-
-import static com.liverussia.launcher.config.Config.SETTINGS_FILE_PATH;
 
 public class ActivityServiceImpl implements ActivityService {
 

@@ -154,37 +154,26 @@ const char* CUtil::GetWeaponName(int iWeaponID)
 	}
 }
 
-uintptr_t CUtil::FindLibrary(const char* library)
+uintptr_t CUtil::FindLibrary(const char* soLib)
 {
-	char filename[0xFF] = { 0 },
-		buffer[2048] = { 0 };
-	FILE* fp = 0;
-	uintptr_t address = 0;
+    FILE *fp = NULL;
+    uintptr_t address = 0;
+    char buffer[2048];
 
-	sprintf(filename, "/proc/%d/maps", getpid());
-
-	fp = fopen(filename, "rt");
-	if (fp == 0)
-	{
-		Log("ERROR: can't open file %s", filename);
-		goto done;
-	}
-
-	while (fgets(buffer, sizeof(buffer), fp))
-	{
-		if (strstr(buffer, library))
-		{
-			address = (uintptr_t)strtoul(buffer, 0, 16);
-			break;
-		}
-	}
-
-done:
-
-	if (fp)
-		fclose(fp);
-
-	return address;
+    fp = fopen( "/proc/self/maps", "rt" );
+    if (fp != NULL)
+    {
+        while (fgets(buffer, sizeof(buffer)-1, fp))
+        {
+            if ( strstr( buffer, soLib ) )
+            {
+                address = (uintptr_t)strtoul( buffer, NULL, 16 );
+                break;
+            }
+        }
+        fclose(fp);
+    }
+    return address;
 }
 void CrashLog(const char* fmt, ...);
 

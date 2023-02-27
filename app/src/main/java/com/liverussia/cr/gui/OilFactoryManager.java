@@ -111,7 +111,7 @@ public class OilFactoryManager {
     }
 
     public void Hide(boolean succes) {
-        //NvEventQueueActivity.getInstance().onOilFactoryGameClose(succes);
+        NvEventQueueActivity.getInstance().onOilFactoryGameClose(succes);
         Utils.HideLayout(br_oilfactory_layout, true);
     }
 }

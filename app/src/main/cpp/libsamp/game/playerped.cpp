@@ -517,14 +517,16 @@ BYTE CPlayerPed::GetCurrentWeapon()
 // 0.3.7
 bool CPlayerPed::IsAPassenger()
 {
-	//if(m_pPed->dwAction == PEDSTATE_PASSENGER) return true;
-
 	if(m_pPed->pVehicle && m_pPed->bInVehicle)
 	{
-        Log("%x, %x", m_pPed + 0x590, m_pPed);
-		if(	m_pPed->pVehicle->pDriver != m_pPed )
+		CVehicleGta *pVehicle = (CVehicleGta *)m_pPed->pVehicle;
+
+		if(	pVehicle->pDriver != m_pPed ||
+			   pVehicle->nModelIndex == TRAIN_PASSENGER ||
+			   pVehicle->nModelIndex == TRAIN_FREIGHT )
 			return true;
 	}
+
 	return false;
 }
 
@@ -1104,10 +1106,6 @@ void CPlayerPed::ProcessAttach()
 		return;
 	}
 
-	if (CUtil::IsGameEntityArePlaceable(m_pPed)) {
-		return;
-	}
-
 	((int(*)(CPedGta*))(g_libGTASA + 0x003EC046 + 1))(m_pPed); // UpdateRPHAnim
 
 	if (IsAdded())
@@ -1152,13 +1150,13 @@ void CPlayerPed::ProcessAttach()
 			{
 				RwMatrixRotate(&outMat, &axis, m_aAttachedObjects[i].vecRotation.x);
 			}
-			axis = 0.0f;
+			axis.x = 0.0f; axis.y = 1.0f; axis.z = 0.0f;
 
 			if (m_aAttachedObjects[i].vecRotation.y != 0.0f)
 			{
 				RwMatrixRotate(&outMat, &axis, m_aAttachedObjects[i].vecRotation.y);
 			}
-			axis = 0.0f;
+			axis.x = 0.0f; axis.y = 0.0f; axis.z = 1.0f;
 			if (m_aAttachedObjects[i].vecRotation.z != 0.0f)
 			{
 				RwMatrixRotate(&outMat, &axis, m_aAttachedObjects[i].vecRotation.z);
@@ -1587,11 +1585,11 @@ PLAYERID CPlayerPed::FindDeathResponsiblePlayer()
 }
 
 // 0.3.7
-void CPlayerPed::GetBonePosition(int iBoneID, CVector* vecOut)
+void CPlayerPed::GetBonePosition(int iBoneID, RwV3d& vecOut)
 {
 	if(!m_pPed) return;
 
-	(( void (*)(CPedGta*, CVector*, int, int))(g_libGTASA + 0x004A4B0C + 1))(m_pPed, vecOut, iBoneID, 0);
+	(( void (*)(CPedGta*, RwV3d&, int, int))(g_libGTASA + 0x004A4B0C + 1))(m_pPed, vecOut, iBoneID, 0);
 }
 
 CEntityGta* CPlayerPed::GetEntityUnderPlayer()

@@ -13,6 +13,9 @@
 #include "java_systems/CEditobject.h"
 #include "java_systems/CAuthorization.h"
 #include "java_systems/CChooseSpawn.h"
+#include "java_systems/LoadingScreen.h"
+
+int CLoader::tick = 0;
 
 void InitBASSFuncs();
 void CLoader::loadBassLib()
@@ -54,8 +57,6 @@ void CLoader::loadSetting()
 
 void *CLoader::loadSettingThread(void *p)
 {
-    Log("loadSettingThread");
-
     CSettings::LoadSettings(nullptr);
 
     pthread_exit(nullptr);
@@ -80,5 +81,8 @@ void CLoader::initJavaClasses(JavaVM* pjvm)
 
     CChooseSpawn::clazz = env->FindClass("com/liverussia/cr/gui/ChooseSpawn");
     CChooseSpawn::clazz = (jclass) env->NewGlobalRef(CChooseSpawn::clazz);
+
+    LoadingScreen::clazz = env->FindClass("com/liverussia/cr/gui/InGameLoadingScreen");
+    LoadingScreen::clazz = (jclass) env->NewGlobalRef(LoadingScreen::clazz);
 }
 

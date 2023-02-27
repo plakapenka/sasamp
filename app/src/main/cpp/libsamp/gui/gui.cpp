@@ -19,7 +19,6 @@ extern CJavaWrapper *g_pJavaWrapper;
 /* imgui_impl_renderware.h */
 void ImGui_ImplRenderWare_RenderDrawData(ImDrawData* draw_data);
 bool ImGui_ImplRenderWare_Init();
-void ImGui_ImplRenderWare_NewFrame();
 void ImGui_ImplRenderWare_ShutDown();
 
 #define MULT_X	0.00052083333f	// 1/1920
@@ -89,7 +88,6 @@ ImFont* CGUI::LoadFont(char *font, float fontsize)
 	char path[0xFF];
 	sprintf(path, "%sSAMP/fonts/%s", g_pszStorage, font);
 
-	Log("abcde = %s", path);
 	// ranges
 	static const ImWchar ranges[] = 
 	{
@@ -155,12 +153,17 @@ void CGUI::PostProcessInput()
 void RenderBackgroundHud();
 extern CGame* pGame;
 
+void ImGui_ImplRenderWare_CreateDeviceObjects();
+
 void CGUI::Render()
 {
 
-	PreProcessInput();
+	if(!g_FontRaster)
+	{
+		ImGui_ImplRenderWare_CreateDeviceObjects();
+		return;
+	}
 
-	ImGui_ImplRenderWare_NewFrame();
 	ImGui::NewFrame();
 
 	//RenderRakNetStatistics();
@@ -175,7 +178,6 @@ void CGUI::Render()
 
 	if(pGame->FindPlayerPed()->IsInVehicle() && !pGame->FindPlayerPed()->IsAPassenger() && !CKeyBoard::IsOpen() && !CDialog::bIsShow)
 	{
-		Log("CSpeedometr::show");
 		if(!CSpeedometr::bIsShow)
 		{
 			CSpeedometr::show();
@@ -191,13 +193,13 @@ void CGUI::Render()
 
 	CKeyBoard::Render();
 
-	//CDebugInfo::Draw();
+	CDebugInfo::Draw();
 
 	ImGui::EndFrame();
 	ImGui::Render();
 	ImGui_ImplRenderWare_RenderDrawData(ImGui::GetDrawData());
 
-	PostProcessInput();
+//	PostProcessInput();
 }
 
 bool CGUI::OnTouchEvent(int type, bool multi, int x, int y)
@@ -246,49 +248,6 @@ void CGUI::RenderRakNetStatistics()
 			ImColor(IM_COL32_BLACK), message);*/
 }
 
-extern uint32_t g_uiBorderedText;
-void CGUI::RenderTextForChatWindow(ImVec2& posCur, ImU32 col, bool bOutline, const char* text_begin, const char* text_end)
-{
-	int iOffset = CSettings::m_Settings.iFontOutline;
-
-	ImColor colOutline = ImColor(IM_COL32_BLACK);
-	ImColor colDef = ImColor(col);
-	colOutline.Value.w = colDef.Value.w;
-
-	if (bOutline)
-	{
-		if (g_uiBorderedText)
-		{
-			posCur.x -= iOffset;
-			ImGui::GetBackgroundDrawList()->AddText(posCur, colOutline, text_begin, text_end);
-			posCur.x += iOffset;
-			// right 
-			posCur.x += iOffset;
-			ImGui::GetBackgroundDrawList()->AddText(posCur, colOutline, text_begin, text_end);
-			posCur.x -= iOffset;
-			// above
-			posCur.y -= iOffset;
-			ImGui::GetBackgroundDrawList()->AddText(posCur, colOutline, text_begin, text_end);
-			posCur.y += iOffset;
-			// below
-			posCur.y += iOffset;
-			ImGui::GetBackgroundDrawList()->AddText(posCur, colOutline, text_begin, text_end);
-			posCur.y -= iOffset;
-		}
-		else
-		{
-			ImColor co(0.0f, 0.0f, 0.0f, 0.4f);
-			if (colOutline.Value.w <= 0.4)
-			{
-				co.Value.w = colOutline.Value.w;
-			}
-			ImVec2 b(posCur.x + ImGui::CalcTextSize(text_begin, text_end).x, posCur.y + GetFontSize());
-			ImGui::GetBackgroundDrawList()->AddRectFilled(posCur, b, co);
-		}
-	}
-
-	ImGui::GetBackgroundDrawList()->AddText(posCur, col, text_begin, text_end);
-}
 //
 //void CGUI::PushToBufferedQueueTextDrawPressed(uint16_t textdrawId)
 //{
@@ -305,7 +264,7 @@ void CGUI::RenderText(ImVec2& posCur, ImU32 col, bool bOutline, const char* text
 
 	if (bOutline)
 	{
-		if (g_uiBorderedText)
+		if (true)
 		{
 			posCur.x -= iOffset;
 			ImGui::GetBackgroundDrawList()->AddText(posCur, ImColor(IM_COL32_BLACK), text_begin, text_end);

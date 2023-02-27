@@ -40,10 +40,9 @@ int CKeyBoard::chatinputposx;
 
 
 char CKeyBoard::m_utf8Input[MAX_INPUT_LEN * 3 + 0xF];
-int CKeyBoard::m_iInputOffset;
+
 CKeyBoardHistory *CKeyBoard::m_pkHistory;
 
-bool CKeyBoard::m_bNewKeyboard;
 DataStructures::SingleProducerConsumer<std::string> CKeyBoard::bufferedStrings;
 
 void CKeyBoard::init()
@@ -78,23 +77,19 @@ void CKeyBoard::init()
 	dop_butt = -1;
 
 	m_utf8Input[0] = '\0';
-	m_iInputOffset = 0;
 
 	m_pkHistory = new CKeyBoardHistory();
 
-	InitENG();
-	InitRU();
-	InitNUM();
-
-	m_bNewKeyboard = true;
+//	InitENG();
+//	InitRU();
+//	InitNUM();
 }
 
 void CKeyBoard::Render()
 {
-	if (!m_bEnable || m_bNewKeyboard)
+	if (!m_bEnable)
 		return;
 
-	Log("CKeyBoard::Render()");
 	ImGuiIO &io = ImGui::GetIO();
 	ImVec2 vecButSize = ImVec2(ImGui::GetFontSize() * 6, ImGui::GetFontSize() * 3.5);
 
@@ -303,12 +298,10 @@ void CKeyBoard::Open()
 
 void CKeyBoard::Close()
 {
+	if(!m_bEnable) return;
 
 	m_bEnable = false;
 
-	m_sInput.clear();
-	CHUD::SetChatInput(m_sInput.c_str());
-	m_iInputOffset = 0;
 	m_utf8Input[0] = 0;
 	m_iCase = LOWER_CASE;
 	m_iPushedKey = -1;
@@ -352,106 +345,6 @@ bool CKeyBoard::OnTouchEvent(int type, bool multi, int x, int y)
 
 	static bool bWannaCopy = false;
 	static uint32_t uiTouchTick = 0;
-
-	//ImVec2 leftCorner(m_fChatPosX, m_fChatPosY + m_fChatSizeY + 50 - 40);
-	//ImVec2 rightCorner(m_fChatPosX + m_fChatSizeX / 1.35, m_fChatPosY + m_fChatSizeY + 125 - 40);
-
-//	if (g_pJavaWrapper)
-//	{
-//		if (type == TOUCH_PUSH && x >= leftCorner.x && y >= leftCorner.y && x <= rightCorner.x && y <= rightCorner.y)
-//		{
-//			if (bWannaCopy && GetTickCount() - uiTouchTick <= 150)
-//			{
-//				std::string msg = g_pJavaWrapper->GetClipboardString();
-//				for (int i = 0; i < msg.size(); i++)
-//				{
-//					AddCharToInput((char)msg[i]);
-//				}
-//				bWannaCopy = false;
-//			}
-//			else
-//			{
-//				bWannaCopy = true;
-//				uiTouchTick = GetTickCount();
-//			}
-//		}
-//
-//		if (type == TOUCH_POP)
-//		{
-//			if (GetTickCount() - uiTouchTick <= 150 && bWannaCopy)
-//			{
-//				bWannaCopy = true;
-//				uiTouchTick = GetTickCount();
-//			}
-//			else
-//			{
-//				bWannaCopy = false;
-//			}
-//		}
-//	}
-
-//	ImVec2 leftCornersettings(m_fChatPosX, m_fChatPosY + m_fChatSizeY + 135 - 40);
-//	ImVec2 rightCornersettings(m_fChatPosX + 70, m_fChatPosY + m_fChatSizeY + 205 - 40);
-//
-//	if (type == TOUCH_POP && x >= leftCornersettings.x && y >= leftCornersettings.y && x <= rightCornersettings.x && y <= rightCornersettings.y)
-//	{
-//		g_pJavaWrapper->ShowClientSettings();
-//	}
-//
-//	ImVec2 leftCornerME(m_fChatPosX + 80, m_fChatPosY + m_fChatSizeY + 135 - 40);
-//	ImVec2 rightCornerME(m_fChatPosX + 200, m_fChatPosY + m_fChatSizeY + 205 - 40);
-//
-//	if (type == TOUCH_POP && x >= leftCornerME.x && y >= leftCornerME.y && x <= rightCornerME.x && y <= rightCornerME.y)
-//	{
-//		sME = !sME;
-//		sTRY = false;
-//		sDO = false;
-//		sGOV = false;
-//	}
-//
-//	ImVec2 leftCornerTRY(m_fChatPosX + 210, m_fChatPosY + m_fChatSizeY + 135 - 40);
-//	ImVec2 rightCornerTRY(m_fChatPosX + 330, m_fChatPosY + m_fChatSizeY + 205 - 40);
-//
-//	if (type == TOUCH_POP && x >= leftCornerTRY.x && y >= leftCornerTRY.y && x <= rightCornerTRY.x && y <= rightCornerTRY.y)
-//	{
-//		sTRY = !sTRY;
-//		sME = false;
-//		sDO = false;
-//		sGOV = false;
-//	}
-//
-//	ImVec2 leftCornerDO(m_fChatPosX + 340, m_fChatPosY + m_fChatSizeY + 135 - 40);
-//	ImVec2 rightCornerDO(m_fChatPosX + 460, m_fChatPosY + m_fChatSizeY + 205 - 40);
-//
-//	if (type == TOUCH_POP && x >= leftCornerDO.x && y >= leftCornerDO.y && x <= rightCornerDO.x && y <= rightCornerDO.y)
-//	{
-//		sDO = !sDO;
-//		sME = false;
-//		sTRY = false;
-//		sGOV = false;
-//	}
-//
-//	ImVec2 leftCornerGOV(m_fChatPosX + 470, m_fChatPosY + m_fChatSizeY + 135 - 40);
-//	ImVec2 rightCornerGOV(m_fChatPosX + 590, m_fChatPosY + m_fChatSizeY + 205 - 40);
-//
-//	if (type == TOUCH_POP && x >= leftCornerGOV.x && y >= leftCornerGOV.y && x <= rightCornerGOV.x && y <= rightCornerGOV.y)
-//	{
-//		sGOV = !sGOV;
-//		sME = false;
-//		sTRY = false;
-//		sDO = false;
-//	}
-//
-//	if (type == TOUCH_PUSH && y < m_Pos.y)
-//	{
-//		bWannaClose = true;
-//	}
-//	if (type == TOUCH_POP && y < m_fChatPosY + m_fChatSizeY + 50 - 40 && bWannaClose)
-//	{
-//		bWannaClose = false;
-//		Close();
-//		return false;
-//	}
 
 	m_iPushedKey = -1;
 	m_iPushedKeyUp = false;
@@ -545,7 +438,7 @@ void CKeyBoard::AddCharToInput(char sym)
 	if (m_sInput.length() < MAX_INPUT_LEN && sym)
 	{
 		m_sInput.push_back(sym);
-		cp1251_to_utf8(m_utf8Input, &m_sInput.c_str()[m_iInputOffset]);
+		cp1251_to_utf8(m_utf8Input, m_sInput.c_str());
 
 		CHUD::SetChatInput(m_sInput.c_str());
 
@@ -556,14 +449,6 @@ void CKeyBoard::DeleteCharFromInput()
 {
 	if (!m_sInput.length())
 		return;
-
-//	if(CChatWindow::cursorStart != CChatWindow::cursorEnd){
-//	//	for(int i = CChatWindow::cursorStart; i < CChatWindow::cursorEnd; i++){
-//			m_sInput.erase(CChatWindow::cursorStart, CChatWindow::cursorEnd-CChatWindow::cursorStart);
-//		//}
-//	} else{
-//		m_sInput.erase(CChatWindow::cursorEnd, 1);
-//	}
 
 	m_sInput.pop_back();
 
@@ -602,19 +487,9 @@ void CKeyBoard::Send()
 		}
 	}
 
-	m_bEnable = false;
+	CKeyBoard::Close();
+	CKeyBoard::Flush();
 	CHUD::ToggleChatInput(false);
-
-	CHUD::toggleServerLogo(true);
-	if(pNetGame->m_GreenZoneState) CHUD::toggleGreenZone(true);
-	if(pGame->isCasinoDiceActive)g_pJavaWrapper->TempToggleCasinoDice(true);
-	if(CBaccarat::bIsShow) CBaccarat::tempToggle(true);
-	if(CAdminRecon::bIsToggle) CAdminRecon::tempToggle(true);
-	if (pGame->m_bRaceCheckpointsEnabled)
-	{
-		CHUD::toggleGps(true);
-	}
-	//g_pJavaWrapper->ShowVoice();
 }
 
 kbKey *CKeyBoard::GetKeyFromPos(int x, int y)
@@ -2312,25 +2187,7 @@ void CKeyBoard::Flush()
 
 	m_sInput.clear();
 	CHUD::SetChatInput(m_sInput.c_str());
-	m_iInputOffset = 0;
-	CChatWindow::cursorStart = 0;
-	CChatWindow::cursorEnd = 0;
 	memset(m_utf8Input, 0, sizeof(m_utf8Input) - 1);
-}
-
-void CKeyBoard::EnableNewKeyboard()
-{
-	m_bNewKeyboard = true;
-}
-
-void CKeyBoard::EnableOldKeyboard()
-{
-	m_bNewKeyboard = false;
-}
-
-bool CKeyBoard::IsNewKeyboard()
-{
-	return m_bNewKeyboard;
 }
 
 extern void ApplyFPSPatch(uint8_t fps);
@@ -2461,11 +2318,4 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_HudManager_SendChatButton(JNIEnv *env, jobject thiz, jint button_id) {
 	CKeyBoard::dop_butt = button_id;
-}
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_HudManager_ChatSetCursor(JNIEnv *env, jobject thiz, jint start,
-                                                    jint end) {
-    CChatWindow::cursorStart = start;
-	CChatWindow::cursorEnd = end;
 }

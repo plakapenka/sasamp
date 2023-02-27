@@ -142,7 +142,6 @@ public class HudManager {
     native void ToggleKeyBoard(boolean toggle);
     native void SendChatMessage(byte str[]);
     native void SendChatButton(int buttonID);
-    native void ChatSetCursor(int start, int end);
     native void clickCameraMode();
     native void clickMultText();
     ChatAdapter adapter;
@@ -394,8 +393,8 @@ public class HudManager {
         }
 
         hud_menu.setOnClickListener( view -> {
-         //   NvEventQueueActivity.getInstance().showMenu();
-         //   NvEventQueueActivity.getInstance().togglePlayer(1);
+            NvEventQueueActivity.getInstance().showMenu();
+            NvEventQueueActivity.getInstance().togglePlayer(1);
         });
 
         // X2 click
@@ -404,7 +403,7 @@ public class HudManager {
             clickMultText();
         });
 
-       // hud_weapon.setOnClickListener(v -> NvEventQueueActivity.getInstance().onWeaponChanged());
+        hud_weapon.setOnClickListener(v -> NvEventQueueActivity.getInstance().onWeaponChanged());
 
         hud_bg.post(() -> {
             if(isHudSetPos)return;

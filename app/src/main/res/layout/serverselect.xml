@@ -2,50 +2,24 @@
     android:id="@+id/loadscreen_main_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:visibility="gone"
+    android:visibility="visible"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/mylogo">
 
-    <com.google.android.material.progressindicator.CircularProgressIndicator
+    <com.skydoves.progressview.ProgressView
         android:id="@+id/loadscreen_progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"
-        app:indicatorColor="#67daff"
-        app:indicatorSize="64dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:trackColor="#ffffff" />
-
-    <TextView
-        android:id="@+id/loadscreen_percent_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:fontFamily="@font/visby_round_cf_extra_bold"
-        android:text="0%"
-        android:textColor="@android:color/white"
-        android:textSize="@dimen/_10sdp"
-        app:layout_constraintBottom_toBottomOf="@+id/loadscreen_progressBar"
-        app:layout_constraintTop_toTopOf="@+id/loadscreen_progressBar"
-        app:layout_constraintLeft_toLeftOf="@+id/loadscreen_progressBar"
-        app:layout_constraintRight_toRightOf="@+id/loadscreen_progressBar"/>
-
-    <TextView
-        android:id="@+id/loadscreen_action_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:fontFamily="@font/visby_round_cf_extra_bold"
-        android:shadowColor="@color/black"
-        android:shadowRadius="5"
-        android:text="Создание java классов .."
-        android:textColor="#e3f2fd"
-        android:textSize="@dimen/_13sdp"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_10sdp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+
+        app:progressView_animation="accelerateDecelerate"
+        app:progressView_autoAnimate="true"
+        app:progressView_borderWidth="1dp"
+        app:progressView_colorBackground="@color/white"
+        app:progressView_colorProgress="#67daff"
+        app:progressView_max="100"
+        app:progressView_padding="1dp"
+        app:progressView_progressFromPrevious="true" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

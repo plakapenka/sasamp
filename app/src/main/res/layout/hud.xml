@@ -672,7 +672,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/target_notify" />
+                android:src="@drawable/target_notify" />
 
             <ImageView
                 android:id="@+id/imageView22"
@@ -682,7 +682,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/target_notify_title" />
+                android:src="@drawable/target_notify_title" />
 
             <ImageView
                 android:id="@+id/target_notify_exit"
@@ -692,7 +692,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/imageView22"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/imageView22"
-                app:srcCompat="@drawable/target_notify_exit" />
+                android:src="@drawable/target_notify_exit" />
 
             <ImageView
                 android:id="@+id/target_notify_status"
@@ -704,7 +704,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageView22"
-                app:srcCompat="@drawable/target_notify_none" />
+                android:src="@drawable/target_notify_none" />
 
             <TextView
                 android:id="@+id/target_notify_text"

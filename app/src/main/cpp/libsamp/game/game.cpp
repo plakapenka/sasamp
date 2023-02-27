@@ -432,7 +432,8 @@ void CGame::ToggleCJWalk(bool bUseCJWalk)
 //	if(bUseCJWalk)
 //		CHook::WriteMemory(g_libGTASA + 0x45477E, (uintptr_t)"\xC4\xF8\xDC\x64", 4);
 //	else
-//		CHook::NOP(g_libGTASA + 0x45477E, 2);
+
+	CHook::NOP(g_libGTASA + 0x004C5F6A, 2);
 }
 
 void CGame::DisableMarker(uint32_t dwMarkerID)

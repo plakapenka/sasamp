@@ -92,7 +92,7 @@ CNetGame::CNetGame(const char* szHostOrIp, int iPort, const char* szPlayerName, 
 		m_dwMapIcons[i] = 0;
 
 //	pGame->EnableClock(false);
-//	pGame->EnableZoneNames(false);
+	pGame->EnableZoneNames(false);
 }
 
 CNetGame::~CNetGame()
@@ -155,6 +155,7 @@ CNetGame::~CNetGame()
 int last_process_cnetgame = 0;
 void CNetGame::Process()
 {
+
 	// 30 fps
 	if (GetTickCount() - last_process_cnetgame >= 1000 / 30){
 		last_process_cnetgame = GetTickCount();
@@ -479,58 +480,72 @@ void CNetGame::Packet_CustomRPC(Packet* p)
             break;
 		}
 		case RPC_INVENTAR_CARRYNG: {
+			Log("RPC_INVENTAR_CARRYNG");
 			packetInventoryUpdateCarryng(p);
 			break;
 		}
 		case RPC_ITEM_MATRIX: {
+			Log("RPC_INVENTAR_CARRYNG");
 			packetInventoryUpdateItem(p);
 			break;
 		}
 		case RPC_ITEM_ACTIVETOGGLE: {
+			Log("RPC_INVENTAR_CARRYNG");
             packetInventoryItemActive(p);
 			break;
 		}
 		case RPC_SHOW_CASINO_BUY_CHIP: {
+			Log("RPC_INVENTAR_CARRYNG");
 			packetCasinoChip(p);
 			break;
 		}
 		case RPC_KILL_LIST: {
+			Log("RPC_INVENTAR_CARRYNG");
 			packetKillList(p);
 			break;
 		}
 		case RPC_TECH_INSPECT: {
+			Log("RPC_INVENTAR_CARRYNG");
 			packetTechInspect(p);
 			break;
 		}
 		case RPC_DAILY_REWARDS: {
+			Log("RPC_INVENTAR_CARRYNG");
 			packetDailyRewards(p);
 			break;
 		}
 		case RPC_SHOW_DONATE: {
+			Log("RPC_INVENTAR_CARRYNG");
 			packetShowDonat(p);
 			break;
 		}
 		case RPC_UPDATE_SATIETY: {
+			Log("RPC_INVENTAR_CARRYNG");
 			packetUpdateSatiety(p);
 			break;
 		}
 		case RPC_SHOW_ACTION_LABEL: {
+			Log("RPC_INVENTAR_CARRYNG");
 			packetNotification(p);
 			break;
 		}
 		case RPC_DUELS_SHOW_KILL_LEFT: {
+			Log("RPC_INVENTAR_CARRYNG");
 			packetDuelsKillsLeft(p);
 			break;
 		}
 		case RPC_CLEAR_KILL_LIST: {
+			Log("RPC_INVENTAR_CARRYNG");
             CDuelsGui::clearKillList();
 			break;
 		}
 		case RPC_UPDATE_BACCARAT: {
+			Log("RPC_INVENTAR_CARRYNG");
 			packetCasinoBaccarat(p);
 			break;
 		}
 		case RPC_SET_MONEY: {
+			Log("RPC_INVENTAR_CARRYNG");
 			uint32_t money;
 			bs.Read(money);
 
@@ -540,30 +555,36 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			break;
 		}
 		case RPC_SHOW_CONTEINER_AUC: {
+			Log("RPC_SHOW_CONTEINER_AUC");
             packetAucContainer(p);
 			break;
 		}
 		case RPC_INVENTAR_SHOWHIDE: {
+			Log("RPC_INVENTAR_SHOWHIDE");
 			packetInventoryToggle(p);
 			break;
 		}
 		case RPC_SHOW_SALARY:
 		{
+			Log("RPC_SHOW_SALARY");
 			packetSalary(p);
 			break;
 		}
 		case RPC_ADMIN_RECON:
 		{
+			Log("RPC_ADMIN_RECON");
 			packetAdminRecon(p);
 			break;
 		}
 		case RPC_MAFIA_WAR:
 		{
+			Log("RPC_MAFIA_WAR");
             packetMafiaWar(p);
 			break;
 		}
 		case RPC_CASINO_LUCKY_WHEEL_MENU:
 		{
+			Log("RPC_CASINO_LUCKY_WHEEL_MENU");
 			uint32_t count;
 			uint32_t time;
 
@@ -575,11 +596,13 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_SHOW_FACTORY_GAME:
 		{
+			Log("RPC_SHOW_FACTORY_GAME");
 			Packet_FurnitureFactory(p);
 			break;
 		}
 		case RPC_SEND_BUFFER:
 		{
+			Log("RPC_SEND_BUFFER");
 			uint16_t len;
 			bs.Read(len);
 			char text[len+1];
@@ -591,7 +614,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_SHOW_DICE_TABLE:
 		{
-
+			Log("RPC_SHOW_DICE_TABLE");
 			const int MAX_PLAYERS_CASINO_DICE = 5;
 
 			char playerName[MAX_PLAYERS_CASINO_DICE][25] = {"--", "--", "--", "--", "--"};
@@ -653,11 +676,13 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_OPEN_SETTINGS:
 		{
+			Log("RPC_OPEN_SETTINGS");
 			g_pJavaWrapper->ShowClientSettings();
 			break;
 		}
 		case RPC_TOGGLE_HUD_ELEMENT:
 		{
+			Log("RPC_TOGGLE_HUD_ELEMENT");
 			uint32_t hud, toggle;
 			bs.Read(hud);
 			bs.Read(toggle);
@@ -669,6 +694,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_SHOW_TARGET_LABEL:
 		{
+			Log("RPC_SHOW_TARGET_LABEL");
 			uint8_t value;
 			char str[256];
 			uint8_t len;
@@ -684,6 +710,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_SHOW_ARMY_GAME:
 		{
+			Log("RPC_SHOW_ARMY_GAME");
 			uint8_t toggle;
 			uint8_t quantity;
 			bs.Read(toggle);
@@ -701,6 +728,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_SHOW_TD_BUS:
 		{
+			Log("RPC_SHOW_TD_BUS");
 			uint8_t toggle;
 			uint32_t time;
 			bs.Read(toggle);
@@ -719,6 +747,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_SHOW_MINING_GAME:
 		{
+			Log("RPC_SHOW_MINING_GAME");
 			uint8_t toggle;
 			uint32_t type;
 
@@ -744,16 +773,19 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_PRE_DEATH:
 		{
+			Log("RPC_PRE_DEATH");
 			packetPreDeath(p);
 			break;
 		}
 		case RPC_MED_GAME:
 		{
+			Log("RPC_MED_GAME");
 			packetMedGame(p);
 			break;
 		}
 		case RPC_CHECK_CLIENT:
 		{
+			Log("RPC_CHECK_CLIENT");
 			char recievKey[17];
 			uint16_t recievKey_len;
 			bs.Read(recievKey_len);
@@ -771,6 +803,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_SHOW_OILGAME:
 		{
+			Log("RPC_SHOW_OILGAME");
 			uint8_t toggle;
 			bs.Read(toggle);
 
@@ -782,6 +815,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_CUSTOM_SET_LEVEL:
 		{
+			Log("RPC_CUSTOM_SET_LEVEL");
 			uint8_t current;
 			uint8_t max;
 			uint8_t level;
@@ -794,6 +828,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_TOGGLE_GPS_INFO:
 		{
+			Log("RPC_TOGGLE_GPS_INFO");
 			uint8_t value;
 			bs.Read(value);
 			if (value == 1)
@@ -808,6 +843,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_TOGGLE_GREENZONE:
 		{
+			Log("RPC_TOGGLE_GREENZONE");
 			uint8_t value;
 			bs.Read(value);
 
@@ -846,6 +882,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_GUNSTORE_TOGGLE:
 		{
+			Log("RPC_GUNSTORE_TOGGLE");
 			uint8_t toggle;
 			bs.Read(toggle);
 
@@ -862,6 +899,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_TOGGLE_ACCESSORIES_MENU:
 		{
+			Log("RPC_TOGGLE_ACCESSORIES_MENU");
 			uint8_t toggle;
 			uint32_t price;
 			bs.Read(toggle);
@@ -877,6 +915,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_TOGGLE_CLOTHING_MENU:
 		{
+			Log("RPC_TOGGLE_CLOTHING_MENU");
 			uint8_t toggle;
 			uint32_t price;
 			bs.Read(toggle);
@@ -891,6 +930,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_FUELSTATION_BUY:
 		{
+			Log("RPC_FUELSTATION_BUY");
 			uint8_t type;
 			uint32_t price1;
 			uint32_t price2;
@@ -913,6 +953,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_SHOW_AUTOSHOP:
 		{
+			Log("RPC_SHOW_AUTOSHOP");
 			uint32_t toggle;
 			bs.Read(toggle);
 
@@ -922,6 +963,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_UPDATE_AUTOSHOP:
 		{
+			Log("RPC_UPDATE_AUTOSHOP");
 			uint32_t price;
 			uint32_t count;
 			float maxspeed;
@@ -948,6 +990,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_CUSTOM_HANDLING_DEFAULTS:
 		{
+			Log("RPC_CUSTOM_HANDLING_DEFAULTS");
 			uint16_t vehId;
 			bs.Read(vehId);
 
@@ -964,6 +1007,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_CUSTOM_VISUALS:
 		{
+			Log("RPC_CUSTOM_VISUALS");
 			uint16_t vehId;
 			uint8_t bLightsColor[3];
 			int8_t bWheelAlignX;
@@ -1094,6 +1138,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_CUSTOM_HANDLING:
 		{
+			Log("RPC_CUSTOM_HANDLING");
 			uint16_t veh;
 			uint8_t value;
 			bs.Read(veh);
