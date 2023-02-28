@@ -33,11 +33,13 @@ int __attribute__((noinline)) g_unobfuscate(int a)
 	return UNOBFUSCATE_DATA(a);
 }
 #include "..//str_obfuscator_no_template.hpp"
-#define MAX_ENCRYPTED_TXD 3
+#define MAX_ENCRYPTED_TXD 5
 const cryptor::string_encryptor encrArch[MAX_ENCRYPTED_TXD] = {
         cryptor::create("texdb/txd/txd.txt", 19),
         cryptor::create("texdb/gta3/gta3.txt", 21),
         cryptor::create("texdb/gta_int/gta_int.txt", 27),
+		cryptor::create("texdb/cars/cars.txt", 27),
+		cryptor::create("texdb/skins/skins.txt", 27),
 };
 
 extern bool g_bIsTestMode;
