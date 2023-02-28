@@ -29,8 +29,6 @@ void CModelInfo::InstallHooks()
 
 CVehicleModelInfo* CModelInfo::AddVehicleModel(int index)
 {
-    Log("AddVehicleModel %d", index);
-
     auto& pInfo = CModelInfo::ms_vehicleModelInfoStore.AddItem();
 
     ((void(*)(CVehicleModelInfo*))(g_libGTASA + 0x00384FD8 + 1))(&pInfo); // CBaseModelInfo::CBaseModelInfo();
@@ -45,8 +43,6 @@ CVehicleModelInfo* CModelInfo::AddVehicleModel(int index)
 
 CPedModelInfo* CModelInfo::AddPedModel(int index)
 {
-    Log("CModelInfo_AddPedModel_hook %d", index);
-
     auto& pInfo = CModelInfo::ms_pedModelInfoStore.AddItem();
 
     ((void(*)(CPedModelInfo*))(g_libGTASA + 0x00384FD8 + 1))(&pInfo); // CBaseModelInfo::CBaseModelInfo();

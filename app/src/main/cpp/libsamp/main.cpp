@@ -174,7 +174,7 @@ void MainLoop()
         return;
     }
 
-	if(pNetGame) pNetGame->Process();
+	pNetGame->Process();
 }
 extern int g_iLastRenderedObject;
 char g_iLastBlock[512];

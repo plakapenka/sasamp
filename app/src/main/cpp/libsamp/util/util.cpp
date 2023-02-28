@@ -40,7 +40,7 @@ RwTexture* CUtil::LoadTextureFromDB(const char* dbname, const char* texture)
 
 	TextureDatabaseRuntime::Register(db_handle);
 
-	RwTexture* tex = GetTexture_hook(texture);
+	auto tex = (( RwTexture* (*)(const char*))(g_libGTASA + 0x00297280 + 1))(texture);
 
 	if(!tex)
 		Log("Error: Texture (%s) not found in database (%s)", dbname, texture);

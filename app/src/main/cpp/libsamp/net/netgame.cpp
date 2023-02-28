@@ -301,7 +301,7 @@ void CNetGame::UpdateNetwork()
 				break;
 
 			case ID_BULLET_SYNC:
-				//Packet_BulletSync(pkt);
+				Packet_BulletSync(pkt);
 				break;
 
 			case ID_TRAILER_SYNC:
@@ -1007,7 +1007,6 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_CUSTOM_VISUALS:
 		{
-			Log("RPC_CUSTOM_VISUALS");
 			uint16_t vehId;
 			uint8_t bLightsColor[3];
 			int8_t bWheelAlignX;

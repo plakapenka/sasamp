@@ -7,6 +7,7 @@
 
 #include "CEntityGta.h"
 
+#pragma pack(1)
 struct CPhysicalGta : CEntityGta
 {
     float m_fPrevDistFromCam;

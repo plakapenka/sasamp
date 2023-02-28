@@ -297,7 +297,6 @@ void SetTimeEx(RPCParameters *rpcParams)
 
 void WorldPlayerAdd(RPCParameters *rpcParams)
 {
-	Log("WorldPlayerAdd");
 
 	unsigned char * Data = reinterpret_cast<unsigned char *>(rpcParams->input);
 	int iBitLength = rpcParams->numberOfBitsOfData;

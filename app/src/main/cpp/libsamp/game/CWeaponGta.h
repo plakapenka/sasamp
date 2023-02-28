@@ -11,7 +11,10 @@ struct CWeaponGta
     uint32_t dwState;
     uint32_t dwAmmoInClip;
     uint32_t dwAmmo;
-    uint8_t skip[20];
+    uint32_t m_nTimer;
+    uint8_t m_bFirstPersonWeaponModeSelected;
+    uint8_t m_bDontPlaceInHand;
+    uint8_t skip[6];
 };
 
 #endif //LIVERUSSIA_CWEAPONGTA_H

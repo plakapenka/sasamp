@@ -75,8 +75,6 @@ CGUI::CGUI()
 
 	style.WindowRounding = 0.0f;
 
-	CRadarRect::LoadTextures();
-
 	m_bKeysStatus = false;
 }
 

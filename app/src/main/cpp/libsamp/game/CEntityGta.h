@@ -7,7 +7,8 @@
 
 #include "CPlaceableGta.h"
 
-typedef struct CEntityGta : CPlaceableGta
+#pragma pack(1)
+struct CEntityGta : CPlaceableGta
 {
     union {
         uintptr_t m_pRwObject;

@@ -1421,7 +1421,6 @@ int GetInternalBoneIDFromSampID(int sampid)
 
 void ScrSetPlayerAttachedObject(RPCParameters* rpcParams)
 {
-	Log("ScrSetPlayerAttachedObject");
 	unsigned char* Data = reinterpret_cast<unsigned char*>(rpcParams->input);
 	int iBitLength = rpcParams->numberOfBitsOfData;
 	RakNet::BitStream bsData(Data, (iBitLength / 8) + 1, false);

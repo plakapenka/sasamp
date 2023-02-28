@@ -193,7 +193,6 @@ void CHUD::UpdateHudInfo()
         Log("No env");
         return;
     }
-
     env->CallVoidMethod(thiz, jUpdateHudInfo,
                         (int)pPed->GetHealth(),
                         (int)pPed->GetArmour(),

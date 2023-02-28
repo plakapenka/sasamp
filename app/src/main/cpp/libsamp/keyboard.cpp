@@ -80,9 +80,9 @@ void CKeyBoard::init()
 
 	m_pkHistory = new CKeyBoardHistory();
 
-//	InitENG();
-//	InitRU();
-//	InitNUM();
+	InitENG();
+	InitRU();
+	InitNUM();
 }
 
 void CKeyBoard::Render()

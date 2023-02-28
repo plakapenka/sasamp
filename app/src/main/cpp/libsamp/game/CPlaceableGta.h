@@ -7,6 +7,7 @@
 
 #include "quaternion.h"
 
+#pragma pack(1)
 struct CPlaceableGta
 {
     uint32_t vtable;

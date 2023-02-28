@@ -810,6 +810,9 @@ void HookCPad()
 	CHook::InlineHook(g_libGTASA, 0x003FBB0C, &CPad__GetAutoClimb_hook, &CPad__GetAutoClimb);
 	CHook::InlineHook(g_libGTASA, 0x003FBBB8, &CPad__GetAbortClimb_hook, &CPad__GetAbortClimb);
 
+	// присесть
+	CHook::InlineHook(g_libGTASA, 0x003FBA9C, &CPad__DuckJustDown_hook, &CPad__DuckJustDown);
+
 //	// swimm
 	CHook::InlineHook(g_libGTASA, 0x003FBD10, &CPad__DiveJustDown_hook, (uintptr_t*)&CPad__DiveJustDown);
 	CHook::InlineHook(g_libGTASA, 0x003FBD58, &CPad__SwimJumpJustDown_hook, (uintptr_t*)&CPad__SwimJumpJustDown);

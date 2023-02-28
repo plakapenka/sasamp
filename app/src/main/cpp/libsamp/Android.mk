@@ -1,12 +1,6 @@
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
-LOCAL_MODULE    := libopenal
-LOCAL_SRC_FILES := vendor/openal/libopenal.a
-
-include $(PREBUILT_STATIC_LIBRARY)
-
-include $(CLEAR_VARS)
 LOCAL_MODULE    := libopus 
 LOCAL_SRC_FILES := vendor/opus/libopus.a
 
@@ -20,9 +14,16 @@ include $(PREBUILT_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := samp
-LOCAL_LDLIBS := -llog -lOpenSLES
+LOCAL_MODULE  := GTASA
+LOCAL_XOM := false
+LOCAL_SRC_FILES  := libGTASA.so
+include $(PREBUILD_SHARED_LIBRARY)
 
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := samp
+LOCAL_LDLIBS := -llog -lGLESv3
+LOCAL_XOM := false
 LOCAL_C_INCLUDES += $(wildcard $(LOCAL_PATH)/vendor/)
 
 # samp
@@ -46,7 +47,9 @@ FILE_LIST += $(wildcard $(LOCAL_PATH)/vendor/RakNet/SAMP/*.cpp)
 FILE_LIST += $(wildcard $(LOCAL_PATH)/vendor/imgui/*.cpp)
 FILE_LIST += $(wildcard $(LOCAL_PATH)/vendor/hash/*.cpp)
 
+
 LOCAL_SRC_FILES := $(FILE_LIST:$(LOCAL_PATH)/%=%)
-LOCAL_STATIC_LIBRARIES := libopenal libopus libenet
-LOCAL_CPPFLAGS := -w -s -fvisibility=hidden -pthread -Wall -fpack-struct=1 -O2 -std=c++17 -fexceptions
+LOCAL_STATIC_LIBRARIES := libopus libenet
+
+LOCAL_CPPFLAGS := -w -s -fvisibility=hidden -pthread -Wall -fpack-struct=1 -O0 -std=c++17 -fexceptions -marm
 include $(BUILD_SHARED_LIBRARY)

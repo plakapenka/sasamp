@@ -160,6 +160,7 @@ bool ImGui_ImplRenderWare_Init()
 
 	io.DisplaySize = ImVec2((float)RsGlobal->maximumWidth, RsGlobal->maximumHeight);
 	Log("GUI | Display size: %f, %f", io.DisplaySize.x, io.DisplaySize.y);
+
 	return true;
 }
 

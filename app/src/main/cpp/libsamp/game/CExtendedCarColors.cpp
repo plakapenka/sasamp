@@ -62,6 +62,8 @@ void CExtendedCarColors::ApplyPatches_level0()
 		DWORD2RGBA(VehicleColoursTableRGBA[i], ms_vehicleColourTable[i]);
 	}
 
+//	CHook::UnFuck(g_libGTASA + 0x0067764C);
+//	*(CRGBA * *)(g_libGTASA + 0x0067764C) = &ms_vehicleColourTable[0];
 	CHook::UnFuck(g_libGTASA + 0x0067764C);
 	*(CRGBA * *)(g_libGTASA + 0x0067764C) = &ms_vehicleColourTable[0];
 

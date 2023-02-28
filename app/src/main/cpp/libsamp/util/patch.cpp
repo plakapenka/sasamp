@@ -22,9 +22,27 @@ void sub_naebal(uintptr_t dest, uintptr_t src, size_t size)
     cacheflush(dest - CRYPT_MASK, dest+size - CRYPT_MASK, 0);
 }
 
-void CHook::UnFuck(uintptr_t ptr)
+void CHook::UnFuck(uintptr_t origin)
 {
-    mprotect((void*)(ptr & 0xFFFFF000), PAGE_SIZE, PROT_READ | PROT_WRITE | PROT_EXEC);
+    Log("UnFuck");
+  //  mmap(reinterpret_cast<void *>(ptr), PAGE_SIZE, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANONYMOUS | MAP_PRIVATE, 0, 0);
+ //   mprotect((void*)(ptr & 0xFFFFF000), 100*PAGE_SIZE, PROT_READ | PROT_EXEC | PROT_WRITE);
+  //  perror("err");
+    //exit(errno);
+    int pagesize = sysconf(_SC_PAGESIZE);
+    int protectsize = pagesize * 4;
+    void *protectaddr = (void*) ((int) origin - ((int) origin % pagesize) - pagesize);
+
+    int protectresult = mprotect(protectaddr, protectsize, PROT_EXEC | PROT_READ | PROT_WRITE );
+
+    if (protectresult == 0) { // success
+     //   MSHookFunction(origin, hook, result);
+        Log("function hook for address %p successed.", origin - g_libGTASA);
+
+    }
+    else { // fail
+        Log("function hook for address %p failed: mprotect=%i, err=%i", origin - g_libGTASA, protectresult, errno);
+    }
 }
 
 void CHook::ReadMemory(uintptr_t dest, uintptr_t src, size_t size)
@@ -35,7 +53,8 @@ void CHook::ReadMemory(uintptr_t dest, uintptr_t src, size_t size)
 
 void CHook::InitHookStuff()
 {
-    memlib_start = g_libGTASA + 0x180044;
+    //memlib_start = g_libGTASA + 0x180044;
+    memlib_start = g_libGTASA + 0x001A9D8C;
     memlib_end = memlib_start + 0x450;
 
     mmap_start = (uintptr_t)mmap(0, PAGE_SIZE, PROT_WRITE | PROT_READ | PROT_EXEC, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);

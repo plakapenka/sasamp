@@ -12,6 +12,7 @@
 
 class CVehicleGta;
 
+#pragma pack(1)
 struct CPedGta : CPhysicalGta
 {
     uint8_t m_PedAudioEntity[348];
@@ -165,12 +166,9 @@ struct CPedGta : CPhysicalGta
             unsigned int bTestForShotInVehicle : 1;
             unsigned int bUsedForReplay : 1; // This ped is controlled by replay and should be removed when replay is done.
         };
-        unsigned int m_nPedFlags;
-        unsigned int m_nSecondPedFlags;
-        unsigned int m_nThirdPedFlags;
-        unsigned int m_nFourthPedFlags;
+        uint8_t m_nPedFlags[16];
     };
-    uintptr_t m_apBones[19];
+    uintptr_t *m_apBones[19];
     uint32_t m_motionAnimGroup;
     CVector2D m_extractedVelocity;
     uint8_t m_acquaintances[20];
@@ -182,18 +180,18 @@ struct CPedGta : CPhysicalGta
     uint16_t m_nGunFlashBlendOutRate;
     uint16_t m_nGunFlashBlendAmount2;
     uint16_t m_nGunFlashBlendOutRate2;
-    uint8_t m_ik[33];
+    uint8_t m_ik[32];
     uint32_t m_nAntiSpazTimer;
     uint32_t m_eMoveStateAnim;
     uint32_t m_eStoredMoveState;
 
-    float fHealth;		 		// 1344-1348	;Health
-    float fMaxHealth;			// 1348-1352	;MaxHealth
-    float fArmour;				// 1352-1356	;Armour
+    float fHealth;
+    float fMaxHealth;
+    float fArmour;
     float fAim;
     CVector2D m_vecCurrentVelocity;
-    float m_fCurrentRotation;			// 1368-1372	;Rotation1
-    float m_fAimingRotation;			// 1372-1376	;Rotation2
+    float m_fCurrentRotation;
+    float m_fAimingRotation;
     float m_fHeadingChangeRate;
     float m_fHeadingChangeRateAccel;
     uintptr_t *m_pGroundPhysical;
@@ -201,12 +199,15 @@ struct CPedGta : CPhysicalGta
     CVector m_vecGroundNormal;
     uintptr_t *m_pEntityStandingOn;
     float m_fHitHeadHeight;
-    uintptr_t *pVehicle;			// 1420-1424	;pVehicle
-    uint8_t skip2[8];
-    uint32_t dwPedType;			// 1432-1436	;dwPedType
-    uint32_t dwUnk1;	 // 1436-1440
-    CWeaponGta WeaponSlots[13]; // 1440-1804
-    uint8_t skip3[12];
+    CVehicleGta *pVehicle;			// 1420-1424	;pVehicle
+    CVehicleGta *m_pMyAccidentVehicle;
+    uintptr_t *m_pAccident;
+    uint32_t dwPedType;
+    uintptr_t *m_pPedStats;
+    CWeaponGta WeaponSlots[13];
+    uint32_t m_eStoredWeapon;
+    uint32_t m_eDelayedWeapon;
+    uint32_t m_delayedAmmo;
     uint8_t byteCurWeaponSlot; // 1816-1817
     uint8_t skip4[23];
     uint32_t pFireObject;	 // 1840-1844

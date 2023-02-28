@@ -519,7 +519,7 @@ bool CPlayerPed::IsAPassenger()
 {
 	if(m_pPed->pVehicle && m_pPed->bInVehicle)
 	{
-		CVehicleGta *pVehicle = (CVehicleGta *)m_pPed->pVehicle;
+		auto pVehicle = m_pPed->pVehicle;
 
 		if(	pVehicle->pDriver != m_pPed ||
 			   pVehicle->nModelIndex == TRAIN_PASSENGER ||
@@ -533,7 +533,7 @@ bool CPlayerPed::IsAPassenger()
 // 0.3.7
 CVehicleGta* CPlayerPed::GetGtaVehicle()
 {
-	return (CVehicleGta*)m_pPed->pVehicle;
+	return m_pPed->pVehicle;
 }
 
 // 0.3.7

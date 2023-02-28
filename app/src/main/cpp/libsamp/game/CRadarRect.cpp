@@ -9,11 +9,6 @@ RwTexture* CRadarRect::m_pRectTexture = nullptr;
 RwTexture* CRadarRect::m_pDiscTexture = nullptr;
 bool CRadarRect::m_bEnabled = false;
 
-void CRadarRect::LoadTextures()
-{
-	m_pRectTexture = CUtil::LoadTextureFromDB("txd", "radardisc_r");
-}
-
 float CRadarRect::CRadar__LimitRadarPoint_hook(float* pos)
 {
 

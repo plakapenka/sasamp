@@ -151,7 +151,6 @@ stFile* NvFOpen_hook(const char* r0, const char* r1, int r2, int r3)
 	FILE *f  = fopen(path, "rb");
 	if(f)
 	{
-		Log("NvFOpen_hook %s ", path );
 		st->isFileExist = true;
 		st->f = f;
 		return st;
@@ -918,6 +917,24 @@ int CTextureDatabaseRuntime__GetEntry_hook(unsigned int *thiz, const char *name,
 	return result;
 }
 
+RwTexture* (*GetTexture_orig)(const char* name);
+RwTexture* GetTexture_hook(const char* name)
+{
+	RwTexture* result = TextureDatabaseRuntime::GetTexture(name);
+
+	if (!result)
+	{
+		Log("Texture %s was not found", name);
+		return nullptr;
+	}
+	else
+	{
+		Log("Texture %s", name);
+		++*(int32_t *)(result + 0x54); // ++result->refCount;
+		return result;
+	}
+}
+
 void InstallSpecialHooks()
 {
 	Log("InstallSpecialHooks");
@@ -936,6 +953,8 @@ void InstallSpecialHooks()
 //	CHook::InlineHook(g_libGTASA, 0x1EEC90, &rxOpenGLDefaultAllInOneRenderCB_hook, &rxOpenGLDefaultAllInOneRenderCB);
 //	CHook::InlineHook(g_libGTASA, 0x28AAAC, &CustomPipeRenderCB_hook, &CustomPipeRenderCB);
 //
+	// gettexture fix crash
+	CHook::InlineHook(g_libGTASA, 0x00297280, &GetTexture_hook, &GetTexture_orig);
 //	//
 //	// CPlaceable::InitMatrixArray
 //	CHook::WriteMemory(g_libGTASA + 0x3ABB0A, "\x4F\xF4\x7A\x61", 4); // MOV.W R1, #4000
@@ -1315,24 +1334,6 @@ uintptr_t RwFrameForAllObjectsCALLBACK1(uintptr_t object, CObject* pObject)
 }
 
 int g_iLastRenderedObject;
-
-RwTexture* (*GetTexture_orig)(const char* name);
-RwTexture* GetTexture_hook(const char* name)
-{
-	RwTexture* result = TextureDatabaseRuntime::GetTexture(name);
-
-	if (!result)
-	{
-		Log("Texture %s was not found", name);
-		return nullptr;
-	}
-	else
-	{
-		Log("Texture %s", name);
-		++*(int32_t *)(result + 0x54); // ++result->refCount;
-		return result;
-	}
-}
 
 int(*CPlayerInfo__Process)(uintptr_t *thiz, uintptr_t *a2);
 int CPlayerInfo__Process_hook(uintptr_t *thiz, uintptr_t *a2)
@@ -2809,8 +2810,6 @@ void InstallHooks()
 	// attached objects
 	CHook::InlineHook(g_libGTASA, 0x00428410, &CWorld_ProcessPedsAfterPreRender_hook, &CWorld_ProcessPedsAfterPreRender);
 
-	// gettexture fix crash
-	CHook::InlineHook(g_libGTASA, 0x00297280, &GetTexture_hook, &GetTexture_orig);
 //
 //	// steal objects fix
 //	CHook::InlineHook(g_libGTASA, 0x003AD8E0, &CPlayerInfo__Process_hook, &CPlayerInfo__Process);
