@@ -43,9 +43,9 @@ bool isEncrypted(const char *szArch)
 {
     if(g_bIsTestMode)return false;
 	//return false;
-    for (int i = 0; i < MAX_ENCRYPTED_TXD; i++)
+    for (const auto & i : encrArch)
     {
-        if (!strcmp(encrArch[i].decrypt(), szArch))
+        if (!strcmp(i.decrypt(), szArch))
             return true;
     }
     return false;
@@ -463,84 +463,6 @@ void cHandlingDataMgr__ConvertDataToGameUnits_hook(uintptr_t *thiz, tHandlingDat
     }
 
 	cHandlingDataMgr__ConvertDataToGameUnits(thiz, handling);
-}
-
-
-#include "..//nv_event.h"
-int32_t(*NVEventGetNextEvent_hooked)(NVEvent* ev, int waitMSecs);
-int32_t NVEventGetNextEvent_hook(NVEvent* ev, int waitMSecs)
-{
-	int32_t ret = NVEventGetNextEvent_hooked(ev, waitMSecs);
-
-	if (ret)
-	{
-		if (ev->m_type == NV_EVENT_MULTITOUCH)
-		{
-			// process manually
-			ev->m_type = (NVEventType)228;
-		}
-
-	}
-
-	NVEvent event;
-	NVEventGetNextEvent(&event);
-
-	if (event.m_type == NV_EVENT_MULTITOUCH)
-	{
-		int type = event.m_data.m_multi.m_action & NV_MULTITOUCH_ACTION_MASK;
-		int num = (event.m_data.m_multi.m_action & NV_MULTITOUCH_POINTER_MASK) >> NV_MULTITOUCH_POINTER_SHIFT;
-
-		int x1 = event.m_data.m_multi.m_x1;
-		int y1 = event.m_data.m_multi.m_y1;
-
-		int x2 = event.m_data.m_multi.m_x2;
-		int y2 = event.m_data.m_multi.m_y2;
-
-		int x3 = event.m_data.m_multi.m_x3;
-		int y3 = event.m_data.m_multi.m_y3;
-
-		if (type == NV_MULTITOUCH_CANCEL)
-		{
-			type = NV_MULTITOUCH_UP;
-		}
-
-		if ((x1 || y1) || num == 0)
-		{
-			if (num == 0 && type != NV_MULTITOUCH_MOVE)
-			{
-				((void(*)(int, int, int posX, int posY))(g_libGTASA + 0x00239D5C + 1))(type, 0, x1, y1); // AND_TouchEvent
-			}
-			else
-			{
-				((void(*)(int, int, int posX, int posY))(g_libGTASA + 0x00239D5C + 1))(NV_MULTITOUCH_MOVE, 0, x1, y1); // AND_TouchEvent
-			}
-		}
-
-		if ((x2 || y2) || num == 1)
-		{
-			if (num == 1 && type != NV_MULTITOUCH_MOVE)
-			{
-				((void(*)(int, int, int posX, int posY))(g_libGTASA + 0x00239D5C + 1))(type, 1, x2, y2); // AND_TouchEvent
-			}
-			else
-			{
-				((void(*)(int, int, int posX, int posY))(g_libGTASA + 0x00239D5C + 1))(NV_MULTITOUCH_MOVE, 1, x2, y2); // AND_TouchEvent
-			}
-		}
-		if ((x3 || y3) || num == 2)
-		{
-			if (num == 2 && type != NV_MULTITOUCH_MOVE)
-			{
-				((void(*)(int, int, int posX, int posY))(g_libGTASA + 0x00239D5C + 1))(type, 2, x3, y3); // AND_TouchEvent
-			}
-			else
-			{
-				((void(*)(int, int, int posX, int posY))(g_libGTASA + 0x00239D5C + 1))(NV_MULTITOUCH_MOVE, 2, x3, y3); // AND_TouchEvent
-			}
-		}
-	}
-
-	return ret;
 }
 
 void(*CStreaming__Init2)();
@@ -1021,7 +943,7 @@ void InstallSpecialHooks()
 	//CHook::InlineHook(g_libGTASA, 0x00269634, NVEventGetNextEvent_hook, &NVEventGetNextEvent_hooked);
 	CHook::InlineHook(g_libGTASA, 0x0046BB04, CStreaming__Init2_hook, &CStreaming__Init2);	// increase stream memory value
 	CHook::InlineHook(g_libGTASA, 0x0040C900, &CPools_Initialise_hook, &CPools_Initialise);
-    //CHook::InlineHook(g_libGTASA, 0x269974, &MenuItem_add_hook, &MenuItem_add);
+    CHook::InlineHook(g_libGTASA, 0x002A36E2, &MenuItem_add_hook, &MenuItem_add);
 }
 
 /* =========================================== Ped damage handler =========================================== */
@@ -1514,12 +1436,10 @@ uintptr_t CVehicle__SetupRenderCB(uintptr_t atomic, void* data)
 
 	return atomic;
 }
-#include "..//cryptors/MODELINFO_EDITABLE_result.h"
 
 void (*CVehicleModelInfo__SetEditableMaterials)(uintptr_t);
 void CVehicleModelInfo__SetEditableMaterials_hook(uintptr_t clump)
 {
-	PROTECT_CODE_MODELINFO_EDITABLE;
 	RpClump *pClump = (RpClump *)clump;
 
 	if (pNetGame && pClump)
@@ -1542,12 +1462,9 @@ void CVehicleModelInfo__SetEditableMaterials_hook(uintptr_t clump)
 	CVehicleModelInfo__SetEditableMaterials(clump);
 }
 
-#include "..//cryptors/RESET_AFTER_RENDER_result.h"
-
 void (*CVehicle__ResetAfterRender)(uintptr_t);
 void CVehicle__ResetAfterRender_hook(uintptr_t thiz)
 {
-	PROTECT_CODE_RESET_AFTER_RENDER;
 
 	for (auto& p : resetEntriesVehicle)
 	{
@@ -1583,14 +1500,11 @@ void CGame__Process_hook()
 	CCustomPlateManager::Process();
 }
 
-#include "..//cryptors/AUTOMOBILE_COLLISION_result.h"
-
 uint16_t g_usLastProcessedModelIndexAutomobile = 0;
 int g_iLastProcessedModelIndexAutoEnt = 0;
 void (*CAutomobile__ProcessEntityCollision)(CVehicleGta* a1, CEntityGta* a2, int a3);
 void CAutomobile__ProcessEntityCollision_hook(CVehicleGta* a1, CEntityGta* a2, int a3)
 {
-	PROTECT_CODE_AUTOMOBILE_COLLISION;
 
 	g_usLastProcessedModelIndexAutomobile = a1->nModelIndex;
 	g_iLastProcessedModelIndexAutoEnt = a2->nModelIndex;
@@ -1605,7 +1519,7 @@ void CAutomobile__ProcessEntityCollision_hook(CVehicleGta* a1, CEntityGta* a2, i
 	{
 		if (pNetGame->GetVehiclePool())
 		{
-			uint16_t vehId = pNetGame->GetVehiclePool()->FindIDFromGtaPtr(a1);
+			uint16_t vehId = pNetGame->GetVehiclePool()->findSampIdFromGtaPtr(a1);
 			CVehicle* pVeh = pNetGame->GetVehiclePool()->GetAt(vehId);
 			if (pVeh)
 			{
@@ -1654,7 +1568,7 @@ void CShadows__StoreCarLightShadow_hook(CVehicleGta* vehicle, int id, RwTexture*
 	{
 		if (pNetGame->GetVehiclePool())
 		{
-			uint16_t vehid = pNetGame->GetVehiclePool()->FindIDFromGtaPtr(vehicle);
+			uint16_t vehid = pNetGame->GetVehiclePool()->findSampIdFromGtaPtr(vehicle);
 			CVehicle* pVeh = pNetGame->GetVehiclePool()->GetAt(vehid);
 			if (pVeh)
 			{
@@ -1741,7 +1655,7 @@ void CVehicle__DoHeadLightBeam_hook(CVehicleGta* vehicle, int arg0, MATRIX4X4& m
 	{
 		if (pNetGame->GetVehiclePool())
 		{
-			uint16_t vehid = pNetGame->GetVehiclePool()->FindIDFromGtaPtr(vehicle);
+			uint16_t vehid = pNetGame->GetVehiclePool()->findSampIdFromGtaPtr(vehicle);
 			CVehicle* pVeh = pNetGame->GetVehiclePool()->GetAt(vehid);
 			if (pVeh)
 			{
@@ -1853,7 +1767,7 @@ void CAutomobile__PreRender_hook(CVehicleGta* thiz)
 	{
 		if (pNetGame->GetVehiclePool())
 		{
-			uint16_t vehid = pNetGame->GetVehiclePool()->FindIDFromGtaPtr(thiz);
+			uint16_t vehid = pNetGame->GetVehiclePool()->findSampIdFromGtaPtr(thiz);
 			pVeh = pNetGame->GetVehiclePool()->GetAt(vehid);
 			if (pVeh)
 			{
@@ -1882,7 +1796,6 @@ void CAutomobile__PreRender_hook(CVehicleGta* thiz)
 	g_iLastProcessedWheelVehicle = -1;
 }
 
-#include "..//cryptors/INSTALLHOOKS_result.h"
 
 void (*CTaskSimpleUseGun__RemoveStanceAnims)(void* thiz, void* ped, float a3);
 void CTaskSimpleUseGun__RemoveStanceAnims_hook(void* thiz, void* ped, float a3)
@@ -2201,139 +2114,6 @@ float CDraw__SetFOV_hook(float thiz, float a2)
 	return thiz;
 }
 
-int (*MobileSettings__GetMaxResWidth)();
-int MobileSettings__GetMaxResWidth_hook()
-{
-	//Log("res = %d", ((int(*)())(g_libGTASA + 0x0023816C + 1))());
-	return (int)( ((int(*)())(g_libGTASA + 0x0023816C + 1))()/1.1 );
-}
-
-char **(*CPhysical__Add)(uintptr_t thiz);
-char **CPhysical__Add_hook(uintptr_t thiz)
-{
-	// char **result = 0;
-
-	if (pNetGame)
-	{
-		CPlayerPed *pPlayerPed = pGame->FindPlayerPed();
-		if (pPlayerPed)
-		{
-			for (size_t i = 0; i < 10; i++)
-			{
-				if (pPlayerPed->m_aAttachedObjects[i].bState)
-				{
-					if (pPlayerPed->m_aAttachedObjects[i].pObject)
-						if ((uintptr_t)pPlayerPed->m_aAttachedObjects[i].pObject->m_pEntity == thiz)
-						{
-							CObject *pObject = pPlayerPed->m_aAttachedObjects[i].pObject;
-							if (pObject->m_pEntity->mat->pos.x > 20000.0f ||
-							pObject->m_pEntity->mat->pos.y > 20000.0f ||
-							pObject->m_pEntity->mat->pos.z > 20000.0f ||
-								pObject->m_pEntity->mat->pos.x < -20000.0f ||
-								pObject->m_pEntity->mat->pos.y < -20000.0f ||
-								pObject->m_pEntity->mat->pos.z < -20000.0f)
-							{
-								/*if(pChatWindow)
-								{
-									pChatWindow->AddDebugMessage("WARNING!!! WARNING!!! WARNING!!! CRASH EXCEPTED!!!");
-								}*/
-								return 0;
-							}
-							// Log("Processing local attached object");
-							// result = CPhysical__Add(thiz);
-						}
-				}
-			}
-		}
-
-		CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
-
-		if (pVehiclePool)
-		{
-			for (size_t i = 0; i < MAX_VEHICLES; i++)
-			{
-				if (pVehiclePool->GetSlotState(i))
-				{
-					CVehicle *pVehicle = pVehiclePool->GetAt(i);
-					if (pVehicle && pVehicle->IsAdded())
-					{
-						/*CObject* pObject = pVehicle->Att((CEntityGta*)thiz);
-						if (pObject != nullptr)
-						{
-							if (pObject->m_pEntity->mat->pos.x > 20000.0f || pObject->m_pEntity->mat->pos.y > 20000.0f || pObject->m_pEntity->mat->pos.z > 20000.0f ||
-								pObject->m_pEntity->mat->pos.x < -20000.0f || pObject->m_pEntity->mat->pos.y < -20000.0f || pObject->m_pEntity->mat->pos.z < -20000.0f)
-							{
-								/*if(pChatWindow)
-								{
-									pChatWindow->AddDebugMessage("WARNING!!! WARNING!!! WARNING!!! CRASH EXCEPTED!!!");
-								}
-								return 0;
-							}
-						}*/
-					}
-				}
-			}
-		}
-
-		CPlayerPool *pPlayerPool = pNetGame->GetPlayerPool();
-
-		if (pPlayerPool)
-		{
-			for (size_t i = 0; i < MAX_PLAYERS; i++)
-			{
-				if (pPlayerPool->GetSlotState(i))
-				{
-					CRemotePlayer *pRemotePlayer = pPlayerPool->GetAt(i);
-					if (pRemotePlayer)
-					{
-						if (pRemotePlayer->GetPlayerPed() && pRemotePlayer->GetPlayerPed()->IsAdded())
-						{
-							pPlayerPed = pRemotePlayer->GetPlayerPed();
-							for (size_t i = 0; i < 10; i++)
-							{
-								if (pPlayerPed->m_aAttachedObjects[i].bState)
-								{
-									if ((uintptr_t)pPlayerPed->m_aAttachedObjects[i].pObject->m_pEntity == thiz)
-									{
-										CObject *pObject = pPlayerPed->m_aAttachedObjects[i].pObject;
-										if (pObject->m_pEntity->mat->pos.x > 20000.0f
-											||	pObject->m_pEntity->mat->pos.y > 20000.0f
-											|| pObject->m_pEntity->mat->pos.z > 20000.0f
-											||	pObject->m_pEntity->mat->pos.x < -20000.0f
-											|| pObject->m_pEntity->mat->pos.y < -20000.0f
-											|| pObject->m_pEntity->mat->pos.z < -20000.0f)
-										{
-											/*if(pChatWindow)
-											{
-												pChatWindow->AddDebugMessage("WARNING!!! WARNING!!! WARNING!!! CRASH EXCEPTED!!!");
-											}*/
-											return 0;
-										}
-										// Log("Processing remote attached object. Player: %d", i);
-										// Log("is added: %d | model index: %d | gta id: %d | x: %.2f | y: %.2f | z: %.2f | flags: %d | vtable: %d | unk: %d", pObject->IsAdded(), pObject->GetModelIndex(), pObject->m_dwGTAId, pObject->m_pEntity->mat->pos.x, pObject->m_pEntity->mat->pos.y, pObject->m_pEntity->mat->pos.z, pObject->m_pEntity->dwProcessingFlags, pObject->m_pEntity->vtable, pObject->m_pEntity->dwUnkModelRel);
-										// result = CPhysical__Add(thiz);
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	/*if(result == 0)
-	{
-		Log("Processing unknown object.");
-		result = CPhysical__Add(thiz);
-	}*/
-
-	// Log("Processed.");
-
-	return CPhysical__Add(thiz);
-}
-
-
 int (*CCollision__ProcessVerticalLine)(float *a1, float *a2, int a3, int a4, int *a5, int a6, int a7, int a8);
 int CCollision__ProcessVerticalLine_hook(float *a1, float *a2, int a3, int a4, int *a5, int a6, int a7, int a8)
 {
@@ -2402,27 +2182,22 @@ int CTaskSimpleUseGun__SetPedPosition_hook(uintptr_t thiz, uintptr_t a2)
 						CVehiclePool* pVehiclePool = pNetGame->GetVehiclePool();
 						if(pVehiclePool)
 						{
-							for(VEHICLEID veh = 0; veh < MAX_VEHICLES; veh++)
+							for(const auto & pVehicle : pVehiclePool->m_pVehicles)
 							{
-								if(pVehiclePool->GetSlotState(veh))
-								{
-									CVehicle* pVehicle = pVehiclePool->GetAt(veh);
-									if(pVehicle)
-									{
-										MATRIX4X4 vehicleMat, playerMat;
-										pVehicle->GetMatrix(&vehicleMat);
-										pPlayerPed->GetMatrix(&playerMat);
+								if(pVehicle == nullptr || pVehicle->m_pVehicle) continue;
 
-										float fSX = (vehicleMat.pos.x - playerMat.pos.x) * (vehicleMat.pos.x - playerMat.pos.x);
-										float fSY = (vehicleMat.pos.y - playerMat.pos.y) * (vehicleMat.pos.y - playerMat.pos.y);
-										float fSZ = (vehicleMat.pos.z - playerMat.pos.z) * (vehicleMat.pos.z - playerMat.pos.z);
+								MATRIX4X4 vehicleMat, playerMat;
+								pVehicle->GetMatrix(&vehicleMat);
+								pPlayerPed->GetMatrix(&playerMat);
 
-										float fDistance = (float)sqrt(fSX + fSY + fSZ);
+								float fSX = (vehicleMat.pos.x - playerMat.pos.x) * (vehicleMat.pos.x - playerMat.pos.x);
+								float fSY = (vehicleMat.pos.y - playerMat.pos.y) * (vehicleMat.pos.y - playerMat.pos.y);
+								float fSZ = (vehicleMat.pos.z - playerMat.pos.z) * (vehicleMat.pos.z - playerMat.pos.z);
 
-										if(fDistance <= 100.0f)
-											*((unsigned char*)thiz + 13) |= 1;
-									}
-								}
+								auto fDistance = sqrt(fSX + fSY + fSZ);
+
+								if(fDistance <= 100.0f)
+									*((unsigned char*)thiz + 13) |= 1;
 							}
 						}
 					}
@@ -2750,8 +2525,6 @@ void CHud__DrawRadar_hook(uintptr_t* thiz)
 void InstallHooks()
 {
 	Log("InstallHooks");
-
-	PROTECT_CODE_INSTALLHOOKS;
 
 	//draw radar
 	CHook::InlineHook(g_libGTASA, 0x00437B0C, &CHud__DrawRadar_hook, &CHud__DrawRadar);

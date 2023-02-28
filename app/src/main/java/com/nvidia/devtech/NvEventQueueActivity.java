@@ -450,8 +450,6 @@ public abstract class NvEventQueueActivity extends Activity implements SensorEve
 
     public native boolean multiTouchEvent4(int i, int i2, int i3, int i4, int i5, int i6, int i7, int i8, int i9, int i10, MotionEvent motionEvent);
 
-    public native boolean customMultiTouchEvent(int action, int count, int x1, int y1, int x2, int y2,
-                                                int x3, int y3);
 	/**
 	 * END indented block, see in comment at top of block
 	 */

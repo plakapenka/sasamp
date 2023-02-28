@@ -168,15 +168,7 @@ public:
 
 	CVehicle *GetCurrentVehicle();
 
-	CVehicleGta *GetCurrentGtaVehicle();
-
-	uint32_t GetCurrentGTAVehicleID();
-
 	VEHICLEID GetCurrentSampVehicleID();
-
-	void TurnBody();
-
-    void ClearLook();
 
     void GiveWeapon(eWeaponType weaponType, uint32_t ammoQuantity, bool GenerateOldWeaponPickup);
 };

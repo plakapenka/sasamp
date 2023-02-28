@@ -804,7 +804,7 @@ void CRemotePlayer::StoreInCarFullSyncData(INCAR_SYNC_DATA *picSync, uint32_t dw
 
 	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
 	if (!pVehiclePool) return;
-	if (!pVehiclePool->GetSlotState(m_VehicleID)) return;
+	if (!pVehiclePool->m_pVehicles[m_VehicleID]) return;
 
 	m_pCurrentVehicle = pVehiclePool->GetAt(m_VehicleID);
 	if (!m_pCurrentVehicle)return;
@@ -828,7 +828,7 @@ void CRemotePlayer::StoreInCarFullSyncData(INCAR_SYNC_DATA *picSync, uint32_t dw
 		CVehicle *pTrailer = pVehiclePool->GetAt(m_icSync.TrailerID);
 		if(pTrailer) {
 			if (m_pCurrentVehicle->m_pTrailer) {
-				if ( (CVehicleGta*)(m_pCurrentVehicle->m_pVehicle->dwTrailer) != pTrailer->m_pVehicle) {
+				if ( m_pCurrentVehicle->m_pVehicle->pTrailer != pTrailer->m_pVehicle) {
 					m_pCurrentVehicle->DetachTrailer();
 				}
 			} else {
@@ -865,8 +865,8 @@ void CRemotePlayer::StorePassengerFullSyncData(PASSENGER_SYNC_DATA *ppsSync)
 	m_VehicleID = ppsSync->VehicleID;
 
 	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
-	if(!pVehiclePool) return;
-	if (!pVehiclePool->GetSlotState(m_VehicleID)) return;
+
+	if (!pVehiclePool->m_pVehicles[m_VehicleID]) return;
 
 	m_byteSeatID = ppsSync->byteSeatFlags & 127;
 	m_pCurrentVehicle = pVehiclePool->GetAt(m_VehicleID);
@@ -999,7 +999,8 @@ void CRemotePlayer::StateChange(BYTE byteNewState, BYTE byteOldState)
 
 		if(pLocalPlayerPed && pLocalPlayerPed->IsInVehicle() && !pLocalPlayerPed->IsAPassenger())
 		{
-			LocalVehicle = pNetGame->GetVehiclePool()->FindIDFromGtaPtr(pLocalPlayerPed->GetGtaVehicle());
+			LocalVehicle = pNetGame->GetVehiclePool()->findSampIdFromGtaPtr(
+					pLocalPlayerPed->GetGtaVehicle());
 			if(LocalVehicle == m_VehicleID) {
 				pLocalPlayerPed->GetMatrix(&mat);
 				pLocalPlayerPed->RemoveFromVehicleAndPutAt(mat.pos.x,mat.pos.y,mat.pos.z + 1.0f);

@@ -214,7 +214,7 @@ bool CLocalPlayer::Process()
 			if (m_pPlayerPed->IsAPassenger()) {
 
 				SendInCarFullSyncData();
-				m_LastVehicle = pNetGame->GetVehiclePool()->FindIDFromGtaPtr(
+				m_LastVehicle = pNetGame->GetVehiclePool()->findSampIdFromGtaPtr(
 						m_pPlayerPed->GetGtaVehicle());
 			}
 
@@ -374,11 +374,11 @@ bool CLocalPlayer::Process()
 					CHUD::toggleSirenButton(false);
 				}
 				if (pVehiclePool) {
-					VEHICLEID ClosetVehicleID = pVehiclePool->FindNearestToLocalPlayerPed();
+					auto pVehicle = pVehiclePool->FindNearestToLocalPlayerPed();
 
-					if (ClosetVehicleID != INVALID_VEHICLE_ID) {
-						CVehicle *pVehicle = pVehiclePool->GetAt(ClosetVehicleID);
-						if (pVehicle && pVehicle->GetDistanceFromLocalPlayerPed() < 4.0f  && !pVehicle->IsTrailer()) {
+					if (pVehicle != nullptr) {
+
+						if (pVehicle->GetDistanceFromLocalPlayerPed() < 4.0f  && !pVehicle->IsTrailer()) {
 							//if(!pVehicle->m_bIsLocked)
 							if (!pVehicle->m_bIsLocked) {// тачка открыта
 								if (!CHUD::bIsShowPassengerButt) {
@@ -544,15 +544,13 @@ void CLocalPlayer::GoEnterVehicle(bool passenger)
 	CVehiclePool* pVehiclePool = pNetGame->GetVehiclePool();
 	// CTouchInterface::IsHoldDown
 
-	VEHICLEID ClosetVehicleID = pVehiclePool->FindNearestToLocalPlayerPed();
-	if (ClosetVehicleID != INVALID_VEHICLE_ID)
+	auto pVehicle = pVehiclePool->FindNearestToLocalPlayerPed();
+	if (pVehicle != nullptr)
 	{
-		CVehicle* pVehicle = pVehiclePool->GetAt(ClosetVehicleID);
-
 		if (pVehicle != nullptr && pVehicle->GetDistanceFromLocalPlayerPed() < 4.0f)
 		{
 			m_pPlayerPed->EnterVehicle(pVehicle->m_dwGTAId, passenger);
-			SendEnterVehicleNotification(ClosetVehicleID, passenger);
+			SendEnterVehicleNotification(pVehicle->getSampId(), passenger);
 			m_dwPassengerEnterExit = GetTickCount();
 		}
 	}
@@ -970,10 +968,10 @@ void CLocalPlayer::SendInCarFullSyncData()
 
 	icSync.TrailerID = 0;
 
-	CVehicleGta* vehTrailer = (CVehicleGta*)pVehicle->m_pVehicle->dwTrailer;
-	if (vehTrailer != nullptr)
+	auto pTrailer = pVehicle->m_pVehicle->pTrailer;
+	if (pTrailer != nullptr)
 	{
-		uint16_t trailerId = pNetGame->GetVehiclePool()->FindIDFromGtaPtr(vehTrailer);
+		uint16_t trailerId = pNetGame->GetVehiclePool()->findSampIdFromGtaPtr(pTrailer);
 
 		if (ScriptCommand(&is_trailer_on_cab, trailerId, pVehicle->m_dwGTAId)) {
 			icSync.TrailerID = trailerId;
@@ -1176,19 +1174,10 @@ void CLocalPlayer::ProcessSpectating()
 	}
 	else if(m_byteSpectateType == SPECTATE_TYPE_VEHICLE)
 	{
-		CVehicle *pVehicle = nullptr;
-		uint32_t dwGTAId = 0;
+		CVehicle *pVehicle = pVehiclePool->m_pVehicles[ (VEHICLEID)m_SpectateID ];
 
-		if (pVehiclePool->GetSlotState((VEHICLEID)m_SpectateID)) 
-		{
-			pVehicle = pVehiclePool->GetAt((VEHICLEID)m_SpectateID);
-			if(pVehicle) 
-			{
-				dwGTAId = pVehicle->m_dwGTAId;
-				ScriptCommand(&camera_on_vehicle, dwGTAId, m_byteSpectateMode, 2);
-				m_bSpectateProcessed = true;
-			}
-		}
+		ScriptCommand(&camera_on_vehicle, pVehicle->m_dwGTAId, m_byteSpectateMode, 2);
+		m_bSpectateProcessed = true;
 	}	
 }
 
@@ -1223,7 +1212,7 @@ void CLocalPlayer::SpectateVehicle(VEHICLEID VehicleID)
 {
 	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
 
-	if (pVehiclePool && pVehiclePool->GetSlotState(VehicleID)) 
+	if (pVehiclePool && pVehiclePool->m_pVehicles[VehicleID])
 	{
 		m_byteSpectateType = SPECTATE_TYPE_VEHICLE;
 		m_SpectateID = VehicleID;

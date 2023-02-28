@@ -7,10 +7,9 @@ extern CNetGame *pNetGame;
 
 CVehiclePool::CVehiclePool()
 {
-	for(VEHICLEID VehicleID = 0; VehicleID < MAX_VEHICLES; VehicleID++)
+	for(auto & m_pVehicle : m_pVehicles)
 	{
-		m_bVehicleSlotState[VehicleID] = false;
-		m_pVehicles[VehicleID] = nullptr;
+		m_pVehicle = nullptr;
 	}
 }
 
@@ -21,117 +20,90 @@ CVehiclePool::~CVehiclePool()
 }
 
 CVehicle* CVehiclePool::GetVehicleFromTrailer(CVehicle *pTrailer) {
-	CVehicle *pVehicle;
-	CPlayerPool *pPlayerPool = pNetGame->GetPlayerPool();
-	CLocalPlayer *pLocalPlayer = pPlayerPool->GetLocalPlayer();
 
-	for (VEHICLEID x = 0; x < MAX_VEHICLES; x++) {
-		if (GetSlotState(x)) {
-			pVehicle = m_pVehicles[x];
+	for(const auto & pVehicle : m_pVehicles)
+	{
+		if(pVehicle == nullptr || pVehicle->m_pVehicle == nullptr)
+			continue;
 
-			if (m_bIsActive[x]) {
-				//Log("veh = %d, trailer = %d, needt = %d", pVehicle, pVehicle->m_pTrailer, pTrailer);
-				if(reinterpret_cast<CVehicleGta *>(pVehicle->m_pVehicle->dwTrailer) == pTrailer->m_pVehicle)
-				{
-					return pVehicle;
-				}
-			}
-		}
+		if(pVehicle->m_pVehicle->pTrailer == pTrailer->m_pVehicle)
+			return pVehicle;
 	}
+
 	return nullptr;
 }
 
 void CVehiclePool::Process()
 {
-	CVehicle *pVehicle;
-	CPlayerPool* pPlayerPool = pNetGame->GetPlayerPool();
-	//CLocalPlayer* pLocalPlayer = pPlayerPool->GetLocalPlayer();
 
-	for(VEHICLEID x = 0; x < MAX_VEHICLES; x++)
+	for(const auto & pVehicle : m_pVehicles)
 	{
-		if(GetSlotState(x))
-		{
-			pVehicle = m_pVehicles[x];
+		if (pVehicle == nullptr || pVehicle->m_pVehicle == nullptr)
+			continue;
 
-			if(m_bIsActive[x])
-			{
-				if (pVehicle->GetHealth() < 300.0f)
-				{
-					MATRIX4X4 matrix4X4;
-					pVehicle->GetMatrix(&matrix4X4);
-					pVehicle->SetMatrix(matrix4X4);
-					pVehicle->SetHealth(300.0f);
-				}
-				if(pVehicle->m_pVehicle->m_nCurrentGear == 0 && pVehicle->m_pVehicle->pHandling->m_transmissionData.m_fCurrentSpeed < -0.01 && pVehicle->m_bEngineOn)
-				{
-					if(pVehicle->m_pLeftReverseLight == nullptr) {
-						pVehicle->toggleReverseLight(true);
-					}
-				}
-				else {
-					if(pVehicle->m_pLeftReverseLight != nullptr) {
-						pVehicle->toggleReverseLight(false);
-					}
-				}
-				if(pVehicle->m_iTurnState == CVehicle::eTurnState::TURN_RIGHT)
-				{
-					if( !pVehicle->m_bIsOnRightTurnLight ) {
-						pVehicle->toggleLeftTurnLight(false);
-						pVehicle->toggleRightTurnLight(true);
-					}
-
-				}
-				else if(pVehicle->m_iTurnState == CVehicle::eTurnState::TURN_LEFT)
-				{
-					if( !pVehicle->m_bIsOnLeftTurnLight ) {
-						pVehicle->toggleRightTurnLight(false);
-						pVehicle->toggleLeftTurnLight(true);
-					}
-				}
-				else if(pVehicle->m_iTurnState == CVehicle::eTurnState::TURN_ALL)
-				{
-					if( !pVehicle->m_bIsOnAllTurnLight )
-					{
-						pVehicle->toggleLeftTurnLight(true);
-						pVehicle->toggleRightTurnLight(true);
-						pVehicle->m_bIsOnAllTurnLight = true;
-                        pVehicle->m_iTurnState = CVehicle::eTurnState::TURN_ALL;
-					}
-
-				}
-				else
-				{
-					if( pVehicle->m_bIsOnRightTurnLight )
-						pVehicle->toggleRightTurnLight(false);
-
-					if( pVehicle->m_bIsOnLeftTurnLight )
-						pVehicle->toggleLeftTurnLight(false);
-
-					if( pVehicle->m_bIsOnAllTurnLight ) {
-						pVehicle->toggleLeftTurnLight(false);
-						pVehicle->toggleRightTurnLight(false);
-
-					}
-					pVehicle->m_bIsOnAllTurnLight = false;
-					pVehicle->m_iTurnState = CVehicle::eTurnState::TURN_OFF;
-				}
-
-				pVehicle->SetEngineState(pVehicle->m_bEngineOn);
-				pVehicle->SetLightsState(pVehicle->m_bLightsOn);
-
-//				*(bool*)(pVehicle->m_pVehicle + 0x13C + 0x0BF) = 1;
-//                *(bool*)(pVehicle->m_pVehicle + 0x13C + 0x0C8) = 1;
-
-				pVehicle->ProcessDamage();
-
-				if(pVehicle->IsDriverLocalPlayer())
-					pVehicle->SetInvulnerable(false);
-				else
-					pVehicle->SetInvulnerable(true);
-
-				pVehicle->ProcessMarkers();
+		if (pVehicle->GetHealth() < 300.0f) {
+			MATRIX4X4 matrix4X4;
+			pVehicle->GetMatrix(&matrix4X4);
+			pVehicle->SetMatrix(matrix4X4);
+			pVehicle->SetHealth(300.0f);
+		}
+		if (pVehicle->m_pVehicle->m_nCurrentGear == 0 &&
+			pVehicle->m_pVehicle->pHandling->m_transmissionData.m_fCurrentSpeed < -0.01 &&
+			pVehicle->m_bEngineOn) {
+			if (pVehicle->m_pLeftReverseLight == nullptr) {
+				pVehicle->toggleReverseLight(true);
+			}
+		} else {
+			if (pVehicle->m_pLeftReverseLight != nullptr) {
+				pVehicle->toggleReverseLight(false);
 			}
 		}
+		if (pVehicle->m_iTurnState == CVehicle::eTurnState::TURN_RIGHT) {
+			if (!pVehicle->m_bIsOnRightTurnLight) {
+				pVehicle->toggleLeftTurnLight(false);
+				pVehicle->toggleRightTurnLight(true);
+			}
+
+		} else if (pVehicle->m_iTurnState == CVehicle::eTurnState::TURN_LEFT) {
+			if (!pVehicle->m_bIsOnLeftTurnLight) {
+				pVehicle->toggleRightTurnLight(false);
+				pVehicle->toggleLeftTurnLight(true);
+			}
+		} else if (pVehicle->m_iTurnState == CVehicle::eTurnState::TURN_ALL) {
+			if (!pVehicle->m_bIsOnAllTurnLight) {
+				pVehicle->toggleLeftTurnLight(true);
+				pVehicle->toggleRightTurnLight(true);
+				pVehicle->m_bIsOnAllTurnLight = true;
+				pVehicle->m_iTurnState = CVehicle::eTurnState::TURN_ALL;
+			}
+
+		} else {
+			if (pVehicle->m_bIsOnRightTurnLight)
+				pVehicle->toggleRightTurnLight(false);
+
+			if (pVehicle->m_bIsOnLeftTurnLight)
+				pVehicle->toggleLeftTurnLight(false);
+
+			if (pVehicle->m_bIsOnAllTurnLight) {
+				pVehicle->toggleLeftTurnLight(false);
+				pVehicle->toggleRightTurnLight(false);
+
+			}
+			pVehicle->m_bIsOnAllTurnLight = false;
+			pVehicle->m_iTurnState = CVehicle::eTurnState::TURN_OFF;
+		}
+
+		pVehicle->SetEngineState(pVehicle->m_bEngineOn);
+		pVehicle->SetLightsState(pVehicle->m_bLightsOn);
+
+		pVehicle->ProcessDamage();
+
+		if (pVehicle->IsDriverLocalPlayer())
+			pVehicle->SetInvulnerable(false);
+		else
+			pVehicle->SetInvulnerable(true);
+
+		pVehicle->ProcessMarkers();
 	}
 }
 #include "..//game/CCustomPlateManager.h"
@@ -164,9 +136,6 @@ bool CVehiclePool::New(NEW_VEHICLE *pNewVehicle)
 		// health
 		m_pVehicles[pNewVehicle->VehicleID]->SetHealth(pNewVehicle->fHealth);
 
-		// slot
-		m_bVehicleSlotState[pNewVehicle->VehicleID] = true;
-
 		// interior
 		if(pNewVehicle->byteInterior > 0)
 			LinkToInterior(pNewVehicle->VehicleID, pNewVehicle->byteInterior);
@@ -182,7 +151,6 @@ bool CVehiclePool::New(NEW_VEHICLE *pNewVehicle)
 					pNewVehicle->byteLightDamageStatus, pNewVehicle->byteTireDamageStatus);
 		}
 
-		m_bIsActive[pNewVehicle->VehicleID] = true;
 		m_bIsWasted[pNewVehicle->VehicleID] = false;
 
 		return true;
@@ -193,17 +161,13 @@ bool CVehiclePool::New(NEW_VEHICLE *pNewVehicle)
 
 bool CVehiclePool::Delete(VEHICLEID VehicleID)
 {
-	if(!GetSlotState(VehicleID) || !m_pVehicles[VehicleID])
-		return false;
-
-	m_bVehicleSlotState[VehicleID] = false;
 	delete m_pVehicles[VehicleID];
 	m_pVehicles[VehicleID] = nullptr;
 
 	return true;
 }
 
-VEHICLEID CVehiclePool::FindIDFromGtaPtr(CVehicleGta *pGtaVehicle)
+VEHICLEID CVehiclePool::findSampIdFromGtaPtr(CVehicleGta *pGtaVehicle)
 {
 	int x=1;
 
@@ -218,15 +182,10 @@ VEHICLEID CVehiclePool::FindIDFromGtaPtr(CVehicleGta *pGtaVehicle)
 
 CVehicle* CVehiclePool::FindVehicle(CVehicleGta *pGtaVehicle)
 {
-	for (size_t i = 0; i < MAX_VEHICLES; i++) {
-		if (GetSlotState(i)) {
-			CVehicle *pVehicle = GetAt(i);
-			if (pVehicle && pVehicle->IsAdded()) {
-				if (pVehicle->m_pVehicle == pGtaVehicle) {
-					return pVehicle;
-				}
-			}
-		}
+	for(const auto & i : m_pVehicles)
+	{
+		if(i->m_pVehicle != nullptr && i->m_pVehicle == pGtaVehicle)
+			return i;
 	}
 	return nullptr;
 }
@@ -255,26 +214,24 @@ int CVehiclePool::FindGtaIDFromID(int id)
 		return INVALID_VEHICLE_ID;
 }
 
-int CVehiclePool::FindNearestToLocalPlayerPed()
+CVehicle* CVehiclePool::FindNearestToLocalPlayerPed()
 {
 	float fLeastDistance = 10000.0f;
 	float fThisDistance = 0.0f;
-	VEHICLEID ClosetSoFar = INVALID_VEHICLE_ID;
 
-	VEHICLEID x = 0;
-	while(x < MAX_VEHICLES)
+	CVehicle* ClosetSoFar = nullptr;
+
+	for(const auto & pVehicle : m_pVehicles)
 	{
-		if(GetSlotState(x) && m_bIsActive[x])
-		{
-			fThisDistance = m_pVehicles[x]->GetDistanceFromLocalPlayerPed();
-			if(fThisDistance < fLeastDistance)
-			{
-				fLeastDistance = fThisDistance;
-				ClosetSoFar = x;
-			}
-		}
+		if(pVehicle == nullptr || pVehicle->m_pVehicle == nullptr)
+			continue;
 
-		x++;
+		fThisDistance = pVehicle->GetDistanceFromLocalPlayerPed();
+		if(fThisDistance < fLeastDistance)
+		{
+			fLeastDistance = fThisDistance;
+			ClosetSoFar = pVehicle;
+		}
 	}
 
 	return ClosetSoFar;
@@ -282,8 +239,7 @@ int CVehiclePool::FindNearestToLocalPlayerPed()
 
 void CVehiclePool::LinkToInterior(VEHICLEID VehicleID, int iInterior)
 {
-	if(m_bVehicleSlotState[VehicleID])
-		m_pVehicles[VehicleID]->LinkToInterior(iInterior);
+	m_pVehicles[VehicleID]->LinkToInterior(iInterior);
 }
 
 void CVehiclePool::NotifyVehicleDeath(VEHICLEID VehicleID)
@@ -299,10 +255,9 @@ void CVehiclePool::NotifyVehicleDeath(VEHICLEID VehicleID)
 
 void CVehiclePool::AssignSpecialParamsToVehicle(VEHICLEID VehicleID, uint8_t byteObjective, uint8_t byteDoorsLocked)
 {
-	if(!GetSlotState(VehicleID)) return;
 	CVehicle *pVehicle = m_pVehicles[VehicleID];
 
-	if(pVehicle && m_bIsActive[VehicleID])
+	if(pVehicle)
 	{
 		pVehicle->m_byteObjectiveVehicle = byteObjective;
 

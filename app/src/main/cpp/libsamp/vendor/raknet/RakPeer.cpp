@@ -2860,17 +2860,9 @@ extern CNetGame* pNetGame;
 
 #define WEAPON_SECURE 0x100
 #define WEAPON_SECURE_KEY	0x15
-#define GIVEPLAYERWEAPON_SERIAL 0xFFFFFF00
-
-#define CUSTOM_AUTH_TEXTDRAW	9999
-#define CUSTOM_AUTH_TEXTDRAW_VER2	10000
-
-#include "..//..//cryptors/SERVER_CHECK1_result.h"
-#include "..//..//cryptors/SERVER_CHECK2_result.h"
 
 static uint32_t FormSpecialNumber(char* pHash)
 {
-	PROTECT_CODE_SERVER_CHECK1;
 
 	uint32_t dwRet = 0;
 

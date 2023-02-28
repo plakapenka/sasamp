@@ -406,7 +406,7 @@ void CVehicle::toggleLeftTurnLight(bool toggle)
 
 VEHICLEID CVehicle::getSampId()
 {
-	return pNetGame->GetVehiclePool()->FindIDFromGtaPtr(m_pVehicle);
+	return pNetGame->GetVehiclePool()->findSampIdFromGtaPtr(m_pVehicle);
 }
 
 void CVehicle::LinkToInterior(int iInterior)
@@ -474,16 +474,6 @@ CVehicle* CVehicle::GetTrailer()
 	if (!m_pVehicle) return nullptr;
 
 	return m_pTrailer;
-//	// Try to find associated trailer
-//	uint32_t dwTrailerGTAPtr = m_pVehicle->dwTrailer;
-//
-//	if (pNetGame && dwTrailerGTAPtr) {
-//		CVehiclePool* pVehiclePool = pNetGame->GetVehiclePool();
-//		VEHICLEID TrailerID = (VEHICLEID)pVehiclePool->FindIDFromGtaPtr((CVehicleGta*)dwTrailerGTAPtr);
-//		if (TrailerID < MAX_VEHICLES && pVehiclePool->GetSlotState(TrailerID)) {
-//			return pVehiclePool->GetAt(TrailerID);
-//		}
-//	}
 }
 
 void CVehicle::SetHealth(float fHealth)
@@ -1364,12 +1354,10 @@ void CVehicle::SetComponentAngle(bool bUnk, int iID, float angle)
 	}
 }
 
-#include "..//cryptors/COMPONENT_VISIBLE_INTERNAL_result.h"
 
 void CVehicle::SetComponentVisibleInternal(const char* szComponent, bool bVisible)
 {
 
-	PROTECT_CODE_COMPONENT_VISIBLE_INTERNAL;
 	if (!m_pVehicle || !m_dwGTAId)
 	{
 		return;
@@ -1833,7 +1821,7 @@ void CVehicle::ProcessDamage()
 {
 	if (pNetGame)
 	{
-		VEHICLEID vehId = pNetGame->GetVehiclePool()->FindIDFromGtaPtr(m_pVehicle);
+		VEHICLEID vehId = pNetGame->GetVehiclePool()->findSampIdFromGtaPtr(m_pVehicle);
 		if (vehId != INVALID_VEHICLE_ID)
 		{
 			if (HasDamageModel())

@@ -180,8 +180,8 @@ struct CVehicleGta : CPhysicalGta
     float   m_fGearChangeCount; // used as parameter for cTransmission::CalculateDriveAcceleration, but doesn't change
     float   m_fWheelSpinForAudio;
     float fHealth;				// 1224-1228	;fHealth
-    uint32_t m_pTowingVehicle;
-    uint32_t dwTrailer;			// 1232 - 1236 - trailer
+    CVehicleGta* m_pTowingVehicle;
+    CVehicleGta* pTrailer;			// 1232 - 1236 - trailer
     uint8_t skip12[48];
     uint32_t dwDoorsLocked;
     uint32_t m_nProjectileWeaponFiringTime; // manual-aimed projectiles for hunter, lock-on projectile for hydra

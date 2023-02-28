@@ -728,7 +728,7 @@ VEHICLEID CPlayerPed::GetCurrentSampVehicleID()
 	if(!pVehiclePool)return INVALID_VEHICLE_ID;
 	if(!m_pPed->pVehicle)return INVALID_VEHICLE_ID;
 
-	return pVehiclePool->FindIDFromGtaPtr((CVehicleGta *)m_pPed->pVehicle);
+	return pVehiclePool->findSampIdFromGtaPtr((CVehicleGta *) m_pPed->pVehicle);
 }
 CVehicle* CPlayerPed::GetCurrentVehicle()
 {
@@ -736,29 +736,14 @@ CVehicle* CPlayerPed::GetCurrentVehicle()
 
 	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
 
-	for (size_t i = 0; i < MAX_VEHICLES; i++) {
-		if (pVehiclePool->GetSlotState(i)) {
-			CVehicle *pVehicle = pVehiclePool->GetAt(i);
-			if (pVehicle && pVehicle->IsAdded()) {
-				if (pVehicle->m_pVehicle == (CVehicleGta *) m_pPed->pVehicle) {
-					return pVehicle;
-				}
-			}
-		}
+	for(const auto & pVehicle : pVehiclePool->m_pVehicles)
+	{
+		if(pVehicle == nullptr || pVehicle->m_pVehicle == nullptr) continue;
+
+		if(pVehicle->m_pVehicle == m_pPed->pVehicle)
+			return pVehicle;
 	}
 	return nullptr;
-}
-
-CVehicleGta* CPlayerPed::GetCurrentGtaVehicle()
-{
-	if(!m_pPed) return nullptr;
-
-	return (CVehicleGta *)m_pPed->pVehicle;
-}
-
-uint32_t CPlayerPed::GetCurrentGTAVehicleID(){
-	if(!m_pPed) return 0;
-	return GamePool_Vehicle_GetIndex(reinterpret_cast<CVehicleGta *>(m_pPed->pVehicle));
 }
 
 int CPlayerPed::GetVehicleSeatID()
@@ -1568,7 +1553,7 @@ PLAYERID CPlayerPed::FindDeathResponsiblePlayer()
 			}
 			else
 			{
-				if(pVehiclePool->FindIDFromGtaPtr((CVehicleGta *)m_pPed->pdwDamageEntity) != INVALID_VEHICLE_ID)
+				if(pVehiclePool->findSampIdFromGtaPtr((CVehicleGta *) m_pPed->pdwDamageEntity) != INVALID_VEHICLE_ID)
 				{
 					CVehicleGta *pGtaVehicle = (CVehicleGta *)m_pPed->pdwDamageEntity;
 					PlayerIDWhoKilled = pPlayerPool->FindRemotePlayerIDFromGtaPtr((CPedGta *)pGtaVehicle->pDriver);
@@ -1896,7 +1881,8 @@ void CPlayerPed::ProcessBulletData(BULLET_DATA* btData)
 									PlayerID = pPlayerPool->FindRemotePlayerIDFromGtaPtr((CPedGta*)btData->pEntity);
 									if (PlayerID == INVALID_PLAYER_ID)
 									{
-										VehicleID = pVehiclePool->FindIDFromGtaPtr((CVehicleGta*)btData->pEntity);
+										VehicleID = pVehiclePool->findSampIdFromGtaPtr(
+												(CVehicleGta *) btData->pEntity);
 										if (VehicleID == INVALID_VEHICLE_ID)
 										{
 											ObjectID = pObjectPool->FindIDFromGtaPtr(btData->pEntity);

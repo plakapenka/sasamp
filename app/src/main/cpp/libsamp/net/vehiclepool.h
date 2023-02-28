@@ -34,31 +34,22 @@ public:
 
 	CVehicle* GetAt(VEHICLEID VehicleID)
 	{
-		if(VehicleID >= MAX_VEHICLES || !m_bVehicleSlotState[VehicleID])
-			return nullptr;
 		return m_pVehicles[VehicleID];
 	}
 
-	bool GetSlotState(VEHICLEID VehicleID)
-	{
-		if(VehicleID >= MAX_VEHICLES)
-			return false;
-		return m_bVehicleSlotState[VehicleID];
-	}
 
-	VEHICLEID FindIDFromGtaPtr(CVehicleGta * pGtaVehicle);
+	VEHICLEID findSampIdFromGtaPtr(CVehicleGta * pGtaVehicle);
 	VEHICLEID FindIDFromRwObject(RwObject* pRWObject);
 	int FindGtaIDFromID(int ID);
 	
 	void AssignSpecialParamsToVehicle(VEHICLEID VehicleID, uint8_t byteObjective, uint8_t byteDoorsLocked);
 
-	int FindNearestToLocalPlayerPed();
+	CVehicle* FindNearestToLocalPlayerPed();
 
 	void LinkToInterior(VEHICLEID VehicleID, int iInterior);
 
 	void NotifyVehicleDeath(VEHICLEID VehicleID);
 
-	bool			m_bIsActive[MAX_VEHICLES];
 	CVehicle*		m_pVehicles[MAX_VEHICLES];
 
 	CVehicle *GetVehicleFromTrailer(CVehicle *pTrailer);
@@ -66,7 +57,6 @@ public:
 	CVehicle *FindVehicle(CVehicleGta *pGtaVehicle);
 
 private:
-	bool			m_bVehicleSlotState[MAX_VEHICLES];
 	bool			m_bIsWasted[MAX_VEHICLES];
 
 };

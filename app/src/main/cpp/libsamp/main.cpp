@@ -69,7 +69,6 @@ void PrintBuildCrashInfo()
 #include "vendor/bass/bass.h"
 #include "gui/CFontRenderer.h"
 #include "util/CJavaWrapper.h"
-#include "cryptors/INITSAMP_result.h"
 #include "CDebugInfo.h"
 
 void InitSAMP(JNIEnv* pEnv, jobject thiz)

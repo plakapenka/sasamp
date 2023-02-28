@@ -1,15 +1,9 @@
 #include "CTEA.h"
 
-#ifndef _MSC_VER
-#include "..//..//libsamp/cryptors/TINY_ENCRYPT_result.h"
-#include "..//..//libsamp/cryptors/TEARAK_result.h"
-#endif
+
 
 void CTEA::EncryptBlock(unsigned int num_rounds, uint32_t v[2])
 {
-#ifndef _MSC_VER
-	PROTECT_CODE_TEARAK;
-#endif
 
 	/* set up */
 	uint32_t v0 = v[0];
@@ -41,9 +35,6 @@ void CTEA::EncryptBlock(unsigned int num_rounds, uint32_t v[2])
 
 void CTEA::DecryptBlock(unsigned int num_rounds, uint32_t v[2])
 {
-#ifndef _MSC_VER
-	PROTECT_CODE_TINY_ENCRYPT;
-#endif
 	
 	/* set up */
 	uint32_t v0 = v[0];

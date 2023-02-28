@@ -661,7 +661,7 @@ void ScrVehicleParamsEx(RPCParameters* rpcParams)
 
 	if (pNetGame && pNetGame->GetVehiclePool())
 	{
-		if (pNetGame->GetVehiclePool()->GetSlotState(VehicleId))
+		if (pNetGame->GetVehiclePool()->m_pVehicles[VehicleId])
 		{
 			// doors
 			pNetGame->GetVehiclePool()->GetAt(VehicleId)->SetDoorState(doors);
@@ -734,7 +734,7 @@ void ScrSetVehicleHealth(RPCParameters *rpcParams)
 {
 	Log("RPC: ScrSetVehicleHealth");
 
-	unsigned char* Data = reinterpret_cast<unsigned char *>(rpcParams->input);
+	unsigned char* Data = rpcParams->input;
 	int iBitLength = rpcParams->numberOfBitsOfData;
 
 	RakNet::BitStream bsData((unsigned char*)Data,(iBitLength/8)+1,false);
@@ -744,8 +744,12 @@ void ScrSetVehicleHealth(RPCParameters *rpcParams)
 	bsData.Read(VehicleID);
 	bsData.Read(fHealth);
 
-	if(pNetGame->GetVehiclePool()->GetSlotState(VehicleID))
-		pNetGame->GetVehiclePool()->GetAt(VehicleID)->SetHealth(fHealth);
+	auto pVehicle = pNetGame->GetVehiclePool()->GetAt(VehicleID);
+
+	if(pVehicle && pVehicle->m_pVehicle)
+	{
+		pVehicle->SetHealth(fHealth);
+	}
 }
 
 void ScrSetVehiclePos(RPCParameters *rpcParams)
@@ -763,16 +767,16 @@ void ScrSetVehiclePos(RPCParameters *rpcParams)
 	bsData.Read(fY);
 	bsData.Read(fZ);
 
-	if(pNetGame && pNetGame->GetVehiclePool())
+	auto pVehicle = pNetGame->GetVehiclePool()->GetAt(VehicleId);
+
+	if(pVehicle && pVehicle->m_pVehicle)
 	{
-		if(pNetGame->GetVehiclePool()->GetSlotState(VehicleId))
-			pNetGame->GetVehiclePool()->GetAt(VehicleId)->TeleportTo(fX, fY, fZ);
+		pVehicle->TeleportTo(fX, fY, fZ);
 	}
 }
 
 void ScrSetVehicleVelocity(RPCParameters *rpcParams)
 {
-	Log("RPC: ScrSetVehicleVelocity");
 
 	unsigned char* Data = reinterpret_cast<unsigned char *>(rpcParams->input);
 	int iBitLength = rpcParams->numberOfBitsOfData;
@@ -785,16 +789,13 @@ void ScrSetVehicleVelocity(RPCParameters *rpcParams)
 	bsData.Read(vecMoveSpeed.x);
 	bsData.Read(vecMoveSpeed.y);
 	bsData.Read(vecMoveSpeed.z);
-	Log("X: %f, Y: %f, Z: %f", vecMoveSpeed.x, vecMoveSpeed.y, vecMoveSpeed.z);
 
-	CVehiclePool *pVehiclePool = pNetGame->GetVehiclePool();
-	CPlayerPed *pPlayerPed = pGame->FindPlayerPed();
+	auto pPlayerPed = pGame->FindPlayerPed();
+	auto pVehicle = pPlayerPed->GetCurrentVehicle();
 
-	if(pPlayerPed)
+	if(pVehicle != nullptr)
 	{
-		CVehicle *pVehicle = pVehiclePool->GetAt( pVehiclePool->FindIDFromGtaPtr(pPlayerPed->GetGtaVehicle()));
-		if(pVehicle)
-			pVehicle->SetMoveSpeedVector(vecMoveSpeed);
+		pVehicle->SetMoveSpeedVector(vecMoveSpeed);
 	}
 }
 

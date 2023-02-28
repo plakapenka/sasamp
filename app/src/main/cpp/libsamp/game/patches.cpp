@@ -102,11 +102,9 @@ void ApplyPatches_level0()
 	Log("ApplyPatches_level0");
 
 	CWorld::Players = new CPlayerInfoGta[MAX_PLAYERS]{nullptr};
-//	CHook::Write(g_libGTASA + 0x006783C0, CWorld::Players);
-	CHook::Write(g_libGTASA + 0x0096B69C, CWorld::Players);
+	CHook::Write(g_libGTASA + 0x006783C0, CWorld::Players);
 
-    //CHook::Write(g_libGTASA + 0x00679B5C, &CWorld::PlayerInFocus);
-	CHook::Write(g_libGTASA + 0x0096B9C4, CWorld::PlayerInFocus);
+    CHook::Write(g_libGTASA + 0x00679B5C, &CWorld::PlayerInFocus);
 
     CHook::Redirect(g_libGTASA, 0x0042CA1C, &CUtil::FindPlayerSlotWithPedPointer);
 

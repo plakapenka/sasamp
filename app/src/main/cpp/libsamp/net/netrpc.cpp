@@ -1078,7 +1078,9 @@ void DamageVehicle(RPCParameters* rpcParams)
 	VEHICLEID vehId;
 	bsData.Read(vehId);
 
-	if (pNetGame->GetVehiclePool()->GetSlotState(vehId))
+	CVehicle* pVehicle = pNetGame->GetVehiclePool()->m_pVehicles[vehId];
+
+	if (pVehicle != nullptr)
 	{
 		uint32_t dwPanelStatus, dwDoorStatus;
 		uint8_t byteLightStatus, byteTireStatus;
@@ -1088,9 +1090,7 @@ void DamageVehicle(RPCParameters* rpcParams)
 		bsData.Read(byteLightStatus);
 		bsData.Read(byteTireStatus);
 
-		CVehicle* pVehicle = pNetGame->GetVehiclePool()->GetAt(vehId);
-		if (pVehicle)
-			pVehicle->UpdateDamageStatus(dwPanelStatus, dwDoorStatus, byteLightStatus, byteTireStatus);
+		pVehicle->UpdateDamageStatus(dwPanelStatus, dwDoorStatus, byteLightStatus, byteTireStatus);
 	}
 }
 

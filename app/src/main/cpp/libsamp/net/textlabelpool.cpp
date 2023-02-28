@@ -107,32 +107,11 @@ void CText3DLabelsPool::DrawAttachedToVehicle(TEXT_LABELS* pLabel)
 	CVector pos;
 	memset((void*)&pos, 0, sizeof(CVector));
 
-	VEHICLEID vehId = pLabel->attachedToVehicleID;
+	auto pVehicle = pNetGame->GetVehiclePool()->m_pVehicles[ pLabel->attachedToVehicleID ];
 
-	CVehiclePool* pVehiclePool = nullptr;
-	if (pNetGame)
-	{
-		pVehiclePool = pNetGame->GetVehiclePool();
-	}
-	if (!pVehiclePool)
-	{
+	if(pVehicle == nullptr || pVehicle->m_pVehicle == nullptr)
 		return;
-	}
 
-	if (!pVehiclePool->GetSlotState(vehId))
-	{
-		return;
-	}
-
-	CVehicle* pVehicle = pVehiclePool->GetAt(vehId);
-	if (!pVehicle)
-	{
-		return;
-	}
-	if (!pVehicle->IsAdded())
-	{
-		return;
-	}
 	MATRIX4X4 mat;
 	memset((void*)& mat, 0, sizeof(MATRIX4X4));
 
@@ -161,7 +140,7 @@ void CText3DLabelsPool::DrawVehiclesInfo()
 	}
 	for(int i = 0; i < MAX_VEHICLES; i++)
 	{
-		if(pVehiclePool->GetSlotState(i) && pVehiclePool->m_bIsActive[i])
+		if(pVehiclePool->m_pVehicles[i])
 		{
 			int distance = pVehiclePool->m_pVehicles[i]->GetDistanceFromLocalPlayerPed();
 			if(distance < 20){

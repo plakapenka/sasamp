@@ -1,9 +1,5 @@
 #include "CXTEA3.h"
 
-#ifndef _MSC_VER
-#include "..//..//libsamp/cryptors/XTEA3_result.h"
-#endif
-
 static uint32_t rol(uint32_t base, uint32_t shift)
 {
 	uint32_t res;
@@ -38,9 +34,6 @@ void CXTEA3::EncryptBlock(unsigned int num_rounds, uint32_t* v)
 
 void CXTEA3::DecryptBlock(unsigned int num_rounds, uint32_t* v)
 {
-#ifndef _MSC_VER
-	PROTECT_CODE_XTEA3;
-#endif
 
 	unsigned int i;
 	uint32_t a, b, c, d, t, delta = 0x9E3779B9, sum = delta * num_rounds;
