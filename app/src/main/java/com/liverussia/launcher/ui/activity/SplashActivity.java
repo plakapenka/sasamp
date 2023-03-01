@@ -60,6 +60,7 @@ public class SplashActivity extends AppCompatActivity {
 		MainUtils.SERVERS = new ArrayList<>();
 		MainUtils.NEWS = new ArrayList<>();
 	}
+
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
 		checkAndroidVersion();
@@ -159,9 +160,9 @@ public class SplashActivity extends AppCompatActivity {
 	}
 
 	private void checkVersion(LatestVersionInfoDto latestVersionInfo) {
-
 		int currentVersion = getCurrentVersion();
 		int latestVersion = Integer.parseInt(latestVersionInfo.getVersion());
+		MainUtils.LATEST_APK_INFO = latestVersionInfo;
 
 		if (currentVersion >= latestVersion) {
 			startLauncher();
@@ -169,7 +170,6 @@ public class SplashActivity extends AppCompatActivity {
 		}
 
 		MainUtils.setType(DownloadType.UPDATE_APK);
-		MainUtils.LATEST_APK_INFO = latestVersionInfo;
 		startActivity(new Intent(this, LoaderActivity.class));
 	}
 

@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private final static int GAME_DIRECTORY_EMPTY_SIZE = 0;
     private final static int LAST_VERSION_WITHOUT_NEED_PERMS = 23;
     private static final int SERVER_LOCKED_VALUE = 1;
+    private static final String TEST_MODE_ON_VALUE = "1";
 
     private Handler handler;
     private Animation animation;
@@ -294,14 +295,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void onClickPlay() {
+        //TODO удалить через какое-то время
         String isTestMode = "0";
         NativeStorage.addClientProperty(NativeStorageElements.TEST, isTestMode, this);
-      //  String isTestMode = NativeStorage.getClientProperty(NativeStorageElements.TEST, this);
+        //TODO
 
-//        if (StringUtils.isNotBlank(isTestMode) && Integer.parseInt(isTestMode) == 1) {
-//            startGame();
-//        } else {
-      //  startGame();
+        if (isCheckSkipping()) {
+            startGame();
+        } else {
             File gameDirectory = new File(this.getExternalFilesDir(null).toString());
 
             if (gameDirectory.list() != null && gameDirectory.list().length > GAME_DIRECTORY_EMPTY_SIZE) {
@@ -312,7 +313,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 MainUtils.setType(DownloadType.LOAD_ALL_CACHE);
                 startActivity(new Intent(this, LoaderActivity.class));
             }
-       // }
+        }
+    }
+
+    private boolean isCheckSkipping() {
+        String isTestMode = NativeStorage.getClientProperty(NativeStorageElements.TEST, this);
+
+        return TEST_MODE_ON_VALUE.equals(isTestMode)
+                || !Boolean.TRUE.equals(MainUtils.LATEST_APK_INFO.getIsCheckFilesOn());
     }
 
     private void doAfterCacheChecked(FileInfo[] fileToReloadArray) {
