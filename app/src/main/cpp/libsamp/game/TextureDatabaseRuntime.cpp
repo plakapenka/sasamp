@@ -12,6 +12,11 @@ TextureDatabase* TextureDatabaseRuntime::Load(const char *withName, bool fullyLo
     return ((TextureDatabase* (*)(const char*, int, int))(g_libGTASA + 0x001EA864 + 1))(withName, fullyLoad, forcedFormat);
 }
 
+TextureDatabase* TextureDatabaseRuntime::GetDatabase(const char *a1)
+{
+    return ((TextureDatabase* (*)(const char*))(g_libGTASA + 0x001EAC0C + 1))(a1);
+}
+
 void TextureDatabaseRuntime::Register(TextureDatabase *toRegister)
 {
     ((void (*)(TextureDatabase*))(g_libGTASA + 0x001E9B48 + 1))(toRegister);

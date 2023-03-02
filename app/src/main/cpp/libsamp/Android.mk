@@ -3,8 +3,7 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := samp
-LOCAL_LDLIBS := -llog -lGLESv3
-LOCAL_XOM := false
+LOCAL_LDLIBS := -llog
 LOCAL_C_INCLUDES += $(wildcard $(LOCAL_PATH)/vendor/)
 
 # samp

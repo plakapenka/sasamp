@@ -628,31 +628,32 @@ uint32_t CPad__GetWeapon_hook(uintptr_t thiz, uintptr_t ped, bool unk)
 #include "gui/gui.h"
 
 
-uintptr_t g_playerPed;
+CPlayerPed* g_playerPed;
 
-uintptr_t(*ProcessPlayerWeapon)(uintptr_t thiz, uintptr_t playerPed);
-uintptr_t ProcessPlayerWeapon_hook(uintptr_t thiz, uintptr_t playerPed)
+void (*ProcessPlayerWeapon)(uintptr_t thiz, CPlayerPed* playerPed);
+void ProcessPlayerWeapon_hook(uintptr_t thiz, CPlayerPed* playerPed)
 {
 	g_playerPed = playerPed;
-	uintptr_t toRetn = ProcessPlayerWeapon(thiz, playerPed);
 
-	g_playerPed = 0;
-	return toRetn;
+	ProcessPlayerWeapon(thiz, playerPed);
+
+	g_playerPed = nullptr;
 }
 
-uint32_t(*GetTarget)(uintptr_t thiz, int a2);
-uint32_t GetTarget_hook(uintptr_t thiz, int a2)
+bool (*GetTarget)(uintptr_t *thiz, bool bCheckWidget);
+bool GetTarget_hook(uintptr_t *thiz, bool bCheckWidget)
 {
-	if (!g_playerPed)
-	{
-		return GetTarget(thiz, a2);
-	}
-	if (!(*(uint32_t*)(g_playerPed + 1088)))
-	{
-		return GetTarget(thiz, a2);
-	}
-
-	return *(uint8_t*)(*(uint32_t*)(g_playerPed + 1088) + 52) & 0b00001000;
+//	if (!g_playerPed)
+//	{
+//		return GetTarget(thiz, a2);
+//	}
+//	if (!(*(uint32_t*)(g_playerPed + 1088)))
+//	{
+//		return GetTarget(thiz, a2);
+//	}
+//
+//	return *(uint8_t*)(*(uint32_t*)(g_playerPed + 1088) + 52) & 0b00001000;
+	return false;
 }
 
 uint32_t(*CPad__GetEnterTargeting)(uintptr_t thiz);

@@ -31,6 +31,8 @@ public:
     static void Register(TextureDatabase *thiz);
 
     static void Unregister(TextureDatabase *toUnregister);
+
+    static TextureDatabase *GetDatabase(const char *a1);
 };
 
 

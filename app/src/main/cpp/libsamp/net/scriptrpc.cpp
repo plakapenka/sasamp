@@ -443,7 +443,6 @@ void ScrSetPlayerInterior(RPCParameters *rpcParams)
 
 void ScrSetMapIcon(RPCParameters *rpcParams)
 {
-	Log("RPC: ScrSetMapIcon");
 	unsigned char* Data = reinterpret_cast<unsigned char *>(rpcParams->input);
 	int iBitLength = rpcParams->numberOfBitsOfData;
 
@@ -979,7 +978,6 @@ void ScrCreateObject(RPCParameters* rpcParams)
 	bsData.Read(iMaterialCount);
 
 	iTotalObjects++;
-	Log("ID: %d, model: %d. iTotalObjects = %d", wObjectID, ModelID, iTotalObjects);
 
 	CObjectPool* pObjectPool = pNetGame->GetObjectPool();
 	pObjectPool->New(wObjectID, ModelID, vecPos, vecRot, fDrawDistance);

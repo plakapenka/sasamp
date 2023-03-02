@@ -19,6 +19,5 @@ public:
 	static void SetDrawFPS(bool bDraw);
 
 	static void Draw();
-	static void ApplyDebugPatches();
 };
 

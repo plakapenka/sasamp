@@ -228,20 +228,21 @@ void ApplyPatches()
     CHook::RET(g_libGTASA + 0x002E833C); // CCarCtrl::GenerateRandomCars()
     CHook::RET(g_libGTASA + 0x0040B078); // CPlayerInfo::FindObjectToSteal
     CHook::RET(g_libGTASA + 0x00306F40); // CEntryExit::GenerateAmbientPeds
-    CHook::RET(g_libGTASA + 0x002BCCF8);// Весь худ одной строкой?
 	CHook::RET(g_libGTASA + 0x004D5E70); // cover хуевер
+	CHook::RET(g_libGTASA + 0x002BCCF8);// здоровье, броня, фист звезды и тп
 	CHook::RET(g_libGTASA + 0x00436FAC); // CHud::SetHelpMessage
+	CHook::RET(g_libGTASA + 0x00438684); // CHud::DrawVehicleName
+	CHook::RET(g_libGTASA + 0x004211F0); // CPlaceName::Process
+	CHook::RET(g_libGTASA + 0x004397B4); // CHud::DrawBustedWastedMessage // ПОТРАЧЕНО
+	CHook::RET(g_libGTASA + 0x00352154); // in game radio
+	CHook::RET(g_libGTASA + 0x003BD974); // звук загрузочного экрана
 
-	CHook::WriteMemory(g_libGTASA + 0x00427D5C, "\x02\x21", 2);
+	//CHook::WriteMemory(g_libGTASA + 0x00427D5C, "\x02\x21", 2); // CWorld::Process
 
 	ApplyShadowPatch();
 //    ApplyDefaultPlatePatch();
 //
 //	//CHook::Write<uint32_t>(g_libGTASA + 0x8E87E4, 1);
-//
-//	CDebugInfo::ApplyDebugPatches();
-//
-////	NOP(g_libGTASA + 0x0049052A, 42); // братки залазят в тачку с тобой
 //
 //	// nop check CWorld::FindPlayerSlotWithPedPointer (fuck*** R*)
 //	// just left mov r4, r0 and ldr r1 [pc, shit]

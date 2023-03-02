@@ -71,16 +71,3 @@ void CDebugInfo::Draw()
 		}
 	}
 }
-
-void CDebugInfo::ApplyDebugPatches()
-{
-#ifdef DEBUG_INFO_ENABLED
-
-	CHook::UnFuck(g_libGTASA + 0x008B8018);
-	*(uint8_t*)(g_libGTASA + 0x008B8018) = 1;
-	CHook::NOP(g_libGTASA + 0x00399EDA, 2);
-	CHook::NOP(g_libGTASA + 0x00399F46, 2);
-	CHook::NOP(g_libGTASA + 0x00399F92, 2);
-
-#endif
-}

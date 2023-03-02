@@ -1092,7 +1092,6 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_CUSTOM_HANDLING:
 		{
-			Log("RPC_CUSTOM_HANDLING");
 			uint16_t veh;
 			uint8_t value;
 			bs.Read(veh);
@@ -1105,7 +1104,6 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 				bs.Read(id);
 				bs.Read(fvalue);
 				comps.push_back(SHandlingData(id, fvalue, 0));
-				Log("Pushed %d %f", id, fvalue);
 			}
 			if (m_pVehiclePool)
 			{

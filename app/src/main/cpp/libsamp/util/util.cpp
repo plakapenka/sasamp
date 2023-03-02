@@ -8,6 +8,23 @@ bool CUtil::IsValidGameVehicle(CVehicleGta *pVehicle)
 	return (((bool (*)(CVehicleGta *))(g_libGTASA+0x5109E8+1))(pVehicle));
 }
 
+RwTexture* CUtil::GetTexture(const char* name)
+{
+	RwTexture* result = TextureDatabaseRuntime::GetTexture(name);
+
+	if (!result)
+	{
+		Log("Texture %s was not found", name);
+		return nullptr;
+	}
+	else
+	{
+		Log("Texture %s", name);
+		++*(int32_t *)(result + 0x54); // ++result->refCount;
+		return result;
+	}
+}
+
 bool CUtil::IsValidGamePed(CPedGta * pPed)
 {
 	// IsPedPointerValid(CPed *) — 0x00435614
@@ -25,12 +42,10 @@ bool CUtil::IsGameEntityArePlaceable(CEntityGta *pEntity)
 	return false;
 }
 
-extern RwTexture* GetTexture_hook(const char* name);
-
 RwTexture* CUtil::LoadTextureFromDB(const char* dbname, const char* texture)
 {
 	// TextureDatabaseRuntime::GetDatabase(dbname)
-	TextureDatabase* db_handle = (( TextureDatabase* (*)(const char*))(g_libGTASA + 0x001EAC0C + 1))(dbname);
+	TextureDatabase* db_handle = TextureDatabaseRuntime::GetDatabase(dbname);
 
 	if(!db_handle)
 	{
@@ -40,7 +55,7 @@ RwTexture* CUtil::LoadTextureFromDB(const char* dbname, const char* texture)
 
 	TextureDatabaseRuntime::Register(db_handle);
 
-	auto tex = (( RwTexture* (*)(const char*))(g_libGTASA + 0x00297280 + 1))(texture);
+	auto tex = CUtil::GetTexture(texture);
 
 	if(!tex)
 		Log("Error: Texture (%s) not found in database (%s)", dbname, texture);

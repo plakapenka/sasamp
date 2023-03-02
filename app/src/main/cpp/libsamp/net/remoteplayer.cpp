@@ -503,8 +503,8 @@ void CRemotePlayer::StoreTrailerFullSyncData(TRAILER_SYNC_DATA* trSync)
 	if (!TrailerID) return;
 
 	CVehicle* pVehicle = pNetGame->GetVehiclePool()->GetAt(TrailerID);
-
-	if (pVehicle)
+	Log("TrailerID = %d", TrailerID);
+	if (pVehicle != nullptr && pVehicle->m_pVehicle != nullptr )
 	{
 		MATRIX4X4 matWorld;
 

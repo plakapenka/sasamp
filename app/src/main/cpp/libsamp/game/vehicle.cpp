@@ -809,12 +809,6 @@ void CVehicle::SetHandlingData(std::vector<SHandlingData>& vHandlingData)
 	CVehicleModelInfo* pModelInfoStart = static_cast<CVehicleModelInfo *>(CModelInfo::GetModelInfo(
 			m_pVehicle->nModelIndex));
 
-	Log("model = %d, pointer = %x, v = %x, e = %x, model = %d",
-		m_pVehicle->nModelIndex,
-		pModelInfoStart,
-		m_pVehicle,
-		m_pVehicle,
-		m_pVehicle + 0x026);
 	if (!pModelInfoStart)
 	{
 		return;

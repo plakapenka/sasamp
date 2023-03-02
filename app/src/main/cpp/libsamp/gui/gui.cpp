@@ -107,44 +107,7 @@ CGUI::~CGUI()
 	ImGui_ImplRenderWare_ShutDown();
 	ImGui::DestroyContext();
 }
-#include "..//CServerManager.h"
-bool g_IsVoiceServer()
-{
-	return true;
-}
 
-void CGUI::PreProcessInput()
-{
-	ImGuiIO& io = ImGui::GetIO();
-
-	io.MousePos = m_vTouchPos;
-	io.MouseDown[0] = m_bMouseDown;
-	if (!m_bNeedClearMousePos && m_bNextClear)
-	{
-		m_bNextClear = false;
-	}
-	if (m_bNeedClearMousePos && m_bNextClear)
-	{
-		io.MousePos = ImVec2(-1, -1);
-		m_bNextClear = true;
-	}
-}
-
-void CGUI::PostProcessInput()
-{
-	ImGuiIO& io = ImGui::GetIO();
-
-	if (m_bNeedClearMousePos && io.MouseDown[0])
-	{
-		return;
-	}
-
-	if (m_bNeedClearMousePos && !io.MouseDown[0])
-	{
-		io.MousePos = ImVec2(-1, -1);
-		m_bNextClear = true;
-	}
-}
 #include "..//CDebugInfo.h"
 #include "java_systems/CDialog.h"
 #include "java_systems/CSpeedometr.h"
@@ -190,10 +153,10 @@ void CGUI::Render()
 	}
 
 	CKeyBoard::Render();
-
 	CDebugInfo::Draw();
 
 	ImGui::EndFrame();
+
 	ImGui::Render();
 	ImGui_ImplRenderWare_RenderDrawData(ImGui::GetDrawData());
 

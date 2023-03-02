@@ -2,10 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.liverussia.cr">
-    <meta-data android:name="android.app.GTASA"
-        android:value="native-activity" />
-    <meta-data android:name="android.app.SAMP"
-        android:value="native-activity" />
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -23,7 +19,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-feature android:glEsVersion="0x00030001" android:required="true"/>
+    <uses-feature android:glEsVersion="0x00020000" android:required="true"/>
     <uses-feature
         android:name="android.hardware.touchscreen"
         android:required="false" />

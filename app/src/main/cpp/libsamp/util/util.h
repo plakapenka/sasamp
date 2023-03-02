@@ -26,6 +26,8 @@ public:
     static CPhysicalGta *GetPoolObj(int slot);
 
     static CPedGta *GetPoolPed(int slot);
+
+    static RwTexture *GetTexture(const char *name);
 };
 
 void cp1251_to_utf8(char *out, const char *in, unsigned int len = 0);
