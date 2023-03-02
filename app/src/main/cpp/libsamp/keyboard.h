@@ -57,7 +57,7 @@ public:
 	static std::string m_sInput;
 
 	static int dop_butt;
-private:
+public:
 	static void Render();
 	static bool OnTouchEvent(int type, bool multi, int x, int y);
 

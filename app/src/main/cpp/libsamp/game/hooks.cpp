@@ -162,22 +162,37 @@ stFile* NvFOpen_hook(const char* r0, const char* r1, int r2, int r3)
 		return nullptr;
 	}
 }
-
+#include "keyboard.h"
 void Render2dStuff()
 {
-	int tick = GetTickCount();
-
 	if (pGUI) pGUI->Render();
 
-	( ( void(*)(bool) )(g_libGTASA + 0x002B0BD8 + 1) )(false); // render widgets
-	( ( void(*)() )(g_libGTASA + 0x00437200 + 1) )(); // прицел
-	( ( void(*)() )(g_libGTASA + 0x00437B0C + 1) )(); // радар
+	if(!CKeyBoard::m_bEnable)
+		( ( void(*)(bool) )(g_libGTASA + 0x002B0BD8 + 1) )(false); // render widgets
 
-	if (CHUD::bIsShow) CHUD::UpdateHudInfo();
+	( ( void(*)() )(g_libGTASA + 0x00437200 + 1) )(); // прицел
+
+
+	if (CHUD::bIsShow) {
+		CHUD::UpdateHudInfo();
+
+		float* radar = (float*) CGtaWidgets::pWidgets[0xA1];
+
+		//thiz[0] = (float)100;
+		if (radar)
+		{
+
+			radar[3] = CHUD::radarPos.X;
+			radar[4] = CHUD::radarPos.Y;
+
+			radar[5] = 38.0f;
+			radar[6] = 38.0f;
+		}
+
+		( ( void(*)() )(g_libGTASA + 0x00437B0C + 1) )(); // радар
+	}
 
 	MainLoop();
-
-	Log("loss = %d", GetTickCount() - tick);
 }
 
 // OsArray<FlowScreen::MenuItem>::Add
@@ -2471,18 +2486,7 @@ void CHud__DrawRadar_hook(uintptr_t* thiz)
 {
 	if(CHUD::bIsShow)
 	{
-		float* radar = (float*) CGtaWidgets::pWidgets[0xA1];
 
-		//thiz[0] = (float)100;
-		if (radar)
-		{
-
-			radar[3] = CHUD::radarPos.X;
-			radar[4] = CHUD::radarPos.Y;
-
-			radar[5] = 38.0f;
-			radar[6] = 38.0f;
-		}
 		CHud__DrawRadar(thiz);
 	}
 
@@ -2504,7 +2508,7 @@ void InstallHooks()
 //	CHook::InlineHook(g_libGTASA, 0x0058AE18, &AddWaterSplashParticles_hook, &AddWaterSplashParticles);
 
 	//draw radar
-	CHook::InlineHook(g_libGTASA, 0x00437B0C, &CHud__DrawRadar_hook, &CHud__DrawRadar);
+	//CHook::InlineHook(g_libGTASA, 0x00437B0C, &CHud__DrawRadar_hook, &CHud__DrawRadar);
 //
 //    // Fixing a crosshair by very stupid math ( JPATCH )
 //	m_f3rdPersonCHairMultX = (float*)(g_libGTASA + 0x008B07FC);
