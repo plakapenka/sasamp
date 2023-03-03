@@ -43,7 +43,7 @@ extern bool g_bIsTestMode;
 
 bool isEncrypted(const char *szArch)
 {
-    if(g_bIsTestMode)return false;
+ //   if(g_bIsTestMode)return false;
 	//return false;
     for (const auto & i : encrArch)
     {
@@ -241,12 +241,12 @@ void InitialiseRenderWare_hook() {
 	TextureDatabaseRuntime::Load("menu", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_PVR);
 
 	//skins
-//	TextureDatabase* skins = TextureDatabaseRuntime::Load("skins", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
-//	TextureDatabaseRuntime::Register(skins);
+	TextureDatabase* skins = TextureDatabaseRuntime::Load("skins", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
+	TextureDatabaseRuntime::Register(skins);
 ////
 ////	// cars
-//	TextureDatabase* cars = TextureDatabaseRuntime::Load("cars", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
-//	TextureDatabaseRuntime::Register(cars);
+	TextureDatabase* cars = TextureDatabaseRuntime::Load("cars", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
+	TextureDatabaseRuntime::Register(cars);
 
 	InitialiseRenderWare();
 }
@@ -312,8 +312,8 @@ void CStreaming_InitImageList_hook()
 	*(uint32_t*)&ms_files[380] = 0;
 
 	CStreaming::AddImageToList("TEXDB\\GTA3.IMG", true);
-//	CStreaming::AddImageToList("TEXDB\\SKINS.IMG", true);
-//    CStreaming::AddImageToList("TEXDB\\CARS.IMG", true);
+	CStreaming::AddImageToList("TEXDB\\SKINS.IMG", true);
+    CStreaming::AddImageToList("TEXDB\\CARS.IMG", true);
 	CStreaming::AddImageToList("TEXDB\\SAMPCOL.IMG", true);
 	CStreaming::AddImageToList("TEXDB\\SAMP.IMG", true);
 }
