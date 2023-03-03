@@ -6,10 +6,9 @@ CPlayerPool::CPlayerPool()
 {
 	m_pLocalPlayer = new CLocalPlayer();
 
-	for(PLAYERID playerId = 0; playerId < MAX_PLAYERS; playerId++)
+	for(auto & m_pPlayer : m_pPlayers)
 	{
-		m_bPlayerSlotState[playerId] = false;
-		m_pPlayers[playerId] = nullptr;
+		m_pPlayer = nullptr;
 	}
 }
 
@@ -92,24 +91,24 @@ void CPlayerPool::UpdatePing(PLAYERID playerId, uint32_t dwPing)
 	}
 }
 
-bool CPlayerPool::Process()
+void CPlayerPool::Process()
 {
-	for(PLAYERID playerId = 0; playerId < MAX_PLAYERS; playerId++) {
-		if (m_bPlayerSlotState[playerId]) {
-			m_pPlayers[playerId]->Process();
+	for(const auto & player : m_pPlayers)
+	{
+		if(player == nullptr)
+			continue;
 
-		}
+		player->Process();
 	}
 
 	m_pLocalPlayer->Process();
-	return true;
 }
 
 PLAYERID CPlayerPool::GetCount()
 {
 	PLAYERID byteCount = 0;
 	for (PLAYERID p = 0; p < MAX_PLAYERS; p++) {
-		if (GetSlotState(p)) byteCount++;
+		if (m_pPlayers[p]) byteCount++;
 	}
 	return byteCount;
 }
@@ -122,7 +121,6 @@ bool CPlayerPool::New(PLAYERID playerId, char *szPlayerName, bool IsNPC)
 		strcpy(m_szPlayerNames[playerId], szPlayerName);
 		m_pPlayers[playerId]->SetID(playerId);
 		m_pPlayers[playerId]->SetNPC(IsNPC);
-		m_bPlayerSlotState[playerId] = true;
 
 		return true;
 	}
@@ -133,13 +131,12 @@ bool CPlayerPool::New(PLAYERID playerId, char *szPlayerName, bool IsNPC)
 bool CPlayerPool::Delete(PLAYERID playerId, uint8_t byteReason)
 {
 	Log("CPlayerPool::Delete %d", playerId);
-	if(!GetSlotState(playerId) || !m_pPlayers[playerId])
+	if(!m_pPlayers[playerId])
 		return false;
 
 	if(GetLocalPlayer()->IsSpectating() && GetLocalPlayer()->m_SpectateID == playerId)
 		GetLocalPlayer()->ToggleSpectating(false);
 
-	m_bPlayerSlotState[playerId] = false;
 	delete m_pPlayers[playerId];
 	m_pPlayers[playerId] = nullptr;
 
@@ -150,16 +147,16 @@ PLAYERID CPlayerPool::FindRemotePlayerIDFromGtaPtr(CPedGta * pActor)
 {
 	CPlayerPed *pPlayerPed;
 
-	for(PLAYERID playerId = 0; playerId < MAX_PLAYERS; playerId++)
+	for(auto & m_pPlayer : m_pPlayers)
 	{
-		if(true == m_bPlayerSlotState[playerId])
+		if(m_pPlayer)
 		{
-			pPlayerPed = m_pPlayers[playerId]->GetPlayerPed();
+			pPlayerPed = m_pPlayer->GetPlayerPed();
 
 			if(pPlayerPed) {
 				CPedGta *pTestActor = pPlayerPed->GetGtaActor();
 				if((pTestActor != NULL) && (pActor == pTestActor)) // found it
-					return m_pPlayers[playerId]->GetID();
+					return m_pPlayer->GetID();
 			}
 		}
 	}

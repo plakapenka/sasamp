@@ -636,7 +636,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 				{
 					if (pPlayerPool)
 					{
-						if(pPlayerPool->GetSlotState(playerID[i]))
+						if(pPlayerPool->m_pPlayers[playerID[i]])
 						{
 							strcpy(playerName[i], pPlayerPool->GetPlayerName(playerID[i]));
 						}
@@ -1898,7 +1898,7 @@ void CNetGame::Packet_MarkersSync(Packet *pkt)
 				bsMarkersSync.Read(sPos[2]);
 			}
 
-			if(playerId < MAX_PLAYERS && m_pPlayerPool->GetSlotState(playerId))
+			if(playerId < MAX_PLAYERS && m_pPlayerPool->m_pPlayers[playerId])
 			{
 				pPlayer = m_pPlayerPool->GetAt(playerId);
 				if(pPlayer)

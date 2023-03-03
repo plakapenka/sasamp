@@ -8,7 +8,7 @@ public:
 	CPlayerPool();
 	~CPlayerPool();
 
-	bool Process();
+	void Process();
 	PLAYERID GetCount();
 	// LOCAL
 
@@ -49,18 +49,12 @@ public:
 		return m_pPlayers[playerId];
 	}
 
-	bool GetSlotState(PLAYERID playerId)
-	{
-		if(playerId >= MAX_PLAYERS) return false;
-		return m_bPlayerSlotState[playerId];
-	};
-
 	void SetPlayerName(PLAYERID playerId, char* szName) { strcpy(m_szPlayerNames[playerId], szName); }
 	char* GetPlayerName(PLAYERID playerId) {
 		if(playerId == GetLocalPlayerID()) {
 			return GetLocalPlayerName();
 		}
-		if(GetSlotState(playerId)) {
+		if(m_pPlayers[playerId] != nullptr) {
 			return m_szPlayerNames[playerId];
 		}
 		return "None";
@@ -72,6 +66,8 @@ public:
 
 	void ApplyCollisionChecking();
 
+// REMOTE
+CRemotePlayer	*m_pPlayers[MAX_PLAYERS]{nullptr};
 private:
 	// LOCAL
 	PLAYERID		m_LocalPlayerID;
@@ -80,9 +76,6 @@ private:
 	int				m_iLocalPlayerScore;
 	uint32_t		m_dwLocalPlayerPing;
 
-	// REMOTE
-	CRemotePlayer	*m_pPlayers[MAX_PLAYERS];
-	bool			m_bPlayerSlotState[MAX_PLAYERS];
 	char			m_szPlayerNames[MAX_PLAYERS][MAX_PLAYER_NAME+1];
 	int				m_iPlayerScores[MAX_PLAYERS];
 	uint32_t		m_dwPlayerPings[MAX_PLAYERS];

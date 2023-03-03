@@ -540,8 +540,8 @@ void CHUD::addGiveDamageNotify(PLAYERID Id, int weaponId, float damage)
     if(!CSettings::m_Settings.iIsEnableDamageInformer) return;
 
     CPlayerPool* pPlayerPool = pNetGame->GetPlayerPool();
-    if(!pPlayerPool)return;
-    if(!pPlayerPool->GetSlotState(Id))return;
+
+    if(!pPlayerPool->m_pPlayers[Id])return;
 
     if(damage > 200) damage = 200.0f;
 

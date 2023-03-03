@@ -867,7 +867,7 @@ void CLocalPlayer::SendBulletSyncData(PLAYERID byteHitID, uint8_t byteHitType, C
 		case BULLET_HIT_TYPE_NONE:
 			break;
 		case BULLET_HIT_TYPE_PLAYER:
-			if (!pNetGame->GetPlayerPool()->GetSlotState((PLAYERID)byteHitID)) return;
+			if (!pNetGame->GetPlayerPool()->m_pPlayers[byteHitID]) return;
 			break;
 
 	}
@@ -1131,7 +1131,7 @@ void CLocalPlayer::ProcessSpectating()
 
 	// handle spectate player left the server
 	if(m_byteSpectateType == SPECTATE_TYPE_PLAYER &&
-		!pPlayerPool->GetSlotState(m_SpectateID))
+		!pPlayerPool->m_pPlayers[m_SpectateID])
 	{
 		m_byteSpectateType = SPECTATE_TYPE_NONE;
 		m_bSpectateProcessed = false;
@@ -1139,7 +1139,7 @@ void CLocalPlayer::ProcessSpectating()
 
 	// handle spectate player is no longer active (ie Died)
 	if(m_byteSpectateType == SPECTATE_TYPE_PLAYER &&
-		pPlayerPool->GetSlotState(m_SpectateID) &&
+		pPlayerPool->m_pPlayers[m_SpectateID] &&
 		(!pPlayerPool->GetAt(m_SpectateID)->IsActive() ||
 		pPlayerPool->GetAt(m_SpectateID)->GetState() == PLAYER_STATE_WASTED))
 	{
@@ -1161,7 +1161,7 @@ void CLocalPlayer::ProcessSpectating()
 		uint32_t dwGTAId = 0;
 		CPlayerPed *pPlayerPed = nullptr;
 
-		if(pPlayerPool->GetSlotState(m_SpectateID))
+		if(pPlayerPool->m_pPlayers[m_SpectateID])
 		{
 			pPlayerPed = pPlayerPool->GetAt(m_SpectateID)->GetPlayerPed();
 			if(pPlayerPed)
@@ -1174,7 +1174,7 @@ void CLocalPlayer::ProcessSpectating()
 	}
 	else if(m_byteSpectateType == SPECTATE_TYPE_VEHICLE)
 	{
-		CVehicle *pVehicle = pVehiclePool->m_pVehicles[ (VEHICLEID)m_SpectateID ];
+		auto pVehicle = pVehiclePool->m_pVehicles[ (VEHICLEID)m_SpectateID ];
 
 		ScriptCommand(&camera_on_vehicle, pVehicle->m_dwGTAId, m_byteSpectateMode, 2);
 		m_bSpectateProcessed = true;
@@ -1196,7 +1196,7 @@ void CLocalPlayer::SpectatePlayer(PLAYERID playerId)
 {
 	CPlayerPool *pPlayerPool = pNetGame->GetPlayerPool();
 
-	if(pPlayerPool && pPlayerPool->GetSlotState(playerId))
+	if(pPlayerPool && pPlayerPool->m_pPlayers[playerId])
 	{
 		if(pPlayerPool->GetAt(playerId)->GetState() != PLAYER_STATE_NONE &&
 			pPlayerPool->GetAt(playerId)->GetState() != PLAYER_STATE_WASTED)

@@ -127,7 +127,7 @@ void ScrSetFightingStyle(RPCParameters *rpcParams)
 	{
 		if(playerId == pPlayerPool->GetLocalPlayerID())
 			pPlayerPed = pPlayerPool->GetLocalPlayer()->GetPlayerPed();
-		else if(pPlayerPool->GetSlotState(playerId)) 
+		else if(pPlayerPool->m_pPlayers[playerId])
 			pPlayerPed = pPlayerPool->GetAt(playerId)->GetPlayerPed();
 
 		if(pPlayerPed)				
@@ -151,7 +151,7 @@ void ScrSetPlayerSkin(RPCParameters *rpcParams)
 		pPlayerPool->GetLocalPlayer()->GetPlayerPed()->SetModelIndex(uiSkin);
 	else
 	{
-		if(pPlayerPool->GetSlotState(iPlayerID) && pPlayerPool->GetAt(iPlayerID)->GetPlayerPed())
+		if(pPlayerPool->m_pPlayers[iPlayerID] && pPlayerPool->GetAt(iPlayerID)->GetPlayerPed())
 			pPlayerPool->GetAt(iPlayerID)->GetPlayerPed()->SetModelIndex(uiSkin);
 	}
 }
@@ -198,7 +198,7 @@ void ScrApplyPlayerAnimation(RPCParameters *rpcParams)
 		if(pPlayerPool->GetLocalPlayerID() == playerId) {
 			pPlayerPed = pPlayerPool->GetLocalPlayer()->GetPlayerPed();
 		}
-		else if(pPlayerPool->GetSlotState(playerId))
+		else if(pPlayerPool->m_pPlayers[playerId])
 			pPlayerPed = pPlayerPool->GetAt(playerId)->GetPlayerPed();
 
 		if(pPlayerPed)
@@ -230,7 +230,7 @@ void ScrClearPlayerAnimations(RPCParameters *rpcParams)
 		}
 		else 
 		{
-			if(pPlayerPool->GetSlotState(playerId))
+			if(pPlayerPool->m_pPlayers[playerId])
 				pPlayerPed = pPlayerPool->GetAt(playerId)->GetPlayerPed();
 		}
 		
@@ -513,7 +513,7 @@ void ScrSetPlayerSpectating(RPCParameters *rpcParams)
 	RakNet::BitStream bsData((unsigned char*)Data,(iBitLength/8)+1,false);
 	bsData.Read(playerId);
 	CPlayerPool *pPlayerPool = pNetGame->GetPlayerPool();
-	if (pPlayerPool->GetSlotState(playerId))
+	if (pPlayerPool->m_pPlayers[playerId])
 		pPlayerPool->GetAt(playerId)->SetState(PLAYER_STATE_SPECTATING);
 }
 
@@ -1439,7 +1439,7 @@ void ScrSetPlayerAttachedObject(RPCParameters* rpcParams)
 	}
 	else
 	{
-		if (pNetGame->GetPlayerPool()->GetSlotState(id))
+		if (pNetGame->GetPlayerPool()->m_pPlayers[id])
 		{
 			pPed = pNetGame->GetPlayerPool()->GetAt(id)->GetPlayerPed();
 		}

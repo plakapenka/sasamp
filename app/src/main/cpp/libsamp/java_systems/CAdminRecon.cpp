@@ -44,11 +44,10 @@ void CAdminRecon::tempToggle(bool toggle){
 void CAdminRecon::show(int targetId){
     JNIEnv* env = g_pJavaWrapper->GetEnv();
     if(!env)return;
-    if(!pNetGame)return;
 
     CPlayerPool *pPlayerPool = pNetGame->GetPlayerPool();
-    if(!pPlayerPool)return;
-    if(!pPlayerPool->GetSlotState(targetId))return;
+
+    if(!pPlayerPool->m_pPlayers[targetId])return;
 
     jstring jName = env->NewStringUTF( pPlayerPool->GetPlayerName(targetId) );
 

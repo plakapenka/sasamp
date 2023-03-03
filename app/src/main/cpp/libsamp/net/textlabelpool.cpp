@@ -63,7 +63,7 @@ void CText3DLabelsPool::DrawAttachedToPlayer(TEXT_LABELS* pLabel)
 		return;
 	}
 
-	if (!pPlayerPool->GetSlotState(playerId))
+	if (!pPlayerPool->m_pPlayers[playerId])
 	{
 		return;
 	}

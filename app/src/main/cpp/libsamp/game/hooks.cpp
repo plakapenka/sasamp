@@ -241,12 +241,12 @@ void InitialiseRenderWare_hook() {
 	TextureDatabaseRuntime::Load("menu", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_PVR);
 
 	//skins
-	TextureDatabase* skins = TextureDatabaseRuntime::Load("skins", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
-	TextureDatabaseRuntime::Register(skins);
-//
-//	// cars
-	TextureDatabase* cars = TextureDatabaseRuntime::Load("cars", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
-	TextureDatabaseRuntime::Register(cars);
+//	TextureDatabase* skins = TextureDatabaseRuntime::Load("skins", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
+//	TextureDatabaseRuntime::Register(skins);
+////
+////	// cars
+//	TextureDatabase* cars = TextureDatabaseRuntime::Load("cars", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
+//	TextureDatabaseRuntime::Register(cars);
 
 	InitialiseRenderWare();
 }
@@ -312,8 +312,8 @@ void CStreaming_InitImageList_hook()
 	*(uint32_t*)&ms_files[380] = 0;
 
 	CStreaming::AddImageToList("TEXDB\\GTA3.IMG", true);
-	CStreaming::AddImageToList("TEXDB\\SKINS.IMG", true);
-    CStreaming::AddImageToList("TEXDB\\CARS.IMG", true);
+//	CStreaming::AddImageToList("TEXDB\\SKINS.IMG", true);
+//    CStreaming::AddImageToList("TEXDB\\CARS.IMG", true);
 	CStreaming::AddImageToList("TEXDB\\SAMPCOL.IMG", true);
 	CStreaming::AddImageToList("TEXDB\\SAMP.IMG", true);
 }
@@ -1058,13 +1058,8 @@ void CPedDamageResponseCalculator__ComputeDamageResponse_hook(stPedDamageRespons
 				pPlayerPool->GetLocalPlayer()->GiveTakeDamage(true, damagedid, fDamage, weaponid, bodypart);
 
 				char nick[MAX_PLAYER_NAME];
-				if( pPlayerPool->GetSlotState(damagedid) )
-				{
-					strcpy(nick, pPlayerPool->GetPlayerName(damagedid));
-				}
-				else {
-					strcpy(nick, "None");
-				}
+				strcpy(nick, pPlayerPool->GetPlayerName(damagedid));
+
 				CHUD::addTakeDamageNotify(pPlayerPool->GetPlayerName(damagedid), weaponid, fDamage);
 			}
 		}
@@ -1130,7 +1125,7 @@ uint64_t CWorld_ProcessPedsAfterPreRender_hook()
 			}
 			else
 			{
-				if (pNetGame->GetPlayerPool()->GetSlotState(i))
+				if (pNetGame->GetPlayerPool()->m_pPlayers[i])
 				{
 					pPed = pNetGame->GetPlayerPool()->GetAt(i)->GetPlayerPed();
 				}

@@ -46,7 +46,7 @@ void CPlayerTags::Render()
 		pGame->FindPlayerPed()->GetMatrix(&matLocal);
 
 		for(PLAYERID playerId = 0; playerId < MAX_PLAYERS; playerId++) {
-			if (pPlayerPool->GetSlotState(playerId) == true) {
+			if (pPlayerPool->m_pPlayers[playerId] != nullptr) {
 				CRemotePlayer *pPlayer = pPlayerPool->GetAt(playerId);
 
 				if (pPlayer && pPlayer->IsActive() && pPlayer->m_bShowNameTag) {

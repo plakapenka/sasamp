@@ -47,7 +47,7 @@ void CTab::update() {
     PLAYERID i = 1, x;
     for (x = 0; x < MAX_PLAYERS; x++)
     {
-        if (!pPlayerPool->GetSlotState(x)) continue;
+        if (!pPlayerPool->m_pPlayers[x]) continue;
 
         CTab::setStat(x,
                 pPlayerPool->GetPlayerName(x),
