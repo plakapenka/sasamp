@@ -295,10 +295,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void onClickPlay() {
-        //TODO удалить через какое-то время
-        String isTestMode = "0";
-        NativeStorage.addClientProperty(NativeStorageElements.TEST, isTestMode, this);
-        //TODO
+        String isTestMode = NativeStorage.getClientProperty(NativeStorageElements.TEST, this);
 
         if (isCheckSkipping()) {
             startGame();

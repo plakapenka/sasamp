@@ -48,38 +48,6 @@ public class NvUtil
 			Environment.getExternalStorageDirectory().getAbsolutePath());
 	}
 
-	public void appendLog(String text)
-	{
-		String path = getAppLocalValue("STORAGE_ROOT");
-		path += "SAMP/javalog.txt";
-		File logFile = new File(path);
-		if (!logFile.exists())
-		{
-			try
-			{
-				logFile.createNewFile();
-			}
-			catch (IOException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		try
-		{
-			//BufferedWriter for performance, true to set append to file flag
-			BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
-			buf.append(text);
-			buf.newLine();
-			buf.close();
-		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
 	public void setActivity(Activity activity)
 	{
 		this.activity = activity;

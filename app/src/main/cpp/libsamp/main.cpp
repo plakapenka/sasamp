@@ -16,7 +16,6 @@
 #include "java_systems/CHUD.h"
 #include "CLoader.h"
 
-#include "CCheckFileHash.h"
 #include "str_obfuscator_no_template.hpp"
 
 #include "crashlytics.h"
@@ -536,15 +535,13 @@ void Log(const char *fmt, ...)
 
 	if(flLog == nullptr && g_pszStorage != nullptr)
 	{
-		sprintf(buffer, "%sSAMP/samp_log.txt", g_pszStorage);
-		flLog = fopen(buffer, "a");
+		sprintf(buffer, "%slog.txt", g_pszStorage);
+		flLog = fopen(buffer, "ab");
 	}
 
 	if(flLog == nullptr) return;
 	fprintf(flLog, "%s\n", buffer);
 	fflush(flLog);
-
-	return;
 }
 
 void CrashLog(const char* fmt, ...)
@@ -564,15 +561,13 @@ void CrashLog(const char* fmt, ...)
 
 	if (flLog == nullptr && g_pszStorage != nullptr)
 	{
-		sprintf(buffer, "%sSAMP/crash_log.log", g_pszStorage);
-		flLog = fopen(buffer, "a");
+		sprintf(buffer, "%scrash_log.txt", g_pszStorage);
+		flLog = fopen(buffer, "ab");
 	}
 
 	if (flLog == nullptr) return;
 	fprintf(flLog, "%s\n", buffer);
 	fflush(flLog);
-
-	return;
 }
 
 uint32_t GetTickCount()

@@ -34,18 +34,4 @@
         app:layout_constraintLeft_toLeftOf="@+id/loadscreen_progressBar"
         app:layout_constraintRight_toRightOf="@+id/loadscreen_progressBar"/>
 
-    <TextView
-        android:id="@+id/loadscreen_action_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:fontFamily="@font/visby_round_cf_extra_bold"
-        android:shadowColor="@color/black"
-        android:shadowRadius="5"
-        android:text="Создание java классов .."
-        android:textColor="#e3f2fd"
-        android:textSize="@dimen/_13sdp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -269,14 +269,8 @@ void ApplyPatches()
 	// live russia
 	CHook::RET(g_libGTASA + 0x0051DEC4);			// живность в воде WaterCreatureManager_c::Update
 	CHook::RET(g_libGTASA + 0x27DB98);				// Весь худ одной строкой?
-	//CHook::NOP(g_libGTASA + 0x0027E21A, 2); 	// CWidgetPlayerInfo::DrawWeaponIcon
-	//CHook::NOP(g_libGTASA + 0x0027E24E, 2); 	// CWidgetPlayerInfo::DrawWanted
-	//CHook::NOP(g_libGTASA + 0x0027E1E8, 2); 	// CWidgetPlayerInfo::RenderBreathBar
-	//CHook::NOP(g_libGTASA + 0x0027E1AE, 2); 	// CWidgetPlayerInfo::RenderArmorBar
-	//CHook::NOP(g_libGTASA + 0x0027E188, 2); 	// CWidgetPlayerInfo::RenderHealthBar
-	//CHook::NOP(g_libGTASA + 0x27E158, 2); 	// PrintMoney
-	//CHook::NOP(g_libGTASA + 0x27E056, 2); 	// PrintTime
-	CHook::NOP(g_libGTASA + 0x0039ADE6, 2);	// CCoronas::RenderSunReflection crash
+
+//	CHook::NOP(g_libGTASA + 0x0039ADE6, 2);	// CCoronas::RenderSunReflection crash
 	CHook::NOP(g_libGTASA + 0x0051018A, 2);	// не давать ган при выходе из тачки 	( клюшка, дробовик and etc )
 	CHook::NOP(g_libGTASA + 0x005101A6, 2);	// не давать ган при выходе из тачки	( клюшка, дробовик and etc )
 
@@ -357,76 +351,11 @@ void ApplyPatches()
 
 	CHook::NOP(g_libGTASA + 0x00454950, 17); // CAnimManager::RemoveAnimBlockRef
 
-	// CPed pool (old: 140, new: 210)
-	/* 	MOVW R0, #0x5EC8
-		MOVT R0, #6 */
-	CHook::WriteMemory(g_libGTASA + 0x3AF2D0, (uintptr_t)"\x45\xF6\xC8\x60\xC0\xF2\x06\x00", 8); // MOV  R0, #0x65EC8 | size=0x7C4 (old: 0x43F30)
-	CHook::WriteMemory(g_libGTASA + 0x3AF2DE, (uintptr_t)"\xD2\x20", 2); // MOVS R0, #0xD2
-	CHook::WriteMemory(g_libGTASA + 0x3AF2E4, (uintptr_t)"\xD2\x22", 2); // MOVS R2, #0xD2
-	CHook::WriteMemory(g_libGTASA + 0x3AF310, (uintptr_t)"\xD2\x2B", 2); // CMP  R3, #0xD2
-
-	// CPedIntelligence pool (old: 140, new: 210)
-	// movw r0, #0x20B0
-	// movt r0, #2
-	// nop
-	CHook::WriteMemory(g_libGTASA + 0x3AF7E6, (uintptr_t)"\x42\xF2\xB0\x00\xC0\xF2\x02\x00\x00\x46", 10); // MOVS R0, #0x220B0 | size=0x298 (old: 0x16B20)
-	CHook::WriteMemory(g_libGTASA + 0x3AF7F6, (uintptr_t)"\xD2\x20", 2); // MOVS R0, #0xD2
-	CHook::WriteMemory(g_libGTASA + 0x3AF7FC, (uintptr_t)"\xD2\x22", 2); // MOVS R2, #0xD2
-	CHook::WriteMemory(g_libGTASA + 0x3AF824, (uintptr_t)"\xD2\x2B", 2); // CMP  R3, 0xD2
-
-	// Task pool (old: 500, new: 1524 (1536))
-	CHook::WriteMemory(g_libGTASA + 0x3AF4EA, (uintptr_t)"\x4F\xF4\x40\x30", 4); // MOV.W R0, #30000 | size = 0x80 (old: 0xFA00)
-	CHook::WriteMemory(g_libGTASA + 0x3AF4F4, (uintptr_t)"\x4F\xF4\xC0\x60", 4); // MOV.W R0, #0x600
-	CHook::WriteMemory(g_libGTASA + 0x3AF4FC, (uintptr_t)"\x4F\xF4\xC0\x62", 4); // MOV.W R2, #0x600
-	CHook::WriteMemory(g_libGTASA + 0x3AF52A, (uintptr_t)"\xB3\xF5\xC0\x6F", 4); // CMP.W R3, #0x600
-
 	// TxdStore pool (old: 5000, new: 20000)
 	CHook::WriteMemory(g_libGTASA + 0x0055BA9A, (uintptr_t)"\x4f\xf4\xb8\x50\xc0\xf2\x11\x00", 8); //  MOV.W	R0, #0x1700 | MOVT	R0, #0x11
 	//CHook::WriteMemory(g_libGTASA + 0x55BA9E, "\xC0\xF2\x11\x00", 4);
 	CHook::WriteMemory(g_libGTASA + 0x0055BAA8, (uintptr_t)"\x44\xf6\x20\x60", 4); // MOVW	R0, #0x4E20
 	CHook::WriteMemory(g_libGTASA + 0x0055BAB0, (uintptr_t)"\x44\xf6\x20\x62", 4); // MOVW	R2, #0x4E20
-
-	// Event pool (old: 200, new: 512)
-
-	// Object pool (old: 350, new: 2992)
-	CHook::WriteMemory(g_libGTASA + 0x003AF3D6, (uintptr_t)"\x4f\xf4\x7e\x40\xc0\xf2\x12\x00", 8); // MOV.W	R0, #0x5900 | MOVT	R0, #0x6
-	CHook::WriteMemory(g_libGTASA + 0x003AF3E4, (uintptr_t)"\x4f\xf4\x3b\x60", 4); // MOV.W R0, #0xBB0
-	CHook::WriteMemory(g_libGTASA + 0x003AF3EC, (uintptr_t)"\x4f\xf4\x3b\x62", 4); // MOV.W R2, #0xBB0
-	CHook::WriteMemory(g_libGTASA + 0x003AF41A, (uintptr_t)"\xb3\xf5\x3b\x6f", 4); // CMP.W R3, #0xBB0
-
-	// Building pool (old: 14000, new: 29585)
-	CHook::WriteMemory(g_libGTASA + 0x003AF378, (uintptr_t)"\x4F\xF4\x90\x40\xC0\xF2\x19\x00", 8); // mov.w r0, #0x4800 movt r0, #0x19
-	CHook::WriteMemory(g_libGTASA + 0x003AF386, (uintptr_t)"\x47\xF2\x91\x30", 4); // mov r0, #0x7391
-	CHook::WriteMemory(g_libGTASA + 0x003AF38E, (uintptr_t)"\x47\xF2\x91\x32", 4); //mov r2, #0x7391
-
-	// Dummys pool (old: 3500, new: 4000)
-	CHook::WriteMemory(g_libGTASA + 0x003AF430, (uintptr_t)"\x4f\xf4\xd6\x40\xc0\xf2\x03\x00", 8); // MOV.W	R0, #0x6B00 | MOVT	R0, #0x3
-	CHook::WriteMemory(g_libGTASA + 0x003AF43E, (uintptr_t)"\x40\xf6\xa0\x70", 4); // MOVW            R0, #0xFA0
-	CHook::WriteMemory(g_libGTASA + 0x003AF446, (uintptr_t)"\x40\xf6\xa0\x72", 4); // MOVW            R2, #0xFA0
-
-	// PtrNode Single pool (old: 75000, new: 100000)
-	CHook::WriteMemory(g_libGTASA + 0x003AF1BC, (uintptr_t)"\x4f\xf4\x54\x50\xc0\xf2\x0c\x00", 8); // MOV.W	R0, #0x3500 | MOVT	R0, #0xC
-	CHook::WriteMemory(g_libGTASA + 0x003AF1D6, (uintptr_t)"\x48\xf2\xa0\x62", 4); // MOVW	R2, #0x86A0
-	CHook::WriteMemory(g_libGTASA + 0x003AF1B0, (uintptr_t)"\x48\xf2\xa0\x66", 4); // MOVW	R6, #0x86A0
-	CHook::WriteMemory(g_libGTASA + 0x003AF1CA, (uintptr_t)"\x48\xf2\xa0\x60\xc0\xf2\x01\x00", 8); // MOV.W R0, #0x86A0 | MOVT R0, #1
-
-	//PtrNode Double pool (old: 6000, new: 8000)
-	CHook::WriteMemory(g_libGTASA + 0x003AF21C, (uintptr_t)"\x4f\xf4\xee\x40\xc0\xf2\x01\x00", 8); // MOV.W	R0, #0x7700 | MOVT	R0, #1
-	CHook::WriteMemory(g_libGTASA + 0x003AF22A, (uintptr_t)"\x41\xf6\x40\x70", 4); // MOVW            R0, #8000
-	CHook::WriteMemory(g_libGTASA + 0x003AF232, (uintptr_t)"\x41\xf6\x40\x72", 4); // MOVW            R2, #8000
-
-	// Entry Node Info pool (old: 500, new: 5120)
-	CHook::WriteMemory(g_libGTASA + 0x003AF27A, (uintptr_t)"\x4f\xf4\xc8\x30", 4); // MOV.W	R0, #0x19000 | size = 0x14
-	CHook::WriteMemory(g_libGTASA + 0x003AF284, (uintptr_t)"\x4f\xf4\xa0\x50", 4); // MOV.W R0, #0x1400
-	CHook::WriteMemory(g_libGTASA + 0x003AF28C, (uintptr_t)"\x4f\xf4\xa0\x52", 4); // MOV.W R2, #0x1400
-	CHook::WriteMemory(g_libGTASA + 0x003AF2BA, (uintptr_t)"\xb3\xf5\xa0\x5f", 4); // CMP.W R3, #0x1400
-
-	// ColModel pool (old:10150, new: 32511)
-	// mov r0, #0xCFD0
-	// movt r0, #0x17
-	CHook::WriteMemory(g_libGTASA + 0x3AF48E, (uintptr_t)"\x4C\xF6\xD0\x70\xC0\xF2\x17\x00", 8); // MOV R0, #0x17CFD0 | size=0x30 (old: 0x76F20)
-	CHook::WriteMemory(g_libGTASA + 0x3AF49C, (uintptr_t)"\x47\xF6\xFF\x60", 4); // MOVW R0, #0x7EFF
-	CHook::WriteMemory(g_libGTASA + 0x3AF4A4, (uintptr_t)"\x47\xF6\xFF\x62", 4); // MOVW R2, #0x7EFF
 
 	// VehicleStruct increase (0x32C*0x50 = 0xFDC0)
 	CHook::WriteMemory(g_libGTASA + 0x405338, (uintptr_t)"\x4F\xF6\xC0\x50", 4);	// MOV  R0, #0xFDC0
@@ -444,14 +373,7 @@ void ApplyPatches()
 	CHook::NOP(g_libGTASA + 0x005191DC, 2);
 
 	// Prevent another ped from answering when collision happens (or damage)
-	CHook::NOP(g_libGTASA + 0x327730, 2);
-	CHook::NOP(g_libGTASA + 0x32C488, 2);
-	CHook::NOP(g_libGTASA + 0x32DF94, 2);
-	CHook::NOP(g_libGTASA + 0x32E05E, 2);
-	CHook::NOP(g_libGTASA + 0x32E160, 2);
-	CHook::NOP(g_libGTASA + 0x32E1F2, 2);
-	CHook::NOP(g_libGTASA + 0x32E292, 2);
-	CHook::NOP(g_libGTASA + 0x32EFD0, 2);
+	CHook::RET(g_libGTASA + 0x00457644);
 
 	// CPed::Say
 	CHook::NOP(g_libGTASA + 0x43E288, 2);
