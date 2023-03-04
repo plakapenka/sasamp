@@ -1,6 +1,7 @@
 #pragma once
 #include "keyboardhistory.h"
 #include "vendor/raknet/SingleProducerConsumer.h"
+#include "gui/gui.h"
 #include <jni.h>
 
 #define LAYOUT_ENG 0

@@ -1,6 +1,5 @@
 #include "../main.h"
 #include "../game/game.h"
-#include "../gui/gui.h"
 #include "..//util/CJavaWrapper.h"
 #include "netgame.h"
 #include "java_systems/CHUD.h"
@@ -21,7 +20,6 @@ extern CNetGame *pNetGame;
 //#define AUTH_BS "1528354F18550C00AB504591304D0379BB0ACA99043"
 
 extern CGame *pGame;
-extern CGUI *pGUI;
 
 int iVehiclePoolProcessFlag = 0;
 int iPickupPoolProcessFlag = 0;

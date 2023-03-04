@@ -2,9 +2,9 @@
 #include "game/game.h"
 #include "game/RW/RenderWare.h"
 #include "net/netgame.h"
-#include "gui/gui.h"
 #include "playertags.h"
 #include "CSettings.h"
+#include "gui/gui.h"
 
 extern CGame *pGame;
 extern CNetGame *pNetGame;
@@ -304,9 +304,9 @@ void CPlayerTags::Draw(CVector* vec, char* szName, uint32_t dwColor,
 		HealthBar2.y += 13.0f;
 	}
 
-	ImGui::GetOverlayDrawList()->AddRectFilled(HealthBarBDR1, HealthBarBDR2, HealthBarBDRColor);
-	ImGui::GetOverlayDrawList()->AddRectFilled(HealthBarBG1, HealthBarBG2, HealthBarBGColor);
-	ImGui::GetOverlayDrawList()->AddRectFilled(HealthBar1, HealthBar2, HealthBarColor);
+	ImGui::GetForegroundDrawList()->AddRectFilled(HealthBarBDR1, HealthBarBDR2, HealthBarBDRColor);
+	ImGui::GetForegroundDrawList()->AddRectFilled(HealthBarBG1, HealthBarBG2, HealthBarBGColor);
+	ImGui::GetForegroundDrawList()->AddRectFilled(HealthBar1, HealthBar2, HealthBarColor);
 
 	// Armour Bar
 	if(fArmour > 0.0f)
@@ -327,9 +327,9 @@ void CPlayerTags::Draw(CVector* vec, char* szName, uint32_t dwColor,
 		fArmour *= fWidth/100.0f;
 		fArmour -= (fWidth/2);
 		HealthBar2.x = Out.x + fArmour;
-		ImGui::GetOverlayDrawList()->AddRectFilled(HealthBarBDR1, HealthBarBDR2, HealthBarBDRColor);
-		ImGui::GetOverlayDrawList()->AddRectFilled(HealthBarBG1, HealthBarBG2, HealthBarBGColor);
-		ImGui::GetOverlayDrawList()->AddRectFilled(HealthBar1, HealthBar2, HealthBarColor);
+		ImGui::GetForegroundDrawList()->AddRectFilled(HealthBarBDR1, HealthBarBDR2, HealthBarBDRColor);
+		ImGui::GetForegroundDrawList()->AddRectFilled(HealthBarBG1, HealthBarBG2, HealthBarBGColor);
+		ImGui::GetForegroundDrawList()->AddRectFilled(HealthBar1, HealthBar2, HealthBarColor);
 	}
 
 	// AFK Icon
@@ -337,7 +337,7 @@ void CPlayerTags::Draw(CVector* vec, char* szName, uint32_t dwColor,
 	{
 		ImVec2 a = ImVec2(HealthBarBDR1.x - (pGUI->GetFontSize()*1.4f), HealthBarBDR1.y);
 		ImVec2 b = ImVec2(a.x + (pGUI->GetFontSize()*1.3f), a.y + (pGUI->GetFontSize()*1.3f));
-		ImGui::GetOverlayDrawList()->AddImage((ImTextureID)m_pAfk_icon->raster, a, b);
+		ImGui::GetForegroundDrawList()->AddImage((ImTextureID)m_pAfk_icon->raster, a, b);
 	}
 
 

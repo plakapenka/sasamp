@@ -9,7 +9,6 @@
 
 #include "../game/game.h"
 #include "net/netgame.h"
-#include "gui/gui.h"
 #include "keyboard.h"
 #include "CSettings.h"
 #include "chatwindow.h"
@@ -18,7 +17,6 @@
 
 extern CJavaWrapper *g_pJavaWrapper;
 extern CGame *pGame;
-extern CGUI* pGUI;
 
 bool        CHUD::bIsShow = false;
 bool        CHUD::bIsShowPassengerButt = false;

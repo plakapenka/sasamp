@@ -43,7 +43,7 @@ extern bool g_bIsTestMode;
 
 bool isEncrypted(const char *szArch)
 {
- //   if(g_bIsTestMode)return false;
+    if(g_bIsTestMode)return false;
 	//return false;
     for (const auto & i : encrArch)
     {
@@ -98,8 +98,8 @@ struct stFile
 stFile* (*NvFOpen)(const char*, const char*, int, int);
 stFile* NvFOpen_hook(const char* r0, const char* r1, int r2, int r3)
 {
+	Log("nv open = %s", r1);
 	char path[0xFF] = { 0 };
-
 	sprintf(path, "%s%s", g_pszStorage, r1);
 
 //	// ----------------------------
@@ -113,36 +113,6 @@ stFile* NvFOpen_hook(const char* r0, const char* r1, int r2, int r3)
 	{
 		sprintf(path, "%sSAMP/script.img", g_pszStorage);
 		Log("Loading script.img..");
-	}
-//	// ----------------------------
-	if(!strncmp(r1, "DATA/PEDS.IDE", 13))
-	{
-		sprintf(path, "%sSAMP/peds.ide", g_pszStorage);
-		Log("Loading peds.ide..");
-	}
-//	// ----------------------------
-	if(!strncmp(r1, "DATA/VEHICLES.IDE", 17))
-	{
-		sprintf(path, "%sSAMP/vehicles.ide", g_pszStorage);
-		Log("Loading vehicles.ide..");
-	}
-
-	if (!strncmp(r1, "DATA/GTA.DAT", 12))
-	{
-		sprintf(path, "%sSAMP/gta.dat", g_pszStorage);
-		Log("Loading gta.dat..");
-	}
-
-	if (!strncmp(r1, "DATA/HANDLING.CFG", 17))
-	{
-		sprintf(path, "%sSAMP/handling.cfg", g_pszStorage);
-		Log("Loading handling.cfg..");
-	}
-
-	if (!strncmp(r1, "DATA/WEAPON.DAT", 15))
-	{
-		sprintf(path, "%sSAMP/weapon.dat", g_pszStorage);
-		Log("Loading weapon.dat..");
 	}
 
 	auto *st = (stFile*)malloc(8);

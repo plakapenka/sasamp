@@ -1015,7 +1015,7 @@ void RemoveBuilding(RPCParameters* rpcParams)
 	iTotalRemovedObjects++;
 	ProcessRemoveBuilding(uModelID, pos, fRad);
 }
-#include "..//gui/gui.h"
+
 #include "../playertags.h"
 #include "java_systems/CTab.h"
 #include "java_systems/CDialog.h"

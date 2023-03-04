@@ -1,5 +1,4 @@
 #include "../main.h"
-#include "gui.h"
 #include "../game/game.h"
 #include "../net/netgame.h"
 #include "../game/RW/RenderWare.h"
@@ -11,6 +10,7 @@
 #include "../util/util.h"
 #include "../game/vehicle.h"
 #include "CFontRenderer.h"
+#include "gui.h"
 
 extern CPlayerTags *pPlayerTags;
 extern CNetGame *pNetGame;

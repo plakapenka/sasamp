@@ -1,8 +1,8 @@
 #include "../main.h"
-#include "gui.h"
 #include "../game/game.h"
 
 #include "../game/RW/RenderWare.h"
+#include "gui.h"
 
 extern CGUI *pGUI;
 

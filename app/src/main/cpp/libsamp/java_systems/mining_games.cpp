@@ -5,7 +5,6 @@
 
 #include "../game/game.h"
 #include "net/netgame.h"
-#include "gui/gui.h"
 
 //extern CNetGame* pNetGame;
 extern CJavaWrapper *g_pJavaWrapper;

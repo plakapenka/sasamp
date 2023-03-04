@@ -1,6 +1,5 @@
 #pragma once
 
-#include "gui/gui.h"
 #include "game/game.h"
 
 

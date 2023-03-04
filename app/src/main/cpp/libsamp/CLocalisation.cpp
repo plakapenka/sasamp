@@ -1,7 +1,6 @@
 #include "CLocalisation.h"
 
 #include "main.h"
-#include "gui/gui.h"
 #include "game/game.h"
 #include "net/netgame.h"
 #include "game/RW/RenderWare.h"
@@ -10,7 +9,6 @@
 #include "keyboard.h"
 #include "CSettings.h"
 
-extern CGUI* pGUI;
 
 char CLocalisation::m_szMessages[E_MSG::MSG_COUNT][MAX_LOCALISATION_LENGTH] = {
 	"{bbbbbb}Соединение к LIVE RUSSIA{ffffff}",

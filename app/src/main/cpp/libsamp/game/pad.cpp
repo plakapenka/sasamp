@@ -625,9 +625,6 @@ uint32_t CPad__GetWeapon_hook(uintptr_t thiz, uintptr_t ped, bool unk)
 	}
 }
 
-#include "gui/gui.h"
-
-
 CPlayerPed* g_playerPed;
 
 void (*ProcessPlayerWeapon)(uintptr_t thiz, CPlayerPed* playerPed);
@@ -758,7 +755,6 @@ extern "C" {
 		}
 	}
 }
-extern CGUI *pGUI;
 
 uint32_t (*CPad__CycleWeaponRightJustDown)(uintptr_t thiz);
 uint32_t CPad__CycleWeaponRightJustDown_hook(uintptr_t thiz)

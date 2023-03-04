@@ -1,8 +1,8 @@
 #include "../main.h"
 #include "game.h"
 #include "../net/netgame.h"
+#include "gui/gui.h"
 #include <cmath>
-#include "../gui/gui.h"
 extern CGUI* pGUI;
 extern CGame *pGame;
 extern CNetGame *pNetGame;

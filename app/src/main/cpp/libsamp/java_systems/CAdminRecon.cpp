@@ -9,7 +9,6 @@
 
 #include "../game/game.h"
 #include "net/netgame.h"
-#include "gui/gui.h"
 
 #include "CHUD.h"
 

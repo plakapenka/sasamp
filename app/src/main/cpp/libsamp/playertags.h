@@ -1,5 +1,7 @@
 #pragma once
 
+#include "gui/gui.h"
+
 struct stVoiceSort
 {
 	uint32_t m_iVoiceTime;

@@ -1,5 +1,4 @@
 #include "main.h"
-#include "gui/gui.h"
 #include "chatwindow.h"
 #include "keyboard.h"
 #include "CSettings.h"
@@ -10,7 +9,6 @@
 #include "java_systems/CTab.h"
 #include "java_systems/CHUD.h"
 
-extern CGUI *pGUI;
 extern CNetGame *pNetGame;
 extern CAMERA_AIM * pcaInternalAim;
 extern CGame * pGame;

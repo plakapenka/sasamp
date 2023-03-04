@@ -1,9 +1,9 @@
 #include "../main.h"
 #include "RW/RenderWare.h"
 #include "game.h"
-#include "../gui/gui.h"
 #include "../util/CJavaWrapper.h"
 #include "java_systems/CHUD.h"
+#include "gui/gui.h"
 
 extern CGame *pGame;
 extern CGUI* pGUI;

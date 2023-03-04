@@ -1,12 +1,8 @@
 #include "main.h"
 
-#include "gui/gui.h"
 #include "game/game.h"
-#include "vendor/imgui/imgui_internal.h"
 #include "keyboardhistory.h"
 #include "keyboard.h"
-
-extern CGUI* pGUI;
 
 CKeyBoardHistory::CKeyBoardHistory()
 {

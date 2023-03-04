@@ -98,7 +98,7 @@ void CWeaponsOutFit::ParseDatFile()
 	char buff[255];
 	memset(buff, 0, sizeof(buff));
 
-	snprintf(buff, sizeof(buff), "%sSAMP/outfit.dat", g_pszStorage);
+	snprintf(buff, sizeof(buff), "%sdata/outfit.dat", g_pszStorage);
 
 	FILE* pFile = fopen(buff, "r");
 

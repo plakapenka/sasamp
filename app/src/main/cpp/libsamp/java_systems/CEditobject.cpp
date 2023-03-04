@@ -8,7 +8,6 @@
 
 #include "../game/game.h"
 #include "net/netgame.h"
-#include "gui/gui.h"
 #include "keyboard.h"
 #include "CSettings.h"
 #include "chatwindow.h"

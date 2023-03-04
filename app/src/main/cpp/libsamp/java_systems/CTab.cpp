@@ -2,8 +2,6 @@
 #include "CTab.h"
 #include "game/game.h"
 #include "net/netgame.h"
-#include "gui/gui.h"
-#include "vendor/imgui/imgui_internal.h"
 #include "util/CJavaWrapper.h"
 #include "CSettings.h"
 #include "CHUD.h"
@@ -14,7 +12,6 @@
 
 extern CNetGame* pNetGame;
 extern CGame* pGame;
-extern CGUI* pGUI;
 
 jobject CTab::thiz = nullptr;
 

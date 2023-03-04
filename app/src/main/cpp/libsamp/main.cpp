@@ -8,7 +8,6 @@
 #include "game/game.h"
 #include "game/RW/RenderWare.h"
 #include "net/netgame.h"
-#include "gui/gui.h"
 #include "chatwindow.h"
 #include "playertags.h"
 #include "keyboard.h"
@@ -30,6 +29,7 @@ char* g_pszStorage = nullptr;
 #include "CLocalisation.h"
 #include "java_systems/CHUD.h"
 #include "java_systems/CInventory.h"
+#include "gui/gui.h"
 
 const cryptor::string_encryptor encLib = cryptor::create("libsamp.so", 11);
 void CrashLog(const char* fmt, ...);

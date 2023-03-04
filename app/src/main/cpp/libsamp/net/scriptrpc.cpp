@@ -1,11 +1,9 @@
 #include "../main.h"
 #include "../game/game.h"
 #include "netgame.h"
-#include "../gui/gui.h"
 
 extern CGame *pGame;
 extern CNetGame *pNetGame;
-extern CGUI *pGUI;
 
 void ScrDisplayGameText(RPCParameters *rpcParams)
 {

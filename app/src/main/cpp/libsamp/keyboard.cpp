@@ -3,7 +3,6 @@
 #include "keyboardhistory.h"
 #include "util/CJavaWrapper.h"
 #include "CSettings.h"
-#include "gui/gui.h"
 #include "game/game.h"
 #include "keyboard.h"
 #include "vendor/imgui/fontawesome.h"
@@ -13,6 +12,7 @@
 #include "java_systems/CAdminRecon.h"
 #include "java_systems/casino/CBaccarat.h"
 #include "java_systems/CSpeedometr.h"
+#include "gui/gui.h"
 
 extern CGUI *pGUI;
 extern CGame *pGame;
@@ -94,23 +94,23 @@ void CKeyBoard::Render()
 	ImVec2 vecButSize = ImVec2(ImGui::GetFontSize() * 6, ImGui::GetFontSize() * 3.5);
 
 	// background
-	ImGui::GetOverlayDrawList()->AddRectFilled(ImVec2(m_Pos.x, m_Pos.y + m_fKeySizeY), ImVec2(m_Size.x, io.DisplaySize.y), 0xB0000000);
+	ImGui::GetForegroundDrawList()->AddRectFilled(ImVec2(m_Pos.x, m_Pos.y + m_fKeySizeY), ImVec2(m_Size.x, io.DisplaySize.y), 0xB0000000);
 
 	// background-triangleup
-	ImGui::GetOverlayDrawList()->AddRectFilled(ImVec2(m_fKeySizeX * 7.6, m_Pos.y), ImVec2(m_fKeySizeX * 8.6, m_Pos.y + m_fKeySizeY), 0xB0000000);
+	ImGui::GetForegroundDrawList()->AddRectFilled(ImVec2(m_fKeySizeX * 7.6, m_Pos.y), ImVec2(m_fKeySizeX * 8.6, m_Pos.y + m_fKeySizeY), 0xB0000000);
 
 	// background-triangledown
-	ImGui::GetOverlayDrawList()->AddRectFilled(ImVec2(m_fKeySizeX * 8.8, m_Pos.y), ImVec2(m_fKeySizeX * 9.8, m_Pos.y + m_fKeySizeY), 0xB0000000);
+	ImGui::GetForegroundDrawList()->AddRectFilled(ImVec2(m_fKeySizeX * 8.8, m_Pos.y), ImVec2(m_fKeySizeX * 9.8, m_Pos.y + m_fKeySizeY), 0xB0000000);
 
 	// triangleup
-	ImGui::GetOverlayDrawList()->AddTriangleFilled(
+	ImGui::GetForegroundDrawList()->AddTriangleFilled(
 				ImVec2(m_fKeySizeX * 7.6 + 70, m_Pos.y + 100),
 				ImVec2(m_fKeySizeX * 7.6 + 115, m_Pos.y + 30),
 				ImVec2(m_fKeySizeX * 7.6 + 160, m_Pos.y + 100),
 				0xFF8A8886);
 
 	// triangledown
-	ImGui::GetOverlayDrawList()->AddTriangleFilled(
+	ImGui::GetForegroundDrawList()->AddTriangleFilled(
 				ImVec2(m_fKeySizeX * 8.8 + 70, m_Pos.y + 30),
 				ImVec2(m_fKeySizeX * 8.8 + 115, m_Pos.y + 100),
 				ImVec2(m_fKeySizeX * 8.8 + 160, m_Pos.y + 30),
@@ -168,7 +168,7 @@ void CKeyBoard::Render()
 //		ImGui::GetOverlayDrawList()->AddText(pGUI->GetFont(), m_fFontSize - pGUI->ScaleY(30.0f), ImVec2(m_fChatPosX + m_Size.x * 0.02 - 25 + chatinputposx, m_fChatPosY + m_fChatSizeY + 50 - 40 + m_Pos.y * 0.05 - 5), 0xFFFFFFFF, m_utf8Input);
 
 	// dividing line
-	ImGui::GetOverlayDrawList()->AddLine(
+	ImGui::GetForegroundDrawList()->AddLine(
 		ImVec2(m_Pos.x, m_Pos.y + m_fKeySizeY),
 		ImVec2(m_Size.x, m_Pos.y + m_fKeySizeY), 0xFF3291F5);
 
@@ -179,15 +179,15 @@ void CKeyBoard::Render()
 		for (auto key : m_Rows[m_iLayout][i])
 		{
 			if (key.id == m_iPushedKey && key.type != KEY_SPACE)
-				ImGui::GetOverlayDrawList()->AddRectFilled(
+				ImGui::GetForegroundDrawList()->AddRectFilled(
 					key.pos,
 					ImVec2(key.pos.x + key.width, key.pos.y + fKeySizeY),
 					0xFF3291F5);
 
 			if (m_iPushedKeyUp)
 			{
-				ImGui::GetOverlayDrawList()->AddRectFilled(ImVec2(m_fKeySizeX * 7.6, m_Pos.y), ImVec2(m_fKeySizeX * 8.6, m_Pos.y + m_fKeySizeY), 0xFF3291F5);
-				ImGui::GetOverlayDrawList()->AddTriangleFilled(
+				ImGui::GetForegroundDrawList()->AddRectFilled(ImVec2(m_fKeySizeX * 7.6, m_Pos.y), ImVec2(m_fKeySizeX * 8.6, m_Pos.y + m_fKeySizeY), 0xFF3291F5);
+				ImGui::GetForegroundDrawList()->AddTriangleFilled(
 				ImVec2(m_fKeySizeX * 7.6 + 70, m_Pos.y + 100),
 				ImVec2(m_fKeySizeX * 7.6 + 115, m_Pos.y + 30),
 				ImVec2(m_fKeySizeX * 7.6 + 160, m_Pos.y + 100),
@@ -195,8 +195,8 @@ void CKeyBoard::Render()
 			}
 			else if (m_iPushedKeyDown)
 			{
-				ImGui::GetOverlayDrawList()->AddRectFilled(ImVec2(m_fKeySizeX * 8.8, m_Pos.y), ImVec2(m_fKeySizeX * 9.8, m_Pos.y + m_fKeySizeY), 0xFF3291F5);
-				ImGui::GetOverlayDrawList()->AddTriangleFilled(
+				ImGui::GetForegroundDrawList()->AddRectFilled(ImVec2(m_fKeySizeX * 8.8, m_Pos.y), ImVec2(m_fKeySizeX * 9.8, m_Pos.y + m_fKeySizeY), 0xFF3291F5);
+				ImGui::GetForegroundDrawList()->AddTriangleFilled(
 				ImVec2(m_fKeySizeX * 8.8 + 70, m_Pos.y + 30),
 				ImVec2(m_fKeySizeX * 8.8 + 115, m_Pos.y + 100),
 				ImVec2(m_fKeySizeX * 8.8 + 160, m_Pos.y + 30),
@@ -206,16 +206,16 @@ void CKeyBoard::Render()
 			switch (key.type)
 			{
 			case KEY_DEFAULT:
-				ImGui::GetOverlayDrawList()->AddText(pGUI->GetFont(), m_fFontSize, key.symPos, 0xFFFFFFFF, key.name[m_iCase]);
+				ImGui::GetForegroundDrawList()->AddText(pGUI->GetFont(), m_fFontSize, key.symPos, 0xFFFFFFFF, key.name[m_iCase]);
 				break;
 
 			case KEY_SHIFT:
-				ImGui::GetOverlayDrawList()->AddTriangleFilled(
+				ImGui::GetForegroundDrawList()->AddTriangleFilled(
 					ImVec2(key.pos.x + key.width * 0.37, key.pos.y + fKeySizeY * 0.50),
 					ImVec2(key.pos.x + key.width * 0.50, key.pos.y + fKeySizeY * 0.25),
 					ImVec2(key.pos.x + key.width * 0.63, key.pos.y + fKeySizeY * 0.50),
 					m_iCase == LOWER_CASE ? 0xFF8A8886 : 0xFF3291F5);
-				ImGui::GetOverlayDrawList()->AddRectFilled(
+				ImGui::GetForegroundDrawList()->AddRectFilled(
 					ImVec2(key.pos.x + key.width * 0.44, key.pos.y + fKeySizeY * 0.5 - 1),
 					ImVec2(key.pos.x + key.width * 0.56, key.pos.y + fKeySizeY * 0.68),
 					m_iCase == LOWER_CASE ? 0xFF8A8886 : 0xFF3291F5);
@@ -228,22 +228,22 @@ void CKeyBoard::Render()
 				points[2] = ImVec2(key.pos.x + key.width * 0.65, key.pos.y + fKeySizeY * 0.25);
 				points[3] = ImVec2(key.pos.x + key.width * 0.65, key.pos.y + fKeySizeY * 0.65);
 				points[4] = ImVec2(key.pos.x + key.width * 0.45, key.pos.y + fKeySizeY * 0.65);
-				ImGui::GetOverlayDrawList()->AddConvexPolyFilled(points, 5, 0xFF8A8886);
+				ImGui::GetForegroundDrawList()->AddConvexPolyFilled(points, 5, 0xFF8A8886);
 				break;
 
 			case KEY_SWITCH:
-				ImGui::GetOverlayDrawList()->AddText(pGUI->GetFont(), m_fFontSize, key.symPos, 0xFFFFFFFF, "lang");
+				ImGui::GetForegroundDrawList()->AddText(pGUI->GetFont(), m_fFontSize, key.symPos, 0xFFFFFFFF, "lang");
 				break;
 
 			case KEY_SPACE:
-				ImGui::GetOverlayDrawList()->AddRectFilled(
+				ImGui::GetForegroundDrawList()->AddRectFilled(
 					ImVec2(key.pos.x + key.width * 0.07, key.pos.y + fKeySizeY * 0.3),
 					ImVec2(key.pos.x + key.width * 0.93, key.pos.y + fKeySizeY * 0.7),
 					key.id == m_iPushedKey ? 0xFF3291F5 : 0xFF8A8886);
 				break;
 
 			case KEY_SEND:
-				ImGui::GetOverlayDrawList()->AddTriangleFilled(
+				ImGui::GetForegroundDrawList()->AddTriangleFilled(
 					ImVec2(key.pos.x + key.width * 0.3, key.pos.y + fKeySizeY * 0.25),
 					ImVec2(key.pos.x + key.width * 0.3, key.pos.y + fKeySizeY * 0.75),
 					ImVec2(key.pos.x + key.width * 0.7, key.pos.y + fKeySizeY * 0.50),
@@ -251,7 +251,7 @@ void CKeyBoard::Render()
 				break;
 
 			case KEY_UP:
-				ImGui::GetOverlayDrawList()->AddTriangleFilled(
+				ImGui::GetForegroundDrawList()->AddTriangleFilled(
 					ImVec2(io.DisplaySize.x - (vecButSize.x * 3) + 50, io.DisplaySize.y / 2 - vecButSize.y * 1.635 + 100),
 					ImVec2(io.DisplaySize.x - (vecButSize.x * 3) + 95, io.DisplaySize.y / 2 - vecButSize.y * 1.635 + 30),
 					ImVec2(io.DisplaySize.x - (vecButSize.x * 3) + 140, io.DisplaySize.y / 2 - vecButSize.y * 1.635 + 100),
@@ -259,7 +259,7 @@ void CKeyBoard::Render()
 				break;
 
 			case KEY_DOWN:
-				ImGui::GetOverlayDrawList()->AddTriangleFilled(
+				ImGui::GetForegroundDrawList()->AddTriangleFilled(
 					ImVec2(io.DisplaySize.x - (vecButSize.x * 1.5) + 50, io.DisplaySize.y / 2 - vecButSize.y * 1.635 + 30),
 					ImVec2(io.DisplaySize.x - (vecButSize.x * 1.5) + 95, io.DisplaySize.y / 2 - vecButSize.y * 1.635 + 100),
 					ImVec2(io.DisplaySize.x - (vecButSize.x * 1.5) + 140, io.DisplaySize.y / 2 - vecButSize.y * 1.635 + 30),

@@ -1,8 +1,8 @@
 #include "../main.h"
 #include "game.h"
 #include "../net/netgame.h"
+#include "gui/gui.h"
 #include <cmath>
-#include "../gui/gui.h"
 extern CGame *pGame;
 extern CNetGame *pNetGame;
 
@@ -60,8 +60,6 @@ CWidget* CWidgetManager::GetWidget(int iID)
 	return m_pWidgets[iID];
 }
 
-#include "../gui/gui.h"
-
 void CWidgetManager::OnTouchEvent(int type, int num, int x, int y)
 {
 
@@ -74,7 +72,7 @@ void CWidgetManager::OnTouchEvent(int type, int num, int x, int y)
 			m_pWidgets[id]->SetState(0);
 			switch (type)
 			{
-			case TOUCH_PUSH:
+				case eTouchType::TOUCH_PUSH:
 				if (m_pWidgets[id]->IsXYInRect(x, y))
 					m_pWidgets[id]->SetState(1);
 				break;

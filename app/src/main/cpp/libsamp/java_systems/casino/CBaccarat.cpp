@@ -9,7 +9,6 @@
 #include "main.h"
 
 #include "game/game.h"
-#include "gui/gui.h"
 #include "../../net/netgame.h"
 #include "util/CJavaWrapper.h"
 
