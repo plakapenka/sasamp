@@ -75,6 +75,8 @@ public class Donate {
     static final int DONATE_OTHER_CHANGE_NICK = 9;
     static final int DONATE_OTHER_CHANGE_SEX = 10;
     static final int DONATE_OTHER_VEH_SLOT = 11;
+    static final int DONATE_OTHER_VEH_FAMILY_SLOT = 12;
+    static final int DONATE_OTHER_GIVE_FAMILY_SLOT = 13;
 
     static final int BUTTTON_BUY = 0;
     static final int BUTTTON_INFO = 1;
@@ -400,6 +402,8 @@ public class Donate {
         allItems.add( new DonateItem("Смена ника", CATEGORY_OTHER, 50, getResId("donate_changenick"), DONATE_OTHER_CHANGE_NICK) );
         allItems.add( new DonateItem("Смена пола", CATEGORY_OTHER, 100, getResId("donate_change_sex"), DONATE_OTHER_CHANGE_SEX) );
         allItems.add( new DonateItem("Слот для авто", CATEGORY_OTHER, 100, getResId("donate_veh_slot"), DONATE_OTHER_VEH_SLOT) );
+        allItems.add( new DonateItem("Слот для семейного авто", CATEGORY_OTHER, 200, getResId("donate_family_car_slot"), DONATE_OTHER_VEH_FAMILY_SLOT) );
+        allItems.add( new DonateItem("Передача семьи", CATEGORY_OTHER, 1000, getResId("donate_give_family"), DONATE_OTHER_GIVE_FAMILY_SLOT) );
     }
 
     public void clickInfo(DonateItem item) {
