@@ -22,7 +22,7 @@ public:
 
     static CStore<CPedModelInfo, 350> ms_pedModelInfoStore;
     static CStore<CAtomicModelInfo, 20000> ms_atomicModelInfoStore;
-    static CStore<CVehicleModelInfo, 300> ms_vehicleModelInfoStore;
+    static CStore<CVehicleModelInfo, 220> ms_vehicleModelInfoStore;
 
     static CPedModelInfo *AddPedModel(int index);
 

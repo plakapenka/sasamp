@@ -32,9 +32,10 @@ public:
 	bool New(NEW_VEHICLE* pNewVehicle);
 	bool Delete(VEHICLEID VehicleID);
 
-	CVehicle* GetAt(VEHICLEID VehicleID)
+	CVehicle* GetAt(VEHICLEID vehicleId)
 	{
-		return m_pVehicles[VehicleID];
+		if(vehicleId > MAX_VEHICLES) return nullptr;
+		return m_pVehicles[vehicleId];
 	}
 
 

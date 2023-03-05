@@ -54,7 +54,6 @@ extern int RPC_StopAudioStream;
 extern int RPC_ClickPlayer;
 extern int RPC_ClickTextDraw;
 extern int RPC_MapMarker;
-extern int RPC_RemoveBuilding;
 extern int RPC_ShowActor;
 extern int RPC_HideActor;
 extern int RPC_SetActorHealth;

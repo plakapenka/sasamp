@@ -10,7 +10,7 @@ CBaseModelInfo *CModelInfo::ms_modelInfoPtrs[20000];
 
 CStore<CPedModelInfo, 350> CModelInfo::ms_pedModelInfoStore;
 CStore<CAtomicModelInfo, 20000> CModelInfo::ms_atomicModelInfoStore;
-CStore<CVehicleModelInfo, 300> CModelInfo::ms_vehicleModelInfoStore;
+CStore<CVehicleModelInfo, 220> CModelInfo::ms_vehicleModelInfoStore;
 
 void CModelInfo::InstallHooks()
 {
@@ -31,7 +31,7 @@ CVehicleModelInfo* CModelInfo::AddVehicleModel(int index)
 {
     auto& pInfo = CModelInfo::ms_vehicleModelInfoStore.AddItem();
 
-    ((void(*)(CVehicleModelInfo*))(g_libGTASA + 0x00384FD8 + 1))(&pInfo); // CBaseModelInfo::CBaseModelInfo();
+    ((void(*)(CVehicleModelInfo*))(g_libGTASA + 0x00386E98 + 1))(&pInfo); // CVehicleModelInfo::CVehicleModelInfo
 
     pInfo.vtable = g_libGTASA + 0x006676A8;
 

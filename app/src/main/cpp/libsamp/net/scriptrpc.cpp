@@ -1460,16 +1460,16 @@ uintptr_t GetTextureFromTXDStore(const char* szTxd, const char* szTexture)
 {
 	Log("GetTextureFromTXDStore %s, %s", szTxd, szTexture);
 
-	int iTXD = ((int(*)(const char*))(g_libGTASA + 0x0055BB84 + 1))(szTxd); //FindTxDSlot
+	int iTXD = ((int(*)(const char*))(g_libGTASA + 0x005D3EB0 + 1))(szTxd); //FindTxDSlot
 	if (iTXD == -1)
 	{
 		Log("no txd");
 		return 0;
 	}
-	((int(*)())(g_libGTASA + 0x0055BD6C + 1))(); // pushCurrentTXD
-	((int(*)(int, int))(g_libGTASA + 0x0055BD6C + 1))(iTXD, 0); // setCurrentTXD
-	uintptr_t tex = ((uintptr_t(*)(const char*, const char*))(g_libGTASA + 0x001B2558 + 1))(szTexture, 0); // rwTextureRead
-	((int(*)())(g_libGTASA + 0x0055BDA8 + 1))(); // popCurrentTXD
+	((int(*)())(g_libGTASA + 0x005D41D4 + 1))(); // pushCurrentTXD
+	((int(*)(int, int))(g_libGTASA + 0x005D41D4 + 1))(iTXD, 0); // setCurrentTXD
+	uintptr_t tex = ((uintptr_t(*)(const char*, const char*))(g_libGTASA + 0x001DBA3C + 1))(szTexture, 0); // rwTextureRead
+	((int(*)())(g_libGTASA + 0x005D4214 + 1))(); // popCurrentTXD
 	return tex;
 
 }

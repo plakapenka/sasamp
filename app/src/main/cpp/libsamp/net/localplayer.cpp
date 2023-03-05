@@ -714,7 +714,7 @@ bool CLocalPlayer::Spawn()
 	pGame->DisableTrainTraffic();
 
 	// CCamera::Fade
-	CHook::WriteMemory(g_libGTASA + 0x36EA2C, "\x70\x47", 2); // bx lr
+//	CHook::WriteMemory(g_libGTASA + 0x36EA2C, "\x70\x47", 2); // bx lr
 
 	m_pPlayerPed->TeleportTo(m_SpawnInfo.vecPos.x,
 		m_SpawnInfo.vecPos.y, (m_SpawnInfo.vecPos.z + 0.5f));

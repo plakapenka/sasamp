@@ -2153,7 +2153,7 @@ void RwMatrixOrthoNormalize(MATRIX4X4 *matIn, MATRIX4X4 *matOut)
 
 void RwMatrixInvert(MATRIX4X4 *matOut, MATRIX4X4 *matIn)
 {
-    ((void (*)(MATRIX4X4*, MATRIX4X4*))(g_libGTASA+0x001B91CC+1))(matOut, matIn);
+    ((void (*)(MATRIX4X4*, MATRIX4X4*))(g_libGTASA+0x001E39A8+1))(matOut, matIn);
 }
 
 void ProjectMatrix(CVector* vecOut, MATRIX4X4* mat, CVector* vecPos)

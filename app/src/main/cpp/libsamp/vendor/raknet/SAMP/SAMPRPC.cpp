@@ -57,7 +57,6 @@ int RPC_MapMarker = 119;
 int RPC_PlayerGiveTakeDamage = 115;
 int RPC_EditAttachedObject = 116;
 int RPC_EditObject = 117;
-int RPC_RemoveBuilding = 43;
 int RPC_ShowActor = 171;
 int RPC_HideActor = 172;
 int RPC_SetActorHealth = 178;

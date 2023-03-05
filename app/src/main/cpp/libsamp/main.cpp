@@ -520,7 +520,7 @@ void Log(const char *fmt, ...)
 
 	if(flLog == nullptr && g_pszStorage != nullptr)
 	{
-		sprintf(buffer, "%sSAMP/samp_log.txt", g_pszStorage);
+		sprintf(buffer, "%slog.txt", g_pszStorage);
 		flLog = fopen(buffer, "a");
 	}
 
@@ -548,7 +548,7 @@ void CrashLog(const char* fmt, ...)
 
 	if (flLog == nullptr && g_pszStorage != nullptr)
 	{
-		sprintf(buffer, "%sSAMP/crash_log.log", g_pszStorage);
+		sprintf(buffer, "%scrash_log.log", g_pszStorage);
 		flLog = fopen(buffer, "a");
 	}
 

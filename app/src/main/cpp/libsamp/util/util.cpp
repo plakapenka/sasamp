@@ -5,7 +5,7 @@
 bool CUtil::IsValidGameVehicle(CVehicleGta *pVehicle)
 {
 	// IsVehiclePointerValid
-	return (((bool (*)(CVehicleGta *))(g_libGTASA+0x5109E8+1))(pVehicle));
+	return (((bool (*)(CVehicleGta *))(g_libGTASA+0x00585400+1))(pVehicle));
 }
 
 RwTexture* CUtil::GetTexture(const char* name)
@@ -259,7 +259,7 @@ void cp1251_to_utf8(char* out, const char* in, unsigned int len)
 
 void AND_OpenLink(const char* szLink)
 {
-	((void (*)(const char*))(g_libGTASA + 0x00242A64 + 1))(szLink);
+	((void (*)(const char*))(g_libGTASA + 0x0026C3F8 + 1))(szLink);
 }
 
 char* ConvertColorToHtml(std::string format) {

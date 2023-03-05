@@ -807,26 +807,26 @@ void RemoveBuildingByPtr(uintptr_t pBuild)
 
 void* GetObjectPool()
 {
-	return (void*) * (uintptr_t*)(g_libGTASA + 0x008B93C8);
+	return (void*) * (uintptr_t*)(g_libGTASA + 0x0095AC50);
 }
 
 void* GetBuildingPool()
 {
-	return (void*) * (uintptr_t*)(g_libGTASA + 0x008B93CC);
+	return (void*) * (uintptr_t*)(g_libGTASA + 0x0095AC4C);
 }
 
 void* GetDummyPool()
 {
-	return (void*) * (uintptr_t*)(g_libGTASA + 0x008B93C4);
+	return (void*) * (uintptr_t*)(g_libGTASA + 0x0095AC54);
 }
 
 
 void RemoveOccluders(float X, float Y, float Z, float fRad)
 {
-	uintptr_t* numOccluders = (uintptr_t*)(g_libGTASA + 0x009A0FEC);
+	uintptr_t* numOccluders = (uintptr_t*)(g_libGTASA + 0x00A45790);
 	if (*numOccluders > 0)
 	{
-		char* v5 = (char*)(g_libGTASA + 0x009A0FF4);
+		char* v5 = (char*)(g_libGTASA + 0x00A45790 + 8);
 		for (int i = 0; i < *numOccluders; i++)
 		{
 			double v6 = (double) * (int16_t*)v5 * 0.25;
@@ -870,150 +870,6 @@ void ResetPoolsMatrix()
 		*(uintptr_t*)(pBuild + 20) = 0;
 		pBuild += 0x1A0;
 	}
-}
-
-void ProcessRemoveBuilding(int uModelID, CVector pos, float fRad)
-{
-	uintptr_t pBuild = *(uintptr_t*)GetBuildingPool();
-	uintptr_t pState = *(uintptr_t*)((uintptr_t)GetBuildingPool() + 4);
-	// pBuild + 34 = nModelIndex
-	// 0x38 - sizeof(CBuilding)
-	// pBuild + 4 - CSimpleTransform
-	// pBuild + 20 - MATRIX4X4*
-
-	RemoveOccluders(pos.x, pos.y, pos.z, 500.0);
-
-	for (int i = 0; i < 14000; i++)
-	{
-		uintptr_t vtable = *(uintptr_t*)(pBuild);
-		vtable -= g_libGTASA;
-		if (vtable == 0x5C7358 || (*(uint8_t*)pState & 0x80))
-		{
-			pBuild += 0x38;
-			pState++;
-			continue;
-		}
-		if (*(uint16_t*)(pBuild + 34) == uModelID || uModelID == -1)
-		{
-			if (*(uintptr_t*)(pBuild + 20) && (*(uintptr_t*)(pBuild + 20) != 0xffffff)
-				&& (*(uintptr_t*)(pBuild + 20) != 0xffffffff))
-			{
-				MATRIX4X4* matt = (MATRIX4X4*) * (uintptr_t*)(pBuild + 20);
-				if (GetDistanceBetween3DPoints(&pos, &matt->pos) <= fRad)
-				{
-					RemoveBuildingByPtr(pBuild);
-				}
-			}
-			else
-			{
-				CVector* vecObjectPos = (CVector*)(pBuild + 4);
-				if (GetDistanceBetween3DPoints(&pos, vecObjectPos) <= fRad)
-				{
-					RemoveBuildingByPtr(pBuild);
-				}
-			}
-		}
-		pBuild += 0x38;
-		pState++;
-	}
-	pBuild = *(uintptr_t*)GetDummyPool();
-	pState = *(uintptr_t*)((uintptr_t)GetDummyPool() + 4);
-	for (int i = 0; i < 3500; i++)
-	{
-		uintptr_t vtable = *(uintptr_t*)(pBuild);
-		vtable -= g_libGTASA;
-		if (vtable == 0x5C7358 || (*(uint8_t*)pState & 0x80))
-		{
-			pBuild += 0x38;
-			pState++;
-			continue;
-		}
-		if (*(uint16_t*)(pBuild + 34) == uModelID || uModelID == -1)
-		{
-			if (*(uintptr_t*)(pBuild + 20) && (*(uintptr_t*)(pBuild + 20) != 0xffffff)
-				&& (*(uintptr_t*)(pBuild + 20) != 0xffffffff))
-			{
-				MATRIX4X4* matt = (MATRIX4X4*) * (uintptr_t*)(pBuild + 20);
-				if (GetDistanceBetween3DPoints(&pos, &matt->pos) <= fRad)
-				{
-					RemoveBuildingByPtr(pBuild);
-				}
-			}
-			else
-			{
-				CVector* vecObjectPos = (CVector*)(pBuild + 4);
-				if (GetDistanceBetween3DPoints(&pos, vecObjectPos) <= fRad)
-				{
-					RemoveBuildingByPtr(pBuild);
-				}
-			}
-		}
-		pBuild += 0x38;
-		pState++;
-	}
-
-	pBuild = *(uintptr_t*)GetObjectPool();
-	pState = *(uintptr_t*)((uintptr_t)GetObjectPool() + 4);
-	for (int i = 0; i < 350; i++)
-	{
-		uintptr_t vtable = *(uintptr_t*)(pBuild);
-		vtable -= g_libGTASA;
-		if (vtable == 0x5C7358 || (*(uint8_t*)pState & 0x80))
-		{
-			pBuild += 0x1A0;
-			pState++;
-			continue;
-		}
-		if (*(uint16_t*)(pBuild + 34) == uModelID || uModelID == -1)
-		{
-			if (*(uintptr_t*)(pBuild + 20) && (*(uintptr_t*)(pBuild + 20) != 0xffffff)
-				&& (*(uintptr_t*)(pBuild + 20) != 0xffffffff))
-			{
-				MATRIX4X4* matt = (MATRIX4X4*) * (uintptr_t*)(pBuild + 20);
-				if (GetDistanceBetween3DPoints(&pos, &matt->pos) <= fRad)
-				{
-					RemoveBuildingByPtr(pBuild);
-				}
-			}
-			else
-			{
-				CVector* vecObjectPos = (CVector*)(pBuild + 4);
-				if (GetDistanceBetween3DPoints(&pos, vecObjectPos) <= fRad)
-				{
-					RemoveBuildingByPtr(pBuild);
-				}
-			}
-		}
-		pBuild += 0x1A0;
-		pState++;
-	}
-}
-
-extern int RemoveModelIDs[1200];
-extern CVector RemovePos[1200];
-extern float RemoveRad[1200];
-extern int iTotalRemovedObjects;
-
-void RemoveBuilding(RPCParameters* rpcParams)
-{
-	uint8_t* Data = reinterpret_cast<uint8_t*>(rpcParams->input);
-	int iBitLength = rpcParams->numberOfBitsOfData;
-	//PlayerID sender = rpcParams->sender;
-
-	RakNet::BitStream bsData(Data, (iBitLength / 8) + 1, false);
-
-	int uModelID;
-	CVector pos;
-	float fRad;
-
-	bsData.Read(uModelID);
-	bsData.Read((char*)& pos, sizeof(CVector));
-	bsData.Read(fRad);
-	RemoveModelIDs[iTotalRemovedObjects] = uModelID;
-	RemovePos[iTotalRemovedObjects] = pos;
-	RemoveRad[iTotalRemovedObjects] = fRad;
-	iTotalRemovedObjects++;
-	ProcessRemoveBuilding(uModelID, pos, fRad);
 }
 
 #include "../playertags.h"
@@ -1345,7 +1201,6 @@ void RegisterRPCs(RakClientInterface* pRakClient)
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrDestroy3DTextLabel, Delete3DTextLabel);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScmEvent, ScmEvent);
 
-	pRakClient->RegisterAsRemoteProcedureCall(&RPC_RemoveBuilding, RemoveBuilding);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_SetPlayerChatBubble, SetPlayerChatBubble);
 
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_WorldPlayerDeath, WorldPlayerDeath);
@@ -1398,7 +1253,6 @@ void UnRegisterRPCs(RakClientInterface* pRakClient)
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_ScrDestroy3DTextLabel);
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_ScmEvent);
 
-	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_RemoveBuilding);
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_SetPlayerChatBubble);
 
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_WorldPlayerDeath);

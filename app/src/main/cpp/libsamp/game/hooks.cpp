@@ -105,13 +105,13 @@ stFile* NvFOpen_hook(const char* r0, const char* r1, int r2, int r3)
 //	// ----------------------------
 	if(!strncmp(r1+12, "mainV1.scm", 10))
 	{
-		sprintf(path, "%sSAMP/main.scm", g_pszStorage);
+		sprintf(path, "%smain.scm", g_pszStorage);
 		Log("Loading %s", path);
 	}
 	// ----------------------------
 	if(!strncmp(r1+12, "SCRIPTV1.IMG", 12))
 	{
-		sprintf(path, "%sSAMP/script.img", g_pszStorage);
+		sprintf(path, "%sscript.img", g_pszStorage);
 		Log("Loading script.img..");
 	}
 
@@ -146,7 +146,7 @@ void Render2dStuff()
 	if (CHUD::bIsShow) {
 		CHUD::UpdateHudInfo();
 
-		float* radar = (float*) CGtaWidgets::pWidgets[0xA1];
+		auto* radar = (float*) CGtaWidgets::pWidgets[0xA1];
 
 		//thiz[0] = (float)100;
 		if (radar)
@@ -335,7 +335,7 @@ extern "C" void pickup_ololo()
 	if(pNetGame && pNetGame->GetPickupPool())
 	{
 		CPickupPool *pPickups = pNetGame->GetPickupPool();
-		pPickups->PickedUp( ((dwParam1-(g_libGTASA+0x70E264))/0x20) );
+		pPickups->PickedUp( ((dwParam1-(g_libGTASA+0x007AFD70))/0x20) );
 	}
 }
 
@@ -465,13 +465,11 @@ signed int OS_FileOpen_hook(unsigned int a1, int *a2, const char *a3, int a4)
 {
 	signed int retn = OS_FileOpen(a1, a2, a3, a4);
 
-	//if (calledFrom == 0x1BCE9A + 1)
-	//{
 	if (isEncrypted(a3))
 	{
 		lastOpenedFile = *a2;
 	}
-	//  }
+
 	return retn;
 }
 
@@ -831,89 +829,84 @@ void InstallSpecialHooks()
 {
 	Log("InstallSpecialHooks");
 
-	//CHook::InlineHook(g_libGTASA, 0x00267054, &FileSetPosition_hook, &FileSetPosition);
-//	// texture Краш если с текстурами какая-то хуйня
+	// texture Краш если с текстурами какая-то хуйня
 	CHook::InlineHook(g_libGTASA, 0x001E8FF8, &CTextureDatabaseRuntime__GetEntry_hook, &CTextureDatabaseRuntime__GetEntry);
 
-//	//IMG
-	//CHook::InlineHook(g_libGTASA, 0x3850E4, &CBaseModelInfo__DeleteCollisionModel_hook, &CBaseModelInfo__DeleteCollisionModel);
-	//CHook::InlineHook(g_libGTASA, 0x3850E4, &CBaseModelInfo__SetColModel_hook, &CBaseModelInfo__SetColModel);
+	//IMG
 	 CHook::InlineHook(g_libGTASA, 0x002CF680, &CStreaming_InitImageList_hook, (uintptr_t*)&CStreaming_InitImageList);
-//
-	CHook::InlineHook(g_libGTASA, 0x0021829C, &GetMeshPriority_hook, &GetMeshPriority);
-//	//new fix
-//	CHook::InlineHook(g_libGTASA, 0x1EEC90, &rxOpenGLDefaultAllInOneRenderCB_hook, &rxOpenGLDefaultAllInOneRenderCB);
-//	CHook::InlineHook(g_libGTASA, 0x28AAAC, &CustomPipeRenderCB_hook, &CustomPipeRenderCB);
-//
+
+//	CHook::InlineHook(g_libGTASA, 0x0021829C, &GetMeshPriority_hook, &GetMeshPriority);
+
+	//new fix
+	CHook::InlineHook(g_libGTASA, 0x00222C50, &rxOpenGLDefaultAllInOneRenderCB_hook, &rxOpenGLDefaultAllInOneRenderCB);
+	CHook::InlineHook(g_libGTASA, 0x002CA85C, &CustomPipeRenderCB_hook, &CustomPipeRenderCB);
+
 	// gettexture fix crash
 	CHook::Redirect(g_libGTASA, 0x00297280, &CUtil::GetTexture);
-//	//
-//	// CPlaceable::InitMatrixArray
-//	CHook::WriteMemory(g_libGTASA + 0x3ABB0A, "\x4F\xF4\x7A\x61", 4); // MOV.W R1, #4000
+
+	// CPlaceable::InitMatrixArray
 	CHook::InlineHook(g_libGTASA, 0x00408B20, &CPlaceable_InitMatrixArray_hook, &CPlaceable_InitMatrixArray);
-//
+
 	// RLEDecompress fix
 	//CHook::InlineHook(g_libGTASA, 0x001E7316, &RLEDecompress_hook, &RLEDecompress);
-//
-//	//
+
+	// Log texture load
 	CHook::InlineHook(g_libGTASA, 0x001E9148, &LoadFullTexture_hook, &LoadFullTexture);
-//
-//	CHook::NOP(g_libGTASA + 0x00185DE8, 2);//_rwOpenGLNativeTextureReadXBOXPvS_
-//	//
+
+	CHook::NOP(g_libGTASA + 0x001AEC3C, 2); // _rwOpenGLNativeTextureReadXBOXPvS_
+
 //	CHook::NOP(g_libGTASA + 0x002F9E5C, 10); 	//LoadCutsceneData
 	//CHook::NOP(g_libGTASA + 0x00471EE2, 2);		//CCutsceneMgr::Initialise
 //
 	CHook::InlineHook(g_libGTASA, 0x00421118, &CTimer__StartUserPause_hook, &CTimer__StartUserPause);
 	CHook::InlineHook(g_libGTASA, 0x00421128, &CTimer__EndUserPause_hook, &CTimer__EndUserPause);
-//
-//	CHook::NOP(g_libGTASA + 0x00398972, 2); // get out fucking roadblocks
-//
-//	//crash
+
+	//crash
 //	if ( !*(uintptr_t *)(g_libGTASA + 0x61B298) && !((int (*)(const char *))(g_libGTASA + 0x179A20))("glAlphaFuncQCOM") )
 //	{
 //		CHook::NOP(g_libGTASA + 0x1A6164, 4);
 //		CHook::WriteMemory(g_libGTASA + 0x1A6164, "\x70\x47", 2);
 //	}
-//
-//	//pvr
+
+	//pvr
 	CHook::UnFuck(g_libGTASA + 0x001E87A0);
 	*(char*)(g_libGTASA + 0x1E87A0 + 12) = 'd';
 	*(char*)(g_libGTASA + 0x1E87A0 + 13) = 'x';
 	*(char*)(g_libGTASA + 0x1E87A0 + 14) = 't';
-//
+
 	CHook::UnFuck(g_libGTASA + 0x001E8C04);
 	*(char*)(g_libGTASA + 0x001E8C04 + 12) = 'd';
 	*(char*)(g_libGTASA + 0x001E8C04 + 13) = 'x';
 	*(char*)(g_libGTASA + 0x001E8C04 + 14) = 't';
-//
-//	//etc
+
+	//etc
 	CHook::UnFuck(g_libGTASA + 0x001E878C);
 	*(char*)(g_libGTASA + 0x001E878C + 12) = 'd';
 	*(char*)(g_libGTASA + 0x001E878C + 13) = 'x';
 	*(char*)(g_libGTASA + 0x001E878C + 14) = 't';
-//
+
 	CHook::UnFuck(g_libGTASA + 0x001E8BF4);
 	*(char*)(g_libGTASA + 0x001E8BF4 + 12) = 'd';
 	*(char*)(g_libGTASA + 0x001E8BF4 + 13) = 'x';
 	*(char*)(g_libGTASA + 0x001E8BF4 + 14) = 't';
-//
+
 //	CHook::WriteMemory(g_libGTASA + 0x0023BEDC, "\xF8\xB5", 2);
 //	CHook::WriteMemory(g_libGTASA + 0x0023BEDE, "\x00\x46\x00\x46", 4);
-//
+
 	CHook::InlineHook(g_libGTASA, 0x002671E2, &OS_FileRead_hook, &OS_FileRead);
-	//CHook::NOP(g_libGTASA + 0x3F3694, 2);
 	CHook::InlineHook(g_libGTASA, 0x00266DB4, &NvFOpen_hook, & NvFOpen);
-//
+
 	CHook::InlineHook(g_libGTASA, 0x0046F570, &InitialiseRenderWare_hook, &InitialiseRenderWare);
 	CHook::InlineHook(g_libGTASA, 0x0029C06C, &MainMenuScreen__Update_hook, &MainMenuScreen__Update);
 	CHook::InlineHook(g_libGTASA, 0x00266A68, &OS_FileOpen_hook, &OS_FileOpen);
-//
+
 	CHook::InlineHook(g_libGTASA, 0x00570C70, &cHandlingDataMgr__FindExactWord_hook, &cHandlingDataMgr__FindExactWord);
 	CHook::InlineHook(g_libGTASA, 0x00570DC8, cHandlingDataMgr__ConvertDataToGameUnits_hook, &cHandlingDataMgr__ConvertDataToGameUnits);
-	//CHook::InlineHook(g_libGTASA, 0x00269634, NVEventGetNextEvent_hook, &NVEventGetNextEvent_hooked);
+
 	CHook::InlineHook(g_libGTASA, 0x0046BB04, CStreaming__Init2_hook, &CStreaming__Init2);	// increase stream memory value
 	CHook::InlineHook(g_libGTASA, 0x0040C900, &CPools_Initialise_hook, &CPools_Initialise);
-    CHook::InlineHook(g_libGTASA, 0x002A36E2, &MenuItem_add_hook, &MenuItem_add);
+
+	// CHook::InlineHook(g_libGTASA, 0x002A36E2, &MenuItem_add_hook, &MenuItem_add);
 }
 
 /* =========================================== Ped damage handler =========================================== */
@@ -1038,46 +1031,6 @@ void CPedDamageResponseCalculator__ComputeDamageResponse_hook(stPedDamageRespons
 	CPedDamageResponseCalculator__ComputeDamageResponse(thiz, pEntity, pDamageResponse, bSpeak);
 }
 
-
-int(*RwFrameAddChild)(int, int);
-int RwFrameAddChild_hook(int a1, int a2)
-{
-	if (a2 && a1)
-	{
-		return RwFrameAddChild(a1, a2);
-	}
-	else return 0;
-}
-
-void (*CAnimManager__UncompressAnimation)(int, int);
-void CAnimManager__UncompressAnimation_hook(int a1, int a2)
-{
-	if (a1)
-	{
-		CAnimManager__UncompressAnimation(a1, a2);
-	}
-}
-
-int(*CUpsideDownCarCheck__IsCarUpsideDown)(int, int);
-int CUpsideDownCarCheck__IsCarUpsideDown_hook(int a1, int a2)
-{
-	if (*(uintptr_t*)(a2 + 20))
-	{
-		return CUpsideDownCarCheck__IsCarUpsideDown(a1, a2);
-	}
-	return 0;
-}
-
-int(*CAnimBlendNode__FindKeyFrame)(int, float, int, int);
-int CAnimBlendNode__FindKeyFrame_hook(int a1, float a2, int a3, int a4)
-{
-	if (*(uintptr_t*)(a1 + 16))
-	{
-		return CAnimBlendNode__FindKeyFrame(a1, a2, a3, a4);
-	}
-	else return 0;
-}
-
 #include "..//keyboard.h"
 
 uint64_t(*CWorld_ProcessPedsAfterPreRender)();
@@ -1109,34 +1062,6 @@ uint64_t CWorld_ProcessPedsAfterPreRender_hook()
 	}
 
 	return res;
-}
-
-int RemoveModelIDs[MAX_REMOVE_MODELS];
-CVector RemovePos[MAX_REMOVE_MODELS];
-float RemoveRad[MAX_REMOVE_MODELS];
-int iTotalRemovedObjects = 0;
-
-
-#include "util.h"
-
-int(*CFileLoader__LoadObjectInstance)(uintptr_t, uintptr_t);
-int CFileLoader__LoadObjectInstance_hook(uintptr_t thiz, uintptr_t name)
-{
-	for (int i = 0; i < iTotalRemovedObjects; i++)
-	{
-		if (RemoveModelIDs[i] == *(uint32_t*)(thiz + 28))
-		{
-			CVector pos;
-			pos.x = *(float*)(thiz);
-			pos.y = *(float*)(thiz + 4);
-			pos.z = *(float*)(thiz + 8);
-			if (GetDistanceBetween3DPoints(&pos, &RemovePos[i]) <= RemoveRad[i])
-			{
-				*(int*)(thiz + 28) = 19300;
-			}
-		}
-	}
-	return CFileLoader__LoadObjectInstance(thiz, name);
 }
 
 #include <list>
@@ -1253,7 +1178,7 @@ RwFrame* CClumpModelInfo_GetFrameFromId_Post(RwFrame* pFrameResult, RpClump* pCl
 		RwFrame* pNewFrameResult = nullptr;
 		uint     uiNewId = id + (i / 2) * ((i & 1) ? -1 : 1);
 
-		pNewFrameResult = ((RwFrame * (*)(RpClump * pClump, int id))(g_libGTASA + 0x00335CC0 + 1))(pClump, i);
+		pNewFrameResult = ((RwFrame * (*)(RpClump * pClump, int id))(g_libGTASA + 0x003856D0 + 1))(pClump, i);
 
 		if (pNewFrameResult)
 		{
@@ -1267,32 +1192,6 @@ RwFrame* (*CClumpModelInfo_GetFrameFromId)(RpClump*, int);
 RwFrame* CClumpModelInfo_GetFrameFromId_hook(RpClump* a1, int a2)
 {
 	return CClumpModelInfo_GetFrameFromId_Post(CClumpModelInfo_GetFrameFromId(a1, a2), a1, a2);
-}
-
-int (*CEventHandler__HandleEvents)(uintptr_t *thiz);
-int CEventHandler__HandleEvents_hook(uintptr_t *thiz)
-{
-	if(*((DWORD *)thiz + 1)){
-		return CEventHandler__HandleEvents(thiz);
-	}
-	return 0;
-}
-
-void (*GivePedScriptedTask)(uintptr_t* thiz, int pedHandle, uintptr_t* a3, int commandID);
-void GivePedScriptedTask_hook(uintptr_t* thiz, int pedHandle, uintptr_t* a3, int commandID)
-{
-	//Log("pedHandle = %d, local = %d", pedHandle, pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->m_dwGTAId);
-	if(!pedHandle || !commandID || !a3)return;
-
-	if ( pedHandle == 0xFFFFFFFF ){
-		return GivePedScriptedTask(thiz, pedHandle, a3, commandID);
-	}
-	//if(!(pedHandle>>8))return;
-	uintptr_t tmp = *(uintptr_t*)(g_libGTASA + 0x008B93D4);
-
-	if(  !(*(const CPedGta**) tmp + 0x4 ) ) return; // CPools::ms_pPedPool
-
-	GivePedScriptedTask(thiz, pedHandle, a3, commandID);
 }
 
 int (*CObject__ProcessGarageDoorBehaviour)(uintptr_t, int);
@@ -1312,13 +1211,6 @@ int CTaskSimpleCarOpenDoorFromOutside__ComputeAnimID_hook(uintptr_t *thiz, int *
 	return CTaskSimpleCarOpenDoorFromOutside__ComputeAnimID(thiz, a2, a3, a4);
 }
 
-int (*RpMaterialDestroy)(RpMaterial* mat);
-int RpMaterialDestroy_hook(RpMaterial* mat)
-{
-//	if(!a1 || !a2 || !a3 || !a4)return 1;
-//
-//	return RpMaterialDestroy(a1, a2, a3, a4);
-}
 
 #include "..//crashlytics.h"
 
@@ -1328,6 +1220,8 @@ uintptr_t g_dwRenderQueueOffset;
 char* (*RenderQueue__ProcessCommand)(uintptr_t thiz, char* a2);
 char* RenderQueue__ProcessCommand_hook(uintptr_t thiz, char* a2)
 {
+	Log("%s", a2);
+	return RenderQueue__ProcessCommand(thiz, a2);
 	if (thiz && a2)
 	{
 		uintptr_t* dwRenderQueue = (uintptr_t*)thiz;
@@ -1396,7 +1290,7 @@ uintptr_t CVehicle__SetupRenderCB(uintptr_t atomic, void* data)
 {
 	if (*(RpGeometry * *)(atomic + 24))
 	{
-		((RpGeometry * (*)(RpGeometry*, uintptr_t, void*))(g_libGTASA + 0x001E284C + 1))(*(RpGeometry * *)(atomic + 24), (uintptr_t)CVehicle__SetupRenderMatCB, (void*)data); // RpGeometryForAllMaterials
+		((RpGeometry * (*)(RpGeometry*, uintptr_t, void*))(g_libGTASA + 0x00215F30 + 1))(*(RpGeometry * *)(atomic + 24), (uintptr_t)CVehicle__SetupRenderMatCB, (void*)data); // RpGeometryForAllMaterials
 	}
 
 	return atomic;
@@ -1418,7 +1312,7 @@ void CVehicleModelInfo__SetEditableMaterials_hook(uintptr_t clump)
 				if (pVehicle->m_bReplacedTexture)
 				{
 					// RpClump* RpClumpForAllAtomics(RpClump* clump, RpAtomicCallBack callback, void* pData);
-					((RpClump * (*)(RpClump *, uintptr_t, void *))(g_libGTASA + 0x1E0EA0 + 1))(pClump, (uintptr_t)CVehicle__SetupRenderCB, (void *)pVehicle); // RpClumpForAllAtomics
+					((RpClump * (*)(RpClump *, uintptr_t, void *))(g_libGTASA + 0x00213D66 + 1))(pClump, (uintptr_t)CVehicle__SetupRenderCB, (void *)pVehicle); // RpClumpForAllAtomics
 				}
 			}
 		}
@@ -1448,19 +1342,48 @@ void CVehicle__ResetAfterRender_hook(uintptr_t thiz)
 void (*CGame__Process)();
 void CGame__Process_hook()
 {
-	CGame__Process();
+	//CGame__Process();
 
 	if(pGame->bIsGameExiting)return;
 
-	static bool once = false;
-	if (!once)
-	{
-		CCustomPlateManager::Initialise();
-		//CSnow::Initialise();
-		once = true;
-	}
+	((void(*)())(g_libGTASA + 0x003F8B50 + 1))(); // CPad::UpdatePads()
+	((void(*)())(g_libGTASA + 0x002B03F8 + 1))(); // CTouchInterface::Clear()
+	((void(*)())(g_libGTASA + 0x002D0558 + 1))(); // CStreaming::Update()
+	((void(*)())(g_libGTASA + 0x005CC2E8 + 1))(); // CWeather::Update()
+	//((void(*)())(g_libGTASA + 0x002D9818 + 1))(); // CCollision::Update()
+	uintptr_t* gFireManager = (uintptr_t *)(g_libGTASA + 0x00958800);
+	((void(*)(uintptr_t*))(g_libGTASA + 0x003F1628 + 1))(gFireManager); // CFireManager::Update
 
-	CCustomPlateManager::Process();
+	((void(*)())(g_libGTASA + 0x0059EB48 + 1))(); // CClouds::Update()
+	((void(*)())(g_libGTASA + 0x004213FC + 1))(); // CUserDisplay::Process()
+//	((void(*)())(g_libGTASA + 0x005CBB20 + 1))(); // CWaterCannons::Update()
+	((void(*)())(g_libGTASA + 0x005DB8E8 + 1))(); // CWeapon::UpdateWeapons()
+	((void(*)())(g_libGTASA + 0x0035E4AC + 1))(); // CSetPieces::Update()
+	((void(*)())(g_libGTASA + 0x00427744 + 1))(); // CWorld::Process()
+	((void(*)())(g_libGTASA + 0x0059CFC0 + 1))(); // CBirds::Update()
+	((void(*)())(g_libGTASA + 0x005C03E4 + 1))(); // CSpecialFX::Update()
+	((void(*)())(g_libGTASA + 0x005B28D8 + 1))(); // CPostEffects::Update()
+
+	((void(*)())(g_libGTASA + 0x0041EF78 + 1))(); // CTimeCycle::Update()
+	((void(*)())(g_libGTASA + 0x004CA834 + 1))(); // CPopCycle::Update()
+
+	uintptr_t* TheCamera = (uintptr_t*)(g_libGTASA + 0x00951FA8);
+	((void(*)(uintptr_t*))(g_libGTASA + 0x003DC7D0 + 1))(TheCamera); // CCamera::Process()
+
+	((void(*)())(g_libGTASA + 0x005A3E40 + 1))(); // CCoronas::DoSunAndMoon()
+	((void(*)())(g_libGTASA + 0x005A22C8 + 1))(); // CCoronas::Update()
+
+
+
+//	static bool once = false;
+//	if (!once)
+//	{
+//		CCustomPlateManager::Initialise();
+//		//CSnow::Initialise();
+//		once = true;
+//	}
+//
+//	CCustomPlateManager::Process();
 }
 
 uint16_t g_usLastProcessedModelIndexAutomobile = 0;
@@ -1763,63 +1686,6 @@ void CTaskSimpleUseGun__RemoveStanceAnims_hook(void* thiz, void* ped, float a3)
 	{
 		CTaskSimpleUseGun__RemoveStanceAnims(thiz, ped, a3);
 	}
-}
-
-float (*CRadar__LimitRadarPoint)(float* a1);
-float CRadar__LimitRadarPoint_hook(float* a1)
-{
-	if (*(uint8_t*)(g_libGTASA + 0x0063E0B4))
-	{
-		return sqrtf((float)(a1[1] * a1[1]) + (float)(*a1 * *a1));
-	}
-
-	if (!CRadarRect::IsEnabled())
-	{
-		return CRadar__LimitRadarPoint(a1);
-	}
-	float value = CRadarRect::CRadar__LimitRadarPoint_hook(a1);
-
-	return value;
-}
-
-static int g_iCurrentWanted = 0;
-static float g_fInitialPos = 0.0f;
-
-void (*CSprite2d__Draw)(CSprite2d* a1, CRect* a2, CRGBA* a3);
-void CSprite2d__Draw_hook(CSprite2d* a1, CRect* a2, CRGBA* a3)
-{
-	uintptr_t dwRetAddr = 0;
-	__asm__ volatile ("mov %0, lr" : "=r" (dwRetAddr));
-	dwRetAddr -= g_libGTASA;
-
-	if (!pGUI)
-	{
-		return CSprite2d__Draw(a1, a2, a3);
-	}
-
-	//if (dwRetAddr == 0x003D3796 + 1 || dwRetAddr == 0x003D376C + 1 || dwRetAddr == 0x003D373E + 1 || dwRetAddr == 0x003D3710 + 1)
-	///{
-		if(!CHUD::bIsShow)return;
-		if (CRadarRect::m_pDiscTexture == nullptr)
-		{
-			CRadarRect::m_pDiscTexture = a1->m_pRwTexture;
-		}
-		if (CRadarRect::IsEnabled() && CRadarRect::m_pRectTexture)
-		{
-			a1->m_pRwTexture = CRadarRect::m_pRectTexture;
-			//CChatWindow::AddDebugMessage("Replacing for rect");
-		}
-		else
-		{
-			a1->m_pRwTexture = CRadarRect::m_pDiscTexture;
-			//CChatWindow::AddDebugMessage("Replacing for disc");
-		}
-
-
-		
-	//}
-
-	CSprite2d__Draw(a1, a2, a3);
 }
 
 void (*CCam__Process)(uintptr_t);
@@ -2188,29 +2054,6 @@ uint32_t CVehicle__GetVehicleLightsStatus_hook(CVehicleGta *_pVehicle)
 	return pVehicle->GetLightsState();
 }
 
-
-void (*RenderEffects)();
-void RenderEffects_hook()
-{
-	// fix render spheres
-//	if(pSettings->Get().bnoFX)
-//	{
-		RwRenderStateSet(rwRENDERSTATEZWRITEENABLE, (void*)0);
-		RwRenderStateSet(rwRENDERSTATESRCBLEND, (void*)5);
-		RwRenderStateSet(rwRENDERSTATEDESTBLEND, (void*)6);
-		RwRenderStateSet(rwRENDERSTATECULLMODE, (void*)1);
-		RwRenderStateSet(rwRENDERSTATEVERTEXALPHAENABLE, (void*)1);
-		RwRenderStateSet(rwRENDERSTATETEXTURERASTER, (void*)0);
-
-		CHook::CallFunction<void>(g_libGTASA + 0x54C330 + 1);
-		CHook::CallFunction<void>(g_libGTASA + 0x54D738 + 1);
-//	}
-//	else
-//	{
-//		RenderEffects();
-//	}
-}
-
 uint32_t (*CWeapon__FireSniper)(CWeaponGta* pWeaponSlot, CPedGta *pFiringEntity, CEntityGta *a3, CVector *vecOrigin);
 uint32_t CWeapon__FireSniper_hook(CWeaponGta* pWeaponSlot, CPedGta *pFiringEntity, CEntityGta *a3, CVector *vecOrigin)
 {
@@ -2225,31 +2068,6 @@ uint32_t CWeapon__FireSniper_hook(CWeaponGta* pWeaponSlot, CPedGta *pFiringEntit
 	}
 
 	return 1;
-}
-
-CVector& (*FindPlayerSpeed)(int a1);
-CVector& FindPlayerSpeed_hook(int a1)
-{
-	uintptr_t dwRetAddr = 0;
-	__asm__ volatile ("mov %0, lr":"=r" (dwRetAddr));
-	dwRetAddr -= g_libGTASA;
-
-	if(dwRetAddr == 0x3DF20E + 1)
-	{
-		if(pNetGame)
-		{
-			CPlayerPed *pPlayerPed = pGame->FindPlayerPed();
-			if(pPlayerPed &&
-			   pPlayerPed->IsInVehicle() &&
-			   pPlayerPed->IsAPassenger())
-			{
-				CVector vec = {0.1f, 0.1f, 0.1f};
-				return vec;
-			}
-		}
-	}
-
-	return FindPlayerSpeed(a1);
 }
 
 void SendBulletSync(CVector *vecOrigin, CVector *vecEnd, CVector *vecPos, CEntityGta **ppEntity)
@@ -2417,7 +2235,7 @@ signed int CBulletInfo_AddBullet_hook(CEntityGta* pEntity, CWeaponGta* pWeapon, 
 	vec2.z *= 50.0f;
 	CBulletInfo_AddBullet(pEntity, pWeapon, vec1, vec2);
 	// CBulletInfo::Update
-	(( void (*)())(g_libGTASA+0x55E170+1))();
+	(( void (*)())(g_libGTASA+0x005D7094+1))();
 	return 1;
 }
 
@@ -2470,11 +2288,6 @@ void InstallHooks()
 {
 	Log("InstallHooks");
 
-//	CHook::InlineHook(g_libGTASA, 0x0058AE18, &AddWaterSplashParticles_hook, &AddWaterSplashParticles);
-
-	//draw radar
-	//CHook::InlineHook(g_libGTASA, 0x00437B0C, &CHud__DrawRadar_hook, &CHud__DrawRadar);
-//
 //    // Fixing a crosshair by very stupid math ( JPATCH )
 //	m_f3rdPersonCHairMultX = (float*)(g_libGTASA + 0x008B07FC);
 //	m_f3rdPersonCHairMultY = (float*)(g_libGTASA + 0x008B07F8);
@@ -2486,17 +2299,17 @@ void InstallHooks()
 //
 //	// Стрельба
 	CHook::InlineHook(g_libGTASA, 0x005DF748, &CWeapon__ProcessLineOfSight_hook, &CWeapon__ProcessLineOfSight);
-//	CHook::InlineHook(g_libGTASA, 0x55E090, &CBulletInfo_AddBullet_hook, &CBulletInfo_AddBullet);
+	CHook::InlineHook(g_libGTASA, 0x55E090, &CBulletInfo_AddBullet_hook, &CBulletInfo_AddBullet);
 //	CHook::InlineHook(g_libGTASA, 0x56668C, &CWeapon__FireSniper_hook, &CWeapon__FireSniper);
 	CHook::InlineHook(g_libGTASA, 0x00371B3C, &CPedDamageResponseCalculator__ComputeDamageResponse_hook, &CPedDamageResponseCalculator__ComputeDamageResponse);
 	CHook::InlineHook(g_libGTASA, 0x005DC178, &CWeapon__FireInstantHit_hook, &CWeapon__FireInstantHit);
-	CHook::InlineHook(g_libGTASA, 0x00424B94, &CWorld__ProcessLineOfSight_hook, &CWorld__ProcessLineOfSight);
+	//CHook::InlineHook(g_libGTASA, 0x00424B94, &CWorld__ProcessLineOfSight_hook, &CWorld__ProcessLineOfSight);
 //
 //	// audio
 ////	CHook::InlineHook(g_libGTASA, 0x368850, &CAudioEngine__Service_hook, &CAudioEngine__Service);
 //	//CHook::InlineHook(g_libGTASA, 0x35AC44, &CAEVehicleAudioEntity__GetAccelAndBrake_hook, &CAEVehicleAudioEntity__GetAccelAndBrake);
 //
-	//CHook::InlineHook(g_libGTASA, 0x002DCA54, &CCollision__ProcessVerticalLine_hook, &CCollision__ProcessVerticalLine);
+	CHook::InlineHook(g_libGTASA, 0x002DCA54, &CCollision__ProcessVerticalLine_hook, &CCollision__ProcessVerticalLine);
 //	CHook::InlineHook(g_libGTASA, 0x5669D8, &CWeapon__GenerateDamageEvent_hook, &CWeapon__GenerateDamageEvent);
 //	// Fire extingusher fix
 //	CHook::InlineHook(g_libGTASA, 0x46D6AC, &CTaskSimpleUseGun__SetPedPosition_hook, &CTaskSimpleUseGun__SetPedPosition);
@@ -2516,15 +2329,13 @@ void InstallHooks()
 	CHook::InlineHook(g_libGTASA, 0x00443F30, &CRadar__DrawRadarGangOverlay_hook, &CRadar__DrawRadarGangOverlay);
 //
 //	CHook::CodeInject(g_libGTASA + 0x2D99F4, (uintptr_t)PickupPickUp_hook, 1);
-//
-//
 
 	CModelInfo::InstallHooks();
 
-//	CHook::InlineHook(g_libGTASA, 0x0033DA5C, &CAnimManager__UncompressAnimation_hook, &CAnimManager__UncompressAnimation);
-//	CHook::InlineHook(g_libGTASA, 0x001AECC0, &RwFrameAddChild_hook, &RwFrameAddChild);
-//	CHook::InlineHook(g_libGTASA, 0x002DFD30, &CUpsideDownCarCheck__IsCarUpsideDown_hook, &CUpsideDownCarCheck__IsCarUpsideDown);
-//	CHook::InlineHook(g_libGTASA, 0x0033AD78, &CAnimBlendNode__FindKeyFrame_hook, &CAnimBlendNode__FindKeyFrame);
+//	CHook::InlineHook(g_libGTASA, 0x0038DD54, &CAnimManager__UncompressAnimation_hook, &CAnimManager__UncompressAnimation);
+//	CHook::InlineHook(g_libGTASA, 0x001D84BC, &RwFrameAddChild_hook, &RwFrameAddChild);
+//	CHook::InlineHook(g_libGTASA, 0x003283BC, &CUpsideDownCarCheck__IsCarUpsideDown_hook, &CUpsideDownCarCheck__IsCarUpsideDown);
+//	CHook::InlineHook(g_libGTASA, 0x0038AF88, &CAnimBlendNode__FindKeyFrame_hook, &CAnimBlendNode__FindKeyFrame);
 //
 	// attached objects
 	CHook::InlineHook(g_libGTASA, 0x00428410, &CWorld_ProcessPedsAfterPreRender_hook, &CWorld_ProcessPedsAfterPreRender);
@@ -2537,18 +2348,12 @@ void InstallHooks()
 //	CHook::InlineHook(g_libGTASA, 0x00335CC0, &CClumpModelInfo_GetFrameFromId_hook, &CClumpModelInfo_GetFrameFromId);
 //
 //	// random crash fix
-//	CHook::InlineHook(g_libGTASA, 0x001A8530, &RenderQueue__ProcessCommand_hook, &RenderQueue__ProcessCommand);
+//	CHook::InlineHook(g_libGTASA, 0x001D1F7E, &RenderQueue__ProcessCommand_hook, &RenderQueue__ProcessCommand);
 //	// fix
 //	CHook::InlineHook(g_libGTASA, 0x001B9D74, &_rwFreeListFreeReal_hook, &_rwFreeListFreeReal);
 
-//	CHook::RET(g_libGTASA + 0x002C0304); // CDarkel__RegisterCarBlownUpByPlayer_hook
-//	CHook::RET(g_libGTASA + 0x002C072C); // CDarkel__ResetModelsKilledByPlayer_hook
-//	CHook::RET(g_libGTASA + 0x002C0758); // CDarkel__QueryModelsKilledByPlayer_hook
-//	CHook::RET(g_libGTASA + 0x002C0778); // CDarkel__FindTotalPedsKilledByPlayer_hook
-//	CHook::RET(g_libGTASA + 0x002C0D04); // CDarkel__RegisterKillByPlayer_hook
-//
-//	CHook::InlineHook(g_libGTASA, 0x338CBC, &CVehicleModelInfo__SetEditableMaterials_hook, &CVehicleModelInfo__SetEditableMaterials);
-//	CHook::InlineHook(g_libGTASA, 0x0050DEF4, &CVehicle__ResetAfterRender_hook, &CVehicle__ResetAfterRender);
+	CHook::InlineHook(g_libGTASA, 0x00388B54, &CVehicleModelInfo__SetEditableMaterials_hook, &CVehicleModelInfo__SetEditableMaterials);
+	CHook::InlineHook(g_libGTASA, 0x005823F0, &CVehicle__ResetAfterRender_hook, &CVehicle__ResetAfterRender);
 //
 	//CHook::InlineHook(g_libGTASA, 0x003F4000, &CGame__Process_hook, &CGame__Process);
 
@@ -2556,8 +2361,7 @@ void InstallHooks()
 	CHook::InlineHook(g_libGTASA, 0x0055BF10, &CAutomobile__ProcessEntityCollision_hook, &CAutomobile__ProcessEntityCollision);
 
 	CHook::InlineHook(g_libGTASA, 0x0029DEF8, &MainMenuScreen__OnExit_hook, &MainMenuScreen__OnExit);
-////	CHook::InlineHook(g_libGTASA, 0x00398334, &CGame__Shutdown_hook, &CGame__Shutdown);
-//
+
 //	CHook::WriteMemory(g_libGTASA + 0x003DA86C,
 //		"\x80\xB4"\
 //		"\x00\xAF"\
@@ -2581,10 +2385,7 @@ void InstallHooks()
 //
 //	CHook::InlineHook(g_libGTASA, 0x003DA86C, &CRadar__LimitRadarPoint_hook, &CRadar__LimitRadarPoint); // TO FIX
 
-
-	//CHook::InlineHook(g_libGTASA, 0x005C9170, &CSprite2d__Draw_hook, &CSprite2d__Draw);
-
-	CHook::InlineHook(g_libGTASA, 0x003BF300, (uintptr_t)CCam__Process_hook, (uintptr_t*)& CCam__Process);
+//	CHook::InlineHook(g_libGTASA, 0x003BF300, (uintptr_t)CCam__Process_hook, (uintptr_t*)& CCam__Process);
 
 	CHook::InlineHook(g_libGTASA, 0x003FB430, (uintptr_t)CPad__CycleCameraModeDownJustDown_hook, (uintptr_t*)& CPad__CycleCameraModeDownJustDown);
 //

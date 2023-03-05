@@ -498,7 +498,7 @@ void CPlayerPed::ClearPlayerAimState()
 	CWorld::PlayerInFocus = m_bytePlayerNumber;
 
 	*(uint32_t *)(ped + 1432) = 0;	// unk
-	((uint32_t(*)(uintptr_t, int, int, int))(g_libGTASA + 0x00454A6C + 1))(ped, 0, 0, 0);	// CPlayerPed::ClearWeaponTarget
+	((uint32_t(*)(uintptr_t, int, int, int))(g_libGTASA + 0x004C58E4 + 1))(ped, 0, 0, 0);	// CPlayerPed::ClearWeaponTarget
 	*(uint8_t *)(*(uint32_t *)(ped + 1088) + 52) = *(uint8_t *)(*(uint32_t *)(ped + 1088) + 52) & 0xF7 | 8 * (0 & 1);	// magic...
 
 	CWorld::PlayerInFocus = old;
@@ -1423,7 +1423,7 @@ void CPlayerPed::SetMoveAnim(int iAnimGroup)
 	if (!IsBlendAssocGroupLoaded(iAnimGroup))
 	{
 		Log("Animgrp %d not loaded", iAnimGroup);
-		uintptr_t pAnimBlock = ((uintptr_t(*)(const char*))(g_libGTASA + 0x0033DB7C + 1))(strBlockName);
+		uintptr_t pAnimBlock = ((uintptr_t(*)(const char*))(g_libGTASA + 0x0038DEA4 + 1))(strBlockName);
 		if (!pAnimBlock)
 		{
 			return;
@@ -1431,7 +1431,7 @@ void CPlayerPed::SetMoveAnim(int iAnimGroup)
 		uint8_t bLoaded = *((uint8_t*)pAnimBlock + 16);
 		if (!bLoaded)
 		{
-			uintptr_t animBlocks = (uintptr_t)(g_libGTASA + 0x0089035C);
+			uintptr_t animBlocks = (uintptr_t)(g_libGTASA + 0x00940AFC);
 			uintptr_t idx = (pAnimBlock - animBlocks) / 32;
 
 			uintptr_t modelId = idx + 25575;
@@ -1459,7 +1459,7 @@ void CPlayerPed::SetMoveAnim(int iAnimGroup)
 	uintptr_t ped = (uintptr_t)m_pPed;
 	*(int*)(ped + 1244) = iAnimGroup;
 
-	((void(*)(CPedGta* thiz))(g_libGTASA + 0x004544F4 + 1))(m_pPed); // ReApplyMoveAnims
+	((void(*)(CPedGta* thiz))(g_libGTASA + 0x004C668C + 1))(m_pPed); // ReApplyMoveAnims
 }
 
 
