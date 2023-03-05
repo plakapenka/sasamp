@@ -106,8 +106,16 @@ public class AutoShop {
                 autoshop_gear_value.setText("Передний");
                 break;
             }
-            default: {
+            case 3: {
                 autoshop_gear_value.setText("Полный");
+                break;
+            }
+            case 4: {
+                autoshop_gear_value.setText("Цепной");
+                break;
+            }
+            default: {
+                autoshop_gear_value.setText("Не указан");
                 break;
             }
         }
