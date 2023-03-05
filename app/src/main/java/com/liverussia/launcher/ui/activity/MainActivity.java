@@ -295,8 +295,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void onClickPlay() {
-        String isTestMode = NativeStorage.getClientProperty(NativeStorageElements.TEST, this);
-
         if (isCheckSkipping()) {
             startGame();
         } else {
@@ -316,6 +314,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private boolean isCheckSkipping() {
         String isTestMode = NativeStorage.getClientProperty(NativeStorageElements.TEST, this);
 
+        //todo брать из Storage тк static стирается
         return TEST_MODE_ON_VALUE.equals(isTestMode)
                 || !Boolean.TRUE.equals(MainUtils.LATEST_APK_INFO.getIsCheckFilesOn());
     }

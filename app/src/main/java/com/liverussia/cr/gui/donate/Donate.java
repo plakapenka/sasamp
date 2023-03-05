@@ -345,6 +345,23 @@ public class Donate {
         allItems.add( new DonateItem("Lamborghini Huracan", CATEGORY_CARS, 7000, getResId("auc_veh_415"), 415) );
         allItems.add( new DonateItem("Ferrari La Ferrari", CATEGORY_CARS, 7500, getResId("auc_veh_541"), 541) );
         allItems.add( new DonateItem("BMW M8", CATEGORY_CARS, 8250, getResId("auc_veh_603"), 603) );
+        allItems.add( new DonateItem("Квадроцикл", CATEGORY_CARS, 370, getResId("auc_veh_424"), 424) );
+        allItems.add( new DonateItem("Санчез", CATEGORY_CARS, 500, getResId("auc_veh_468"), 468) );
+        allItems.add( new DonateItem("Путник", CATEGORY_CARS, 750, getResId("auc_veh_586"), 586) );
+        allItems.add( new DonateItem("ПСЖ 600", CATEGORY_CARS, 750, getResId("auc_veh_461"), 461) );
+        allItems.add( new DonateItem("БФ-400", CATEGORY_CARS, 1000, getResId("auc_veh_581"), 581) );
+        allItems.add( new DonateItem("ФКР-900", CATEGORY_CARS, 1250, getResId("auc_veh_521"), 521) );
+        allItems.add( new DonateItem("Байк", CATEGORY_CARS, 1750, getResId("auc_veh_463"), 463) );
+        allItems.add( new DonateItem("Каваски", CATEGORY_CARS, 2350, getResId("auc_veh_522"), 522) );
+        allItems.add( new DonateItem("Снегоход", CATEGORY_CARS, 2500, getResId("auc_veh_471"), 471) );
+        allItems.add( new DonateItem("Bandito", CATEGORY_CARS, 2500, getResId("auc_veh_568"), 568) );
+        allItems.add( new DonateItem("Картер", CATEGORY_CARS, 2500, getResId("auc_veh_571"), 571) );
+        allItems.add( new DonateItem("Monster", CATEGORY_CARS, 10000, getResId("auc_veh_444"), 444) );
+        allItems.add( new DonateItem("УАЗ - Патриот", CATEGORY_CARS, 500, getResId("auc_veh_540"), 540) );
+        allItems.add( new DonateItem("LADA 2101", CATEGORY_CARS, 50, getResId("auc_veh_518"), 518) );
+        allItems.add( new DonateItem("LADA Priora", CATEGORY_CARS, 300, getResId("auc_veh_467"), 467) );
+        allItems.add( new DonateItem("Rolls-Royce Cullinan", CATEGORY_CARS, 12500, getResId("auc_veh_558"), 558) );
+
 
         //vip
         allItems.add( new DonateItem("Silver VIP\n( 7 дней )", CATEGORY_VIP, 100, getResId("silver_vip"), 0) );

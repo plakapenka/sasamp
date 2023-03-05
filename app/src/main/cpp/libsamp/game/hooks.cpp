@@ -2981,11 +2981,24 @@ void CHud__DrawRadar_hook(uintptr_t* thiz)
 		CHud__DrawRadar(thiz);
 }
 
+int (*World__remove)(uintptr_t* thiz, uintptr_t* entity);
+int World__remove_hook(uintptr_t* thiz, uintptr_t* entity)
+{
+	if (thiz == nullptr) {
+		return 0;
+	}
+
+	return World__remove(thiz, entity);
+}
+
 void InstallHooks()
 {
 	Log("InstallHooks");
 
 	PROTECT_CODE_INSTALLHOOKS;
+
+	//
+	CHook::InlineHook(g_libGTASA, 0x003C1500, &World__remove_hook, &World__remove);
 
 	//draw radar
 	CHook::InlineHook(g_libGTASA, 0x3D4ED8, &CHud__DrawRadar_hook, &CHud__DrawRadar);
