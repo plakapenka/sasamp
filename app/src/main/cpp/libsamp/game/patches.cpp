@@ -270,7 +270,7 @@ void ApplyPatches()
 	CHook::RET(g_libGTASA + 0x0051DEC4);			// живность в воде WaterCreatureManager_c::Update
 	CHook::RET(g_libGTASA + 0x27DB98);				// Весь худ одной строкой?
 
-//	CHook::NOP(g_libGTASA + 0x0039ADE6, 2);	// CCoronas::RenderSunReflection crash
+	CHook::NOP(g_libGTASA + 0x0039ADE6, 2);	// CCoronas::RenderSunReflection crash
 	CHook::NOP(g_libGTASA + 0x0051018A, 2);	// не давать ган при выходе из тачки 	( клюшка, дробовик and etc )
 	CHook::NOP(g_libGTASA + 0x005101A6, 2);	// не давать ган при выходе из тачки	( клюшка, дробовик and etc )
 
