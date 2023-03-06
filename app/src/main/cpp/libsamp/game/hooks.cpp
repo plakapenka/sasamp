@@ -1102,11 +1102,16 @@ void InstallSpecialHooks()
 	CHook::NOP(g_libGTASA + 0x00398972, 2); // get out fucking roadblocks
 
 	//crash
-	if ( !*(uintptr_t *)(g_libGTASA + 0x61B298) && !((int (*)(const char *))(g_libGTASA + 0x179A20))("glAlphaFuncQCOM") )
-	{
-		CHook::NOP(g_libGTASA + 0x1A6164, 4);
-		CHook::WriteMemory(g_libGTASA + 0x1A6164, "\x70\x47", 2);
-	}
+	if (!*(uintptr_t *)(g_libGTASA + 0x61B298))
+		*(uintptr_t *)(g_libGTASA + 0x61B298) = ((uintptr_t(*)(const char *))(g_libGTASA + 0x179A20))("glAlphaFuncQCOM");
+
+	if (!*(uintptr_t *)(g_libGTASA + 0x61B298))
+		*(uintptr_t *)(g_libGTASA + 0x61B298) = ((uintptr_t(*)(const char *))(g_libGTASA + 0x179A20))("glAlphaFunc");
+//	if ( !*(uintptr_t *)(g_libGTASA + 0x61B298) && !((int (*)(const char *))(g_libGTASA + 0x179A20))("glAlphaFuncQCOM") )
+//	{
+//		CHook::NOP(g_libGTASA + 0x1A6164, 4);
+//		CHook::WriteMemory(g_libGTASA + 0x1A6164, "\x70\x47", 2);
+//	}
 
 	//pvr
 	CHook::UnFuck(g_libGTASA + 0x00573670);
