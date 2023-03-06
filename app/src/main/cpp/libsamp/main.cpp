@@ -8,7 +8,6 @@
 #include "game/game.h"
 #include "game/RW/RenderWare.h"
 #include "net/netgame.h"
-#include "gui/gui.h"
 #include "chatwindow.h"
 #include "playertags.h"
 #include "keyboard.h"
@@ -470,7 +469,13 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 {
 	javaVM = vm;
 
-	g_libGTASA = FindLibrary("libGTASA.so");
+	auto dlllll = dlopen("libGTASA.so", RTLD_NOLOAD);
+	uintptr_t ttt = (uintptr_t)dlsym(dlllll, "_ZN11CAutomobile15vecHunterGunPosE");
+
+	g_libGTASA = ttt - 0x00971450;
+
+
+	//g_libGTASA = FindLibrary("libGTASA.so");
 	if(g_libGTASA == 0)
 	{
 		Log("ERROR: libGTASA.so address not found!");
