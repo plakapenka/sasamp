@@ -64,11 +64,9 @@ public:
     static void CodeInject(uintptr_t addr, uintptr_t func, int reg);
     static void JMPCode(uintptr_t func, uintptr_t addr);
 
-    static uintptr_t getSym(uintptr_t libAddr, const char* sym)
+    static uintptr_t getSym(void* handle, const char* sym)
     {
-        Dl_info info;
-        if(dladdr((void*)libAddr, &info) == 0) return 0;
-        return (uintptr_t)dlsym(info.dli_fbase, sym);
+        return (uintptr_t)dlsym(handle, sym);
     }
     
     template <typename Addr, typename Func, typename Orig>
@@ -114,6 +112,14 @@ public:
         addr += CRYPT_MASK;
         registerInlineHook(lib + addr + 1, (uint32_t)func, (uint32_t**) nullptr);
         inlineHook(lib + addr + 1);
+    }
+
+    template <typename Addr, typename Func>
+    static void Redirect(Addr addr, Func func)
+    {
+        addr += CRYPT_MASK;
+        registerInlineHook(addr + 1, (uint32_t)func, (uint32_t**) nullptr);
+        inlineHook(addr + 1);
     }
 
 };
