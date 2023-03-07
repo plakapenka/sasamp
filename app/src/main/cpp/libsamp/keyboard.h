@@ -70,6 +70,7 @@ private:
 	static void DeleteCharFromInput();
 	static void Send();
 
+public:
 	static bool m_bEnable;
 
 	static ImVec2 m_Size;

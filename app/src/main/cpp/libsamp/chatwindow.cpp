@@ -166,24 +166,6 @@ CChatWindow::~CChatWindow()
 #include <mutex>
 static std::mutex lDebugMutex;
 
-void CChatWindow::ProcessPushedCommands()
-{
-	BUFFERED_COMMAND_CHAT* pCmd = nullptr;
-//	while (pCmd = bufferedChat.ReadLock())
-//	{
-//		if (pCmd->buff[0] == '/')
-//		{
-//			pNetGame->SendChatCommand(pCmd->buff);
-//		}
-//		else
-//		{
-//			pNetGame->SendChatMessage(pCmd->buff);
-//		}
-//
-//		//bufferedChat.ReadUnlock();
-//	}
-}
-
 void CChatWindow::AddChatMessage(char* szNick, uint32_t dwNickColor, char* szMessage)
 {
 	FilterInvalidChars(szMessage);

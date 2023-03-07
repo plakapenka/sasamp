@@ -180,26 +180,40 @@ bool bGameStarted = false;
 uint32_t bProcessedCleanStreamPool = 0;
 void RenderBackgroundHud();
 
-void (*Render2dStuff)();
-void Render2dStuff_hook()
+#include "keyboard.h"
+
+void Render2dStuff()
 {
-	if (CHUD::bIsShow) CHUD::UpdateHudInfo();
+
+	( ( void(*)() )(g_libGTASA + 0x003D44CC + 1) )(); // прицел
+
+	if (CHUD::bIsShow) {
+		CHUD::UpdateHudInfo();
+
+		// radar
+		RenderBackgroundHud();
+
+		auto thiz = (float*) * (uintptr_t*)(g_libGTASA + 0x6580C8);
+		if (thiz)
+		{
+
+			thiz[3] = CHUD::radarPos.X;
+			thiz[4] = CHUD::radarPos.Y;
+
+			thiz[5] = 38.0f;
+			thiz[6] = 38.0f;
+		}
+
+		((void (*)()) (g_libGTASA + 0x003D4ED8 + 1))(); // радар
+
+		//
+		if(!CKeyBoard::m_bEnable)
+			( ( void(*)(bool) )(g_libGTASA + 0x0026EE80 + 1) )(false); // render widgets
+	}
 
 	bGameStarted = true;
-//	MAKE_PROFILE(test, test_time);
+
 	MainLoop();
-	RenderBackgroundHud();
-//	LOG_PROFILE(test, test_time);
-	Render2dStuff();
-
-	if (!bProcessedCleanStreamPool)
-		bProcessedCleanStreamPool = GetTickCount();
-
-	uint32_t result = GetTickCount() - bProcessedCleanStreamPool;
-	if (result >= 5000)
-	{
-		CStreaming::RemoveAllUnusedModels();
-	}
 
 }
 
@@ -1528,7 +1542,7 @@ uintptr_t GetTexture_hook(const char* a1)
 	}
 	else
 	{
-		Log("Texture %s", a1);
+	//	Log("Texture %s", a1);
 		++* (uintptr_t*)(tex + 84);
 		return tex;
 	}
@@ -2146,69 +2160,6 @@ float CRadar__LimitRadarPoint_hook(float* a1)
 	float value = CRadarRect::CRadar__LimitRadarPoint_hook(a1);
 
 	return value;
-}
-
-static int g_iCurrentWanted = 0;
-static float g_fInitialPos = 0.0f;
-
-void (*CSprite2d__Draw)(CSprite2d* a1, CRect* a2, CRGBA* a3);
-void CSprite2d__Draw_hook(CSprite2d* a1, CRect* a2, CRGBA* a3)
-{
-	uintptr_t dwRetAddr = 0;
-	__asm__ volatile ("mov %0, lr" : "=r" (dwRetAddr));
-	dwRetAddr -= g_libGTASA;
-
-	if (!pGUI)
-	{
-		return CSprite2d__Draw(a1, a2, a3);
-	}
-
-	if (dwRetAddr == 0x003D3796 + 1 || dwRetAddr == 0x003D376C + 1 || dwRetAddr == 0x003D373E + 1 || dwRetAddr == 0x003D3710 + 1)
-	{
-		if(!CHUD::bIsShow)return;
-		if (CRadarRect::m_pDiscTexture == nullptr)
-		{
-			CRadarRect::m_pDiscTexture = a1->m_pRwTexture;
-		}
-		if (CRadarRect::IsEnabled() && CRadarRect::m_pRectTexture)
-		{
-			a1->m_pRwTexture = CRadarRect::m_pRectTexture;
-			//CChatWindow::AddDebugMessage("Replacing for rect");
-		}
-		else
-		{
-			a1->m_pRwTexture = CRadarRect::m_pDiscTexture;
-			//CChatWindow::AddDebugMessage("Replacing for disc");
-		}
-
-		float* thiz = (float*) * (uintptr_t*)(g_libGTASA + 0x6580C8);
-
-		//thiz[0] = (float)100;
-		if (thiz)
-		{
-
-			thiz[3] = CHUD::radarPos.X;
-			thiz[4] = CHUD::radarPos.Y;
-
-			thiz[5] = 38.0f;
-			thiz[6] = 38.0f;
-		}
-		
-	}
-
-	CSprite2d__Draw(a1, a2, a3);
-}
-
-void(*CHud__Draw)();
-void CHud__Draw_hook()
-{
-	float* thiz = (float*) * (uintptr_t*)(g_libGTASA + 0x6580C8);
-	if (thiz)
-	{
-		thiz[5] = 45.0f;
-		thiz[6] = 45.0f;
-	}
-	CHud__Draw();
 }
 
 void (*CCam__Process)(uintptr_t);
@@ -2943,22 +2894,6 @@ bool CEventKnockOffBike__AffectsPed_hook(uintptr_t *thiz, PED_TYPE *a2)
 	return false;
 }
 
-void (*CVehicle__ReduceVehicleDamage)(VEHICLE_TYPE* thiz, float *fDamage);
-void CVehicle__ReduceVehicleDamage_hook(VEHICLE_TYPE* thiz, float *fDamage)
-{
-	*fDamage = *fDamage/10;
-}
-
-int (*FindPlayerPed_ab_)(int a1);
-int FindPlayerPed_ab__hook(int a1)
-{
-	if ( a1 < 0 )
-		a1 = *(uint8_t*)(g_libGTASA + 0x008E864C); // CWorld::PlayerInFocus;
-
-	int *CWorld__Players = *(int**)(g_libGTASA + 0x5D021C);
-
-	return CWorld__Players[0x65 * a1];
-}
 
 float *m_f3rdPersonCHairMultX, *m_f3rdPersonCHairMultY, *ms_fAspectRatio;
 
@@ -2977,13 +2912,6 @@ void DrawCrosshair_hook(uintptr_t* thiz)
 
 	*m_f3rdPersonCHairMultX = save1;
 	*m_f3rdPersonCHairMultY = save2;
-}
-
-void (*CHud__DrawRadar)(uintptr_t* thiz);
-void CHud__DrawRadar_hook(uintptr_t* thiz)
-{
-	if(CHUD::bIsShow)
-		CHud__DrawRadar(thiz);
 }
 
 int (*World__remove)(uintptr_t* thiz, uintptr_t* entity);
@@ -3005,19 +2933,12 @@ void InstallHooks()
 	//
 	CHook::InlineHook(g_libGTASA, 0x003C1500, &World__remove_hook, &World__remove);
 
-	//draw radar
-	CHook::InlineHook(g_libGTASA, 0x3D4ED8, &CHud__DrawRadar_hook, &CHud__DrawRadar);
-
     // Fixing a crosshair by very stupid math ( JPATCH )
 	m_f3rdPersonCHairMultX = (float*)(g_libGTASA + 0x008B07FC);
 	m_f3rdPersonCHairMultY = (float*)(g_libGTASA + 0x008B07F8);
 	ms_fAspectRatio = (float*)(g_libGTASA + 0x0098525C);
     CHook::InlineHook(g_libGTASA, 0x3D44CC, &DrawCrosshair_hook, &DrawCrosshair);
 
-	//
-	CHook::InlineHook(g_libGTASA, 0x003AC5DC, &FindPlayerPed_ab__hook, &FindPlayerPed_ab_); // crash fix?
-
-	//CHook::NOP(g_libGTASA + 0x50F3A0, 6); // CVehicle::ReduceVehicleDamage
 	// не падать с мотоцикла
 	CHook::InlineHook(g_libGTASA, 0x00322FBC, &CEventKnockOffBike__AffectsPed_hook, &CEventKnockOffBike__AffectsPed);
 
@@ -3046,7 +2967,7 @@ void InstallHooks()
 
 	CHook::InlineHook(g_libGTASA, 0x3D7CA8, &CLoadingScreen_DisplayPCScreen_hook, &CLoadingScreen_DisplayPCScreen);
 
-	CHook::InlineHook(g_libGTASA, 0x39AEF4, &Render2dStuff_hook, &Render2dStuff);
+	CHook::Redirect(g_libGTASA, 0x39AEF4, &Render2dStuff);
 	CHook::InlineHook(g_libGTASA, 0x39B098, &Render2dStuffAfterFade_hook, &Render2dStuffAfterFade);
 	CHook::InlineHook(g_libGTASA, 0x239D5C, &TouchEvent_hook, &TouchEvent);
     //
@@ -3067,9 +2988,6 @@ void InstallHooks()
 	CHook::InlineHook(g_libGTASA, 0x001AECC0, &RwFrameAddChild_hook, &RwFrameAddChild);
 	CHook::InlineHook(g_libGTASA, 0x002DFD30, &CUpsideDownCarCheck__IsCarUpsideDown_hook, &CUpsideDownCarCheck__IsCarUpsideDown);
 	CHook::InlineHook(g_libGTASA, 0x0033AD78, &CAnimBlendNode__FindKeyFrame_hook, &CAnimBlendNode__FindKeyFrame);
-
-	// TextDraw render
-	//SetUpHook(g_libGTASA + 0x003D5894, (uintptr_t)CHud__DrawScriptText_hook, (uintptr_t*)& CHud__DrawScriptText);
 
 	// attached objects
 	CHook::InlineHook(g_libGTASA, 0x003C1BF8, &CWorld_ProcessPedsAfterPreRender_hook, &CWorld_ProcessPedsAfterPreRender);
@@ -3094,12 +3012,6 @@ void InstallHooks()
 	// fix
 	CHook::InlineHook(g_libGTASA, 0x001B9D74, &_rwFreeListFreeReal_hook, &_rwFreeListFreeReal);
 
-	//SetUpHook(g_libGTASA + 0x0027548C, (DWORD)CWidgetButtonAttack_hook, (DWORD*)&CWidgetButtonAttack);
-
-
-
-	//SetUpHook(g_libGTASA + 0x0027455C, (uintptr_t)CWidget__IsTouched_hook, (uintptr_t*)& CWidget__IsTouched);
-
 	CHook::RET(g_libGTASA + 0x002C0304); // CDarkel__RegisterCarBlownUpByPlayer_hook
 	CHook::RET(g_libGTASA + 0x002C072C); // CDarkel__ResetModelsKilledByPlayer_hook
 	CHook::RET(g_libGTASA + 0x002C0758); // CDarkel__QueryModelsKilledByPlayer_hook
@@ -3114,7 +3026,6 @@ void InstallHooks()
 	CHook::InlineHook(g_libGTASA, 0x004D4A6C, &CAutomobile__ProcessEntityCollision_hook, &CAutomobile__ProcessEntityCollision);
 
 	CHook::InlineHook(g_libGTASA, 0x0025CB8C, &MainMenuScreen__OnExit_hook, &MainMenuScreen__OnExit);
-//	CHook::InlineHook(g_libGTASA, 0x00398334, &CGame__Shutdown_hook, &CGame__Shutdown);
 
 	CHook::WriteMemory(g_libGTASA + 0x003DA86C,
 		"\x80\xB4"\
@@ -3136,17 +3047,10 @@ void InstallHooks()
 
 	CHook::InlineHook(g_libGTASA, 0x0046CEF4, &CTaskSimpleUseGun__RemoveStanceAnims_hook, &CTaskSimpleUseGun__RemoveStanceAnims);
 
-	CHook::InlineHook(g_libGTASA, 0x003DA86C, &CRadar__LimitRadarPoint_hook, &CRadar__LimitRadarPoint); // TO FIX
-	//CHook::InlineHook(g_libGTASA, 0x005529FC, &CSprite2d__DrawBarChart_hook, &CSprite2d__DrawBarChart);
-	//SetUpHook(g_libGTASA + 0x005353B4, (uintptr_t)CFont__PrintString_hook, (uintptr_t*)& CFont__PrintString);
-	CHook::InlineHook(g_libGTASA, 0x0055265C, &CSprite2d__Draw_hook, &CSprite2d__Draw);
+	//CHook::InlineHook(g_libGTASA, 0x003DA86C, &CRadar__LimitRadarPoint_hook, &CRadar__LimitRadarPoint); // TO FIX
 
-	//SetUpHook(g_libGTASA + 0x0027D8A8, (uintptr_t)CWidgetPlayerInfo__DrawWanted_hook, (uintptr_t*)& CWidgetPlayerInfo__DrawWanted);
-
-	//SetUpHook(g_libGTASA + 0x0027CE88, (uintptr_t)CWidgetPlayerInfo__DrawWeaponIcon_hook, (uintptr_t*)& CWidgetPlayerInfo__DrawWeaponIcon);
 	CHook::InlineHook(g_libGTASA, 0x00389D74, (uintptr_t)CCam__Process_hook, (uintptr_t*)& CCam__Process);
 
-	CHook::InlineHook(g_libGTASA, 0x003D6E6C, (uintptr_t)CHud__Draw_hook, (uintptr_t*)& CHud__Draw);
 	CHook::InlineHook(g_libGTASA, 0x0039DC68, (uintptr_t)CPad__CycleCameraModeDownJustDown_hook, (uintptr_t*)& CPad__CycleCameraModeDownJustDown);
 
 	CHook::InlineHook(g_libGTASA, 0x0031B164, (uintptr_t)FxEmitterBP_c__Render_hook, (uintptr_t*)& FxEmitterBP_c__Render);
@@ -3188,14 +3092,8 @@ void InstallHooks()
 	// fix разрешения экрана
 	CHook::InlineHook(g_libGTASA, 0x0026CE30, &MobileSettings__GetMaxResWidth_hook, &MobileSettings__GetMaxResWidth);
 
-	//
-	//CHook::InlineHook(g_libGTASA, 0x39AE28, &RenderEffects_hook, &RenderEffects);
-
 	//размытие на скорости
 	CHook::InlineHook(g_libGTASA, 0x005311D0, &CDraw__SetFOV_hook, &CDraw__SetFOV);
-
-	//
-	//CHook::InlineHook(g_libGTASA, 0x003B0E6C, &CEntity__RegisterReference_hook, &CEntity__RegisterReference);
 
 	HookCPad();
 }
