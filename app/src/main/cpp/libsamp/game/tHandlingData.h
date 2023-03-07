@@ -9,14 +9,14 @@
 #include "CVector.h"
 #include "cTransmission.h"
 
-enum eVehicleLightsSize : unsigned char {
+enum eVehicleLightsSize : int8_t {
     LIGHTS_LONG,
     LIGHTS_SMALL,
     LIGHTS_BIG,
     LIGHTS_TALL
 };
 
-enum eVehicleHandlingFlags : unsigned int {
+enum eVehicleHandlingFlags : uint32_t {
     VEHICLE_HANDLING_1G_BOOST = 0x1,
     VEHICLE_HANDLING_2G_BOOST = 0x2,
     VEHICLE_HANDLING_NPC_ANTI_ROLL = 0x4,
@@ -47,7 +47,7 @@ enum eVehicleHandlingFlags : unsigned int {
     VEHICLE_HANDLING_SWINGING_CHASSIS = 0x10000000
 };
 
-enum eVehicleHandlingModelFlags : unsigned int {
+enum eVehicleHandlingModelFlags : uint32_t {
     VEHICLE_HANDLING_MODEL_IS_VAN = 0x1,
     VEHICLE_HANDLING_MODEL_IS_BUS = 0x2,
     VEHICLE_HANDLING_MODEL_IS_LOW = 0x4,
@@ -82,14 +82,15 @@ enum eVehicleHandlingModelFlags : unsigned int {
     VEHICLE_HANDLING_MODEL_IS_HATCHBACK = 0x80000000
 };
 
+#pragma pack(1)
 struct tHandlingData {
-    int           	m_nVehicleId;
+    int32_t          m_nVehicleId;
     float         	m_fMass; // 1.0 to 50000.0
-    float 			field_8;
+    float 			fOneOverMass;
     float         	m_fTurnMass;
     float         	m_fDragMult;
     CVector       	m_vecCentreOfMass; // x, y, z - 1.0 to 50000.0
-    unsigned char 	m_nPercentSubmerged; // 10 to 120 (> 100% vehicle sinks)
+    uint8_t 	    m_nPercentSubmerged; // 10 to 120 (> 100% vehicle sinks)
     uint8_t         pad0[3];
     float         	m_fBuoyancyConstant;
     float         	m_fTractionMultiplier; // 0.5 to 2.0
@@ -182,10 +183,11 @@ struct tHandlingData {
         };
     };
     float              m_fSeatOffsetDistance; // // ped seat position offset towards centre of car
-    unsigned int       m_nMonetaryValue; // 1 to 100000
+    uint32_t      m_nMonetaryValue; // 1 to 100000
     eVehicleLightsSize m_nFrontLights;
     eVehicleLightsSize m_nRearLights;
-    unsigned char      m_nAnimGroup;
+    uint8_t             m_nAnimGroup;
+    uint8_t skip_0;
 };
 
 #endif //LIVERUSSIA_THANDLINGDATA_H
