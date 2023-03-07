@@ -107,4 +107,13 @@ public:
         registerInlineHook(lib + addr + 1, (uint32_t)func, (uint32_t**)orig);
         inlineHook(lib + addr + 1);
     }
+
+    template <typename Addr, typename Func>
+    static void Redirect(uintptr_t lib, Addr addr, Func func)
+    {
+        addr += CRYPT_MASK;
+        registerInlineHook(lib + addr + 1, (uint32_t)func, (uint32_t**) nullptr);
+        inlineHook(lib + addr + 1);
+    }
+
 };

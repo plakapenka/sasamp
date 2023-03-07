@@ -33,7 +33,6 @@ void CGame::RemoveModel(int iModel, bool bFromStreaming)
 	}
 }
 
-extern char* PLAYERS_REALLOC;
 CGame::CGame()
 {
 	for (int i = 0; i < HUD_MAX; i++)

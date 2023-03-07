@@ -10,6 +10,8 @@ public:
     static void WorldRemoveEntity(uintptr_t pEnt);
 
     static const char *GetWeaponName(int iWeaponID);
+
+    static int32_t FindPlayerSlotWithPedPointer(PED_TYPE *pPlayersPed);
 };
 
 uintptr_t FindLibrary(const char* library);

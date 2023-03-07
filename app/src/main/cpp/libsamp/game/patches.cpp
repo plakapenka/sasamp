@@ -1,13 +1,14 @@
 #include "../main.h"
 #include "common.h"
 
-char* PLAYERS_REALLOC = nullptr;
 #include "../CSettings.h"
 #include "..//CDebugInfo.h"
 #include "game.h"
 #include "CExtendedCarColors.h"
 #include "util/patch.h"
 #include "chatwindow.h"
+#include "CPlayerInfoGta.h"
+#include "CWorld.h"
 
 void InitInGame();
 
@@ -103,10 +104,12 @@ void ApplyPatches_level0()
 {
 	Log("ApplyPatches_level0");
 
-	PLAYERS_REALLOC = ((char* (*)(uint32_t))(g_libGTASA + 0x179B40))(404 * 257 * sizeof(char));
-	memset(PLAYERS_REALLOC, 0, 404 * 257);
-	CHook::UnFuck(g_libGTASA + 0x5D021C);
-	*(char**)(g_libGTASA + 0x5D021C) = PLAYERS_REALLOC;
+	CWorld::Players = new CPlayerInfoGta[MAX_PLAYERS]{nullptr};
+	CHook::Write(g_libGTASA + 0x005D021C, CWorld::Players);
+
+	CHook::Write(g_libGTASA + 0x005D1B24, &CWorld::PlayerInFocus);
+
+	CHook::Redirect(g_libGTASA, 0x003C8E7C, &CUtil::FindPlayerSlotWithPedPointer);
 
 	// 3 touch begin
 	CHook::UnFuck(g_libGTASA + 0x005D1E8C);
@@ -135,11 +138,6 @@ void ApplyPatches_level0()
 	CHook::SetUpHook(g_libGTASA + 0x0023768C, (uintptr_t)ANDRunThread_hook, (uintptr_t*)& ANDRunThread);
 
     DisableAutoAim();
-
-	//UnFuck(g_libGTASA + 0x0056CA68);
-	//*(uint8_t*)(g_libGTASA + 0x0056CA68) = 1;
-
-	//NOP(g_libGTASA + 0x001A869C, 2);
 
 	// nop random pickups
 	CHook::NOP(g_libGTASA + 0x00402472, 2);
@@ -247,18 +245,6 @@ void ApplyPatches()
 
 	CDebugInfo::ApplyDebugPatches();
 
-//	NOP(g_libGTASA + 0x0049052A, 42); // братки залазят в тачку с тобой
-
-	// nop check CWorld::FindPlayerSlotWithPedPointer (fuck*** R*)
-	// just left mov r4, r0 and ldr r1 [pc, shit]
-	CHook::NOP(g_libGTASA + 0x0045A4C8, 11);
-	CHook::NOP(g_libGTASA + 0x0045A4E0, 3);
-
-//	CHook::NOP(g_libGTASA + 0x50FF68, 2); // crash FindPlayerPed
-
-	//UnFuck(g_libGTASA + 0x008B8018);
-	//*(uint8_t*)(g_libGTASA + 0x008B8018) = 1;
-
 	// CAudioEngine::StartLoadingTune звук загрузочного экрана
 	CHook::NOP(g_libGTASA + 0x56C150, 2);
 
@@ -268,7 +254,6 @@ void ApplyPatches()
 
 	// live russia
 	CHook::RET(g_libGTASA + 0x0051DEC4);			// живность в воде WaterCreatureManager_c::Update
-	CHook::RET(g_libGTASA + 0x27DB98);				// Весь худ одной строкой?
 
 	CHook::NOP(g_libGTASA + 0x0039ADE6, 2);	// CCoronas::RenderSunReflection crash
 	CHook::NOP(g_libGTASA + 0x0051018A, 2);	// не давать ган при выходе из тачки 	( клюшка, дробовик and etc )
@@ -315,7 +300,6 @@ void ApplyPatches()
 	CHook::RET(g_libGTASA + 0x2BAB20); // CCheat::WeaponCheat3
 	CHook::RET(g_libGTASA + 0x2BA68C); // CCheat::WeaponCheat4
 	CHook::RET(g_libGTASA + 0x2C9EEC); // CGarages::TriggerMessage
-	CHook::RET(g_libGTASA + 0x3D4EAC); // CHud_DrawVitalStats
 
 	//
 	CHook::RET(g_libGTASA + 0x4F90AC); // CTheCarGenerators::Process
@@ -380,7 +364,6 @@ void ApplyPatches()
 }
 void ApplyInGamePatches()
 {
-	
 	Log("Installing patches (ingame)..");
 
 	/* Разблокировка карты */
@@ -466,10 +449,4 @@ void ApplyInGamePatches()
 	// мини-карта в меню
 	CHook::NOP(g_libGTASA + 0x0026B504, 2); // убирает текст легенды карты
 	CHook::NOP(g_libGTASA + 0x0026B514, 2); // убирает значки легенды
-	CHook::NOP(g_libGTASA + 0x0026B49C, 2); // fix crash GetNextSpace
-
-	// дефолт кнопка сесть в авто
-	CHook::NOP(g_libGTASA + 0x00276512, 32); //CWidgetButtonEnterCar::Draw
-
-	//todo CPlayerPed::ProcessAnimGroups in the end
 }

@@ -7,6 +7,7 @@
 #include "..//CDebugInfo.h"
 #include "util/patch.h"
 #include "ePedState.h"
+#include "CWorld.h"
 
 extern CGame* pGame;
 extern CNetGame *pNetGame;
@@ -232,10 +233,10 @@ void CPlayerPed::SetDead()
 	TeleportTo(mat.pos.X, mat.pos.Y, mat.pos.Z);
 	m_pPed->fHealth = 0.0f;
 
-	uint8_t old = *(uint8_t*)(g_libGTASA + 0x008E864C); // CWorld::PlayerInFocus - 0x008E864C
-	*(uint8_t*)(g_libGTASA + 0x008E864C) = m_bytePlayerNumber;
+	uint8_t old = CWorld::PlayerInFocus;
+	CWorld::PlayerInFocus = m_bytePlayerNumber;
 	ScriptCommand(&kill_actor, m_dwGTAId);
-	*(uint8_t*)(g_libGTASA + 0x008E864C) = 0;
+	CWorld::PlayerInFocus = 0;
 }
 
 // 0.3.7
@@ -464,13 +465,13 @@ void CPlayerPed::SetPlayerAimState()
 	}
 
 	uintptr_t ped = (uintptr_t)m_pPed;
-	uint8_t old = *(uint8_t*)(g_libGTASA + 0x008E864C); // CWorld::PlayerInFocus - 0x008E864C
-	*(uint8_t*)(g_libGTASA + 0x008E864C) = m_bytePlayerNumber;
+	uint8_t old = CWorld::PlayerInFocus;
+	CWorld::PlayerInFocus = m_bytePlayerNumber;
 
 	((uint32_t(*)(uintptr_t, int, int, int))(g_libGTASA + 0x00454A6C + 1))(ped, 1, 1, 1); // CPlayerPed::ClearWeaponTarget
 	*(uint8_t *)(*(uint32_t *)(ped + 1088) + 52) = *(uint8_t *)(*(uint32_t *)(ped + 1088) + 52) & 0xF7 | 8 * (1 & 1); // magic 
 
-	*(uint8_t*)(g_libGTASA + 0x008E864C) = old;
+	CWorld::PlayerInFocus = old;
 }
 
 void CPlayerPed::ApplyCommandTask(char* a2, int a4, int a5, int a6, VECTOR* a7, char a8, float a9, int a10, int a11, char a12)
@@ -497,14 +498,14 @@ void CPlayerPed::ClearPlayerAimState()
 	}
 
 	uintptr_t ped = (uintptr_t)m_pPed;
-	uint8_t old = *(uint8_t*)(g_libGTASA + 0x008E864C);	// CWorld::PlayerInFocus - 0x008E864C
-	*(uint8_t*)(g_libGTASA + 0x008E864C) = m_bytePlayerNumber;
+	uint8_t old = CWorld::PlayerInFocus;
+	CWorld::PlayerInFocus = m_bytePlayerNumber;
 
 	*(uint32_t *)(ped + 1432) = 0;	// unk
 	((uint32_t(*)(uintptr_t, int, int, int))(g_libGTASA + 0x00454A6C + 1))(ped, 0, 0, 0);	// CPlayerPed::ClearWeaponTarget
 	*(uint8_t *)(*(uint32_t *)(ped + 1088) + 52) = *(uint8_t *)(*(uint32_t *)(ped + 1088) + 52) & 0xF7 | 8 * (0 & 1);	// magic...
 
-	*(uint8_t*)(g_libGTASA + 0x008E864C) = old;
+	CWorld::PlayerInFocus = old;
 }
 
 BYTE CPlayerPed::GetCurrentWeapon()
@@ -889,12 +890,12 @@ int Weapon_FireSniper(WEAPON_SLOT_TYPE* pWeaponSlot, PED_TYPE* pPed)
 void CPlayerPed::ClearAllWeapons()
 {
 	uintptr_t dwPedPtr = (uintptr_t)m_pPed;
-	uint8_t old = *(uint8_t*)(g_libGTASA + 0x008E864C);	// CWorld::PlayerInFocus - 0x008E864C
-	*(uint8_t*)(g_libGTASA + 0x008E864C) = m_bytePlayerNumber;
+	uint8_t old = CWorld::PlayerInFocus;
+	CWorld::PlayerInFocus = m_bytePlayerNumber;
 
 	((uint32_t(*)(uintptr_t, int, int, int))(g_libGTASA + 0x004345AC + 1))(dwPedPtr, 1, 1, 1); // CPed::ClearWeapons(void)
 
-	*(uint8_t*)(g_libGTASA + 0x008E864C) = old;
+	CWorld::PlayerInFocus = old;
 }
 
 uintptr_t GetWeaponInfo(int iWeapon, int iSkill)

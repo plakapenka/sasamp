@@ -1,5 +1,6 @@
 #include "../main.h"
 #include "game.h"
+#include "CWorld.h"
 
 #define PI 3.14159265
 
@@ -1854,12 +1855,22 @@ const char g_szAnimBlockNames[][40] = {
 
 uintptr_t dwPlayerPedPtrs[PLAYER_PED_SLOTS];
 
-extern char* PLAYERS_REALLOC;
 
 PED_TYPE* GamePool_FindPlayerPed()
 {
-	return *(PED_TYPE**)PLAYERS_REALLOC;
+	return *(PED_TYPE**)CWorld::Players;
 }
+
+int32_t CUtil::FindPlayerSlotWithPedPointer(PED_TYPE* pPlayersPed)
+{
+    for(int i = 0; i < MAX_PLAYERS; ++i)
+    {
+        if(CWorld::Players[i].m_pPed == pPlayersPed)
+            return i;
+    }
+    return -1;
+}
+
 
 PED_TYPE* GamePool_Ped_GetAt(int iID)
 {

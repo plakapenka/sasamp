@@ -2,6 +2,7 @@
 #include "game.h"
 #include "../net/netgame.h"
 #include "util/patch.h"
+#include "CWorld.h"
 
 #include <jni.h>
 
@@ -481,13 +482,13 @@ void CPed__ProcessControl_hook(uintptr_t thiz)
 		if (*wCameraMode2 == 4)* wCameraMode2 = 0;
 		// CPed::UpdatePosition nulled from CPed::ProcessControl
 		CHook::NOP(g_libGTASA + 0x439B7A, 2);
-		*(uint8_t*)(g_libGTASA + 0x008E864C) = byteCurPlayer;
+		CWorld::PlayerInFocus = byteCurPlayer;
 		// call original
 		
 		CPed__ProcessControl(thiz);
 		// restore
 		CHook::WriteMemory(g_libGTASA + 0x439B7A, "\xFA\xF7\x1D\xF8", 4);
-		*(uint8_t*)(g_libGTASA + 0x008E864C) = 0;
+		CWorld::PlayerInFocus = 0;
 		*pbyteCameraMode = byteSavedCameraMode;
 		//*((uint16_t*)g_libGTASA + 0x8B0FBC) = wSavedCameraMode2;
 		GameSetLocalPlayerCameraExtZoom();
@@ -571,10 +572,10 @@ void AllVehicles__ProcessControl_hook(uintptr_t thiz)
 	}
 
 	if(pVehicle->pDriver && pVehicle->pDriver->dwPedType == 0 &&
-		pVehicle->pDriver != GamePool_FindPlayerPed() && 
-		*(uint8_t*)(g_libGTASA+0x8E864C) == 0) // CWorld::PlayerInFocus
+		pVehicle->pDriver != GamePool_FindPlayerPed() &&
+			CWorld::PlayerInFocus == 0) // CWorld::PlayerInFocus
 	{
-		*(uint8_t*)(g_libGTASA+0x8E864C) = 0;
+		CWorld::PlayerInFocus = 0;
 
 		pVehicle->pDriver->dwPedType = 4;
 		//CAEVehicleAudioEntity::Service
@@ -618,11 +619,11 @@ uint32_t CPad__GetWeapon_hook(uintptr_t thiz, uintptr_t ped, bool unk)
 	}
 	else
 	{
-		uint8_t old = *(uint8_t*)(g_libGTASA + 0x008E864C);
-		*(uint8_t*)(g_libGTASA + 0x008E864C) = byteCurPlayer;
+		uint8_t old = CWorld::PlayerInFocus;
+		CWorld::PlayerInFocus = byteCurPlayer;
 		uintptr_t value = CPad__GetWeapon(thiz, ped, unk);
 		LocalPlayerKeys.bKeys[ePadKeys::KEY_FIRE] = value;
-		*(uint8_t*)(g_libGTASA + 0x008E864C) = old;
+		CWorld::PlayerInFocus = old;
 		return value;
 	}
 }
@@ -671,13 +672,13 @@ uint32_t CPad__GetEnterTargeting_hook(uintptr_t thiz)
 		{
 			return 0;
 		}
-		uint8_t old = *(uint8_t*)(g_libGTASA + 0x008E864C);
-		*(uint8_t*)(g_libGTASA + 0x008E864C) = byteCurPlayer;
+		uint8_t old = CWorld::PlayerInFocus;
+		CWorld::PlayerInFocus = byteCurPlayer;
 		uintptr_t result = CPad__GetEnterTargeting(thiz);
 		LocalPlayerKeys.bKeys[ePadKeys::KEY_HANDBRAKE] = result;
 
 
-		*(uint8_t*)(g_libGTASA + 0x008E864C) = old;
+		CWorld::PlayerInFocus = old;
 		return result;
 	}
 }
@@ -706,7 +707,7 @@ uint32_t TaskUseGun(uintptr_t thiz, uintptr_t ped)
 		// aim switching
 		GameStoreLocalPlayerAim();
 		GameSetRemotePlayerAim(byteCurPlayer);
-		*(uint8_t*)(g_libGTASA + 0x008E864C) = byteCurPlayer;
+		CWorld::PlayerInFocus = byteCurPlayer;
 
 		result = ((uint32_t(*)(uintptr_t, uintptr_t))(g_libGTASA + 0x0046D6AC + 1))(thiz, ped);
 
@@ -717,7 +718,7 @@ uint32_t TaskUseGun(uintptr_t thiz, uintptr_t ped)
 		// remote the local player's camera zoom factor
 		GameSetLocalPlayerCameraExtZoom();
 
-		*(uint8_t*)(g_libGTASA + 0x008E864C) = 0;
+		CWorld::PlayerInFocus = 0;
 		GameSetLocalPlayerAim();
 		*wCameraMode2 = wSavedCameraMode2;
 	}
@@ -734,11 +735,11 @@ uint32_t CPad__TaskProcess(uintptr_t thiz, uintptr_t ped, int unk, int unk1)
 {
 	dwCurPlayerActor = ped;
 	byteCurPlayer = FindPlayerNumFromPedPtr(dwCurPlayerActor);
-	uint8_t old = *(uint8_t*)(g_libGTASA + 0x008E864C);
-	*(uint8_t*)(g_libGTASA + 0x008E864C) = byteCurPlayer;
+	uint8_t old = CWorld::PlayerInFocus;
+	CWorld::PlayerInFocus = byteCurPlayer;
 
 	uint32_t result =  ((uint32_t(*)(uintptr_t, uintptr_t, int, int))(g_libGTASA + 0x004C2F7C + 1))(thiz, ped, unk, unk1);
-	*(uint8_t*)(g_libGTASA + 0x008E864C) = old;
+	CWorld::PlayerInFocus = old;
 	return result;
 }
 
@@ -773,32 +774,6 @@ uint32_t CPad__CycleWeaponRightJustDown_hook(uintptr_t thiz)
 		return 1;
 	}
 	return CPad__CycleWeaponRightJustDown(thiz);
-}
-
-
-uint32_t (*CCamera_IsTargetingActive)(uintptr_t thiz);
-uint32_t CCamera_IsTargetingActive_hook(uintptr_t thiz)
-{
-	return 1;
-//	uintptr_t dwRetAddr = 0;
-//	__asm__ volatile ("mov %0, lr" : "=r" (dwRetAddr));
-//	dwRetAddr -= g_libGTASA;
-//
-//	if(dwRetAddr == 0x003ADAD7) {
-//		return CCamera_IsTargetingActive(thiz);
-//	}
-//
-//	if(dwRetAddr == 0x00387455) {
-//		return CCamera_IsTargetingActive(thiz);
-//	}
-//
-//	if(dwCurPlayerActor && (byteCurPlayer != 0)) {
-//		return RemotePlayerKeys[byteCurPlayer].bKeys[ePadKeys::KEY_HANDBRAKE] ? 1 : 0;
-//	} else {
-//		*(uint8_t*)(g_libGTASA + 0x008E864C) = 0;
-//		LocalPlayerKeys.bKeys[ePadKeys::KEY_HANDBRAKE] = CCamera_IsTargetingActive(thiz);
-//		return LocalPlayerKeys.bKeys[ePadKeys::KEY_HANDBRAKE];
-//	}
 }
 
 void HookCPad()
