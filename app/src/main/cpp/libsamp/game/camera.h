@@ -3,7 +3,7 @@
 class CCamera
 {
 public:
-	CCamera() { m_matPos = (MATRIX4X4*)(g_libGTASA+0x8B1104); }
+	CCamera() { m_matPos = (RwMatrix*)(g_libGTASA+0x8B1104); }
 	~CCamera() {}
 
 	// 0.3.7
@@ -15,7 +15,7 @@ public:
 	// 0.3.7
 	void LookAtPoint(float fX, float fY, float fZ, int iType);
 
-	void GetMatrix(PMATRIX4X4 mat);
+	void GetMatrix(RwMatrix* mat);
 	// 0.3.7
 	void InterpolateCameraPos(VECTOR *posFrom, VECTOR *posTo, int time, uint8_t mode);
 	// 0.3.7
@@ -23,5 +23,5 @@ public:
 
 private:
 	ENTITY_TYPE* m_pEntity;
-	MATRIX4X4 *m_matPos;
+	RwMatrix *m_matPos;
 };

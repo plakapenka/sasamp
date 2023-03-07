@@ -164,7 +164,7 @@ public:
 #pragma pack(pop)
 
 #pragma pack(1)
-typedef struct _MATRIX4X4 
+struct RwMatrixTag
 {
 	VECTOR right;		// 0-12 	; r11 r12 r13
 	uint32_t  flags;	// 12-16
@@ -174,7 +174,9 @@ typedef struct _MATRIX4X4
 	float  pad_a;		// 44-48
 	VECTOR pos;			// 48-60
 	float  pad_p;		// 60-64
-} MATRIX4X4, *PMATRIX4X4;
+};
+typedef RwMatrixTag RwMatrix;
+
 
 //-----------------------------------------------------------
 
@@ -203,8 +205,8 @@ struct RwFrame
 {
 	RwObject        object;                 // 0
 	void* pad1, * pad2;            // 8
-	MATRIX4X4        modelling;              // 16
-	MATRIX4X4        ltm;                    // 32
+	RwMatrix        modelling;              // 16
+	RwMatrix        ltm;                    // 32
 	RwList          objects;                // 48
 	struct RwFrame* child;                  // 56
 	struct RwFrame* next;                   // 60
@@ -270,7 +272,7 @@ struct RpHAnimHierarchy
 	int32_t             flags;          /**< Flags for the hierarchy  */
 	int32_t             numNodes;      /**< Number of nodes in the hierarchy  */
 
-	MATRIX4X4* pMatrixArray;   /**< Pointer to node matrices*/
+	RwMatrix* pMatrixArray;   /**< Pointer to node matrices*/
 };
 
 
@@ -294,7 +296,7 @@ typedef struct _ENTITY_TYPE
 
 	float fRotZBeforeMat;
 
-	MATRIX4X4 *mat;
+	RwMatrix *mat;
 	union {
 		uintptr_t m_pRwObject;
 		uintptr_t m_pRpClump;

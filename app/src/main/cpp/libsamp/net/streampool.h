@@ -15,7 +15,7 @@ class CStreamPool
 	CStream* m_pStreams[MAX_STREAMS];
 	bool	m_bSlotState[MAX_STREAMS];
 	HSTREAM m_hIndividualStream;
-	//MATRIX4X4 m_matListener;
+	//RwMatrix m_matListener;
 	bool bShutdownThread;
 	std::thread* pThread;
 	DataStructures::SingleProducerConsumer<BUFFERED_COMMAND_STREAMPOOL> bufferedCommands;
@@ -39,7 +39,7 @@ public:
 	void PlayIndividualStream(const char* szUrl, int type = BASS_SAMPLE_LOOP);
 	void StopIndividualStream();
 
-	void PostListenerMatrix(MATRIX4X4* pMat);
+	void PostListenerMatrix(RwMatrix* pMat);
 
 	void SetStreamVolume(int iID, float fVolume);
 

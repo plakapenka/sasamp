@@ -75,7 +75,7 @@ public:
 	void UpdateOnFootTargetPosition();
 	void SlerpRotation();
 
-	void UpdateInCarMatrixAndSpeed(MATRIX4X4* mat, VECTOR* pos, VECTOR* speed);
+	void UpdateInCarMatrixAndSpeed(RwMatrix* mat, VECTOR* pos, VECTOR* speed);
 	void UpdateInCarTargetPosition();
 	void UpdateVehicleRotation();
 	void EnterVehicle(VEHICLEID VehicleID, bool bPassenger);

@@ -24,6 +24,7 @@
 #include <arpa/inet.h>
 
 uintptr_t g_libGTASA = 0;
+void* hGTASA;
 char* g_pszStorage = new char[255];
 
 #include "CServerManager.h"
@@ -469,8 +470,8 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 {
 	javaVM = vm;
 
-	auto dlllll = dlopen("libGTASA.so", RTLD_NOLOAD);
-	uintptr_t ttt = (uintptr_t)dlsym(dlllll, "_ZN11CAutomobile15vecHunterGunPosE");
+	hGTASA = dlopen("libGTASA.so", RTLD_LAZY);
+	uintptr_t ttt = (uintptr_t)dlsym(hGTASA, "_ZN11CAutomobile15vecHunterGunPosE");
 
 	g_libGTASA = ttt - 0x00971450;
 

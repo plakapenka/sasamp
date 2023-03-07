@@ -34,11 +34,11 @@ int GetAnimIdxByName(const char* szName);
 struct RwRaster* GetRWRasterFromBitmap(uint8_t* pBitmap, size_t dwStride, size_t dwX, size_t dwY);
 struct RwRaster* GetRWRasterFromBitmapPalette(uint8_t* pBitmap, size_t dwStride, size_t dwX, size_t dwY, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 
-void ProjectMatrix(VECTOR* vecOut, MATRIX4X4* mat, VECTOR* vecPos);
-void RwMatrixOrthoNormalize(MATRIX4X4 *matIn, MATRIX4X4 *matOut);
-void RwMatrixInvert(MATRIX4X4 *matOut, MATRIX4X4 *matIn);
-void RwMatrixRotate(MATRIX4X4* mat, int axis, float angle);
-void RwMatrixScale(MATRIX4X4* mat, VECTOR* vecScale);
+void ProjectMatrix(VECTOR* vecOut, RwMatrix* mat, VECTOR* vecPos);
+void RwMatrixOrthoNormalize(RwMatrix *matIn, RwMatrix *matOut);
+void RwMatrixInvert(RwMatrix *matOut, RwMatrix *matIn);
+void RwMatrixRotate(RwMatrix* mat, int axis, float angle);
+void RwMatrixScale(RwMatrix* mat, VECTOR* vecScale);
 
 int GetFreeTextDrawTextureSlot();
 void DestroyTextDrawTexture(int index);

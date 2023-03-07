@@ -23,7 +23,7 @@ void CEntity::Add()
 
 		WorldAddEntity((uintptr_t)m_pEntity);
 
-		MATRIX4X4 mat;
+		RwMatrix mat;
 		GetMatrix(&mat);
 		TeleportTo(mat.pos.X, mat.pos.Y, mat.pos.Z);
 	}
@@ -43,7 +43,7 @@ void CEntity::UpdateRwMatrixAndFrame()
 			{
 				uintptr_t pRwMatrix = *(uintptr_t*)(m_pEntity->m_pRwObject + 4) + 0x10;
 				// CMatrix::UpdateRwMatrix
-				((void (*) (MATRIX4X4*, uintptr_t))(g_libGTASA + 0x3E862C + 1))(m_pEntity->mat, pRwMatrix);
+				((void (*) (RwMatrix*, uintptr_t))(g_libGTASA + 0x3E862C + 1))(m_pEntity->mat, pRwMatrix);
 
 				// CEntity::UpdateRwFrame
 				((void (*) (ENTITY_TYPE*))(g_libGTASA + 0x39194C + 1))(m_pEntity);
@@ -62,7 +62,7 @@ void CEntity::AddPhysical()
 	((void (*)(ENTITY_TYPE*))(*(void**)(m_pEntity->vtable + 8)))(m_pEntity); // CPhysical::Add
 }
 
-void CEntity::UpdateMatrix(MATRIX4X4 mat)
+void CEntity::UpdateMatrix(RwMatrix mat)
 {
 	if (m_pEntity)
 	{
@@ -123,7 +123,7 @@ void CEntity::Remove()
 }
 
 // 0.3.7
-void CEntity::GetMatrix(PMATRIX4X4 Matrix)
+void CEntity::GetMatrix(RwMatrix* Matrix)
 {
 	if (!m_pEntity || !m_pEntity->mat) return;
 
@@ -145,7 +145,7 @@ void CEntity::GetMatrix(PMATRIX4X4 Matrix)
 }
 
 // 0.3.7
-void CEntity::SetMatrix(MATRIX4X4 Matrix)
+void CEntity::SetMatrix(RwMatrix Matrix)
 {
 	if (!m_pEntity) return;
 	if (!m_pEntity->mat) return;
@@ -275,7 +275,7 @@ void CEntity::TeleportTo(float fX, float fY, float fZ)
 
 float CEntity::GetDistanceFromCamera()
 {
-	MATRIX4X4 matEnt;
+	RwMatrix matEnt;
 
 	if(!m_pEntity || CUtil::IsGameEntityArePlaceable(m_pEntity))
 		return 100000.0f;
@@ -291,8 +291,8 @@ float CEntity::GetDistanceFromCamera()
 
 float CEntity::GetDistanceFromLocalPlayerPed()
 {
-	MATRIX4X4	matFromPlayer;
-	MATRIX4X4	matThis;
+	RwMatrix	matFromPlayer;
+	RwMatrix	matThis;
 	float 		fSX, fSY, fSZ;
 
 	CPlayerPed *pLocalPlayerPed = pGame->FindPlayerPed();
@@ -328,7 +328,7 @@ float CEntity::GetDistanceFromLocalPlayerPed()
 
 float CEntity::GetDistanceFromPoint(float X, float Y, float Z)
 {
-	MATRIX4X4	matThis;
+	RwMatrix	matThis;
 	float		fSX,fSY,fSZ;
 
 	GetMatrix(&matThis);

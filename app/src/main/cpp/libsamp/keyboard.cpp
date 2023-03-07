@@ -2448,8 +2448,8 @@ bool ProcessLocalCommands(const char str[])
 
 //		RwFrame* pWheelLB = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x00335CEC + 1))(pVehicle->m_pVehicle->entity.m_pRwObject, "taillights"); // GetFrameFromname
 //
-//		MATRIX4X4 mat;
-//		memcpy(&mat, (const void*)&(pWheelLB->modelling), sizeof(MATRIX4X4));
+//		RwMatrix mat;
+//		memcpy(&mat, (const void*)&(pWheelLB->modelling), sizeof(RwMatrix));
 //
 //		//CHook::CallFunction<int>(g_libGTASA + 0x338698 + 1, pModelInfoStart, &vec, 1);
 //	//	(( int (*)(uint8_t*, CVector*, int32_t))(g_libGTASA + 0x338698 + 1))(pModelInfoStart, &vec, size);

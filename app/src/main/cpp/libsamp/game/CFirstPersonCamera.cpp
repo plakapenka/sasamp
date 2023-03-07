@@ -9,7 +9,7 @@ extern CNetGame* pNetGame;
 
 bool CFirstPersonCamera::m_bEnabled = false;
 
-MATRIX4X4* RwMatrixMultiplyByVector(VECTOR* out, MATRIX4X4* a2, VECTOR* in);
+RwMatrix* RwMatrixMultiplyByVector(VECTOR* out, RwMatrix* a2, VECTOR* in);
 void CFirstPersonCamera::ProcessCameraOnFoot(uintptr_t pCam, CPlayerPed* pPed)
 {
 	if (!m_bEnabled || *(uint8_t*)(g_libGTASA + 0x8B147E) || *(uint8_t*)(g_libGTASA + 0x8B147F))
@@ -78,9 +78,9 @@ void CFirstPersonCamera::ProcessCameraInVeh(uintptr_t pCam, CPlayerPed* pPed, CV
 	}
 
 	VECTOR vecOut;
-	MATRIX4X4 mat;
+	RwMatrix mat;
 
-	memcpy(&mat, pPed->m_pPed->entity.mat, sizeof(MATRIX4X4));
+	memcpy(&mat, pPed->m_pPed->entity.mat, sizeof(RwMatrix));
 
 	RwMatrixMultiplyByVector(&vecOut, &mat, &vecOffset);
 

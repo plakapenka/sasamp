@@ -797,7 +797,7 @@ void RemoveBuildingByPtr(uintptr_t pBuild)
 	*(uint8_t*)(pBuild + 47) = 1;
 	if (*(uintptr_t*)(pBuild + 20))
 	{
-		MATRIX4X4* matt = (MATRIX4X4*) * (uintptr_t*)(pBuild + 20);
+		RwMatrix* matt = (RwMatrix*) * (uintptr_t*)(pBuild + 20);
 		matt->pos.Z -= 2000.0f;
 		//*(uint32_t*)((uintptr_t)matt + 12) &= 0xFFFDFFFC;
 	}
@@ -877,7 +877,7 @@ void ProcessRemoveBuilding(int uModelID, VECTOR pos, float fRad)
 	// pBuild + 34 = nModelIndex
 	// 0x38 - sizeof(CBuilding)
 	// pBuild + 4 - CSimpleTransform
-	// pBuild + 20 - MATRIX4X4*
+	// pBuild + 20 - RwMatrix*
 
 	RemoveOccluders(pos.X, pos.Y, pos.Z, 500.0);
 
@@ -896,7 +896,7 @@ void ProcessRemoveBuilding(int uModelID, VECTOR pos, float fRad)
 			if (*(uintptr_t*)(pBuild + 20) && (*(uintptr_t*)(pBuild + 20) != 0xffffff)
 				&& (*(uintptr_t*)(pBuild + 20) != 0xffffffff))
 			{
-				MATRIX4X4* matt = (MATRIX4X4*) * (uintptr_t*)(pBuild + 20);
+				RwMatrix* matt = (RwMatrix*) * (uintptr_t*)(pBuild + 20);
 				if (GetDistanceBetween3DPoints(&pos, &matt->pos) <= fRad)
 				{
 					RemoveBuildingByPtr(pBuild);
@@ -931,7 +931,7 @@ void ProcessRemoveBuilding(int uModelID, VECTOR pos, float fRad)
 			if (*(uintptr_t*)(pBuild + 20) && (*(uintptr_t*)(pBuild + 20) != 0xffffff)
 				&& (*(uintptr_t*)(pBuild + 20) != 0xffffffff))
 			{
-				MATRIX4X4* matt = (MATRIX4X4*) * (uintptr_t*)(pBuild + 20);
+				RwMatrix* matt = (RwMatrix*) * (uintptr_t*)(pBuild + 20);
 				if (GetDistanceBetween3DPoints(&pos, &matt->pos) <= fRad)
 				{
 					RemoveBuildingByPtr(pBuild);
@@ -967,7 +967,7 @@ void ProcessRemoveBuilding(int uModelID, VECTOR pos, float fRad)
 			if (*(uintptr_t*)(pBuild + 20) && (*(uintptr_t*)(pBuild + 20) != 0xffffff)
 				&& (*(uintptr_t*)(pBuild + 20) != 0xffffffff))
 			{
-				MATRIX4X4* matt = (MATRIX4X4*) * (uintptr_t*)(pBuild + 20);
+				RwMatrix* matt = (RwMatrix*) * (uintptr_t*)(pBuild + 20);
 				if (GetDistanceBetween3DPoints(&pos, &matt->pos) <= fRad)
 				{
 					RemoveBuildingByPtr(pBuild);
@@ -1275,7 +1275,7 @@ void ClearActorAnimations(RPCParameters* rpcParams)
 	{
 		if (pActorPool->GetAt(actorId))
 		{
-			MATRIX4X4 mat;
+			RwMatrix mat;
 			pActorPool->GetAt(actorId)->GetMatrix(&mat);
 			pActorPool->GetAt(actorId)->TeleportTo(mat.pos.X, mat.pos.Y, mat.pos.Z);
 		}

@@ -36,7 +36,7 @@ CPlayerTags::~CPlayerTags() {}
 void CPlayerTags::Render()
 {
 	VECTOR VecPos;
-	MATRIX4X4 matLocal, matPlayer;
+	RwMatrix matLocal, matPlayer;
 	int dwHitEntity;
 	char szNickBuf[50];
 	int iVoiceCounter = 0;

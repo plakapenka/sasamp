@@ -13,7 +13,7 @@ CVehicle::CVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRota
 	Log("CVehicle(%d, %4.f, %4.f, %4.f, %4.f)", iType, fPosX, fPosY, fPosZ, fRotation);
 
 	CDebugInfo::uiStreamedVehicles++;
-	MATRIX4X4 mat;
+	RwMatrix mat;
 	uint32_t dwRetID = 0;
 
 	m_pCustomHandling = nullptr;
@@ -153,10 +153,10 @@ CVehicle::CVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRota
 
 	if (pWheelLF && pWheelRF && pWheelRB && pWheelLB)
 	{
-		memcpy(&m_vInitialWheelMatrix[0], (const void*)&(pWheelLF->modelling), sizeof(MATRIX4X4));
-		memcpy(&m_vInitialWheelMatrix[1], (const void*)&(pWheelRF->modelling), sizeof(MATRIX4X4));
-		memcpy(&m_vInitialWheelMatrix[2], (const void*)&(pWheelRB->modelling), sizeof(MATRIX4X4));
-		memcpy(&m_vInitialWheelMatrix[3], (const void*)&(pWheelLB->modelling), sizeof(MATRIX4X4));
+		memcpy(&m_vInitialWheelMatrix[0], (const void*)&(pWheelLF->modelling), sizeof(RwMatrix));
+		memcpy(&m_vInitialWheelMatrix[1], (const void*)&(pWheelRF->modelling), sizeof(RwMatrix));
+		memcpy(&m_vInitialWheelMatrix[2], (const void*)&(pWheelRB->modelling), sizeof(RwMatrix));
+		memcpy(&m_vInitialWheelMatrix[3], (const void*)&(pWheelLB->modelling), sizeof(RwMatrix));
 	}
 }
 
@@ -1253,7 +1253,7 @@ void CVehicle::SetWheelWidth(float fValue)
 	m_fWheelWidth = fValue;
 }
 
-MATRIX4X4* RwMatrixMultiplyByVector(VECTOR* out, MATRIX4X4* a2, VECTOR* in);
+RwMatrix* RwMatrixMultiplyByVector(VECTOR* out, RwMatrix* a2, VECTOR* in);
 
 void CVehicle::ProcessWheelsOffset()
 {

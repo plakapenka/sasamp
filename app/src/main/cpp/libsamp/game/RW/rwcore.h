@@ -431,3 +431,4 @@ struct RwTexture
     RwInt32             refCount; /* Reference count, surprisingly enough */              //+84
 };
 typedef struct RwTexture RwTexture;
+

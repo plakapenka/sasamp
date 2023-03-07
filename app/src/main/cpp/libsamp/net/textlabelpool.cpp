@@ -133,8 +133,8 @@ void CText3DLabelsPool::DrawAttachedToVehicle(TEXT_LABELS* pLabel)
 	{
 		return;
 	}
-	MATRIX4X4 mat;
-	memset((void*)& mat, 0, sizeof(MATRIX4X4));
+	RwMatrix mat;
+	memset((void*)& mat, 0, sizeof(RwMatrix));
 
 	pVehicle->GetMatrix(&mat);
 
@@ -170,8 +170,8 @@ void CText3DLabelsPool::DrawVehiclesInfo()
 				VECTOR pos;
 				memset((void*)&pos, 0, sizeof(VECTOR));
 
-				MATRIX4X4 mat;
-				memset((void*)& mat, 0, sizeof(MATRIX4X4));
+				RwMatrix mat;
+				memset((void*)& mat, 0, sizeof(RwMatrix));
 
 				pVehicle->GetMatrix(&mat);
 

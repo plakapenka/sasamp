@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../main.h"
+
 class CQuaternion
 {
 public:
@@ -22,8 +24,8 @@ public:
 		z = q.z;
 	}
 
-	void SetFromMatrix(MATRIX4X4 mat);
-	void GetMatrix(PMATRIX4X4 mat);
+	void SetFromMatrix(RwMatrix mat);
+	void GetMatrix(RwMatrix *mat);
 	void Normalize();
 	void Slerp(CQuaternion *pQ1, CQuaternion *pQ2, float t);
 

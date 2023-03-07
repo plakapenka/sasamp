@@ -22,8 +22,8 @@ bool CSkyBox::m_bPendingStatus = false;
 extern CGame* pGame;
 extern CNetGame* pNetGame;
 
-void RwMatrixScale(MATRIX4X4* matrix, VECTOR* scale);
-MATRIX4X4* RwMatrixMultiplyByVector(VECTOR* out, MATRIX4X4* a2, VECTOR* in);
+void RwMatrixScale(RwMatrix* matrix, VECTOR* scale);
+RwMatrix* RwMatrixMultiplyByVector(VECTOR* out, RwMatrix* a2, VECTOR* in);
 
 CObject* CSkyBox::CreateObjectScaled(int iModel, float fScale)
 {
@@ -46,7 +46,7 @@ CObject* CSkyBox::CreateObjectScaled(int iModel, float fScale)
 
 	object->RemovePhysical();
 
-	MATRIX4X4 matrix;
+	RwMatrix matrix;
 	object->GetMatrix(&matrix);
 
 	RwMatrixScale(&matrix, reinterpret_cast<VECTOR *>(vecScale));
@@ -86,7 +86,7 @@ void CSkyBox::Process()
 	if (m_pSkyObject)
 	{
 		CAMERA_AIM *aim = GameGetInternalAim();
-		MATRIX4X4 matrix;
+		RwMatrix matrix;
 
 		m_pSkyObject->GetMatrix(&matrix);
 

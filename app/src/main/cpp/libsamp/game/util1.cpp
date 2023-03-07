@@ -2161,24 +2161,24 @@ struct RwRaster* GetRWRasterFromBitmap(uint8_t* pBitmap, size_t dwStride, size_t
 	return pRaster;
 }
 
-void RwMatrixOrthoNormalize(MATRIX4X4 *matIn, MATRIX4X4 *matOut)
+void RwMatrixOrthoNormalize(RwMatrix *matIn, RwMatrix *matOut)
 {
-    ((void (*)(MATRIX4X4*, MATRIX4X4*))(g_libGTASA+0x1B8CC8+1))(matIn, matOut);
+    ((void (*)(RwMatrix*, RwMatrix*))(g_libGTASA+0x1B8CC8+1))(matIn, matOut);
 }
 
-void RwMatrixInvert(MATRIX4X4 *matOut, MATRIX4X4 *matIn)
+void RwMatrixInvert(RwMatrix *matOut, RwMatrix *matIn)
 {
-    ((void (*)(MATRIX4X4*, MATRIX4X4*))(g_libGTASA+0x1B91CC+1))(matOut, matIn);
+    ((void (*)(RwMatrix*, RwMatrix*))(g_libGTASA+0x1B91CC+1))(matOut, matIn);
 }
 
-void ProjectMatrix(VECTOR* vecOut, MATRIX4X4* mat, VECTOR* vecPos)
+void ProjectMatrix(VECTOR* vecOut, RwMatrix* mat, VECTOR* vecPos)
 {
 	vecOut->X = mat->at.X * vecPos->Z + mat->up.X * vecPos->Y + mat->right.X * vecPos->X + mat->pos.X;
 	vecOut->Y = mat->at.Y * vecPos->Z + mat->up.Y * vecPos->Y + mat->right.Y * vecPos->X + mat->pos.Y;
 	vecOut->Z = mat->at.Z * vecPos->Z + mat->up.Z * vecPos->Y + mat->right.Z * vecPos->X + mat->pos.Z;
 }
 
-void RwMatrixRotate(MATRIX4X4* mat, int axis, float angle)
+void RwMatrixRotate(RwMatrix* mat, int axis, float angle)
 {
 	static float matt[3][3] =
 	{
@@ -2187,10 +2187,10 @@ void RwMatrixRotate(MATRIX4X4* mat, int axis, float angle)
 		{ 0.0f, 0.0f, 1.0f }
 	};
 
-	((void (*)(MATRIX4X4*, float*, float, int))(g_libGTASA + 0x1B9118 + 1))(mat, matt[axis], angle, 1);
+	((void (*)(RwMatrix*, float*, float, int))(g_libGTASA + 0x1B9118 + 1))(mat, matt[axis], angle, 1);
 }
 
-void RwMatrixScale(MATRIX4X4* matrix, VECTOR* vecScale)
+void RwMatrixScale(RwMatrix* matrix, VECTOR* vecScale)
 {
 	matrix->right.X *= vecScale->X;
 	matrix->right.Y *= vecScale->X;

@@ -57,9 +57,9 @@ void CVehiclePool::Process()
 			{
 				if (pVehicle->GetHealth() < 300.0f)
 				{
-					MATRIX4X4 matrix4X4;
-					pVehicle->GetMatrix(&matrix4X4);
-					pVehicle->SetMatrix(matrix4X4);
+					RwMatrix RwMatrix;
+					pVehicle->GetMatrix(&RwMatrix);
+					pVehicle->SetMatrix(RwMatrix);
 					pVehicle->SetHealth(300.0f);
 				}
 				if(pVehicle->m_pVehicle->m_nCurrentGear == 0 && pVehicle->m_pVehicle->pHandling->m_transmissionData.m_fCurrentSpeed < -0.01 && pVehicle->m_bEngineOn)

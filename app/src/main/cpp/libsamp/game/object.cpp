@@ -86,7 +86,7 @@ void CObject::Process(float fElapsedTime)
 	if (m_byteMoving & 1)
 	{
 		VECTOR vecSpeed = { 0.0f, 0.0f, 0.0f };
-		MATRIX4X4 matEnt;
+		RwMatrix matEnt;
 		GetMatrix(&matEnt);
 		float distance = fElapsedTime * m_fMoveSpeed;
 		float remaining = DistanceRemaining(&matEnt);
@@ -186,7 +186,7 @@ void CObject::Process(float fElapsedTime)
 	}
 }
 
-float CObject::DistanceRemaining(MATRIX4X4 *matPos)
+float CObject::DistanceRemaining(RwMatrix *matPos)
 {
 
 	float	fSX,fSY,fSZ;
@@ -206,7 +206,7 @@ void CObject::SetPos(float x, float y, float z)
 
 void CObject::MoveTo(float fX, float fY, float fZ, float fSpeed, float fRotX, float fRotY, float fRotZ)
 {
-	MATRIX4X4 mat;
+	RwMatrix mat;
 	this->GetMatrix(&mat);
 
 	if (m_byteMoving & 1) {
@@ -237,7 +237,7 @@ void CObject::MoveTo(float fX, float fY, float fZ, float fSpeed, float fRotX, fl
 		m_bNeedRotate = true;
 
 		VECTOR vecRot;
-		MATRIX4X4 matrix;
+		RwMatrix matrix;
 		this->GetRotation(&vecRot.X, &vecRot.Y, &vecRot.Z);
 		m_vecRotationTarget.X = fixAngle(fRotX);
 		m_vecRotationTarget.Y = fixAngle(fRotY);
@@ -320,7 +320,7 @@ void CObject::ApplyMoveSpeed()
 	{
 		float fTimeStep	= *(float*)(g_libGTASA + 0x8C9BB4); // 2.00 - 0x96B500
 
-		MATRIX4X4 mat;
+		RwMatrix mat;
 		GetMatrix(&mat);
 		mat.pos.X += fTimeStep * m_pEntity->vecMoveSpeed.X;
 		mat.pos.Y += fTimeStep * m_pEntity->vecMoveSpeed.Y;
@@ -333,7 +333,7 @@ void CObject::GetRotation(float* pfX,float* pfY,float* pfZ)
 {
 	if (!m_pEntity) return;
 
-	MATRIX4X4* mat = m_pEntity->mat;
+	RwMatrix* mat = m_pEntity->mat;
 
 	if(mat) CHook::CallFunction<void>(g_libGTASA + 0x3E8098 + 1, mat, pfX, pfY, pfZ, 21);
 

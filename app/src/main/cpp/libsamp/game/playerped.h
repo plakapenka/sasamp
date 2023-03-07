@@ -133,7 +133,7 @@ public:
 
 	BYTE m_iCurrentSpecialAction = 0;
 	int drunk_level = 0;
-	MATRIX4X4 m_HeadBoneMatrix;
+	RwMatrix m_HeadBoneMatrix;
 	ATTACHED_OBJECT_INFO_INTERNAL m_aAttachedObjects[MAX_ATTACHED_OBJECTS];
 
 	void ProcessSpecialAction(BYTE byteSpecialAction);

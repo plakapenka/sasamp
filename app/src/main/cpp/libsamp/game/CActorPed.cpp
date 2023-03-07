@@ -117,7 +117,7 @@ void CActorPed::SetDead()
 		return;
 	}
 
-	MATRIX4X4 matEntity;
+	RwMatrix matEntity;
 	GetMatrix(&matEntity);
 	TeleportTo(matEntity.pos.X, matEntity.pos.Y, matEntity.pos.Z);
 
@@ -185,7 +185,7 @@ void CActorPed::RemoveFromVehicle()
 	if (!m_pPed) return;
 	if (!GamePool_Ped_GetAt(m_dwGTAId)) return;
 
-	MATRIX4X4 mat;
+	RwMatrix mat;
 
 	if (IN_VEHICLE(m_pPed))
 	{

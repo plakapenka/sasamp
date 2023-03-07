@@ -140,9 +140,9 @@ void CStreamPool::StopIndividualStream() // ready
 	m_hIndividualStream = NULL;
 }
 
-//void CStreamPool::PostListenerMatrix(MATRIX4X4* pMat)
+//void CStreamPool::PostListenerMatrix(RwMatrix* pMat)
 //{
-//	memcpy(&m_matListener, pMat, sizeof(MATRIX4X4));
+//	memcpy(&m_matListener, pMat, sizeof(RwMatrix));
 //}
 void CStreamPool::SetStreamVolume(int iID, float fVolume)
 {
@@ -279,7 +279,7 @@ void CStreamPool::Process() // ready
 		}
 	}
 
-	MATRIX4X4 matLocal;
+	RwMatrix matLocal;
 	pGame->FindPlayerPed()->GetMatrix(&matLocal);
 
 	for (int i = 0; i < MAX_STREAMS; i++)

@@ -136,7 +136,7 @@ void GameSetLocalPlayerAim()
 {
 	//if (!pcaInternalAim) return;
 	memcpy(pcaInternalAim, &caLocalPlayerAim, sizeof(CAMERA_AIM));
-	//memcpy(pInternalCamera,&SavedCam,sizeof(MATRIX4X4));
+	//memcpy(pInternalCamera,&SavedCam,sizeof(RwMatrix));
 }
 
 //----------------------------------------------------------

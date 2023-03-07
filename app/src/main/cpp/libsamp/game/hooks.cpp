@@ -1903,11 +1903,11 @@ void CShadows__StoreCarLightShadow_hook(VEHICLE_TYPE* vehicle, int id, RwTexture
 	CShadows__StoreCarLightShadow(vehicle, id, texture, posn, frontX, frontY, sideX, sideY, r, g, b, maxViewAngle);
 }
 
-void CVehicle__DoHeadLightReflectionTwin(CVehicle* pVeh, MATRIX4X4* a2)
+void CVehicle__DoHeadLightReflectionTwin(CVehicle* pVeh, RwMatrix* a2)
 {
 	VEHICLE_TYPE* v2; // r4
 	int v3; // r2
-	MATRIX4X4* v4; // r5
+	RwMatrix* v4; // r5
 	float* v5; // r3
 	float v6; // s12
 	float v7; // s5
@@ -1968,8 +1968,8 @@ void CVehicle__DoHeadLightReflectionTwin(CVehicle* pVeh, MATRIX4X4* a2)
 		7.0f);
 }
 
-void (*CVehicle__DoHeadLightBeam)(VEHICLE_TYPE* vehicle, int arg0, MATRIX4X4& matrix, unsigned char arg2);
-void CVehicle__DoHeadLightBeam_hook(VEHICLE_TYPE* vehicle, int arg0, MATRIX4X4& matrix, unsigned char arg2)
+void (*CVehicle__DoHeadLightBeam)(VEHICLE_TYPE* vehicle, int arg0, RwMatrix& matrix, unsigned char arg2);
+void CVehicle__DoHeadLightBeam_hook(VEHICLE_TYPE* vehicle, int arg0, RwMatrix& matrix, unsigned char arg2)
 {
 	uint8_t r, g, b;
 	r = 0xFF;
@@ -2599,7 +2599,7 @@ int CTaskSimpleUseGun__SetPedPosition_hook(uintptr_t thiz, uintptr_t a2)
 									CVehicle* pVehicle = pVehiclePool->GetAt(veh);
 									if(pVehicle)
 									{
-										MATRIX4X4 vehicleMat, playerMat;
+										RwMatrix vehicleMat, playerMat;
 										pVehicle->GetMatrix(&vehicleMat);
 										pPlayerPed->GetMatrix(&playerMat);
 
@@ -2748,10 +2748,10 @@ void SendBulletSync(VECTOR *vecOrigin, VECTOR *vecEnd, VECTOR *vecPos, ENTITY_TY
 				}
 				else
 				{
-					static MATRIX4X4 mat1;
+					static RwMatrix mat1;
 					memset(&mat1, 0, sizeof(mat1));
 
-					static MATRIX4X4 mat2;
+					static RwMatrix mat2;
 					memset(&mat2, 0, sizeof(mat2));
 
 					RwMatrixOrthoNormalize(&mat2, pEntity->mat);
@@ -2794,7 +2794,7 @@ uint32_t CWorld__ProcessLineOfSight_hook(VECTOR *vecOrigin, VECTOR *vecEnd, VECT
 		g_bForceWorldProcessLineOfSight = false;
 
 		ENTITY_TYPE *pEntity = nullptr;
-		MATRIX4X4 *pMatrix = nullptr;
+		RwMatrix *pMatrix = nullptr;
 		VECTOR vecPosPlusOffset;
 
 		if(pNetGame->m_iLagCompensation != 2)
