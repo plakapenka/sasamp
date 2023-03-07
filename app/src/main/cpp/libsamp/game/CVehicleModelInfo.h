@@ -78,7 +78,7 @@ struct CVehicleModelInfo : public CClumpModelInfo {
     float              m_fWheelSizeRear;    //5C
     short              m_nWheelModelIndex;  //60
     short              m_nHandlingId;       // 62
-   // int8_t             field_4B;
+    // int8_t             field_4B;
     unsigned char      m_nNumDoors;     //64
     eVehicleClass      m_nVehicleClass; //65
     unsigned char      m_nFlags;    //66
@@ -95,17 +95,25 @@ struct CVehicleModelInfo : public CClumpModelInfo {
         RpAtomic* m_apExtras[6];
         unsigned char m_nNumExtras;
         unsigned int m_nMaskComponentsDamagable;
-
     } * m_pVehicleStruct;   // 74
-
-    uint8_t skip_0[816];
+    uint32_t m_firstColour[49];
+    uint32_t m_secondColour[33];
+    uint32_t m_thirdColour[17];
+    uint32_t m_fourthColour[17];
+    uintptr_t* m_apDirtMaterials[64];
+    uint8_t m_possibleColours[32];
+    uint8_t m_numPossibleColours;
+    uint8_t m_lastColUsed;
+    uintptr_t *m_lastCol;
+    int16_t   m_anUpgrades[18];
+    uint8_t skip_0[2];
+    uint32_t m_anRemapTxds[4];
 
     union {
         uintptr_t* m_pAnimBlock;
         char* m_animBlockFileName;
         unsigned int m_dwAnimBlockIndex;
     };
-
 };
 
 

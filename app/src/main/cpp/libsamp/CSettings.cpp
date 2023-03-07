@@ -21,7 +21,7 @@ static void ClearBackslashN(char *pStr, size_t size) {
 void CSettings::toDefaults(int iCategory)
 {
 	char buff[0x7F];
-	sprintf(buff, "%ssettings.ini", g_pszStorage);
+	sprintf(buff, "%sSAMP/settings.ini", g_pszStorage);
 
 	FILE *pFile = fopen(buff, "w");
 
@@ -40,7 +40,7 @@ void CSettings::toDefaults(int iCategory)
 void CSettings::save(int iIgnoreCategory)
 {
 	char buff[0x7F];
-	sprintf(buff, "%ssettings.ini", g_pszStorage);
+	sprintf(buff, "%sSAMP/settings.ini", g_pszStorage);
 	remove(buff);
 
 	ini_table_s *config = ini_table_create();
@@ -98,7 +98,7 @@ void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 	Log("Loading settings..");
 
 	char buff[0x7F];
-	sprintf(buff, "%ssettings.ini", g_pszStorage);
+	sprintf(buff, "%sSAMP/settings.ini", g_pszStorage);
 
 	ini_table_s *config = ini_table_create();
 	Log("Opening settings: %s", buff);

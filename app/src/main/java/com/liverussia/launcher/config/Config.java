@@ -14,7 +14,7 @@ public class Config {
     public static final String YOU_TUBE_URI = "https://www.youtube.com/@LeonidLitvinenko";
     public static final String TELEGRAM_URI = "https://t.me/lr_dev";
 
-    public static final String NATIVE_SETTINGS_FILE_PATH = "/settings.ini";
+    public static final String NATIVE_SETTINGS_FILE_PATH = "/SAMP/settings.ini";
     public static final String SETTINGS_FILE_PATH = "/gta_sa.set";
     public static final String DOWNLOAD_DIRECTORY_NAME = "/temp_downloads";
     public static final String UPDATED_APK_PATH = "/liverussia.apk";

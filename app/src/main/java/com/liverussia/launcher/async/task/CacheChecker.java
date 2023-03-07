@@ -72,7 +72,7 @@ public class CacheChecker implements Listener<FileInfo[]> {
 
         NOT_CHECK_BY_HASH_FILES.add("files/gta_sa.set");
         NOT_CHECK_BY_HASH_FILES.add("files/GTASAMP10.b");
-        NOT_CHECK_BY_HASH_FILES.add("files/settings.ini");
+        NOT_CHECK_BY_HASH_FILES.add("files/SAMP/settings.ini");
         NOT_CHECK_BY_HASH_FILES.add("files/gtasatelem.set");
         NOT_CHECK_BY_HASH_FILES.add("files/samp_log.txt");
         NOT_CHECK_BY_HASH_FILES.add("files/crash_log.log");

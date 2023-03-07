@@ -261,9 +261,9 @@ void ApplyPatches()
 //	// live russia
 //	CHook::RET(g_libGTASA + 0x0051DEC4);			// живность в воде WaterCreatureManager_c::Update
 
-	CHook::NOP(g_libGTASA + 0x00584884, 4);	// не давать ган при выходе из тачки 	( клюшка, дробовик  )
-	CHook::NOP(g_libGTASA + 0x00584850, 4);	// не давать ган при выходе из тачки 	( клюшка, дробовик  )
-	CHook::NOP(g_libGTASA + 0x00584892, 4);	// не давать ган при выходе из тачки	( клюшка, дробовик  )
+	CHook::NOP(g_libGTASA + 0x00584884, 2);	// не давать ган при выходе из тачки 	( клюшка, дробовик  )
+	CHook::NOP(g_libGTASA + 0x00584850, 2);	// не давать ган при выходе из тачки 	( клюшка, дробовик  )
+	CHook::NOP(g_libGTASA + 0x00584892, 2);	// не давать ган при выходе из тачки	( клюшка, дробовик  )
 //
 //	// CVehicleRecording::Load
 //	CHook::RET(g_libGTASA + 0x2DC8E0);

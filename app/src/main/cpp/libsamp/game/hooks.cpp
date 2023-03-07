@@ -2286,6 +2286,7 @@ void AddWaterSplashParticles_hook(CVehicleGta* thiz)
 
 void InstallHooks()
 {
+    CHook::RET(g_libGTASA + 0x003ACE04);
 	Log("InstallHooks");
 
 //    // Fixing a crosshair by very stupid math ( JPATCH )
