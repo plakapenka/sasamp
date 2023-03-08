@@ -313,10 +313,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private boolean isCheckSkipping() {
         String isTestMode = NativeStorage.getClientProperty(NativeStorageElements.TEST, this);
+        Boolean isCheckFilesOn = Storage.getBooleanProperty(StorageElements.IS_CHECK_FILES_ON, this);
 
         //todo брать из Storage тк static стирается
         return TEST_MODE_ON_VALUE.equals(isTestMode)
-                || !Boolean.TRUE.equals(MainUtils.LATEST_APK_INFO.getIsCheckFilesOn());
+                || !Boolean.TRUE.equals(isCheckFilesOn);
     }
 
     private void doAfterCacheChecked(FileInfo[] fileToReloadArray) {
@@ -356,7 +357,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 //        Servers servers = MainUtils.SERVERS.get(position);
 
-        int serverLockedValue = Integer.parseInt(Storage.getProperty(StorageElements.SERVER_LOCKED.getValue(), this));
+        int serverLockedValue = Integer.parseInt(Storage.getProperty(StorageElements.SERVER_LOCKED, this));
 
         String password = NativeStorage.getClientProperty(NativeStorageElements.LOCKED_SERVER_PASSWORD, this);
 

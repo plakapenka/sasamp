@@ -355,9 +355,9 @@ public class RouletteFragment extends Fragment implements View.OnClickListener, 
         authenticatedUserRoulettePanel.setVisibility(View.VISIBLE);
         logoutButton.setVisibility(View.VISIBLE);
 
-        String username = Storage.getProperty(StorageElements.AUTHENTICATED_NICKNAME.getValue(), this.getActivity());
-        String balance = Storage.getProperty(StorageElements.USER_BALANCE.getValue(), this.getActivity());
-        String serverName = Storage.getProperty(StorageElements.AUTHENTICATED_SERVER.getValue(), this.getActivity());
+        String username = Storage.getProperty(StorageElements.AUTHENTICATED_NICKNAME, this.getActivity());
+        String balance = Storage.getProperty(StorageElements.USER_BALANCE, this.getActivity());
+        String serverName = Storage.getProperty(StorageElements.AUTHENTICATED_SERVER, this.getActivity());
 
         ServerInfo serverInfo = ServerInfo.ofName(serverName);
 

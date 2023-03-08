@@ -803,9 +803,9 @@ public class HudManager {
     public void initServerLogo() {
         activity.runOnUiThread(() -> {
 
-            String serverColor = Storage.getProperty(StorageElements.SERVER_COLOR.getValue(), activity);
-            String serverName = Storage.getProperty(StorageElements.SERVER_NAME.getValue(), activity);
-            String serverMulti = Storage.getProperty(StorageElements.SERVER_MULTI.getValue(), activity);
+            String serverColor = Storage.getProperty(StorageElements.SERVER_COLOR, activity);
+            String serverName = Storage.getProperty(StorageElements.SERVER_NAME, activity);
+            String serverMulti = Storage.getProperty(StorageElements.SERVER_MULTI, activity);
 
             ImageView img = activity.findViewById(R.id.hud_logo_img);
             TextView text = activity.findViewById(R.id.hud_logo_text);

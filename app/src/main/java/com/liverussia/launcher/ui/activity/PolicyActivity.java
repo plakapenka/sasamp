@@ -14,6 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.liverussia.cr.R;
+import com.liverussia.launcher.domain.enums.StorageElements;
+import com.liverussia.launcher.storage.Storage;
 import com.liverussia.launcher.utils.MainUtils;
 import com.liverussia.launcher.async.dto.response.LatestVersionInfoDto;
 import com.liverussia.launcher.domain.enums.DownloadType;
@@ -125,6 +127,7 @@ public class PolicyActivity extends AppCompatActivity {
         int currentVersion = getCurrentVersion();
         int latestVersion = Integer.parseInt(latestVersionInfo.getVersion());
         MainUtils.LATEST_APK_INFO = latestVersionInfo;
+        Storage.addProperty(StorageElements.IS_CHECK_FILES_ON, latestVersionInfo.getIsCheckFilesOn(), this);
 
         if (currentVersion >= latestVersion) {
             startLauncher();

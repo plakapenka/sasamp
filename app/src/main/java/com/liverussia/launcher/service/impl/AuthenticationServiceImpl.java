@@ -39,7 +39,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public RefreshTokenRequestDto getRefreshTokenRequestDto() {
         RefreshTokenRequestDto refreshTokenRequestDto = new RefreshTokenRequestDto();
-        String refreshToken = Storage.getProperty(StorageElements.REFRESH_TOKEN.getValue(), activity);
+        String refreshToken = Storage.getProperty(StorageElements.REFRESH_TOKEN, activity);
         refreshTokenRequestDto.setRefreshToken(refreshToken);
 
         return refreshTokenRequestDto;
@@ -47,13 +47,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public boolean isAccessTokenHealth() {
-        String accessEncodedToken = Storage.getProperty(StorageElements.ACCESS_TOKEN.getValue(), activity);
+        String accessEncodedToken = Storage.getProperty(StorageElements.ACCESS_TOKEN, activity);
         return isTokenHealth(accessEncodedToken);
     }
 
     @Override
     public boolean isRefreshTokenHealth() {
-        String refreshEncodedToken = Storage.getProperty(StorageElements.REFRESH_TOKEN.getValue(), activity);
+        String refreshEncodedToken = Storage.getProperty(StorageElements.REFRESH_TOKEN, activity);
         return isTokenHealth(refreshEncodedToken);
     }
 
@@ -68,7 +68,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             return false;
         }
 
-        String tokenReceive = Storage.getProperty(StorageElements.TOKENS_RECEIVE_TIME.getValue(), activity);
+        String tokenReceive = Storage.getProperty(StorageElements.TOKENS_RECEIVE_TIME, activity);
 
         if (StringUtils.isBlank(tokenReceive)) {
             return false;
@@ -99,12 +99,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         String accessToken = BEARER_TOKEN_STARTS_STRING.concat(authenticationResponseDto.getAccessToken());
 
-        Storage.addProperty(StorageElements.AUTHENTICATED_NICKNAME.getValue(), username, activity);
-        Storage.addProperty(StorageElements.USER_BALANCE.getValue(), balance, activity);
-        Storage.addProperty(StorageElements.AUTHENTICATED_SERVER.getValue(), serverName, activity);
-        Storage.addProperty(StorageElements.ACCESS_TOKEN.getValue(), accessToken, activity);
-        Storage.addProperty(StorageElements.REFRESH_TOKEN.getValue(), authenticationResponseDto.getRefreshToken(), activity);
-        Storage.addProperty(StorageElements.TOKENS_RECEIVE_TIME.getValue(), DateTimeUtils.getUTCNow().toString(), activity);
+        Storage.addProperty(StorageElements.AUTHENTICATED_NICKNAME, username, activity);
+        Storage.addProperty(StorageElements.USER_BALANCE, balance, activity);
+        Storage.addProperty(StorageElements.AUTHENTICATED_SERVER, serverName, activity);
+        Storage.addProperty(StorageElements.ACCESS_TOKEN, accessToken, activity);
+        Storage.addProperty(StorageElements.REFRESH_TOKEN, authenticationResponseDto.getRefreshToken(), activity);
+        Storage.addProperty(StorageElements.TOKENS_RECEIVE_TIME, DateTimeUtils.getUTCNow().toString(), activity);
     }
 
 
