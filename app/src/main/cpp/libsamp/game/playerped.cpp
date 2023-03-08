@@ -69,7 +69,7 @@ CPlayerPed::CPlayerPed(uint8_t bytePlayerNumber, int iSkin, float fX, float fY, 
 
 	SetModelIndex(iSkin);
 	ForceTargetRotation(fRotation);
-	MATRIX4X4 mat;
+	RwMatrix mat;
 	GetMatrix(&mat);
 	mat.pos.x = fX;
 	mat.pos.y = fY;
@@ -233,7 +233,7 @@ void CPlayerPed::SetDead()
 		return;
 	}
 	
-	MATRIX4X4 mat;
+	RwMatrix mat;
 	GetMatrix(&mat);
 	// will reset the tasks
 	TeleportTo(mat.pos.x, mat.pos.y, mat.pos.z);
@@ -607,7 +607,7 @@ void CPlayerPed::SetInterior(uint8_t byteID, bool refresh)
 		ScriptCommand(&link_actor_to_interior, m_dwGTAId, byteID);
 
 		if(refresh) {
-			MATRIX4X4 mat;
+			RwMatrix mat;
 			this->GetMatrix(&mat);
 			ScriptCommand(&refresh_streaming_at, mat.pos.x, mat.pos.y);
 		}
@@ -642,7 +642,7 @@ void CPlayerPed::PutDirectlyInVehicle(CVehicle *pVehicle, int iSeat)
 
 	Log("PutDirectlyInVehicle");
 
-//	MATRIX4X4 mat;
+//	RwMatrix mat;
 //	pVehicle->GetMatrix(&mat);
 //
 ////	GetMatrix(&mat);
@@ -828,7 +828,7 @@ void CPlayerPed::ClearAnimations()
 {
 	ApplyAnimation("crry_prtial", "CARRY", 4.0, 0, 0, 0, 0, 1);
 	//ClearAllTasks();
-	MATRIX4X4 mat;
+	RwMatrix mat;
 	GetMatrix(&mat);
 	TeleportTo(mat.pos.x,mat.pos.y,mat.pos.z);
 
@@ -1015,7 +1015,7 @@ void CPlayerPed::AttachObject(ATTACHED_OBJECT_INFO* pInfo, int iSlot)
 		DeattachObject(iSlot);
 	}
 	memcpy((void*)& m_aAttachedObjects[iSlot], (const void*)pInfo, sizeof(ATTACHED_OBJECT_INFO));
-	MATRIX4X4 matPos;
+	RwMatrix matPos;
 	GetMatrix(&matPos);
 	CVector vecRot{ 0.0f, 0.0f, 0.0f };
 	m_aAttachedObjects[iSlot].pObject = new CObject(pInfo->dwModelId, matPos.pos.x, matPos.pos.y, matPos.pos.z, vecRot, 200.0f);
@@ -1065,9 +1065,9 @@ void CPlayerPed::FlushAttach()
 	}
 }
 
-MATRIX4X4* RwMatrixMultiplyByVector(CVector* out, MATRIX4X4* a2, CVector* in)
+RwMatrix* RwMatrixMultiplyByVector(CVector* out, RwMatrix* a2, CVector* in)
 {
-	MATRIX4X4* result;
+	RwMatrix* result;
 	CVector* v4;
 
 	result = a2;
@@ -1078,9 +1078,9 @@ MATRIX4X4* RwMatrixMultiplyByVector(CVector* out, MATRIX4X4* a2, CVector* in)
 	return result;
 }
 
-void RwMatrixRotate(MATRIX4X4* pMat, CVector* axis, float angle)
+void RwMatrixRotate(RwMatrix* pMat, CVector* axis, float angle)
 {
-	((int(*)(MATRIX4X4*, CVector*, float, int))(g_libGTASA + 0x001E38F4 + 1))(pMat, axis, angle, 1);
+	((int(*)(RwMatrix*, CVector*, float, int))(g_libGTASA + 0x001E38F4 + 1))(pMat, axis, angle, 1);
 }
 
 void CPlayerPed::ProcessAttach()
@@ -1120,8 +1120,8 @@ void CPlayerPed::ProcessAttach()
 			}
 			((void (*)(CEntityGta*))(*(void**)(pObject->m_pEntity->vtable + 16)))(pObject->m_pEntity); // CPhysical::Remove
 
-			MATRIX4X4 outMat;
-			memcpy(&outMat, &hierarchy->pMatrixArray[iID], sizeof(MATRIX4X4));
+			RwMatrix outMat;
+			memcpy(&outMat, &hierarchy->pMatrixArray[iID], sizeof(RwMatrix));
 
 			CVector vecOut;
 			RwMatrixMultiplyByVector(&vecOut, &outMat, &m_aAttachedObjects[i].vecOffset);
@@ -1165,7 +1165,7 @@ void CPlayerPed::ProcessAttach()
 					uintptr_t v8 = *(uintptr_t*)(pObject->m_pEntity->m_pRwObject + 4) + 16;
 					if (v8)
 					{
-						((int(*)(MATRIX4X4*, uintptr_t))(g_libGTASA + 0x0044EE3E + 1))(pObject->m_pEntity->mat, v8);
+						((int(*)(RwMatrix*, uintptr_t))(g_libGTASA + 0x0044EE3E + 1))(pObject->m_pEntity->mat, v8);
 					}
 				}
 			}
@@ -1198,7 +1198,7 @@ void CPlayerPed::ProcessHeadMatrix()
 		return;
 	}
 
-	memcpy(&m_HeadBoneMatrix, &hierarchy->pMatrixArray[iID], sizeof(MATRIX4X4));
+	memcpy(&m_HeadBoneMatrix, &hierarchy->pMatrixArray[iID], sizeof(RwMatrix));
 }
 
 bool IsTaskRunNamedOrSlideToCoord(void* pTask)
@@ -1319,7 +1319,7 @@ void CPlayerPed::PlayAnimByIdx(int idx, float BlendData, bool loop, bool freeze,
 	
 	if (!idx)
 	{
-		MATRIX4X4 mat;
+		RwMatrix mat;
 		GetMatrix(&mat);
 		TeleportTo(mat.pos.x, mat.pos.y, mat.pos.z);
 		return;
@@ -1570,11 +1570,11 @@ PLAYERID CPlayerPed::FindDeathResponsiblePlayer()
 }
 
 // 0.3.7
-void CPlayerPed::GetBonePosition(int iBoneID, RwV3d& vecOut)
+void CPlayerPed::GetBonePosition(int iBoneID, CVector* vecOut)
 {
 	if(!m_pPed) return;
 
-	(( void (*)(CPedGta*, RwV3d&, int, int))(g_libGTASA + 0x004A4B0C + 1))(m_pPed, vecOut, iBoneID, 0);
+	(( void (*)(CPedGta*, CVector*, int, int))(g_libGTASA + 0x004A4B0C + 1))(m_pPed, vecOut, iBoneID, 0);
 }
 
 CEntityGta* CPlayerPed::GetEntityUnderPlayer()

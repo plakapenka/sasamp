@@ -9,7 +9,7 @@ extern CNetGame* pNetGame;
 
 bool CFirstPersonCamera::m_bEnabled = false;
 
-MATRIX4X4* RwMatrixMultiplyByVector(CVector* out, MATRIX4X4* a2, CVector* in);
+RwMatrix* RwMatrixMultiplyByVector(CVector* out, RwMatrix* a2, CVector* in);
 void CFirstPersonCamera::ProcessCameraOnFoot(uintptr_t pCam, CPlayerPed* pPed)
 {
 	if (!m_bEnabled || *(uint8_t*)(g_libGTASA + 0x00951FA8 + 0xC76) || *(uint8_t*)(g_libGTASA + 0x00951FA8 + 0xC77))
@@ -30,7 +30,7 @@ void CFirstPersonCamera::ProcessCameraOnFoot(uintptr_t pCam, CPlayerPed* pPed)
 
 	if (vecOut.x != vecOut.x || vecOut.y != vecOut.y || vecOut.z != vecOut.z)
 	{
-		pPed->GetBonePosition(4, vecOut);
+		pPed->GetBonePosition(4, &vecOut);
 	}
 	if (vecOut.x != vecOut.x || vecOut.y != vecOut.y || vecOut.z != vecOut.z)
 	{
@@ -78,15 +78,15 @@ void CFirstPersonCamera::ProcessCameraInVeh(uintptr_t pCam, CPlayerPed* pPed, CV
 	}
 
 	CVector vecOut;
-	MATRIX4X4 mat;
+	RwMatrix mat;
 
-	memcpy(&mat, pPed->m_pPed->mat, sizeof(MATRIX4X4));
+	memcpy(&mat, pPed->m_pPed->mat, sizeof(RwMatrix));
 
 	RwMatrixMultiplyByVector(&vecOut, &mat, &vecOffset);
 
 	if (vecOut.x != vecOut.x || vecOut.y != vecOut.y || vecOut.z != vecOut.z)
 	{
-		pPed->GetBonePosition(4, vecOut);
+		pPed->GetBonePosition(4, &vecOut);
 	}
 	if (vecOut.x != vecOut.x || vecOut.y != vecOut.y || vecOut.z != vecOut.z)
 	{

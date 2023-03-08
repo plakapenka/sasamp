@@ -2307,7 +2307,7 @@ bool ProcessLocalCommands(const char str[])
 
 	if (strcmp(str, "/fpsinfo") == 0)
 	{
-		CDebugInfo::ToggleDebugDraw();
+		CDebugInfo::SetDrawFPS(!CDebugInfo::m_uiDrawDebug);
 		return true;
 	}
 

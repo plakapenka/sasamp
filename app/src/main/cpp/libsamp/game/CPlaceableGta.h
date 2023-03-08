@@ -12,7 +12,7 @@ struct CPlaceableGta
 {
     uint32_t vtable;
     uint8_t skip0[16];
-    MATRIX4X4 *mat;
+    RwMatrix *mat;
 };
 
 #endif //LIVERUSSIA_CPLACEABLEGTA_H

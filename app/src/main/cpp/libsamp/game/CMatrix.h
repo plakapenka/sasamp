@@ -7,7 +7,7 @@
 
 #include "CVector.h"
 
-typedef struct _MATRIX4X4
+struct RwMatrixTag
 {
     CVector right;		// 0-12 	; r11 r12 r13
     uint32_t  flags;	// 12-16
@@ -17,6 +17,7 @@ typedef struct _MATRIX4X4
     float  pad_a;		// 44-48
     CVector pos;			// 48-60
     float  pad_p;		// 60-64
-} MATRIX4X4, *PMATRIX4X4, RwMatrix;
+};
+typedef RwMatrixTag RwMatrix;
 
 #endif //LIVERUSSIA_CMATRIX_H

@@ -504,8 +504,6 @@ void CPed__ProcessControl_hook(uintptr_t thiz)
 		// Reapply the no ped rots from Cam patch
 		//CHook::WriteMemory(g_libGTASA + 0x4BED92, "\x00\x46", 2);
 	}
-
-	return;
 }
 
 void AllVehicles__ProcessControl_hook(CVehicleGta* pVehicle)
@@ -574,14 +572,14 @@ void AllVehicles__ProcessControl_hook(CVehicleGta* pVehicle)
 	{
 		CWorld::PlayerInFocus = 0;
 
-	//	pVehicle->pDriver->dwPedType = 4;
+		pVehicle->pDriver->dwPedType = 4;
 		//CAEVehicleAudioEntity::Service
-	//	(( void (*)(uintptr_t))(g_libGTASA+0x003ACE04+1))(thiz+0x138);
-	//	pVehicle->pDriver->dwPedType = 0;
+		(( void (*)(char*))(g_libGTASA + 0x003ACE04 + 1))(reinterpret_cast<char *>(&pVehicle->m_VehicleAudioEntity));
+		pVehicle->pDriver->dwPedType = 0;
 	}
 	else
 	{
-	//	(( void (*)(uintptr_t))(g_libGTASA+0x003ACE04+1))(thiz+0x138);
+		(( void (*)(char*))(g_libGTASA + 0x003ACE04 + 1))(reinterpret_cast<char *>(&pVehicle->m_VehicleAudioEntity));
 	}
 
 	// Tyre burst fix

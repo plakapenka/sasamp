@@ -455,7 +455,6 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 
     g_libGTASA = ttt-0x00931560;
 
-//	g_libGTASA = CUtil::FindLibrary("libGTASA.so");
 	if(g_libGTASA == 0)
 	{
 		Log("ERROR: libGTASA.so address not found!");

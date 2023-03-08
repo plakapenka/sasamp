@@ -44,66 +44,38 @@ void CText3DLabelsPool::DrawAttachedToPlayer(TEXT_LABELS* pLabel)
 	{
 		return;
 	}
-	if (!pLabel)
-	{
-		return;
-	}
-	CVector pos;
-	memset((void*)&pos, 0, sizeof(CVector));
 
 	PLAYERID playerId = pLabel->attachedToPlayerID;
 
-	CPlayerPool* pPlayerPool = nullptr;
-	if (pNetGame)
-	{
-		pPlayerPool = pNetGame->GetPlayerPool();
-	}
-	if (!pPlayerPool)
-	{
-		return;
-	}
-
-	if (!pPlayerPool->m_pPlayers[playerId])
-	{
-		return;
-	}
+	CPlayerPool* pPlayerPool = pNetGame->GetPlayerPool();
 
 	CRemotePlayer* pPlayer = pPlayerPool->GetAt(playerId);
 	if (!pPlayer)
 	{
 		return;
 	}
-	if (!pPlayer->GetPlayerPed())
-	{
-		return;
-	}
+
 	CPlayerPed* pPlayerPed = pPlayer->GetPlayerPed();
-	if (!pPlayerPed->IsAdded())
+	if (!pPlayerPed)
 	{
 		return;
 	}
 	CVector boneOut;
-	pPlayerPed->GetBonePosition(5, boneOut);
+	pPlayerPed->GetBonePosition(5, &boneOut);
 
-	memcpy((void*)&pos, (const void*)&boneOut, sizeof(CVector));
+	boneOut.x += pLabel->offsetCoords.x;
+	boneOut.y += pLabel->offsetCoords.y;
+	boneOut.z += pLabel->offsetCoords.z;
 
-	pos.x += pLabel->offsetCoords.x;
-	pos.y += pLabel->offsetCoords.y;
-	pos.z += pLabel->offsetCoords.z;
-
-   // CPlayerPed* pPed = pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed();
     float fDist = pPlayerPed->GetDistanceFromCamera();
-    pos.z += (fDist * 0.055);
+	boneOut.z += fDist * 0.055f;
 
-	DrawTextLabel(pLabel, &pos);
+	DrawTextLabel(pLabel, &boneOut);
 }
 
 void CText3DLabelsPool::DrawAttachedToVehicle(TEXT_LABELS* pLabel)
 {
-	if (!pLabel)
-	{
-		return;
-	}
+
 	CVector pos;
 	memset((void*)&pos, 0, sizeof(CVector));
 
@@ -112,8 +84,8 @@ void CText3DLabelsPool::DrawAttachedToVehicle(TEXT_LABELS* pLabel)
 	if(pVehicle == nullptr || pVehicle->m_pVehicle == nullptr)
 		return;
 
-	MATRIX4X4 mat;
-	memset((void*)& mat, 0, sizeof(MATRIX4X4));
+	RwMatrix mat;
+	memset((void*)& mat, 0, sizeof(RwMatrix));
 
 	pVehicle->GetMatrix(&mat);
 
@@ -149,8 +121,8 @@ void CText3DLabelsPool::DrawVehiclesInfo()
 				CVector pos;
 				memset((void*)&pos, 0, sizeof(CVector));
 
-				MATRIX4X4 mat;
-				memset((void*)& mat, 0, sizeof(MATRIX4X4));
+				RwMatrix mat;
+				memset((void*)& mat, 0, sizeof(RwMatrix));
 
 				pVehicle->GetMatrix(&mat);
 
@@ -187,20 +159,18 @@ void CText3DLabelsPool::DrawVehiclesInfo()
 
 void CText3DLabelsPool::DrawTextLabel(TEXT_LABELS* pLabel, CVector* pPos)
 {
-	if (!pNetGame->GetPlayerPool()->GetLocalPlayer())
-	{
-		return;
-	}
+
 	CPlayerPed* pPed = pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed();
 	if (!pPed)
 	{
 		return;
 	}
+
 	if (!pPed->IsAdded())
 	{
 		return;
 	}
-
+	bool hitEntity = false;
 	if (pLabel->useLineOfSight)
 	{
 		CAMERA_AIM* pCam = GameGetInternalAim();
@@ -209,12 +179,12 @@ void CText3DLabelsPool::DrawTextLabel(TEXT_LABELS* pLabel, CVector* pPos)
 			return;
 		}
 
-		ScriptCommand(&get_line_of_sight,
+		hitEntity = ScriptCommand(&get_line_of_sight,
 			pPos->x, pPos->y, pPos->z,
 			pCam->pos1x, pCam->pos1y, pCam->pos1z,
 			1, 0, 0, 0, 0);
 	}
-	else
+	if (!pLabel->useLineOfSight || hitEntity)
 	{
 		if (pPed->GetDistanceFromPoint(pPos->x, pPos->y, pPos->z) <= pLabel->drawDistance)
 		{
@@ -570,10 +540,6 @@ void TextWithColors(ImVec2 pos, ImColor col, const char* szStr, const char* szSt
 extern CGame* pGame;
 void CText3DLabelsPool::Draw()
 {
-	if (!pGame->IsToggledHUDElement(HUD_ELEMENT_TEXTLABELS))
-	{
-		return;
-	}
 	if(pGame->m_bDl_enabled) DrawVehiclesInfo();
 	for (int i = 0; i < TEXT_LABEL_POOL_SIZE; i++)
 	{

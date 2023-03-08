@@ -2,7 +2,7 @@
 #include "game.h"
 #include <cmath>
 
-void CQuaternion::SetFromMatrix(MATRIX4X4 mat)
+void CQuaternion::SetFromMatrix(RwMatrix mat)
 {
 	w = sqrt( std::max( (float)0, 1.0f + mat.right.x + mat.up.y + mat.at.z ) ) * 0.5f;
 	x = sqrt( std::max( (float)0, 1.0f + mat.right.x - mat.up.y - mat.at.z ) ) * 0.5f;
@@ -14,7 +14,7 @@ void CQuaternion::SetFromMatrix(MATRIX4X4 mat)
 	z = static_cast < float > ( copysign( z, mat.up.x - mat.right.y ) );
 }
 
-void CQuaternion::GetMatrix(PMATRIX4X4 mat)
+void CQuaternion::GetMatrix(RwMatrix* mat)
 {
 	if(!mat) return;
 

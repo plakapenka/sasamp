@@ -23,7 +23,7 @@ void CEntity::Add()
 
 		WorldAddEntity((uintptr_t)m_pEntity);
 
-		MATRIX4X4 mat;
+		RwMatrix mat;
 		GetMatrix(&mat);
 		TeleportTo(mat.pos.x, mat.pos.y, mat.pos.z);
 	}
@@ -72,7 +72,7 @@ void CEntity::UpdateRwMatrixAndFrame()
 			{
 				uintptr_t pRwMatrix = *(uintptr_t*)(m_pEntity->m_pRwObject + 4) + 0x10;
 				// CMatrix::UpdateRwMatrix
-				((void (*) (MATRIX4X4*, uintptr_t))(g_libGTASA + 0x0044EE3E + 1))(m_pEntity->mat, pRwMatrix);
+				((void (*) (RwMatrix*, uintptr_t))(g_libGTASA + 0x0044EE3E + 1))(m_pEntity->mat, pRwMatrix);
 
 				// CEntity::UpdateRwFrame
 				((void (*) (CEntityGta*))(g_libGTASA + 0x003EC038 + 1))(m_pEntity);
@@ -91,7 +91,7 @@ void CEntity::AddPhysical()
 	((void (*)(CEntityGta*))(*(void**)(m_pEntity->vtable + 8)))(m_pEntity); // CPhysical::Add
 }
 
-void CEntity::UpdateMatrix(MATRIX4X4 mat)
+void CEntity::UpdateMatrix(RwMatrix mat)
 {
 	if (m_pEntity)
 	{
@@ -152,7 +152,7 @@ void CEntity::Remove()
 }
 
 // 0.3.7
-void CEntity::GetMatrix(PMATRIX4X4 Matrix)
+void CEntity::GetMatrix(RwMatrix* Matrix)
 {
 	if (!m_pEntity || !m_pEntity->mat) return;
 
@@ -174,7 +174,7 @@ void CEntity::GetMatrix(PMATRIX4X4 Matrix)
 }
 
 // 0.3.7
-void CEntity::SetMatrix(MATRIX4X4 Matrix)
+void CEntity::SetMatrix(RwMatrix Matrix)
 {
 	if (!m_pEntity) return;
 	if (!m_pEntity->mat) return;
@@ -269,13 +269,13 @@ void CEntity::TeleportTo(float fX, float fY, float fZ)
 
 float CEntity::GetDistanceFromCamera()
 { // not v2.1
-	MATRIX4X4 matEnt;
+	RwMatrix matEnt;
 
 	if(!m_pEntity || CUtil::IsGameEntityArePlaceable(m_pEntity))
 		return 100000.0f;
 
 	this->GetMatrix(&matEnt);
-	MATRIX4X4 matCam;
+	RwMatrix matCam;
 	pGame->GetCamera()->GetMatrix(&matCam);
 
 	float tmpX = (matEnt.pos.x - matCam.pos.x);
@@ -287,8 +287,8 @@ float CEntity::GetDistanceFromCamera()
 
 float CEntity::GetDistanceFromLocalPlayerPed()
 {
-	MATRIX4X4	matFromPlayer;
-	MATRIX4X4	matThis;
+	RwMatrix	matFromPlayer;
+	RwMatrix	matThis;
 	float 		fSX, fSY, fSZ;
 
 	CPlayerPed *pLocalPlayerPed = pGame->FindPlayerPed();
@@ -324,7 +324,7 @@ float CEntity::GetDistanceFromLocalPlayerPed()
 
 float CEntity::GetDistanceFromPoint(float X, float Y, float Z)
 {
-	MATRIX4X4	matThis;
+	RwMatrix	matThis;
 	float		fSX,fSY,fSZ;
 
 	GetMatrix(&matThis);

@@ -31,7 +31,7 @@ void CCamera::LookAtPoint(float fX, float fY, float fZ, int iType)
 	ScriptCommand(&point_camera, fX, fY, fZ, iType);
 }
 
-void CCamera::GetMatrix(PMATRIX4X4 Matrix)
+void CCamera::GetMatrix(RwMatrix* Matrix)
 {
 	Matrix->right.x = m_matPos->right.x;
 	Matrix->right.y = m_matPos->right.y;

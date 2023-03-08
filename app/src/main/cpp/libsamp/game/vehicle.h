@@ -108,7 +108,6 @@ public:
 	unsigned int GetVehicleSubtype();
 
 	void SetEngineState(bool bEnable);
-	int GetEngineState();
 	void SetLightsState(bool iState);
 	bool GetLightsState();
 	void SetBootAndBonnetState(int iBoot, int iBonnet);
@@ -221,7 +220,7 @@ public:
 	bool m_bWasWheelOffsetProcessedY;
 	uint32_t m_uiLastProcessedWheelOffset;
 
-	MATRIX4X4 m_vInitialWheelMatrix[4];
+	RwMatrix m_vInitialWheelMatrix[4];
 
 	SCustomCarShadow m_Shadow;
 	bool m_bShadow;

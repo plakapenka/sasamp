@@ -11,15 +11,15 @@ public:
 	virtual void Add();
 	//virtual void Remove();
 	void Render();
-	void UpdateMatrix(MATRIX4X4 mat);
+	void UpdateMatrix(RwMatrix mat);
 	void SetCollisionChecking(bool bCheck);
 	void SetGravityProcessing(bool bProcess);
 	void UpdateRwMatrixAndFrame();
 
 	// 0.3.7
-	void GetMatrix(PMATRIX4X4 Matrix);
+	void GetMatrix(RwMatrix* Matrix);
 	// 0.3.7
-	void SetMatrix(MATRIX4X4 Matrix);
+	void SetMatrix(RwMatrix Matrix);
 	// 0.3.7
 	void GetMoveSpeedVector(CVector *vec);
 	// 0.3.7

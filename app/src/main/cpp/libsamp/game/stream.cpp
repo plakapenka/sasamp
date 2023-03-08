@@ -61,7 +61,7 @@ void CStream::ProcessAttached() // todo
 		{
 			return;
 		}
-		MATRIX4X4 mat;
+		RwMatrix mat;
 		pVeh->GetMatrix(&mat);
 		memcpy(&m_vPos, &mat.pos, sizeof(CVector));
 		//CChatWindow::AddDebugMessage("processed for vehicle %d", m_iAttachedTo);
@@ -77,7 +77,7 @@ void CStream::ProcessAttached() // todo
 		{
 			return;
 		}
-		MATRIX4X4 mat;
+		RwMatrix mat;
 		pPed->GetMatrix(&mat);
 		memcpy(&m_vPos, &mat.pos, sizeof(CVector));
 		//CChatWindow::AddDebugMessage("processed for player %d", m_iAttachedTo);
@@ -136,7 +136,7 @@ void CStream::SetIsDeactivated(bool bIsDeactivated)
 	m_bIsDeactivated = bIsDeactivated;
 }
 
-void CStream::Process(MATRIX4X4* pMatListener) // todo
+void CStream::Process(RwMatrix* pMatListener) // todo
 {
 	float fDistance = GetDistanceBetween3DPoints(&(pMatListener->pos), &m_vPos);
 	if (fDistance <= m_fDistance && !m_hStream && !m_bIsDeactivated)

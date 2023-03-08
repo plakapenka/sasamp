@@ -103,7 +103,7 @@ public:
 	// 0.3.7
 	void ApplyAnimation( char *szAnimName, char *szAnimFile, float fT, bool opt1, bool opt2, bool opt3, bool opt4, int iUnk );
 	// 0.3.7
-	void GetBonePosition(int iBoneID, RwV3d& vecOut);
+	void GetBonePosition(int iBoneID, CVector* vecOut);
 	// roflan
 	//BYTE FindDeathReasonAndResponsiblePlayer(PLAYERID *nPlayer);
 	PLAYERID FindDeathResponsiblePlayer();
@@ -133,7 +133,7 @@ public:
 
 	BYTE m_iCurrentSpecialAction = 0;
 	int drunk_level = 0;
-	MATRIX4X4 m_HeadBoneMatrix;
+	RwMatrix m_HeadBoneMatrix;
 	ATTACHED_OBJECT_INFO_INTERNAL m_aAttachedObjects[MAX_ATTACHED_OBJECTS];
 
 	void ProcessSpecialAction(BYTE byteSpecialAction);

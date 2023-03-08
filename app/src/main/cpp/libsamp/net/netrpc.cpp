@@ -799,7 +799,7 @@ void RemoveBuildingByPtr(uintptr_t pBuild)
 	*(uint8_t*)(pBuild + 47) = 1;
 	if (*(uintptr_t*)(pBuild + 20))
 	{
-		MATRIX4X4* matt = (MATRIX4X4*) * (uintptr_t*)(pBuild + 20);
+		RwMatrix* matt = (RwMatrix*) * (uintptr_t*)(pBuild + 20);
 		matt->pos.z -= 2000.0f;
 		//*(uint32_t*)((uintptr_t)matt + 12) &= 0xFFFDFFFC;
 	}
@@ -1133,7 +1133,7 @@ void ClearActorAnimations(RPCParameters* rpcParams)
 	{
 		if (pActorPool->GetAt(actorId))
 		{
-			MATRIX4X4 mat;
+			RwMatrix mat;
 			pActorPool->GetAt(actorId)->GetMatrix(&mat);
 			pActorPool->GetAt(actorId)->TeleportTo(mat.pos.x, mat.pos.y, mat.pos.z);
 		}

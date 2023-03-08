@@ -150,8 +150,8 @@ struct RwFrame
 {
 	RwObject        object;                 // 0
 	void* pad1, * pad2;            // 8
-	MATRIX4X4        modelling;              // 16
-	MATRIX4X4        ltm;                    // 32
+	RwMatrix        modelling;              // 16
+	RwMatrix        ltm;                    // 32
 	RwList          objects;                // 48
 	struct RwFrame* child;                  // 56
 	struct RwFrame* next;                   // 60

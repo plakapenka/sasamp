@@ -76,7 +76,7 @@ void CRemotePlayer::ProcessSpecialActions(BYTE byteSpecialAction)
 void CRemotePlayer::Process()
 {
 	CPlayerPool *pPool = pNetGame->GetPlayerPool();
-	MATRIX4X4 matPlayer, matVehicle;
+	RwMatrix matPlayer, matVehicle;
 	CVector vecMoveSpeed;
 
 	if(IsActive())
@@ -163,7 +163,7 @@ void CRemotePlayer::Process()
 			if (m_byteWeaponShotID != 0xFF)
 			{
 				//weapon sync
-				//MATRIX4X4 localMat;
+				//RwMatrix localMat;
 				//pPool->GetLocalPlayer()->GetPlayerPed()->GetMatrix(&localMat);
 
 				m_ofSync.byteCurrentWeapon = m_byteWeaponShotID;
@@ -262,7 +262,7 @@ uint32_t CRemotePlayer::GetPlayerColorAsARGB()
 
 void CRemotePlayer::SlerpRotation()
 {
-	MATRIX4X4 mat;
+	RwMatrix mat;
 	CQuaternion quatPlayer, quatResult;
 
 	if(m_pPlayerPed)
@@ -304,7 +304,7 @@ void CRemotePlayer::Remove()
 	}
 }
 
-void CRemotePlayer::UpdateInCarMatrixAndSpeed(MATRIX4X4* mat, CVector* pos, CVector* speed)
+void CRemotePlayer::UpdateInCarMatrixAndSpeed(RwMatrix* mat, CVector* pos, CVector* speed)
 {
 	m_InCarQuaternion.SetFromMatrix(*mat);
 
@@ -321,7 +321,7 @@ void CRemotePlayer::UpdateInCarMatrixAndSpeed(MATRIX4X4* mat, CVector* pos, CVec
 
 void CRemotePlayer::UpdateInCarTargetPosition()
 {
-	MATRIX4X4 matEnt;
+	RwMatrix matEnt;
 	CVector vec = { 0.0f, 0.0f, 0.0f };
 
 	float delta = 0.0f;
@@ -385,7 +385,7 @@ void CRemotePlayer::UpdateInCarTargetPosition()
 void CRemotePlayer::UpdateVehicleRotation()
 {
 	CQuaternion quat, qresult;
-	MATRIX4X4 matEnt;
+	RwMatrix matEnt;
 	CVector vec = { 0.0f, 0.0f, 0.0f };
 
 
@@ -506,7 +506,7 @@ void CRemotePlayer::StoreTrailerFullSyncData(TRAILER_SYNC_DATA* trSync)
 	Log("TrailerID = %d", TrailerID);
 	if (pVehicle != nullptr && pVehicle->m_pVehicle != nullptr )
 	{
-		MATRIX4X4 matWorld;
+		RwMatrix matWorld;
 
 		trSync->quat.GetMatrix(&matWorld);
 		matWorld.pos.x = trSync->vecPos.x;
@@ -521,7 +521,7 @@ void CRemotePlayer::StoreTrailerFullSyncData(TRAILER_SYNC_DATA* trSync)
 
 void CRemotePlayer::UpdateOnFootTargetPosition()
 {
-	MATRIX4X4 mat;
+	RwMatrix mat;
 	CVector vec;
 
 	if(!m_pPlayerPed) return;
@@ -787,7 +787,7 @@ void CRemotePlayer::StoreOnFootFullSyncData(ONFOOT_SYNC_DATA *pofSync, uint32_t 
 
 		if(m_pPlayerPed->m_pPed->bInVehicle)
 		{
-			MATRIX4X4 mat;
+			RwMatrix mat;
 			m_pPlayerPed->GetMatrix(&mat);
 			m_pPlayerPed->RemoveFromVehicleAndPutAt(mat.pos.x, mat.pos.y, mat.pos.z);
 		}
@@ -890,7 +890,7 @@ void CRemotePlayer::StorePassengerFullSyncData(PASSENGER_SYNC_DATA *ppsSync)
 
 void CRemotePlayer::RemoveFromVehicle()
 {
-	MATRIX4X4 mat;
+	RwMatrix mat;
 
 	if(m_pPlayerPed)
 	{
@@ -995,7 +995,7 @@ void CRemotePlayer::StateChange(BYTE byteNewState, BYTE byteOldState)
 		// is driving, we'll have to kick the local player out
 		CPlayerPed *pLocalPlayerPed = pGame->FindPlayerPed();
 		VEHICLEID LocalVehicle=0xFFFF;
-		MATRIX4X4 mat;
+		RwMatrix mat;
 
 		if(pLocalPlayerPed && pLocalPlayerPed->IsInVehicle() && !pLocalPlayerPed->IsAPassenger())
 		{

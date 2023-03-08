@@ -9,8 +9,8 @@ struct RetextureMaterial
 class CObject : public CEntity
 {
 public:
-	MATRIX4X4	m_matTarget;
-	MATRIX4X4	m_matCurrent;
+	RwMatrix	m_matTarget;
+	RwMatrix	m_matCurrent;
 	uint8_t		m_byteMoving;
 	float		m_fMoveSpeed;
 	bool		m_bIsPlayerSurfing;
@@ -42,7 +42,7 @@ public:
 	~CObject();
 
 	void Process(float fElapsedTime);
-	float DistanceRemaining(MATRIX4X4 *matPos);
+	float DistanceRemaining(RwMatrix *matPos);
 	float RotaionRemaining(CVector matPos);
 
 	void SetPos(float x, float y, float z);

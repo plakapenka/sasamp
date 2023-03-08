@@ -30,7 +30,7 @@ public:
 
 	void SetIsDeactivated(bool bIsDeactivated);
 
-	void Process(MATRIX4X4* pMatListener);
+	void Process(RwMatrix* pMatListener);
 
 	void SetPosition(CVector vec);
 };

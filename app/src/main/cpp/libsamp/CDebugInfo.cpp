@@ -17,13 +17,6 @@ extern CGame *pGame;
 uint32_t CDebugInfo::uiStreamedPeds = 0;
 uint32_t CDebugInfo::uiStreamedVehicles = 0;
 uint32_t CDebugInfo::m_uiDrawDebug = 0;
-uint32_t CDebugInfo::m_dwSpeedMode = 0;
-uint32_t CDebugInfo::m_dwSpeedStart = 0;
-
-void CDebugInfo::ToggleDebugDraw()
-{
-	m_uiDrawDebug ^= 1;
-}
 
 void CDebugInfo::SetDrawFPS(bool toggle)
 {

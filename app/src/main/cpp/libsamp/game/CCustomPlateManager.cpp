@@ -405,19 +405,12 @@ void CCustomPlateManager::Initialise()
 	m_pBuSprite = new CSprite2d();
 	m_pKzSprite = new CSprite2d();
 	m_pRuPoliceSprite = new CSprite2d();
-//	m_pTaxiSprite = new CSprite2d();
-//	m_pRuGosSprite = new CSprite2d();
-//
-//	m_pNoPlateSprite = new CSprite2d();
 
 	m_pUaSprite->m_pRwTexture = CUtil::LoadTextureFromDB("samp", "plate_ua");
 	m_pRuSprite->m_pRwTexture = CUtil::LoadTextureFromDB("samp", "plate_ru");
 	m_pBuSprite->m_pRwTexture = CUtil::LoadTextureFromDB("samp", "plate_bu");
 	m_pKzSprite->m_pRwTexture = CUtil::LoadTextureFromDB("samp", "plate_kz");
 	m_pRuPoliceSprite->m_pRwTexture = CUtil::LoadTextureFromDB("samp", "plate_ru_police");
-//	m_pTaxiSprite->m_pRwTexture = (RwTexture*)LoadTextureFromDB("samp", "plate_taxi");
-//	m_pRuGosSprite->m_pRwTexture = (RwTexture*)LoadTextureFromDB("samp", "plate_gos");
-//	m_pNoPlateSprite->m_pRwTexture = (RwTexture*)LoadTextureFromDB("samp", "plate_outside");
 
 	m_pBitmap = new uint8_t[PLATE_BITMAP_HEIGHT * PLATE_BITMAP_WIDTH];
 
@@ -462,32 +455,11 @@ void CCustomPlateManager::Shutdown()
 		m_pRuPoliceSprite = nullptr;
 	}
 
-//	if (m_pTaxiSprite)
-//	{
-//		delete m_pTaxiSprite;
-//		m_pTaxiSprite = nullptr;
-//	}
-//
-//	if(m_pRuGosSprite)
-//	{
-//		delete m_pRuGosSprite;
-//		m_pRuGosSprite = nullptr;
-//	}
-//
-//	if(m_pNoPlateSprite)
-//	{
-//		delete m_pNoPlateSprite;
-//		m_pNoPlateSprite = nullptr;
-//	}
-
-
 	if (m_pBitmap)
 	{
 		delete[] m_pBitmap;
 		m_pBitmap = nullptr;
 	}
-
-	//  todo: CFont
 }
 
 void CCustomPlateManager::PushPlate(uint16_t vehicleId, uint32_t dwType, char* szNumber, char* szRegion)

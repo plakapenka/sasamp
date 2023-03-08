@@ -53,6 +53,8 @@ import android.view.ViewParent;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
+import androidx.fragment.app.FragmentActivity;
+
 import com.liverussia.cr.R;
 import com.liverussia.cr.core.DialogClientSettings;
 import com.liverussia.cr.gui.AdminRecon;
@@ -104,7 +106,7 @@ are also made available to the native code for ease of application porting.
 Please see the external SDK documentation for an introduction to the use of
 this class and its paired native library.
 */
-public abstract class NvEventQueueActivity extends Activity implements SensorEventListener {
+public abstract class NvEventQueueActivity extends FragmentActivity implements SensorEventListener {
 
     private static NvEventQueueActivity instance = null;
     protected Handler handler = null;
@@ -226,7 +228,7 @@ public abstract class NvEventQueueActivity extends Activity implements SensorEve
                     mDialogClientSettings = null;
                 }
                 mDialogClientSettings = new DialogClientSettings();
-             //   mDialogClientSettings.show(getSupportFragmentManager(), "test");
+                mDialogClientSettings.show(getSupportFragmentManager(), "test");
             }
         });
     }

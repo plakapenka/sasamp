@@ -587,7 +587,7 @@ void CLocalPlayer::HandleClassSelectionOutcome()
 
 void CLocalPlayer::SendNextClass()
 {
-	MATRIX4X4 matPlayer;
+	RwMatrix matPlayer;
 	m_pPlayerPed->GetMatrix(&matPlayer);
 
 	if(m_iSelectedClass == (pNetGame->m_iSpawnsAvailable - 1)) m_iSelectedClass = 0;
@@ -599,7 +599,7 @@ void CLocalPlayer::SendNextClass()
 
 void CLocalPlayer::SendPrevClass()
 {
-	MATRIX4X4 matPlayer;
+	RwMatrix matPlayer;
 	m_pPlayerPed->GetMatrix(&matPlayer);
 	
 	if(m_iSelectedClass == 0) m_iSelectedClass = (pNetGame->m_iSpawnsAvailable - 1);
@@ -769,7 +769,7 @@ uint8_t CLocalPlayer::DetermineNumberOfPlayersInLocalRange()
 void CLocalPlayer::SendOnKeyFullSyncData()
 {
 	RakNet::BitStream bsPlayerSync;
-	//MATRIX4X4 matPlayer;
+	//RwMatrix matPlayer;
 
 
 	uint8_t exKeys = GetPlayerPed()->GetExtendedKeys();
@@ -779,7 +779,7 @@ void CLocalPlayer::SendOnKeyFullSyncData()
 void CLocalPlayer::SendOnFootFullSyncData()
 {
 	RakNet::BitStream bsPlayerSync;
-	MATRIX4X4 matPlayer;
+	RwMatrix matPlayer;
 	CVector vecMoveSpeed;
 	uint16_t lrAnalog, udAnalog;
 	uint16_t wKeys = m_pPlayerPed->GetKeys(&lrAnalog, &udAnalog);
@@ -873,7 +873,7 @@ void CLocalPlayer::SendBulletSyncData(PLAYERID byteHitID, uint8_t byteHitType, C
 	}
 	uint8_t byteCurrWeapon = m_pPlayerPed->GetCurrentWeapon(), byteShotWeapon;
 
-	MATRIX4X4 matPlayer;
+	RwMatrix matPlayer;
 	BULLET_SYNC blSync;
 
 	m_pPlayerPed->GetMatrix(&matPlayer);
@@ -914,7 +914,7 @@ void CLocalPlayer::SendInCarFullSyncData()
 	if(!pVehiclePool) return;
 	if(!m_pPlayerPed || !m_pPlayerPed->m_pPed)return;
 
-	MATRIX4X4 matPlayer;
+	RwMatrix matPlayer;
 	CVector vecMoveSpeed;
 
 	uint16_t lrAnalog, udAnalog;
@@ -979,7 +979,7 @@ void CLocalPlayer::SendInCarFullSyncData()
 	}
     if (icSync.TrailerID && icSync.TrailerID < MAX_VEHICLES)
 	{
-		MATRIX4X4 matTrailer;
+		RwMatrix matTrailer;
 		TRAILER_SYNC_DATA trSync;
 		CVehicle* pTrailer = pVehiclePool->GetAt(icSync.TrailerID);
 
@@ -1023,7 +1023,7 @@ void CLocalPlayer::SendPassengerFullSyncData()
 	uint16_t lrAnalog, udAnalog;
 	uint16_t wKeys = m_pPlayerPed->GetKeys(&lrAnalog, &udAnalog);
 	PASSENGER_SYNC_DATA psSync;
-	MATRIX4X4 mat;
+	RwMatrix mat;
 
 	psSync.VehicleID = m_pPlayerPed->GetCurrentSampVehicleID();
 
@@ -1094,7 +1094,7 @@ void CLocalPlayer::ProcessSpectating()
 {
 	RakNet::BitStream bsSpectatorSync;
 	SPECTATOR_SYNC_DATA spSync;
-	MATRIX4X4 matPos;
+	RwMatrix matPos;
 
 	uint16_t lrAnalog, udAnalog;
 	uint16_t wKeys = m_pPlayerPed->GetKeys(&lrAnalog, &udAnalog);

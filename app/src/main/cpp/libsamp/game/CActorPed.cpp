@@ -112,7 +112,7 @@ void CActorPed::SetDead()
 		return;
 	}
 
-	MATRIX4X4 matEntity;
+	RwMatrix matEntity;
 	GetMatrix(&matEntity);
 	TeleportTo(matEntity.pos.x, matEntity.pos.y, matEntity.pos.z);
 

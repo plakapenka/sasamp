@@ -35,7 +35,7 @@ CPlayerTags::~CPlayerTags() {}
 void CPlayerTags::Render()
 {
 	CVector VecPos;
-	MATRIX4X4 matLocal, matPlayer;
+	RwMatrix matLocal, matPlayer;
 	int dwHitEntity;
 	char szNickBuf[50];
 
@@ -62,7 +62,7 @@ void CPlayerTags::Render()
 							VecPos.x = 0.0f;
 							VecPos.y = 0.0f;
 							VecPos.z = 0.0f;
-							pPlayerPed->GetBonePosition(8, VecPos);
+							pPlayerPed->GetBonePosition(8, &VecPos);
 							DrawChatBubble(playerId, &VecPos, pPlayerPed->GetDistanceFromCamera());
 						}
 						if (GetTickCount() - m_dwStartTime[playerId] >= m_dwTime[playerId]) {
@@ -71,13 +71,12 @@ void CPlayerTags::Render()
 					}
 
 					if (pPlayerPed->GetDistanceFromCamera() <= pNetGame->m_fNameTagDrawDistance) {
-
 						{
 							if (!pPlayerPed->IsAdded()) continue;
 							VecPos.x = 0.0f;
 							VecPos.y = 0.0f;
 							VecPos.z = 0.0f;
-							pPlayerPed->GetBonePosition(8, VecPos);
+							pPlayerPed->GetBonePosition(8, &VecPos);
 						}
 
 						CAMERA_AIM *pCam = GameGetInternalAim();

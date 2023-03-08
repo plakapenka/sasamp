@@ -42,9 +42,9 @@ void CVehiclePool::Process()
 			continue;
 
 		if (pVehicle->GetHealth() < 300.0f) {
-			MATRIX4X4 matrix4X4;
-			pVehicle->GetMatrix(&matrix4X4);
-			pVehicle->SetMatrix(matrix4X4);
+			RwMatrix RwMatrix;
+			pVehicle->GetMatrix(&RwMatrix);
+			pVehicle->SetMatrix(RwMatrix);
 			pVehicle->SetHealth(300.0f);
 		}
 		if (pVehicle->m_pVehicle->m_nCurrentGear == 0 &&
@@ -184,7 +184,7 @@ CVehicle* CVehiclePool::FindVehicle(CVehicleGta *pGtaVehicle)
 {
 	for(const auto & i : m_pVehicles)
 	{
-		if(i->m_pVehicle != nullptr && i->m_pVehicle == pGtaVehicle)
+		if(i != nullptr && i->m_pVehicle != nullptr && i->m_pVehicle == pGtaVehicle)
 			return i;
 	}
 	return nullptr;
