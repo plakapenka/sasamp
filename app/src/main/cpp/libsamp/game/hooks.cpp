@@ -184,6 +184,14 @@ void RenderBackgroundHud();
 
 void Render2dStuff()
 {
+    RwRenderStateSet(rwRENDERSTATEZTESTENABLE, (void*)0);
+    RwRenderStateSet(rwRENDERSTATEZWRITEENABLE, (void*)0);
+    RwRenderStateSet(rwRENDERSTATEVERTEXALPHAENABLE, (void*)1);
+    RwRenderStateSet(rwRENDERSTATESRCBLEND, (void*)5);
+    RwRenderStateSet(rwRENDERSTATEDESTBLEND, (void*)6);
+    RwRenderStateSet(rwRENDERSTATEFOGENABLE, (void*)0);
+
+
 
 	( ( void(*)() )(g_libGTASA + 0x003D44CC + 1) )(); // прицел
 
@@ -210,6 +218,9 @@ void Render2dStuff()
 		if(!CKeyBoard::m_bEnable)
 			( ( void(*)(bool) )(g_libGTASA + 0x0026EE80 + 1) )(false); // render widgets
 	}
+
+	((void (*)(bool)) (g_libGTASA + 0x004D240C + 1))(1u); // gametext
+    ((void (*)(bool)) (g_libGTASA + 0x0053411C + 1))(1u); // CFont::RenderFontBuffer
 
 	bGameStarted = true;
 
