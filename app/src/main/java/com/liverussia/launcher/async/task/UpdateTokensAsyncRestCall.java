@@ -47,7 +47,7 @@ public class UpdateTokensAsyncRestCall {
         this.activity = activity;
         this.authenticationService = new AuthenticationServiceImpl(activity);
 
-        String url = Storage.getProperty(StorageElements.ROULETTE_SERVER_HOST.getValue(), activity);
+        String url = Storage.getProperty(StorageElements.ROULETTE_SERVER_HOST, activity);
         this.retrofit = new Retrofit.Builder()
                 .baseUrl(url)
                 .addConverterFactory(GsonConverterFactory.create())

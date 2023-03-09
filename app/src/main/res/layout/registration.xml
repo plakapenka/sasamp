@@ -34,11 +34,10 @@
             android:id="@+id/choose_skin_right"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:rotation="180"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/register_choose_skin" />
+            app:srcCompat="@drawable/register_choose_skin_right" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/choose_skin_btn"

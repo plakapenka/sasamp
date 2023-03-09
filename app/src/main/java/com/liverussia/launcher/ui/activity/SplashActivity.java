@@ -16,6 +16,8 @@ import com.liverussia.cr.R;
 
 import java.util.ArrayList;
 
+import com.liverussia.launcher.domain.enums.StorageElements;
+import com.liverussia.launcher.storage.Storage;
 import com.liverussia.launcher.utils.MainUtils;
 import com.liverussia.launcher.async.dto.response.LatestVersionInfoDto;
 import com.liverussia.launcher.async.dto.response.MonitoringData;
@@ -59,6 +61,7 @@ public class SplashActivity extends Activity {
 		MainUtils.SERVERS = new ArrayList<>();
 		MainUtils.NEWS = new ArrayList<>();
 	}
+
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
 		checkAndroidVersion();
@@ -158,9 +161,10 @@ public class SplashActivity extends Activity {
 	}
 
 	private void checkVersion(LatestVersionInfoDto latestVersionInfo) {
-
 		int currentVersion = getCurrentVersion();
 		int latestVersion = Integer.parseInt(latestVersionInfo.getVersion());
+		MainUtils.LATEST_APK_INFO = latestVersionInfo;
+		Storage.addProperty(StorageElements.IS_CHECK_FILES_ON, latestVersionInfo.getIsCheckFilesOn(), this);
 
 		if (currentVersion >= latestVersion) {
 			startLauncher();
@@ -168,7 +172,6 @@ public class SplashActivity extends Activity {
 		}
 
 		MainUtils.setType(DownloadType.UPDATE_APK);
-		MainUtils.LATEST_APK_INFO = latestVersionInfo;
 		startActivity(new Intent(this, LoaderActivity.class));
 	}
 

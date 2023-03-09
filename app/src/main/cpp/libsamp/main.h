@@ -22,6 +22,7 @@
 #include "util/util.h"
 
 extern uintptr_t g_libGTASA;
+extern void* hGTASA;
 extern char* g_pszStorage;
 
 void Log(const char *fmt, ...);

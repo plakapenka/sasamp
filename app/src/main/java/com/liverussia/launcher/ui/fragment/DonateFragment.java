@@ -162,8 +162,8 @@ public class DonateFragment extends Fragment implements View.OnClickListener, Ac
         String nickname = nicknameField.getText().toString();
         String donateSum = donateSumField.getText().toString();
 
-        Storage.addProperty(StorageElements.EMAIL.getValue(), email, this.getActivity());
-        Storage.addProperty(StorageElements.NICKNAME.getValue(), nickname, this.getActivity());
+        Storage.addProperty(StorageElements.EMAIL, email, this.getActivity());
+        Storage.addProperty(StorageElements.NICKNAME, nickname, this.getActivity());
 
         Intent billingIntent = new Intent(this.getContext(), BillingActivity.class);
         billingIntent.putExtra(BillingParameters.NICKNAME.getName(), nickname);
@@ -190,8 +190,8 @@ public class DonateFragment extends Fragment implements View.OnClickListener, Ac
     }
 
     private void initUserData() {
-        String nickname = Storage.getProperty(StorageElements.NICKNAME.getValue(), this.getActivity());
-        String email = Storage.getProperty(StorageElements.EMAIL.getValue(), this.getActivity());
+        String nickname = Storage.getProperty(StorageElements.NICKNAME, this.getActivity());
+        String email = Storage.getProperty(StorageElements.EMAIL, this.getActivity());
 
         nicknameField.setText(nickname);
         emailField.setText(email);

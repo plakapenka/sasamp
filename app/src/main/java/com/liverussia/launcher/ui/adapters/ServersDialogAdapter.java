@@ -69,7 +69,7 @@ public class ServersDialogAdapter extends RecyclerView.Adapter<ServersAdapter.Se
             String rouletteUrl = ROULETTE_SERVER_PROTOCOL
                     .concat(servers.getRouletteDomain());
 
-            Storage.addProperty(StorageElements.ROULETTE_SERVER_HOST.getValue(), rouletteUrl, context);
+            Storage.addProperty(StorageElements.ROULETTE_SERVER_HOST, rouletteUrl, context);
         });
     }
 

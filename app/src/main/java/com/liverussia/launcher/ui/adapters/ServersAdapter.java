@@ -113,10 +113,10 @@ public class ServersAdapter extends RecyclerView.Adapter<ServersAdapter.ServersV
     }
 
 	private void saveServerInfoToStorage(Servers servers) {
-		Storage.addProperty(StorageElements.SERVER_MULTI.getValue(), servers.getMult(), context);
-		Storage.addProperty(StorageElements.SERVER_COLOR.getValue(), servers.getColor(), context);
-		Storage.addProperty(StorageElements.SERVER_NAME.getValue(), servers.getname(), context);
-		Storage.addProperty(StorageElements.SERVER_LOCKED.getValue(), String.valueOf(servers.getLock()), context);
+		Storage.addProperty(StorageElements.SERVER_MULTI, servers.getMult(), context);
+		Storage.addProperty(StorageElements.SERVER_COLOR, servers.getColor(), context);
+		Storage.addProperty(StorageElements.SERVER_NAME, servers.getname(), context);
+		Storage.addProperty(StorageElements.SERVER_LOCKED, String.valueOf(servers.getLock()), context);
 	}
 
 	@Override

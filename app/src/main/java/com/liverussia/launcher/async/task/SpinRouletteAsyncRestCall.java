@@ -36,7 +36,7 @@ public class SpinRouletteAsyncRestCall {
     public SpinRouletteAsyncRestCall(Activity activity) {
         this.activity = activity;
 
-        String url = Storage.getProperty(StorageElements.ROULETTE_SERVER_HOST.getValue(), activity);
+        String url = Storage.getProperty(StorageElements.ROULETTE_SERVER_HOST, activity);
         this.retrofit = new Retrofit.Builder()
                 .baseUrl(url)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -50,7 +50,7 @@ public class SpinRouletteAsyncRestCall {
     public void spinRoulette() {
         NetworkService networkService = retrofit.create(NetworkService.class);
 
-        String token = Storage.getProperty(StorageElements.ACCESS_TOKEN.getValue(), activity);
+        String token = Storage.getProperty(StorageElements.ACCESS_TOKEN, activity);
         Call<SpinRouletteResponseDto> call = networkService.spinRoulette(token);
 
 

@@ -17,8 +17,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateUserInfoInStorage(UserInfoDto userInfoDto) {
-        Storage.addProperty(StorageElements.AUTHENTICATED_NICKNAME.getValue(), userInfoDto.getUsername(), activity);
-        Storage.addProperty(StorageElements.USER_BALANCE.getValue(), userInfoDto.getBalance(), activity);
-        Storage.addProperty(StorageElements.AUTHENTICATED_SERVER.getValue(), userInfoDto.getServerName(), activity);
+        Storage.addProperty(StorageElements.AUTHENTICATED_NICKNAME, userInfoDto.getUsername(), activity);
+        Storage.addProperty(StorageElements.USER_BALANCE, userInfoDto.getBalance(), activity);
+        Storage.addProperty(StorageElements.AUTHENTICATED_SERVER, userInfoDto.getServerName(), activity);
     }
 }

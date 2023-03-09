@@ -15,8 +15,6 @@ extern CNetGame *pNetGame;
 void (*CWidgetButton__Draw)(int thiz);
 void CWidgetButton__Draw_hook(int thiz)
 {
-    if(!CHUD::bIsShow)return;
-
     if(thiz == CGtaWidgets::pWidgets[WIDGET_POSITION_HORN]) {
         return;
     }
