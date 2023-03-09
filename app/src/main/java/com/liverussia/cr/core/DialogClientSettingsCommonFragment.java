@@ -93,7 +93,7 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
                              ViewGroup container,
                              Bundle savedInstanceState) {
 
-
+        mContext = (NvEventQueueActivity) getActivity();
         mRootView = inflater.inflate(R.layout.dialog_settings_common,container,false);
 
         fps_text = mRootView.findViewById(R.id.fps_text);
