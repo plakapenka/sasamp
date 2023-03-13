@@ -41,7 +41,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_gravity="center"
-                    app:srcCompat="@drawable/notify_ruble" />
+                    android:src="@drawable/notify_ruble" />
 
             </FrameLayout>
 

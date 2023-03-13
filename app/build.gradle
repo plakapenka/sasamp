@@ -16,14 +16,14 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 26
+        minSdkVersion 24
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 28
     //    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         applicationId "com.liverussia.cr"
-        versionName "180"
-        versionCode 180
+        versionName "183"
+        versionCode 183
         vectorDrawables.useSupportLibrary = true
 
         lintOptions {

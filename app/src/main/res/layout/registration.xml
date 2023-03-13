@@ -19,7 +19,7 @@
             android:layout_marginStart="50dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@drawable/register_choose_skin_notf" />
+            android:src="@drawable/register_choose_skin_notf" />
 
         <ImageView
             android:id="@+id/choose_skin_left"
@@ -28,7 +28,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/register_choose_skin" />
+            android:src="@drawable/register_choose_skin" />
 
         <ImageView
             android:id="@+id/choose_skin_right"
@@ -37,7 +37,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/register_choose_skin_right" />
+            android:src="@drawable/register_choose_skin_right" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/choose_skin_btn"
@@ -60,7 +60,7 @@
             android:layout_marginEnd="5dp"
             app:layout_constraintEnd_toEndOf="@+id/choose_skin_notf"
             app:layout_constraintTop_toTopOf="@+id/choose_skin_notf"
-            app:srcCompat="@drawable/ic_close_black_24dp" />
+            android:src="@drawable/ic_close_black_24dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -268,7 +268,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView7"
-                app:srcCompat="@drawable/reg_createa" />
+                android:src="@drawable/reg_createa" />
 
             <TextView
                 android:id="@+id/textView5"
@@ -292,7 +292,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView5"
-                app:srcCompat="@drawable/reg_vk" />
+                android:src="@drawable/reg_vk" />
 
             <ImageView
                 android:id="@+id/imageView11"
@@ -304,7 +304,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageView10"
-                app:srcCompat="@drawable/reg_google" />
+                android:src="@drawable/reg_google" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -364,7 +364,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/reg_mail" />
+                    android:src="@drawable/reg_mail" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -414,7 +414,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/auth_key" />
+                    android:src="@drawable/auth_key" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -464,7 +464,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/auth_key" />
+                    android:src="@drawable/auth_key" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -483,7 +483,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/authreg_back" />
+                    android:src="@drawable/authreg_back" />
 
                 <TextView
                     android:layout_width="wrap_content"

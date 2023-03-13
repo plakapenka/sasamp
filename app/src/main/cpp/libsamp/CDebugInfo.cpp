@@ -26,7 +26,7 @@ void CDebugInfo::SetDrawFPS(bool toggle)
 
 void CDebugInfo::Draw()
 {
-	if (!pGame->IsToggledHUDElement(HUD_ELEMENT_FPS)) return;
+	//if (!pGame->IsToggledHUDElement(HUD_ELEMENT_FPS)) return;
 
 	char szStr[30];
 	char szStrMem[256];
@@ -35,7 +35,7 @@ void CDebugInfo::Draw()
 	if (m_uiDrawDebug)
 	{
 		float fps = *(float*)(g_libGTASA + 0x0096B50C);
-	//	Log("%.3f", *pFPS);
+
 		snprintf(&szStr[0], 30, "FPS: %.0f / %d", fps, *(uint32_t*)(g_libGTASA + 0x009FC8FC + 0x0C));
 		pos = ImVec2(pGUI->ScaleX(40.0f), pGUI->ScaleY(1080.0f - pGUI->GetFontSize() * 10));
 

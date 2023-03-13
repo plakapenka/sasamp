@@ -23,7 +23,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/shop_buyinfo" />
+            android:src="@drawable/shop_buyinfo" />
 
         <TextView
             android:id="@+id/shopstore_buyinfo"
@@ -49,7 +49,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/shop_btn" />
+            android:src="@drawable/shop_btn" />
 
         <ImageView
             android:id="@+id/shopstore_right"
@@ -60,7 +60,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/shop_btn" />
+            android:src="@drawable/shop_btn" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/shopstore_buy"
@@ -95,5 +95,5 @@
             app:layout_constraintEnd_toEndOf="@+id/shopstore_right"
             app:layout_constraintStart_toStartOf="@+id/shopstore_right"
             app:layout_constraintTop_toBottomOf="@+id/shopstore_right"
-            app:srcCompat="@drawable/shop_camera" />
+            android:src="@drawable/shop_camera" />
     </androidx.constraintlayout.widget.ConstraintLayout>

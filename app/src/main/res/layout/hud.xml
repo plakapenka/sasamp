@@ -214,7 +214,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/hud_menu"
                 app:layout_constraintVertical_bias="0.563"
-                app:srcCompat="@drawable/gpsactive" />
+                android:src="@drawable/gpsactive" />
 
             <ImageView
                 android:id="@+id/hud_greenzone"
@@ -738,7 +738,7 @@
             android:layout_marginTop="8dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout7"
-            app:srcCompat="@drawable/voice_btn" />
+            android:src="@drawable/voice_btn" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:visibility="gone"
@@ -818,7 +818,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/bus_bg" />
+            android:src="@drawable/bus_bg" />
 
         <TextView
             android:id="@+id/bus_text"
@@ -847,7 +847,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/imageView25"
             app:layout_constraintStart_toStartOf="@+id/imageView25"
             app:layout_constraintTop_toTopOf="@+id/imageView25"
-            app:srcCompat="@drawable/bus_mark" />
+            android:src="@drawable/bus_mark" />
 
         <ImageView
             android:id="@+id/imageView34"
@@ -857,7 +857,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/imageView25"
             app:layout_constraintEnd_toEndOf="@+id/imageView25"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/bus_image" />
+            android:src="@drawable/bus_image" />
 
         <ImageView
             android:id="@+id/imageView35"
@@ -868,7 +868,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/imageView25"
             app:layout_constraintEnd_toEndOf="@+id/imageView34"
             app:layout_constraintStart_toStartOf="@+id/imageView33"
-            app:srcCompat="@drawable/bus_text" />
+            android:src="@drawable/bus_text" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 <!--            <ImageView-->

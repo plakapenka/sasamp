@@ -64,7 +64,7 @@ public:
 	// 0.3.7
 	static uint8_t GetActiveInterior();
 	// 0.3.7
-	static void SetWorldTime(int iHour, int iMinute);
+	static void SetWorldTime(int iHour, int iMinute = 0);
 	// 0.3.7
 	void SetWorldWeather(unsigned char byteWeatherID) const;
 

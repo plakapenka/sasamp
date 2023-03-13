@@ -89,6 +89,7 @@ void InitGame(RPCParameters *rpcParams)
 	if(pPlayerPool) pLocalPlayer = pPlayerPool->GetLocalPlayer();
 
 	pGame->SetGravity(pNetGame->m_fGravity);
+	pGame->SetWorldTime(pNetGame->m_byteWorldTime);
 
 	if(pNetGame->m_bDisableEnterExits)
 		pGame->DisableInteriorEnterExits();
@@ -275,7 +276,8 @@ void WorldTime(RPCParameters *rpcParams)
 	RakNet::BitStream bsData((unsigned char*)Data,(iBitLength/8)+1,false);
 	uint8_t byteWorldTime;
 	bsData.Read(byteWorldTime);
-	pNetGame->m_byteWorldTime = byteWorldTime;
+
+	pGame->SetWorldTime(byteWorldTime);
 }
 
 void SetTimeEx(RPCParameters *rpcParams)
@@ -291,8 +293,6 @@ void SetTimeEx(RPCParameters *rpcParams)
 	bsData.Read(byteMinute);
 
 	pGame->SetWorldTime(byteHour, byteMinute);
-	pNetGame->m_byteWorldTime = byteHour;
-	pNetGame->m_byteWorldMinute = byteMinute;
 }
 
 void WorldPlayerAdd(RPCParameters *rpcParams)

@@ -294,8 +294,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void onClickPlay() {
-       // String isTestMode = NativeStorage.getClientProperty(NativeStorageElements.TEST, this);
-        String isTestMode = "1";
+        String isTestMode = NativeStorage.getClientProperty(NativeStorageElements.TEST, this);
+       // String isTestMode = "1";
 
         if (StringUtils.isNotBlank(isTestMode) && Integer.parseInt(isTestMode) == 1) {
             startGame();
@@ -351,7 +351,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 //        Servers servers = MainUtils.SERVERS.get(position);
 
-        int serverLockedValue = Integer.parseInt(Storage.getProperty(StorageElements.SERVER_LOCKED.getValue(), this));
+        int serverLockedValue = Integer.parseInt(Storage.getProperty(StorageElements.SERVER_LOCKED, this));
 
         String password = NativeStorage.getClientProperty(NativeStorageElements.LOCKED_SERVER_PASSWORD, this);
 

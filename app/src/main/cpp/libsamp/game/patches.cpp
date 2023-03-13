@@ -187,12 +187,11 @@ void ApplyShadowPatch()
 	CHook::NOP(g_libGTASA + 0x003FCD84, 2); // CRealTimeShadowManager::ReturnRealTimeShadow from ~CPhysical crash!
 //	CHook::RET(g_libGTASA + 0x541AA8); // CRealTimeShadowManager::ReturnRealTimeShadow from ~CPhysical
 //	CHook::NOP(g_libGTASA + 0x2661DA, 2); // Display - Shadows ( настройки )
-//	CHook::RET(g_libGTASA + 0x541AC4); //shadow CRealTimeShadowManager::Update
+	CHook::RET(g_libGTASA + 0x005B800C); //shadow CRealTimeShadowManager::Update
 //	CHook::RET(g_libGTASA + 0x543B04); // CShadows::RenderStaticShadows
 //	CHook::NOP(g_libGTASA + 0x0039B2C4, 2); // CMirrors::BeforeMainRender(void)
 //	CHook::RET(g_libGTASA + 0x5471F4); // CShadows::RenderStoredShadows
 //	CHook::RET(g_libGTASA + 0x545C04); // CShadows::StoreStaticShadow
-//	CHook::NOP(g_libGTASA + 0x39B2C0, 2);	// CRealTimeShadowManager::Update from Idle
 }
 
 void ApplyDefaultPlatePatch()
@@ -219,6 +218,18 @@ void ApplyPatches()
 {
 	Log("Installing patches..");
 
+	// Menu
+	//CHook::NOP(g_libGTASA + 0x0029BC18, 76); // stats
+
+	// JPatch
+	CHook::WriteMemory(g_libGTASA + 0x003F4138, (uintptr_t)"\x03", 1); // RE3: Fix R* optimization that prevents peds to spawn
+	CHook::WriteMemory(g_libGTASA + 0x001D240E, (uintptr_t)"\x08", 1); // Lower threads sleeping timer
+	CHook::WriteMemory(g_libGTASA + 0x00266CC2, (uintptr_t)"\x08", 1); // Lower threads sleeping timer
+
+	// задние фары
+	CHook::WriteMemory(g_libGTASA + 0x00591074, (uintptr_t)"\x04", 1);
+	CHook::WriteMemory(g_libGTASA + 0x00591086, (uintptr_t)"\xFA", 1);
+
 	// CdStreamInit(6);
 	CHook::WriteMemory(g_libGTASA + 0x003F3698, (uintptr_t)"\x06\x20", 2);
 
@@ -235,11 +246,15 @@ void ApplyPatches()
 	CHook::RET(g_libGTASA + 0x004397B4); // CHud::DrawBustedWastedMessage // ѕќ“–ј„≈Ќќ
 //	CHook::RET(g_libGTASA + 0x00352154); // in game radio
 	CHook::RET(g_libGTASA + 0x003BD974); // звук загрузочного экрана
+	CHook::RET(g_libGTASA + 0x00324368); // CVehicleRecording::Load
 
 	CHook::RET(g_libGTASA + 0x004B7630); // CPedGroups::Process() crash
 	CHook::RET(g_libGTASA + 0x004B425E); // CPedGroupIntelligence::Process crash
 	CHook::RET(g_libGTASA + 0x004B2050); // CPedGroupMembership::SetLeader crash
 	CHook::RET(g_libGTASA + 0x004B3156); // CPedGroupIntelligence::Flush crash!111111111
+
+	CHook::NOP(g_libGTASA + 0x004409AE, 2); // моргание значнок на карте
+	CHook::NOP(g_libGTASA + 0x002AB400, 85); // названи€ зон при просмотре карты
 //	CHook::RET(g_libGTASA + 0x004B425E); // CPedGroupIntelligence::Process crash
 
 	//CHook::WriteMemory(g_libGTASA + 0x00427D5C, "\x02\x21", 2); // CWorld::Process
@@ -267,10 +282,7 @@ void ApplyPatches()
 	CHook::NOP(g_libGTASA + 0x00584884, 2);	// не давать ган при выходе из тачки 	( клюшка, дробовик  )
 	CHook::NOP(g_libGTASA + 0x00584850, 2);	// не давать ган при выходе из тачки 	( клюшка, дробовик  )
 	CHook::NOP(g_libGTASA + 0x00584892, 2);	// не давать ган при выходе из тачки	( клюшка, дробовик  )
-//
-//	// CVehicleRecording::Load
-//	CHook::RET(g_libGTASA + 0x2DC8E0);
-//
+
 //	//CHook::WriteMemory(g_libGTASA + 0x00458D68, (uintptr_t)"\x00\x46\x00\x46", 4); // cFire::extinguish nopped
 //	CHook::NOP(g_libGTASA + 0x458D68, 2);	// CFire::Extinguish from CPlayerPed::SetInitialState
 //
@@ -284,7 +296,8 @@ void ApplyPatches()
 //	CHook::RET(g_libGTASA + 0x4BDB18);	// CTaskSimplePlayerOnFoot::PlayIdleAnimations
 //	CHook::RET(g_libGTASA + 0x494FE4);	// CCarEnterExit::SetPedInCarDirect
 //	CHook::RET(g_libGTASA + 0x3DA500); // CRadar::DrawLgegend
-//	CHook::RET(g_libGTASA + 0x3DBB30); // CRadar::AddBlipToLegendList
+//	CHook::RET(g_libGTASA + 0x00441A58); // CRadar::AddBlipToLegendList
+//	CHook::RET(g_libGTASA + 0x0043FF24);
 //	CHook::RET(g_libGTASA + 0x5366D0); // CGlass::Render
 //	//CHook::RET(g_libGTASA + 0x5286EC); // CBirds::Render
 //	CHook::RET(g_libGTASA + 0x4DD00C); // CAutomobile::CustomCarPlate_BeforeRenderingStart
@@ -295,8 +308,6 @@ void ApplyPatches()
 //	CHook::RET(g_libGTASA + 0x005C5098); // CMirrors::RenderReflBuffer
 //	CHook::RET(g_libGTASA + 0x3B67F8); // CRopes::Update
 //	CHook::RET(g_libGTASA + 0x4FDC78); // CHeli::UpdateHelis
-//	CHook::RET(g_libGTASA + 0x3D541C); // CHud::DrawVehicleName
-//	CHook::RET(g_libGTASA + 0x3D62FC); // CHud::DrawBustedWastedMessage // ѕќ“–ј„≈Ќќ
 //	CHook::RET(g_libGTASA + 0x3D4244); // CHud::SetHelpMessage
 //	CHook::RET(g_libGTASA + 0x3D42A8); // CHud::SetHelpMessageStatUpdate
 //	CHook::RET(g_libGTASA + 0x2BCD0C); // CCheat::ProcessCheatMenu
@@ -338,9 +349,6 @@ void ApplyPatches()
 
     CHook::RET(g_libGTASA + 0x004C9A14); // CPlayerPed::AnnoyPlayerPed не агритьс€ в ответ
 
-//
-//	CHook::NOP(g_libGTASA + 0x00454950, 17); // CAnimManager::RemoveAnimBlockRef
-//
 	// TxdStore pool (old: 5000, new: 20000)
 //	CHook::WriteMemory(g_libGTASA + 0x005D3AAA, (uintptr_t)"\x4f\xf4\xb8\x50\xc0\xf2\x11\x00", 8); //  MOV.W	R0, #0x1700 | MOVT	R0, #0x11
 //	//CHook::WriteMemory(g_libGTASA + 0x55BA9E, "\xC0\xF2\x11\x00", 4);
@@ -354,7 +362,7 @@ void ApplyPatches()
 //	CHook::WriteMemory(g_libGTASA + 0x00468C3C, (uintptr_t)"\x50\x28", 2);			// CMP  R0, #0x50
 //
 //
-//	// stop assign 0xFFFFFF to beam color!
+//	// stop assign 0xFFFFFF to beam color! FIXME
 //	CHook::NOP(g_libGTASA + 0x00519116, 2);
 //	CHook::NOP(g_libGTASA + 0x0051911C, 4);
 //	CHook::NOP(g_libGTASA + 0x00519198, 4);
@@ -363,7 +371,7 @@ void ApplyPatches()
 //	CHook::NOP(g_libGTASA + 0x005191DC, 2);
 //
 
-//	// CPed::Say
+	// CPed::Say
 //	CHook::NOP(g_libGTASA + 0x43E288, 2);
 }
 void ApplyInGamePatches()

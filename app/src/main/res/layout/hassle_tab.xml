@@ -62,7 +62,7 @@
                 android:layout_marginEnd="@dimen/_13sdp"
                 android:clickable="true"
                 android:visibility="invisible"
-                app:srcCompat="@drawable/menu_close" />
+                android:src="@drawable/menu_close" />
 
             <ImageView
                 android:id="@+id/icon_search_view"

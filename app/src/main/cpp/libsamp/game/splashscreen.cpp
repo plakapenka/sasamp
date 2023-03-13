@@ -50,6 +50,7 @@ unsigned int color_scheme = 0;
 
 void LoadSplashTexture()
 {
+
 	splashTexture = CUtil::LoadTextureFromDB("txd", "hud_bg");
 }
 

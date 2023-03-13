@@ -98,7 +98,6 @@ struct stFile
 stFile* (*NvFOpen)(const char*, const char*, int, int);
 stFile* NvFOpen_hook(const char* r0, const char* r1, int r2, int r3)
 {
-	Log("nv open = %s", r1);
 	char path[0xFF] = { 0 };
 	sprintf(path, "%s%s", g_pszStorage, r1);
 
@@ -135,6 +134,7 @@ stFile* NvFOpen_hook(const char* r0, const char* r1, int r2, int r3)
 #include "keyboard.h"
 void Render2dStuff()
 {
+    ( ( void(*)(bool) )(g_libGTASA + 0x001C0750 + 1) )(false); // emu_GammaSet
 	if (pGUI) pGUI->Render();
 
 	( ( void(*)() )(g_libGTASA + 0x00437200 + 1) )(); // прицел
@@ -164,25 +164,6 @@ void Render2dStuff()
 
 	MainLoop();
 }
-
-// OsArray<FlowScreen::MenuItem>::Add
-void (*MenuItem_add)(int r0, uintptr_t r1);
-void MenuItem_add_hook(int r0, uintptr_t r1)
-{
-	static bool bMenuInited = false;
-	char* name = *(char**)(r1+4);
-
-	// убирает кнопки "Start Game" и "Stats" в меню
-	if(g_bPlaySAMP && (
-		!strcmp(name, "FEP_STG") ||
-		!strcmp(name, "FEH_STA") ||
-		!strcmp(name, "FEH_BRI") ))
-		return;
-
-	MenuItem_add(r0, r1);
-}
-
-/* ====================================================== */
 
 // CGame::InitialiseRenderWare
 void (*InitialiseRenderWare)();
@@ -804,10 +785,21 @@ int CTextureDatabaseRuntime__GetEntry_hook(unsigned int *thiz, const char *name,
 	return result;
 }
 
+int (*mpg123_param)(void* mh, int key, long val, int ZERO, double fval);
+int mpg123_param_hook(void* mh, int key, long val, int ZERO, double fval) {
+	// 0x2000 = MPG123_SKIP_ID3V2
+	// 0x200  = MPG123_FUZZY
+	// 0x100  = MPG123_SEEKBUFFER
+	// 0x40   = MPG123_GAPLESS
+	return mpg123_param(mh, key, val | (0x2000 | 0x200 | 0x100 | 0x40), ZERO, fval);
+}
 
 void InstallSpecialHooks()
 {
 	Log("InstallSpecialHooks");
+
+	// Just a fuzzy seek. Tell MPG123 to not load useless data
+	CHook::InlineHook(g_libGTASA, 0x0022F268, &mpg123_param_hook, &mpg123_param);
 
 	// texture Краш если с текстурами какая-то хуйня
 	CHook::InlineHook(g_libGTASA, 0x001E8FF8, &CTextureDatabaseRuntime__GetEntry_hook, &CTextureDatabaseRuntime__GetEntry);
@@ -834,34 +826,13 @@ void InstallSpecialHooks()
 	CHook::InlineHook(g_libGTASA, 0x00421118, &CTimer__StartUserPause_hook, &CTimer__StartUserPause);
 	CHook::InlineHook(g_libGTASA, 0x00421128, &CTimer__EndUserPause_hook, &CTimer__EndUserPause);
 
-	//crash
-//	if ( !*(uintptr_t *)(g_libGTASA + 0x61B298) && !((int (*)(const char *))(g_libGTASA + 0x179A20))("glAlphaFuncQCOM") )
-//	{
-//		CHook::NOP(g_libGTASA + 0x1A6164, 4);
-//		CHook::WriteMemory(g_libGTASA + 0x1A6164, "\x70\x47", 2);
-//	}
-
 	//pvr
-	CHook::UnFuck(g_libGTASA + 0x001E87A0);
-	*(char*)(g_libGTASA + 0x1E87A0 + 12) = 'd';
-	*(char*)(g_libGTASA + 0x1E87A0 + 13) = 'x';
-	*(char*)(g_libGTASA + 0x1E87A0 + 14) = 't';
-
-	CHook::UnFuck(g_libGTASA + 0x001E8C04);
-	*(char*)(g_libGTASA + 0x001E8C04 + 12) = 'd';
-	*(char*)(g_libGTASA + 0x001E8C04 + 13) = 'x';
-	*(char*)(g_libGTASA + 0x001E8C04 + 14) = 't';
+	CHook::Write(g_libGTASA + 0x001E87A0, "texdb/%s/%s.dxt.tmb");
+	CHook::Write(g_libGTASA + 0x001E8C04, "texdb/%s/%s.dxt");
 
 	//etc
-	CHook::UnFuck(g_libGTASA + 0x001E878C);
-	*(char*)(g_libGTASA + 0x001E878C + 12) = 'd';
-	*(char*)(g_libGTASA + 0x001E878C + 13) = 'x';
-	*(char*)(g_libGTASA + 0x001E878C + 14) = 't';
-
-	CHook::UnFuck(g_libGTASA + 0x001E8BF4);
-	*(char*)(g_libGTASA + 0x001E8BF4 + 12) = 'd';
-	*(char*)(g_libGTASA + 0x001E8BF4 + 13) = 'x';
-	*(char*)(g_libGTASA + 0x001E8BF4 + 14) = 't';
+	CHook::Write(g_libGTASA + 0x001E878C, "texdb/%s/%s.dxt.tmb");
+	CHook::Write(g_libGTASA + 0x001E8BF4, "texdb/%s/%s.dxt");
 
 	CHook::InlineHook(g_libGTASA, 0x002671E2, &OS_FileRead_hook, &OS_FileRead);
 	CHook::InlineHook(g_libGTASA, 0x00266DB4, &NvFOpen_hook, & NvFOpen);
@@ -875,8 +846,6 @@ void InstallSpecialHooks()
 
 	CHook::InlineHook(g_libGTASA, 0x0046BB04, &CStreaming__Init2_hook, &CStreaming__Init2);	// increase stream memory value
 	CHook::InlineHook(g_libGTASA, 0x0040C900, &CPools_Initialise_hook, &CPools_Initialise);
-
-	// CHook::InlineHook(g_libGTASA, 0x002A36E2, &MenuItem_add_hook, &MenuItem_add);
 }
 
 /* =========================================== Ped damage handler =========================================== */
@@ -1389,8 +1358,8 @@ void CVehicle__DoHeadLightReflectionTwin(CVehicle* pVeh, RwMatrix* a2)
 		7.0f);
 }
 
-void (*CVehicle__DoHeadLightBeam)(CVehicleGta* vehicle, int arg0, RwMatrix& matrix, unsigned char arg2);
-void CVehicle__DoHeadLightBeam_hook(CVehicleGta* vehicle, int arg0, RwMatrix& matrix, unsigned char arg2)
+void (*CVehicle__DoHeadLightBeam)(CVehicleGta* vehicle, int32_t lightId, RwMatrix* matrix, bool isRight);
+void CVehicle__DoHeadLightBeam_hook(CVehicleGta* vehicle, int32_t lightId, RwMatrix* matrix, bool isRight)
 {
 	uint8_t r, g, b;
 	r = 0xFF;
@@ -1421,7 +1390,7 @@ void CVehicle__DoHeadLightBeam_hook(CVehicleGta* vehicle, int arg0, RwMatrix& ma
 	*(uint8_t*)(g_libGTASA + 0x9BAB01) = g;
 	*(uint8_t*)(g_libGTASA + 0x9BAB02) = b;
 
-	CVehicle__DoHeadLightBeam(vehicle, arg0, matrix, arg2);
+	CVehicle__DoHeadLightBeam(vehicle, lightId, matrix, isRight);
 
 }
 
@@ -1993,6 +1962,14 @@ void DrawCrosshair_hook(uintptr_t* thiz)
 	*m_f3rdPersonCHairMultY = save2;
 }
 
+bool (*RpMaterialDestroy)(uintptr_t* material);
+bool RpMaterialDestroy_hook(uintptr_t* material)
+{
+	if(material)return true;
+
+	return RpMaterialDestroy(material);
+}
+
 #include "../java_systems/LoadingScreen.h"
 
 void InstallHooks()
@@ -2008,7 +1985,7 @@ void InstallHooks()
 	// не падать с мотоцикла
 	CHook::InlineHook(g_libGTASA, 0x0037573C, &CEventKnockOffBike__AffectsPed_hook, &CEventKnockOffBike__AffectsPed);
 
-//	// Стрельба
+	// Стрельба
 	CHook::InlineHook(g_libGTASA, 0x005DF748, &CWeapon__ProcessLineOfSight_hook, &CWeapon__ProcessLineOfSight);
 	CHook::InlineHook(g_libGTASA, 0x55E090, &CBulletInfo_AddBullet_hook, &CBulletInfo_AddBullet);
 	CHook::InlineHook(g_libGTASA, 0x56668C, &CWeapon__FireSniper_hook, &CWeapon__FireSniper);
@@ -2040,11 +2017,10 @@ void InstallHooks()
 	// attached objects
 	CHook::InlineHook(g_libGTASA, 0x00428410, &CWorld_ProcessPedsAfterPreRender_hook, &CWorld_ProcessPedsAfterPreRender);
 
-//
-//	// steal objects fix
-//	CHook::InlineHook(g_libGTASA, 0x003AD8E0, &CPlayerInfo__Process_hook, &CPlayerInfo__Process);
-//
-//	// GetFrameFromID fix
+	// crash
+	CHook::InlineHook(g_libGTASA, 0x002171D0, &RpMaterialDestroy_hook, &RpMaterialDestroy);
+
+	// GetFrameFromID fix
 //	CHook::InlineHook(g_libGTASA, 0x00335CC0, &CClumpModelInfo_GetFrameFromId_hook, &CClumpModelInfo_GetFrameFromId);
 //
 //	// random crash fix
@@ -2057,13 +2033,12 @@ void InstallHooks()
 //
 	CHook::InlineHook(g_libGTASA, 0x003F4000, &CGame__Process_hook, &CGame__Process);
 
-
-	CHook::InlineHook(g_libGTASA, 0x0055BF10, &CAutomobile__ProcessEntityCollision_hook, &CAutomobile__ProcessEntityCollision);
+	//CHook::InlineHook(g_libGTASA, 0x0055BF10, &CAutomobile__ProcessEntityCollision_hook, &CAutomobile__ProcessEntityCollision);
 
 	CHook::InlineHook(g_libGTASA, 0x0029DEF8, &MainMenuScreen__OnExit_hook, &MainMenuScreen__OnExit);
 
-//	// headlights color, wheel size, wheel align
-//	CHook::InlineHook(g_libGTASA, 0x005466EC, &CShadows__StoreCarLightShadow_hook, &CShadows__StoreCarLightShadow);
+	// headlights color, wheel size, wheel align
+//	CHook::InlineHook(g_libGTASA, 0x005B9D38, &CShadows__StoreCarLightShadow_hook, &CShadows__StoreCarLightShadow);
 //	CHook::InlineHook(g_libGTASA, 0x00518EC4, &CVehicle__DoHeadLightBeam_hook, &CVehicle__DoHeadLightBeam);
 //
 	// размер колес
@@ -2071,8 +2046,6 @@ void InstallHooks()
 	CHook::InlineHook(g_libGTASA, 0x00559534, &CAutomobile__UpdateWheelMatrix_hook, &CAutomobile__UpdateWheelMatrix);
 //	CHook::InlineHook(g_libGTASA, 0x003E8D48, &CMatrix__Rotate_hook, &CMatrix__Rotate);
 	CHook::InlineHook(g_libGTASA, 0x0044EFBE, &CMatrix__SetScale_hook, &CMatrix__SetScale);
-
-//	CHook::InlineHook(g_libGTASA, 0x003DA86C, &CRadar__LimitRadarPoint_hook, &CRadar__LimitRadarPoint); // TO FIX
 
 //	CHook::InlineHook(g_libGTASA, 0x003BF300, (uintptr_t)CCam__Process_hook, (uintptr_t*)& CCam__Process);
 
@@ -2086,16 +2059,13 @@ void InstallHooks()
 //
 	// vehicle light processing
 	CHook::Redirect(g_libGTASA, 0x00590230, &CVehicle__GetVehicleLightsStatus);
-//	CHook::NOP(g_libGTASA + 0x408AAA, 2);
-//
-//	// Настройки
+
+	// Настройки
 //	CHook::NOP(g_libGTASA + 0x266460, 2); // Game - TrafficMode
 //	CHook::NOP(g_libGTASA + 0x266496, 2); // Game - AimMode
 //	CHook::NOP(g_libGTASA + 0x261A50, 2); // Main - Language
-//	CHook::NOP(g_libGTASA + 0x2665EE, 2); // Game - SocialClub
-//
+	CHook::NOP(g_libGTASA + 0x002A4A62, 2); // Game - SocialClub
 
-//	//CHook::InlineHook(g_libGTASA, 0x39AE28, &RenderEffects_hook, &RenderEffects);
 
 	//размытие на скорости
 	CHook::InlineHook(g_libGTASA, 0x005A61F4, &CDraw__SetFOV_hook, &CDraw__SetFOV);

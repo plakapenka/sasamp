@@ -171,7 +171,7 @@ void CGame::InitInGame()
 	ApplyInGamePatches();
 	InitScripting();
 	
-	//GameResetRadarColors();
+	GameResetRadarColors();
 }
 
 
@@ -328,6 +328,11 @@ void CGame::SetWorldTime(int iHour, int iMinute)
 	*(uint8_t*)(g_libGTASA+0x00953143) = (uint8_t)iMinute;
 	*(uint8_t*)(g_libGTASA+0x00953142) = (uint8_t)iHour;
 	ScriptCommand(&set_current_time, iHour, iMinute);
+
+	pNetGame->m_byteWorldTime = iHour;
+	pNetGame->m_byteWorldMinute = iMinute;
+
+	Log("world = %d", iHour);
 }
 
 // 0.3.7

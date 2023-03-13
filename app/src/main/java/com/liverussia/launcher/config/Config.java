@@ -17,7 +17,7 @@ public class Config {
     public static final String NATIVE_SETTINGS_FILE_PATH = "/SAMP/settings.ini";
     public static final String SETTINGS_FILE_PATH = "/gta_sa.set";
     public static final String DOWNLOAD_DIRECTORY_NAME = "/temp_downloads";
-    public static final String UPDATED_APK_PATH = "/liverussia.apk";
+    public static final String UPDATED_APK_PATH = "/test/test.apk";
 
     public static String createBillingUri(String serverId, String serverName, String sum, String nickname, String mail, String captcha) {
         return String.format(

@@ -8,6 +8,8 @@ bool CUtil::IsValidGameVehicle(CVehicleGta *pVehicle)
 	return (((bool (*)(CVehicleGta *))(g_libGTASA+0x00585400+1))(pVehicle));
 }
 
+extern RwTexture* splashTexture;
+
 RwTexture* CUtil::GetTexture(const char* name)
 {
 	RwTexture* result = TextureDatabaseRuntime::GetTexture(name);
@@ -15,14 +17,12 @@ RwTexture* CUtil::GetTexture(const char* name)
 	if (!result)
 	{
 		Log("Texture %s was not found", name);
-		return nullptr;
+		result = TextureDatabaseRuntime::GetTexture("hud_bg");
+	//	return nullptr;
 	}
-	else
-	{
-		Log("Texture %s", name);
-		++*(int32_t *)(result + 0x54); // ++result->refCount;
-		return result;
-	}
+
+	++*(int32_t *)(result + 0x54); // ++result->refCount;
+	return result;
 }
 
 bool CUtil::IsValidGamePed(CPedGta * pPed)

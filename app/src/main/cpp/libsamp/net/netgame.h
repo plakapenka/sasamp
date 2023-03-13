@@ -212,7 +212,6 @@ public:
 	int 		m_iSpawnsAvailable;
 	bool 		m_bShowPlayerTags;
 	int 		m_iShowPlayerMarkers;
-	bool		m_bHoldTime;
 	uint8_t		m_byteWorldTime;
 	uint8_t		m_byteWorldMinute;
 	uint8_t		m_byteWeather;

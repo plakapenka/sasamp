@@ -56,7 +56,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/armygame_info" />
+            android:src="@drawable/armygame_info" />
 
         <ProgressBar
             android:id="@+id/army_water_progress"
@@ -97,7 +97,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/army_water_progress"
             app:layout_constraintEnd_toStartOf="@+id/army_water_progress"
             app:layout_constraintStart_toStartOf="@+id/imageView23"
-            app:srcCompat="@drawable/armygame_mopbtn" />
+            android:src="@drawable/armygame_mopbtn" />
 
         <ImageView
             android:id="@+id/army_bucket_btn"
@@ -106,7 +106,7 @@
             app:layout_constraintBottom_toTopOf="@+id/army_soap_procent"
             app:layout_constraintEnd_toEndOf="@+id/imageView23"
             app:layout_constraintStart_toEndOf="@+id/army_soap_progress"
-            app:srcCompat="@drawable/armygame_bucketbtn" />
+            android:src="@drawable/armygame_bucketbtn" />
 
         <TextView
             android:id="@+id/army_water_procent"
@@ -137,7 +137,7 @@
             app:layout_constraintEnd_toEndOf="@+id/army_water_progress"
             app:layout_constraintStart_toStartOf="@+id/army_water_progress"
             app:layout_constraintTop_toBottomOf="@+id/imageView23"
-            app:srcCompat="@drawable/oil_water" />
+            android:src="@drawable/oil_water" />
 
         <ImageView
             android:id="@+id/imageView30"
@@ -146,6 +146,6 @@
             app:layout_constraintEnd_toEndOf="@+id/army_soap_progress"
             app:layout_constraintStart_toStartOf="@+id/army_soap_progress"
             app:layout_constraintTop_toBottomOf="@+id/imageView23"
-            app:srcCompat="@drawable/armygame_soap" />
+            android:src="@drawable/armygame_soap" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

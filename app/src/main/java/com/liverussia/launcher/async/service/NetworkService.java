@@ -40,7 +40,7 @@ public interface NetworkService {
     @GET("https://files.liverussia.online/roulette/prizes/urls.json")
     Call<ServerImagesResponseDto> getPossibleRoulettePrizes();
 
-    @GET("https://files.liverussia.online/apk/last_apk_info.json")
+    @GET("https://files.liverussia.online/apk/test/last_apk_info.json")
     Call<LatestVersionInfoDto> getLatestVersionInfoDto();
 
     @POST("/api/v1/auth/android/refresh")

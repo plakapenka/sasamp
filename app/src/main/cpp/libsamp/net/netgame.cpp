@@ -73,7 +73,6 @@ CNetGame::CNetGame(const char* szHostOrIp, int iPort, const char* szPlayerName, 
 
 	m_GreenZoneState = false;
 	m_iSpawnsAvailable = 0;
-	m_bHoldTime = true;
 	m_byteWorldMinute = 0;
 	m_byteWorldTime = 12;
 	m_byteWeather =	10;
@@ -181,9 +180,6 @@ void CNetGame::Process()
 						  1);
 		}
 	}
-
-	if(m_bHoldTime)
-		pGame->SetWorldTime(m_byteWorldTime, m_byteWorldMinute);
 
 	if(GetGameState() == GAMESTATE_CONNECTED)
 	{
@@ -1366,7 +1362,6 @@ void CNetGame::ShutDownForGameRestart()
 	m_byteWorldTime = 12;
 	m_byteWorldMinute = 0;
 	m_byteWeather = 1;
-	m_bHoldTime = true;
 	m_bNameTagLOS = true;
 	m_bUseCJWalk = false;
 	m_fGravity = 0.008f;
