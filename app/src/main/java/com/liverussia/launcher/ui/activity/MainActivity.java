@@ -314,14 +314,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void doAfterCacheChecked(FileInfo[] fileToReloadArray) {
+    private void doAfterCacheChecked(ArrayList<FileInfo> fileToReloadArray) {
 
-        List<FileInfo> filesToReloadList = Arrays.asList(fileToReloadArray);
+       // List<FileInfo> filesToReloadList = fileToReloadArray;
 
-        if (CollectionUtils.isEmpty(filesToReloadList)) {
+        if (CollectionUtils.isEmpty(fileToReloadArray)) {
             startGame();
         } else {
-            reloadCache(filesToReloadList);
+            reloadCache(fileToReloadArray);
         }
     }
 
