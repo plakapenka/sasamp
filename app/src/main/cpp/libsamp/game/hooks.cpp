@@ -827,12 +827,26 @@ void InstallSpecialHooks()
 	CHook::InlineHook(g_libGTASA, 0x00421128, &CTimer__EndUserPause_hook, &CTimer__EndUserPause);
 
 	//pvr
-	CHook::Write(g_libGTASA + 0x001E87A0, "texdb/%s/%s.dxt.tmb");
-	CHook::Write(g_libGTASA + 0x001E8C04, "texdb/%s/%s.dxt");
+	CHook::UnFuck(g_libGTASA + 0x001E87A0);
+	*(char*)(g_libGTASA + 0x1E87A0 + 12) = 'd';
+	*(char*)(g_libGTASA + 0x1E87A0 + 13) = 'x';
+	*(char*)(g_libGTASA + 0x1E87A0 + 14) = 't';
+
+	CHook::UnFuck(g_libGTASA + 0x001E8C04);
+	*(char*)(g_libGTASA + 0x001E8C04 + 12) = 'd';
+	*(char*)(g_libGTASA + 0x001E8C04 + 13) = 'x';
+	*(char*)(g_libGTASA + 0x001E8C04 + 14) = 't';
 
 	//etc
-	CHook::Write(g_libGTASA + 0x001E878C, "texdb/%s/%s.dxt.tmb");
-	CHook::Write(g_libGTASA + 0x001E8BF4, "texdb/%s/%s.dxt");
+	CHook::UnFuck(g_libGTASA + 0x001E878C);
+	*(char*)(g_libGTASA + 0x001E878C + 12) = 'd';
+	*(char*)(g_libGTASA + 0x001E878C + 13) = 'x';
+	*(char*)(g_libGTASA + 0x001E878C + 14) = 't';
+
+	CHook::UnFuck(g_libGTASA + 0x001E8BF4);
+	*(char*)(g_libGTASA + 0x001E8BF4 + 12) = 'd';
+	*(char*)(g_libGTASA + 0x001E8BF4 + 13) = 'x';
+	*(char*)(g_libGTASA + 0x001E8BF4 + 14) = 't';
 
 	CHook::InlineHook(g_libGTASA, 0x002671E2, &OS_FileRead_hook, &OS_FileRead);
 	CHook::InlineHook(g_libGTASA, 0x00266DB4, &NvFOpen_hook, & NvFOpen);
