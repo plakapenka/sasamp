@@ -8,9 +8,6 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
-import com.google.common.hash.HashCode;
-import com.google.common.hash.Hashing;
-import com.google.common.io.Files;
 import com.liverussia.launcher.ui.dialogs.DialogProgress;
 import com.liverussia.launcher.async.domain.AsyncTaskResult;
 import com.liverussia.launcher.async.listener.OnAsyncCriticalErrorListener;
@@ -31,10 +28,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
-import java.util.ArrayList;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
@@ -42,7 +43,7 @@ import java.util.Set;
 
 import static com.liverussia.launcher.config.Config.FILE_INFO_URL;
 
-public class CacheChecker implements Listener<ArrayList<FileInfo>> {
+public class CacheChecker implements Listener<FileInfo[]> {
 
     private final FragmentActivity activity;
 
@@ -51,7 +52,7 @@ public class CacheChecker implements Listener<ArrayList<FileInfo>> {
     private final BackgroundThreadPoster backgroundThreadPoster;
 
     private DialogProgress dialogProgress;
-    private OnAsyncSuccessListenerWithResponse<ArrayList<FileInfo>> onAsyncSuccessListener;
+    private OnAsyncSuccessListenerWithResponse<FileInfo[]> onAsyncSuccessListener;
     private OnAsyncCriticalErrorListener onAsyncCriticalErrorListener;
 
     private final static Set<String> NOT_CHECK_BY_HASH_FILES;
@@ -59,6 +60,7 @@ public class CacheChecker implements Listener<ArrayList<FileInfo>> {
     public CacheChecker(FragmentActivity activity) {
         this.activity = activity;
     }
+
     {
         activityService = new ActivityServiceImpl();
         uiThreadPoster = new UiThreadPoster();
@@ -129,23 +131,17 @@ public class CacheChecker implements Listener<ArrayList<FileInfo>> {
         }
     }
 
-    private void checkHash(GameFileInfoDto gameFileInfo)
-    {
-        ArrayList<FileInfo> toReload = new ArrayList<>();
-
-        for(FileInfo file : gameFileInfo.getFiles())
-        {
-            if(!NOT_CHECK_BY_HASH_FILES.contains(file.getPath()) &&)
-            {
-                if(isInvalidFile(file))
-                {
-                    toReload.add(file);
-                }
-            }
-        }
+    private void checkHash(GameFileInfoDto gameFileInfo) {
+        FileInfo[] filesToReload = Optional.ofNullable(gameFileInfo.getFiles())
+                .orElse(Collections.emptyList())
+                .stream()
+                .filter(fileInfo -> !NOT_CHECK_BY_HASH_FILES.contains(fileInfo.getPath()) || isNotExistFile(fileInfo))
+                .filter(this::isInvalidFile)
+                .peek(this::removeFile)
+                .toArray(FileInfo[]::new);
 
         uiThreadPoster.post(() -> {
-            onAsyncFinished(new AsyncTaskResult<>(toReload));
+            onAsyncFinished(new AsyncTaskResult<>(filesToReload));
         });
     }
 
@@ -157,9 +153,9 @@ public class CacheChecker implements Listener<ArrayList<FileInfo>> {
                 .peek(this::removeFile)
                 .toArray(FileInfo[]::new);
 
-//        uiThreadPoster.post(() -> {
-//            onAsyncFinished(new AsyncTaskResult<>(filesToReload));
-//        });
+        uiThreadPoster.post(() -> {
+            onAsyncFinished(new AsyncTaskResult<>(filesToReload));
+        });
     }
 
     private void removeFile(FileInfo fileInfo) {
@@ -204,16 +200,41 @@ public class CacheChecker implements Listener<ArrayList<FileInfo>> {
     }
 
     private String calculateHash(String filename) {
-        try {
-            HashCode md5 = Files.hash(
-                    new File(filename),
-                    Hashing.md5()
-            );
-            byte[] md5Bytes = md5.asBytes();
-            return md5.toString();
 
-        } catch (IOException e) {
-            return "fuck";
+//        try {
+//            MessageDigest md = MessageDigest.getInstance("MD5");
+//
+//            try (DigestInputStream dis = new DigestInputStream(new FileInputStream(filename), md)) {
+//                while (dis.read() != -1) ; // пустой цикл для очистки данных
+//                md = dis.getMessageDigest();
+//            }
+//
+//            StringBuilder result = new StringBuilder();
+//
+//            for (byte b : md.digest()) {
+//                result.append(String.format("%02x", b));
+//            }
+//
+//            return result.toString();
+//        } catch (NoSuchAlgorithmException | IOException e) {
+//            throw new RuntimeException(e);
+//        }
+
+
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] buffer = new byte[8192];
+
+            try (InputStream is = new BufferedInputStream(new FileInputStream(filename))) {
+                int read;
+                while ((read = is.read(buffer)) > 0) {
+                    md.update(buffer, 0, read);
+                }
+            }
+            byte[] digest = md.digest();
+            return bytesToHex(digest);
+        } catch (NoSuchAlgorithmException | IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -244,7 +265,7 @@ public class CacheChecker implements Listener<ArrayList<FileInfo>> {
         }
     }
 
-    public void setOnAsyncSuccessListener(OnAsyncSuccessListenerWithResponse<ArrayList<FileInfo>> onClickListener) {
+    public void setOnAsyncSuccessListener(OnAsyncSuccessListenerWithResponse<FileInfo[]> onClickListener) {
         this.onAsyncSuccessListener = onClickListener;
     }
 
@@ -254,7 +275,7 @@ public class CacheChecker implements Listener<ArrayList<FileInfo>> {
 
     @UiThread
     @Override
-    public void onAsyncFinished(AsyncTaskResult<ArrayList<FileInfo>> result) {
+    public void onAsyncFinished(AsyncTaskResult<FileInfo[]> result) {
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         //dialogProgress.dismiss();

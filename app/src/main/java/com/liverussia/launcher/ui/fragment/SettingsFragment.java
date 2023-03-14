@@ -31,7 +31,6 @@ import com.liverussia.launcher.service.ActivityService;
 import org.springframework.util.CollectionUtils;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -143,14 +142,14 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private void doAfterCacheChecked(ArrayList<FileInfo> fileToReload) {
+    private void doAfterCacheChecked(FileInfo[] fileToReloadArray) {
 
-   //     List<FileInfo> filesToReloadList = Arrays.asList(fileToReloadArray);
+        List<FileInfo> filesToReloadList = Arrays.asList(fileToReloadArray);
 
-        if (CollectionUtils.isEmpty(fileToReload)) {
+        if (CollectionUtils.isEmpty(filesToReloadList)) {
             activityService.showMessage(InfoMessage.GAME_FILES_VALID.getText(), getActivity());
         } else {
-            validateCache(fileToReload);
+            validateCache(filesToReloadList);
         }
     }
 
