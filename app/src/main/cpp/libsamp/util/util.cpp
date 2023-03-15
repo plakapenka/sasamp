@@ -65,7 +65,7 @@ RwTexture* CUtil::LoadTextureFromDB(const char* dbname, const char* texture)
 	return tex;
 }
 
-#include "../game/eWeaponType.h"
+#include "game/Enums/eWeaponType.h"
 
 const char* CUtil::GetWeaponName(int iWeaponID)
 {

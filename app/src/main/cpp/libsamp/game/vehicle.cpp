@@ -5,7 +5,7 @@ extern CGame* pGame;
 #include "..//CDebugInfo.h"
 #include "..//net/netgame.h"
 #include "CVector.h"
-#include "CModelInfo.h"
+#include "game/Models/CModelInfo.h"
 
 extern CNetGame* pNetGame;
 

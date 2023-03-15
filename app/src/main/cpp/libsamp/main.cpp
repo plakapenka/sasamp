@@ -137,7 +137,7 @@ void ProcessCheckForKeyboard()
 
 
 #include "CDebugInfo.h"
-#include "game/CModelInfo.h"
+#include "game/Models/CModelInfo.h"
 #include "java_systems/LoadingScreen.h"
 
 void MainLoop()

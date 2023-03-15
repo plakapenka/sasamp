@@ -8,7 +8,7 @@
 
 #include <cstdint>
 #include "main.h"
-#include "CTimeInfo.h"
+#include "game/CTimeInfo.h"
 
 enum ModelInfoType : unsigned char {
     MODEL_INFO_ATOMIC = 1,

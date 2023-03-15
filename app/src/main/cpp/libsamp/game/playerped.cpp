@@ -6,10 +6,10 @@
 
 #include "..//CDebugInfo.h"
 #include "util/patch.h"
-#include "ePedState.h"
+#include "game/Enums/ePedState.h"
 #include "CWorld.h"
 #include "game/RW/rtanim.h"
-#include "eWeaponType.h"
+#include "game/Enums/eWeaponType.h"
 
 extern CGame* pGame;
 extern CNetGame *pNetGame;

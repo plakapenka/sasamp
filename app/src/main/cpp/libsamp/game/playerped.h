@@ -1,7 +1,7 @@
 #pragma once
 #include "aimstuff.h"
 #include "bass.h"
-#include "eWeaponType.h"
+#include "game/Enums/eWeaponType.h"
 #include "CWeaponGta.h"
 #include "CVehicleGta.h"
 #include "vehicle.h"

@@ -2,7 +2,7 @@
 #include "game.h"
 #include "CPlayerInfoGta.h"
 #include "CWorld.h"
-#include "CModelInfo.h"
+#include "game/Models/CModelInfo.h"
 
 #define PI 3.14159265
 
