@@ -2,7 +2,7 @@
 #include "RW/RenderWare.h"
 #include <sstream>
 #include "game.h"
-#include "ePedState.h"
+#include "game/Enums/ePedState.h"
 
 #include "../net/netgame.h"
 #include "../gui/gui.h"
@@ -131,13 +131,29 @@ stFile* NvFOpen_hook(const char* r0, const char* r1, int r2, int r3)
 		return nullptr;
 	}
 }
+float *ms_fAspectRatio;
+static constexpr float ar43 = 4.0f / 3.0f;
+
 #include "keyboard.h"
 void Render2dStuff()
 {
     ( ( void(*)(bool) )(g_libGTASA + 0x001C0750 + 1) )(false); // emu_GammaSet
+
 	if (pGUI) pGUI->Render();
 
+	// jpatch fix crosshair
+	float saveX = *CCamera::m_f3rdPersonCHairMultX;
+	*CCamera::m_f3rdPersonCHairMultX = 0.530f - (*ms_fAspectRatio - ar43) * 0.01125f;
+
+	float saveY = *CCamera::m_f3rdPersonCHairMultY;
+	*CCamera::m_f3rdPersonCHairMultY = 0.400f + (*ms_fAspectRatio - ar43) * 0.03600f;
+
 	( ( void(*)() )(g_libGTASA + 0x00437200 + 1) )(); // прицел
+
+	*CCamera::m_f3rdPersonCHairMultX = saveX;
+	*CCamera::m_f3rdPersonCHairMultY = saveY;
+	//
+
 
 	if(!CKeyBoard::m_bEnable)
 		( ( void(*)(bool) )(g_libGTASA + 0x002B0BD8 + 1) )(false); // render widgets
@@ -167,8 +183,9 @@ void Render2dStuff()
 
 // CGame::InitialiseRenderWare
 void (*InitialiseRenderWare)();
-void InitialiseRenderWare_hook() {
-	Log("InitialiseRenderWare ..");
+void InitialiseRenderWare_hook()
+{
+
 
 	CHook::NOP(g_libGTASA + 0x0046F576, 2);
 	CHook::NOP(g_libGTASA + 0x0046F588, 2); // mobile
@@ -1957,24 +1974,7 @@ bool CEventKnockOffBike__AffectsPed_hook(uintptr_t *thiz, CPedGta *a2)
 	return false;
 }
 
-float *m_f3rdPersonCHairMultX, *m_f3rdPersonCHairMultY, *ms_fAspectRatio;
 
-// Fixing a crosshair by very stupid math ( JPATCH )
-static constexpr float ar43 = 4.0f / 3.0f;
-void (*DrawCrosshair)(uintptr_t* thiz);
-void DrawCrosshair_hook(uintptr_t* thiz)
-{
-	float save1 = *m_f3rdPersonCHairMultX;
-	*m_f3rdPersonCHairMultX = 0.530f - (*ms_fAspectRatio - ar43) * 0.01125f;
-
-	float save2 = *m_f3rdPersonCHairMultY;
-	*m_f3rdPersonCHairMultY = 0.400f + (*ms_fAspectRatio - ar43) * 0.03600f;
-
-	DrawCrosshair(thiz);
-
-	*m_f3rdPersonCHairMultX = save1;
-	*m_f3rdPersonCHairMultY = save2;
-}
 
 bool (*RpMaterialDestroy)(uintptr_t* material);
 bool RpMaterialDestroy_hook(uintptr_t* material)
@@ -1990,11 +1990,8 @@ void InstallHooks()
 {
 	Log("InstallHooks");
 
-//    // Fixing a crosshair by very stupid math ( JPATCH )
-//	m_f3rdPersonCHairMultX = (float*)(g_libGTASA + 0x008B07FC);
-//	m_f3rdPersonCHairMultY = (float*)(g_libGTASA + 0x008B07F8);
-//	ms_fAspectRatio = (float*)(g_libGTASA + 0x0098525C);
-//    CHook::InlineHook(g_libGTASA, 0x3D44CC, &DrawCrosshair_hook, &DrawCrosshair);
+    // Fixing a crosshair by very stupid math ( JPATCH )
+	ms_fAspectRatio = (float*)(g_libGTASA + 0x00A26A90);
 
 	// не падать с мотоцикла
 	CHook::InlineHook(g_libGTASA, 0x0037573C, &CEventKnockOffBike__AffectsPed_hook, &CEventKnockOffBike__AffectsPed);

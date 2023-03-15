@@ -1,5 +1,10 @@
 #include "../main.h"
 #include "game.h"
+#include "camera.h"
+
+
+float* CCamera::m_f3rdPersonCHairMultX;
+float* CCamera::m_f3rdPersonCHairMultY;
 
 // 0.3.7
 void CCamera::SetBehindPlayer()
@@ -68,4 +73,9 @@ void CCamera::InterpolateCameraLookAt(CVector *posFrom, CVector *posTo, int time
 {
 	ScriptCommand(&lock_camera_position, 1);
 	ScriptCommand(&point_camera_transverse, posFrom->x, posFrom->y, posFrom->z, posTo->x, posTo->y, posTo->z, time, mode);
+}
+
+void CCamera::TakeControl(uintptr_t *thiz, CEntityGta *NewTarget, eCamMode CamMode, eSwitchType CamSwitchStyle, int32_t WhoIsTakingControl)
+{
+	((void(*)(uintptr_t*, CEntityGta*, eCamMode, eSwitchType, int32_t))(g_libGTASA + 0x003E1714 + 1))(thiz, NewTarget, CamMode, CamSwitchStyle, WhoIsTakingControl);
 }

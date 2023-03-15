@@ -1,9 +1,24 @@
 #pragma once
 
+#include "game/Enums/eCamMode.h"
+
+enum class eSwitchType : uint16_t {
+	NONE,
+	INTERPOLATION,
+	JUMPCUT
+};
+
 class CCamera
 {
 public:
-	CCamera() { m_matPos = (RwMatrix*)(g_libGTASA + 0x951FA8 + 0x8FC); }
+	CCamera() {
+		m_matPos = (RwMatrix*)(g_libGTASA + 0x951FA8 + 0x8FC);
+		m_f3rdPersonCHairMultX = (float*)(g_libGTASA + 0x00952CB0);
+		m_f3rdPersonCHairMultY = (float*)(g_libGTASA + 0x00952CB4);
+
+		TheCamera = (uintptr_t*)(g_libGTASA + 0x00951FA8);
+	}
+
 	~CCamera() {}
 
 	// 0.3.7
@@ -21,7 +36,15 @@ public:
 	// 0.3.7
 	void InterpolateCameraLookAt(CVector *posFrom, CVector *posTo, int time, uint8_t mode);
 
+	static void TakeControl(uintptr_t *thiz, CEntityGta *NewTarget, eCamMode CamMode, eSwitchType CamSwitchStyle, int32_t WhoIsTakingControl);
+
 private:
 	CEntityGta* m_pEntity;
 	RwMatrix *m_matPos;
+
+public:
+	uintptr_t* TheCamera; // this
+
+	static float* m_f3rdPersonCHairMultX;
+	static float* m_f3rdPersonCHairMultY;
 };
