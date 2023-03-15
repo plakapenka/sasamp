@@ -223,8 +223,8 @@ void ApplyPatches()
 
 	// JPatch
 	CHook::WriteMemory(g_libGTASA + 0x003F4138, (uintptr_t)"\x03", 1); // RE3: Fix R* optimization that prevents peds to spawn
-	CHook::WriteMemory(g_libGTASA + 0x001D240E, (uintptr_t)"\x08", 1); // Lower threads sleeping timer
-	CHook::WriteMemory(g_libGTASA + 0x00266CC2, (uintptr_t)"\x08", 1); // Lower threads sleeping timer
+	//CHook::WriteMemory(g_libGTASA + 0x001D240E, (uintptr_t)"\x08", 1); // Lower threads sleeping timer
+	//CHook::WriteMemory(g_libGTASA + 0x00266CC2, (uintptr_t)"\x08", 1); // Lower threads sleeping timer
 
 	// задние фары
 	CHook::WriteMemory(g_libGTASA + 0x00591074, (uintptr_t)"\x04", 1);
@@ -404,11 +404,6 @@ void ApplyInGamePatches()
 	// CPlayerPed::CPlayerPed task fix crash
 	//CHook::WriteMemory(g_libGTASA + 0x4C36E2, (uintptr_t)"\xE0", 1);
 
-
-//	// camera_on_actor path
-//	CHook::UnFuck(g_libGTASA + 0x2F7B68);
-//	*(uint8_t*)(g_libGTASA + 0x2F7B6B) = 0xBE;
-//
 	// CPed::RemoveWeaponWhenEnteringVehicle (GetPlayerInfoForThisPlayerPed)
 	CHook::RET(g_libGTASA + 0x004A536C );
 //

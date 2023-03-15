@@ -1158,25 +1158,25 @@ void CLocalPlayer::ProcessSpectating()
 	}
 	else if(m_byteSpectateType == SPECTATE_TYPE_PLAYER)
 	{
-		uint32_t dwGTAId = 0;
-		CPlayerPed *pPlayerPed = nullptr;
-
 		if(pPlayerPool->m_pPlayers[m_SpectateID])
 		{
-			pPlayerPed = pPlayerPool->GetAt(m_SpectateID)->GetPlayerPed();
+
+			auto pPlayerPed = pPlayerPool->m_pPlayers[m_SpectateID]->GetPlayerPed();
 			if(pPlayerPed)
 			{
-				dwGTAId = pPlayerPed->m_dwGTAId;
-				ScriptCommand(&camera_on_actor, dwGTAId, m_byteSpectateMode, 2);
+				auto* TheCamera = (uintptr_t*)(g_libGTASA + 0x00951FA8);
+				CCamera::TakeControl(TheCamera, pPlayerPed->m_pPed,static_cast<eCamMode>(m_byteSpectateMode), eSwitchType::JUMPCUT, 1);
+
 				m_bSpectateProcessed = true;
 			}
 		}
 	}
 	else if(m_byteSpectateType == SPECTATE_TYPE_VEHICLE)
 	{
-		auto pVehicle = pVehiclePool->m_pVehicles[ (VEHICLEID)m_SpectateID ];
+		auto pVehicle = pVehiclePool->m_pVehicles[ m_SpectateID ];
 
-		ScriptCommand(&camera_on_vehicle, pVehicle->m_dwGTAId, m_byteSpectateMode, 2);
+		auto* TheCamera = (uintptr_t*)(g_libGTASA + 0x00951FA8);
+		CCamera::TakeControl(TheCamera, pVehicle->m_pVehicle,static_cast<eCamMode>(m_byteSpectateMode), eSwitchType::JUMPCUT, 1);
 		m_bSpectateProcessed = true;
 	}	
 }
