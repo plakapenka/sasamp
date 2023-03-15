@@ -28,6 +28,8 @@ public class ArmyGameManager {
 
     float armystate, armywaterstate, armysoapstate;
 
+    native void onArmyGameClose();
+
     Runnable runnableoilgame = new Runnable() {
         @Override
         public void run() {
@@ -101,12 +103,12 @@ public class ArmyGameManager {
     }
 
     public void Hide() {
-        NvEventQueueActivity.getInstance().onArmyGameClose();
+        onArmyGameClose();
         Utils.HideLayout(army_game_main, true);
     }
 
     public void HideFull() {
-        NvEventQueueActivity.getInstance().onArmyGameClose();
+        onArmyGameClose();
         Utils.HideLayout(br_army_layout, true);
     }
 }

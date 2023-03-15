@@ -48,6 +48,10 @@ public class RegistrationManager {
 
     private String MailString = "";
     private int choosesex;
+    native void onRegisterChooseSkinClick(int choosesex);
+    native void onRegisterSkinBackClick();
+    native void onRegisterSkinNextClick();
+    native void onRegisterClick(String password, String mail, int sex);
 
     public RegistrationManager(Activity activity){
         br_registration_layout = activity.findViewById(R.id.br_registration_layout);
@@ -80,12 +84,12 @@ public class RegistrationManager {
 
         choose_skin_left.setOnClickListener(view -> {
             view.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.button_click));
-            NvEventQueueActivity.getInstance().onRegisterSkinBackClick();
+            onRegisterSkinBackClick();
         });
 
         choose_skin_right.setOnClickListener(view -> {
             view.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.button_click));
-            NvEventQueueActivity.getInstance().onRegisterSkinNextClick();
+            onRegisterSkinNextClick();
         });
 
         choose_skin_notf_close.setOnClickListener(view -> {
@@ -95,14 +99,14 @@ public class RegistrationManager {
         });
 
         choose_skin_btn.setOnClickListener(view -> {
-            NvEventQueueActivity.getInstance().onRegisterClick(reg_password.getText().toString(), MailString, choosesex);
+            onRegisterClick(reg_password.getText().toString(), MailString, choosesex);
         });
 
         choosesex_btn.setOnClickListener(view -> {
             view.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.button_click));
             if (choosesex > 0)
             {
-                NvEventQueueActivity.getInstance().onRegisterChooseSkinClick(choosesex);
+                onRegisterChooseSkinClick(choosesex);
                 Utils.ShowLayout(skin_layout, true);
                 Utils.HideLayout(sex_layout, true);
             }

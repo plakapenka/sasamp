@@ -739,21 +739,6 @@ bool CPad__TaskProcess(uintptr_t *thiz, uintptr_t pPed)
 
 bool bWeaponClicked;
 
-//switch weapons
-extern "C" {
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onWeaponChanged(JNIEnv *pEnv, jobject thiz) {
-		//pGame->FindPlayerPed()->SwitchWeapon();
-		if(!pGame->FindPlayerPed()) return;
-
-		if(!bWeaponClicked) {
-			bWeaponClicked = true;
-		}
-		else {
-			bWeaponClicked = false;
-		}
-	}
-}
-
 uint32_t (*CPad__CycleWeaponRightJustDown)(uintptr_t thiz);
 uint32_t CPad__CycleWeaponRightJustDown_hook(uintptr_t thiz)
 {
@@ -831,4 +816,18 @@ void HookCPad()
 //
 	CHook::InlineHook(g_libGTASA, 0x003FB2AC, &CPad__CycleWeaponRightJustDown_hook, &CPad__CycleWeaponRightJustDown);
 
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_HudManager_onWeaponChanged(JNIEnv *env, jobject thiz) {
+	//pGame->FindPlayerPed()->SwitchWeapon();
+	if(!pGame->FindPlayerPed()) return;
+
+	if(!bWeaponClicked) {
+		bWeaponClicked = true;
+	}
+	else {
+		bWeaponClicked = false;
+	}
 }

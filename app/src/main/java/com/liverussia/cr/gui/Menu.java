@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 
 import com.liverussia.cr.R;
+import com.liverussia.cr.core.Samp;
 import com.liverussia.cr.gui.adapters.DialogMenuAdapter;
 import com.liverussia.cr.gui.models.DataDialogMenu;
 import com.liverussia.cr.gui.util.Utils;
@@ -34,6 +35,7 @@ public class Menu {
     private final Animation anim;
     private int index = -1;
     private final ArrayList<DataDialogMenu> dataDialogMenuArrayList = new ArrayList<>();
+    native void sendRPC(int type, byte[] str, int action);
 
     @SuppressLint("InflateParams")
     public Menu(Activity aactivity) {
@@ -65,7 +67,7 @@ public class Menu {
                         Update(true);
                     } else {
                         try {
-                            NvEventQueueActivity.getInstance().sendRPC(1, String.valueOf(index).getBytes("windows-1251"), index);
+                            sendRPC(1, String.valueOf(index).getBytes("windows-1251"), index);
                             //  Toast.makeText(activity, String.valueOf(index), Toast.LENGTH_SHORT).show();
                             close();
                         } catch (UnsupportedEncodingException e) {
@@ -86,7 +88,7 @@ public class Menu {
                     Update(true);
                 } else {
                     try {
-                        NvEventQueueActivity.getInstance().sendRPC(1, String.valueOf(index).getBytes("windows-1251"), index);
+                        sendRPC(1, String.valueOf(index).getBytes("windows-1251"), index);
                         //  Toast.makeText(activity, String.valueOf(index), Toast.LENGTH_SHORT).show();
                         close();
                     } catch (UnsupportedEncodingException e) {
@@ -146,6 +148,6 @@ public class Menu {
 
     public void close() {
         Utils.HideLayout(menu_layout, true);
-        NvEventQueueActivity.getInstance().togglePlayer(0);
+        Samp.getInstance().togglePlayer(0);
     }
 }

@@ -22,7 +22,6 @@
 package com.nvidia.devtech;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -39,7 +38,6 @@ import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Vibrator;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
@@ -57,29 +55,16 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.liverussia.cr.R;
 import com.liverussia.cr.core.DialogClientSettings;
-import com.liverussia.cr.gui.AdminRecon;
-import com.liverussia.cr.gui.AutoShop;
-import com.liverussia.cr.gui.Casino_LuckyWheel;
-import com.liverussia.cr.gui.Furniture_factory;
-import com.liverussia.cr.gui.Inventory;
-import com.liverussia.cr.gui.DuelsHud;
-import com.liverussia.cr.gui.MineGame1;
-import com.liverussia.cr.gui.MineGame2;
-import com.liverussia.cr.gui.MineGame3;
-import com.liverussia.cr.gui.PreDeath;
-import com.liverussia.cr.gui.SamwillManager;
-import com.liverussia.cr.gui.TechIspect;
-import com.liverussia.cr.gui.dialogs.Dialog;
-import com.liverussia.cr.gui.Notification;
-import com.liverussia.cr.gui.RegistrationManager;
-import com.liverussia.cr.gui.FuelStationManager;
-import com.liverussia.cr.gui.OilFactoryManager;
 import com.liverussia.cr.gui.ArmyGameManager;
-import com.liverussia.cr.gui.ShopStoreManager;
-import com.liverussia.cr.gui.GunShopManager;
+import com.liverussia.cr.gui.AutoShop;
 import com.liverussia.cr.gui.ChooseSpawn;
+import com.liverussia.cr.gui.FuelStationManager;
+import com.liverussia.cr.gui.GunShopManager;
 import com.liverussia.cr.gui.Menu;
-import com.liverussia.cr.gui.InGameLoadingScreen;
+import com.liverussia.cr.gui.OilFactoryManager;
+import com.liverussia.cr.gui.RegistrationManager;
+import com.liverussia.cr.gui.SamwillManager;
+import com.liverussia.cr.gui.ShopStoreManager;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -108,7 +93,7 @@ this class and its paired native library.
 */
 public abstract class NvEventQueueActivity extends FragmentActivity implements SensorEventListener {
 
-    private static NvEventQueueActivity instance = null;
+
     protected Handler handler = null;
 
     private int SwapBufferSkip = 0;
@@ -162,19 +147,6 @@ public abstract class NvEventQueueActivity extends FragmentActivity implements S
     //private HeightProvider mHeightProvider = null;
     private DialogClientSettings mDialogClientSettings = null;
 
-    private SamwillManager mSamwillManager = null;
-
-    private AutoShop mAutoShop = null;
-    private RegistrationManager mRegistrationManager = null;
-    private FuelStationManager mFuelStationManager = null;
-    private OilFactoryManager mOilFactoryManager = null;
-    private Vibrator vibrator;
-    private ArmyGameManager mArmyGameManager = null;
-    private ShopStoreManager mShopStoreManager = null;
-    private GunShopManager mGunShopManager = null;
-    private ChooseSpawn mChooseSpawn = null;
-    private Menu mMenu = null;
-
     /* *
      * Helper function to select fixed window size.
      * */ 
@@ -184,40 +156,8 @@ public abstract class NvEventQueueActivity extends FragmentActivity implements S
     	fixedHeight = fh;
     }
 
-    public native void native_SendAutoShopButton(int buttonID);
-    public native void onRegisterChooseSkinClick(int choosesex);
-    public native void onRegisterSkinBackClick();
-    public native void onRegisterSkinNextClick();
-    public native void onRegisterClick(String password, String mail, int sex);
-    public native void onLoginClick(String password);
-    public native void onChooseSpawnClick(int spawnid);
-
-    public native void onSamwillHideGame(int samwillpacket);
-
-    public native void onTargetNotifyClose();
-    public native void onOilFactoryGameClose(boolean success);
-    public native void onArmyGameClose();
-    public native void onFuelStationClick(int fueltype, int fuelliters);
-    public native void onShopStoreClick(int buttonid);
-    public native void onGunShopClick(int weaponid);
-
-    // Типы
-    // 1 - Меню
-    // 2 - Сервер
-    public native void sendRPC(int type, byte[] str, int action);
-
     private int mUseFullscreen = 0;
 
-    private void processCutout()
-    {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
-        {
-            if(mUseFullscreen == 1)
-            {
-                getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
-            }
-        }
-    }
     public void showClientSettings()
     {
         runOnUiThread(new Runnable() {
@@ -257,12 +197,6 @@ public abstract class NvEventQueueActivity extends FragmentActivity implements S
                         | View.SYSTEM_UI_FLAG_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
-
-    public native void onWeaponChanged();
-
-    public native void togglePlayer(int toggle);
-
-    public native void SendCasinoButt(int buttonID);
 
     /**
      * Helper class used to pass raw data around.  
@@ -473,7 +407,6 @@ public abstract class NvEventQueueActivity extends FragmentActivity implements S
         System.out.println("**** onCreate");
         super.onCreate(savedInstanceState);
 
-        instance = this;
 		if(supportPauseResume)
 		{
 		    System.out.println("Calling init(false)");
@@ -501,21 +434,6 @@ public abstract class NvEventQueueActivity extends FragmentActivity implements S
 
         //((TextView)findViewById(R.id.main_version_text)).setText(BuildConfig.VERSION_NAME);
 
-        getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
-            @Override
-            public void onSystemUiVisibilityChange(int i) {
-                if ((i & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
-                    hideSystemUI();
-                } else {
-                    // TODO: The system bars are NOT visible. Make any desired
-                    // adjustments to your UI, such as hiding the action bar or
-                    // other navigational controls.
-                }
-
-            }
-        });
-
-        processCutout();
     }
 
     public void onConfigurationChanged(Configuration newConfig) {
@@ -564,9 +482,9 @@ public abstract class NvEventQueueActivity extends FragmentActivity implements S
 //        if (this.mSensorManager != null) {
 //            this.mSensorManager.registerListener(this, this.mSensorManager.getDefaultSensor(1), this.mSensorDelay);
 //        }
-        this.paused = false;
 
         super.onResume();
+        this.paused = false;
         this.inputPaused = false;
     }
 
@@ -604,10 +522,6 @@ public abstract class NvEventQueueActivity extends FragmentActivity implements S
 //        if (this.mSensorManager != null) {
 //            this.mSensorManager.unregisterListener(this);
 //        }
-        if(!paused){
-            pauseEvent();
-            this.paused = true;
-        }
 
         super.onStop();
     }
@@ -867,37 +781,6 @@ public abstract class NvEventQueueActivity extends FragmentActivity implements S
 
         view.setFocusable(true);
         view.setFocusableInTouchMode(true);
-
-        //
-
-        //
-
-        new Furniture_factory(this);
-        new AdminRecon(this);
-        new DuelsHud(this);
-        new TechIspect(this);
-        // mInputManager = new InputManager(this);
-        //mHeightProvider = new HeightProvider(this).init(mRootFrame).setHeightListener(this);
-        new Notification(this);
-        mRegistrationManager = new RegistrationManager(this);
-        mFuelStationManager = new FuelStationManager(this);
-        mOilFactoryManager = new OilFactoryManager(this);
-        vibrator = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
-        mArmyGameManager = new ArmyGameManager(this);
-        mShopStoreManager = new ShopStoreManager(this);
-        mGunShopManager = new GunShopManager(this);
-        new PreDeath(this);
-        new Dialog(this);
-        new Inventory(this);
-        new MineGame1(this);
-        new MineGame2(this);
-        new MineGame3(this);
-        new Casino_LuckyWheel(this);
-
-        mSamwillManager = new SamwillManager(this);
-        mAutoShop = new AutoShop(this);
-
-        mMenu = new Menu(this);
 
      //   DoResumeEvent();
 
@@ -1373,9 +1256,7 @@ public abstract class NvEventQueueActivity extends FragmentActivity implements S
         return toReturn;
     }
 
-    public static NvEventQueueActivity getInstance() {
-        return instance;
-    }
+
 
     public void setPauseState(boolean z2) {
         if (mAndroidUI == null) {
@@ -1384,32 +1265,11 @@ public abstract class NvEventQueueActivity extends FragmentActivity implements S
         runOnUiThread(() -> mAndroidUI.setVisibility(z2 ? View.GONE:View.VISIBLE));
     }
 
-    public void toggleAutoShop(boolean toggle) {
-        runOnUiThread(() -> mAutoShop.ToggleShow(toggle));
-    }
 
-    public void updateAutoShop(String name, int price, int count, float maxspeed, float acceleration, int gear) {
-        runOnUiThread(() -> mAutoShop.Update(name, price, count, maxspeed, acceleration, gear));
-    }
 
-    public void showRegistration(String nick, int id) { runOnUiThread(() -> { mRegistrationManager.Show(nick, id); }); }
 
-    public void hideRegistration() { runOnUiThread(() -> { mRegistrationManager.Hide(); }); }
 
-    public void showMenu() { runOnUiThread(() -> { mMenu.ShowMenu(); }); }
 
-    public void showSamwill() { runOnUiThread(() -> { mSamwillManager.Show(); }); }
-
-    public void ExitGame(){
-        finishAndRemoveTask();
-        System.exit(0);
-    }
-
-    public void goVibrate(int milliseconds){
-        if (vibrator.hasVibrator()) {
-            vibrator.vibrate(milliseconds);
-        }
-    }
 
     public void CopyTextToBuffer(String string){
        // String text = edtCopy.getText().toString();
@@ -1421,19 +1281,6 @@ public abstract class NvEventQueueActivity extends FragmentActivity implements S
        // Toast.makeText(this,"Скопированно в буфер обмена ",Toast.LENGTH_SHORT).show();
     }
 
-    public void showOilFactoryGame() { runOnUiThread(() -> { mOilFactoryManager.Show(); } ); }
-
-    public void showArmyGame(int quantity) { runOnUiThread(() -> { mArmyGameManager.Show(quantity); } ); }
-
-    public void hideArmyGame() { runOnUiThread(() -> { mArmyGameManager.HideFull(); } ); }
-
-    public void toggleShopStoreManager(boolean toggle, int type, int price) { runOnUiThread(() -> mShopStoreManager.Toggle(toggle, type, price) ); }
-
-    public void showGunShopManager() { runOnUiThread(() -> { mGunShopManager.Show(); } ); }
-
-    public void hideGunShopManager() { runOnUiThread(() -> { mGunShopManager.Hide(); } ); }
-
-    public void showFuelStation(int type, int price1, int price2, int price3, int price4, int price5, int maxCount) { runOnUiThread(() -> { mFuelStationManager.Show(type, price1, price2, price3, price4, price5, maxCount); } ); }
 
 
 }

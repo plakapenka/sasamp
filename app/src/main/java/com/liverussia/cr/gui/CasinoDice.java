@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.liverussia.cr.R;
+import com.liverussia.cr.core.Samp;
 import com.nvidia.devtech.NvEventQueueActivity;
 
 import java.text.DecimalFormat;
@@ -44,6 +45,8 @@ public class CasinoDice {
     private final int CASINO_DICE_BUTTON_EXIT = 2;
 
     public native void CasinoInit();
+    native void SendCasinoButt(int buttonID);
+
     public CasinoDice(Activity aactivity)
     {
         CasinoInit();
@@ -81,13 +84,13 @@ public class CasinoDice {
         dice_butt_exit = activity.findViewById(R.id.dice_butt_exit);
 
         dice_butt_bet.setOnClickListener(view -> {
-            NvEventQueueActivity.getInstance().SendCasinoButt(CASINO_DICE_BUTTON_BET);
+            SendCasinoButt(CASINO_DICE_BUTTON_BET);
         });
         dice_butt_dice.setOnClickListener(view -> {
-            NvEventQueueActivity.getInstance().SendCasinoButt(CASINO_DICE_BUTTON_DICE);
+            SendCasinoButt(CASINO_DICE_BUTTON_DICE);
         });
         dice_butt_exit.setOnClickListener(view -> {
-            NvEventQueueActivity.getInstance().SendCasinoButt(CASINO_DICE_BUTTON_EXIT);
+            SendCasinoButt(CASINO_DICE_BUTTON_EXIT);
         });
     }
 

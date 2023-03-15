@@ -44,6 +44,7 @@ public class SamwillManager {
 
     private long tick;
 
+    native void onSamwillHideGame(int samwillpacket);
     public SamwillManager(Activity activity){
 
         Vibrator vibrator = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
@@ -158,7 +159,7 @@ public class SamwillManager {
 
 
     public void Show() {
-        sawSound = Samp.soundPool.load(NvEventQueueActivity.getInstance(), R.raw.saw, 0);
+        sawSound = Samp.soundPool.load(Samp.getInstance(), R.raw.saw, 0);
         samwillpacket = 0;
         samwill1 = -1;
         samwill2 = -1;
@@ -176,7 +177,7 @@ public class SamwillManager {
     }
 
     public void Hide() {
-        NvEventQueueActivity.getInstance().onSamwillHideGame(samwillpacket);
+        onSamwillHideGame(samwillpacket);
         Utils.HideLayout(br_samwill_layout, true);
 
         Samp.soundPool.unload(sawSound);

@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.liverussia.cr.R;
+import com.liverussia.cr.core.Samp;
 import com.liverussia.cr.gui.util.Utils;
 import com.nvidia.devtech.NvEventQueueActivity;
 
@@ -142,7 +143,7 @@ public class Dialog {
                     this.mCurrentInputText = str;
                 });
                 adapter.setOnDoubleClickListener(() -> sendDialogResponse(1));
-                this.mCustomRecyclerView.setLayoutManager(new LinearLayoutManager((Context) NvEventQueueActivity.getInstance()));
+                this.mCustomRecyclerView.setLayoutManager(new LinearLayoutManager((Context) Samp.getInstance()));
                 this.mCustomRecyclerView.setAdapter(adapter);
 
                 mMainLayout.post(() ->{

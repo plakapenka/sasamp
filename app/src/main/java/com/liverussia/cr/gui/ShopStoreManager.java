@@ -25,6 +25,8 @@ public class ShopStoreManager {
     private MaterialButton shopstore_exit;
     private ImageView shopstore_camera;
 
+    native void onShopStoreClick(int buttonid);
+
     public ShopStoreManager(Activity activity){
         br_shopstroreselect_layout = activity.findViewById(R.id.br_shopstroreselect_layout);
         shopstore_buyinfo = activity.findViewById(R.id.shopstore_buyinfo);
@@ -36,25 +38,25 @@ public class ShopStoreManager {
 
         shopstore_left.setOnClickListener(view -> {
             view.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.button_click));
-            NvEventQueueActivity.getInstance().onShopStoreClick(0);
+            onShopStoreClick(0);
         });
 
         shopstore_right.setOnClickListener(view -> {
             view.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.button_click));
-            NvEventQueueActivity.getInstance().onShopStoreClick(3);
+            onShopStoreClick(3);
         });
 
         shopstore_buy.setOnClickListener(view -> {
             view.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.button_click));
-            NvEventQueueActivity.getInstance().onShopStoreClick(1);
+            onShopStoreClick(1);
         });
 
         shopstore_exit.setOnClickListener(view -> {
-            NvEventQueueActivity.getInstance().onShopStoreClick(2);
+            onShopStoreClick(2);
         });
 
         shopstore_camera.setOnClickListener(view -> {
-            NvEventQueueActivity.getInstance().onShopStoreClick(4);
+            onShopStoreClick(4);
         });
 
         br_shopstroreselect_layout.setVisibility(View.GONE);

@@ -15,6 +15,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.liverussia.cr.R;
+import com.liverussia.cr.core.Samp;
 import com.liverussia.cr.gui.util.LinearLayoutManagerWrapper;
 import com.liverussia.cr.gui.util.Utils;
 import com.nvidia.devtech.NvEventQueueActivity;
@@ -116,7 +117,7 @@ public class Tab {
             this.mOnline.setText(this.mPlayerData.size() + "/1000");
 
             mTabAdapter = new TabAdapter(this.mPlayerData);
-            mPlayersList.setLayoutManager(new LinearLayoutManagerWrapper(NvEventQueueActivity.getInstance()));
+            mPlayersList.setLayoutManager(new LinearLayoutManagerWrapper(Samp.getInstance()));
             mPlayersList.setAdapter(this.mTabAdapter);
             mSearch.setText("");
             setVisibleIconInSearchView("");

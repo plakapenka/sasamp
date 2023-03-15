@@ -65,194 +65,6 @@ void CJavaWrapper::ShowClientSettings()
 #include "java_systems/CAuthorization.h"
 #include "java_systems/CChooseSpawn.h"
 
-extern "C"
-{
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_sendRPC(JNIEnv* pEnv, jobject thiz, jint type, jbyteArray str, jint action)
-	{
-		switch(type) {
-			case 1:
-				switch(action) {
-					case 1:
-						pNetGame->SendChatCommand("/gps");
-						break;
-					case 2:
-						pNetGame->SendChatCommand("/mm");
-						break;
-					case 3:
-						pNetGame->SendChatCommand("/inv");
-						break;
-					case 4: {
-						//pNetGame->SendChatCommand("/anim");
-						pNetGame->SendChatCommand("/anim");	
-						break;
-					}
-					case 5:
-						pNetGame->SendChatCommand("/donat");
-						break;
-					case 6:
-						pNetGame->SendChatCommand("/car");
-						break;
-					case 7:
-					{
-						pNetGame->SendChatCommand("/report");
-						break;
-					}
-					case 8:
-					{
-						pNetGame->SendChatCommand("/promo");
-						break;
-					}
-					case 9:
-					{
-						CTab::toggle();
-						break;
-					}
-				}
-			case 2:
-				switch(action) {
-					case 0:
-						//if (pChatWindow)
-						//	CChatWindow::AddDebugMessage("{bbbbbb}Клиент {ff0000}LIVE RUSSIA{bbbbbb} запущен{ffffff}");
-						//pNetGame = new CNetGame(cryptor::create("46.174.49.47", 14).decrypt(), atoi(cryptor::create("7788", 4).decrypt()), pSettings->GetReadOnly().szNickName, pSettings->GetReadOnly().szPassword);
-						//pSettings->GetWrite().szServer = 0;
-						break;
-				}
-		}
-		
-	}
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_togglePlayer(JNIEnv* pEnv, jobject thiz, jint toggle) {
-		if(toggle)
-			pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->TogglePlayerControllable(false, true);
-		else
-			pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->TogglePlayerControllable(true, true);
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onRegisterSkinBackClick(JNIEnv *pEnv, jobject thiz) {
-		g_pJavaWrapper->RegisterSkinValue--;
-		if (g_pJavaWrapper->RegisterSexMale == 1) // man
-		{
-			if (g_pJavaWrapper->RegisterSkinValue < 1)
-			{
-				g_pJavaWrapper->RegisterSkinValue = 9;
-			}
-		}
-		else if (g_pJavaWrapper->RegisterSexMale == 2) // woman
-		{
-			if (g_pJavaWrapper->RegisterSkinValue < 1)
-			{
-				g_pJavaWrapper->RegisterSkinValue = 4;
-			}
-		}
-		//CChatWindow::AddDebugMessage("chooseskinvalue: %d, chooseskinid: %d", g_pJavaWrapper->RegisterSkinValue, g_pJavaWrapper->ChangeRegisterSkin(g_pJavaWrapper->RegisterSkinValue));
-		pNetGame->SendRegisterSkinPacket(g_pJavaWrapper->ChangeRegisterSkin(g_pJavaWrapper->RegisterSkinValue));
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onRegisterSkinNextClick(JNIEnv *pEnv, jobject thiz) {
-		g_pJavaWrapper->RegisterSkinValue++;
-		if (g_pJavaWrapper->RegisterSexMale == 1) // man
-		{
-			if (g_pJavaWrapper->RegisterSkinValue > 9)
-			{
-				g_pJavaWrapper->RegisterSkinValue = 1;
-			}
-		}
-		else if (g_pJavaWrapper->RegisterSexMale == 2) // woman
-		{
-			if (g_pJavaWrapper->RegisterSkinValue > 4)
-			{
-				g_pJavaWrapper->RegisterSkinValue = 1;
-			}
-		}
-		//CChatWindow::AddDebugMessage("chooseskinvalue: %d, chooseskinid: %d", g_pJavaWrapper->RegisterSkinValue, g_pJavaWrapper->ChangeRegisterSkin(g_pJavaWrapper->RegisterSkinValue));
-		pNetGame->SendRegisterSkinPacket(g_pJavaWrapper->ChangeRegisterSkin(g_pJavaWrapper->RegisterSkinValue));
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onRegisterChooseSkinClick(JNIEnv *pEnv, jobject thiz, jint choosesex) {
-		g_pJavaWrapper->RegisterSexMale = choosesex;
-		pGame->ToggleHUDElement(0, false);
-		CPlayerPed *pPlayer = pGame->FindPlayerPed();
-		CCamera *pCamera = pGame->GetCamera();
-
-		pNetGame->SendRegisterSkinPacket(g_pJavaWrapper->ChangeRegisterSkin(g_pJavaWrapper->RegisterSkinValue));
-
-		if(pPlayer->IsInVehicle())
-			pPlayer->RemoveFromVehicleAndPutAt(-82.9753, 966.7605, 1597.9788);
-		else
-			pPlayer->TeleportTo(-82.9753, 966.7605, 1597.9788);
-
-		pPlayer->ForceTargetRotation(90.0f);
-
-		if (pPlayer && pCamera)
-		{
-			pPlayer->SetInterior(2);
-			pCamera->SetPosition(-85.068267, 966.699584, 1598.421997, 0.0f, 0.0f, 0.0f);
-			pCamera->LookAtPoint(-80.124114, 967.120971, 1597.807373, 2);
-		}
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onRegisterClick(JNIEnv *pEnv, jobject thiz, jstring password, jstring mail, jint choosesex) {
-		const char *inputPassword = pEnv->GetStringUTFChars(password, nullptr);
-		const char *inputMail = pEnv->GetStringUTFChars(mail, nullptr);
-
-		if(pNetGame) {
-			pNetGame->SendRegisterPacket((char*)inputPassword, (char*)inputMail, choosesex, g_pJavaWrapper->RegisterSkinId);
-		}
-
-		pGame->ToggleHUDElement(0, false);
-
-		Log("onRegisterPlayClick: inputPassword - %s, inputMail - %s, ChooseSex - %d", inputPassword, inputMail, choosesex);
-
-		pEnv->ReleaseStringUTFChars(password, inputPassword);
-		pEnv->ReleaseStringUTFChars(mail, inputMail);
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onSamwillHideGame(JNIEnv *pEnv, jobject thiz, jint samwillpacket) {
-		pNetGame->SendCustomPacket(251, 20, samwillpacket);
-		Log("onSamwillHideGame: Quantity - %d", samwillpacket);
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onArmyGameClose(JNIEnv *pEnv, jobject thiz) {
-		pNetGame->SendCustomPacket(251, 45, 1);
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onFuelStationClick(JNIEnv *pEnv, jobject thiz, jint fueltype, jint fuelliters) {
-		pNetGame->SendCustomPacketFuelData(251, 39, fueltype, fuelliters);
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onShopStoreClick(JNIEnv *pEnv, jobject thiz, jint buttonid) {
-		pNetGame->SendCustomPacket(251, 42, buttonid);
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onGunShopClick(JNIEnv *pEnv, jobject thiz, jint weaponid) {
-		pNetGame->SendCustomPacket(251, 44, weaponid);
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onSpeedTurnRightClick(JNIEnv *pEnv, jobject thiz, jint state) {
-		pNetGame->SendSpeedTurnPacket(2, state);
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onSpeedTurnCenterClick(JNIEnv *pEnv, jobject thiz, jint state) {
-		pNetGame->SendSpeedTurnPacket(1, state);
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onSpeedTurnLeftClick(JNIEnv *pEnv, jobject thiz, jint state) {
-		pNetGame->SendSpeedTurnPacket(0, state);
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onDeathInfoWait(JNIEnv *pEnv, jobject thiz) {
-		pNetGame->SendCustomPacket(251, 48, 0);
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onDeathInfoClick(JNIEnv *pEnv, jobject thiz) {
-		pNetGame->SendCustomPacket(251, 48, 1);
-	}
-
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onAuctionButtonClick(JNIEnv *pEnv, jobject thiz, jint btnid) {
-		pNetGame->SendCustomPacket(251, 52, btnid);
-	}
-}
-
 void CJavaWrapper::ShowFuelStation(int type, int price1, int price2, int price3, int price4, int price5, int maxCount)
 {
     JNIEnv* env = GetEnv();
@@ -645,43 +457,6 @@ CJavaWrapper* g_pJavaWrapper = nullptr;
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_nvidia_devtech_NvEventQueueActivity_native_1SendAutoShopButton(JNIEnv *env, jobject thiz,
-																		jint button_id) {
-	uint8_t packet = ID_CUSTOM_RPC;
-	uint8_t RPC = RPC_CLICK_AUTOSHOP;
-	uint8_t button = button_id;
-
-
-	RakNet::BitStream bsSend;
-	bsSend.Write(packet);
-	bsSend.Write(RPC);
-	bsSend.Write(button);
-	pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
-}
-
-extern "C"
-{
-JNIEXPORT void JNICALL
-Java_com_nvidia_devtech_NvEventQueueActivity_SendCasinoButt(JNIEnv *env, jobject thiz,
-                                                            jint buttonID) {
-    uint8_t packet = ID_CUSTOM_RPC;
-    uint8_t RPC = RPC_SHOW_DICE_TABLE;
-    uint8_t button = buttonID;
-
-
-    RakNet::BitStream bsSend;
-    bsSend.Write(packet);
-    bsSend.Write(RPC);
-    bsSend.Write(button);
-    pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
-}
-
-}
-
-
-
-extern "C"
-JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_Casino_1LuckyWheel_ClickButt(JNIEnv *env, jobject thiz, jint button_id) {
 	pGame->isCasinoWheelActive = false;
 	if(button_id == 228)
@@ -702,7 +477,16 @@ Java_com_liverussia_cr_gui_Casino_1LuckyWheel_ClickButt(JNIEnv *env, jobject thi
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_nvidia_devtech_NvEventQueueActivity_onOilFactoryGameClose(JNIEnv *env, jobject thiz,
+Java_com_liverussia_cr_core_Samp_playUrlSound(JNIEnv *env, jclass clazz, jstring url) {
+	const char *_url = env->GetStringUTFChars(url, nullptr);
+
+	pNetGame->GetStreamPool()->PlayIndividualStream(_url, BASS_STREAM_AUTOFREE);
+
+	env->ReleaseStringUTFChars(url, _url);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_OilFactoryManager_onOilFactoryGameClose(JNIEnv *env, jobject thiz,
 																   jboolean success) {
 	uint8_t packet = ID_CUSTOM_RPC;
 	uint8_t RPC = RPC_SHOW_OILGAME;
@@ -714,13 +498,207 @@ Java_com_nvidia_devtech_NvEventQueueActivity_onOilFactoryGameClose(JNIEnv *env, 
 
 	pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
 }
-
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_core_Samp_playUrlSound(JNIEnv *env, jclass clazz, jstring url) {
-	const char *_url = env->GetStringUTFChars(url, nullptr);
+Java_com_liverussia_cr_gui_AutoShop_sendAutoShopButton(JNIEnv *env, jobject thiz, jint button_id) {
+	uint8_t packet = ID_CUSTOM_RPC;
+	uint8_t RPC = RPC_CLICK_AUTOSHOP;
+	uint8_t button = button_id;
 
-	pNetGame->GetStreamPool()->PlayIndividualStream(_url, BASS_STREAM_AUTOFREE);
 
-	env->ReleaseStringUTFChars(url, _url);
+	RakNet::BitStream bsSend;
+	bsSend.Write(packet);
+	bsSend.Write(RPC);
+	bsSend.Write(button);
+	pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_RegistrationManager_onRegisterChooseSkinClick(JNIEnv *env, jobject thiz,
+																		 jint choosesex) {
+	g_pJavaWrapper->RegisterSexMale = choosesex;
+	pGame->ToggleHUDElement(0, false);
+	CPlayerPed *pPlayer = pGame->FindPlayerPed();
+	CCamera *pCamera = pGame->GetCamera();
+
+	pNetGame->SendRegisterSkinPacket(g_pJavaWrapper->ChangeRegisterSkin(g_pJavaWrapper->RegisterSkinValue));
+
+	if(pPlayer->IsInVehicle())
+		pPlayer->RemoveFromVehicleAndPutAt(-82.9753, 966.7605, 1597.9788);
+	else
+		pPlayer->TeleportTo(-82.9753, 966.7605, 1597.9788);
+
+	pPlayer->ForceTargetRotation(90.0f);
+
+	if (pPlayer && pCamera)
+	{
+		pPlayer->SetInterior(2);
+		pCamera->SetPosition(-85.068267, 966.699584, 1598.421997, 0.0f, 0.0f, 0.0f);
+		pCamera->LookAtPoint(-80.124114, 967.120971, 1597.807373, 2);
+	}
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_RegistrationManager_onRegisterSkinBackClick(JNIEnv *env, jobject thiz) {
+	g_pJavaWrapper->RegisterSkinValue--;
+	if (g_pJavaWrapper->RegisterSexMale == 1) // man
+	{
+		if (g_pJavaWrapper->RegisterSkinValue < 1)
+		{
+			g_pJavaWrapper->RegisterSkinValue = 9;
+		}
+	}
+	else if (g_pJavaWrapper->RegisterSexMale == 2) // woman
+	{
+		if (g_pJavaWrapper->RegisterSkinValue < 1)
+		{
+			g_pJavaWrapper->RegisterSkinValue = 4;
+		}
+	}
+	//CChatWindow::AddDebugMessage("chooseskinvalue: %d, chooseskinid: %d", g_pJavaWrapper->RegisterSkinValue, g_pJavaWrapper->ChangeRegisterSkin(g_pJavaWrapper->RegisterSkinValue));
+	pNetGame->SendRegisterSkinPacket(g_pJavaWrapper->ChangeRegisterSkin(g_pJavaWrapper->RegisterSkinValue));
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_RegistrationManager_onRegisterSkinNextClick(JNIEnv *env, jobject thiz) {
+	g_pJavaWrapper->RegisterSkinValue++;
+	if (g_pJavaWrapper->RegisterSexMale == 1) // man
+	{
+		if (g_pJavaWrapper->RegisterSkinValue > 9)
+		{
+			g_pJavaWrapper->RegisterSkinValue = 1;
+		}
+	}
+	else if (g_pJavaWrapper->RegisterSexMale == 2) // woman
+	{
+		if (g_pJavaWrapper->RegisterSkinValue > 4)
+		{
+			g_pJavaWrapper->RegisterSkinValue = 1;
+		}
+	}
+	//CChatWindow::AddDebugMessage("chooseskinvalue: %d, chooseskinid: %d", g_pJavaWrapper->RegisterSkinValue, g_pJavaWrapper->ChangeRegisterSkin(g_pJavaWrapper->RegisterSkinValue));
+	pNetGame->SendRegisterSkinPacket(g_pJavaWrapper->ChangeRegisterSkin(g_pJavaWrapper->RegisterSkinValue));
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_RegistrationManager_onRegisterClick(JNIEnv *env, jobject thiz,
+															   jstring password, jstring mail,
+															   jint sex) {
+	const char *inputPassword = env->GetStringUTFChars(password, nullptr);
+	const char *inputMail = env->GetStringUTFChars(mail, nullptr);
+
+	if(pNetGame) {
+		pNetGame->SendRegisterPacket((char*)inputPassword, (char*)inputMail, sex, g_pJavaWrapper->RegisterSkinId);
+	}
+
+	pGame->ToggleHUDElement(0, false);
+
+	Log("onRegisterPlayClick: inputPassword - %s, inputMail - %s, ChooseSex - %d", inputPassword, inputMail, sex);
+
+	env->ReleaseStringUTFChars(password, inputPassword);
+	env->ReleaseStringUTFChars(mail, inputMail);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_SamwillManager_onSamwillHideGame(JNIEnv *env, jobject thiz,
+															jint samwillpacket) {
+	pNetGame->SendCustomPacket(251, 20, samwillpacket);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_ArmyGameManager_onArmyGameClose(JNIEnv *env, jobject thiz) {
+	pNetGame->SendCustomPacket(251, 45, 1);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_FuelStationManager_onFuelStationClick(JNIEnv *env, jobject thiz,
+																 jint fueltype, jint fuelliters) {
+	pNetGame->SendCustomPacketFuelData(251, 39, fueltype, fuelliters);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_ShopStoreManager_onShopStoreClick(JNIEnv *env, jobject thiz,
+															 jint buttonid) {
+	pNetGame->SendCustomPacket(251, 42, buttonid);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_GunShopManager_onGunShopClick(JNIEnv *env, jobject thiz, jint weaponid) {
+	pNetGame->SendCustomPacket(251, 44, weaponid);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_Menu_sendRPC(JNIEnv *env, jobject thiz, jint type, jbyteArray str,
+										jint action) {
+	switch(type) {
+		case 1:
+			switch(action) {
+				case 1:
+					pNetGame->SendChatCommand("/gps");
+					break;
+				case 2:
+					pNetGame->SendChatCommand("/mm");
+					break;
+				case 3:
+					pNetGame->SendChatCommand("/inv");
+					break;
+				case 4: {
+					//pNetGame->SendChatCommand("/anim");
+					pNetGame->SendChatCommand("/anim");
+					break;
+				}
+				case 5:
+					pNetGame->SendChatCommand("/donat");
+					break;
+				case 6:
+					pNetGame->SendChatCommand("/car");
+					break;
+				case 7:
+				{
+					pNetGame->SendChatCommand("/report");
+					break;
+				}
+				case 8:
+				{
+					pNetGame->SendChatCommand("/promo");
+					break;
+				}
+				case 9:
+				{
+					CTab::toggle();
+					break;
+				}
+			}
+		case 2:
+			switch(action) {
+				case 0:
+					//if (pChatWindow)
+					//	CChatWindow::AddDebugMessage("{bbbbbb}Клиент {ff0000}LIVE RUSSIA{bbbbbb} запущен{ffffff}");
+					//pNetGame = new CNetGame(cryptor::create("46.174.49.47", 14).decrypt(), atoi(cryptor::create("7788", 4).decrypt()), pSettings->GetReadOnly().szNickName, pSettings->GetReadOnly().szPassword);
+					//pSettings->GetWrite().szServer = 0;
+					break;
+			}
+	}
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_CasinoDice_SendCasinoButt(JNIEnv *env, jobject thiz, jint button_id) {
+	uint8_t packet = ID_CUSTOM_RPC;
+	uint8_t RPC = RPC_SHOW_DICE_TABLE;
+	uint8_t button = button_id;
+
+
+	RakNet::BitStream bsSend;
+	bsSend.Write(packet);
+	bsSend.Write(RPC);
+	bsSend.Write(button);
+	pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_core_Samp_togglePlayer(JNIEnv *env, jobject thiz, jint toggle) {
+	if(toggle)
+		pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->TogglePlayerControllable(false, true);
+	else
+		pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->TogglePlayerControllable(true, true);
 }

@@ -33,6 +33,7 @@ public class FuelStationManager {
     private TextView fuelstation_literinfo;
     private SeekBar fuelstation_bar;
 
+    native void onFuelStationClick(int fueltype, int fuelliters);
     int fuelstation_active, fielstation_progress, fuelprice1, fuelprice2, fuelprice3, fuelprice4, fuelprice5, fuelprice;
 
     public FuelStationManager(Activity activity){
@@ -208,7 +209,7 @@ public class FuelStationManager {
     }
 
     public void Hide(int typefuel, int literfuel) {
-        NvEventQueueActivity.getInstance().onFuelStationClick(typefuel, literfuel);
+        onFuelStationClick(typefuel, literfuel);
         Utils.HideLayout(br_fuelstation_layout, true);
     }
 }

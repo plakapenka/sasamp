@@ -28,6 +28,8 @@ public class OilFactoryManager {
     private View oil_factory_exit_button;
     public CountDownTimer countDownTimer;
 
+    native void onOilFactoryGameClose(boolean success);
+
     int oliwaterstate, oiloilstate;
 
     public void startCountdown() {
@@ -111,7 +113,7 @@ public class OilFactoryManager {
     }
 
     public void Hide(boolean succes) {
-        NvEventQueueActivity.getInstance().onOilFactoryGameClose(succes);
+        onOilFactoryGameClose(succes);
         Utils.HideLayout(br_oilfactory_layout, true);
     }
 }
