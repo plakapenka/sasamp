@@ -7,7 +7,10 @@ import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.Log;
+import android.view.View;
+import android.widget.FrameLayout;
 
+import com.liverussia.cr.R;
 import com.liverussia.cr.gui.AdminRecon;
 import com.liverussia.cr.gui.ArmyGameManager;
 import com.liverussia.cr.gui.AucContainer;
@@ -57,6 +60,7 @@ public class Samp extends GTASA
     FuelStationManager mFuelStationManager = null;
     OilFactoryManager mOilFactoryManager = null;
     SamwillManager mSamwillManager = null;
+    DialogClientSettings mDialogClientSettings = null;
 
     ArmyGameManager mArmyGameManager = null;
     ShopStoreManager mShopStoreManager = null;
@@ -194,5 +198,25 @@ public class Samp extends GTASA
 
     public static Samp getInstance() {
         return thiz;
+    }
+
+    public void showClientSettings()
+    {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(mDialogClientSettings != null)
+                {
+                    mDialogClientSettings = null;
+                }
+                mDialogClientSettings = new DialogClientSettings();
+                mDialogClientSettings.show(getSupportFragmentManager(), "test");
+            }
+        });
+    }
+
+    public void setPauseState(boolean z2) {
+        FrameLayout mAndroidUI = findViewById(R.id.ui_layout);
+        runOnUiThread(() -> mAndroidUI.setVisibility(z2 ? View.GONE:View.VISIBLE));
     }
 }
