@@ -101,9 +101,9 @@
                 android:layout_height="@dimen/_100sdp"
                 android:layout_marginLeft="@dimen/_75sdp"
                 android:layout_marginTop="@dimen/_24sdp"
-                app:layout_constraintBottom_toBottomOf="@+id/hud_down_bg"
+                app:layout_constraintBottom_toBottomOf="@+id/hud_bg"
                 app:layout_constraintStart_toEndOf="@+id/hud_center_bg"
-                app:layout_constraintTop_toTopOf="@+id/imageView">
+                app:layout_constraintTop_toTopOf="@+id/hud_bg">
 
                 <ImageView
                     android:id="@+id/hud_star_1"
