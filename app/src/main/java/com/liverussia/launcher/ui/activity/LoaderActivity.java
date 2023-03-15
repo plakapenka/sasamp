@@ -2,11 +2,13 @@ package com.liverussia.launcher.ui.activity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -377,24 +379,20 @@ public class LoaderActivity extends Activity {
 
     private void installApk() {
         try {
-            File file = new File(getExternalFilesDir(null).toString() + DOWNLOAD_DIRECTORY_NAME,  UPDATED_APK_PATH);
-            Intent intent;
+            File file = new File(getExternalFilesDir(null).toString() + DOWNLOAD_DIRECTORY_NAME + UPDATED_APK_PATH);
 
             if (file.exists()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    Uri apkUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + FILE_PROVIDER_EXTENSION, file);
-//                    intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
-                    intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setData(apkUri);
-                    intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                } else {
-                    Uri apkUri = Uri.fromFile(file);
-                    intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setDataAndType(apkUri, APK_DATA_TYPE);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                Uri uri = FileProvider.getUriForFile(getApplicationContext(), BuildConfig.APPLICATION_ID + ".provider", file);
+                intent.setDataAndType(uri, "application/vnd.android.package-archive");
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                try {
+                    getApplicationContext().startActivity(intent);
+                } catch (ActivityNotFoundException e) {
+                    e.printStackTrace();
+                    Log.e("TAG", "Error in opening the file!");
                 }
-                startActivity(intent);
-                finish();
             }
             else {
                 activityService.showMessage(ErrorMessage.APK_UPDATE_FILE_NOT_FOUND.getText(), this);

@@ -14,6 +14,4 @@ public class LatestVersionInfoDto {
     private String path;
 
     private long size;
-
-    private Boolean isCheckFilesOn;
 }

@@ -22,8 +22,7 @@ public enum StorageElements {
 
     ROULETTE_SERVER_HOST("roulette_server"),
 
-    TOKENS_RECEIVE_TIME("token_receive_time"),
-    IS_CHECK_FILES_ON("is_check_files_on");
+    TOKENS_RECEIVE_TIME("token_receive_time");
 
     private final String value;
 }

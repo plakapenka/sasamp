@@ -127,7 +127,6 @@ public class PolicyActivity extends Activity {
         int currentVersion = getCurrentVersion();
         int latestVersion = Integer.parseInt(latestVersionInfo.getVersion());
         MainUtils.LATEST_APK_INFO = latestVersionInfo;
-        Storage.addProperty(StorageElements.IS_CHECK_FILES_ON, latestVersionInfo.getIsCheckFilesOn(), this);
 
         if (currentVersion >= latestVersion) {
             startLauncher();
