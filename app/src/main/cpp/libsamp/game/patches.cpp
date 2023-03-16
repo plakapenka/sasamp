@@ -252,6 +252,8 @@ void ApplyPatches()
 	CHook::RET(g_libGTASA + 0x004B425E); // CPedGroupIntelligence::Process crash
 	CHook::RET(g_libGTASA + 0x004B2050); // CPedGroupMembership::SetLeader crash
 	CHook::RET(g_libGTASA + 0x004B3156); // CPedGroupIntelligence::Flush crash!111111111
+	//CHook::RET(g_libGTASA + 0x0048B954); // CTheScripts::Save()
+	CHook::NOP(g_libGTASA + 0x005E54FA, 2); // не сохранять при сворачивании
 
 	CHook::NOP(g_libGTASA + 0x004409AE, 2); // моргание значнок на карте
 	CHook::NOP(g_libGTASA + 0x002AB400, 85); // названия зон при просмотре карты
@@ -272,10 +274,10 @@ void ApplyPatches()
 //	//UnFuck(g_libGTASA + 0x008B8018);
 //	//*(uint8_t*)(g_libGTASA + 0x008B8018) = 1;
 
-//	// DefaultPCSaveFileName
-//	char* DefaultPCSaveFileName = (char*)(g_libGTASA + 0x60EAE8);
-//	memcpy((char*)DefaultPCSaveFileName, "GTASAMP", 8);
-//
+	// DefaultPCSaveFileName
+	char* DefaultPCSaveFileName = (char*)(g_libGTASA + 0x006B012C);
+	memcpy((char*)DefaultPCSaveFileName, "GTASAMP", 8);
+
 //	// live russia
 //	CHook::RET(g_libGTASA + 0x0051DEC4);			// живность в воде WaterCreatureManager_c::Update
 

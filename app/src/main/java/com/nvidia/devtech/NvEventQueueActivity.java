@@ -55,16 +55,6 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.liverussia.cr.R;
 import com.liverussia.cr.core.DialogClientSettings;
-import com.liverussia.cr.gui.ArmyGameManager;
-import com.liverussia.cr.gui.AutoShop;
-import com.liverussia.cr.gui.ChooseSpawn;
-import com.liverussia.cr.gui.FuelStationManager;
-import com.liverussia.cr.gui.GunShopManager;
-import com.liverussia.cr.gui.Menu;
-import com.liverussia.cr.gui.OilFactoryManager;
-import com.liverussia.cr.gui.RegistrationManager;
-import com.liverussia.cr.gui.SamwillManager;
-import com.liverussia.cr.gui.ShopStoreManager;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -99,10 +89,9 @@ public abstract class NvEventQueueActivity extends FragmentActivity implements S
     private int SwapBufferSkip = 0;
 
     protected boolean paused = false;
-   // private boolean inputPaused = false;
 
     protected boolean wantsMultitouch = false;
-    private boolean inputPaused = false;
+
 	protected boolean supportPauseResume = true;
     protected boolean ResumeEventDone = false;
 
@@ -140,6 +129,7 @@ public abstract class NvEventQueueActivity extends FragmentActivity implements S
     private String glVersion = null;
     //private boolean GameIsFocused = false;
     private boolean viewIsActive = false;
+    boolean waitingForResume = false;
 
     private FrameLayout mRootFrame = null;
     private SurfaceView mSurfaceView = null;
@@ -441,34 +431,7 @@ public abstract class NvEventQueueActivity extends FragmentActivity implements S
     }
 
     public void onWindowFocusChanged(boolean hasFocus) {
-//        if (getSupportFragmentManager().findFragmentByTag("dialog") != null) {
-//            super.onWindowFocusChanged(z);
-//            return;
-//        }
-//        if (this.ResumeEventDone && this.viewIsActive && !this.paused) {
-//
-//            if (GameIsFocused && !z) {
-//                System.out.println("*** onWindowFocusChanged pauseEvent entering");
-//                pauseEvent();
-//                System.out.println("*** onWindowFocusChanged pauseEvent executed");
-//            } else if (!GameIsFocused && z) {
-//                System.out.println("*** onWindowFocusChanged resumeEvent entering");
-//                resumeEvent();
-//                System.out.println("*** onWindowFocusChanged resumeEvent executed");
-//            }
-//            this.GameIsFocused = z;
-//        }
-//        super.onWindowFocusChanged(z);
-//        if (z) {
-//            hideSystemUI();
-//            return;
-//        }
 
-        if (hasFocus) {
-            hideSystemUI();
-            this.paused = false;
-            resumeEvent();
-        }
         super.onWindowFocusChanged(hasFocus);
     }
 
@@ -479,13 +442,14 @@ public abstract class NvEventQueueActivity extends FragmentActivity implements S
      */
     @Override
     public void onResume() {
+        Log.d("NvEvent", "NvEvent onResume");
 //        if (this.mSensorManager != null) {
 //            this.mSensorManager.registerListener(this, this.mSensorManager.getDefaultSensor(1), this.mSensorDelay);
 //        }
 
         super.onResume();
         this.paused = false;
-        this.inputPaused = false;
+
     }
 
     /**
@@ -495,6 +459,8 @@ public abstract class NvEventQueueActivity extends FragmentActivity implements S
      */
     @Override
     public void onRestart() {
+        Log.d("NvEvent", "NvEvent onRestart");
+
         super.onRestart();
     }
     
@@ -504,12 +470,14 @@ public abstract class NvEventQueueActivity extends FragmentActivity implements S
      * And remaps as needed into the native calls exposed by nv_event.h
      */
     public void onPause() {
+        Log.d("NvEvent", "**** onPause");
         super.onPause();
-        if (this.ResumeEventDone) {
-            pauseEvent();
-        }
         this.paused = true;
-        this.inputPaused = true;
+        if (this.ResumeEventDone) {
+            Log.d("NvEvent", "java is invoking pauseEvent(), this will block until\nthe client calls NVEventPauseProcessed");
+            pauseEvent();
+            Log.d("NvEvent", "pauseEvent() returned");
+        }
     }
     
     /**
@@ -519,6 +487,7 @@ public abstract class NvEventQueueActivity extends FragmentActivity implements S
      */
 	@Override
     public void onStop() {
+        Log.d("NvEvent", "NvEvent onStop");
 //        if (this.mSensorManager != null) {
 //            this.mSensorManager.unregisterListener(this);
 //        }
@@ -538,6 +507,7 @@ public abstract class NvEventQueueActivity extends FragmentActivity implements S
      */
     @Override
     public void onDestroy() {
+        Log.d("NvEvent", "NvEvent onDestroy");
 //        if (this.supportPauseResume) {
 //            quitAndWait();
 //            finish();
@@ -561,20 +531,21 @@ public abstract class NvEventQueueActivity extends FragmentActivity implements S
         }
     }
 
-//    public void DoResumeEvent()
-//    {
-//        new Thread(new Runnable() {
-//            public void run() {
-//                while (NvEventQueueActivity.this.cachedSurfaceHolder == null)
-//                {
-//                    NvEventQueueActivity.this.mSleep(1000);
-//                }
-//                System.out.println("Call from DoResumeEvent");
-//                NvEventQueueActivity.this.resumeEvent();
-//                NvEventQueueActivity.this.ResumeEventDone = true;
-//            }
-//        }).start();
-//    }
+    public void DoResumeEvent() {
+        if (!this.waitingForResume) {
+            new Thread(new Runnable() {
+                public void run() {
+                    NvEventQueueActivity.this.waitingForResume = true;
+                    while (NvEventQueueActivity.this.cachedSurfaceHolder == null) {
+                        NvEventQueueActivity.this.mSleep(1000);
+                    }
+                    NvEventQueueActivity.this.waitingForResume = false;
+                    NvEventQueueActivity.this.resumeEvent();
+                    NvEventQueueActivity.this.ResumeEventDone = true;
+                }
+            }).start();
+        }
+    }
 
 	public void onAccuracyChanged(Sensor sensor, int accuracy) {
 		// Auto-generated method stub
@@ -754,113 +725,54 @@ public abstract class NvEventQueueActivity extends FragmentActivity implements S
      * And remaps as needed into the native calls exposed by nv_event.h
      */
 
-    public SurfaceView GetSurfaceView()
-    {
-        return mSurfaceView;
-    }
-
-    protected boolean systemInit()
+    public boolean systemInit()
     {
         final NvEventQueueActivity act = this;
 
-		System.out.println("ln systemInit");
-
+        Log.d("NvEvent", "ln systemInit");
         setContentView(R.layout.main_render_screen);
-
-        SurfaceView view = findViewById(R.id.main_sv);
-
-       // view.setAlpha(0);
-
-        mSurfaceView = view;
-        mRootFrame = findViewById(R.id.main_fl_root);
-        mAndroidUI = findViewById(R.id.ui_layout);
-
-        SurfaceHolder holder = view.getHolder();
+        SurfaceView surfaceView = (SurfaceView) findViewById(R.id.main_sv);
+        this.mSurfaceView = surfaceView;
+        this.mRootFrame = (FrameLayout) findViewById(R.id.main_fl_root);
+        SurfaceHolder holder = surfaceView.getHolder();
         holder.setType(2);
         holder.setKeepScreenOn(true);
+        surfaceView.setFocusable(true);
+        surfaceView.setFocusableInTouchMode(true);
 
-        view.setFocusable(true);
-        view.setFocusableInTouchMode(true);
+        getWindow().setSustainedPerformanceMode(true);
 
-     //   DoResumeEvent();
-
-        holder.addCallback(new Callback()
-        {
-            // @Override
-            public void surfaceCreated(SurfaceHolder holder)
-            {
-                System.out.println("systemInit.surfaceCreated");
-                @SuppressWarnings("unused")
-                boolean firstRun = cachedSurfaceHolder == null;
-                cachedSurfaceHolder = holder;
-
-                if (fixedWidth!=0 && fixedHeight!=0)
-                {
-                    System.out.println("Setting fixed window size");
-                    holder.setFixedSize(fixedWidth, fixedHeight);
+        DoResumeEvent();
+        holder.addCallback(new SurfaceHolder.Callback() {
+            public void surfaceCreated(SurfaceHolder holder) {
+                boolean firstRun = NvEventQueueActivity.this.cachedSurfaceHolder == null;
+                NvEventQueueActivity.this.cachedSurfaceHolder = holder;
+                if (!firstRun && NvEventQueueActivity.this.ResumeEventDone) {
+                    NvEventQueueActivity.this.resumeEvent();
                 }
-
-                ranInit = true;
-                if(!supportPauseResume && !init(true))
-                {
-                    handler.post(new Runnable()
-                                 {
-                                     public void run()
-                                     {
-                                         new AlertDialog.Builder(act)
-                                                 .setMessage("Application initialization failed. The application will exit.")
-                                                 .setPositiveButton("Ok",
-                                                         new DialogInterface.OnClickListener ()
-                                                         {
-                                                             public void onClick(DialogInterface i, int a)
-                                                             {
-                                                                 finish();
-                                                             }
-                                                         }
-                                                 )
-                                                 .setCancelable(false)
-                                                 .show();
-                                     }
-                                 }
-                    );
+                boolean unused = NvEventQueueActivity.this.ranInit = true;
+                if (NvEventQueueActivity.this.supportPauseResume || !NvEventQueueActivity.this.init(false)) {
                 }
+                System.out.println("surfaceCreated: w:" + NvEventQueueActivity.this.surfaceWidth + ", h:" + NvEventQueueActivity.this.surfaceHeight);
+                NvEventQueueActivity.this.setWindowSize(NvEventQueueActivity.this.surfaceWidth, NvEventQueueActivity.this.surfaceHeight);
 
-               // if (!firstRun && ResumeEventDone)
-                //{
-                    System.out.println("entering resumeEvent");
-                    resumeEvent();
-                    System.out.println("returned from resumeEvent");
-               // }
-                setWindowSize(surfaceWidth, surfaceHeight);
+                if (firstRun) {
+                   // NvEventQueueActivity.this.GamepadReportSurfaceCreated(holder);
+                }
             }
 
-            /**
-             * Implementation function: defined in libnvevent.a
-             * The application does not and should not overide this; nv_event handles this internally
-             * And remaps as needed into the native calls exposed by nv_event.h
-             */
-            // @Override
-            public void surfaceChanged(SurfaceHolder holder, int format,
-                                       int width, int height)
-            {
+            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
                 System.out.println("Surface changed: " + width + ", " + height);
-                surfaceWidth = width;
-                surfaceHeight = height;
-                setWindowSize(surfaceWidth, surfaceHeight);
+                NvEventQueueActivity.this.surfaceWidth = width;
+                NvEventQueueActivity.this.surfaceHeight = height;
+                NvEventQueueActivity.this.setWindowSize(NvEventQueueActivity.this.surfaceWidth, NvEventQueueActivity.this.surfaceHeight);
+                NvEventQueueActivity.this.hideSystemUI();
             }
 
-            /**
-             * Implementation function: defined in libnvevent.a
-             * The application does not and should not overide this; nv_event handles this internally
-             * And remaps as needed into the native calls exposed by nv_event.h
-             */
-            // @Override
-            public void surfaceDestroyed(SurfaceHolder holder)
-            {
-                System.out.println("systemInit.surfaceDestroyed");
-                viewIsActive = false;
-                pauseEvent();
-                destroyEGLSurface();
+            public void surfaceDestroyed(SurfaceHolder holder) {
+                NvEventQueueActivity.this.pauseEvent();
+                NvEventQueueActivity.this.destroyEGLSurface();
+                NvEventQueueActivity.this.viewIsActive = false;
             }
         });
         return true;
@@ -1160,31 +1072,28 @@ public abstract class NvEventQueueActivity extends FragmentActivity implements S
         }
     }
 
-    public boolean makeCurrent()
-    {
-        if (eglContext == null)
-		{
-	        System.out.println("eglContext is NULL");
-	        return false;
-	    }
-        else if (eglSurface == null)
-        {
-	        System.out.println("eglSurface is NULL");
-	        return false;
-	    }
-        else if (!egl.eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext))
-        {
-            if (!egl.eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext))
-            {
-                System.out.println("eglMakeCurrent err: " + egl.eglGetError());
+    public boolean makeCurrent() {
+        EGLContext eGLContext = this.eglContext;
+        if (eGLContext == null) {
+            Log.d("NvEvent","eglContext is NULL");
+            return false;
+        }
+        EGLSurface eGLSurface = this.eglSurface;
+        if (eGLSurface == null) {
+            Log.d("NvEvent","eglSurface is NULL");
+            return false;
+        }
+        if (!this.egl.eglMakeCurrent(this.eglDisplay, eGLSurface, eGLSurface, eGLContext)) {
+            EGL10 egl10 = this.egl;
+            EGLDisplay eGLDisplay = this.eglDisplay;
+            EGLSurface eGLSurface2 = this.eglSurface;
+            if (!egl10.eglMakeCurrent(eGLDisplay, eGLSurface2, eGLSurface2, this.eglContext)) {
+                Log.d("NvEvent","eglMakeCurrent err: " + this.egl.eglGetError());
                 return false;
             }
         }
-	    
-        // This must be called after we have bound an EGL context
-        //nvAcquireTimeExtension();
         GetGLExtensions();
-	    return true;
+        return true;
     }
 
 	public int getOrientation()
@@ -1256,20 +1165,12 @@ public abstract class NvEventQueueActivity extends FragmentActivity implements S
         return toReturn;
     }
 
-
-
     public void setPauseState(boolean z2) {
         if (mAndroidUI == null) {
             mAndroidUI = (FrameLayout) findViewById(R.id.ui_layout);
         }
         runOnUiThread(() -> mAndroidUI.setVisibility(z2 ? View.GONE:View.VISIBLE));
     }
-
-
-
-
-
-
 
     public void CopyTextToBuffer(String string){
        // String text = edtCopy.getText().toString();

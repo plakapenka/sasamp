@@ -22,8 +22,8 @@ android {
     //    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         applicationId "com.liverussia.cr"
-        versionName "191"
-        versionCode 191
+        versionName "192"
+        versionCode 192
         vectorDrawables.useSupportLibrary = true
 
         lintOptions {
