@@ -11,11 +11,13 @@ import android.graphics.PorterDuff;
 import android.text.Html;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -37,6 +39,7 @@ import com.skydoves.progressview.ProgressView;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
@@ -146,6 +149,7 @@ public class HudManager {
     native void clickCameraMode();
     native void clickMultText();
     native void onWeaponChanged();
+    native boolean isAndroidKeyboard();
     ChatAdapter adapter;
     int damageSound = 0;
 
@@ -247,22 +251,24 @@ public class HudManager {
       //  ArrayAdapter<String> autocompleete = new ArrayAdapter (activity, R.layout.chat_autocompleete_line, cities);
       //  chat_input.setAdapter(autocompleete);
 
-//        chat_input.setOnEditorActionListener(new EditText.OnEditorActionListener() {
-//            @Override
-//            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-//                if (actionId == EditorInfo.IME_ACTION_SEND) {
-//                    try {
-//                        SendChatMessage(chat_input.getText().toString().getBytes("windows-1251"));
-//                    } catch (UnsupportedEncodingException e) {
-//                        e.printStackTrace();
-//                    }
-//                    chat_input.getText().clear();
-//                    ClickChatj();
-//                    return true;
-//                }
-//                return false;
-//            }
-//        });
+        chat_input.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEND) {
+                    if(chat_input.getText().length() > 0) {
+                        try {
+                            SendChatMessage(chat_input.getText().toString().getBytes("windows-1251"));
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    chat_input.getText().clear();
+                    ClickChatj(true);
+                    return true;
+                }
+                return false;
+            }
+        });
 
         defaultChatFontSize = 27;
 
@@ -964,21 +970,28 @@ public class HudManager {
         });
 
     }
-    public void ClickChatj(){
+    public void ClickChatj(boolean androidKeyboard){
         activity.runOnUiThread(() -> {
             InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
             if (chat_input_layout.getVisibility() == View.VISIBLE) {
                 chat_input_layout.setVisibility(View.GONE);
-                ToggleKeyBoard(false);
-                cursorPos = 0;
-                //   imm.hideSoftInputFromWindow(chat_input.getWindowToken(), 0);
+                if(androidKeyboard)
+                    imm.hideSoftInputFromWindow(chat_input.getWindowToken(), 0);
+                else {
+                    ToggleKeyBoard(false);
+                    cursorPos = 0;
+                }
 
             } else {
                 chat_input_layout.setVisibility(View.VISIBLE);
                 chat_input.requestFocus();
-                ToggleKeyBoard(true);
-                cursorPos = chat_input.getText().length();
-               //  imm.showSoftInput(chat_input, InputMethodManager.SHOW_IMPLICIT);
+                if(androidKeyboard)
+                    imm.showSoftInput(chat_input, InputMethodManager.SHOW_IMPLICIT);
+                else {
+                    ToggleKeyBoard(true);
+                    cursorPos = chat_input.getText().length();
+                }
+
             }
         });
 
@@ -1009,8 +1022,7 @@ public class HudManager {
 
             View view = inflater.inflate(R.layout.chatline, parent, false);
             view.setOnClickListener(view1 -> {
-                //ClickChat();
-                ClickChatj();
+                ClickChatj( isAndroidKeyboard() );
             });
             return new ViewHolder(view);
         }

@@ -303,3 +303,18 @@ Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_getNativeHpArmour
 																					 jobject thiz) {
 	CSettings::m_Settings.iHPArmourText;
 }
+
+extern "C"
+JNIEXPORT jboolean JNICALL
+Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_getAndroidKeyboard(JNIEnv *env,
+																				  jobject thiz) {
+	return CSettings::m_Settings.iAndroidKeyboard;
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_core_DialogClientSettingsCommonFragment_setAndroidKeyboard(JNIEnv *env,
+																				  jobject thiz,
+																				  jboolean b) {
+	CSettings::m_Settings.iAndroidKeyboard = b;
+	CSettings::save();
+}

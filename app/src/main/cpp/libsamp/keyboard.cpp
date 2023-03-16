@@ -423,6 +423,7 @@ void CKeyBoard::HandleInput(kbKey &key)
 
 	case KEY_SEND:
 		Send();
+		Close();
 		break;
 	case KEY_UP:
 		m_pkHistory->PageUp();
@@ -487,9 +488,7 @@ void CKeyBoard::Send()
 		}
 	}
 
-	CKeyBoard::Close();
-	CKeyBoard::Flush();
-	CHUD::ToggleChatInput(false);
+
 }
 
 kbKey *CKeyBoard::GetKeyFromPos(int x, int y)
@@ -2318,4 +2317,9 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_HudManager_SendChatButton(JNIEnv *env, jobject thiz, jint button_id) {
 	CKeyBoard::dop_butt = button_id;
+}
+extern "C"
+JNIEXPORT jboolean JNICALL
+Java_com_liverussia_cr_gui_HudManager_isAndroidKeyboard(JNIEnv *env, jobject thiz) {
+    return CSettings::Get().iAndroidKeyboard;
 }

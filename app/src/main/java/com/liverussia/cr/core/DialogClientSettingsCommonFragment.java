@@ -30,16 +30,19 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
     native int getNativeFpsLimit();
     native void setNativeFpsCount(int fps);
     native void setNativeFpsCounterSettings(boolean b);
+    native void setAndroidKeyboard(boolean b);
     native void setNativeOutfitGunsSettings(boolean b);
     native void setNativeHpArmourText(boolean b);
     native boolean getNativeFpsCounterSettings();
     native boolean getNativeOutfitGunsSettings();
     native boolean getNativeHpArmourText();
+    native boolean getAndroidKeyboard();
 
     native boolean getNativeShow3dText();
     native void setNativeShow3dText(boolean state);
 
     private SwitchCompat mSwitchFPSCounter;
+    SwitchCompat switch_android_keyboard;
     private SwitchCompat mSwitchOutfit;
     private SwitchCompat mSwitchHpArmour;
     SwitchCompat switch_damageinformer;
@@ -135,6 +138,7 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
             setNativeFpsCount(curFps);
         });
 
+        switch_android_keyboard = mRootView.findViewById(R.id.switch_android_keyboard);
         mSwitchFPSCounter = mRootView.findViewById(R.id.switch_fps_counter);
         mSwitchHpArmour = mRootView.findViewById(R.id.switch_info_bar);
         switch_damageinformer = mRootView.findViewById(R.id.switch_damageinformer);
@@ -221,6 +225,13 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
             }
         });
 
+        switch_android_keyboard.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                setAndroidKeyboard(b);
+            }
+        });
+
         return mRootView;
     }
 
@@ -231,6 +242,7 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
 
     @Override
     public void getValues() {
+        switch_android_keyboard.setChecked( getAndroidKeyboard() );
         mSwitchFPSCounter.setChecked( getNativeFpsCounterSettings() );
         mSwitchHpArmour.setChecked( getNativeHpArmourText() );
         switch_damageinformer.setChecked(getNativeDamageInformer());

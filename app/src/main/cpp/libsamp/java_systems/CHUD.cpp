@@ -629,8 +629,8 @@ Java_com_liverussia_cr_gui_HudManager_SendChatMessage(JNIEnv *env, jobject thiz,
     //const char *inputText = pEnv->GetStringUTFChars(str, nullptr);
 
     if(pNetGame) {
-        pNetGame->SendChatMessage(const_cast<char *>(szStr.c_str()));
-
+        CKeyBoard::m_sInput = szStr;
+        CKeyBoard::Send();
     }
 
     env->ReleaseByteArrayElements(str, pMsg, JNI_ABORT);

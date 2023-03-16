@@ -433,6 +433,8 @@ public abstract class NvEventQueueActivity extends FragmentActivity implements S
     public void onWindowFocusChanged(boolean hasFocus) {
 
         super.onWindowFocusChanged(hasFocus);
+
+        hideSystemUI();
     }
 
     /**
@@ -621,7 +623,7 @@ public abstract class NvEventQueueActivity extends FragmentActivity implements S
                 ret = touchEvent(event.getAction(), (int) event.getX(), (int) event.getY(), event);
             }
         }
-        boolean z2 = ret;
+
         return ret;
     }
 
