@@ -40,7 +40,7 @@ CVehicle::CVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRota
 		// normal vehicle
 		if (!pGame->IsModelLoaded(iType))
 		{
-			pGame->RequestModel(iType);
+			CStreaming::RequestModel(iType);
 			pGame->LoadRequestedModels();
 			while (!pGame->IsModelLoaded(iType)) usleep(10);
 		}

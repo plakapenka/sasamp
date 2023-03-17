@@ -428,7 +428,7 @@ void CPlayerPed::GiveWeapon(int iWeaponID, int iAmmo)
 	
 	if (!pGame->IsModelLoaded(iModelID)) 
 	{
-		pGame->RequestModel(iModelID);
+		CStreaming::RequestModel(iModelID);
 		pGame->LoadRequestedModels();
 		while (!pGame->IsModelLoaded(iModelID)) sleep(1);
 	}
@@ -855,8 +855,6 @@ void CPlayerPed::ClearAllWeapons()
 
 uintptr_t* GetWeaponInfo(int iWeapon, int iSkill)
 {
-    Log("GetWeaponInfo");
-
 	return CHook::CallFunction<uintptr_t*>(g_libGTASA + 0x0018F48C, iWeapon, iSkill);
 }
 
@@ -1438,7 +1436,7 @@ void CPlayerPed::SetMoveAnim(int iAnimGroup)
 			Log("trying to load modelid %u", modelId);
 			if (!pGame->IsModelLoaded(modelId))
 			{
-				pGame->RequestModel(modelId);
+				CStreaming::RequestModel(modelId);
 				pGame->LoadRequestedModels();
 				int tries = 0;
 				while (!pGame->IsModelLoaded(modelId) && tries <= 10)

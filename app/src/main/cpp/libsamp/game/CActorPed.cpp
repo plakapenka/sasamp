@@ -11,15 +11,13 @@ extern CGame* pGame;
 
 CActorPed::CActorPed(uint16_t usModel, CVector vecPosition, float fRotation, float fHealth, bool bInvulnerable)
 {
-	
-
 	m_dwGTAId = 0;
 	m_pPed = nullptr;
 	m_pEntity = nullptr;
 
 	if (!pGame->IsModelLoaded(usModel)) 
 	{
-		pGame->RequestModel(usModel);
+		CStreaming::RequestModel(usModel);
 		pGame->LoadRequestedModels();
 	}
 

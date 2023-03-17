@@ -12,6 +12,8 @@ public:
     static int AddImageToList(const char *name, bool b);
 
     static void RemoveAllUnusedModels();
+
+    static void RequestModel(int index, int flags = 0xC);
 };
 
 

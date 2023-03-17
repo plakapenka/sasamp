@@ -37,9 +37,9 @@ void CGame::RemoveModel(int iModel, bool bFromStreaming)
 
 CGame::CGame()
 {
-	for (int i = 0; i < HUD_MAX; i++)
+	for (bool & i : aToggleStatusHUD)
 	{
-		aToggleStatusHUD[i] = true;
+		i = true;
 	}
 	m_pGameCamera = new CCamera();
 	m_pGamePlayer = nullptr;
@@ -64,7 +64,7 @@ void CGame::exitGame()
 	//delete pNetGame;
     //exit(0);
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+  //  std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
 	g_pJavaWrapper->ExitGame();
 }
@@ -88,8 +88,8 @@ CPlayerPed* CGame::NewPlayer(int iSkin, float fX, float fY, float fZ, float fRot
 	uint8_t bytePlayerNum = FindFirstFreePlayerPedSlot();
 	if(!bytePlayerNum) return nullptr;
 
-	CPlayerPed* pPlayerNew = new CPlayerPed(bytePlayerNum, iSkin, fX, fY, fZ, fRotation);
-	if(pPlayerNew && pPlayerNew->m_pPed)
+	auto* pPlayerNew = new CPlayerPed(bytePlayerNum, iSkin, fX, fY, fZ, fRotation);
+	if(pPlayerNew->m_pPed)
 		bUsedPlayerSlots[bytePlayerNum] = true;
 
 	//if(byteCreateMarker) (no xrefs ;( )
@@ -118,18 +118,18 @@ uint32_t CGame::CreatePickup(int iModel, int iType, float fX, float fY, float fZ
 
 	if(iModel > 0 && iModel < 20000)
 	{
-    	if(CModelInfo::ms_modelInfoPtrs[iModel] == 0)
+    	if(CModelInfo::ms_modelInfoPtrs[iModel] == nullptr)
     		iModel = 18631;
 	}
 	else iModel = 18631;
 
-	if(!ScriptCommand(&is_model_available, iModel))
-	{
-		ScriptCommand(&request_model, iModel);
-		ScriptCommand(&load_requested_models);
-		while(!ScriptCommand(&is_model_available, iModel))
-			usleep(1000);
-	}
+//	if(!ScriptCommand(&is_model_available, iModel))
+//	{
+//		ScriptCommand(&request_model, iModel);
+//		ScriptCommand(&load_requested_models);
+//		while(!ScriptCommand(&is_model_available, iModel))
+//			usleep(1000);
+//	}
 
 	ScriptCommand(&create_pickup, iModel, iType, fX, fY, fZ, &hnd);
 
@@ -360,12 +360,6 @@ void CGame::EnableZoneNames(bool bEnable)
 void CGame::PlaySound(int iSound, float fX, float fY, float fZ)
 {
 	ScriptCommand(&play_sound, fX, fY, fZ, iSound);
-}
-
-// 0.3.7
-void CGame::RequestModel(unsigned int iModelID, int iLoadingStream)
-{
-	ScriptCommand(&request_model, iModelID);
 }
 
 // 0.3.7

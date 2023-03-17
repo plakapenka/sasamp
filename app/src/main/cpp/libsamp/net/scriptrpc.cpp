@@ -1031,7 +1031,7 @@ void ScrCreateObject(RPCParameters* rpcParams)
 			}
 			if (!pGame->IsModelLoaded(modelId))
 			{
-				pGame->RequestModel(modelId);
+				CStreaming::RequestModel(modelId);
 				pGame->LoadRequestedModels();
 				while (!pGame->IsModelLoaded(modelId)) sleep(1);
 			}
@@ -1529,7 +1529,7 @@ void ScrSetPlayerObjectMaterial(RPCParameters* rpcParams)
 	}
 	if (!pGame->IsModelLoaded(modelId))
 	{
-		pGame->RequestModel(modelId);
+		CStreaming::RequestModel(modelId);
 		pGame->LoadRequestedModels();
 		while (!pGame->IsModelLoaded(modelId)) sleep(1);
 	}

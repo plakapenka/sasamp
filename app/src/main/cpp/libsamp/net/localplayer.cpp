@@ -79,7 +79,7 @@ CLocalPlayer::CLocalPlayer()
 		m_byteLastWeapon[i] = 0;
 		m_dwLastAmmo[i] = 0;
 	}
-	pGame->RequestModel(18646);
+	CStreaming::RequestModel(18646);
 
 }
 

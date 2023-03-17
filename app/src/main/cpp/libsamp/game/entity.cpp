@@ -226,7 +226,7 @@ bool CEntity::SetModelIndex(unsigned int uiModel)
 	int iTryCount = 0;
 	if(!pGame->IsModelLoaded(uiModel) && !IsValidModel(uiModel))
 	{
-		pGame->RequestModel(uiModel);
+		CStreaming::RequestModel(uiModel);
 		pGame->LoadRequestedModels();
 		while(!pGame->IsModelLoaded(uiModel))
 		{
