@@ -315,9 +315,10 @@ void CKeyBoard::Close()
 	if(CBaccarat::bIsShow) CBaccarat::tempToggle(true);
 	if(CAdminRecon::bIsToggle) CAdminRecon::tempToggle(true);
 	if(pNetGame->m_GreenZoneState) CHUD::toggleGreenZone(true);
+
+	CHUD::ToggleChatInput(false);
 	//g_pJavaWrapper->ShowVoice();
 
-	return;
 }
 #include "util/CJavaWrapper.h"
 #include "chatwindow.h"
@@ -422,8 +423,8 @@ void CKeyBoard::HandleInput(kbKey &key)
 		break;
 
 	case KEY_SEND:
-		Send();
-		Close();
+		CKeyBoard::Send();
+		CKeyBoard::Close();
 		break;
 	case KEY_UP:
 		m_pkHistory->PageUp();
@@ -487,8 +488,7 @@ void CKeyBoard::Send()
 			pNetGame->SendChatMessage(m_sInput.c_str());
 		}
 	}
-
-
+	CKeyBoard::Flush();
 }
 
 kbKey *CKeyBoard::GetKeyFromPos(int x, int y)
