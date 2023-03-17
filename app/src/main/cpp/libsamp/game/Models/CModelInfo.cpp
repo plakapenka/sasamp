@@ -23,8 +23,6 @@ void CModelInfo::InstallHooks()
     CHook::Redirect(g_libGTASA, 0x003860DC, &CModelInfo::AddVehicleModel);
     CHook::Redirect(g_libGTASA, 0x00385A38, &CModelInfo::AddAtomicModel);
 
-   // CHook::WriteMemory(g_libGTASA + 0x006796CC, &CModelInfo::ms_modelInfoPtrs, sizeof(void*));
-   // *(CBaseModelInfo**)(g_libGTASA + 0x006796CC) = *CModelInfo::ms_modelInfoPtrs;
 }
 
 CVehicleModelInfo* CModelInfo::AddVehicleModel(int index)
