@@ -363,12 +363,6 @@ void CGame::PlaySound(int iSound, float fX, float fY, float fZ)
 }
 
 // 0.3.7
-void CGame::LoadRequestedModels()
-{
-	ScriptCommand(&load_requested_models);
-}
-
-// 0.3.7
 uint8_t CGame::IsModelLoaded(unsigned int iModelID)
 {
 	return ScriptCommand(&is_model_available, iModelID);

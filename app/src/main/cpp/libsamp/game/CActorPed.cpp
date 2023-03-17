@@ -6,6 +6,7 @@
 #include "..//CDebugInfo.h"
 
 #include "CActorPed.h"
+#include "StreamingInfo.h"
 
 extern CGame* pGame;
 
@@ -17,8 +18,8 @@ CActorPed::CActorPed(uint16_t usModel, CVector vecPosition, float fRotation, flo
 
 	if (!pGame->IsModelLoaded(usModel)) 
 	{
-		CStreaming::RequestModel(usModel);
-		pGame->LoadRequestedModels();
+		CStreaming::RequestModel(usModel, STREAMING_GAME_REQUIRED);
+		CStreaming::LoadAllRequestedModels(false);
 	}
 
 	uint32_t actorGTAId = 0;

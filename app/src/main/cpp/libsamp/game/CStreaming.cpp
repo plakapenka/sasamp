@@ -19,3 +19,8 @@ void CStreaming::RequestModel(int32_t index, int32_t flags)
 {
     ((void (*) (int32_t, int32_t))(g_libGTASA + 0x002D299C + 1))(index, flags);
 }
+
+void CStreaming::LoadAllRequestedModels(bool bPriorityRequestsOnly)
+{
+    ((void (*) (bool))(g_libGTASA + 0x002D46A8 + 1))(bPriorityRequestsOnly);
+}

@@ -1935,8 +1935,9 @@ bool IsValidModel(unsigned int uiModelID)
 {
     if(uiModelID < 0 || uiModelID > 20000) return false;
 
-    uintptr_t dwModelInfo = reinterpret_cast<uintptr_t>(CModelInfo::ms_modelInfoPtrs[uiModelID]);
-    if(dwModelInfo && *(uintptr_t*)(dwModelInfo+0x34/*pRwObject*/))
+    auto dwModelInfo = CModelInfo::ms_modelInfoPtrs[uiModelID];
+
+    if(dwModelInfo && dwModelInfo->m_pRwObject)
         return true;
 
     return false;
@@ -1944,9 +1945,9 @@ bool IsValidModel(unsigned int uiModelID)
 
 uint16_t GetModelReferenceCount(int nModelIndex)
 {
-	uint8_t *pModelInfoStart = reinterpret_cast<uint8_t *>(CModelInfo::ms_modelInfoPtrs[nModelIndex]);
-	
-	return *(uint16_t*)(pModelInfoStart+0x1E);
+	auto pModelInfoStart = CModelInfo::ms_modelInfoPtrs[nModelIndex];
+
+    return pModelInfoStart->m_nRefCount;
 }
 
 void InitPlayerPedPtrRecords()

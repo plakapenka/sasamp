@@ -7,6 +7,7 @@
 #include "../util/CJavaWrapper.h"
 #include "java_systems/CHUD.h"
 #include "java_systems/CEditobject.h"
+#include "game/StreamingInfo.h"
 
 extern CGame *pGame;
 extern CNetGame *pNetGame;
@@ -449,8 +450,8 @@ void WorldVehicleAdd(RPCParameters *rpcParams)
 				continue;
 
 			data += 999;
-			CStreaming::RequestModel(data);
-			pGame->LoadRequestedModels();
+			CStreaming::RequestModel(data, STREAMING_GAME_REQUIRED);
+			CStreaming::LoadAllRequestedModels(false);
 			ScriptCommand(&request_car_component, data);
 			int iWait = 10;
 			while (!ScriptCommand(&is_component_available, data) && iWait)
@@ -732,8 +733,8 @@ void ProcessIncommingEvent(BYTE bytePlayerID, int iEventType, uint32_t dwParam1,
 		Log("RPC: EVENT_TYPE_CARCOMPONENT");
 		iVehicleID = pVehiclePool->FindGtaIDFromID(dwParam1);
 		iComponent = (int)dwParam2;
-		CStreaming::RequestModel(iComponent);
-		pGame->LoadRequestedModels();
+		CStreaming::RequestModel(iComponent, STREAMING_GAME_REQUIRED);
+		CStreaming::LoadAllRequestedModels(false);
 		ScriptCommand(&request_car_component, iComponent);
 
 		iWait = 10;

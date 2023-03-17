@@ -2,6 +2,7 @@
 #include "game.h"
 #include "../net/netgame.h"
 #include "../chatwindow.h"
+#include "StreamingInfo.h"
 
 #include <cmath>
 
@@ -226,8 +227,8 @@ bool CEntity::SetModelIndex(unsigned int uiModel)
 	int iTryCount = 0;
 	if(!pGame->IsModelLoaded(uiModel) && !IsValidModel(uiModel))
 	{
-		CStreaming::RequestModel(uiModel);
-		pGame->LoadRequestedModels();
+		CStreaming::RequestModel(uiModel, STREAMING_GAME_REQUIRED);
+		CStreaming::LoadAllRequestedModels(false);
 		while(!pGame->IsModelLoaded(uiModel))
 		{
 			usleep(1000);

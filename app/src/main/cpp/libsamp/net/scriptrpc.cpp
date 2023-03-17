@@ -1,6 +1,7 @@
 #include "../main.h"
 #include "../game/game.h"
 #include "netgame.h"
+#include "game/StreamingInfo.h"
 
 extern CGame *pGame;
 extern CNetGame *pNetGame;
@@ -1031,8 +1032,8 @@ void ScrCreateObject(RPCParameters* rpcParams)
 			}
 			if (!pGame->IsModelLoaded(modelId))
 			{
-				CStreaming::RequestModel(modelId);
-				pGame->LoadRequestedModels();
+				CStreaming::RequestModel(modelId, STREAMING_GAME_REQUIRED);
+				CStreaming::LoadAllRequestedModels(false);
 				while (!pGame->IsModelLoaded(modelId)) sleep(1);
 			}
 			pObject->m_bMaterials = true;
@@ -1529,8 +1530,8 @@ void ScrSetPlayerObjectMaterial(RPCParameters* rpcParams)
 	}
 	if (!pGame->IsModelLoaded(modelId))
 	{
-		CStreaming::RequestModel(modelId);
-		pGame->LoadRequestedModels();
+		CStreaming::RequestModel(modelId, STREAMING_GAME_REQUIRED);
+		CStreaming::LoadAllRequestedModels(false);
 		while (!pGame->IsModelLoaded(modelId)) sleep(1);
 	}
 	pObj->m_bMaterials = true;

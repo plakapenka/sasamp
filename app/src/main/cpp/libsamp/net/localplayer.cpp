@@ -11,6 +11,7 @@
 #include "../util/CJavaWrapper.h"
 #include "java_systems/CHUD.h"
 #include "java_systems/CInventory.h"
+#include "game/StreamingInfo.h"
 
 extern CGame *pGame;
 
@@ -79,8 +80,7 @@ CLocalPlayer::CLocalPlayer()
 		m_byteLastWeapon[i] = 0;
 		m_dwLastAmmo[i] = 0;
 	}
-	CStreaming::RequestModel(18646);
-
+	CStreaming::RequestModel(18646, STREAMING_GAME_REQUIRED);
 }
 
 CLocalPlayer::~CLocalPlayer()

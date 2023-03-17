@@ -6,6 +6,7 @@ extern CGame* pGame;
 #include "..//net/netgame.h"
 #include "CVector.h"
 #include "game/Models/CModelInfo.h"
+#include "StreamingInfo.h"
 
 extern CNetGame* pNetGame;
 
@@ -40,8 +41,8 @@ CVehicle::CVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRota
 		// normal vehicle
 		if (!pGame->IsModelLoaded(iType))
 		{
-			CStreaming::RequestModel(iType);
-			pGame->LoadRequestedModels();
+			CStreaming::RequestModel(iType, STREAMING_GAME_REQUIRED);
+			CStreaming::LoadAllRequestedModels(false);
 			while (!pGame->IsModelLoaded(iType)) usleep(10);
 		}
         m_bHasSiren = false;

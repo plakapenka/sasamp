@@ -10,6 +10,7 @@
 #include "CWorld.h"
 #include "game/RW/rtanim.h"
 #include "game/Enums/eWeaponType.h"
+#include "StreamingInfo.h"
 
 extern CGame* pGame;
 extern CNetGame *pNetGame;
@@ -428,8 +429,8 @@ void CPlayerPed::GiveWeapon(int iWeaponID, int iAmmo)
 	
 	if (!pGame->IsModelLoaded(iModelID)) 
 	{
-		CStreaming::RequestModel(iModelID);
-		pGame->LoadRequestedModels();
+		CStreaming::RequestModel(iModelID, STREAMING_GAME_REQUIRED);
+		CStreaming::LoadAllRequestedModels(false);
 		while (!pGame->IsModelLoaded(iModelID)) sleep(1);
 	}
 	//ScriptCommand(&give_actor_weapon, m_dwGTAId, iWeaponID, iAmmo);
@@ -1436,8 +1437,8 @@ void CPlayerPed::SetMoveAnim(int iAnimGroup)
 			Log("trying to load modelid %u", modelId);
 			if (!pGame->IsModelLoaded(modelId))
 			{
-				CStreaming::RequestModel(modelId);
-				pGame->LoadRequestedModels();
+				CStreaming::RequestModel(modelId, STREAMING_GAME_REQUIRED);
+				CStreaming::LoadAllRequestedModels(false);
 				int tries = 0;
 				while (!pGame->IsModelLoaded(modelId) && tries <= 10)
 				{

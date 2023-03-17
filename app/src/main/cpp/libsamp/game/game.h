@@ -91,8 +91,6 @@ public:
 	// 0.3.7
 	static void DisableMarker(uint32_t dwMarkerID);
 	// 0.3.7
-	static void LoadRequestedModels();
-	// 0.3.7
 	static uint8_t IsModelLoaded(unsigned int iModelID);
 	// 0.3.7
 	static void RefreshStreamingAt(float x, float y);

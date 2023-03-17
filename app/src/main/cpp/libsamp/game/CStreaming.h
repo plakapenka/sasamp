@@ -13,7 +13,9 @@ public:
 
     static void RemoveAllUnusedModels();
 
-    static void RequestModel(int index, int flags = 0xC);
+    static void RequestModel(int index, int flags);
+
+    static void LoadAllRequestedModels(bool bPriorityRequestsOnly);
 };
 
 
