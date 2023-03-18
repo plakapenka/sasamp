@@ -108,6 +108,7 @@ void ApplyPatches_level0()
 
     CHook::Redirect(g_libGTASA, 0x0042CA1C, &CUtil::FindPlayerSlotWithPedPointer);
 
+    CHook::RET(g_libGTASA + 0x0057CB40); // CTrain::InitTrains()
 //
 //	// 3 touch begin
 //	CHook::UnFuck(g_libGTASA + 0x005D1E8C);
@@ -218,6 +219,8 @@ void ApplyPatches()
 {
 	Log("Installing patches..");
 
+	//CHook::Write(g_libGTASA + 0x003BFB4A, 1); //1st pers
+
 	// Menu
 	//CHook::NOP(g_libGTASA + 0x0029BC18, 76); // stats
 
@@ -252,8 +255,8 @@ void ApplyPatches()
 	CHook::RET(g_libGTASA + 0x004B425E); // CPedGroupIntelligence::Process crash
 	CHook::RET(g_libGTASA + 0x004B2050); // CPedGroupMembership::SetLeader crash
 	CHook::RET(g_libGTASA + 0x004B3156); // CPedGroupIntelligence::Flush crash!111111111
-	//CHook::RET(g_libGTASA + 0x0048B954); // CTheScripts::Save()
-	CHook::NOP(g_libGTASA + 0x005E54FA, 2); // не сохранять при сворачивании
+
+	CHook::NOP(g_libGTASA + 0x005E54FA, 2); // не сохранять при сворачивании. черный экран
 
 	CHook::NOP(g_libGTASA + 0x004409AE, 2); // моргание значнок на карте
 	CHook::NOP(g_libGTASA + 0x002AB400, 85); // названия зон при просмотре карты

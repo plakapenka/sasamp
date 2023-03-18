@@ -100,7 +100,6 @@ public:
 	static void SetMaxStats();
 
 	static void SetWantedLevel(uint8_t byteLevel);
-	static uint8_t GetWantedLevel();
 
 	static bool IsAnimationLoaded(const char szAnimFile[]);
 

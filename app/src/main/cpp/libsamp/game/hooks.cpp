@@ -200,13 +200,13 @@ void InitialiseRenderWare_hook()
 //	CHook::NOP(g_libGTASA + 0x0046F5C6, 2); // player
 	CHook::NOP(g_libGTASA + 0x0046F5D2, 2); // menu
 
-	TextureDatabaseRuntime::Load("samp", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
+	TextureDatabaseRuntime::Load("samp", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_DXT);
 
-	TextureDatabaseRuntime::Load("mobile", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
-	TextureDatabaseRuntime::Load("txd", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
-	TextureDatabaseRuntime::Load("gta3", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
-	TextureDatabaseRuntime::Load("gta_int", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
-	TextureDatabaseRuntime::Load("menu", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_PVR);
+	TextureDatabaseRuntime::Load("mobile", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_DXT);
+	TextureDatabaseRuntime::Load("txd", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_DXT);
+	TextureDatabaseRuntime::Load("gta3", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_DXT);
+	TextureDatabaseRuntime::Load("gta_int", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_DXT);
+	TextureDatabaseRuntime::Load("menu", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_DXT);
 
 	//skins
 	TextureDatabase* skins = TextureDatabaseRuntime::Load("skins", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
@@ -1259,9 +1259,11 @@ void CGame__Process_hook()
 
 uint16_t g_usLastProcessedModelIndexAutomobile = 0;
 int g_iLastProcessedModelIndexAutoEnt = 0;
-void (*CAutomobile__ProcessEntityCollision)(CVehicleGta* a1, CEntityGta* a2, int a3);
-void CAutomobile__ProcessEntityCollision_hook(CVehicleGta* a1, CEntityGta* a2, int a3)
+int32_t (*CAutomobile__ProcessEntityCollision)(CVehicleGta* a1, CEntityGta* a2, uintptr_t* aColPoints);
+int32_t CAutomobile__ProcessEntityCollision_hook(CVehicleGta* a1, CEntityGta* a2, uintptr_t* aColPoints)
 {
+	int32_t res;
+
 	g_usLastProcessedModelIndexAutomobile = a1->nModelIndex;
 	g_iLastProcessedModelIndexAutoEnt = a2->nModelIndex;
 
@@ -1284,16 +1286,19 @@ void CAutomobile__ProcessEntityCollision_hook(CVehicleGta* a1, CEntityGta* a2, i
 		}
 	}
 
-	CAutomobile__ProcessEntityCollision(a1, a2, a3);
+	res = CAutomobile__ProcessEntityCollision(a1, a2, aColPoints);
 	if (bReplace)
 	{
 		*(void**)(pColData + 16) = pOld;
 	}
+	return res;
 }
 
 void (*MainMenuScreen__OnExit)();
 void MainMenuScreen__OnExit_hook()
 {
+	*(bool*)(g_libGTASA + 0x009FC8FC + 0x10) = true; // RsGlobal.quit
+
 	pGame->exitGame();
 
 	//g_pJavaWrapper->ExitGame();
@@ -1675,14 +1680,6 @@ void CPed__ProcessEntityCollision_hook(CPedGta* thiz, CEntityGta* ent, void* col
 	CPed__ProcessEntityCollision(thiz, ent, colPoint);
 }
 
-int (*_RwTextureDestroy)(RwTexture *);
-int _RwTextureDestroy_hook(RwTexture *texture)
-{
-	if (!texture)
-		return 1;
-	return _RwTextureDestroy(texture);
-}
-
 void (*CDraw__SetFOV)(float fFOV, bool isCinematic);
 void CDraw__SetFOV_hook(float fFOV, bool isCinematic)
 {
@@ -1976,12 +1973,21 @@ bool CEventKnockOffBike__AffectsPed_hook(uintptr_t *thiz, CPedGta *a2)
 
 
 
-bool (*RpMaterialDestroy)(uintptr_t* material);
-bool RpMaterialDestroy_hook(uintptr_t* material)
+uintptr_t* (*rpMaterialListDeinitialize)(RpMaterialList* matList);
+uintptr_t* rpMaterialListDeinitialize_hook(RpMaterialList* matList)
 {
-	if(material)return true;
+	if(!matList || !matList->materials)
+		return nullptr;
 
-	return RpMaterialDestroy(material);
+	return rpMaterialListDeinitialize(matList);
+}
+
+uintptr_t* (*ConvertBufferToObject)(uint8_t* fileBuffer, int32_t modelId);
+uintptr_t* ConvertBufferToObject_hook(uint8_t* fileBuffer, int32_t modelId)
+{
+	Log("ConvertBufferToObject = %d", modelId);
+
+	return ConvertBufferToObject(fileBuffer, modelId);
 }
 
 #include "../java_systems/LoadingScreen.h"
@@ -1989,6 +1995,8 @@ bool RpMaterialDestroy_hook(uintptr_t* material)
 void InstallHooks()
 {
 	Log("InstallHooks");
+
+	//CHook::InlineHook(g_libGTASA, 0x002D2FD0, &ConvertBufferToObject_hook, &ConvertBufferToObject);
 
     // Fixing a crosshair by very stupid math ( JPATCH )
 	ms_fAspectRatio = (float*)(g_libGTASA + 0x00A26A90);
@@ -2029,14 +2037,15 @@ void InstallHooks()
 	CHook::InlineHook(g_libGTASA, 0x00428410, &CWorld_ProcessPedsAfterPreRender_hook, &CWorld_ProcessPedsAfterPreRender);
 
 	// crash
-	CHook::InlineHook(g_libGTASA, 0x002171D0, &RpMaterialDestroy_hook, &RpMaterialDestroy);
+	CHook::InlineHook(g_libGTASA, 0x002176EC, &rpMaterialListDeinitialize_hook, &rpMaterialListDeinitialize);
 
 	// GetFrameFromID fix
 //	CHook::InlineHook(g_libGTASA, 0x00335CC0, &CClumpModelInfo_GetFrameFromId_hook, &CClumpModelInfo_GetFrameFromId);
-//
-//	// random crash fix
+
+	// random crash fix
 //	CHook::InlineHook(g_libGTASA, 0x001D1F7E, &RenderQueue__ProcessCommand_hook, &RenderQueue__ProcessCommand);
-//	// fix
+
+	// fix
 //	CHook::InlineHook(g_libGTASA, 0x001B9D74, &_rwFreeListFreeReal_hook, &_rwFreeListFreeReal);
 
 	CHook::InlineHook(g_libGTASA, 0x00388B54, &CVehicleModelInfo__SetEditableMaterials_hook, &CVehicleModelInfo__SetEditableMaterials);
@@ -2044,7 +2053,7 @@ void InstallHooks()
 //
 	CHook::InlineHook(g_libGTASA, 0x003F4000, &CGame__Process_hook, &CGame__Process);
 
-	//CHook::InlineHook(g_libGTASA, 0x0055BF10, &CAutomobile__ProcessEntityCollision_hook, &CAutomobile__ProcessEntityCollision);
+	CHook::InlineHook(g_libGTASA, 0x0055BF10, &CAutomobile__ProcessEntityCollision_hook, &CAutomobile__ProcessEntityCollision);
 
 	CHook::InlineHook(g_libGTASA, 0x0029DEF8, &MainMenuScreen__OnExit_hook, &MainMenuScreen__OnExit);
 

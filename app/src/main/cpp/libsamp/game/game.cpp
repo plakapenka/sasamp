@@ -108,7 +108,7 @@ void CGame::RemovePlayer(CPlayerPed* pPlayer)
 
 CObject *CGame::NewObject(int iModel, float fPosX, float fPosY, float fPosZ, CVector vecRot, float fDrawDistance)
 {
-	CObject *pObjectNew = new CObject(iModel, fPosX, fPosY, fPosZ, vecRot, fDrawDistance);
+	auto *pObjectNew = new CObject(iModel, fPosX, fPosY, fPosZ, vecRot, fDrawDistance);
 	return pObjectNew;
 }
 
@@ -152,8 +152,6 @@ void *Init(void *p)
 	pthread_exit(0);
 }
 
-extern void apply_v2();
-
 void CGame::InitInMenu()
 {
 	Log("CGame: InitInMenu");
@@ -191,12 +189,6 @@ bool CGame::IsToggledHUDElement(int iID)
 		return 1;
 	}
 	return aToggleStatusHUD[iID];
-}
-
-uint8_t CGame::GetWantedLevel()
-{
-	return CHUD::iWantedLevel;
-	//return *(uint8_t*)(g_libGTASA + 0x27D8D2);
 }
 
 float CGame::FindGroundZForCoord(float x, float y, float z)
