@@ -2,6 +2,7 @@
 #include "../game/game.h"
 #include "netgame.h"
 #include "../chatwindow.h"
+#include "game/Enums/AnimationEnums.h"
 
 extern CGame *pGame;
 
@@ -423,7 +424,7 @@ void CRemotePlayer::UpdateVehicleRotation()
 bool CRemotePlayer::Spawn(uint8_t byteTeam, unsigned int iSkin, CVector *vecPos, float fRotation,
 	uint32_t dwColor, uint8_t byteFightingStyle, bool bVisible)
 {
-
+	//byteTeam - переделан на moveGroupAnim
 	if(m_pPlayerPed)
 	{
 		pGame->RemovePlayer(m_pPlayerPed);
@@ -449,6 +450,9 @@ bool CRemotePlayer::Spawn(uint8_t byteTeam, unsigned int iSkin, CVector *vecPos,
 
 		if(byteFightingStyle != 4)
 			m_pPlayerPed->SetFightingStyle(byteFightingStyle);
+
+		if(byteTeam != ANIM_GROUP_NONE && byteTeam != 255)
+			m_pPlayerPed->SetMoveAnim(byteTeam);
 
 		SetState(PLAYER_STATE_SPAWNED);
 		return true;

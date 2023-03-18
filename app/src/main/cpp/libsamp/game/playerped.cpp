@@ -1454,9 +1454,10 @@ void CPlayerPed::SetMoveAnim(int iAnimGroup)
 		}
 		Log("animgrp %d loaded", iAnimGroup);
 	}
+	m_pPed->m_motionAnimGroup = iAnimGroup;
 
-	uintptr_t ped = (uintptr_t)m_pPed;
-	*(int*)(ped + 1244) = iAnimGroup;
+//	uintptr_t ped = (uintptr_t)m_pPed;
+//	*(int*)(ped + 1244) = iAnimGroup;
 
 	((void(*)(CPedGta* thiz))(g_libGTASA + 0x004C668C + 1))(m_pPed); // ReApplyMoveAnims
 }
