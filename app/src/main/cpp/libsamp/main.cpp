@@ -59,7 +59,6 @@ extern uintptr_t g_dwRenderQueueOffset;
 
 void PrintBuildCrashInfo()
 {
-	CrashLog("SA:MP version: %d.%01d", SAMP_MAJOR_VERSION, SAMP_MINOR_VERSION);
 	CrashLog("Build times: %s %s", __TIME__, __DATE__);
 	CrashLog("Last processed auto and entity: %d %d", g_usLastProcessedModelIndexAutomobile, g_iLastProcessedModelIndexAutoEnt);
 	CrashLog("Last processed skin and entity: %d %d", g_iLastProcessedSkinCollision, g_iLastProcessedEntityCollision);
@@ -84,8 +83,6 @@ void InitSAMP(JNIEnv* pEnv, jobject thiz)
 	CWeaponsOutFit::ParseDatFile();
 }
 
-void ProcessCheckForKeyboard();
-
 void InitInMenu()
 {
 	pGame = new CGame();
@@ -96,9 +93,6 @@ void InitInMenu()
     CKeyBoard::init();
     pPlayerTags = new CPlayerTags();
 	CFontRenderer::Initialise();
-//	ProcessCheckForKeyboard();
-
-
 }
 #include <unistd.h> // system api
 #include <sys/mman.h>
@@ -121,24 +115,13 @@ bool unique_library_handler(const char* library)
 	return true;
 }
 
-void ProcessCheckForKeyboard()
-{
-	if (CSettings::m_Settings.iAndroidKeyboard)
-	{
-		CKeyBoard::EnableNewKeyboard();
-	}
-	else
-	{
-		CKeyBoard::EnableOldKeyboard();
-	}
-}
-
 #include "net/CUDPSocket.h"
 
 
 #include "CDebugInfo.h"
 #include "game/Models/CModelInfo.h"
 #include "java_systems/LoadingScreen.h"
+#include "util/CStackTrace.h"
 
 void MainLoop()
 {
@@ -215,27 +198,8 @@ void handler3(int signum, siginfo_t* info, void* contextPtr)
 		CrashLog("libGTASA base address: 0x%X", g_libGTASA);
 		CrashLog("libsamp base address: 0x%X", CUtil::FindLibrary("libsamp.so"));
 		CrashLog("libc base address: 0x%X", CUtil::FindLibrary("libc.so"));
-		CrashLog("register states:");
-		CrashLog("r0: 0x%X, r1: 0x%X, r2: 0x%X, r3: 0x%X",
-			context->uc_mcontext.arm_r0,
-			context->uc_mcontext.arm_r1,
-			context->uc_mcontext.arm_r2,
-			context->uc_mcontext.arm_r3);
-		CrashLog("r4: 0x%x, r5: 0x%x, r6: 0x%x, r7: 0x%x",
-			context->uc_mcontext.arm_r4,
-			context->uc_mcontext.arm_r5,
-			context->uc_mcontext.arm_r6,
-			context->uc_mcontext.arm_r7);
-		CrashLog("r8: 0x%x, r9: 0x%x, sl: 0x%x, fp: 0x%x",
-			context->uc_mcontext.arm_r8,
-			context->uc_mcontext.arm_r9,
-			context->uc_mcontext.arm_r10,
-			context->uc_mcontext.arm_fp);
-		CrashLog("ip: 0x%x, sp: 0x%x, lr: 0x%x, pc: 0x%x",
-			context->uc_mcontext.arm_ip,
-			context->uc_mcontext.arm_sp,
-			context->uc_mcontext.arm_lr,
-			context->uc_mcontext.arm_pc);
+
+		PRINT_CRASH_STATES(context);
 
 		CrashLog("backtrace:");
 		CrashLog("1: libGTASA.so + 0x%X", context->uc_mcontext.arm_pc - g_libGTASA);
@@ -275,27 +239,8 @@ void handler(int signum, siginfo_t *info, void* contextPtr)
 		CrashLog("libGTASA base address: 0x%X", g_libGTASA);
 		CrashLog("libsamp base address: 0x%X", CUtil::FindLibrary("libsamp.so"));
 		CrashLog("libc base address: 0x%X", CUtil::FindLibrary("libc.so"));
-		CrashLog("register states:");
-		CrashLog("r0: 0x%X, r1: 0x%X, r2: 0x%X, r3: 0x%X",
-			context->uc_mcontext.arm_r0, 
-			context->uc_mcontext.arm_r1, 
-			context->uc_mcontext.arm_r2,
-			context->uc_mcontext.arm_r3);
-		CrashLog("r4: 0x%x, r5: 0x%x, r6: 0x%x, r7: 0x%x",
-			context->uc_mcontext.arm_r4,
-			context->uc_mcontext.arm_r5,
-			context->uc_mcontext.arm_r6,
-			context->uc_mcontext.arm_r7);
-		CrashLog("r8: 0x%x, r9: 0x%x, sl: 0x%x, fp: 0x%x",
-			context->uc_mcontext.arm_r8,
-			context->uc_mcontext.arm_r9,
-			context->uc_mcontext.arm_r10,
-			context->uc_mcontext.arm_fp);
-		CrashLog("ip: 0x%x, sp: 0x%x, lr: 0x%x, pc: 0x%x",
-			context->uc_mcontext.arm_ip,
-			context->uc_mcontext.arm_sp,
-			context->uc_mcontext.arm_lr,
-			context->uc_mcontext.arm_pc);
+
+        PRINT_CRASH_STATES(context);
 
 		CrashLog("backtrace:");
 		CrashLog("1: libGTASA.so + 0x%X", context->uc_mcontext.arm_pc - g_libGTASA);
@@ -327,27 +272,8 @@ void handler2(int signum, siginfo_t* info, void* contextPtr)
 		CrashLog("libGTASA base address: 0x%X", g_libGTASA);
 		CrashLog("libsamp base address: 0x%X", CUtil::FindLibrary("libsamp.so"));
 		CrashLog("libc base address: 0x%X", CUtil::FindLibrary("libc.so"));
-		CrashLog("register states:");
-		CrashLog("r0: 0x%X, r1: 0x%X, r2: 0x%X, r3: 0x%X",
-			context->uc_mcontext.arm_r0,
-			context->uc_mcontext.arm_r1,
-			context->uc_mcontext.arm_r2,
-			context->uc_mcontext.arm_r3);
-		CrashLog("r4: 0x%x, r5: 0x%x, r6: 0x%x, r7: 0x%x",
-			context->uc_mcontext.arm_r4,
-			context->uc_mcontext.arm_r5,
-			context->uc_mcontext.arm_r6,
-			context->uc_mcontext.arm_r7);
-		CrashLog("r8: 0x%x, r9: 0x%x, sl: 0x%x, fp: 0x%x",
-			context->uc_mcontext.arm_r8,
-			context->uc_mcontext.arm_r9,
-			context->uc_mcontext.arm_r10,
-			context->uc_mcontext.arm_fp);
-		CrashLog("ip: 0x%x, sp: 0x%x, lr: 0x%x, pc: 0x%x",
-			context->uc_mcontext.arm_ip,
-			context->uc_mcontext.arm_sp,
-			context->uc_mcontext.arm_lr,
-			context->uc_mcontext.arm_pc);
+
+        PRINT_CRASH_STATES(context);
 
 		CrashLog("backtrace:");
 		CrashLog("1: libGTASA.so + 0x%X", context->uc_mcontext.arm_pc - g_libGTASA);
@@ -385,27 +311,8 @@ void handler1(int signum, siginfo_t* info, void* contextPtr)
 		CrashLog("libGTASA base address: 0x%X", g_libGTASA);
 		CrashLog("libsamp base address: 0x%X", CUtil::FindLibrary("libsamp.so"));
 		CrashLog("libc base address: 0x%X", CUtil::FindLibrary("libc.so"));
-		CrashLog("register states:");
-		CrashLog("r0: 0x%X, r1: 0x%X, r2: 0x%X, r3: 0x%X",
-			context->uc_mcontext.arm_r0,
-			context->uc_mcontext.arm_r1,
-			context->uc_mcontext.arm_r2,
-			context->uc_mcontext.arm_r3);
-		CrashLog("r4: 0x%x, r5: 0x%x, r6: 0x%x, r7: 0x%x",
-			context->uc_mcontext.arm_r4,
-			context->uc_mcontext.arm_r5,
-			context->uc_mcontext.arm_r6,
-			context->uc_mcontext.arm_r7);
-		CrashLog("r8: 0x%x, r9: 0x%x, sl: 0x%x, fp: 0x%x",
-			context->uc_mcontext.arm_r8,
-			context->uc_mcontext.arm_r9,
-			context->uc_mcontext.arm_r10,
-			context->uc_mcontext.arm_fp);
-		CrashLog("ip: 0x%x, sp: 0x%x, lr: 0x%x, pc: 0x%x",
-			context->uc_mcontext.arm_ip,
-			context->uc_mcontext.arm_sp,
-			context->uc_mcontext.arm_lr,
-			context->uc_mcontext.arm_pc);
+
+        PRINT_CRASH_STATES(context);
 
 		CrashLog("backtrace:");
 		CrashLog("1: libGTASA.so + 0x%X", context->uc_mcontext.arm_pc - g_libGTASA);
