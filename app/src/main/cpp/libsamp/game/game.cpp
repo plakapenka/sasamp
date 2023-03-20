@@ -323,8 +323,6 @@ void CGame::SetWorldTime(int iHour, int iMinute)
 
 	pNetGame->m_byteWorldTime = iHour;
 	pNetGame->m_byteWorldMinute = iMinute;
-
-	Log("world = %d", iHour);
 }
 
 // 0.3.7

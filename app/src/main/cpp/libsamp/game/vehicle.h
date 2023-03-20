@@ -94,7 +94,8 @@ public:
 	void ProcessMarkers();
 
 	void RemoveEveryoneFromVehicle();
-
+	void RemovePassenger(CPedGta *pPed);
+	void RemoveDriver(bool bDontTurnOffEngine);
 	void SetDoorState(int iState);
 	int GetDoorState();
 
