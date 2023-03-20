@@ -532,38 +532,29 @@ bool CVehicle::HasSunk()
 
 bool IsValidGamePed(CPedGta* pPed);
 
+void CVehicle::RemovePassenger(CPedGta *pPed)
+{
+	((bool (*)(CVehicleGta*, CPedGta*))(g_libGTASA + 0x00584548 + 1))(m_pVehicle, pPed);
+}
+
+void CVehicle::RemoveDriver(bool bDontTurnOffEngine)
+{
+	((bool (*)(CVehicleGta*, bool))(g_libGTASA + 0x005847CC + 1))(m_pVehicle, bDontTurnOffEngine);
+}
+
 void CVehicle::RemoveEveryoneFromVehicle()
 {
 	Log("RemoveEveryoneFromVehicle");
 	if (!m_pVehicle) return;
-	if(!m_dwGTAId)return;
-	if (!GamePool_Vehicle_GetAt(m_dwGTAId)) return;
 
-	float fPosX = m_pVehicle->mat->pos.x;
-	float fPosY = m_pVehicle->mat->pos.y;
-	float fPosZ = m_pVehicle->mat->pos.z;
-
-	int iPlayerID = 0;
 	if (m_pVehicle->pDriver)
 	{
-		if(IsValidGamePed(m_pVehicle->pDriver))
-		{
-			iPlayerID = GamePool_Ped_GetIndex(m_pVehicle->pDriver);
-			ScriptCommand(&remove_actor_from_car_and_put_at, iPlayerID, fPosX, fPosY, fPosZ + 2.0f);
-		}
-
+		RemoveDriver(true);
 	}
 
-	for (int i = 0; i < 7; i++)
+	for(const auto & pPassenger : m_pVehicle->pPassengers)
 	{
-		if (m_pVehicle->pPassengers[i] != nullptr)
-		{
-			if(IsValidGamePed(m_pVehicle->pPassengers[i])) {
-				iPlayerID = GamePool_Ped_GetIndex(m_pVehicle->pPassengers[i]);
-				ScriptCommand(&remove_actor_from_car_and_put_at, iPlayerID, fPosX, fPosY,
-							  fPosZ + 2.0f);
-			}
-		}
+		RemovePassenger(pPassenger);
 	}
 }
 

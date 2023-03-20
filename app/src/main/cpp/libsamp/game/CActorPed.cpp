@@ -61,12 +61,7 @@ CActorPed::~CActorPed()
 
 bool IsValidGamePed(CPedGta* pPed)
 {
-	
-	//IsPedPointerValid(CPed *) � 0x00435614
-	if (((bool (*)(CPedGta*))(g_libGTASA + 0x004A72C4 + 1))(pPed)) {
-		return true;
-	}
-	return false;
+	return ((bool (*)(CPedGta*))(g_libGTASA + 0x004A72C4 + 1))(pPed);
 }
 
 void CActorPed::Destroy()
