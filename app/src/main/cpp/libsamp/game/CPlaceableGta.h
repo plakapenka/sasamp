@@ -6,12 +6,13 @@
 #define LIVERUSSIA_CPLACEABLEGTA_H
 
 #include "quaternion.h"
+#include "CSimpleTransform.h"
 
 #pragma pack(1)
 struct CPlaceableGta
 {
     uint32_t vtable;
-    uint8_t skip0[16];
+    CSimpleTransform m_placement;
     RwMatrix *mat;
 };
 
