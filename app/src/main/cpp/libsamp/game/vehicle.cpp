@@ -418,6 +418,11 @@ void CVehicle::LinkToInterior(int iInterior)
 	}
 }
 
+int32_t CVehicle::AddVehicleUpgrade(int32_t modelId)
+{
+	return ( ( int32_t(*)(CVehicleGta*, int32_t) )(g_libGTASA + 0x0058C66C + 1) )(m_pVehicle, modelId);
+}
+
 void CVehicle::SetColor(int iColor1, int iColor2)
 {
 	if (iColor1 >= 256 || iColor1 < 0)

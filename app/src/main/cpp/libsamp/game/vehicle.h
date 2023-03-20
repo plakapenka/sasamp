@@ -285,6 +285,8 @@ public:
 	void toggleAllTurnLight(bool toggle);
 
 	void toggleReverseLight(bool toggle);
+
+    int32_t AddVehicleUpgrade(int32_t modelId);
 };
 
 enum eVehicleOverrideLightsState {
