@@ -212,6 +212,7 @@ void handler3(int signum, siginfo_t* info, void* contextPtr)
 		CrashLog("1: libc.so + 0x%X", context->uc_mcontext.arm_pc - CUtil::FindLibrary("libc.so"));
 		CrashLog("2: libc.so + 0x%X", context->uc_mcontext.arm_lr - CUtil::FindLibrary("libc.so"));
 
+		CStackTrace::printBacktrace(context);
 		//DumpLibraries();
 
 		//exit(0);
@@ -251,6 +252,8 @@ void handler(int signum, siginfo_t *info, void* contextPtr)
 
 		CrashLog("1: libc.so + 0x%X", context->uc_mcontext.arm_pc - CUtil::FindLibrary("libc.so"));
 		CrashLog("2: libc.so + 0x%X", context->uc_mcontext.arm_lr - CUtil::FindLibrary("libc.so"));
+
+		CStackTrace::printBacktrace(context);
 	}
 }
 
@@ -286,6 +289,7 @@ void handler2(int signum, siginfo_t* info, void* contextPtr)
 		CrashLog("1: libc.so + 0x%X", context->uc_mcontext.arm_pc - CUtil::FindLibrary("libc.so"));
 		CrashLog("2: libc.so + 0x%X", context->uc_mcontext.arm_lr - CUtil::FindLibrary("libc.so"));
 
+		CStackTrace::printBacktrace(context);
 	}
 
 	return;
@@ -325,6 +329,7 @@ void handler1(int signum, siginfo_t* info, void* contextPtr)
 		CrashLog("1: libc.so + 0x%X", context->uc_mcontext.arm_pc - CUtil::FindLibrary("libc.so"));
 		CrashLog("2: libc.so + 0x%X", context->uc_mcontext.arm_lr - CUtil::FindLibrary("libc.so"));
 
+		CStackTrace::printBacktrace(context);
 	}
 
 	return;
@@ -351,8 +356,6 @@ void ANDRunThread_hook(void* a1)
 
 	ANDRunThread(a1);
 }
-
-
 
 jint JNI_OnLoad(JavaVM *vm, void *reserved)
 {
