@@ -11,6 +11,8 @@
 #include "game/RW/rtanim.h"
 #include "game/Enums/eWeaponType.h"
 #include "StreamingInfo.h"
+#include "game/Enums/AnimationEnums.h"
+#include "game/Models/CModelInfo.h"
 
 extern CGame* pGame;
 extern CNetGame *pNetGame;
@@ -1374,9 +1376,11 @@ bool IsBlendAssocGroupLoaded(int iGroup)
 void CPlayerPed::SetMoveAnim(int iAnimGroup)
 {
 	Log("SetMoveAnim %d", iAnimGroup);
-	if (iAnimGroup == 0)
+
+	if(iAnimGroup == ANIM_GROUP_DEFAULT)
 	{
-		return;
+		auto pModel = reinterpret_cast<CPedModelInfo*>(CModelInfo::GetModelInfo(m_pPed->nModelIndex));
+		iAnimGroup = pModel->m_nAnimType;
 	}
 
 	// Find which anim block to load
@@ -1411,14 +1415,7 @@ void CPlayerPed::SetMoveAnim(int iAnimGroup)
 	{
 		return;
 	}
-	if (!m_dwGTAId || !m_pPed)
-	{
-		return;
-	}
-	if (!CUtil::GetPoolPed(m_dwGTAId))
-	{
-		return;
-	}
+
 	if (!IsBlendAssocGroupLoaded(iAnimGroup))
 	{
 		Log("Animgrp %d not loaded", iAnimGroup);

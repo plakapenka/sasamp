@@ -7,10 +7,11 @@
 
 
 #include "CClumpModelInfo.h"
+#include "game/Enums/AnimationEnums.h"
 
 struct CPedModelInfo : public CClumpModelInfo{
 public:
-    int m_nAnimType;
+    AssocGroupId m_nAnimType;
     unsigned int m_nPedType;
     unsigned int m_nStatType;
     unsigned short m_nCarsCanDriveMask;
