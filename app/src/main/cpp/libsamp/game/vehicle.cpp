@@ -32,61 +32,42 @@ CVehicle::CVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRota
 	m_dwGTAId = 0;
 	m_pTrailer = nullptr;
 
-	if ((iType != TRAIN_PASSENGER_LOCO) &&
-		(iType != TRAIN_FREIGHT_LOCO) &&
-		(iType != TRAIN_PASSENGER) &&
-		(iType != TRAIN_FREIGHT) &&
-		(iType != TRAIN_TRAM))
-	{
-		// normal vehicle
-		if (!pGame->IsModelLoaded(iType))
-		{
-			CStreaming::RequestModel(iType, STREAMING_GAME_REQUIRED);
-			CStreaming::LoadAllRequestedModels(false);
-			while (!pGame->IsModelLoaded(iType)) usleep(10);
-		}
-        m_bHasSiren = false;
-		// TUT!!!
-		ScriptCommand(&create_car, iType, fPosX, fPosY, fPosZ, &dwRetID);
-		ScriptCommand(&set_car_z_angle, dwRetID, fRotation);
-		ScriptCommand(&car_gas_tank_explosion, dwRetID, 0);
-		ScriptCommand(&set_car_hydraulics, dwRetID, 0);
-		ScriptCommand(&toggle_car_tires_vulnerable, dwRetID, 1);
-		ScriptCommand(&set_car_immunities, dwRetID, 0, 0, 0, 0, 0);
-		m_pVehicle = (CVehicleGta*)GamePool_Vehicle_GetAt(dwRetID);
-		m_pEntity = m_pVehicle;
-		m_dwGTAId = dwRetID;
-
-		if (m_pVehicle)
-		{
-			//m_pVehicle->m_nOverrideLights = eVehicleOverrideLightsState::NO_CAR_LIGHT_OVERRIDE;
-			m_pVehicle->dwDoorsLocked = 0;
-			m_pVehicle->fHealth = 1000.0;
-			m_bIsLocked = false;
-
-			GetMatrix(&mat);
-			mat.pos.x = fPosX;
-			mat.pos.y = fPosY;
-			mat.pos.z = fPosZ;
-
-			if (GetVehicleSubtype() != VEHICLE_SUBTYPE_BIKE &&
-				GetVehicleSubtype() != VEHICLE_SUBTYPE_PUSHBIKE)
-				mat.pos.z += 0.25f;
-
-			SetMatrix(mat);
-		}
+	// normal vehicle
+	if (!pGame->IsModelLoaded(iType)) {
+		CStreaming::RequestModel(iType, STREAMING_GAME_REQUIRED);
+		CStreaming::LoadAllRequestedModels(false);
+		while (!pGame->IsModelLoaded(iType)) usleep(10);
 	}
-	else if ((iType == TRAIN_PASSENGER_LOCO) ||
-			 (iType == TRAIN_FREIGHT_LOCO) ||
-			 (iType == TRAIN_TRAM))
-	{
-		// train locomotives
-	}
-	else if ((iType == TRAIN_PASSENGER) ||
-			 iType == TRAIN_FREIGHT)
-	{
+	m_bHasSiren = false;
 
+	ScriptCommand(&create_car, iType, fPosX, fPosY, fPosZ, &dwRetID);
+	ScriptCommand(&set_car_z_angle, dwRetID, fRotation);
+	ScriptCommand(&car_gas_tank_explosion, dwRetID, 0);
+	ScriptCommand(&set_car_hydraulics, dwRetID, 0);
+	ScriptCommand(&toggle_car_tires_vulnerable, dwRetID, 1);
+	ScriptCommand(&set_car_immunities, dwRetID, 0, 0, 0, 0, 0);
+	m_pVehicle = (CVehicleGta*)GamePool_Vehicle_GetAt(dwRetID);
+	m_pEntity = m_pVehicle;
+	m_dwGTAId = dwRetID;
+
+	if (m_pVehicle) {
+		//m_pVehicle->m_nOverrideLights = eVehicleOverrideLightsState::NO_CAR_LIGHT_OVERRIDE;
+		m_pVehicle->dwDoorsLocked = 0;
+		m_pVehicle->fHealth = 1000.0;
+		m_bIsLocked = false;
+
+		GetMatrix(&mat);
+		mat.pos.x = fPosX;
+		mat.pos.y = fPosY;
+		mat.pos.z = fPosZ;
+
+		if (GetVehicleSubtype() != VEHICLE_SUBTYPE_BIKE &&
+			GetVehicleSubtype() != VEHICLE_SUBTYPE_PUSHBIKE)
+			mat.pos.z += 0.25f;
+
+		SetMatrix(mat);
 	}
+
 
 	m_byteObjectiveVehicle = 0;
 	m_bSpecialMarkerEnabled = false;
@@ -775,8 +756,7 @@ void* GetSuspensionLinesFromModel(int nModelIndex, int& numWheels)
 
 uint8_t* GetCollisionDataFromModel(int nModelIndex)
 {
-	CVehicleModelInfo* pModelInfoStart = static_cast<CVehicleModelInfo *>(CModelInfo::GetModelInfo(
-			nModelIndex));
+	auto* pModelInfoStart = static_cast<CVehicleModelInfo *>(CModelInfo::GetModelInfo(nModelIndex));
 
 	if (!pModelInfoStart)
 	{
