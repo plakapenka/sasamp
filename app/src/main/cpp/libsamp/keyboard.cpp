@@ -2275,6 +2275,13 @@ bool ProcessLocalCommands(const char str[])
 		CTab::toggle();
 		return true;
 	}
+	if (strcmp(str, "/testtun") == 0)
+	{
+		auto pVehicle = pGame->FindPlayerPed()->GetCurrentVehicle();
+
+		pVehicle->AddVehicleUpgrade(1014);
+		return true;
+	}
 
 	if (strstr(str, "/fpslimit "))
 	{

@@ -425,7 +425,7 @@ void DisableRaceCheckpoint(RPCParameters *rpcParams)
 }
 void WorldVehicleAdd(RPCParameters *rpcParams)
 {
-	unsigned char * Data = reinterpret_cast<unsigned char *>(rpcParams->input);
+	auto Data = reinterpret_cast<unsigned char *>(rpcParams->input);
 	int iBitLength = rpcParams->numberOfBitsOfData;
 
 	RakNet::BitStream bsData((unsigned char*)Data,(iBitLength/8)+1,false);
@@ -435,15 +435,16 @@ void WorldVehicleAdd(RPCParameters *rpcParams)
 	NEW_VEHICLE NewVehicle;
 	bsData.Read((char *)&NewVehicle,sizeof(NEW_VEHICLE));
 
+	Log("New color = %d", NewVehicle.cColor1);
 	//if(NewVehicle.iVehicleType < 400 || NewVehicle.iVehicleType > 611) return;
 	if (!pVehiclePool->New(&NewVehicle))
 		return;
 	int iVehicle = pVehiclePool->FindGtaIDFromID(NewVehicle.VehicleID);
 	if (iVehicle)
 	{
-		for (int i = 0; i < 14; i++)
+		for (unsigned char byteModSlot : NewVehicle.byteModSlots)
 		{
-			int data = (int)NewVehicle.byteModSlots[i];
+			int data = (int)byteModSlot;
 			uint32_t v = 0;
 
 			if (data == 0)
@@ -483,6 +484,7 @@ void WorldVehicleAdd(RPCParameters *rpcParams)
 //				}
 //			}
 //		}
+
 		if (NewVehicle.cColor1 != -1 || NewVehicle.cColor2 != -1)
 		{
 			pVehiclePool->GetAt(NewVehicle.VehicleID)->SetColor(NewVehicle.cColor1, NewVehicle.cColor2);
@@ -492,7 +494,7 @@ void WorldVehicleAdd(RPCParameters *rpcParams)
 
 void WorldVehicleRemove(RPCParameters *rpcParams)
 {
-	unsigned char * Data = reinterpret_cast<unsigned char *>(rpcParams->input);
+	auto Data = reinterpret_cast<unsigned char *>(rpcParams->input);
 	int iBitLength = rpcParams->numberOfBitsOfData;
 
 	CPlayerPed *pPlayerPed = pGame->FindPlayerPed();
@@ -733,8 +735,10 @@ void ProcessIncommingEvent(BYTE bytePlayerID, int iEventType, uint32_t dwParam1,
 		Log("RPC: EVENT_TYPE_CARCOMPONENT");
 		iVehicleID = pVehiclePool->FindGtaIDFromID(dwParam1);
 		iComponent = (int)dwParam2;
+
 		CStreaming::RequestModel(iComponent, STREAMING_GAME_REQUIRED);
 		CStreaming::LoadAllRequestedModels(false);
+
 		ScriptCommand(&request_car_component, iComponent);
 
 		iWait = 10;
@@ -749,13 +753,14 @@ void ProcessIncommingEvent(BYTE bytePlayerID, int iEventType, uint32_t dwParam1,
 			break;
 		}
 		ScriptCommand(&add_car_component, iVehicleID, iComponent, &v);
-		CChatWindow::AddDebugMessage("Added car component: %d",iComponent);
+		//CChatWindow::AddDebugMessage("Added car component: %d",iComponent);
 		break;
 
 	case EVENT_TYPE_CARCOLOR:
 		pVehicle = pVehiclePool->GetAt((VEHICLEID)dwParam1);
 		if (pVehicle)
 		{
+
 			pVehicle->SetColor((int)dwParam2, (int)dwParam3);
 		}
 		break;

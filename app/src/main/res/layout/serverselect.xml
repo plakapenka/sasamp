@@ -3,23 +3,23 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:visibility="visible"
+    android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/mylogo">
 
-    <com.skydoves.progressview.ProgressView
-        android:id="@+id/loadscreen_progressBar"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_10sdp"
-        app:layout_constraintBottom_toBottomOf="parent"
 
-        app:progressView_animation="accelerateDecelerate"
-        app:progressView_autoAnimate="true"
-        app:progressView_borderWidth="1dp"
-        app:progressView_colorBackground="@color/white"
-        app:progressView_colorProgress="#67daff"
-        app:progressView_max="100"
-        app:progressView_padding="1dp"
-        app:progressView_progressFromPrevious="true" />
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:layout_width="@dimen/_100sdp"
+        android:layout_height="@dimen/_100sdp"
+        android:layout_marginBottom="16dp"
+        android:indeterminate="true"
+        app:indicatorColor="#67daff"
+
+        app:trackCornerRadius="@dimen/_10sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

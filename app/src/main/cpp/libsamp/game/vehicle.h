@@ -178,7 +178,12 @@ public:
 	uint8_t			m_byteObjectiveVehicle; // Is this a special objective vehicle? 0/1
 	uint8_t			m_bSpecialMarkerEnabled;
 
-	uint8_t			m_byteColor1;
+	union
+	{
+		int32_t m_byteColor1;
+		CRGBA color1;
+	};
+	//uint8_t			m_byteColor1;
 	uint8_t			m_byteColor2;
 	bool 			m_bColorChanged;
 

@@ -142,3 +142,27 @@ Java_com_liverussia_cr_gui_Speedometer_sendClick(JNIEnv *env, jobject thiz, jint
         }
     }
 }
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_liverussia_cr_gui_tunings_Colors_color_1change(JNIEnv *env, jobject thiz, jint type,
+                                                        jint r, jint g, jint b) {
+    if(!pNetGame)
+        return;
+
+    if(!pNetGame->GetPlayerPool())
+        return;
+
+    if(!pNetGame->GetPlayerPool()->GetLocalPlayer())
+        return;
+
+    CPlayerPed *pPlayerPed = pNetGame->GetPlayerPool()->GetLocalPlayer()->m_pPlayerPed;
+    CVehicle* pVehicle = pPlayerPed->GetCurrentVehicle();
+
+    if(pVehicle) {
+        pVehicle->color1.R = r;
+        pVehicle->color1.G = g;
+        pVehicle->color1.B = b;
+    }
+
+}

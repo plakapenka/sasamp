@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_fl_root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_gravity="bottom">
+    android:layout_height="match_parent">
 
     <SurfaceView
         android:id="@+id/main_sv"
@@ -15,7 +15,8 @@
         android:id="@+id/ui_layout"
         android:visibility="visible"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_height="fill_parent"
+        tools:ignore="MissingConstraints">
 
 <!--        <View android:id="@+id/dark_screen" android:background="#ff000000" android:visibility="visible" android:layout_width="fill_parent" android:layout_height="fill_parent" android:alpha="0.0" />-->
         <include layout="@layout/dailyreward" />
@@ -54,4 +55,5 @@
     </FrameLayout>
 
     <include layout="@layout/serverselect" />
-</FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

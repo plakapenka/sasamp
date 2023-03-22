@@ -11,6 +11,11 @@
 #define RpAtomicGetGeometry(_atomic) \
     RpAtomicGetGeometryMacro(_atomic)
 
+#define RpMaterialGetColorMacro(_material)                          \
+    (&((_material)->color))
+
+#define RpMaterialGetColor(_material)                               \
+    RpMaterialGetColorMacro(_material)
 
 #include "../common.h"
 #include "rtanim.h"

@@ -123,12 +123,13 @@ void ApplyPatches_level0()
 //	CHook::WriteMemory(g_libGTASA + 0x0025C522, (uintptr_t)"\x02\x2C", 2);
 //	// 3 touch end
 //
-//	// col links limits!!!
-//	CHook::WriteMemory(g_libGTASA + 0x1859FC, (uintptr_t)"\x01\x22", 2);
+	CHook::RET(g_libGTASA + 0x0028732C); // SCCloudSaveStateUpdate()
+	// col links limits!!! TODO
+	CHook::WriteMemory(g_libGTASA + 0x001AE8DE, (uintptr_t)"\x01\x22", 2);
 //	//sizeof(CCollisionLink) = 12 (0xC)
 //	// we need 200 col links(MALO LI!!!)
-//	CHook::WriteMemory(g_libGTASA + 0x0029554A, (uintptr_t)"\x4f\xf4\x61\x60", 4); // allocate memory to 300 * sizeof(CCollisionLink)
-//	CHook::WriteMemory(g_libGTASA + 0x00295556, (uintptr_t)"\x4f\xf4\x5b\x62", 4); // BUT MAKE INITIALIZED ONLY 292 DUE TO SHIT ARM ASM!! (292 * sizeof(CCollisionLink)
+	CHook::WriteMemory(g_libGTASA + 0x002D9724, (uintptr_t)"\x4f\xf4\x61\x60", 4); // allocate memory to 300 * sizeof(CCollisionLink)
+	CHook::WriteMemory(g_libGTASA + 0x002D972E, (uintptr_t)"\x00\xF5\x5B\x63", 4); // BUT MAKE INITIALIZED ONLY 292 DUE TO SHIT ARM ASM!! (292 * sizeof(CCollisionLink)
 //
 //	// col links limits end
 //
@@ -331,7 +332,7 @@ void ApplyPatches()
 //	CHook::RET(g_libGTASA + 0x2C1CB0); // CEntryExit::GenerateAmbientPeds
 //	CHook::RET(g_libGTASA + 0x002FB2C8); // CCarCtrl::GenerateOneEmergencyServicesCar
 //	CHook::NOP(g_libGTASA + 0x4612A0, 9); 	// CPedIntelligence::SetPedDecisionMakerType from CPopulation::AddPedAtAttractor
-	//CHook::NOP(g_libGTASA + 0x0046BE88, 2);	// CStreaming::ms_memoryAvailable = (int)v24
+	CHook::NOP(g_libGTASA + 0x0046BE88, 2);	// CStreaming::ms_memoryAvailable = (int)v24
 //	CHook::NOP(g_libGTASA + 0x39872A, 2);	// CCover::Update from CGame::Process
 //	CHook::NOP(g_libGTASA + 0x3AC8B2, 2); 	// CMessages::AddBigMessage from CPlayerInfo::KillPlayer
 //	CHook::NOP(g_libGTASA + 0x4F75B4, 4);  // CBoat::ProcessControl
@@ -347,6 +348,7 @@ void ApplyPatches()
 //	CHook::WriteMemory(g_libGTASA + 0x1A7EF2, "\x4F\xF4\x00\x10\x4F\xF4\x80\x00", 8); 	// RenderQueue::RenderQueue
 //	CHook::WriteMemory(g_libGTASA + 0x1A7F32, "\x4F\xF4\x00\x10\x4F\xF4\x80\x00", 8); 	// RenderQueue::RenderQueue
 //
+	CHook::RET(g_libGTASA + 0x004CCB08);
 //	CHook::WriteMemory(g_libGTASA + 0x45FC20, "\x4F\xF0\x00\x00\xF7\x46", 6);			// CPopulation::AddToPopulation
 //	CHook::WriteMemory(g_libGTASA + 0x293218, "\x01\x20\x70\x47", 4); 					// CStreaming::RemoveLoadedVehicle
 //	CHook::WriteMemory(g_libGTASA + 0x1BDD4A, "\x10\x46\xA2\xF1\x04\x0B", 6); 			// TextureDatabaseRuntime::LoadFullTexture
@@ -357,14 +359,15 @@ void ApplyPatches()
 	// TxdStore pool (old: 5000, new: 20000)
 //	CHook::WriteMemory(g_libGTASA + 0x005D3AAA, (uintptr_t)"\x4f\xf4\xb8\x50\xc0\xf2\x11\x00", 8); //  MOV.W	R0, #0x1700 | MOVT	R0, #0x11
 //	//CHook::WriteMemory(g_libGTASA + 0x55BA9E, "\xC0\xF2\x11\x00", 4);
-//	CHook::WriteMemory(g_libGTASA + 0x005D3AB8, (uintptr_t)"\x44\xf6\x20\x60", 4); // MOVW	R0, #0x4E20
-//	CHook::WriteMemory(g_libGTASA + 0x005D3ABC, (uintptr_t)"\x44\xf6\x20\x62", 4); // MOVW	R2, #0x4E20
+	CHook::WriteMemory(g_libGTASA + 0x005D3AB8, (uintptr_t)"\x44\xf6\x20\x60", 4); // MOVW	R0, #0x4E20
+	CHook::WriteMemory(g_libGTASA + 0x005D3ABC, (uintptr_t)"\x44\xf6\x20\x65", 4); // MOVW	R2, #0x4E20
 //
-//	// VehicleStruct increase (0x32C*0x50 = 0xFDC0)
-//	CHook::WriteMemory(g_libGTASA + 0x00468BEE, (uintptr_t)"\x4F\xF6\xC0\x50", 4);	// MOV  R0, #0xFDC0
-//	CHook::WriteMemory(g_libGTASA + 0x00468BFA, (uintptr_t)"\x50\x20", 2);			// MOVS R0, #0x50
-//	//CHook::WriteMemory(g_libGTASA + 0x405348, (uintptr_t)"\x50\x22", 2);			// MOVS R2, #0x50
-//	CHook::WriteMemory(g_libGTASA + 0x00468C3C, (uintptr_t)"\x50\x28", 2);			// CMP  R0, #0x50
+
+	// VehicleStruct increase (0x32C*0x50 = 0xFDC0)
+	CHook::WriteMemory(g_libGTASA + 0x00468BEE, (uintptr_t)"\x4F\xF6\xC0\x50", 4);	// MOV  R0, #0xFDC0
+	CHook::WriteMemory(g_libGTASA + 0x00468BF8, (uintptr_t)"\x50\x20", 2);			// MOVS R0, #0x50
+	CHook::WriteMemory(g_libGTASA + 0x00468BFA, (uintptr_t)"\x50\x25", 2);			// MOVS R5, #0x50
+	CHook::WriteMemory(g_libGTASA + 0x00468C3C, (uintptr_t)"\x50\x28", 2);			// CMP  R0, #0x50
 //
 //
 //	// stop assign 0xFFFFFF to beam color! FIXME

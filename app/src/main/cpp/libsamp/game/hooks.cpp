@@ -137,7 +137,15 @@ static constexpr float ar43 = 4.0f / 3.0f;
 #include "keyboard.h"
 void Render2dStuff()
 {
-    ( ( void(*)(bool) )(g_libGTASA + 0x001C0750 + 1) )(false); // emu_GammaSet
+//	RwRenderStateSet(rwRENDERSTATEZTESTENABLE, (void*)0);
+//	RwRenderStateSet(rwRENDERSTATEZWRITEENABLE, (void*)0);
+//	RwRenderStateSet(rwRENDERSTATEVERTEXALPHAENABLE, (void*)1);
+//	RwRenderStateSet(rwRENDERSTATESRCBLEND, (void*)5);
+//	RwRenderStateSet(rwRENDERSTATEDESTBLEND, (void*)6);
+//	RwRenderStateSet(rwRENDERSTATEFOGENABLE, (void*)0);
+//	RwRenderStateSet(rwRENDERSTATECULLMODE, (void*)1);
+
+	( ( void(*)(bool) )(g_libGTASA + 0x001C0750 + 1) )(false); // emu_GammaSet
 
 	if (pGUI) pGUI->Render();
 
@@ -153,7 +161,6 @@ void Render2dStuff()
 	*CCamera::m_f3rdPersonCHairMultX = saveX;
 	*CCamera::m_f3rdPersonCHairMultY = saveY;
 	//
-
 
 	if(!CKeyBoard::m_bEnable)
 		( ( void(*)(bool) )(g_libGTASA + 0x002B0BD8 + 1) )(false); // render widgets
@@ -177,6 +184,10 @@ void Render2dStuff()
 
 		( ( void(*)() )(g_libGTASA + 0x00437B0C + 1) )(); // радар
 	}
+
+//	((void (*)(bool)) (g_libGTASA + 0x0054BDD4 + 1))(true); // gametext
+//	((void (*)(bool)) (g_libGTASA + 0x005A9120 + 1))(true); // CFont::RenderFontBuffer
+
 
 	MainLoop();
 }
@@ -1098,6 +1109,7 @@ RwFrame* CClumpModelInfo_GetFrameFromId_hook(RpClump* a1, int a2)
 }
 
 #include "..//crashlytics.h"
+#include "game/RW/rpworld.h"
 
 char g_bufRenderQueueCommand[200];
 uintptr_t g_dwRenderQueueOffset;
@@ -1133,7 +1145,7 @@ RpMaterial* CVehicle__SetupRenderMatCB(RpMaterial* material, void* data)
 	{
 		if (material->texture)
 		{
-			CVehicle* pVeh = (CVehicle*)data;
+			auto pVeh = (CVehicle*)data;
 
 			for (size_t i = 0; i < MAX_REPLACED_TEXTURES; i++)
 			{
@@ -1153,6 +1165,18 @@ RpMaterial* CVehicle__SetupRenderMatCB(RpMaterial* material, void* data)
 					}
 				}
 			}
+			RwRGBA color = material->color;
+			int v11;
+			v11 = *(DWORD *)&color & 0xFFFFFF;
+			if(v11 == 0xFF3C)
+			{ // first color
+				resetEntriesVehicle.push_back(std::make_pair(reinterpret_cast<unsigned int*>(&(material->color)), *reinterpret_cast<unsigned int*>(&(material->color))));
+				material->color.red = pVeh->color1.R;
+				material->color.green = pVeh->color1.G;
+				material->color.blue = pVeh->color1.B;
+               // Log("%d", pVeh->m_byteColor1);
+			}
+
 		}
 	}
 	return material;
@@ -1671,13 +1695,13 @@ int CPad__CycleCameraModeDownJustDown_hook(void* thiz)
 int g_iLastProcessedSkinCollision = 228;
 int g_iLastProcessedEntityCollision = 228;
 
-void (*CPed__ProcessEntityCollision)(CPedGta* thiz, CEntityGta* ent, void* colPoint);
-void CPed__ProcessEntityCollision_hook(CPedGta* thiz, CEntityGta* ent, void* colPoint)
+int32_t (*CPed__ProcessEntityCollision)(CPedGta* thiz, CEntityGta* ent, void* colPoint);
+int32_t CPed__ProcessEntityCollision_hook(CPedGta* thiz, CEntityGta* ent, void* colPoint)
 {
 	g_iLastProcessedSkinCollision = thiz->nModelIndex;
 	g_iLastProcessedEntityCollision = ent->nModelIndex;
 
-	CPed__ProcessEntityCollision(thiz, ent, colPoint);
+	return CPed__ProcessEntityCollision(thiz, ent, colPoint);
 }
 
 void (*CDraw__SetFOV)(float fFOV, bool isCinematic);

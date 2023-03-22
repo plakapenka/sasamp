@@ -51,6 +51,7 @@ import android.view.ViewParent;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentActivity;
 
 import com.liverussia.cr.R;
@@ -131,7 +132,7 @@ public abstract class NvEventQueueActivity extends FragmentActivity implements S
     private boolean viewIsActive = false;
     boolean waitingForResume = false;
 
-    private FrameLayout mRootFrame = null;
+    private ConstraintLayout mRootFrame = null;
     private SurfaceView mSurfaceView = null;
 
     //private HeightProvider mHeightProvider = null;
@@ -735,7 +736,7 @@ public abstract class NvEventQueueActivity extends FragmentActivity implements S
         setContentView(R.layout.main_render_screen);
         SurfaceView surfaceView = (SurfaceView) findViewById(R.id.main_sv);
         this.mSurfaceView = surfaceView;
-        this.mRootFrame = (FrameLayout) findViewById(R.id.main_fl_root);
+        this.mRootFrame = findViewById(R.id.main_fl_root);
         SurfaceHolder holder = surfaceView.getHolder();
         holder.setType(2);
         holder.setKeepScreenOn(true);

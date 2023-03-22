@@ -15,7 +15,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class InGameLoadingScreen {
-    ProgressView loadscreen_progressBar;
     ConstraintLayout loadscreen_main_layout;
     SurfaceView main_sv;
     Activity activity;
@@ -26,15 +25,8 @@ public class InGameLoadingScreen {
         activity.runOnUiThread(()-> {
             main_sv = activity.findViewById(R.id.main_sv);
             loadscreen_main_layout = activity.findViewById(R.id.loadscreen_main_layout);
-            loadscreen_progressBar = activity.findViewById(R.id.loadscreen_progressBar);
-        });
-    }
 
-    void updatePercent(int percent) {
-        activity.runOnUiThread(()-> {
-            loadscreen_progressBar.setProgress(percent);
         });
-
     }
 
     void hide()

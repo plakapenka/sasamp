@@ -40,7 +40,6 @@ import com.liverussia.cr.gui.ShopStoreManager;
 import com.liverussia.cr.gui.TechIspect;
 import com.liverussia.cr.gui.dialogs.Dialog;
 import com.liverussia.cr.gui.tab.Tab;
-import com.nvidia.devtech.NvEventQueueActivity;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -130,6 +129,7 @@ public class Samp extends GTASA
         // mInputManager = new InputManager(this);
         //mHeightProvider = new HeightProvider(this).init(mRootFrame).setHeightListener(this);
         new Notification(this);
+      //  new Colors(this);
 
         vibrator = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
     }

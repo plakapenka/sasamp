@@ -51,6 +51,6 @@ void LoadingScreen::gtaLoadingScreenTick()
     const float percent = *(float*)(g_libGTASA + 0x009920C0)*2;
     if (percent <= 0.0f) return;
 
-    LoadingScreen::updatePercent(percent);
+ //   LoadingScreen::updatePercent(percent);
 }
 

@@ -420,19 +420,29 @@ void CVehicle::LinkToInterior(int iInterior)
 
 int32_t CVehicle::AddVehicleUpgrade(int32_t modelId)
 {
+	CStreaming::RequestModel(modelId, STREAMING_GAME_REQUIRED);
+	CStreaming::LoadAllRequestedModels(false);
+
+	ScriptCommand(&request_car_component, modelId);
+
+	while (!ScriptCommand(&is_component_available, modelId))
+	{
+		usleep(5);
+	}
+
 	return ( ( int32_t(*)(CVehicleGta*, int32_t) )(g_libGTASA + 0x0058C66C + 1) )(m_pVehicle, modelId);
 }
 
 void CVehicle::SetColor(int iColor1, int iColor2)
 {
-	if (iColor1 >= 256 || iColor1 < 0)
-	{
-		iColor1 = 0;
-	}
-	if (iColor2 >= 256 || iColor2 < 0)
-	{
-		iColor2 = 0;
-	}
+//	if (iColor1 >= 256 || iColor1 < 0)
+//	{
+//		iColor1 = 0;
+//	}
+//	if (iColor2 >= 256 || iColor2 < 0)
+//	{
+//		iColor2 = 0;
+//	}
 	if (m_pVehicle)
 	{
 		if (GamePool_Vehicle_GetAt(m_dwGTAId))
@@ -442,7 +452,8 @@ void CVehicle::SetColor(int iColor1, int iColor2)
 		}
 	}
 
-	m_byteColor1 = (uint8_t)iColor1;
+    //m_byteColor1 = iColor1;
+	color1.Set(iColor1);
 	m_byteColor2 = (uint8_t)iColor2;
 	m_bColorChanged = true;
 }
@@ -803,8 +814,7 @@ void CVehicle::SetHandlingData(std::vector<SHandlingData>& vHandlingData)
 		m_pCustomHandling = new tHandlingData;
 	}
 
-	CVehicleModelInfo* pModelInfoStart = static_cast<CVehicleModelInfo *>(CModelInfo::GetModelInfo(
-			m_pVehicle->nModelIndex));
+	auto pModelInfoStart = static_cast<CVehicleModelInfo *>(CModelInfo::GetModelInfo(m_pVehicle->nModelIndex));
 
 	if (!pModelInfoStart)
 	{
