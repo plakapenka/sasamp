@@ -125,12 +125,13 @@ void ApplyPatches_level0()
 //
 	CHook::RET(g_libGTASA + 0x0028732C); // SCCloudSaveStateUpdate()
 	// col links limits!!! TODO
-	CHook::WriteMemory(g_libGTASA + 0x001AE8DE, (uintptr_t)"\x01\x22", 2);
+//	CHook::WriteMemory(g_libGTASA + 0x001AE8DE, (uintptr_t)"\x01\x22", 2);
 //	//sizeof(CCollisionLink) = 12 (0xC)
 //	// we need 200 col links(MALO LI!!!)
+
 	CHook::WriteMemory(g_libGTASA + 0x002D9724, (uintptr_t)"\x4f\xf4\x61\x60", 4); // allocate memory to 300 * sizeof(CCollisionLink)
-	CHook::WriteMemory(g_libGTASA + 0x002D972E, (uintptr_t)"\x00\xF5\x5B\x63", 4); // BUT MAKE INITIALIZED ONLY 292 DUE TO SHIT ARM ASM!! (292 * sizeof(CCollisionLink)
-//
+	//CHook::WriteMemory(g_libGTASA + 0x002D972E, (uintptr_t)"\x00\xF5\x5B\x63", 4); // BUT MAKE INITIALIZED ONLY 292 DUE TO SHIT ARM ASM!! (292 * sizeof(CCollisionLink)
+
 //	// col links limits end
 //
 	CExtendedCarColors::ApplyPatches_level0();
@@ -141,9 +142,8 @@ void ApplyPatches_level0()
 //
 //	//UnFuck(g_libGTASA + 0x0056CA68);
 //	//*(uint8_t*)(g_libGTASA + 0x0056CA68) = 1;
-//
-//	CHook::NOP(g_libGTASA + 0x001D2410, 4);
-//
+
+	CHook::NOP(g_libGTASA + 0x001D2408, 8);
 
 	// osMutexStuff
 //	CHook::WriteMemory(g_libGTASA + 0x001A7ECE, (uintptr_t)"\x4F\xF0\x01\x00\x00\x46", 6);
@@ -227,7 +227,6 @@ void ApplyPatches()
 
 	// JPatch
 	CHook::WriteMemory(g_libGTASA + 0x003F4138, (uintptr_t)"\x03", 1); // RE3: Fix R* optimization that prevents peds to spawn
-	//CHook::WriteMemory(g_libGTASA + 0x001D240E, (uintptr_t)"\x08", 1); // Lower threads sleeping timer
 	//CHook::WriteMemory(g_libGTASA + 0x00266CC2, (uintptr_t)"\x08", 1); // Lower threads sleeping timer
 
 	// задние фары
@@ -345,8 +344,8 @@ void ApplyPatches()
 	//CHook::RET(g_libGTASA + 0x00328430); 	// CUpsideDownCarCheck::UpdateTimers from CTheScripts::Process
 //
 //	CHook::WriteMemory(g_libGTASA + 0x2C3868, "\x00\x20\x70\x47", 4); 					// CGameLogic::IsCoopGameGoingOn
-//	CHook::WriteMemory(g_libGTASA + 0x1A7EF2, "\x4F\xF4\x00\x10\x4F\xF4\x80\x00", 8); 	// RenderQueue::RenderQueue
-//	CHook::WriteMemory(g_libGTASA + 0x1A7F32, "\x4F\xF4\x00\x10\x4F\xF4\x80\x00", 8); 	// RenderQueue::RenderQueue
+//	CHook::WriteMemory(g_libGTASA + 0x001D16EA, "\x4F\xF4\x00\x10\x4F\xF4\x80\x06", 8); 	// RenderQueue::RenderQueue
+//	CHook::WriteMemory(g_libGTASA + 0x001D193A, "\x4F\xF4\x00\x16", 4); 	// RenderQueue::RenderQueue
 //
 	CHook::RET(g_libGTASA + 0x004CCB08);
 //	CHook::WriteMemory(g_libGTASA + 0x45FC20, "\x4F\xF0\x00\x00\xF7\x46", 6);			// CPopulation::AddToPopulation
