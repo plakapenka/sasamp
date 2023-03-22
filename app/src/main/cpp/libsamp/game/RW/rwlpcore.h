@@ -713,3 +713,18 @@ struct RpGeometry
 };
 
 typedef struct RwStream RwStream;
+
+struct RwMatrixTag
+{
+    /* These are padded to be 16 byte quantities per line */
+    RwV3d               right;
+    RwUInt32            flags;
+    RwV3d               up;
+    RwUInt32            pad1;
+    RwV3d               at;
+    RwUInt32            pad2;
+    RwV3d               pos;
+    RwUInt32            pad3;
+};
+
+typedef RwMatrixTag RwMatrix;
