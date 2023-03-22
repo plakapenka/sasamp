@@ -17,7 +17,7 @@ typedef struct _NEW_VEHICLE
 	uint8_t		byteAddSiren;
 	uint8_t		byteModSlots[14];
 	uint8_t	  	bytePaintjob;
-	int	cColor1;
+	uint32_t 	cColor1;
 	int	cColor2;
 } NEW_VEHICLE;
 
