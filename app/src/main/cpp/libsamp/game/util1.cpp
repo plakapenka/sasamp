@@ -1870,21 +1870,7 @@ CPedGta *GamePool_FindPlayerPed()
 CPedGta* CUtil::FindPlayerPed(int32_t Player)
 {
     return (CPedGta*)&CWorld::Players;
-    Log("asdfsdfsdfadsf = %x", CWorld::Players);
-    int32_t v2; // r1
 
-    if (  (int)(g_libGTASA + 0x006E002C) == 1 ) { // CHID::currentInstanceIndex
-        Log("FindPlayerPed %x", *CWorld::Players[1].m_pPed);
-        return CWorld::Players[1].m_pPed;
-    }
-
-    v2 = CWorld::PlayerInFocus;
-
-    if ( Player >= 0 )
-        v2 = Player;
-
-    Log("FindPlayerPed %x", *CWorld::Players[v2].m_pPed);
-    return CWorld::Players[v2].m_pPed;
 }
 
 int32_t CUtil::FindPlayerSlotWithPedPointer(CPedGta* pPlayersPed)
@@ -1985,7 +1971,7 @@ void SetScissorRect(void* pRect)
 	return ((void (*)(void*))(g_libGTASA + 0x00002B3EC4 + 1))(pRect);
 }
 
-float DegToRad(float fDegrees)
+float CUtil::DegToRad(float fDegrees)
 {
     if (fDegrees > 360.0f || fDegrees < 0.0f) return 0.0f;
     

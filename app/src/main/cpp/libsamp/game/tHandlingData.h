@@ -6,7 +6,7 @@
 #define LIVERUSSIA_THANDLINGDATA_H
 
 
-#include "CVector.h"
+#include "game/Core/CVector.h"
 #include "cTransmission.h"
 
 enum eVehicleLightsSize : int8_t {

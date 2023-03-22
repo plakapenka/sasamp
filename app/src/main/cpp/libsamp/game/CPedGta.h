@@ -7,7 +7,7 @@
 
 #include "CWeaponGta.h"
 #include "CPedIntelligence.h"
-#include "CVector2D.h"
+#include "game/Core/CVector2D.h"
 #include "CVehicleGta.h"
 
 class CVehicleGta;

@@ -6,7 +6,7 @@
 #define LIVERUSSIA_CSIMPLETRANSFORM_H
 
 
-#include "CVector.h"
+#include "game/Core/CVector.h"
 #include "CMatrix.h"
 
 class CSimpleTransform {

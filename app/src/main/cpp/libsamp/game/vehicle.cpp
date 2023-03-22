@@ -4,7 +4,7 @@
 extern CGame* pGame;
 #include "..//CDebugInfo.h"
 #include "..//net/netgame.h"
-#include "CVector.h"
+#include "game/Core/CVector.h"
 #include "game/Models/CModelInfo.h"
 #include "StreamingInfo.h"
 

@@ -175,8 +175,8 @@ void Render2dStuff()
 		if (radar)
 		{
 
-			radar[3] = CHUD::radarPos.X;
-			radar[4] = CHUD::radarPos.Y;
+			radar[3] = CHUD::radarPos.x;
+			radar[4] = CHUD::radarPos.y;
 
 			radar[5] = 38.0f;
 			radar[6] = 38.0f;

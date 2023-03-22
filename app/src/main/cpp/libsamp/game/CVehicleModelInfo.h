@@ -9,7 +9,7 @@
 #include "Models/CClumpModelInfo.h"
 #include "game/RW/rwlpcore.h"
 #include "game/Enums/eVehicleClass.h"
-#include "CVector.h"
+#include "game/Core/CVector.h"
 #include "quaternion.h"
 
 

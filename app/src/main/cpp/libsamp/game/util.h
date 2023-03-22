@@ -19,7 +19,6 @@ uint8_t FindPlayerNumFromPedPtr(uintptr_t dwPedPtr);
 
 void DefinedState2d();
 void SetScissorRect(void* pRect);
-float DegToRad(float fDegrees);
 // 0.3.7
 float FloatOffset(float f1, float f2);
 float GetDistanceBetween3DPoints(CVector* f, CVector* s);

@@ -28,6 +28,8 @@ public:
     static CPedGta *GetPoolPed(int slot);
 
     static RwTexture *GetTexture(const char *name);
+
+    static float DegToRad(float fDegrees);
 };
 
 void cp1251_to_utf8(char *out, const char *in, unsigned int len = 0);

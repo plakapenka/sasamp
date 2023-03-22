@@ -981,8 +981,8 @@ void CPlayerPed::ForceTargetRotation(float fRotation)
 	if(!m_pPed) return;
 	if(!CUtil::GetPoolPed(m_dwGTAId)) return;
 
-	m_pPed->m_fCurrentRotation = DegToRad(fRotation);
-	m_pPed->m_fAimingRotation = DegToRad(fRotation);
+	m_pPed->m_fCurrentRotation = CUtil::DegToRad(fRotation);
+	m_pPed->m_fAimingRotation = CUtil::DegToRad(fRotation);
 
 	ScriptCommand(&set_actor_z_angle,m_dwGTAId,fRotation);
 }
@@ -992,8 +992,8 @@ void CPlayerPed::SetRotation(float fRotation)
 	if(!m_pPed) return;
 	if(!CUtil::GetPoolPed(m_dwGTAId)) return;
 
-	m_pPed->m_fCurrentRotation = DegToRad(fRotation);
-	m_pPed->m_fAimingRotation = DegToRad(fRotation);
+	m_pPed->m_fCurrentRotation = CUtil::DegToRad(fRotation);
+	m_pPed->m_fAimingRotation = CUtil::DegToRad(fRotation);
 }
 
 // 0.3.7

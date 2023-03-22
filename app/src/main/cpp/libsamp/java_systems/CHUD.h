@@ -4,7 +4,7 @@
 #pragma once
 #include "../util/CJavaWrapper.h"
 #include "game/common.h"
-#include "game/CVector2DFloat.h"
+#include "game/Core/CVector2D.h"
 
 
 #ifndef LIVERUSSIA_HUD_H
@@ -45,9 +45,9 @@ public:
 
     static bool bIsShowMafiaWar;
 
-    static CVector2DFloat radarBgPos1;
-    static CVector2DFloat radarBgPos2;
-    static CVector2DFloat radarPos;
+    static CVector2D radarBgPos1;
+    static CVector2D radarBgPos2;
+    static CVector2D radarPos;
 
     static void AddChatMessage(const char msg[]);
 

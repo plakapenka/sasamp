@@ -6,6 +6,42 @@
 #include "quaternion.h"
 #include "CEntityGta.h"
 
+constexpr float E              = 2.71828f;          // e
+constexpr float E_CONST        = 0.577f;            // Euler-Mascheroni constant
+constexpr float FRAC_1_TAU     = 0.159154f;         // 1 / ?
+constexpr float FRAC_1_PI      = 0.318309f;         // 1 / ?
+constexpr float FRAC_2_TAU     = 0.318309f;         // 2 / ?
+constexpr float FRAC_2_PI      = 0.636619f;         // 2 / ?
+constexpr float FRAC_2_SQRT_PI = 1.12837f;          // 2 / ??
+constexpr float FRAC_4_TAU     = 0.636619f;         // 4 / ?
+constexpr float FRAC_1_SQRT_2  = 0.707106f;         // 1 / ?2
+constexpr float FRAC_PI_2      = 1.57079f;          // ? / 2
+constexpr float FRAC_PI_3      = 1.04719f;          // ? / 3
+constexpr float FRAC_PI_4      = 0.785398f;         // ? / 4
+constexpr float FRAC_PI_6      = 0.523598f;         // ? / 6
+constexpr float FRAC_PI_8      = 0.392699f;         // ? / 8
+constexpr float FRAC_TAU_2     = 3.14159f;          // ? / 2 = ?
+constexpr float FRAC_TAU_3     = 2.09439f;          // ? / 3
+constexpr float FRAC_TAU_4     = 1.57079f;          // ? / 4
+constexpr float FRAC_TAU_6     = 1.04719f;          // ? / 6
+constexpr float FRAC_TAU_8     = 0.785398f;         // ? / 8
+constexpr float FRAC_TAU_12    = 0.523598f;         // ? / 12
+constexpr float LN_2           = 0.693147f;         // ln(2)
+constexpr float LN_10          = 2.30258f;          // ln(10)
+constexpr float LOG2_E         = 1.44269f;          // log2(e)
+constexpr float LOG10_E        = 0.434294f;         // log10(e)
+constexpr float LOG10_2        = 0.301029f;         // log10(2)
+constexpr float LOG2_10        = 3.32192f;          // log2(10)
+constexpr float PI             = 3.14159f;          // ?
+constexpr float HALF_PI        = PI / 2.0f;         // ? / 2
+constexpr float PI_6           = PI / 6.0f;         // ? / 6
+constexpr float SQRT_2         = 1.41421f;          // ?2
+constexpr float SQRT_3         = 1.73205f;          // ?3
+constexpr float TWO_PI         = 6.28318f;          // ? (TAU)
+
+constexpr float COS_45 = SQRT_2; // cos(45deg)
+
+
 #define HUD_ELEMENT_MAP     1
 #define HUD_ELEMENT_TAGS    2
 #define HUD_ELEMENT_BUTTONS 3

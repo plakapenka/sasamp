@@ -5,7 +5,7 @@
 #ifndef LIVERUSSIA_CMATRIX_H
 #define LIVERUSSIA_CMATRIX_H
 
-#include "CVector.h"
+#include "game/Core/CVector.h"
 
 struct RwMatrixTag
 {

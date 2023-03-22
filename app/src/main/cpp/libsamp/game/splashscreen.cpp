@@ -62,8 +62,8 @@ void RenderBackgroundHud()
 		if (splashTexture)
 		{//183 55.. 399..33
 			ImGui::GetBackgroundDrawList()->AddImage((ImTextureID)splashTexture->raster,
-													 ImVec2(CHUD::radarBgPos1.X, CHUD::radarBgPos1.Y),
-													 ImVec2(CHUD::radarBgPos2.X, CHUD::radarBgPos2.Y),
+													 ImVec2(CHUD::radarBgPos1.x, CHUD::radarBgPos1.y),
+													 ImVec2(CHUD::radarBgPos2.x, CHUD::radarBgPos2.y),
 													 ImVec2(0, 0), ImVec2(1, 1));
 		}
 	}

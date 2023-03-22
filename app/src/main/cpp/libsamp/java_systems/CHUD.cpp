@@ -34,9 +34,9 @@ bool        CHUD::bIsCamEditGui = false;
 int         CHUD::iSatiety = 0;
 PLAYERID    CHUD::lastGiveDamagePlayerId = INVALID_PLAYER_ID;
 
-CVector2DFloat CHUD::radarBgPos1;
-CVector2DFloat CHUD::radarBgPos2;
-CVector2DFloat CHUD::radarPos;
+CVector2D CHUD::radarBgPos1;
+CVector2D CHUD::radarBgPos2;
+CVector2D CHUD::radarPos;
 
 jobject CHUD::thiz = nullptr;
 
@@ -604,18 +604,18 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_HudManager_SetRadarBgPos(JNIEnv *env, jobject thiz, jfloat x1, jfloat y1,
                                                     jfloat x2, jfloat y2) {
-    CHUD::radarBgPos1.X = x1;
-    CHUD::radarBgPos1.Y = y1;
+    CHUD::radarBgPos1.x = x1;
+    CHUD::radarBgPos1.y = y1;
 
-    CHUD::radarBgPos2.X = x2;
-    CHUD::radarBgPos2.Y = y2;
+    CHUD::radarBgPos2.x = x2;
+    CHUD::radarBgPos2.y = y2;
 }
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_HudManager_SetRadarPos(JNIEnv *env, jobject thiz, jfloat x1, jfloat y1) {
 
-    CHUD::radarPos.X = x1;
-    CHUD::radarPos.Y = y1;
+    CHUD::radarPos.x = x1;
+    CHUD::radarPos.y = y1;
 
 }
 

@@ -125,8 +125,8 @@ void CActorPed::ForceTargetRotation(float fRotation)
 		return;
 	}
 
-	m_pPed->m_fCurrentRotation = DegToRad(fRotation);
-	m_pPed->m_fAimingRotation = DegToRad(fRotation);
+	m_pPed->m_fCurrentRotation = CUtil::DegToRad(fRotation);
+	m_pPed->m_fAimingRotation = CUtil::DegToRad(fRotation);
 
 	ScriptCommand(&set_actor_z_angle, m_dwGTAId, fRotation);
 }
