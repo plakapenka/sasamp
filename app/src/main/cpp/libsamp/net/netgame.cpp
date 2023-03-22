@@ -87,9 +87,6 @@ CNetGame::CNetGame(const char* szHostOrIp, int iPort, const char* szPlayerName, 
 
 	for(int i=0; i<100; i++)
 		m_dwMapIcons[i] = 0;
-
-//	pGame->EnableClock(false);
-	pGame->EnableZoneNames(false);
 }
 
 CNetGame::~CNetGame()
@@ -1377,7 +1374,6 @@ void CNetGame::ShutDownForGameRestart()
 	}
 
 	CHUD::iLocalMoney = 0;
-	pGame->EnableZoneNames(false);
 	m_bZoneNames = false;
 	GameResetRadarColors();
 	pGame->SetGravity(m_fGravity);

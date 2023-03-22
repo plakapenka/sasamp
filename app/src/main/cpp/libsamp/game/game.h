@@ -68,8 +68,6 @@ public:
 	// 0.3.7
 	void SetWorldWeather(unsigned char byteWeatherID) const;
 
-	// 0.3.7
-	void EnableZoneNames(bool bEnable);
 	void PlaySound(int iSound, float fX, float fY, float fZ);
 
 	// 0.3.7

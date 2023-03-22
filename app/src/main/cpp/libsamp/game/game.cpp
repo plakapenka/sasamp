@@ -340,12 +340,6 @@ void CGame::SetWorldWeather(unsigned char byteWeatherID) const
 //	}
 }
 
-// 0.3.7
-void CGame::EnableZoneNames(bool bEnable)
-{
-	ScriptCommand(&enable_zone_names, bEnable);
-}
-
 // ��������
 void CGame::PlaySound(int iSound, float fX, float fY, float fZ)
 {
