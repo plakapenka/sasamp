@@ -30,6 +30,10 @@ public:
     static RwTexture *GetTexture(const char *name);
 
     static float DegToRad(float fDegrees);
+
+    constexpr static float RadiansToDegrees(float angleInRadians) {
+        return angleInRadians * 180.0F / PI;
+    }
 };
 
 void cp1251_to_utf8(char *out, const char *in, unsigned int len = 0);

@@ -1979,6 +1979,9 @@ float CUtil::DegToRad(float fDegrees)
     else return (float)((fDegrees * PI) / 180.0f);
 }
 
+
+
+
 // 0.3.7
 float FloatOffset(float f1, float f2)
 {   
