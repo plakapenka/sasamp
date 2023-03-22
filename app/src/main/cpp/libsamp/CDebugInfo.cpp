@@ -45,8 +45,8 @@ void CDebugInfo::Draw()
 		uint32_t msAvailable = *(uint32_t*)(g_libGTASA + 0x00685FA0);
 		float percentUsed = ((float)msUsed/(float)msAvailable)*100;
 		snprintf(&szStrMem[0], 256, "MEM: %.1f/%.1f (%.1f %%)",
-				 (float)msUsed/100000,
-				 (float)msAvailable/100000,
+				 (float)msUsed/ (1024*1024),
+				 (float)msAvailable / (1024*1024),
 				 percentUsed
 				 );
 		pos = ImVec2(pGUI->ScaleX(40.0f), pGUI->ScaleY(1080.0f - pGUI->GetFontSize() * 9));
