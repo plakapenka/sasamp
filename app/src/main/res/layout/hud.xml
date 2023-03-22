@@ -724,17 +724,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/target_notify_exit" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <ImageView
-            android:visibility="gone"
-            android:id="@+id/imageView17"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout7"
-            android:src="@drawable/voice_btn" />
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:visibility="gone"
             android:id="@+id/opg_war_layout"

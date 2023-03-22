@@ -4,11 +4,11 @@
 
     <ImageView
         android:id="@+id/closeStory"
-        android:layout_width="@dimen/_50sdp"
-        android:layout_height="@dimen/_50sdp"
+        android:layout_width="@dimen/_30sdp"
+        android:layout_height="@dimen/_30sdp"
         android:layout_gravity="right"
         android:layout_marginTop="@dimen/_7sdp"
         android:padding="@dimen/_5sdp"
-        android:src="@drawable/close" />
+        android:src="@drawable/cross" />
     <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar android:layout_gravity="bottom" android:id="@+id/progressStory" android:layout_width="match_parent" android:layout_height="@dimen/_5sdp" app:rcBackgroundColor="#25ffffff" app:rcBackgroundPadding="0dp" app:rcMax="5000" app:rcProgress="0" app:rcProgressColor="@color/white25" app:rcRadius="0dp" app:rcReverse="false" app:rcSecondaryProgress="0" app:rcSecondaryProgressColor="@color/white25"/>
 </FrameLayout>
