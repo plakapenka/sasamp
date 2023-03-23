@@ -128,7 +128,7 @@ void CEntity::SetCollisionChecking(bool bCheck)
 
 void CEntity::Render()
 {
-	uintptr_t pRwObject = m_pEntity->m_pRwObject;
+	auto pRwObject = m_pEntity->m_pRpClump;
 
 	int iModel = GetModelIndex();
 	if(iModel >= 400 && iModel <= 611 && pRwObject)

@@ -1245,7 +1245,7 @@ bool CPlayerPed::IsPlayingAnim(int idx)
 	const char* pNameAnim = strchr(pAnim, ':') + 1;
 
 	uintptr_t blendAssoc = ((uintptr_t(*)(uintptr_t clump, const char* szName))(g_libGTASA + 0x00390A24 + 1))
-		(m_pPed->m_pRwObject, pNameAnim);	// RpAnimBlendClumpGetAssociation
+		(m_pPed->m_pRpClump, pNameAnim);	// RpAnimBlendClumpGetAssociation
 
 	if (blendAssoc)
 	{
@@ -1602,7 +1602,7 @@ void CPlayerPed::ClumpUpdateAnimations(float step, int flag)
 {
 	if (m_pPed)
 	{
-		uintptr_t pRwObj = m_pEntity->m_pRwObject;
+		auto pRwObj = m_pEntity->m_pRpClump;
 		if (pRwObj)
 		{
 			((void (*)(uintptr_t, float, int))(g_libGTASA + 0x0038BF50 + 1))(pRwObj, step, flag);
