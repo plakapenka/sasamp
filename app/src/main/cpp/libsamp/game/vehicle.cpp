@@ -130,10 +130,10 @@ CVehicle::CVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRota
 	m_bShadow = false;
 	m_Shadow.pTexture = nullptr;
 
-	RwFrame* pWheelLF = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x003856F4 + 1))(m_pVehicle->m_pRpClump, "wheel_lf_dummy"); // GetFrameFromname
-	RwFrame* pWheelRF = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x003856F4 + 1))(m_pVehicle->m_pRpClump, "wheel_rf_dummy"); // GetFrameFromname
-	RwFrame* pWheelRB = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x003856F4 + 1))(m_pVehicle->m_pRpClump, "wheel_rb_dummy"); // GetFrameFromname
-	RwFrame* pWheelLB = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x003856F4 + 1))(m_pVehicle->m_pRpClump, "wheel_lb_dummy"); // GetFrameFromname
+	RwFrame* pWheelLF = ((RwFrame * (*)(RpClump*, const char*))(g_libGTASA + 0x003856F4 + 1))(m_pVehicle->m_pRpClump, "wheel_lf_dummy"); // GetFrameFromname
+	RwFrame* pWheelRF = ((RwFrame * (*)(RpClump*, const char*))(g_libGTASA + 0x003856F4 + 1))(m_pVehicle->m_pRpClump, "wheel_rf_dummy"); // GetFrameFromname
+	RwFrame* pWheelRB = ((RwFrame * (*)(RpClump*, const char*))(g_libGTASA + 0x003856F4 + 1))(m_pVehicle->m_pRpClump, "wheel_rb_dummy"); // GetFrameFromname
+	RwFrame* pWheelLB = ((RwFrame * (*)(RpClump*, const char*))(g_libGTASA + 0x003856F4 + 1))(m_pVehicle->m_pRpClump, "wheel_lb_dummy"); // GetFrameFromname
 
 	if (pWheelLF && pWheelRF && pWheelRB && pWheelLB)
 	{
@@ -1238,8 +1238,8 @@ void CVehicle::ProcessWheelsOffset()
 		if (m_bWheelOffsetX)
 		{
 			//CChatWindow::AddDebugMessage("setting wheel offset X");
-			RwFrame* pWheelLF = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x003856F4 + 1))(m_pVehicle->m_pRpClump, "wheel_lf_dummy"); // GetFrameFromname
-			RwFrame* pWheelRF = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x003856F4 + 1))(m_pVehicle->m_pRpClump, "wheel_rf_dummy"); // GetFrameFromname
+			RwFrame* pWheelLF = ((RwFrame * (*)(RpClump*, const char*))(g_libGTASA + 0x003856F4 + 1))(m_pVehicle->m_pRpClump, "wheel_lf_dummy"); // GetFrameFromname
+			RwFrame* pWheelRF = ((RwFrame * (*)(RpClump*, const char*))(g_libGTASA + 0x003856F4 + 1))(m_pVehicle->m_pRpClump, "wheel_rf_dummy"); // GetFrameFromname
 
 			/*if (m_fNewOffsetX)
 			{
@@ -1263,8 +1263,8 @@ void CVehicle::ProcessWheelsOffset()
 		if (m_bWheelOffsetY)
 		{
 			//CChatWindow::AddDebugMessage("setting wheel offset Y");
-			RwFrame* pWheelRB = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x003856F4 + 1))(m_pVehicle->m_pRpClump, "wheel_rb_dummy"); // GetFrameFromname
-			RwFrame* pWheelLB = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x003856F4 + 1))(m_pVehicle->m_pRpClump, "wheel_lb_dummy"); // GetFrameFromname
+			RwFrame* pWheelRB = ((RwFrame * (*)(RpClump*, const char*))(g_libGTASA + 0x003856F4 + 1))(m_pVehicle->m_pRpClump, "wheel_rb_dummy"); // GetFrameFromname
+			RwFrame* pWheelLB = ((RwFrame * (*)(RpClump*, const char*))(g_libGTASA + 0x003856F4 + 1))(m_pVehicle->m_pRpClump, "wheel_lb_dummy"); // GetFrameFromname
 
 			/*if (m_fNewOffsetY)
 			{
@@ -1354,7 +1354,7 @@ void CVehicle::SetComponentVisibleInternal(const char* szComponent, bool bVisibl
 	}
 
 
-	RwFrame* pFrame = ((RwFrame * (*)(uintptr_t, const char*))(g_libGTASA + 0x003856F4 + 1))(m_pVehicle->m_pRpClump, szComponent); // GetFrameFromname
+	RwFrame* pFrame = ((RwFrame * (*)(RpClump*, const char*))(g_libGTASA + 0x003856F4 + 1))(m_pVehicle->m_pRpClump, szComponent); // GetFrameFromname
 	if (pFrame != nullptr)
 	{
 		// Get all atomics for this component - Usually one, or two if there is a damaged version

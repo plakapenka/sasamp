@@ -128,13 +128,13 @@ void CEntity::SetCollisionChecking(bool bCheck)
 
 void CEntity::Render()
 {
-	auto pRwObject = m_pEntity->m_pRpClump;
+	auto pRpClump = m_pEntity->m_pRpClump;
 
 	int iModel = GetModelIndex();
-	if(iModel >= 400 && iModel <= 611 && pRwObject)
+	if(iModel >= 400 && iModel <= 611 && pRpClump)
 	{
 		// CVisibilityPlugins::SetupVehicleVariables
-		((void (*)(uintptr_t))(g_libGTASA + 0x005D4B90 + 1))(pRwObject);
+		((void (*)(RpClump*))(g_libGTASA + 0x005D4B90 + 1))(pRpClump);
 	}
 
 	// CEntity::PreRender

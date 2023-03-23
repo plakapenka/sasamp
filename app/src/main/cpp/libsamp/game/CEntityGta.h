@@ -12,7 +12,7 @@ struct CEntityGta : CPlaceableGta
 {
     union {
         struct RwObject* m_pRwObject;
-        uintptr_t m_pRpClump;
+        struct RpClump* m_pRpClump;
         uintptr_t m_pRpAtomic;
         uintptr_t pdwRenderWare;    // 24-28	;rwObject
     };
