@@ -25,7 +25,7 @@
 #include "CWeaponsOutFit.h"
 #include "CRadarRect.h"
 #include "CFirstPersonCamera.h"
-#include "CStreaming.h"
+#include "Streaming.h"
 #include "TextureDatabaseRuntime.h"
 
 class CGame

@@ -2,8 +2,8 @@
 // Created by plaka on 11.01.2023.
 //
 
-#ifndef LIVERUSSIA_CSTREAMING_H
-#define LIVERUSSIA_CSTREAMING_H
+#ifndef LIVERUSSIA_STREAMING_H
+#define LIVERUSSIA_STREAMING_H
 
 
 class CStreaming {
@@ -19,4 +19,4 @@ public:
 };
 
 
-#endif //LIVERUSSIA_CSTREAMING_H
+#endif //LIVERUSSIA_STREAMING_H

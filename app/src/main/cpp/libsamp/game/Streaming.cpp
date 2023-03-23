@@ -2,7 +2,7 @@
 // Created by plaka on 11.01.2023.
 //
 
-#include "CStreaming.h"
+#include "Streaming.h"
 #include "../util/patch.h"
 
 int CStreaming::AddImageToList(const char* fileName, bool bNotPlayerImg)
