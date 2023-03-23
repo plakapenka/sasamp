@@ -10,7 +10,7 @@
 #include "game/RW/rwlpcore.h"
 #include "game/Enums/eVehicleClass.h"
 #include "game/Core/CVector.h"
-#include "quaternion.h"
+#include "game/Core/Quaternion.h"
 
 
 enum eVehicleType {

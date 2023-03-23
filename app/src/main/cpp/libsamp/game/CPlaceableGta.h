@@ -5,7 +5,7 @@
 #ifndef LIVERUSSIA_CPLACEABLEGTA_H
 #define LIVERUSSIA_CPLACEABLEGTA_H
 
-#include "quaternion.h"
+#include "game/Core/Quaternion.h"
 #include "CSimpleTransform.h"
 
 #pragma pack(1)

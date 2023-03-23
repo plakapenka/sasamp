@@ -797,15 +797,15 @@ void CLocalPlayer::SendOnFootFullSyncData()
 	ofSync.vecPos.y = matPlayer.pos.y;
 	ofSync.vecPos.z = matPlayer.pos.z;
 
-	ofSync.quat.SetFromMatrix(matPlayer);
-	ofSync.quat.Normalize();
+	ofSync.quat.Set(&matPlayer);
+	ofSync.quat.Normalise();
 
 	if( FloatOffset(ofSync.quat.w, m_OnFootData.quat.w) < 0.00001 &&
 		FloatOffset(ofSync.quat.x, m_OnFootData.quat.x) < 0.00001 &&
 		FloatOffset(ofSync.quat.y, m_OnFootData.quat.y) < 0.00001 &&
 		FloatOffset(ofSync.quat.z, m_OnFootData.quat.z) < 0.00001)
 	{
-		ofSync.quat.Set(m_OnFootData.quat);
+		ofSync.quat = m_OnFootData.quat;
 	}
 
 	ofSync.byteHealth = (uint8_t)m_pPlayerPed->GetHealth();
@@ -938,15 +938,15 @@ void CLocalPlayer::SendInCarFullSyncData()
 	pVehicle->GetMatrix(&matPlayer);
 	pVehicle->GetMoveSpeedVector(&vecMoveSpeed);
 
-	icSync.quat.SetFromMatrix(matPlayer);
-	icSync.quat.Normalize();
+	icSync.quat.Set(&matPlayer);
+	icSync.quat.Normalise();
 
 	if(	FloatOffset(icSync.quat.w, m_InCarData.quat.w) < 0.00001 &&
 		FloatOffset(icSync.quat.x, m_InCarData.quat.x) < 0.00001 &&
 		FloatOffset(icSync.quat.y, m_InCarData.quat.y) < 0.00001 &&
-		FloatOffset(icSync.quat.z, m_InCarData.quat.z) < 0.00001) {
-
-		icSync.quat.Set(m_InCarData.quat);
+		FloatOffset(icSync.quat.z, m_InCarData.quat.z) < 0.00001)
+	{
+		icSync.quat = m_InCarData.quat;
 	}
 
 	// pos
@@ -993,7 +993,7 @@ void CLocalPlayer::SendInCarFullSyncData()
 			trSync.vecPos.z = matTrailer.pos.z;
 
 			CQuaternion syncQuat;
-			syncQuat.SetFromMatrix(matTrailer);
+			syncQuat.Set(&matTrailer);
 			trSync.quat = syncQuat;
 
 			pTrailer->GetMoveSpeedVector(&trSync.vecMoveSpeed);

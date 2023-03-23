@@ -5,7 +5,7 @@
 #include "common.h"
 #include "aimstuff.h"
 #include "pad.h"
-#include "quaternion.h"
+#include "game/Core/Quaternion.h"
 #include "playerped.h"
 #include "vehicle.h"
 #include "object.h"

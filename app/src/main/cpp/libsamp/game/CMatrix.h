@@ -1,9 +1,7 @@
 //
 // Created by plaka on 23.02.2023.
 //
-
-#ifndef LIVERUSSIA_CMATRIX_H
-#define LIVERUSSIA_CMATRIX_H
+#pragma once
 
 #include "game/Core/CVector.h"
 
@@ -20,4 +18,3 @@ struct RwMatrixTag
 };
 typedef RwMatrixTag RwMatrix;
 
-#endif //LIVERUSSIA_CMATRIX_H

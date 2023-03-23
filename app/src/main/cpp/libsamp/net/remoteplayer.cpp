@@ -104,8 +104,8 @@ void CRemotePlayer::Process()
 			if(!m_pCurrentVehicle || !GamePool_Vehicle_GetAt(m_pCurrentVehicle->m_dwGTAId))
 				return;
 
-			m_icSync.quat.Normalize();
-			m_icSync.quat.GetMatrix(&matVehicle);
+			m_icSync.quat.Normalise();
+			m_icSync.quat.Get(&matVehicle);
 			matVehicle.pos.x = m_icSync.vecPos.x;
 			matVehicle.pos.y = m_icSync.vecPos.y;
 			matVehicle.pos.z = m_icSync.vecPos.z;
@@ -270,10 +270,10 @@ void CRemotePlayer::SlerpRotation()
 	{
 		m_pPlayerPed->GetMatrix(&mat);
 
-		quatPlayer.SetFromMatrix(mat);
+		quatPlayer.Set(&mat);
 
 		quatResult.Slerp(&m_ofSync.quat, &quatPlayer, 0.75f);
-		quatResult.GetMatrix(&mat);
+		quatResult.Get(&mat);
 		m_pPlayerPed->SetMatrix(mat);
 
 		double fZ = atan2(-mat.up.x, mat.up.y) * 57.295776; /* rad to deg */
@@ -307,7 +307,7 @@ void CRemotePlayer::Remove()
 
 void CRemotePlayer::UpdateInCarMatrixAndSpeed(RwMatrix* mat, CVector* pos, CVector* speed)
 {
-	m_InCarQuaternion.SetFromMatrix(*mat);
+	m_InCarQuaternion.Set(mat);
 
 	m_vecInCarTargetPos.x = pos->x;
 	m_vecInCarTargetPos.y = pos->y;
@@ -414,10 +414,10 @@ void CRemotePlayer::UpdateVehicleRotation()
 	m_pCurrentVehicle->SetTurnSpeedVector(vec);
 
 	m_pCurrentVehicle->GetMatrix(&matEnt);
-	quat.SetFromMatrix(matEnt);
+	quat.Set(&matEnt);
 	qresult.Slerp(&m_InCarQuaternion, &quat, 0.75f);
-	qresult.Normalize();
-	qresult.GetMatrix(&matEnt);
+	qresult.Normalise();
+	qresult.Get(&matEnt);
 	m_pCurrentVehicle->SetMatrix(matEnt);
 }
 
@@ -512,7 +512,7 @@ void CRemotePlayer::StoreTrailerFullSyncData(TRAILER_SYNC_DATA* trSync)
 	{
 		RwMatrix matWorld;
 
-		trSync->quat.GetMatrix(&matWorld);
+		trSync->quat.Get(&matWorld);
 		matWorld.pos.x = trSync->vecPos.x;
 		matWorld.pos.y = trSync->vecPos.y;
 		matWorld.pos.z = trSync->vecPos.z;

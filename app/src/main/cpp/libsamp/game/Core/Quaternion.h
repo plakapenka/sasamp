@@ -1,0 +1,145 @@
+#pragma once
+
+#include "../CMatrix.h"
+#include "game/RW/rtquat.h"
+
+class CQuaternion {
+public:
+	union {
+		struct {
+			CVector imag;
+			float real;
+		};
+		struct {
+			float x, y, z, w;
+		};
+	};
+
+public:
+	static void InjectHooks();
+
+	constexpr CQuaternion() {};
+	constexpr CQuaternion(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
+
+	// Quat to matrix
+	void Get(RwMatrix* out) const;
+
+	// Quat to euler angles
+	void Get(float *x, float *y, float *z);
+
+	// Quat to axis & angle
+	void Get(RwV3d *axis, float *angle);
+
+	// Stores result of quat multiplication
+	void Multiply(const CQuaternion* a, const CQuaternion* b);
+
+	// Spherical linear interpolation
+	void Slerp(const CQuaternion& from, const CQuaternion& to, float halfTheta, float sinThetaInv, float t);
+
+	// Quat from matrix
+	void Set(const RwMatrix* m);
+
+	void Set(float _x, float _y, float _z, float _w)
+	{
+		w = _w;
+		x = _x;
+		y = _y;
+		z = _z;
+	}
+
+	// Quat from euler angles
+	void Set(float x, float y, float z);
+
+	// Quat from axis & angle
+	void Set(RwV3d *axis, float angle);
+
+	// Spherical linear interpolation
+	void Slerp(const CQuaternion*, const CQuaternion*, float);
+
+	// Conjugate of a quat
+	void Conjugate();
+
+	// Squared length of a quat
+	float GetLengthSquared() const;
+
+	// Multiplies quat by a floating point value
+	void Scale(float multiplier);
+
+	// Copies value from other quat
+	void Copy(const CQuaternion& from);
+
+	// Gets a dot product for quats
+	void Dot(const CQuaternion& a);
+
+	// Normalises a quat
+	void Normalise();
+
+	// Add right to the quat 0x4D12F0
+	void operator+=(const CQuaternion& right) {
+		x += right.x;
+		y += right.y;
+		z += right.z;
+		w += right.w;
+	}
+
+	// Substract right from the quat 0x4D1320
+	void operator-=(const CQuaternion& right) {
+		x -= right.x;
+		y -= right.y;
+		z -= right.z;
+		w -= right.w;
+	}
+
+	// Assigns value from other quat 0x4D00C0
+	CQuaternion& operator=(const CQuaternion& right) {
+		x = right.x;
+		y = right.y;
+		z = right.z;
+		w = right.w;
+		return *this;
+	}
+
+	// Multiplies quat by a floating point value 0x4CF9B0
+	void operator*=(float multiplier) {
+		x *= multiplier;
+		y *= multiplier;
+		z *= multiplier;
+		w *= multiplier;
+	}
+
+	CQuaternion operator-() const {
+		return { -x, -y, -z, -w };
+	}
+
+	// NOTSA
+	RtQuat* AsRtQuat() { return (RtQuat*)this; }
+};
+
+//VALIDATE_SIZE(CQuaternion, 0x10);
+
+constexpr float DotProduct(const CQuaternion& q1, const CQuaternion& q2) {
+	return q1.x * q2.x +
+		   q1.y * q2.y +
+		   q1.z * q2.z +
+		   q1.w * q2.w;
+}
+
+constexpr CQuaternion operator+(const CQuaternion& left, const CQuaternion& right) {
+	return { left.x + right.x, left.y + right.y, left.z + right.z, left.w + right.w };
+}
+
+constexpr CQuaternion operator-(const CQuaternion& left, const CQuaternion& right) {
+	return { left.x - right.x, left.y - right.y, left.z - right.z, left.w - right.w };
+}
+
+constexpr CQuaternion operator*(const CQuaternion& left, float right) {
+	return { left.x * right, left.y * right, left.z * right, left.w * right };
+}
+
+constexpr CQuaternion operator*(float left, const CQuaternion& right) {
+	return { left * right.x, left * right.y, left * right.z, left * right.w };
+}
+
+constexpr CQuaternion operator/(const CQuaternion& left, float right) {
+	return { left.x / right, left.y / right, left.z / right, left.w / right };
+}

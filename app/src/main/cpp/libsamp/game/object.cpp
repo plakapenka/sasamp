@@ -107,7 +107,7 @@ void CObject::Process(float fElapsedTime)
 			matEnt.pos.y = m_matTarget.pos.y;
 			matEnt.pos.z = m_matTarget.pos.z;
 			if (m_bNeedRotate) {
-				m_quatTarget.GetMatrix(&matEnt);
+				m_quatTarget.Get(&matEnt);
 			}
 			UpdateMatrix(matEnt);
 			StopMoving();
@@ -174,8 +174,8 @@ void CObject::Process(float fElapsedTime)
 			GetMatrix(&matEnt);
 			CQuaternion quat;
 			quat.Slerp(&m_quatStart, &m_quatTarget, slerpDelta);
-			quat.Normalize();
-			quat.GetMatrix(&matEnt);
+			quat.Normalise();
+			quat.Get(&matEnt);
 		}
 		else
 		{
@@ -216,7 +216,7 @@ void CObject::MoveTo(float fX, float fY, float fZ, float fSpeed, float fRotX, fl
 		mat.pos.z = m_matTarget.pos.z;
 
 		if (m_bNeedRotate) {
-			m_quatTarget.GetMatrix(&mat);
+			m_quatTarget.Get(&mat);
 		}
 
 		this->UpdateMatrix(mat);
@@ -257,10 +257,10 @@ void CObject::MoveTo(float fX, float fY, float fZ, float fSpeed, float fRotX, fl
 		this->InstantRotate(vecRot.x, vecRot.y, vecRot.z);
 		this->GetMatrix(&matrix);
 
-		m_quatStart.SetFromMatrix(matrix);
-		m_quatTarget.SetFromMatrix(m_matTarget);
-		m_quatStart.Normalize();
-		m_quatTarget.Normalize();
+		m_quatStart.Set(&matrix);
+		m_quatTarget.Set(&m_matTarget);
+		m_quatStart.Normalise();
+		m_quatTarget.Normalise();
 	}
 
 	m_fDistanceToTargetPoint = this->GetDistanceFromPoint(m_matTarget.pos.x, m_matTarget.pos.y, m_matTarget.pos.z);

@@ -241,6 +241,30 @@ typedef enum RwPlaneType RwPlaneType;
 #define RwIm2DVertexCopyRGBA(dst, src)  \
     ((dst)->emissiveColor = (src)->emissiveColor)
 
+#define RwV3dAssignMacro(_target, _source)                     \
+    ( *(_target) = *(_source) )
+
+/* Get components */
+#define RwMatrixGetRight(m)    (&(m)->right)
+#define RwMatrixGetUp(m)       (&(m)->up)
+#define RwMatrixGetAt(m)       (&(m)->at)
+#define RwMatrixGetPos(m)      (&(m)->pos)
+
+#define RwV2dAssign(o, a)               RwV2dAssignMacro(o, a)
+#define RwV2dAdd(o, a, b)               RwV2dAddMacro(o, a, b)
+#define RwV2dSub(o, a, b)               RwV2dSubMacro(o, a, b)
+#define RwV2dLineNormal(_o, _a, _b)     RwV2dLineNormalMacro(_o, _a, _b)
+#define RwV2dScale(o, i, s)             RwV2dScaleMacro(o, i, s)
+#define RwV2dDotProduct(a,b)            RwV2dDotProductMacro(a,b)
+#define RwV2dPerp(o, a)                 RwV2dPerpMacro(o, a)
+#define RwV3dAssign(o, a)               RwV3dAssignMacro(o, a)
+#define RwV3dAdd(o, a, b)               RwV3dAddMacro(o, a, b)
+#define RwV3dSub(o, a, b)               RwV3dSubMacro(o, a, b)
+#define RwV3dScale(o, a, s)             RwV3dScaleMacro(o, a, s)
+#define RwV3dIncrementScaled(o, a, s)   RwV3dIncrementScaledMacro(o, a, s)
+#define RwV3dNegate(o, a)               RwV3dNegateMacro(o, a)
+#define RwV3dDotProduct(a, b)           RwV3dDotProductMacro(a, b)
+#define RwV3dCrossProduct(o, a, b)      RwV3dCrossProductMacro(o, a, b)
 /****************************************************************************
  Global Types
  */
