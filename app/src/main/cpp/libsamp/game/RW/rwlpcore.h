@@ -754,3 +754,4 @@ struct RwMatrixTag
 typedef RwMatrixTag RwMatrix;
 
 RwMatrix* RwMatrixUpdate(RwMatrix* matrix);
+RwBool RwMatrixDestroy(RwMatrix* mpMat);
