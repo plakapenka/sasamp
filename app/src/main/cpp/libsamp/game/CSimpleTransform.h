@@ -7,7 +7,6 @@
 
 
 #include "game/Core/CVector.h"
-#include "CMatrix.h"
 
 class CSimpleTransform {
 public:

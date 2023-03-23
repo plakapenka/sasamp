@@ -138,7 +138,7 @@ void CStream::SetIsDeactivated(bool bIsDeactivated)
 
 void CStream::Process(RwMatrix* pMatListener) // todo
 {
-	float fDistance = GetDistanceBetween3DPoints(&(pMatListener->pos), &m_vPos);
+	float fDistance = GetDistanceBetween3DPoints(reinterpret_cast<CVector*>(&pMatListener->pos), &m_vPos);
 	if (fDistance <= m_fDistance && !m_hStream && !m_bIsDeactivated)
 	{
 		//CChatWindow::AddDebugMessage("create stream");

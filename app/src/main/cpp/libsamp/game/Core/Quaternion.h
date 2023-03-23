@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../CMatrix.h"
 #include "game/RW/rtquat.h"
+#include "CVector.h"
 
 class CQuaternion {
 public:
@@ -16,7 +16,6 @@ public:
 	};
 
 public:
-	static void InjectHooks();
 
 	constexpr CQuaternion() {};
 	constexpr CQuaternion(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}

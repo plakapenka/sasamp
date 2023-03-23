@@ -8,7 +8,6 @@
 
 #include "CVector.h"
 
-#include "game/CMatrix.h"
 
 class CMatrix {
 
