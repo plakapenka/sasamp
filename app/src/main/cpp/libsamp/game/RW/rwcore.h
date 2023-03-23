@@ -450,3 +450,41 @@ struct RwTexture
 };
 typedef struct RwTexture RwTexture;
 
+typedef struct RxObjSpace3DVertex RxObjSpace3DVertex;
+
+/**
+ * \ingroup cored3d9
+ * \struct RxObjSpace3DVertex
+ * Structure representing object space vertex.
+ */
+struct RxObjSpace3DVertex
+{
+    RwV3d       objVertex;        /**< position */
+    RwV3d       objNormal;        /**< normal */
+    RwUInt32    color;            /**< emissive color*/
+    RwReal      u;                /**< u */
+    RwReal      v;                /**< v */
+};
+
+/* This vertex is non truncatable */
+#define RxObjSpace3DVertexNoUVsNoNormalsSize (sizeof(RxObjSpace3DVertex))
+#define RxObjSpace3DVertexNoUVsSize          (sizeof(RxObjSpace3DVertex))
+#define RxObjSpace3DVertexFullSize           (sizeof(RxObjSpace3DVertex))
+
+/**
+ * \ingroup cored3d9
+ * \ref RxObjSpace3DLitVertex
+ * Typedef for an RxObjSpace3DLitVertex.
+ */
+typedef RxObjSpace3DVertex RxObjSpace3DLitVertex;
+
+/**
+ * \ingroup cored3d9
+ * \ref RwIm3DVertex
+ * Typedef for an RwIm3DVertex.
+ */
+typedef RxObjSpace3DLitVertex RwIm3DVertex;
+
+void* RwIm3DTransform(RwIm3DVertex* pVerts, RwUInt32 numVerts, RwMatrix* ltm, RwUInt32 flags);
+RwBool RwIm3DRenderLine(RwInt32 vert1, RwInt32 vert2);
+RwBool RwIm3DEnd();
