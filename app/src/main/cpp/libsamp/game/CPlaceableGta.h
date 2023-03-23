@@ -7,13 +7,14 @@
 
 #include "game/Core/Quaternion.h"
 #include "CSimpleTransform.h"
+#include "game/Core/MatrixLink.h"
 
 #pragma pack(1)
 struct CPlaceableGta
 {
     uint32_t vtable;
-    CSimpleTransform m_placement;
-    RwMatrix *mat;
+    CSimpleTransform m_transform;
+    CMatrixLink *mat;
 };
 
 #endif //LIVERUSSIA_CPLACEABLEGTA_H

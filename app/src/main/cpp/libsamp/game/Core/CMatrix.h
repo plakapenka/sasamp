@@ -30,10 +30,10 @@ public:
     CMatrix() = default;
 
     CMatrix(const CVector& pos, const CVector& right, const CVector& fwd, const CVector& up) :
-            m_right{right},
-            m_forward{fwd},
-            m_up{up},
-            m_pos{pos}
+            right{right},
+            up{fwd},
+            at{up},
+            pos{pos}
     {
         // TODO: Add some kind of `assert` to check validity
     }
@@ -66,35 +66,34 @@ public:
                 up
         };
     }
-private:
+public:
     // RwV3d-like:
-    CVector m_right;        // 0x0  // RW: Right
+    CVector right;        // 0x0  // RW: Right
     uint32_t  flags;          // 0xC
-    CVector m_forward;      // 0x10 // RW: Up
+    CVector up;      // 0x10 // RW: Up
     uint32_t  pad1;           // 0x1C
-    CVector m_up;           // 0x20 // RW: At
+    CVector at;           // 0x20 // RW: At
     uint32_t  pad2;           // 0x2C
-    CVector m_pos;          // 0x30
+    CVector pos;          // 0x30
     uint32_t  pad3;           // 0x3C
 
-public:
     RwMatrix* m_pAttachMatrix{};       // 0x40
     bool      m_bOwnsAttachedMatrix{}; // 0x44 - Do we need to delete attached matrix at detaching
 
 public:
   //  static void InjectHooks();
 
-    CVector& GetRight() { return m_right; }
-    const CVector& GetRight() const { return m_right; }
+    CVector& GetRight() { return right; }
+    const CVector& GetRight() const { return right; }
 
-    CVector& GetForward() { return m_forward; }
-    const CVector& GetForward() const { return m_forward; }
+    CVector& GetForward() { return up; }
+    const CVector& GetForward() const { return up; }
 
-    CVector& GetUp() { return m_up; }
-    const CVector& GetUp() const { return m_up; }
+    CVector& GetUp() { return at; }
+    const CVector& GetUp() const { return at; }
 
-    CVector& GetPosition() { return m_pos; }
-    const CVector& GetPosition() const { return m_pos; }
+    CVector& GetPosition() { return pos; }
+    const CVector& GetPosition() const { return pos; }
 
     void Attach(RwMatrix* matrix, bool bOwnsMatrix);
     void Detach();
@@ -149,17 +148,17 @@ public:
     }
 
     void SetRotateKeepPos(const CVector& rot) {
-        auto pos{ m_pos };
+        auto temp {pos };
         SetRotate(rot.x, rot.y, rot.z);
-        m_pos = pos;
+        pos = temp;
     }
 
     static auto GetIdentity() {
         CMatrix mat;
-        mat.m_right   = CVector{ 1.f, 0.f, 0.f };
-        mat.m_forward = CVector{ 0.f, 1.f, 0.f };
-        mat.m_up      = CVector{ 0.f, 0.f, 1.f };
-        mat.m_pos     = CVector{ 0.f, 0.f, 0.f };
+        mat.right   = CVector{1.f, 0.f, 0.f };
+        mat.up = CVector{0.f, 1.f, 0.f };
+        mat.at      = CVector{0.f, 0.f, 1.f };
+        mat.pos     = CVector{0.f, 0.f, 0.f };
         return mat;
     }
 
@@ -170,10 +169,10 @@ public:
         GetPosition() *= mult;
     }
 
-    RwMatrix ToRwMatrix() const {
+    RwMatrix* ToRwMatrix() const {
         RwMatrix ret;
         CopyToRwMatrix(&ret);
-        return ret;
+        return &ret;
     }
 
     // operators and classes that aren't defined as part of class, but it's much easier to get them working with access to class private fields

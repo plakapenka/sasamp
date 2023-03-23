@@ -1354,11 +1354,11 @@ void CShadows__StoreCarLightShadow_hook(CVehicleGta* vehicle, int id, RwTexture*
 	CShadows__StoreCarLightShadow(vehicle, id, texture, posn, frontX, frontY, sideX, sideY, r, g, b, maxViewAngle);
 }
 
-void CVehicle__DoHeadLightReflectionTwin(CVehicle* pVeh, RwMatrix* a2)
+void CVehicle__DoHeadLightReflectionTwin(CVehicle* pVeh, CMatrix* matVehicle)
 {
 	CVehicleGta* v2; // r4
 	int v3; // r2
-	RwMatrix* v4; // r5
+	CMatrix* v4; // r5
 	float* v5; // r3
 	float v6; // s12
 	float v7; // s5
@@ -1378,7 +1378,7 @@ void CVehicle__DoHeadLightReflectionTwin(CVehicle* pVeh, RwMatrix* a2)
 
 	v2 = pVeh->m_pVehicle;
 	v3 = *((uintptr_t*)v2 + 5);
-	v4 = a2;
+	v4 = matVehicle;
 	v5 = *(float**)(CModelInfo::ms_modelInfoPtrs[v2->nModelIndex] + 116);
 	v6 = *v5;
 	v7 = v5[1];
@@ -1855,7 +1855,7 @@ void SendBulletSync(CVector *vecOrigin, CVector *vecEnd, CVector *vecPos, CEntit
 					static RwMatrix mat2;
 					memset(&mat2, 0, sizeof(mat2));
 
-					RwMatrixOrthoNormalize(&mat2, pEntity->mat);
+					RwMatrixOrthoNormalize(&mat2, pEntity->mat->ToRwMatrix());
 					RwMatrixInvert(&mat1, &mat2);
 					ProjectMatrix(&bulletData.vecOffset, &mat1, vecPos);
 				}
@@ -1895,7 +1895,6 @@ uint32_t CWorld__ProcessLineOfSight_hook(CVector *vecOrigin, CVector *vecEnd, CV
 		g_bForceWorldProcessLineOfSight = false;
 
 		CEntityGta *pEntity = nullptr;
-		RwMatrix *pMatrix = nullptr;
 		CVector vecPosPlusOffset;
 
 		if(pNetGame->m_iLagCompensation != 2)
@@ -1908,7 +1907,7 @@ uint32_t CWorld__ProcessLineOfSight_hook(CVector *vecOrigin, CVector *vecEnd, CV
 					{
 						if(!CUtil::IsGameEntityArePlaceable(g_pCurrentBulletData->pEntity))
 						{
-							pMatrix = g_pCurrentBulletData->pEntity->mat;
+							auto pMatrix = g_pCurrentBulletData->pEntity->mat;
 							if(pMatrix)
 							{
 								if(pNetGame->m_iLagCompensation)
@@ -1917,7 +1916,7 @@ uint32_t CWorld__ProcessLineOfSight_hook(CVector *vecOrigin, CVector *vecEnd, CV
 									vecPosPlusOffset.y = pMatrix->pos.y + g_pCurrentBulletData->vecOffset.y;
 									vecPosPlusOffset.z = pMatrix->pos.z + g_pCurrentBulletData->vecOffset.z;
 								}
-								else ProjectMatrix(&vecPosPlusOffset, pMatrix, &g_pCurrentBulletData->vecOffset);
+								else ProjectMatrix(&vecPosPlusOffset, pMatrix->ToRwMatrix(), &g_pCurrentBulletData->vecOffset);
 
 								vecEnd->x = vecPosPlusOffset.x - vecOrigin->x + vecPosPlusOffset.x;
 								vecEnd->y = vecPosPlusOffset.y - vecOrigin->y + vecPosPlusOffset.y;

@@ -68,55 +68,55 @@ void CMatrix::UpdateRW()
 // update RwMatrix with this matrix
 void CMatrix::UpdateRwMatrix(RwMatrix* matrix) const
 {
-    *RwMatrixGetRight(matrix) = m_right;
-    *RwMatrixGetUp(matrix) = m_forward;
-    *RwMatrixGetAt(matrix) = m_up;
-    *RwMatrixGetPos(matrix) = m_pos;
+    *RwMatrixGetRight(matrix) = right;
+    *RwMatrixGetUp(matrix) = up;
+    *RwMatrixGetAt(matrix) = at;
+    *RwMatrixGetPos(matrix) = pos;
 
     RwMatrixUpdate(matrix);
 }
 
 void CMatrix::UpdateMatrix(RwMatrix* rwMatrix)
 {
-    m_right = *RwMatrixGetRight(rwMatrix);
-    m_forward = *RwMatrixGetUp(rwMatrix);
-    m_up = *RwMatrixGetAt(rwMatrix);
-    m_pos = *RwMatrixGetPos(rwMatrix);
+    right = *RwMatrixGetRight(rwMatrix);
+    up = *RwMatrixGetUp(rwMatrix);
+    at = *RwMatrixGetAt(rwMatrix);
+    pos = *RwMatrixGetPos(rwMatrix);
 }
 
 void CMatrix::SetUnity()
 {
     CMatrix::ResetOrientation();
-    m_pos.Set(0.0F, 0.0F, 0.0F);
+    pos.Set(0.0F, 0.0F, 0.0F);
 }
 
 void CMatrix::ResetOrientation()
 {
-    m_right.Set  (1.0F, 0.0F, 0.0F);
-    m_forward.Set(0.0F, 1.0F, 0.0F);
-    m_up.Set     (0.0F, 0.0F, 1.0F);
+    right.Set  (1.0F, 0.0F, 0.0F);
+    up.Set(0.0F, 1.0F, 0.0F);
+    at.Set     (0.0F, 0.0F, 1.0F);
 }
 
 void CMatrix::SetScale(float scale)
 {
-    m_right.Set  (scale, 0.0F,  0.0F);
-    m_forward.Set(0.0F,  scale, 0.0F);
-    m_up.Set     (0.0F,  0.0F,  scale);
-    m_pos.Set    (0.0F,  0.0F,  0.0F);
+    right.Set  (scale, 0.0F, 0.0F);
+    up.Set(0.0F, scale, 0.0F);
+    at.Set     (0.0F, 0.0F, scale);
+    pos.Set    (0.0F, 0.0F, 0.0F);
 }
 
 // scale on three axes
 void CMatrix::SetScale(float x, float y, float z)
 {
-    m_right.Set  (x,     0.0F,  0.0F);
-    m_forward.Set(0.0F,  y,     0.0F);
-    m_up.Set     (0.0F,  0.0F,  z   );
-    m_pos.Set    (0.0F,  0.0F,  0.0F);
+    right.Set  (x, 0.0F, 0.0F);
+    up.Set(0.0F, y, 0.0F);
+    at.Set     (0.0F, 0.0F, z   );
+    pos.Set    (0.0F, 0.0F, 0.0F);
 }
 
 void CMatrix::SetTranslateOnly(CVector translation)
 {
-    m_pos = translation;
+    pos = translation;
 }
 
 // like previous + reset orientation
@@ -131,9 +131,9 @@ void CMatrix::SetRotateXOnly(float angle)
     auto fSin = sin(angle);
     auto fCos = cos(angle);
 
-    m_right.Set  (1.0F,  0.0F,  0.0F);
-    m_forward.Set(0.0F,  fCos,  fSin);
-    m_up.Set     (0.0F, -fSin,  fCos);
+    right.Set  (1.0F, 0.0F, 0.0F);
+    up.Set(0.0F, fCos, fSin);
+    at.Set     (0.0F, -fSin, fCos);
 }
 
 void CMatrix::SetRotateYOnly(float angle)
@@ -141,9 +141,9 @@ void CMatrix::SetRotateYOnly(float angle)
     auto fSin = sin(angle);
     auto fCos = cos(angle);
 
-    m_right.Set  (fCos,  0.0F, -fSin);
-    m_forward.Set(0.0F,  1.0F,  0.0F);
-    m_up.Set     (fSin,  0.0F,  fCos);
+    right.Set  (fCos, 0.0F, -fSin);
+    up.Set(0.0F, 1.0F, 0.0F);
+    at.Set     (fSin, 0.0F, fCos);
 }
 
 void CMatrix::SetRotateZOnly(float angle)
@@ -151,27 +151,27 @@ void CMatrix::SetRotateZOnly(float angle)
     auto fSin = sin(angle);
     auto fCos = cos(angle);
 
-    m_right.Set  ( fCos, fSin, 0.0F);
-    m_forward.Set(-fSin, fCos, 0.0F);
-    m_up.Set     ( 0.0F, 0.0F, 1.0F);
+    right.Set  (fCos, fSin, 0.0F);
+    up.Set(-fSin, fCos, 0.0F);
+    at.Set     (0.0F, 0.0F, 1.0F);
 }
 
 void CMatrix::SetRotateX(float angle)
 {
     CMatrix::SetRotateXOnly(angle);
-    m_pos.Set(0.0F, 0.0F, 0.0F);
+    pos.Set(0.0F, 0.0F, 0.0F);
 }
 
 void CMatrix::SetRotateY(float angle)
 {
     CMatrix::SetRotateYOnly(angle);
-    m_pos.Set(0.0F, 0.0F, 0.0F);
+    pos.Set(0.0F, 0.0F, 0.0F);
 }
 
 void CMatrix::SetRotateZ(float angle)
 {
     CMatrix::SetRotateZOnly(angle);
-    m_pos.Set(0.0F, 0.0F, 0.0F);
+    pos.Set(0.0F, 0.0F, 0.0F);
 }
 
 // set rotate on 3 axes
@@ -184,40 +184,40 @@ void CMatrix::SetRotate(float x, float y, float z)
     auto fSinZ = sin(z);
     auto fCosZ = cos(z);
 
-    m_right.Set  ( fCosZ*fCosY-(fSinZ*fSinX)*fSinY,  fCosZ*fSinX*fSinY+fSinZ*fCosY,  -(fSinY*fCosX));
-    m_forward.Set(-(fSinZ*fCosX),                    fCosZ*fCosX,                     fSinX);
-    m_up.Set     ( fCosZ*fSinY+fSinZ*fSinX*fCosY,    fSinZ*fSinY-fCosZ*fSinX*fCosY,   fCosY*fCosX);
-    m_pos.Set(0.0F, 0.0F, 0.0F);
+    right.Set  (fCosZ * fCosY - (fSinZ * fSinX) * fSinY, fCosZ * fSinX * fSinY + fSinZ * fCosY, -(fSinY * fCosX));
+    up.Set(-(fSinZ * fCosX), fCosZ * fCosX, fSinX);
+    at.Set     (fCosZ * fSinY + fSinZ * fSinX * fCosY, fSinZ * fSinY - fCosZ * fSinX * fCosY, fCosY * fCosX);
+    pos.Set(0.0F, 0.0F, 0.0F);
 }
 
 void CMatrix::RotateX(float angle)
 {
     auto rotMat = CMatrix();
     rotMat.SetRotateX(angle);
-    m_right =   rotMat * m_right;
-    m_forward = rotMat * m_forward;
-    m_up =      rotMat * m_up;
-    m_pos =     rotMat * m_pos;
+    right = rotMat * right;
+    up = rotMat * up;
+    at = rotMat * at;
+    pos = rotMat * pos;
 }
 
 void CMatrix::RotateY(float angle)
 {
     auto rotMat = CMatrix();
     rotMat.SetRotateY(angle);
-    m_right =   rotMat * m_right;
-    m_forward = rotMat * m_forward;
-    m_up =      rotMat * m_up;
-    m_pos =     rotMat * m_pos;
+    right = rotMat * right;
+    up = rotMat * up;
+    at = rotMat * at;
+    pos = rotMat * pos;
 }
 
 void CMatrix::RotateZ(float angle)
 {
     auto rotMat = CMatrix();
     rotMat.SetRotateZ(angle);
-    m_right =   rotMat * m_right;
-    m_forward = rotMat * m_forward;
-    m_up =      rotMat * m_up;
-    m_pos =     rotMat * m_pos;
+    right = rotMat * right;
+    up = rotMat * up;
+    at = rotMat * at;
+    pos = rotMat * pos;
 }
 
 // rotate on 3 axes
@@ -225,25 +225,25 @@ void CMatrix::Rotate(CVector rotation)
 {
     auto rotMat = CMatrix();
     rotMat.SetRotate(rotation.x, rotation.y, rotation.z);
-    m_right =   rotMat * m_right;
-    m_forward = rotMat * m_forward;
-    m_up =      rotMat * m_up;
-    m_pos =     rotMat * m_pos;
+    right = rotMat * right;
+    up = rotMat * up;
+    at = rotMat * at;
+    pos = rotMat * pos;
 }
 
 void CMatrix::Reorthogonalise()
 {
-    auto vecCross = CrossProduct(m_right, m_forward);
+    auto vecCross = CrossProduct(right, up);
     vecCross.Normalise();
 
-    auto vecCross2 = CrossProduct(m_forward, vecCross);
+    auto vecCross2 = CrossProduct(up, vecCross);
     vecCross2.Normalise();
 
     auto vecCross3 = CrossProduct(vecCross, vecCross2);
 
-    m_right = vecCross2;
-    m_forward = vecCross3;
-    m_up = vecCross;
+    right = vecCross2;
+    up = vecCross3;
+    at = vecCross;
 }
 
 // similar to UpdateRW(RwMatrixTag *)
@@ -268,9 +268,9 @@ void CMatrix::SetRotate(const CQuaternion& quat)
     auto y2r = vecImag2.y * quat.real;
     auto z2r = vecImag2.z * quat.real;
 
-    m_right.Set  (1.0F-(z2z+y2y),   z2r+y2x,        z2x-y2r);
-    m_forward.Set(y2x-z2r,          1.0F-(z2z+x2x), x2r+z2y);
-    m_up.Set     (y2r+z2x,          z2y-x2r,        1.0F-(y2y+x2x));
+    right.Set  (1.0F - (z2z + y2y), z2r + y2x, z2x - y2r);
+    up.Set(y2x - z2r, 1.0F - (z2z + x2x), x2r + z2y);
+    at.Set     (y2r + z2x, z2y - x2r, 1.0F - (y2y + x2x));
 }
 
 void CMatrix::Scale(float scale) {
@@ -278,32 +278,32 @@ void CMatrix::Scale(float scale) {
 }
 
 void CMatrix::ScaleXYZ(float x, float y, float z) {
-    m_right   *= x;
-    m_forward *= y;
-    m_up      *= z;
+    right   *= x;
+    up *= y;
+    at      *= z;
 }
 
 void CMatrix::ForceUpVector(CVector vecUp) {
-    m_right   = CrossProduct(m_forward, vecUp);
-    m_forward = CrossProduct(vecUp, m_right);
-    m_up      = vecUp;
+    right   = CrossProduct(up, vecUp);
+    up = CrossProduct(vecUp, right);
+    at      = vecUp;
 }
 
 void CMatrix::ConvertToEulerAngles(float* pX, float* pY, float* pZ, uint32_t uiFlags)
 {
     float fArr[3][3];
 
-    fArr[0][0] = m_right.x;
-    fArr[0][1] = m_right.y;
-    fArr[0][2] = m_right.z;
+    fArr[0][0] = right.x;
+    fArr[0][1] = right.y;
+    fArr[0][2] = right.z;
 
-    fArr[1][0] = m_forward.x;
-    fArr[1][1] = m_forward.y;
-    fArr[1][2] = m_forward.z;
+    fArr[1][0] = up.x;
+    fArr[1][1] = up.y;
+    fArr[1][2] = up.z;
 
-    fArr[2][0] = m_up.x;
-    fArr[2][1] = m_up.y;
-    fArr[2][2] = m_up.z;
+    fArr[2][0] = at.x;
+    fArr[2][1] = at.y;
+    fArr[2][2] = at.z;
 
     /* Original indices deciding logic, i replaced it with clearer one
     auto iInd1 = CMatrix::EulerIndices1[(uiFlags >> 3) & 0x3];
@@ -445,9 +445,9 @@ void CMatrix::ConvertFromEulerAngles(float x, float y, float z, uint32_t uiFlags
         fArr[iInd3][iInd3] =  fCosX*fCosY;
     }
 
-    m_right.Set  (fArr[0][0], fArr[0][1], fArr[0][2]);
-    m_forward.Set(fArr[1][0], fArr[1][1], fArr[1][2]);
-    m_up.Set     (fArr[2][0], fArr[2][1], fArr[2][2]);
+    right.Set  (fArr[0][0], fArr[0][1], fArr[0][2]);
+    up.Set(fArr[1][0], fArr[1][1], fArr[1][2]);
+    at.Set     (fArr[2][0], fArr[2][1], fArr[2][2]);
 }
 
 void CMatrix::operator=(const CMatrix& rvalue)
@@ -458,10 +458,10 @@ void CMatrix::operator=(const CMatrix& rvalue)
 
 void CMatrix::operator+=(const CMatrix& rvalue)
 {
-    m_right += rvalue.m_right;
-    m_forward += rvalue.m_forward;
-    m_up += rvalue.m_up;
-    m_pos += rvalue.m_pos;
+    right += rvalue.right;
+    up += rvalue.up;
+    at += rvalue.at;
+    pos += rvalue.pos;
 }
 
 void CMatrix::operator*=(const CMatrix& rvalue)
@@ -472,28 +472,28 @@ void CMatrix::operator*=(const CMatrix& rvalue)
 CMatrix operator*(const CMatrix& a, const CMatrix& b)
 {
     auto result = CMatrix();
-    result.m_right =   a.m_right * b.m_right.x   + a.m_forward * b.m_right.y   + a.m_up * b.m_right.z;
-    result.m_forward = a.m_right * b.m_forward.x + a.m_forward * b.m_forward.y + a.m_up * b.m_forward.z;
-    result.m_up =      a.m_right * b.m_up.x      + a.m_forward * b.m_up.y      + a.m_up * b.m_up.z;
-    result.m_pos =     a.m_right * b.m_pos.x     + a.m_forward * b.m_pos.y     + a.m_up * b.m_pos.z + a.m_pos;
+    result.right = a.right * b.right.x + a.up * b.right.y + a.at * b.right.z;
+    result.up = a.right * b.up.x + a.up * b.up.y + a.at * b.up.z;
+    result.at = a.right * b.at.x + a.up * b.at.y + a.at * b.at.z;
+    result.pos = a.right * b.pos.x + a.up * b.pos.y + a.at * b.pos.z + a.pos;
     return result;
 }
 
 CVector operator*(const CMatrix& a, const CVector& b)
 {
     CVector result;
-    result.x = a.m_pos.x + a.m_right.x * b.x + a.m_forward.x * b.y + a.m_up.x * b.z;
-    result.y = a.m_pos.y + a.m_right.y * b.x + a.m_forward.y * b.y + a.m_up.y * b.z;
-    result.z = a.m_pos.z + a.m_right.z * b.x + a.m_forward.z * b.y + a.m_up.z * b.z;
+    result.x = a.pos.x + a.right.x * b.x + a.up.x * b.y + a.at.x * b.z;
+    result.y = a.pos.y + a.right.y * b.x + a.up.y * b.y + a.at.y * b.z;
+    result.z = a.pos.z + a.right.z * b.x + a.up.z * b.y + a.at.z * b.z;
     return result;
 }
 CMatrix operator+(const CMatrix& a, const CMatrix& b)
 {
     CMatrix result;
-    result.m_right =   a.m_right + b.m_right;
-    result.m_forward = a.m_forward + b.m_forward;
-    result.m_up =      a.m_up + b.m_up;
-    result.m_pos =     a.m_pos + b.m_pos;
+    result.right = a.right + b.right;
+    result.up = a.up + b.up;
+    result.at = a.at + b.at;
+    result.pos = a.pos + b.pos;
     return result;
 }
 

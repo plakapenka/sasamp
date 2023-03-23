@@ -145,16 +145,16 @@ void CVector::operator /= (float divisor)
 
 void CVector::FromMultiply(const CMatrix& matrix, const CVector& vector)
 {
-    x = matrix.m_pos.x + matrix.m_right.x * vector.x + matrix.m_forward.x * vector.y + matrix.m_up.x * vector.z;
-    y = matrix.m_pos.y + matrix.m_right.y * vector.x + matrix.m_forward.y * vector.y + matrix.m_up.y * vector.z;
-    z = matrix.m_pos.z + matrix.m_right.z * vector.x + matrix.m_forward.z * vector.y + matrix.m_up.z * vector.z;
+    x = matrix.pos.x + matrix.right.x * vector.x + matrix.up.x * vector.y + matrix.at.x * vector.z;
+    y = matrix.pos.y + matrix.right.y * vector.x + matrix.up.y * vector.y + matrix.at.y * vector.z;
+    z = matrix.pos.z + matrix.right.z * vector.x + matrix.up.z * vector.y + matrix.at.z * vector.z;
 }
 
 void CVector::FromMultiply3x3(const CMatrix& matrix, const CVector& vector)
 {
-    x = matrix.m_right.x * vector.x + matrix.m_forward.x * vector.y + matrix.m_up.x * vector.z;
-    y = matrix.m_right.y * vector.x + matrix.m_forward.y * vector.y + matrix.m_up.y * vector.z;
-    z = matrix.m_right.z * vector.x + matrix.m_forward.z * vector.y + matrix.m_up.z * vector.z;
+    x = matrix.right.x * vector.x + matrix.up.x * vector.y + matrix.at.x * vector.z;
+    y = matrix.right.y * vector.x + matrix.up.y * vector.y + matrix.at.y * vector.z;
+    z = matrix.right.z * vector.x + matrix.up.z * vector.y + matrix.at.z * vector.z;
 }
 
 CVector CVector::Average(const CVector* begin, const CVector* end) {

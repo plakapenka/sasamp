@@ -333,9 +333,10 @@ void CObject::GetRotation(float* pfX,float* pfY,float* pfZ)
 {
 	if (!m_pEntity) return;
 
-	RwMatrix* mat = m_pEntity->mat;
+	auto mat = m_pEntity->mat;
 
-	if(mat) CHook::CallFunction<void>(g_libGTASA + 0x0044E6AC + 1, mat, pfX, pfY, pfZ, 21);
+	if(mat)
+		m_pEntity->mat->ConvertToEulerAngles(pfX, pfY, pfZ, 21);
 
 	*pfX = *pfX * 57.295776 * -1.0;
 	*pfY = *pfY * 57.295776 * -1.0;

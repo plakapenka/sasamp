@@ -1163,11 +1163,15 @@ void CPlayerPed::ProcessAttach()
 			{
 				if (pObject->m_pEntity->mat)
 				{
-					uintptr_t v8 = *(uintptr_t*)(pObject->m_pEntity->m_pRwObject + 4) + 16;
-					if (v8)
-					{
-						((int(*)(RwMatrix*, uintptr_t))(g_libGTASA + 0x0044EE3E + 1))(pObject->m_pEntity->mat, v8);
-					}
+					auto parent = (char *)pObject->m_pEntity->m_pRwObject->parent;
+					auto m_pMat = pObject->m_pEntity->mat;
+
+					auto pMatrix = (RwMatrix *)(parent + 0x10);
+
+					if (m_pMat)
+						m_pMat->UpdateRwMatrix(pMatrix);
+					else
+						pObject->m_pEntity->m_transform.UpdateRwMatrix(pMatrix);
 				}
 			}
 			//Log("pos %f %f %f", outMat.pos.x, outMat.pos.y, outMat.pos.z);
@@ -1892,7 +1896,7 @@ void CPlayerPed::ProcessBulletData(BULLET_DATA* btData)
 
 												if (btData->pEntity->mat)
 												{
-													ProjectMatrix(&vecOut, btData->pEntity->mat, &btData->vecOffset);
+													ProjectMatrix(&vecOut, btData->pEntity->mat->ToRwMatrix(), &btData->vecOffset);
 													btData->vecOffset.x = vecOut.x;
 													btData->vecOffset.y = vecOut.y;
 													btData->vecOffset.z = vecOut.z;

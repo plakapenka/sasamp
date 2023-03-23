@@ -71,9 +71,9 @@ void CEntity::UpdateRwMatrixAndFrame()
 		{
 			if (m_pEntity->mat)
 			{
-				uintptr_t pRwMatrix = *(uintptr_t*)(m_pEntity->m_pRwObject + 4) + 0x10;
-				// CMatrix::UpdateRwMatrix
-				((void (*) (RwMatrix*, uintptr_t))(g_libGTASA + 0x0044EE3E + 1))(m_pEntity->mat, pRwMatrix);
+				auto pRwMatrix = (RwMatrix*)(&m_pEntity->m_pRwObject->parent + 0x10);
+
+				m_pEntity->mat->UpdateRwMatrix(pRwMatrix);
 
 				// CEntity::UpdateRwFrame
 				((void (*) (CEntityGta*))(g_libGTASA + 0x003EC038 + 1))(m_pEntity);
