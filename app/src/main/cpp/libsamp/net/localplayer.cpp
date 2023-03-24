@@ -779,25 +779,20 @@ void CLocalPlayer::SendOnKeyFullSyncData()
 void CLocalPlayer::SendOnFootFullSyncData()
 {
 	RakNet::BitStream bsPlayerSync;
-	RwMatrix matPlayer;
-	CVector vecMoveSpeed;
+
 	uint16_t lrAnalog, udAnalog;
 	uint16_t wKeys = m_pPlayerPed->GetKeys(&lrAnalog, &udAnalog);
 
 	ONFOOT_SYNC_DATA ofSync;
-
-	m_pPlayerPed->GetMatrix(&matPlayer);
-
-	m_pPlayerPed->GetMoveSpeedVector(&vecMoveSpeed);
+	auto pMat = m_pPlayerPed->m_pPed->mat;
 
 	ofSync.lrAnalog = lrAnalog;
 	ofSync.udAnalog = udAnalog;
 	ofSync.wKeys = wKeys;
-	ofSync.vecPos.x = matPlayer.pos.x;
-	ofSync.vecPos.y = matPlayer.pos.y;
-	ofSync.vecPos.z = matPlayer.pos.z;
 
-	ofSync.quat.Set(&matPlayer);
+	ofSync.vecPos = pMat->GetPosition();
+
+	ofSync.quat.Set(pMat->ToRwMatrix());
 	ofSync.quat.Normalise();
 
 	if( FloatOffset(ofSync.quat.w, m_OnFootData.quat.w) < 0.00001 &&
@@ -825,9 +820,7 @@ void CLocalPlayer::SendOnFootFullSyncData()
 		ofSync.byteSpecialAction = m_pPlayerPed->m_iCurrentSpecialAction;
 	}
 
-	ofSync.vecMoveSpeed.x = vecMoveSpeed.x;
-	ofSync.vecMoveSpeed.y = vecMoveSpeed.y;
-	ofSync.vecMoveSpeed.z = vecMoveSpeed.z;
+	ofSync.vecMoveSpeed = m_pPlayerPed->m_pPed->vecMoveSpeed;
 
 	ofSync.vecSurfOffsets.x = 0.0f;
 	ofSync.vecSurfOffsets.y = 0.0f;
@@ -835,17 +828,6 @@ void CLocalPlayer::SendOnFootFullSyncData()
 	ofSync.wSurfInfo = 0;
 
 	ofSync.dwAnimation = 0;
-	//ofSync.dwAnimation = GetCurrentAnimationIndexFlag();
-//	ofSync.animation.flags.lockY = m_pPlayerPed->animFlagLockY;
-//	ofSync.animation.flags.lockX = m_pPlayerPed->animFlagLockX;
-//	ofSync.animation.flags.time = m_pPlayerPed->animFlagTime;
-//	ofSync.animation.flags.loop = m_pPlayerPed->animFlagLoop;
-//	ofSync.animation.flags.freeze = m_pPlayerPed->animFlagFreeze;
-//	m_pPlayerPed->animFlagTime = 0;
-//	m_pPlayerPed->animFlagLoop = false;
-//	m_pPlayerPed->animFlagFreeze = false;
-//	ofSync.animation.flags.lockY = false;
-//	ofSync.animation.flags.lockX = false;
 
 	if( (GetTickCount() - m_dwLastUpdateOnFootData) > 500 || memcmp(&m_OnFootData, &ofSync, sizeof(ONFOOT_SYNC_DATA)))
 	{
