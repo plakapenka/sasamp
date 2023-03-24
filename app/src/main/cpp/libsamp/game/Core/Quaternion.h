@@ -11,7 +11,7 @@ public:
 			float real;
 		};
 		struct {
-			float x, y, z, w;
+			float w, x, y, z;
 		};
 	};
 
