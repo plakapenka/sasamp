@@ -79,6 +79,11 @@ public:
         z = right.z;
         return *this;
     }
+    void operator=(const float all){
+        x = all;
+        y = all;
+        z = all;
+    }
     void operator+=(const CVector& right);
     void operator-=(const CVector& right);
     void operator*=(const CVector& right);

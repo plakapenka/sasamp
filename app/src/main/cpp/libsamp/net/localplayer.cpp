@@ -978,8 +978,8 @@ void CLocalPlayer::SendInCarFullSyncData()
 			syncQuat.Set(&matTrailer);
 			trSync.quat = syncQuat;
 
-			pTrailer->GetMoveSpeedVector(&trSync.vecMoveSpeed);
-			pTrailer->GetTurnSpeedVector(&trSync.vecTurnSpeed);
+			trSync.vecMoveSpeed = pTrailer->m_pVehicle->vecMoveSpeed;
+			trSync.vecTurnSpeed = pTrailer->m_pVehicle->m_vecTurnSpeed;
 
 			RakNet::BitStream bsTrailerSync;
 			bsTrailerSync.Write((BYTE)ID_TRAILER_SYNC);

@@ -200,16 +200,8 @@ void CRemotePlayer::Process()
 				m_ofSync.lrAnalog = 0;
 				m_ofSync.udAnalog = 0;
 
-				vecMoveSpeed.x = 0.0f;
-				vecMoveSpeed.y = 0.0f;
-				vecMoveSpeed.z = 0.0f;
-				m_pPlayerPed->SetMoveSpeedVector(vecMoveSpeed);
-
-				m_pPlayerPed->GetMatrix(&matPlayer);
-				matPlayer.pos.x = m_ofSync.vecPos.x;
-				matPlayer.pos.y = m_ofSync.vecPos.y;
-				matPlayer.pos.z = m_ofSync.vecPos.z;
-				m_pPlayerPed->SetMatrix(matPlayer);
+				m_pPlayerPed->m_pPed->vecMoveSpeed = 0.0f;
+				m_pPlayerPed->m_pPed->mat->pos = m_ofSync.vecPos;
 			}
 		}
 		if(GetState() == PLAYER_STATE_DRIVER && m_pPlayerPed->IsInVehicle())
