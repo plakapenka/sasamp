@@ -244,7 +244,7 @@ void ApplyPatches()
     CHook::RET(g_libGTASA + 0x00306F40); // CEntryExit::GenerateAmbientPeds
 	CHook::RET(g_libGTASA + 0x002BCCF8);// здоровье, брон€, фист звезды и тп
 	CHook::RET(g_libGTASA + 0x00436FAC); // CHud::SetHelpMessage
-	//CHook::RET(g_libGTASA + 0x004211F0); // CPlaceName::Process
+	CHook::RET(g_libGTASA + 0x004211F0); // CPlaceName::Process
 	CHook::RET(g_libGTASA + 0x004B2D14); // CPedGroupDefaultTaskAllocatorRandom::AllocateDefaultTasks crash
 	CHook::RET(g_libGTASA + 0x004397B4); // CHud::DrawBustedWastedMessage // ѕќ“–ј„≈Ќќ
 //	CHook::RET(g_libGTASA + 0x00352154); // in game radio
