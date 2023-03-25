@@ -8,7 +8,6 @@ import com.liverussia.cr.core.Samp;
 import com.liverussia.cr.gui.adapters.DialogMenuAdapter;
 import com.liverussia.cr.gui.models.DataDialogMenu;
 import com.liverussia.cr.gui.util.Utils;
-import com.nvidia.devtech.NvEventQueueActivity;
 
 import android.content.Context;
 import android.os.Handler;
@@ -18,11 +17,9 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.transition.TransitionManager;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -107,13 +104,13 @@ public class Menu {
 
     private void setMenu() {
         this.dataDialogMenuArrayList.clear();
-        this.dataDialogMenuArrayList.add(new DataDialogMenu(1, R.drawable.br_menu_compass, "Навигатор"));
-        this.dataDialogMenuArrayList.add(new DataDialogMenu(2, R.drawable.br_menu_menu, "Меню"));
+        this.dataDialogMenuArrayList.add(new DataDialogMenu(1, R.drawable.menu_gps, "Навигатор"));
+        this.dataDialogMenuArrayList.add(new DataDialogMenu(2, R.drawable.menu_menu, "Меню"));
        // this.dataDialogMenuArrayList.add(new DataDialogMenu(3, R.drawable.br_menu_chat, "Общение"));
-        this.dataDialogMenuArrayList.add(new DataDialogMenu(3, R.drawable.br_menu_bag, "Инвентарь"));
-        this.dataDialogMenuArrayList.add(new DataDialogMenu(4, R.drawable.br_menu_anim, "Анимации"));
-        this.dataDialogMenuArrayList.add(new DataDialogMenu(5, R.drawable.br_menu_ruble, "Донат"));
-        this.dataDialogMenuArrayList.add(new DataDialogMenu(6, R.drawable.br_menu_car, "Автомобили"));
+        this.dataDialogMenuArrayList.add(new DataDialogMenu(3, R.drawable.menu_bag, "Инвентарь"));
+        this.dataDialogMenuArrayList.add(new DataDialogMenu(4, R.drawable.menu_anim, "Анимации"));
+        this.dataDialogMenuArrayList.add(new DataDialogMenu(5, R.drawable.menu_ruble, "Донат"));
+        this.dataDialogMenuArrayList.add(new DataDialogMenu(6, R.drawable.menu_car, "Автомобили"));
         this.dataDialogMenuArrayList.add(new DataDialogMenu(7, R.drawable.menu_report_icon, "Жалоба"));
         this.dataDialogMenuArrayList.add(new DataDialogMenu(8, R.drawable.menu_promocode_icon, "Промокод"));
         this.dataDialogMenuArrayList.add(new DataDialogMenu(9, R.drawable.players_icon, "Игроки"));

@@ -22,7 +22,7 @@
         <include layout="@layout/dailyreward" />
         <include layout="@layout/hud" />
         <include layout="@layout/casino_dice" />
-        <include layout="@layout/bspeed_layout"/>
+        <include layout="@layout/speedometer"/>
         <include layout="@layout/menu_action_dialog" />
         <include layout="@layout/registration" />
         <include layout="@layout/authorization" />
