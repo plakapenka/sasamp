@@ -218,9 +218,10 @@ bool CLocalPlayer::Process()
 						m_pPlayerPed->GetGtaVehicle());
 			}
 
-			m_pPlayerPed->SetHealth(0.0f);
+			//m_pPlayerPed->SetHealth(0.0f);
 			m_pPlayerPed->SetDead();
 			SendWastedNotification();
+			Spawn();
 
 			m_bIsActive = false;
 			m_bIsWasted = true;

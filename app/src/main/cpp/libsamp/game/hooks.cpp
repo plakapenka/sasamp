@@ -1304,7 +1304,7 @@ void CGame__Process_hook()
         ((void (*)(uintptr_t *)) (g_libGTASA + 0x003DC7D0 + 1))(TheCamera); // CCamera::Process()
 
 		//((void (*)()) (g_libGTASA + 0x005CF8D0 + 1))(); // CCullZones::Update()
-		((void (*)()) (g_libGTASA + 0x00307D8C + 1))(); // CGameLogic::Update()
+		//((void (*)()) (g_libGTASA + 0x00307D8C + 1))(); // CGameLogic::Update()
 		//CGangWars::Update();
 		//((void (*)()) (g_libGTASA + 0x003006C4 + 1))(); // CConversations::Update()
 		//((void (*)()) (g_libGTASA + 0x00301B68 + 1))(); // CPedToPlayerConversations::Update()

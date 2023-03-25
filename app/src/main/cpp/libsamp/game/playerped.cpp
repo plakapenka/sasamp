@@ -240,12 +240,14 @@ void CPlayerPed::SetDead()
 	GetMatrix(&mat);
 	// will reset the tasks
 	TeleportTo(mat.pos.x, mat.pos.y, mat.pos.z);
-	m_pPed->fHealth = 0.0f;
+	m_pPed->fHealth = 0.5f;
 
-	uint8_t old = CWorld::PlayerInFocus; // CWorld::PlayerInFocus - 0x008E864C
-	CWorld::PlayerInFocus = m_bytePlayerNumber;
-	ScriptCommand(&kill_actor, m_dwGTAId);
-	CWorld::PlayerInFocus = old;
+
+
+//	uint8_t old = CWorld::PlayerInFocus; // CWorld::PlayerInFocus - 0x008E864C
+//	CWorld::PlayerInFocus = m_bytePlayerNumber;
+//	ScriptCommand(&kill_actor, m_dwGTAId);
+//	CWorld::PlayerInFocus = old;
 }
 
 // 0.3.7
