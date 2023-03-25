@@ -523,37 +523,6 @@ size_t OS_FileRead_hook(FILE *file, void *a2, size_t numBytes)
     }
 }
 
-void (*CTimer__StartUserPause)();
-void CTimer__StartUserPause_hook()
-{
-	Log("CTimer__StartUserPause_hook");
-	// process pause event
-	if (g_pJavaWrapper)
-	{
-
-		CKeyBoard::Close();
-
-		g_pJavaWrapper->SetPauseState(true);
-
-		CSpeedometr::tempToggle(false);
-	}
-
-	*(bool*)(g_libGTASA + 0x0096B514) = true;
-}
-
-void (*CTimer__EndUserPause)();
-void CTimer__EndUserPause_hook()
-{
-	// process resume event
-	if (g_pJavaWrapper)
-	{
-		g_pJavaWrapper->SetPauseState(false);
-		CSpeedometr::tempToggle(true);
-	}
-
-	*(bool*)(g_libGTASA + 0x0096B514) = false;
-}
-
 extern char g_iLastBlock[512];
 unsigned int(*LoadFullTexture)(uintptr_t *thiz, unsigned int entryIndex);
 unsigned int LoadFullTexture_hook(uintptr_t *thiz, unsigned int entryIndex)
@@ -851,8 +820,7 @@ void InstallSpecialHooks()
 	// Log texture load
 	CHook::InlineHook(g_libGTASA, 0x001E9148, &LoadFullTexture_hook, &LoadFullTexture);
 
-	CHook::InlineHook(g_libGTASA, 0x00421118, &CTimer__StartUserPause_hook, &CTimer__StartUserPause);
-	CHook::InlineHook(g_libGTASA, 0x00421128, &CTimer__EndUserPause_hook, &CTimer__EndUserPause);
+
 
 	//pvr
 	CHook::UnFuck(g_libGTASA + 0x001E87A0);
@@ -1234,40 +1202,142 @@ void CVehicle__ResetAfterRender_hook(uintptr_t thiz)
 #include "..//gui/CFontInstance.h"
 #include "..//gui/CFontRenderer.h"
 #include "CCustomPlateManager.h"
+#include "Timer.h"
 
 void (*CGame__Process)();
 void CGame__Process_hook()
 {
 	if(pGame->bIsGameExiting)return;
 
-	//FIXME
-//	((void(*)())(g_libGTASA + 0x003F8B50 + 1))(); // CPad::UpdatePads()
-//	((void(*)())(g_libGTASA + 0x002B03F8 + 1))(); // CTouchInterface::Clear()
-//	((void(*)())(g_libGTASA + 0x002D0558 + 1))(); // CStreaming::Update()
-//	((void(*)())(g_libGTASA + 0x005CC2E8 + 1))(); // CWeather::Update()
-//	//((void(*)())(g_libGTASA + 0x002D9818 + 1))(); // CCollision::Update()
-//	uintptr_t* gFireManager = (uintptr_t *)(g_libGTASA + 0x00958800);
-//	((void(*)(uintptr_t*))(g_libGTASA + 0x003F1628 + 1))(gFireManager); // CFireManager::Update
-//
-//	((void(*)())(g_libGTASA + 0x0059EB48 + 1))(); // CClouds::Update()
-//	((void(*)())(g_libGTASA + 0x004213FC + 1))(); // CUserDisplay::Process()
-////	((void(*)())(g_libGTASA + 0x005CBB20 + 1))(); // CWaterCannons::Update()
-//	((void(*)())(g_libGTASA + 0x005DB8E8 + 1))(); // CWeapon::UpdateWeapons()
-//	((void(*)())(g_libGTASA + 0x0035E4AC + 1))(); // CSetPieces::Update()
-//	((void(*)())(g_libGTASA + 0x00427744 + 1))(); // CWorld::Process()
-//	((void(*)())(g_libGTASA + 0x0059CFC0 + 1))(); // CBirds::Update()
-//	((void(*)())(g_libGTASA + 0x005C03E4 + 1))(); // CSpecialFX::Update()
-//	((void(*)())(g_libGTASA + 0x005B28D8 + 1))(); // CPostEffects::Update()
-//
-//	((void(*)())(g_libGTASA + 0x0041EF78 + 1))(); // CTimeCycle::Update()
-//	((void(*)())(g_libGTASA + 0x004CA834 + 1))(); // CPopCycle::Update()
-//
-//	uintptr_t* TheCamera = (uintptr_t*)(g_libGTASA + 0x00951FA8);
-//	((void(*)(uintptr_t*))(g_libGTASA + 0x003DC7D0 + 1))(TheCamera); // CCamera::Process()
-//
-//	((void(*)())(g_libGTASA + 0x005A3E40 + 1))(); // CCoronas::DoSunAndMoon()
-//	((void(*)())(g_libGTASA + 0x005A22C8 + 1))(); // CCoronas::Update()
+    uint32_t CurrentTimeInCycles;
+    uint32_t v1; // r4
+    uint32_t v2; // r5
+    uint32_t v3; // r5
 
+	//FIXME
+	((void(*)())(g_libGTASA + 0x003F8B50 + 1))(); // CPad::UpdatePads()
+	((void(*)())(g_libGTASA + 0x002B03F8 + 1))(); // CTouchInterface::Clear()
+	((void(*)())(g_libGTASA + 0x0028C178 + 1))(); // CHID::Update()
+
+//	auto g_LoadMonitor = (uintptr_t *) (g_libGTASA + 0x009595EC);
+//	((void(*)(uintptr_t*))(g_libGTASA + 0x003F4FB6 + 1))(g_LoadMonitor); // CLoadMonitor::BeginFrame
+
+    CurrentTimeInCycles = CTimer::GetCurrentTimeInCycles();
+    v1 = CurrentTimeInCycles / CTimer::GetCyclesPerMillisecond();
+
+	((void(*)())(g_libGTASA + 0x002D0558 + 1))(); // CStreaming::Update()
+
+    v2 = CTimer::GetCurrentTimeInCycles();
+    v3 = v2 / CTimer::GetCyclesPerMillisecond();
+
+	//((void(*)())(g_libGTASA + 0x00390120 + 1))(); // CCutsceneMgr::Update();
+
+	if ( !(CTimer::m_CodePause << 0x18) )
+	{
+		auto gMobileMenu = (uintptr_t *) (g_libGTASA + 0x006E0074);
+		((void(*)(uintptr_t*))(g_libGTASA + 0x0029A730 + 1))(gMobileMenu); // MobileMenu::Update
+	}
+
+   // ((void(*)())(g_libGTASA + 0x0042CF54 + 1))(); // CTheZones::Update()
+    ((void(*)())(g_libGTASA + 0x004D4F00 + 1))(); // CCover::Update()
+
+	auto TheCamera = (uintptr_t *) (g_libGTASA + 0x00951FA8);
+
+//	auto p_tx = (CSimpleTransform *)&TheCamera + 0x14 + 0x30;
+//	if ( !TheCamera.m_pMat )
+//		p_tx = *TheCamera + 0x4;
+
+	//CAudioZones::Update(0, p_tx->m_translate);
+
+	*(int32_t*)(g_libGTASA + 0x00A7D22C) = 0; // CWindModifiers::Number
+
+    if ( !CTimer::m_CodePause && !CTimer::m_UserPause )
+    {
+		((void (*)()) (g_libGTASA + 0x005C8884 + 1))(); // CSprite2d::SetRecipNearClip();
+		((void (*)()) (g_libGTASA + 0x005C89F8 + 1))(); // CSprite2d::InitPerFrame();
+		((void (*)()) (g_libGTASA + 0x005A8A74 + 1))(); // CFont::InitPerFrame()
+//		((void (*)()) (g_libGTASA + 0x002FEB2C + 1))(); // CCheat::DoCheats();
+//		((void (*)()) (g_libGTASA + 0x003E33C8 + 1))(); // CClock::Update()
+
+        ((void (*)()) (g_libGTASA + 0x005CC2E8 + 1))(); // CWeather::Update()
+        ((void(*)())(g_libGTASA + 0x0032AED8 + 1))(); // CTheScripts::Process()
+        ((void(*)())(g_libGTASA + 0x002D9818 + 1))(); // CCollision::Update()
+
+//		auto ThePaths = (uintptr_t *) (g_libGTASA + 0x007A61F0);
+//		((void (*)(uintptr_t *)) (g_libGTASA + 0x003195F4 + 1))(ThePaths); // CPathFind::UpdateStreaming
+
+//		CTrain::UpdateTrains();
+//		CHeli::UpdateHelis();
+		//((void(*)())(g_libGTASA + 0x003036B4 + 1))(); // CDarkel::Update()
+		((void(*)())(g_libGTASA + 0x005BE838 + 1))(); // CSkidmarks::Update();
+		((void(*)())(g_libGTASA + 0x005AB4C8 + 1))(); // CGlass::Update()
+//		CWanted::UpdateEachFrame();
+//		((void(*)())(g_libGTASA + 0x003F3640 + 1))(); // CCreepingFire::Update();
+		((void(*)())(g_libGTASA + 0x0035E4AC + 1))(); // CSetPieces::Update();
+
+        auto gFireManager = (uintptr_t *) (g_libGTASA + 0x00958800);
+        ((void (*)(uintptr_t *)) (g_libGTASA + 0x003F1628 + 1))(gFireManager); // CFireManager::Update
+
+
+		((void(*)(bool))(g_libGTASA + 0x004CC380 + 1))(false); // CPopulation::Update нужно (
+
+		((void (*)()) (g_libGTASA + 0x005DB8E8 + 1))(); // CWeapon::UpdateWeapons()
+        ((void (*)()) (g_libGTASA + 0x0059EB48 + 1))(); // CClouds::Update()
+		((void (*)()) (g_libGTASA + 0x005A6720 + 1))(); // CMovingThings::Update();
+		((void(*)())(g_libGTASA + 0x005CBB20 + 1))(); // CWaterCannons::Update()
+		//((void (*)()) (g_libGTASA + 0x004213FC + 1))(); // CUserDisplay::Process()
+        ((void (*)()) (g_libGTASA + 0x00427744 + 1))(); // CWorld::Process()
+
+        if ( !CTimer::bSkipProcessThisFrame )
+		{
+            ((void (*)()) (g_libGTASA + 0x0059CFC0 + 1))(); // CBirds::Update()
+            ((void (*)()) (g_libGTASA + 0x005C03E4 + 1))(); // CSpecialFX::Update()
+        }
+//		auto g_InterestingEvents = *(uint8_t*)(g_libGTASA + 0x009EF9D8);
+//		if ( *((uint8_t *)&g_InterestingEvents + 0x12C) << 0x1F )
+//			((void (*)(uint8_t*)) (g_libGTASA + 0x004C1EC0 + 1))(&g_InterestingEvents); // CInterestingEvents::ScanForNearbyEntities
+
+        ((void (*)()) (g_libGTASA + 0x005B28D8 + 1))(); // CPostEffects::Update()
+        ((void (*)()) (g_libGTASA + 0x0041EF78 + 1))(); // CTimeCycle::Update()
+        ((void (*)()) (g_libGTASA + 0x004CA834 + 1))(); // CPopCycle::Update()
+
+        ((void (*)(uintptr_t *)) (g_libGTASA + 0x003DC7D0 + 1))(TheCamera); // CCamera::Process()
+
+		//((void (*)()) (g_libGTASA + 0x005CF8D0 + 1))(); // CCullZones::Update()
+		((void (*)()) (g_libGTASA + 0x00307D8C + 1))(); // CGameLogic::Update()
+		//CGangWars::Update();
+		//((void (*)()) (g_libGTASA + 0x003006C4 + 1))(); // CConversations::Update()
+		//((void (*)()) (g_libGTASA + 0x00301B68 + 1))(); // CPedToPlayerConversations::Update()
+		//((void (*)()) (g_libGTASA + 0x002E388E + 1))(); // CBridge::Update()
+        ((void (*)()) (g_libGTASA + 0x005A3E40 + 1))(); // CCoronas::DoSunAndMoon()
+        ((void (*)()) (g_libGTASA + 0x005A22C8 + 1))(); // CCoronas::Update()
+		((void (*)()) (g_libGTASA + 0x005BD370 + 1))(); // CShadows::UpdatePermanentShadows()
+		((void (*)()) (g_libGTASA + 0x002CA3A4 + 1))(); // CCustomBuildingRenderer::Update()
+
+		//
+//		auto p_m_transform = (CSimpleTransform *)&TheCamera + 0x14 + 0x30;
+//		if ( ! (uintptr_t*)(&TheCamera + 0x14) )
+//			p_m_transform = (CSimpleTransform *)(&TheCamera + 0x4);
+
+	//	((void (*)(CSimpleTransform*)) (g_libGTASA + 0x002CE120 + 1))(p_m_transform); // CPlantMgr::Update
+		//
+
+		auto g_fx = *(uintptr_t *) (g_libGTASA + 0x00820520);
+		auto temp = *(uintptr_t*)&TheCamera + 0x8D8;
+		((void (*)(uintptr_t*, uintptr_t, float )) (g_libGTASA + 0x00363DE0 + 1))(&g_fx, temp, CTimer::ms_fTimeStep / 50.0f); // Fx_c::Update
+
+		auto g_breakMan = (uintptr_t *) (g_libGTASA + 0x0099DD14);
+		((void (*)(uintptr_t*, float )) (g_libGTASA + 0x0045267C + 1))(g_breakMan, CTimer::ms_fTimeStep); // BreakManager_c::Update
+
+		auto g_procObjMan = (uintptr_t *) (g_libGTASA + 0x009A1F3C);
+		((void (*)(uintptr_t* )) (g_libGTASA + 0x004571A0 + 1))(g_procObjMan); // ProcObjectMan_c::Update
+
+		auto g_waterCreatureMan = (uintptr_t *) (g_libGTASA + 0x00A14350);
+		((void (*)(uintptr_t*, float )) (g_libGTASA + 0x004571A0 + 1))(g_waterCreatureMan, CTimer::ms_fTimeStep / 50.0f); // WaterCreatureManager_c::Update
+
+		((void (*)()) (g_libGTASA + 0x00596540 + 1))(); // CWaterLevel::PreRenderWater()
+	}
+//
 
 	static bool once = false;
 	if (!once)
@@ -1278,7 +1348,7 @@ void CGame__Process_hook()
 
 	CCustomPlateManager::Process();
 
-	CGame__Process();
+//	CGame__Process();
 }
 
 uint16_t g_usLastProcessedModelIndexAutomobile = 0;
@@ -2018,6 +2088,8 @@ uintptr_t* ConvertBufferToObject_hook(uint8_t* fileBuffer, int32_t modelId)
 void InstallHooks()
 {
 	Log("InstallHooks");
+
+    CTimer::InjectHooks();
 
 	//CHook::InlineHook(g_libGTASA, 0x002D2FD0, &ConvertBufferToObject_hook, &ConvertBufferToObject);
 
