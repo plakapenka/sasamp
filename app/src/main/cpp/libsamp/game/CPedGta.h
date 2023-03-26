@@ -9,6 +9,7 @@
 #include "CPedIntelligence.h"
 #include "game/Core/CVector2D.h"
 #include "CVehicleGta.h"
+#include "game/Enums/ePedState.h"
 
 class CVehicleGta;
 
@@ -22,7 +23,7 @@ struct CPedGta : CPhysicalGta
     uintptr_t *m_pPlayerData;
     uint8_t m_nCreatedBy;
     char                field_485[3];
-    uint32_t dwAction;			// 1096-1100	;Action
+    ePedState m_nPedState;			// 1096-1100	;Action
     uint32_t m_eMoveState;
     uint8_t m_storedCollPoly[44];
     uint32_t m_distTravelledSinceLastHeightCheck;

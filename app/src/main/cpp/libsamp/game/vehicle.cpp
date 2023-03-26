@@ -199,10 +199,9 @@ CVehicle::~CVehicle()
 		ScriptCommand(&destroy_car, m_dwGTAId);
 	}
 
-	if (m_pCustomHandling) {
-		delete m_pCustomHandling;
-		m_pCustomHandling = nullptr;
-	}
+	delete m_pCustomHandling;
+	m_pCustomHandling = nullptr;
+
 	if (m_bShadow) {
 		if (m_Shadow.pTexture) {
 			RwTextureDestroy(m_Shadow.pTexture);
@@ -217,26 +216,17 @@ CVehicle::~CVehicle()
 	}
 
 	//
-	if(m_pLeftFrontTurnLighter != nullptr)
-	{
-		delete m_pLeftFrontTurnLighter;
-		m_pLeftFrontTurnLighter = nullptr;
-	}
-	if(m_pLeftRearTurnLighter != nullptr)
-	{
-		delete m_pLeftRearTurnLighter;
-		m_pLeftRearTurnLighter = nullptr;
-	}
-	if(m_pRightFrontTurnLighter != nullptr)
-	{
-		delete m_pRightFrontTurnLighter;
-		m_pRightFrontTurnLighter = nullptr;
-	}
-	if(m_pRightRearTurnLighter != nullptr)
-	{
-		delete m_pRightRearTurnLighter;
-		m_pRightRearTurnLighter = nullptr;
-	}
+	delete m_pLeftFrontTurnLighter;
+	m_pLeftFrontTurnLighter = nullptr;
+
+	delete m_pLeftRearTurnLighter;
+	m_pLeftRearTurnLighter = nullptr;
+
+	delete m_pRightFrontTurnLighter;
+	m_pRightFrontTurnLighter = nullptr;
+
+	delete m_pRightRearTurnLighter;
+	m_pRightRearTurnLighter = nullptr;
 
 	//
 	if(m_pLeftReverseLight != nullptr)

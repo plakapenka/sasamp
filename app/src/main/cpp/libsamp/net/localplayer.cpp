@@ -186,6 +186,7 @@ extern bool g_uiHeadMoveEnabled;
 #include "java_systems/CDialog.h"
 #include "java_systems/CTechInspect.h"
 #include "java_systems/casino/CBaccarat.h"
+#include "game/CWorld.h"
 
 CAMERA_AIM* caAim = new CAMERA_AIM();
 
@@ -222,7 +223,6 @@ bool CLocalPlayer::Process()
 			m_pPlayerPed->SetDead();
 			SendWastedNotification();
 			Spawn();
-
 			m_bIsActive = false;
 			m_bIsWasted = true;
 
@@ -279,6 +279,7 @@ bool CLocalPlayer::Process()
 		}
 		else  { // ONFOOT
 			UpdateSurfing();
+
 			if ((dwThisTick - m_dwLastHeadUpdate) > 1000 && g_uiHeadMoveEnabled) {
 				CVector LookAt;
 				CAMERA_AIM *Aim = GameGetInternalAim();
@@ -685,7 +686,11 @@ void CLocalPlayer::SetSpawnInfo(PLAYER_SPAWN_INFO *pSpawn)
 bool CLocalPlayer::Spawn()
 {
 	Log("CLocalPlayer::Spawn");
-	if(!m_bHasSpawnInfo) return false;
+//	if(!m_bHasSpawnInfo) return false;
+
+	m_pPlayerPed->m_pPed->m_nPedState = PEDSTATE_NONE;
+	*(uint8_t*)(g_libGTASA + 0x007A1F11) = 0;
+
 	m_pPlayerPed->SetInterior(0);
 
     //g_pJavaWrapper->ShowSpeed();
@@ -712,7 +717,7 @@ bool CLocalPlayer::Spawn()
 	m_pPlayerPed->ClearAllWeapons();
 	m_pPlayerPed->ResetDamageEntity();
 
-	pGame->DisableTrainTraffic();
+//	pGame->DisableTrainTraffic();
 
 	// CCamera::Fade
 //	CHook::WriteMemory(g_libGTASA + 0x36EA2C, "\x70\x47", 2); // bx lr
