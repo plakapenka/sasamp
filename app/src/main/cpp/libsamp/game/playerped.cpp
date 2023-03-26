@@ -1001,12 +1001,12 @@ void CPlayerPed::SetRotation(float fRotation)
 // 0.3.7
 uint8_t CPlayerPed::GetActionTrigger()
 {
-	return (uint8_t)m_pPed->dwAction;
+	return (uint8_t)m_pPed->m_nPedState;
 }
 
-void CPlayerPed::SetActionTrigger(uint8_t action)
+void CPlayerPed::SetActionTrigger(ePedState action)
 {
-	m_pPed->dwAction = (uint32_t)action;
+	m_pPed->m_nPedState = action;
 }
 
 int GetInternalBoneIDFromSampID(int sampid);
@@ -1121,7 +1121,7 @@ void CPlayerPed::ProcessAttach()
 			{
 				continue;
 			}
-			((void (*)(CEntityGta*))(*(void**)(pObject->m_pEntity->vtable + 16)))(pObject->m_pEntity); // CPhysical::Remove
+			pObject->RemovePhysical();
 
 			RwMatrix outMat;
 			memcpy(&outMat, &hierarchy->pMatrixArray[iID], sizeof(RwMatrix));
@@ -1161,24 +1161,10 @@ void CPlayerPed::ProcessAttach()
 			}
 
 			pObject->SetMatrix(outMat); // copy to CMatrix
-			if (pObject->m_pEntity->m_pRwObject)
-			{
-				if (pObject->m_pEntity->mat)
-				{
-					auto parent = (char *)pObject->m_pEntity->m_pRwObject->parent;
-					auto m_pMat = pObject->m_pEntity->mat;
 
-					auto pMatrix = (RwMatrix *)(parent + 0x10);
+			pObject->UpdateRwMatrixAndFrame();
 
-					if (m_pMat)
-						m_pMat->UpdateRwMatrix(pMatrix);
-					else
-						pObject->m_pEntity->m_transform.UpdateRwMatrix(pMatrix);
-				}
-			}
-			//Log("pos %f %f %f", outMat.pos.x, outMat.pos.y, outMat.pos.z);
-			((int(*)(CEntityGta*))(g_libGTASA + 0x003EC038 + 1))(pObject->m_pEntity); // CEntity::UpdateRwFrame
-			((void (*)(CEntityGta*))(*(void**)(pObject->m_pEntity->vtable + 8)))(pObject->m_pEntity); // CPhysical::Add
+			pObject->AddPhysical();
 		}
 		else
 		{

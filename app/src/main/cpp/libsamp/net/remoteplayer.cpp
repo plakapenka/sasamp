@@ -110,17 +110,9 @@ void CRemotePlayer::Process()
 			matVehicle.pos.y = m_icSync.vecPos.y;
 			matVehicle.pos.z = m_icSync.vecPos.z;
 
-			if( m_pCurrentVehicle->GetModelIndex() == TRAIN_PASSENGER_LOCO ||
-				m_pCurrentVehicle->GetModelIndex() == TRAIN_FREIGHT_LOCO ||
-				m_pCurrentVehicle->GetModelIndex() == TRAIN_TRAM)
-			{
-				//UpdateTrainDriverMatrixAndSpeed(&matVehicle, &m_icSync.vecMoveSpeed, m_icSync.fTrainSpeed);
-			}
-			else
-			{
-				UpdateInCarMatrixAndSpeed(&matVehicle, &m_icSync.vecPos, &m_icSync.vecMoveSpeed);
-				UpdateInCarTargetPosition();
-			}
+			UpdateInCarMatrixAndSpeed(&matVehicle, &m_icSync.vecPos, &m_icSync.vecMoveSpeed);
+			UpdateInCarTargetPosition();
+
 		}
 		else if(GetState() == PLAYER_STATE_PASSENGER && m_byteUpdateFromNetwork == UPDATE_TYPE_PASSENGER)
 		{
@@ -301,13 +293,10 @@ void CRemotePlayer::UpdateInCarMatrixAndSpeed(RwMatrix* mat, CVector* pos, CVect
 {
 	m_InCarQuaternion.Set(mat);
 
-	m_vecInCarTargetPos.x = pos->x;
-	m_vecInCarTargetPos.y = pos->y;
-	m_vecInCarTargetPos.z = pos->z;
+	m_vecInCarTargetPos = pos;
 
-	m_vecInCarTargetSpeed.x = speed->x;
-	m_vecInCarTargetSpeed.y = speed->y;
-	m_vecInCarTargetSpeed.z = speed->z;
+	m_vecInCarTargetSpeed = speed;
+
 
 	m_pCurrentVehicle->SetMoveSpeedVector(*speed);
 }

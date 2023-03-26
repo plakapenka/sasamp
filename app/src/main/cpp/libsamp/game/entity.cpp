@@ -69,15 +69,18 @@ void CEntity::UpdateRwMatrixAndFrame()
 	{
 		if (m_pEntity->m_pRwObject)
 		{
-			if (m_pEntity->mat)
-			{
-				auto pRwMatrix = (RwMatrix*)(&m_pEntity->m_pRwObject->parent + 0x10);
+			auto parent = (char *)m_pEntity->m_pRwObject->parent;
+			auto m_pMat = m_pEntity->mat;
 
-				m_pEntity->mat->UpdateRwMatrix(pRwMatrix);
+			auto pMatrix = (RwMatrix *)(parent + 0x10);
 
-				// CEntity::UpdateRwFrame
-				((void (*) (CEntityGta*))(g_libGTASA + 0x003EC038 + 1))(m_pEntity);
-			}
+			if (m_pMat)
+				m_pMat->UpdateRwMatrix(pMatrix);
+			else
+				m_pEntity->m_transform.UpdateRwMatrix(pMatrix);
+
+
+			((void (*) (CEntityGta*))(g_libGTASA + 0x003EC038 + 1))(m_pEntity);
 		}
 	}
 }
