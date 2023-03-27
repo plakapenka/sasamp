@@ -15,3 +15,7 @@ RwBool RwIm3DRenderLine(RwInt32 vert1, RwInt32 vert2) {
 RwBool RwIm3DEnd() {
     return ((RwBool(__cdecl *)(void))(g_libGTASA + 0x001DD03C + 1))();
 }
+
+RwFrame* RwFrameForAllObjects(RwFrame* frame, RwObjectCallBack callBack, void* data) {
+    return ((RwFrame*(__cdecl *)(RwFrame*, RwObjectCallBack, void*))(g_libGTASA + 0x001D8858 + 1))(frame, callBack, data);
+}

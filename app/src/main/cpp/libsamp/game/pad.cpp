@@ -623,10 +623,10 @@ uint32_t CPad__GetWeapon_hook(uintptr_t thiz, uintptr_t ped, bool unk)
 	}
 }
 
-CPlayerPed* g_playerPed;
+CPedGta* g_playerPed;
 
-void (*ProcessPlayerWeapon)(uintptr_t thiz, CPlayerPed* playerPed);
-void ProcessPlayerWeapon_hook(uintptr_t thiz, CPlayerPed* playerPed)
+void (*ProcessPlayerWeapon)(uintptr_t thiz, CPedGta* playerPed);
+void ProcessPlayerWeapon_hook(uintptr_t thiz, CPedGta* playerPed)
 {
 	g_playerPed = playerPed;
 
@@ -638,15 +638,15 @@ void ProcessPlayerWeapon_hook(uintptr_t thiz, CPlayerPed* playerPed)
 bool (*GetTarget)(uintptr_t *thiz, bool bCheckWidget);
 bool GetTarget_hook(uintptr_t *thiz, bool bCheckWidget)
 {
-//	if (!g_playerPed)
-//	{
-//		return GetTarget(thiz, a2);
-//	}
+	if (!g_playerPed)
+	{
+		return GetTarget(thiz, bCheckWidget);
+	}
 //	if (!(*(uint32_t*)(g_playerPed + 1088)))
 //	{
 //		return GetTarget(thiz, a2);
 //	}
-//
+	return g_playerPed->bIsAimingGun;
 //	return *(uint8_t*)(*(uint32_t*)(g_playerPed + 1088) + 52) & 0b00001000;
 	return false;
 }

@@ -237,16 +237,16 @@ void ApplyPatches()
 	CHook::WriteMemory(g_libGTASA + 0x003F3698, (uintptr_t)"\x06\x20", 2);
 
 	CHook::RET(g_libGTASA + 0x004CF2DC); // CPopulation::AddPed
-	CHook::RET(g_libGTASA + 0x003E33C8); // CClock::Update
-    CHook::RET(g_libGTASA + 0x0056E3C0); // CTheCarGenerators::Process()
-    CHook::RET(g_libGTASA + 0x002E833C); // CCarCtrl::GenerateRandomCars()
+	//CHook::RET(g_libGTASA + 0x003E33C8); // CClock::Update
+   // CHook::RET(g_libGTASA + 0x0056E3C0); // CTheCarGenerators::Process()
+  //  CHook::RET(g_libGTASA + 0x002E833C); // CCarCtrl::GenerateRandomCars()
     CHook::RET(g_libGTASA + 0x0040B078); // CPlayerInfo::FindObjectToSteal
     CHook::RET(g_libGTASA + 0x00306F40); // CEntryExit::GenerateAmbientPeds
 	CHook::RET(g_libGTASA + 0x002BCCF8);// здоровье, броня, фист звезды и тп
 	CHook::RET(g_libGTASA + 0x00436FAC); // CHud::SetHelpMessage
-	CHook::RET(g_libGTASA + 0x004211F0); // CPlaceName::Process
+//	CHook::RET(g_libGTASA + 0x004211F0); // CPlaceName::Process
 	CHook::RET(g_libGTASA + 0x004B2D14); // CPedGroupDefaultTaskAllocatorRandom::AllocateDefaultTasks crash
-	CHook::RET(g_libGTASA + 0x004397B4); // CHud::DrawBustedWastedMessage // ПОТРАЧЕНО
+//	CHook::RET(g_libGTASA + 0x004397B4); // CHud::DrawBustedWastedMessage // ПОТРАЧЕНО
 //	CHook::RET(g_libGTASA + 0x00352154); // in game radio
 	CHook::RET(g_libGTASA + 0x003BD974); // звук загрузочного экрана
 	CHook::RET(g_libGTASA + 0x00324368); // CVehicleRecording::Load

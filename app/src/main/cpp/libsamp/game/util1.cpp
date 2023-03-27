@@ -2153,16 +2153,17 @@ void ProjectMatrix(CVector* vecOut, RwMatrix* mat, CVector* vecPos)
 	vecOut->z = mat->at.z * vecPos->z + mat->up.z * vecPos->y + mat->right.z * vecPos->x + mat->pos.z;
 }
 
-void RwMatrixRotate(RwMatrix* mat, int axis, float angle)
+RwMatrix* RwMatrixRotate(RwMatrix* mat, int axis, float angle)
 {
-	static float matt[3][3] =
+	static CVector matt[3] =
 	{
 		{ 1.0f, 0.0f, 0.0f },
 		{ 0.0f, 1.0f, 0.0f },
 		{ 0.0f, 0.0f, 1.0f }
 	};
+    //((int(*)(RwMatrix*, CVector*, float, int))(g_libGTASA + 0x001E38F4 + 1))(pMat, axis, angle, 1);
 
-	((void (*)(RwMatrix*, float*, float, int))(g_libGTASA + 0x001E38F4 + 1))(mat, matt[axis], angle, 1);
+	((void (*)(RwMatrix*, CVector*, float, int))(g_libGTASA + 0x001E38F4 + 1))(mat, &matt[axis], angle, 1);
 }
 
 void RwMatrixScale(RwMatrix* matrix, CVector* vecScale)

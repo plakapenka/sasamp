@@ -189,7 +189,7 @@ public class CacheChecker implements Listener<FileInfo[]> {
                 .concat("/")
                 .concat(filePath)
         );
-        return !file.exists() || file.length() != fileInfo.getSize() || file.lastModified() < fileInfo.getVer();
+        return !file.exists() || /*file.length() != fileInfo.getSize() || */file.lastModified() < fileInfo.getVer();
     }
 
     private GameFileInfoDto getGameFilesInfo() {

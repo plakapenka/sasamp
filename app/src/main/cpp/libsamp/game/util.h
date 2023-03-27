@@ -31,7 +31,7 @@ struct RwRaster* GetRWRasterFromBitmapPalette(uint8_t* pBitmap, size_t dwStride,
 void ProjectMatrix(CVector* vecOut, RwMatrix* mat, CVector* vecPos);
 void RwMatrixOrthoNormalize(RwMatrix *matIn, RwMatrix *matOut);
 void RwMatrixInvert(RwMatrix *matOut, RwMatrix *matIn);
-void RwMatrixRotate(RwMatrix* mat, int axis, float angle);
+RwMatrix* RwMatrixRotate(RwMatrix* mat, int axis, float angle);
 void RwMatrixScale(RwMatrix* mat, CVector* vecScale);
 
 int GetFreeTextDrawTextureSlot();
