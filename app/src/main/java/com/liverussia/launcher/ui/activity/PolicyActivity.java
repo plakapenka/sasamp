@@ -13,6 +13,7 @@ import android.view.animation.AnimationUtils;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.liverussia.cr.R;
 import com.liverussia.launcher.domain.enums.StorageElements;
 import com.liverussia.launcher.storage.Storage;
@@ -75,6 +76,10 @@ public class PolicyActivity extends Activity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 1000) {
+            // включить крашлитик обратно
+            FirebaseCrashlytics.getInstance().deleteUnsentReports();
+            FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true);
+
             checkVersionAndStartLauncher();
         }
     }

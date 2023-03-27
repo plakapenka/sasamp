@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.google.firebase.crashlytics.internal.common.CrashlyticsCore;
 import com.liverussia.cr.R;
 import com.liverussia.cr.gui.AdminRecon;
 import com.liverussia.cr.gui.ArmyGameManager;
@@ -178,6 +180,9 @@ public class Samp extends GTASA
     public void showSamwill() { runOnUiThread(() -> { mSamwillManager.Show(); }); }
 
     public void ExitGame(){
+        // выход считается крашем ((
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(false);
+
         finishAndRemoveTask();
         System.exit(0);
     }
