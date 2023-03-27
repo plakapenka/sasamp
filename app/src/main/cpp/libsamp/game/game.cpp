@@ -6,6 +6,7 @@
 #include "util/patch.h"
 #include "CGtaWidgets.h"
 #include "game/Models/CModelInfo.h"
+#include "CSkyBox.h"
 
 void ApplyPatches();
 void ApplyInGamePatches();
@@ -66,6 +67,8 @@ void CGame::exitGame()
 
   //  std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
+	pNetGame->m_pRakClient->Disconnect(0);
+
 	g_pJavaWrapper->ExitGame();
 }
 
@@ -108,6 +111,7 @@ void CGame::RemovePlayer(CPlayerPed* pPlayer)
 
 CObject *CGame::NewObject(int iModel, float fPosX, float fPosY, float fPosZ, CVector vecRot, float fDrawDistance)
 {
+//	Log("new obj = %d", iModel);
 	auto *pObjectNew = new CObject(iModel, fPosX, fPosY, fPosZ, vecRot, fDrawDistance);
 	return pObjectNew;
 }
@@ -170,6 +174,8 @@ void CGame::InitInGame()
 	InitScripting();
 	
 	GameResetRadarColors();
+
+	//CSkyBox::Initialise();
 }
 
 
