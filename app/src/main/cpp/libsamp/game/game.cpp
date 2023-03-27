@@ -18,24 +18,6 @@ uint16_t *szGameTextMessage;
 bool bUsedPlayerSlots[PLAYER_PED_SLOTS];
 bool CGame::bIsGameInited = false;
 
-void CGame::RemoveModel(int iModel, bool bFromStreaming)
-{
-	if (iModel >= 0 && iModel < 20000)
-	{
-		if (bFromStreaming)
-		{
-			if (ScriptCommand(&is_model_available, iModel))
-				// CStreaming::RemoveModel
-				((void(*)(int))(g_libGTASA + 0x002D0128 + 1))(iModel);
-		}
-		else
-		{
-			if (ScriptCommand(&is_model_available, iModel))
-				ScriptCommand(&release_model);
-		}
-	}
-}
-
 CGame::CGame()
 {
 	for (bool & i : aToggleStatusHUD)
