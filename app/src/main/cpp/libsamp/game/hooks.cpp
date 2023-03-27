@@ -21,6 +21,7 @@ extern "C"
 #include "chatwindow.h"
 #include "../util/patch.h"
 #include "java_systems/CSpeedometr.h"
+#include "../CSkyBox.h"
 
 extern CGame* pGame;
 extern CPlayerPed *g_pCurrentFiredPed;
@@ -31,6 +32,7 @@ static uint32_t dwRLEDecompressSourceSize = 0;
 
 #include "..//str_obfuscator_no_template.hpp"
 #define MAX_ENCRYPTED_TXD 5
+
 const cryptor::string_encryptor encrArch[MAX_ENCRYPTED_TXD] = {
         cryptor::create("texdb/txd/txd.txt", 19),
         cryptor::create("texdb/gta3/gta3.txt", 21),
@@ -295,6 +297,7 @@ void CStreaming_InitImageList_hook()
     CStreaming::AddImageToList("TEXDB\\CARS.IMG", true);
 	CStreaming::AddImageToList("TEXDB\\SAMPCOL.IMG", true);
 	CStreaming::AddImageToList("TEXDB\\SAMP.IMG", true);
+
 }
 
 /* ====================================================== */
@@ -2085,6 +2088,30 @@ uintptr_t* ConvertBufferToObject_hook(uint8_t* fileBuffer, int32_t modelId)
 
 #include "../java_systems/LoadingScreen.h"
 
+void (*CRenderer__RenderEverythingBarRoads)();
+void CRenderer__RenderEverythingBarRoads_hook()
+{
+	CSkyBox::Process();
+
+	CRenderer__RenderEverythingBarRoads();
+}
+
+void(*CObject__Render)(CEntityGta*);
+void CObject__Render_hook(CEntityGta* thiz)
+{
+	// 0051ABB0 + 1
+	// 004353FE + 1
+	// 004352C4 + 1
+
+	if (CSkyBox::GetSkyObject())
+	{
+		if (CSkyBox::GetSkyObject()->m_pEntity == thiz && !CSkyBox::IsNeedRender())
+			return;
+	}
+
+	CObject__Render(thiz);
+}
+
 void InstallHooks()
 {
 	Log("InstallHooks");
@@ -2095,6 +2122,10 @@ void InstallHooks()
 
     // Fixing a crosshair by very stupid math ( JPATCH )
 	ms_fAspectRatio = (float*)(g_libGTASA + 0x00A26A90);
+
+	// skybox
+//	CHook::InlineHook(g_libGTASA, 0x00454F54, &CObject__Render_hook, &CObject__Render);
+//	CHook::InlineHook(g_libGTASA, 0x0040FD64, &CRenderer__RenderEverythingBarRoads_hook, &CRenderer__RenderEverythingBarRoads);
 
 	// не падать с мотоцикла
 	CHook::InlineHook(g_libGTASA, 0x0037573C, &CEventKnockOffBike__AffectsPed_hook, &CEventKnockOffBike__AffectsPed);
