@@ -733,3 +733,6 @@ RwTexture* RwTexDictionaryFindNamedTexture(RwTexDictionary* dict, const RwChar* 
 const RwTexDictionary* RwTexDictionaryForAllTextures(const RwTexDictionary* dict, RwTextureCallBack fpCallBack, void* data);
 RwFrame* RwFrameForAllObjects(RwFrame* frame, RwObjectCallBack callBack, void* data);
 RwFrame* RwFrameCreate();
+RwInt32 RwTexDictionaryRegisterPlugin(RwInt32 size, RwUInt32 pluginID, RwPluginObjectConstructor constructCB, RwPluginObjectDestructor destructCB, RwPluginObjectCopy copyCB);
+RwCamera* RwCameraSetFarClipPlane(RwCamera* camera, RwReal farClip);
+RwCamera* RwCameraSetNearClipPlane(RwCamera* camera, RwReal nearClip);

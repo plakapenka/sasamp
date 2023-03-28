@@ -59,3 +59,15 @@ RwFrame* RwFrameForAllObjects(RwFrame* frame, RwObjectCallBack callBack, void* d
 RwFrame* RwFrameCreate() {
     return ((RwFrame*(__cdecl *)(void))(g_libGTASA + 0x001D81AC + 1))();
 }
+
+RwInt32 RwTexDictionaryRegisterPlugin(RwInt32 size, RwUInt32 pluginID, RwPluginObjectConstructor constructCB, RwPluginObjectDestructor destructCB, RwPluginObjectCopy copyCB) {
+    return ((RwInt32(__cdecl *)(RwInt32, RwUInt32, RwPluginObjectConstructor, RwPluginObjectDestructor, RwPluginObjectCopy))(g_libGTASA + 0x001DBB20 + 1))(size, pluginID, constructCB, destructCB, copyCB);
+}
+
+RwCamera* RwCameraSetFarClipPlane(RwCamera* camera, RwReal farClip) {
+    return ((RwCamera*(__cdecl *)(RwCamera*, RwReal))(g_libGTASA + 0x001D5ACC + 1))(camera, farClip);
+}
+
+RwCamera* RwCameraSetNearClipPlane(RwCamera* camera, RwReal nearClip) {
+    return ((RwCamera*(__cdecl *)(RwCamera*, RwReal))(g_libGTASA + 0x001D5A38 + 1))(camera, nearClip);
+}

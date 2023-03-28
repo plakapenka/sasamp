@@ -10,6 +10,16 @@
 #include "TxdDef.h"
 #include "Core/Pool.h"
 
+struct _TxdParent {
+    RwTexDictionary* parent;
+};
+
+/**
+ * Txd Store plugin unique rwID
+ */
+#define rwID_TXDPARENTPLUGIN  MAKECHUNKID(rwVENDORID_DEVELOPER, 0xF5)
+
+static inline int32_t& ms_txdPluginOffset = *reinterpret_cast<int32_t*>(0xC88018);
 typedef CPool<TxdDef> CTxdPool;
 
 class CTxdStore {

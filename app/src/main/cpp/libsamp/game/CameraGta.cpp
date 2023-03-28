@@ -3,3 +3,5 @@
 //
 
 #include "CameraGta.h"
+
+CCameraGta TheCamera;

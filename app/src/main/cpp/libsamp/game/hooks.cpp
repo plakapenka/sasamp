@@ -139,13 +139,6 @@ static constexpr float ar43 = 4.0f / 3.0f;
 #include "keyboard.h"
 void Render2dStuff()
 {
-//	RwRenderStateSet(rwRENDERSTATEZTESTENABLE, (void*)0);
-//	RwRenderStateSet(rwRENDERSTATEZWRITEENABLE, (void*)0);
-//	RwRenderStateSet(rwRENDERSTATEVERTEXALPHAENABLE, (void*)1);
-//	RwRenderStateSet(rwRENDERSTATESRCBLEND, (void*)5);
-//	RwRenderStateSet(rwRENDERSTATEDESTBLEND, (void*)6);
-//	RwRenderStateSet(rwRENDERSTATEFOGENABLE, (void*)0);
-//	RwRenderStateSet(rwRENDERSTATECULLMODE, (void*)1);
 
 	( ( void(*)(bool) )(g_libGTASA + 0x001C0750 + 1) )(false); // emu_GammaSet
 
