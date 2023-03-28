@@ -12,7 +12,7 @@
 #include "game/Enums/eWeaponType.h"
 #include "StreamingInfo.h"
 #include "game/Enums/AnimationEnums.h"
-#include "game/Models/CModelInfo.h"
+#include "game/Models/ModelInfo.h"
 
 extern CGame* pGame;
 extern CNetGame *pNetGame;

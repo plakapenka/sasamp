@@ -2,15 +2,15 @@
 // Created by plaka on 21.02.2023.
 //
 
-#include "CModelInfo.h"
+#include "ModelInfo.h"
 #include "util/patch.h"
-#include "CAtomicModelInfo.h"
+#include "AtomicModelInfo.h"
 
-CBaseModelInfo *CModelInfo::ms_modelInfoPtrs[20000];
+CBaseModelInfo *CModelInfo::ms_modelInfoPtrs[NUM_MODEL_INFOS];
 
-CStore<CPedModelInfo, 350> CModelInfo::ms_pedModelInfoStore;
-CStore<CAtomicModelInfo, 20000> CModelInfo::ms_atomicModelInfoStore;
-CStore<CVehicleModelInfo, 220> CModelInfo::ms_vehicleModelInfoStore;
+CStore<CPedModelInfo, CModelInfo::NUM_PED_MODEL_INFOS> CModelInfo::ms_pedModelInfoStore;
+CStore<CAtomicModelInfo, CModelInfo::NUM_ATOMIC_MODEL_INFOS> CModelInfo::ms_atomicModelInfoStore;
+CStore<CVehicleModelInfo, CModelInfo::NUM_VEHICLE_MODEL_INFOS> CModelInfo::ms_vehicleModelInfoStore;
 
 void CModelInfo::InstallHooks()
 {
@@ -66,3 +66,4 @@ CAtomicModelInfo* CModelInfo::AddAtomicModel(int index)
     CModelInfo::SetModelInfo(index, &pInfo);
     return &pInfo;
 }
+

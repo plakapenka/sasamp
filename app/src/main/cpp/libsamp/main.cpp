@@ -119,7 +119,7 @@ bool unique_library_handler(const char* library)
 
 
 #include "CDebugInfo.h"
-#include "game/Models/CModelInfo.h"
+#include "game/Models/ModelInfo.h"
 #include "java_systems/LoadingScreen.h"
 #include "util/CStackTrace.h"
 

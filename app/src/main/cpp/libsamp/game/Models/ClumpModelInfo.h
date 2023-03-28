@@ -2,10 +2,10 @@
 // Created by plaka on 21.02.2023.
 //
 
-#ifndef LIVERUSSIA_CCLUMPMODELINFO_H
-#define LIVERUSSIA_CCLUMPMODELINFO_H
+#ifndef LIVERUSSIA_CLUMPMODELINFO_H
+#define LIVERUSSIA_CLUMPMODELINFO_H
 
-#include "CBaseModelInfo.h"
+#include "BaseModelInfo.h"
 
 struct tCompSearchStructById {
     int32_t m_nId;
@@ -22,4 +22,4 @@ struct CClumpModelInfo : public CBaseModelInfo {
 };
 // 3C
 
-#endif //LIVERUSSIA_CCLUMPMODELINFO_H
+#endif //LIVERUSSIA_CLUMPMODELINFO_H

@@ -2,11 +2,11 @@
 // Created by plaka on 21.02.2023.
 //
 
-#ifndef LIVERUSSIA_CPEDMODELINFO_H
-#define LIVERUSSIA_CPEDMODELINFO_H
+#ifndef LIVERUSSIA_PEDMODELINFO_H
+#define LIVERUSSIA_PEDMODELINFO_H
 
 
-#include "CClumpModelInfo.h"
+#include "ClumpModelInfo.h"
 #include "game/Enums/AnimationEnums.h"
 
 struct CPedModelInfo : public CClumpModelInfo{
@@ -29,4 +29,4 @@ public:
 };
 
 
-#endif //LIVERUSSIA_CPEDMODELINFO_H
+#endif //LIVERUSSIA_PEDMODELINFO_H

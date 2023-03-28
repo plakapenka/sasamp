@@ -5,7 +5,7 @@
 #include "java_systems/CHUD.h"
 #include "util/patch.h"
 #include "CGtaWidgets.h"
-#include "game/Models/CModelInfo.h"
+#include "game/Models/ModelInfo.h"
 #include "CSkyBox.h"
 
 void ApplyPatches();

@@ -13,7 +13,7 @@
 #include "gui/gui.h"
 
 #include "CSettings.h"
-#include "game/Models/CModelInfo.h"
+#include "game/Models/ModelInfo.h"
 
 // -- EXTERN`S
 extern CGame *pGame;

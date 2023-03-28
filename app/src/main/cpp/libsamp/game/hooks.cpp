@@ -302,7 +302,7 @@ void CStreaming_InitImageList_hook()
 
 /* ====================================================== */
 
-#include "game/Models/CModelInfo.h"
+#include "game/Models/ModelInfo.h"
 
 
 /* ====================================================== */

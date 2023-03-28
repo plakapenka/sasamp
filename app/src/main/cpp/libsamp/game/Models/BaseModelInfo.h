@@ -2,15 +2,15 @@
 // Created by plaka on 21.02.2023.
 //
 
-#ifndef LIVERUSSIA_CBASEMODELINFO_H
-#define LIVERUSSIA_CBASEMODELINFO_H
+#ifndef LIVERUSSIA_BASEMODELINFO_H
+#define LIVERUSSIA_BASEMODELINFO_H
 
 
 #include <cstdint>
+#include <cassert>
 #include "main.h"
-#include "game/CTimeInfo.h"
 
-enum ModelInfoType : unsigned char {
+enum ModelInfoType : uint8_t {
     MODEL_INFO_ATOMIC = 1,
     MODEL_INFO_TIME = 3,
     MODEL_INFO_WEAPON = 4,
@@ -22,15 +22,15 @@ enum ModelInfoType : unsigned char {
 
 struct CBaseModelInfo {
     uintptr_t 	vtable;
-    unsigned int m_nKey;
+    uint32_t m_nKey;
     char m_modelName[21];
     char skip_1;
-    unsigned short m_nRefCount;
-    short m_nTxdIndex;
-    unsigned char m_nAlpha;
-    unsigned char m_n2dfxCount;
-    short m_n2dEffectIndex;
-    short m_nObjectInfoIndex;
+    uint16_t m_nRefCount;
+    int16_t m_nTxdIndex;
+    uint8_t m_nAlpha;
+    uint8_t m_n2dfxCount;
+    int16_t m_n2dEffectIndex;
+    int16_t m_nObjectInfoIndex;
     union {
         unsigned short m_nFlags;
         struct {
@@ -81,8 +81,9 @@ struct CBaseModelInfo {
         struct RpClump *m_pRwClump;
         struct RpAtomic *m_pRwAtomic;
     };
+
 };
 // sizeof=0x38
 
 
-#endif //LIVERUSSIA_CBASEMODELINFO_H
+#endif //LIVERUSSIA_BASEMODELINFO_H

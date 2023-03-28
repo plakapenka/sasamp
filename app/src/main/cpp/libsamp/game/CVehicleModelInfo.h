@@ -6,7 +6,7 @@
 #define LIVERUSSIA_CVEHICLEMODELINFO_H
 
 
-#include "Models/CClumpModelInfo.h"
+#include "Models/ClumpModelInfo.h"
 #include "game/RW/rwlpcore.h"
 #include "game/Enums/eVehicleClass.h"
 #include "game/Core/CVector.h"
