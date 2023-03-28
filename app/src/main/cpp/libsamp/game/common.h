@@ -175,15 +175,6 @@ struct RwList
 	RwListEntry root;
 };
 
-struct RwObject
-{
-	unsigned char type;
-	unsigned char subtype;
-	unsigned char flags;
-	unsigned char privateFlags;
-	void* parent;            // should be RwFrame with RpClump
-};
-
 struct RwFrame
 {
 	RwObject        object;                 // 0
@@ -261,11 +252,6 @@ struct RwResEntry
 	RwResEntryDestroyNotify destroyNotify; /* This is called right before destruction */
 };
 
-
-struct RwLinkList
-{
-	RwLLLink link;
-};
 typedef struct RpClump RpClump;
 
 typedef RpClump    *(*RpClumpCallBack) (RpClump * clump, void *data);

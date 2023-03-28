@@ -30,6 +30,7 @@
 
 #define RWFORCEENUMSIZEINT ((RwInt32)((~((RwUInt32)0))>>1))
 
+
 typedef long RwFixed;
 typedef int  RwInt32;
 typedef unsigned int RwUInt32;
@@ -151,6 +152,40 @@ enum RwTextureCoordinateIndex
     rwTEXTURECOORDINATEINDEXFORCEENUMSIZEINT = RWFORCEENUMSIZEINT
 };
 typedef enum RwTextureCoordinateIndex RwTextureCoordinateIndex;
+
+/**
+ * \ingroup rwstream
+ * \ref RwStreamType
+ * This type represents the different types of stream that
+ * can be used.
+ * See API section \ref rwstream
+ */
+enum RwStreamType
+{
+    rwNASTREAM = 0,     /**<Invalid stream type */
+    rwSTREAMFILE,       /**<File */
+    rwSTREAMFILENAME,   /**<File name */
+    rwSTREAMMEMORY,     /**<Memory*/
+    rwSTREAMCUSTOM,     /**<Custom */
+    rwSTREAMTYPEFORCEENUMSIZEINT = RWFORCEENUMSIZEINT
+};
+typedef enum RwStreamType RwStreamType;
+
+/**
+ * \ingroup rwstream
+ * \ref RwStreamAccessType
+ * This type represents the options available for
+ * accessing a stream when it is opened.
+ * See API section \ref rwstream */
+enum RwStreamAccessType
+{
+    rwNASTREAMACCESS = 0,   /**<Invalid stream access */
+    rwSTREAMREAD,           /**<Read */
+    rwSTREAMWRITE,          /**<Write */
+    rwSTREAMAPPEND,         /**<Append */
+    rwSTREAMACCESSTYPEFORCEENUMSIZEINT = RWFORCEENUMSIZEINT
+};
+typedef enum RwStreamAccessType RwStreamAccessType;
 
 typedef struct RwTexCoords RwTexCoords;
 /**
@@ -753,5 +788,33 @@ struct RwMatrixTag
 
 typedef RwMatrixTag RwMatrix;
 
+struct RwObject
+{
+    RwUInt8 type;                /**< Internal Use */
+    RwUInt8 subType;             /**< Internal Use */
+    RwUInt8 flags;               /**< Internal Use */
+    RwUInt8 privateFlags;        /**< Internal Use */
+    void   *parent;              /**< Internal Use */
+    /* Often a Frame  */
+};
+
+typedef struct RwLLLink  RwLLLink;                     /*** RwLLLink ***/
+
+struct RwLLLink
+{
+    RwLLLink *next;
+    RwLLLink *prev;
+};
+
+typedef struct RwLinkList RwLinkList;
+
+struct RwLinkList
+{
+    RwLLLink link;
+};
+
 RwMatrix* RwMatrixUpdate(RwMatrix* matrix);
 RwBool RwMatrixDestroy(RwMatrix* mpMat);
+RwBool RwStreamFindChunk(RwStream* stream, RwUInt32 type, RwUInt32* lengthOut, RwUInt32* versionOut);
+RwStream* RwStreamOpen(RwStreamType type, RwStreamAccessType accessType, const void* data);
+RwBool RwStreamClose(RwStream* stream, void* data);

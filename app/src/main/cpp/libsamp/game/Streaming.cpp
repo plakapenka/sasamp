@@ -24,3 +24,8 @@ void CStreaming::LoadAllRequestedModels(bool bPriorityRequestsOnly)
 {
     ((void (*) (bool))(g_libGTASA + 0x002D46A8 + 1))(bPriorityRequestsOnly);
 }
+
+void CStreaming::RemoveModel(int32_t index)
+{
+    ((void (*) (int32_t))(g_libGTASA + 0x002D0128 + 1))(index);
+}
