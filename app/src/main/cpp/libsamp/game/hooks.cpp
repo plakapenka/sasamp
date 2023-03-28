@@ -2111,10 +2111,13 @@ void CObject__Render_hook(CEntityGta* thiz)
 	CObject__Render(thiz);
 }
 
+#include "Scene.h"
+
 void InstallHooks()
 {
 	Log("InstallHooks");
 
+	Scene = *(CScene*)(g_libGTASA + 0x009FC938);
     CTimer::InjectHooks();
 
 	//CHook::InlineHook(g_libGTASA, 0x002D2FD0, &ConvertBufferToObject_hook, &ConvertBufferToObject);

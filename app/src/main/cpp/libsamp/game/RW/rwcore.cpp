@@ -51,3 +51,11 @@ RwTexture* RwTexDictionaryFindNamedTexture(RwTexDictionary* dict, const RwChar* 
 const RwTexDictionary* RwTexDictionaryForAllTextures(const RwTexDictionary* dict, RwTextureCallBack fpCallBack, void* data) {
     return ((const RwTexDictionary*(__cdecl *)(const RwTexDictionary*, RwTextureCallBack, void*))(g_libGTASA + 0x001DB6B4 + 1))(dict, fpCallBack, data);
 }
+
+RwFrame* RwFrameForAllObjects(RwFrame* frame, RwObjectCallBack callBack, void* data) {
+    return ((RwFrame*(__cdecl *)(RwFrame*, RwObjectCallBack, void*))(g_libGTASA + 0x001D8858 + 1))(frame, callBack, data);
+}
+
+RwFrame* RwFrameCreate() {
+    return ((RwFrame*(__cdecl *)(void))(g_libGTASA + 0x001D81AC + 1))();
+}

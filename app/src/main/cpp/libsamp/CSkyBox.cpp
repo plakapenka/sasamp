@@ -146,6 +146,7 @@ void CSkyBox::ReTexture() {
     ((void (*)()) (g_libGTASA + 0x005D1F98 + 1))(); // -- DeActivateDirectional
     ((void *(*)()) (g_libGTASA + 0x005D204C + 1))(); // -- SetFullAmbient
     ((void (*)()) (g_libGTASA + 0x005D2068 + 1))(); // -- SetAmbientColours
+   // RwFrameForAllObjects(pObj->parent, RwFrameForAllObjectsCallback, m_pSkyObject);
     ((uintptr_t(*)(void*, uintptr_t, CObject *)) (g_libGTASA + 0x001D8858 + 1))(pObj->parent,
                                                                                       (uintptr_t) RwFrameForAllObjectsCallback,
                                                                                       m_pSkyObject); // RwFrameForAllObjects

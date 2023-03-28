@@ -175,21 +175,6 @@ struct RwList
 	RwListEntry root;
 };
 
-struct RwFrame
-{
-	RwObject        object;                 // 0
-	void* pad1, * pad2;            // 8
-	RwMatrix        modelling;              // 16
-	RwMatrix        ltm;                    // 32
-	RwList          objects;                // 48
-	struct RwFrame* child;                  // 56
-	struct RwFrame* next;                   // 60
-	struct RwFrame* root;                   // 64
-
-	// Rockstar Frame extension (0x253F2FE) (24 bytes)
-	unsigned char pluginData[8];                               // padding
-	char          szName[RW_FRAME_NAME_LENGTH + 1];            // name (as stored in the frame extension)
-};
 #pragma pack(pop)
 
 #define ATOMIC_ID_FLAG_TWO_VERSIONS_DAMAGED     2

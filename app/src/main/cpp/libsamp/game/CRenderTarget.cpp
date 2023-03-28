@@ -2,19 +2,20 @@
 
 #include "../main.h"
 #include "game.h"
+#include "game/RW/rpworld.h"
+#include "Scene.h"
 
 bool CRenderTarget::InitialiseScene()
 {
-	// RpLightCreate
-	m_pLight = ((struct RpLight* (*)(int))(g_libGTASA + 0x00216DB0 + 1))(2);
+	m_pLight = RpLightCreate(2);
+
 	if (m_pLight == nullptr)
 	{
 		return false;
 	}
 
-	// RpLightSetColor
-	float rwColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	((struct RpLight* (*)(struct RpLight*, float*))(g_libGTASA + 0x00216746 + 1))(m_pLight, rwColor);
+	RwRGBAReal rwColor;
+	RpLightSetColor(m_pLight, &rwColor);
 
 	// RwCameraCreate
 	m_pCamera = ((struct RwCamera* (*)())(g_libGTASA + 0x001D5EE0 + 1))();
@@ -25,7 +26,7 @@ bool CRenderTarget::InitialiseScene()
 	}
 
 	// RwFrameCreate
-	m_pFrame = ((struct RwFrame* (*)())(g_libGTASA + 0x001D81AC + 1))();
+	m_pFrame = RwFrameCreate();
 
 	if (m_pFrame == nullptr)
 	{
@@ -104,11 +105,9 @@ void CRenderTarget::ProcessCamera()
 	}
 	m_bSucessfull = true;
 
-	// RpWorldAddLight
-	uintptr_t pRwWorld = *(uintptr_t*)(g_libGTASA + 0x009FC938);
-	if (pRwWorld)
+	if (Scene.m_pRpWorld)
 	{
-		((uintptr_t(*)(uintptr_t, struct RpLight*))(g_libGTASA + 0x0021E7B0 + 1))(pRwWorld, m_pLight);
+		RpWorldAddLight(Scene.m_pRpWorld, m_pLight);
 	}
 
 	if (m_b2D)
@@ -148,12 +147,9 @@ void CRenderTarget::PostProcessCamera()
 	{
 		RwCameraEndUpdate(m_pCamera);
 
-		uintptr_t pRwWorld = *(uintptr_t*)(g_libGTASA + 0x009FC938);
-
-		// RpWorldRemoveLight
-		if (pRwWorld)
+		if (Scene.m_pRpWorld)
 		{
-			((uintptr_t(*)(uintptr_t, struct RpLight*))(g_libGTASA + 0x0021E7F4 + 1))(pRwWorld, m_pLight);
+			RpWorldRemoveLight(Scene.m_pRpWorld, m_pLight);
 		}
 	}
 }
@@ -182,8 +178,7 @@ CRenderTarget::CRenderTarget(uint32_t dwResultSizeX, uint32_t dwResultSizeY, boo
 
 CRenderTarget::~CRenderTarget()
 {
-	// RwBool RpLightDestroy(RpLight* light);
-	((RwBool (*)(struct RpLight*))(g_libGTASA + 0x00216EF4 + 1))(m_pLight);
+	RpLightDestroy(m_pLight);
 
 	// RwObjectHasFrameSetFrame
 	((void(*)(struct RwCamera*, struct RwFrame*))(g_libGTASA + 0x001DCF64 + 1))(m_pCamera, nullptr);

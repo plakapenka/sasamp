@@ -334,7 +334,7 @@ typedef RxVertexIndex   RwImVertexIndex;
     rwRENDERSTATENARENDERSTATE = 0,
 
     rwRENDERSTATETEXTURERASTER = 1,
-        /**<Raster used for texturing (normally used in immediate mode). 
+        /**<Raster used for texturing (normally used in immediate mode).
          *  The value is a pointer to an \ref RwRaster.
          * Default: NULL.
          */
@@ -377,7 +377,7 @@ typedef RxVertexIndex   RwImVertexIndex;
     rwRENDERSTATEDESTBLEND = 11,
         /**<\ref RwBlendFunction used to modulate the destination pixel
          *  color in the frame buffer when blending. The resulting pixel
-         *  color is given by the formula 
+         *  color is given by the formula
          *  (SRCBLEND * srcColor + DESTBLEND * destColor) for each RGB
          *  component. For a particular platform, not all combinations
          *  of blend function are allowed (see platform specific
@@ -385,40 +385,40 @@ typedef RxVertexIndex   RwImVertexIndex;
          * Default: rwBLENDINVSRCALPHA.
          */
     rwRENDERSTATEVERTEXALPHAENABLE = 12,
-        /**<Alpha blending on/off (always enabled on some platforms). 
-         *  This is normally used in immediate mode to enable alpha blending 
+        /**<Alpha blending on/off (always enabled on some platforms).
+         *  This is normally used in immediate mode to enable alpha blending
          *  when vertex colors or texture rasters have transparency. Retained
-         *  mode pipelines will usually set this state based on material colors 
+         *  mode pipelines will usually set this state based on material colors
          *  and textures.
          * Default: FALSE.
          */
     rwRENDERSTATEBORDERCOLOR = 13,
-        /**<Border color for \ref RwTextureAddressMode 
-         *  \ref rwTEXTUREADDRESSBORDER. The value should be a packed 
-         *  RwUInt32 in a platform specific format. The macro 
-         *  RWRGBALONG(r, g, b, a) may be used to construct this using 
+        /**<Border color for \ref RwTextureAddressMode
+         *  \ref rwTEXTUREADDRESSBORDER. The value should be a packed
+         *  RwUInt32 in a platform specific format. The macro
+         *  RWRGBALONG(r, g, b, a) may be used to construct this using
          *  8-bit color components.
          * Default: RWRGBALONG(0, 0, 0, 0).
          */
     rwRENDERSTATEFOGENABLE = 14,
-        /**<Fogging on/off (all polygons will be fogged).  
+        /**<Fogging on/off (all polygons will be fogged).
          * Default: FALSE.
          */
     rwRENDERSTATEFOGCOLOR = 15,
-        /**<Color used for fogging. The value should be a packed RwUInt32 
+        /**<Color used for fogging. The value should be a packed RwUInt32
          *  in a platform specific format. The macro RWRGBALONG(r, g, b, a)
-         *  may be used to construct this using 8-bit color components. 
+         *  may be used to construct this using 8-bit color components.
          * Default: RWRGBALONG(0, 0, 0, 0).
          */
     rwRENDERSTATEFOGTYPE = 16,
-        /**<\ref RwFogType, the type of fogging to use. 
+        /**<\ref RwFogType, the type of fogging to use.
          * Default: rwFOGTYPELINEAR.
          */
     rwRENDERSTATEFOGDENSITY = 17,
-        /**<Fog density for \ref RwFogType of 
-         *  \ref rwFOGTYPEEXPONENTIAL or \ref rwFOGTYPEEXPONENTIAL2. 
-         *  The value should be a pointer to an RwReal in the 
-         *  range 0 to 1.  
+        /**<Fog density for \ref RwFogType of
+         *  \ref rwFOGTYPEEXPONENTIAL or \ref rwFOGTYPEEXPONENTIAL2.
+         *  The value should be a pointer to an RwReal in the
+         *  range 0 to 1.
          * Default: 1.
          */
     rwRENDERSTATECULLMODE = 20,
@@ -437,35 +437,35 @@ typedef RxVertexIndex   RwImVertexIndex;
          * Default: rwSTENCILOPERATIONKEEP.
          */
     rwRENDERSTATESTENCILZFAIL,
-        /**<\ref RwStencilOperation used when the stencil test passes and 
-         *  the depth test (z-test) fails. 
+        /**<\ref RwStencilOperation used when the stencil test passes and
+         *  the depth test (z-test) fails.
          *  <i> Supported on Xbox, D3D8, D3D9, and OpenGL only. </i>
          * Default: rwSTENCILOPERATIONKEEP.
          */
     rwRENDERSTATESTENCILPASS,
-        /**<\ref RwStencilOperation used when both the stencil and the depth 
-         *  (z) tests pass. 
+        /**<\ref RwStencilOperation used when both the stencil and the depth
+         *  (z) tests pass.
          *  <i> Supported on Xbox, D3D8, D3D9, and OpenGL only. </i>
          * Default: rwSTENCILOPERATIONKEEP.
          */
     rwRENDERSTATESTENCILFUNCTION,
-        /**<\ref RwStencilFunction for the stencil test. 
+        /**<\ref RwStencilFunction for the stencil test.
          *  <i> Supported on Xbox, D3D8, D3D9, and OpenGL only. </i>
          * Default: rwSTENCILFUNCTIONALWAYS.
          */
     rwRENDERSTATESTENCILFUNCTIONREF,
-        /**<Integer reference value for the stencil test. 
+        /**<Integer reference value for the stencil test.
          *  <i> Supported on Xbox, D3D8, D3D9, and OpenGL only. </i>
          * Default: 0.
          */
     rwRENDERSTATESTENCILFUNCTIONMASK,
-        /**<Mask applied to the reference value and each stencil buffer 
-         *  entry to determine the significant bits for the stencil test. 
+        /**<Mask applied to the reference value and each stencil buffer
+         *  entry to determine the significant bits for the stencil test.
          *  <i> Supported on Xbox, D3D8, D3D9, and OpenGL only. </i>
          * Default: 0xffffffff.
          */
     rwRENDERSTATESTENCILFUNCTIONWRITEMASK,
-        /**<Write mask applied to values written into the stencil buffer. 
+        /**<Write mask applied to values written into the stencil buffer.
          *  <i> Supported on Xbox, D3D8, D3D9, and OpenGL only. </i>
          * Default: 0xffffffff.
          */
@@ -478,7 +478,7 @@ typedef RxVertexIndex   RwImVertexIndex;
          * equal test passes.
          */
     rwRENDERSTATEALPHATESTFUNCTIONREF,
-        /**<Integer reference value for the alpha test. 
+        /**<Integer reference value for the alpha test.
          *  <i> Range is 0 to 255, mapped to the platform's actual range </i>
          * Default: 128 (PS2) 0 (GameCube, Xbox, D3D8, D3D9 and OpenGL).
          */
@@ -552,26 +552,26 @@ enum RwStencilOperation
 {
     rwSTENCILOPERATIONNASTENCILOPERATION = 0,
 
-    rwSTENCILOPERATIONKEEP,     
+    rwSTENCILOPERATIONKEEP,
         /**<Do not update the entry in the stencil buffer */
-    rwSTENCILOPERATIONZERO,     
+    rwSTENCILOPERATIONZERO,
         /**<Set the stencil-buffer entry to 0 */
-    rwSTENCILOPERATIONREPLACE,  
+    rwSTENCILOPERATIONREPLACE,
         /**<Replace the stencil-buffer entry with reference value */
-    rwSTENCILOPERATIONINCRSAT,  
-        /**<Increment the stencil-buffer entry, clamping to the 
+    rwSTENCILOPERATIONINCRSAT,
+        /**<Increment the stencil-buffer entry, clamping to the
          *  maximum value */
-    rwSTENCILOPERATIONDECRSAT,  
-        /**<Decrement the stencil-buffer entry, clamping to zero */    
-    rwSTENCILOPERATIONINVERT,   
+    rwSTENCILOPERATIONDECRSAT,
+        /**<Decrement the stencil-buffer entry, clamping to zero */
+    rwSTENCILOPERATIONINVERT,
         /**<Invert the bits in the stencil-buffer entry */
-    rwSTENCILOPERATIONINCR,     
-        /**<Increment the stencil-buffer entry, wrapping to zero if 
+    rwSTENCILOPERATIONINCR,
+        /**<Increment the stencil-buffer entry, wrapping to zero if
          *  the new value exceeds the maximum value */
-    rwSTENCILOPERATIONDECR,     
+    rwSTENCILOPERATIONDECR,
         /**<Decrement the stencil-buffer entry, wrapping to the maximum
          *  value if the new value is less than zero */
- 
+
     rwSTENCILOPERATIONFORCEENUMSIZEINT = RWFORCEENUMSIZEINT
 };
 typedef enum RwStencilOperation RwStencilOperation;
@@ -580,27 +580,27 @@ enum RwStencilFunction
 {
     rwSTENCILFUNCTIONNASTENCILFUNCTION = 0,
 
-    rwSTENCILFUNCTIONNEVER,         
+    rwSTENCILFUNCTIONNEVER,
         /**<Always fail the test */
-    rwSTENCILFUNCTIONLESS,          
+    rwSTENCILFUNCTIONLESS,
         /**<Accept the new pixel if its value is less than the value of
          *  the current pixel */
-    rwSTENCILFUNCTIONEQUAL,         
+    rwSTENCILFUNCTIONEQUAL,
         /**<Accept the new pixel if its value equals the value of the
          *  current pixel */
-    rwSTENCILFUNCTIONLESSEQUAL,     
-        /**<Accept the new pixel if its value is less than or equal to 
+    rwSTENCILFUNCTIONLESSEQUAL,
+        /**<Accept the new pixel if its value is less than or equal to
          *  the value of the current pixel */
-    rwSTENCILFUNCTIONGREATER,       
-        /**<Accept the new pixel if its value is greater than the value 
+    rwSTENCILFUNCTIONGREATER,
+        /**<Accept the new pixel if its value is greater than the value
          *  of the current pixel */
-    rwSTENCILFUNCTIONNOTEQUAL,      
-        /**<Accept the new pixel if its value does not equal the value of 
+    rwSTENCILFUNCTIONNOTEQUAL,
+        /**<Accept the new pixel if its value does not equal the value of
          *  the current pixel */
-    rwSTENCILFUNCTIONGREATEREQUAL,  
+    rwSTENCILFUNCTIONGREATEREQUAL,
         /**<Accept the new pixel if its value is greater than or equal
          *  to the value of the current pixel */
-    rwSTENCILFUNCTIONALWAYS,        
+    rwSTENCILFUNCTIONALWAYS,
         /**<Always pass the test */
 
     rwSTENCILFUNCTIONFORCEENUMSIZEINT = RWFORCEENUMSIZEINT
@@ -611,27 +611,27 @@ enum RwAlphaTestFunction
 {
     rwALPHATESTFUNCTIONNAALPHATESTFUNCTION = 0,
 
-    rwALPHATESTFUNCTIONNEVER,         
+    rwALPHATESTFUNCTIONNEVER,
         /**<Always fail the test */
-    rwALPHATESTFUNCTIONLESS,          
+    rwALPHATESTFUNCTIONLESS,
         /**<Accept the new pixel if its alpha value is less than the value of
          *  the reference value */
-    rwALPHATESTFUNCTIONEQUAL,         
+    rwALPHATESTFUNCTIONEQUAL,
         /**<Accept the new pixel if its alpha value equals the value of the
          *  reference value */
-    rwALPHATESTFUNCTIONLESSEQUAL,     
-        /**<Accept the new pixel if its alpha value is less than or equal to 
+    rwALPHATESTFUNCTIONLESSEQUAL,
+        /**<Accept the new pixel if its alpha value is less than or equal to
          *  the value of the reference value */
-    rwALPHATESTFUNCTIONGREATER,       
-        /**<Accept the new pixel if its alpha value is greater than the value 
+    rwALPHATESTFUNCTIONGREATER,
+        /**<Accept the new pixel if its alpha value is greater than the value
          *  of the reference value */
-    rwALPHATESTFUNCTIONNOTEQUAL,      
-        /**<Accept the new pixel if its alpha value does not equal the value of 
+    rwALPHATESTFUNCTIONNOTEQUAL,
+        /**<Accept the new pixel if its alpha value does not equal the value of
          *  the reference value */
-    rwALPHATESTFUNCTIONGREATEREQUAL,  
+    rwALPHATESTFUNCTIONGREATEREQUAL,
         /**<Accept the new pixel if its alpha value is greater than or equal
          *  to the value of the reference value */
-    rwALPHATESTFUNCTIONALWAYS,        
+    rwALPHATESTFUNCTIONALWAYS,
         /**<Always pass the test */
 
     rwALPHATESTFUNCTIONFORCEENUMSIZEINT = RWFORCEENUMSIZEINT
@@ -642,9 +642,9 @@ enum RwCullMode
 {
     rwCULLMODENACULLMODE = 0,
 
-    rwCULLMODECULLNONE, 
+    rwCULLMODECULLNONE,
         /**<Both front and back-facing triangles are drawn. */
-    rwCULLMODECULLBACK, 
+    rwCULLMODECULLBACK,
         /**<Only front-facing triangles are drawn */
     rwCULLMODECULLFRONT,
         /**<Only back-facing triangles are drawn */
@@ -813,8 +813,11 @@ struct RwLinkList
     RwLLLink link;
 };
 
+typedef RwObject *(*RwObjectCallBack)(RwObject *object, void *data);
+
 RwMatrix* RwMatrixUpdate(RwMatrix* matrix);
 RwBool RwMatrixDestroy(RwMatrix* mpMat);
 RwBool RwStreamFindChunk(RwStream* stream, RwUInt32 type, RwUInt32* lengthOut, RwUInt32* versionOut);
 RwStream* RwStreamOpen(RwStreamType type, RwStreamAccessType accessType, const void* data);
 RwBool RwStreamClose(RwStream* stream, void* data);
+

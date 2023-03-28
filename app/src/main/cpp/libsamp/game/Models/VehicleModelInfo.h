@@ -11,23 +11,7 @@
 #include "../Enums/eVehicleClass.h"
 #include "../Core/CVector.h"
 #include "../Core/Quaternion.h"
-
-
-enum eVehicleType {
-    VEHICLE_IGNORE = -1,
-    VEHICLE_AUTOMOBILE = 0,
-    VEHICLE_MTRUCK, // MONSTER TRUCK
-    VEHICLE_QUAD,
-    VEHICLE_HELI,
-    VEHICLE_PLANE,
-    VEHICLE_BOAT,
-    VEHICLE_TRAIN,
-    VEHICLE_FHELI,
-    VEHICLE_FPLANE,
-    VEHICLE_BIKE,
-    VEHICLE_BMX,
-    VEHICLE_TRAILER
-};
+#include "game/Enums/eVehicleType.h"
 
 union tVehicleCompsUnion {
     unsigned int m_nComps;
@@ -70,18 +54,18 @@ public:
 struct CVehicleModelInfo : public CClumpModelInfo {
     RpMaterial*        m_pPlateMaterial; // 3C
     char               m_szPlateText[9]; // 40
-    unsigned char      m_nPlateType;    //  49
+    uint8_t            m_nPlateType;    //  49
     char               m_szGameName[8]; //  4a
     char               _pad3A[2];       //  52
-    unsigned int       m_nVehicleType;  //  54
+    eVehicleType       m_nVehicleType;  //  54
     float              m_fWheelSizeFront;// 58
     float              m_fWheelSizeRear;    //5C
-    short              m_nWheelModelIndex;  //60
-    short              m_nHandlingId;       // 62
+    int16_t            m_nWheelModelIndex;  //60
+    int16_t            m_nHandlingId;       // 62
     // int8_t             field_4B;
-    unsigned char      m_nNumDoors;     //64
+    uint8_t            m_nNumDoors;     //64
     eVehicleClass      m_nVehicleClass; //65
-    unsigned char      m_nFlags;    //66
+    uint8_t            m_nFlags;    //66
     unsigned char      m_nWheelUpgradeClass;//67
     unsigned char      m_nTimesUsed;    //68
     char               field_51;    // 69
@@ -90,12 +74,13 @@ struct CVehicleModelInfo : public CClumpModelInfo {
     float              m_fBikeSteerAngle; // 70
 
     struct {
-        CVector m_avDummyPos[15];
+        CVector         m_avDummyPos[15];
         UpgradePosnDesc m_aUpgrades[18];
-        RpAtomic* m_apExtras[6];
-        unsigned char m_nNumExtras;
-        unsigned int m_nMaskComponentsDamagable;
+        RpAtomic*       m_apExtras[6];
+        uint8_t         m_nNumExtras;
+        uint32_t        m_nMaskComponentsDamagable;
     } * m_pVehicleStruct;   // 74
+
     uint32_t m_firstColour[49];
     uint32_t m_secondColour[33];
     uint32_t m_thirdColour[17];

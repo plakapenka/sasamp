@@ -2,8 +2,8 @@
 
 /**
  * \ingroup rwraster
- * \ref RwRasterLockMode represents the options available for locking 
- * a raster so that it may be modified (see API function \ref RwRasterLock). An 
+ * \ref RwRasterLockMode represents the options available for locking
+ * a raster so that it may be modified (see API function \ref RwRasterLock). An
  * application may wish to write to the raster, read from the raster or
  * simultaneously write and read a raster (rwRASTERLOCKWRITE | rwRASTERLOCKREAD).
  */
@@ -36,7 +36,7 @@ enum RwRasterLockMode
                                  *  fetch the pixel data. This is only useful
                                  *  if it is known that ALL the raster data is
                                  *  going to be overwritten before the raster
-                                 *  is unlocked, i.e. from an 
+                                 *  is unlocked, i.e. from an
                                  *  \ref RwRasterSetFromImage call. This flag
                                  *  is not supported by all drivers. */
     rwRASTERLOCKRAW = 0x08,    /**<When used in combination with
@@ -101,7 +101,7 @@ typedef enum RwRasterType RwRasterType;
  *      This value may be masked out of the raster format using
  *      rwRASTERFORMATPIXELFORMATMASK.
  * <li> The palette depth if the raster is palettized:
- *      <ul> 
+ *      <ul>
  *      <li> rwRASTERFORMATPAL4
  *      <li> rwRASTERFORMATPAL8
  *      </ul>
@@ -133,7 +133,7 @@ enum RwRasterFormat
 
     rwRASTERFORMATMIPMAP = 0x8000,  /**<Mip mapping on */
 
-    rwRASTERFORMATPIXELFORMATMASK = 0x0f00, /**<The pixel color format 
+    rwRASTERFORMATPIXELFORMATMASK = 0x0f00, /**<The pixel color format
                                              *  (excluding palettised bits) */
     rwRASTERFORMATMASK = 0xff00     /**<The whole format */ ,
     rwRASTERFORMATFORCEENUMSIZEINT = RWFORCEENUMSIZEINT
@@ -195,8 +195,8 @@ typedef enum RwRasterPrivateFlag RwRasterPrivateFlag;
 
 /**
  * \ingroup rwraster
- * \struct RwRaster 
- * Raster containing device-dependent pixels. 
+ * \struct RwRaster
+ * Raster containing device-dependent pixels.
  * This should be considered an opaque type.
  * Use the RwRaster API functions to access.
  */
@@ -270,7 +270,7 @@ struct RwRaster
 extern RwRaster* (*RwRasterCreate)(RwInt32 width, RwInt32 height, RwInt32 depth, RwInt32 flags);
 extern RwBool (*RwRasterDestroy)(RwRaster * raster);
 
-extern RwRaster* (*RwRasterGetOffset)(RwRaster *raster, 
+extern RwRaster* (*RwRasterGetOffset)(RwRaster *raster,
                                       RwInt16 *xOffset, RwInt16 *yOffset);
 
 extern RwInt32 (*RwRasterGetNumLevels)(RwRaster * raster);
@@ -313,8 +313,8 @@ extern RwRaster* (*RwRasterUnlockPalette)(RwRaster * raster);
 
 /**
  * \ingroup rwimage
- * \struct RwImage 
- * Image containing device-independent pixels. 
+ * \struct RwImage
+ * Image containing device-independent pixels.
  * This should be considered an opaque type.
  * Use the RwImage API functions to access.
  */
@@ -698,6 +698,27 @@ typedef enum RwCorePluginID RwCorePluginID ;
  */
 typedef RwTexture *(*RwTextureCallBack)(RwTexture *texture, void *data);
 
+struct RwFrame
+{
+    RwObject            object;
+
+    RwLLLink            inDirtyListLink;
+
+    /* Put embedded matrices here to ensure they remain 16-byte aligned */
+    RwMatrix            modelling;
+    RwMatrix            ltm;
+
+    RwLinkList          objectList; /* List of objects connected to a frame */
+
+    struct RwFrame      *child;
+    struct RwFrame      *next;
+    struct RwFrame      *root;   /* Root of the tree */
+
+#if (RWFRAMESTATICPLUGINSSIZE)
+    RWALIGN(RwUInt8             pluginData[RWFRAMESTATICPLUGINSSIZE], rwFRAMEALIGNMENT);
+#endif /* defined(RWFRAMESTATICPLUGINSIZE)) */
+};
+
 void* RwIm3DTransform(RwIm3DVertex* pVerts, RwUInt32 numVerts, RwMatrix* ltm, RwUInt32 flags);
 RwBool RwIm3DRenderLine(RwInt32 vert1, RwInt32 vert2);
 RwBool RwIm3DEnd();
@@ -710,3 +731,5 @@ RwBool RwTexDictionaryDestroy(RwTexDictionary* dict);
 RwTexture* RwTexDictionaryRemoveTexture(RwTexture* texture);
 RwTexture* RwTexDictionaryFindNamedTexture(RwTexDictionary* dict, const RwChar* name);
 const RwTexDictionary* RwTexDictionaryForAllTextures(const RwTexDictionary* dict, RwTextureCallBack fpCallBack, void* data);
+RwFrame* RwFrameForAllObjects(RwFrame* frame, RwObjectCallBack callBack, void* data);
+RwFrame* RwFrameCreate();
