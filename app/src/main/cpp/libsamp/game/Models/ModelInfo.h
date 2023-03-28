@@ -10,7 +10,7 @@
 #include "game/CStore.h"
 #include "PedModelInfo.h"
 #include "AtomicModelInfo.h"
-#include "game/CVehicleModelInfo.h"
+#include "VehicleModelInfo.h"
 
 class CModelInfo {
 

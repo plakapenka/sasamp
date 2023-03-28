@@ -2,15 +2,15 @@
 // Created by plaka on 21.02.2023.
 //
 
-#ifndef LIVERUSSIA_CVEHICLEMODELINFO_H
-#define LIVERUSSIA_CVEHICLEMODELINFO_H
+#ifndef LIVERUSSIA_VEHICLEMODELINFO_H
+#define LIVERUSSIA_VEHICLEMODELINFO_H
 
 
-#include "Models/ClumpModelInfo.h"
-#include "game/RW/rwlpcore.h"
-#include "game/Enums/eVehicleClass.h"
-#include "game/Core/CVector.h"
-#include "game/Core/Quaternion.h"
+#include "ClumpModelInfo.h"
+#include "../RW/rwlpcore.h"
+#include "../Enums/eVehicleClass.h"
+#include "../Core/CVector.h"
+#include "../Core/Quaternion.h"
 
 
 enum eVehicleType {
@@ -117,4 +117,4 @@ struct CVehicleModelInfo : public CClumpModelInfo {
 };
 
 
-#endif //LIVERUSSIA_CVEHICLEMODELINFO_H
+#endif //LIVERUSSIA_VEHICLEMODELINFO_H
