@@ -23,8 +23,8 @@ android {
 
         multiDexEnabled false
         applicationId "com.liverussia.cr"
-        versionName "200"
-        versionCode 204
+        versionName "205"
+        versionCode 205
         vectorDrawables.useSupportLibrary = true
 
         lintOptions {
@@ -71,6 +71,9 @@ android {
     }
 
     buildToolsVersion '33.0.1'
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
@@ -92,10 +95,12 @@ dependencies {
     implementation 'com.makeramen:roundedimageview:2.3.0'
     implementation 'com.github.bumptech.glide:glide:4.13.0'
     implementation 'com.google.firebase:firebase-messaging:23.1.2'
+    implementation 'androidx.navigation:navigation-fragment:2.4.1'
+    implementation 'androidx.navigation:navigation-ui:2.4.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.13.0'
 
     //CrashLytics
-    implementation 'com.google.firebase:firebase-crashlytics:18.3.5'
+    implementation 'com.google.firebase:firebase-crashlytics:18.3.6'
     implementation platform('com.google.firebase:firebase-bom:31.1.0')
 
     implementation 'com.google.firebase:firebase-crashlytics-ndk'

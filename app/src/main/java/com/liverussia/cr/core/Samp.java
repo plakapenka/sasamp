@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
@@ -50,6 +51,7 @@ import java.util.Locale;
 public class Samp extends GTASA
 {
     public static native void playUrlSound(String url);
+    public static WindowManager windowManager = null;
     public static DecimalFormat formatter = null;
     public static SoundPool soundPool = null;
     public static Vibrator vibrator = null;
@@ -76,6 +78,7 @@ public class Samp extends GTASA
     public void onCreate(Bundle bundle)
     {
         thiz = this;
+        windowManager = (WindowManager) this.getSystemService(WINDOW_SERVICE);
 
         Log.i("java", "calling initSAMP");
         initSAMP(getExternalFilesDir(null).toString() + "/");

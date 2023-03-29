@@ -131,6 +131,11 @@ inline int32_t ModelIdToIFP(int32_t absId) { return absId - RESOURCE_ID_IFP; }
 inline int32_t ModelIdToRRR(int32_t absId) { return absId - RESOURCE_ID_RRR; }
 inline int32_t ModelIdToSCM(int32_t absId) { return absId - RESOURCE_ID_SCM; }
 
+struct tRwStreamInitializeData {
+    uint8_t* m_pBuffer;
+    uint32_t m_uiBufferSize;
+};
+
 class CStreaming {
 
 public:

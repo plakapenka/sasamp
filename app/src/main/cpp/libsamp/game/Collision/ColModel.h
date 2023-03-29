@@ -10,6 +10,7 @@
 #include "CollisionData.h"
 
 class CColModel : public CBoundingBox {
+public:
     uint8_t        m_nColSlot;
     union {
         struct {

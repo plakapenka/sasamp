@@ -1,16 +1,21 @@
 package com.liverussia.cr.core;
 
+import static android.content.Context.WINDOW_SERVICE;
+
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
@@ -127,6 +132,16 @@ public class DialogClientSettingsCommonFragment extends Fragment implements ISav
         fps_plus_butt.setOnClickListener(view -> {
             int curFps = Integer.parseInt(String.valueOf(fps_text.getText()));
             curFps ++;
+            // fps limit
+            Display display = Samp.windowManager.getDefaultDisplay();
+            if(display.getRefreshRate() < curFps){
+                curFps = (int) display.getRefreshRate();
+
+                Toast toast = Toast.makeText(mContext, "Ваш экран не поддерживает выше 60 герц",Toast.LENGTH_LONG);
+                toast.show();
+            }
+
+            //
             fps_text.setText(String.format("%d", curFps));
             setNativeFpsCount(curFps);
         });
