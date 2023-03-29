@@ -78,7 +78,7 @@ public:
     uint32_t  pad3;           // 0x3C
 
     RwMatrix* m_pAttachMatrix{};       // 0x40
-    bool      m_bOwnsAttachedMatrix{}; // 0x44 - Do we need to delete attached matrix at detaching
+    uint32_t  m_bOwnsAttachedMatrix{}; // 0x44 - Do we need to delete attached matrix at detaching
 
 public:
   //  static void InjectHooks();
@@ -201,5 +201,7 @@ CMatrix  Lerp(CMatrix from, CMatrix to, float t);
 
 //extern int32_t& numMatrices;
 //extern CMatrix& gDummyMatrix;
+
+static_assert(sizeof(CMatrix) == 0x48, "Invalid");
 
 #endif //LIVERUSSIA_CMATRIX_H

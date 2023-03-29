@@ -7,7 +7,7 @@
 
 class CCamPathSplines {
 public:
-    float* m_pArrPathData;
+    float m_pArrPathData;
 };
 
 #endif //LIVERUSSIA_CAMPATHSPLINES_H

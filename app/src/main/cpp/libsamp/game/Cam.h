@@ -121,6 +121,6 @@ public:
 //    CPedGta *m_pLastPedLookedAt;
 //    bool m_bFirstPersonRunAboutActive;
 };
-
+static_assert(sizeof(CCam) == 0x210, "Invalid");
 
 #endif //LIVERUSSIA_CAM_H

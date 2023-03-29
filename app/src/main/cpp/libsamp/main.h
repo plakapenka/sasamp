@@ -7,6 +7,8 @@
 #include <unistd.h>
 #include "game/common.h"
 
+#define VALIDATE_SIZE(struc, size) static_assert(sizeof(struc) == size, "Invalid structure size of " #struc)
+
 #define SAMP_VERSION	"0.3.7"
 #define PORT_VERSION	"0.69"
 

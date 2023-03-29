@@ -12,6 +12,28 @@
 #include "QueuedMode.h"
 #include "game/RW/rwcore.h"
 #include "CamPathSplines.h"
+#include "RW/rwcore.h"
+#include "Core/CMatrix.h"
+#include "main.h"
+
+enum class eFadeFlag : uint16_t {
+    FADE_IN,
+    FADE_OUT
+};
+
+enum class eSwitchType : uint16_t {
+    NONE,
+    INTERPOLATION,
+    JUMPCUT
+};
+
+struct CVehicleCamTweak {
+    int32_t m_nModelIndex;
+    float   m_fDistance;
+    float   m_fAltitude;
+    float   m_fAngle;
+};
+static_assert(sizeof(CVehicleCamTweak) == 0x10, "Invalid");
 
 struct CCameraGta : CPlaceableGta{
     bool            m_bAboveGroundTrainNodesLoaded{};
@@ -142,6 +164,7 @@ struct CCameraGta : CPlaceableGta{
     float           m_fSoundDistUpAsReadOld{};
     float           m_fAvoidTheGeometryProbsTimer{};
     uint16_t        m_nAvoidTheGeometryProbsDirn{};
+    uint16_t        skip8;
     float           m_fWideScreenReductionAmount{};
     float           m_fStartingFOVForInterPol{};
     CCam            m_aCams[3]{};
@@ -149,7 +172,6 @@ struct CCameraGta : CPlaceableGta{
     uintptr_t*      m_pToGarageWeAreInForHackAvoidFirstPerson{};
     CQueuedMode     m_PlayerMode{};
     CQueuedMode     m_PlayerWeaponMode{};
-
     CVector         m_vecPreviousCameraPosition{};
     CVector         m_vecRealPreviousCameraPosition{};
     CVector         m_vecAimingTargetCoors{};
@@ -174,6 +196,7 @@ struct CCameraGta : CPlaceableGta{
     CVector         m_vecAttachedCamOffset{};
     CVector         m_vecAttachedCamLookAt{};
     float           m_fAttachedCamAngle{};
+
     RwCamera*       m_pRwCamera{};
     CEntityGta*     m_pTargetEntity{};
     CEntityGta*     m_pAttachedEntity{};
@@ -193,11 +216,81 @@ struct CCameraGta : CPlaceableGta{
     CVector         m_avecFrustumWorldNormals_Mirror[4]{};
     float           m_fFrustumPlaneOffsets[4]{};
     float           m_fFrustumPlaneOffsets_Mirror[4]{};
-    CVector         m_vecRightFrustumNormal{};  //!< unused?
-    CVector         m_vecBottomFrustumNormal{}; //!< unused?
-    CVector         m_vecTopFrustumNormal{};    //!< unused?
-    float           field_BF8{}; //!< unused?
+    CVector         m_vecOldSourceForInter{};  //!< unused?
+    CVector         m_vecOldFrontForInter{}; //!< unused?
+    CVector         m_vecOldUpForInter{};    //!< unused?
+    float           m_vecOldFOVForInter{}; //!< unused?
+    float           m_fFloatingFade{};
+    float           m_fFloatingFadeMusic{};
+    float           m_fTimeToFadeOut{};
+    float           m_fTimeToFadeMusic{};
+    float           m_fTimeToWaitToFadeMusic{};
+    float           m_fFractionInterToStopMoving{0.25f};
+    float           m_fFractionInterToStopCatchUp{0.75f};
+    float           m_fFractionInterToStopMovingTarget{};
+    float           m_fFractionInterToStopCatchUpTarget{};
+    float           m_fGaitSwayBuffer{0.85f};
+    float           m_fScriptPercentageInterToStopMoving{};
+    float           m_fScriptPercentageInterToCatchUp{};
+    uint32_t        m_nScriptTimeForInterpolation{};
+    eFadeFlag       m_iFadingDirection{};
+    uint8_t         skip6[2];
+    int32_t         *m_nModeObbeCamIsInForCar;
+    eCamMode        m_nModeToGoTo{ MODE_FOLLOWPED };
+    eFadeFlag       m_nMusicFadingDirection{};
+    eSwitchType     m_nTypeOfSwitch{ eSwitchType::INTERPOLATION };
+    uint8_t         skip7[2];
+    uint32_t        m_nFadeStartTime{};
+    uint32_t        m_nFadeTimeStartedMusic{};
+    int32_t         m_numExtrasEntitysToIgnore{};
+    CEntityGta*     m_pExtrasEntitysToIgnore[2]{};
+    float           m_duckZMod{};
+    float           m_duckZMod_Aim{};
+    float           m_fTrackLinearStartTime{};
+    float           m_fTrackLinearEndTime{};
+    CVector         m_vectorTrackFrom{};
+    CVector         m_vectorTrackTo{};
+    int             m_bVectorTrackSmoothEnds{};
+    CVector         m_VectorTrackScript{};
+    int             m_bVectorTrackScript{};
+    float           m_fShakeIntensity{};
+    float           m_fStartShakeTime{};
+    float           m_fEndShakeTime{};
+    int             m_bShakeScript;
+    int32_t         m_CurShakeCam{};
+    float           m_FOVLerpStartTime;
+    float           m_FOVLerpEndTime;
+    float           m_FOVLerpStart;
+    float           m_FOVLerpEnd;
+    bool            m_bFOVLerpSmoothEnds;
+    uint8_t         m_bFOVScript[3];
+    float           m_fFOVNew{};
+    float           m_fMoveLinearStartTime{};
+    float           m_fMoveLinearEndTime{};
+    CVector         m_vectorMoveFrom{};
+    CVector         m_vectorMoveTo{};
+    int32_t         m_bVectorMoveSmoothEnds{};
+    CVector         m_VectorMoveScript{};
+    bool            m_bVectorMoveScript{};
+    bool            m_bPersistFOV;
+    bool            m_bPersistCamPos;
+    bool            m_bPersistCamLookAt;
+    int32_t         m_bForceCinemaCam;
+    CVehicleCamTweak m_aCamTweak[5]{};
+    int32_t         m_bInitedVehicleCamTweaks{};
+    float           m_VehicleTweakLenMod;
+    float           m_VehicleTweakTargetZMod;
+    float           m_VehicleTweakPitchMod;
+    int32_t         m_nCurrentTweakModelIndex{};
+    float           m_TimeStartFOVLO;
+    float           m_TimeEndFOVLO;
+    float           m_FOVStartFOVLO;
+    CVector         m_StartPositionFOVLO;
+    float           m_FOVTargetFOVLO;
+    bool            m_bSmoothLerpFOVLO;
+    bool            m_bInitLockOnCam[3];
 };
+static_assert(sizeof(CCameraGta) == 0xd00, "Invalid");
 
 extern CCameraGta TheCamera;
 
