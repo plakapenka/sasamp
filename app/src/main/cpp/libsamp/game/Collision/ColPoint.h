@@ -30,6 +30,7 @@ public:
 public:
     CColPoint& operator=(CColPoint const&) = default;
 };
+static_assert(sizeof(CColPoint) == 0x2C, "Invalid size CColPoint");
 
 
 #endif //LIVERUSSIA_COLPOINT_H

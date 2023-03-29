@@ -20,6 +20,6 @@ public:
     [[nodiscard]] bool IsPointWithin(const CVector& point) const;
     inline void SetMinMax(CVector min, CVector max);
 };
-
+static_assert(sizeof(CBoundingBox) == 0x28, "Invalid");
 
 #endif //LIVERUSSIA_BOUNDINGBOX_H

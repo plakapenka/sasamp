@@ -38,6 +38,7 @@ public:
 
     friend auto TransformObject(const CSphere& sp, const CMatrix& transform) -> CSphere;
 };
+static_assert(sizeof(CSphere) == 0x10, "Invalid");
 
 
 #endif //LIVERUSSIA_SPHERE_H

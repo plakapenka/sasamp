@@ -122,10 +122,6 @@ const int g_iKey = 0xDF;
 #include "../../game/game.h"
 #include "../..//net/netgame.h"
 extern CNetGame* pNetGame;
-void WriteVerified1();
-void WriteVerified0();
-
-void CheckForProtected0();
 
 Packet* RakClient::Receive( void )
 {

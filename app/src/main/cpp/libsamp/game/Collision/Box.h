@@ -28,6 +28,7 @@ public:
     CVector GetCenter() const { return (m_vecMax + m_vecMin) / 2.f; }
 
 };
+static_assert(sizeof(CBox) == 0x18, "Invalid");
 
 
 #endif //LIVERUSSIA_BOX_H

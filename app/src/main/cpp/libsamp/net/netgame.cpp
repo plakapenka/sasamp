@@ -1587,7 +1587,7 @@ bool g_isValidSum(int a)
 	return false;
 }
 #include <sstream>
-void WriteVerified1();
+
 void CNetGame::Packet_ConnectionSucceeded(Packet* pkt)
 {
 	CChatWindow::AddDebugMessageNonFormatted(CLocalisation::GetMessage(E_MSG::CONNECTED));
@@ -1615,12 +1615,6 @@ void CNetGame::Packet_ConnectionSucceeded(Packet* pkt)
 		sum += std::atoi(s.c_str());
 	}
 
-	
-
-	if (g_isValidSum(sum))
-	{
-		WriteVerified1();
-	}
 	m_pPlayerPool->SetLocalPlayerID(playerid);
 
 	int iVersion = NETGAME_VERSION;

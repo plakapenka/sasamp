@@ -26,11 +26,11 @@ struct tColLighting {
 };
 
 struct ColData {
-    eSurfaceType    m_nSurfaceTypeA;
-    uint8_t         m_nPieceTypeA;
-    tColLighting    m_nLightingA;
+    eSurfaceType    m_nSurfaceType;
+    uint8_t         m_nPieceType;
+    tColLighting    m_lighting;
 };
-
+static_assert(sizeof(ColData) == 0x3, "Invalid size ColData");
 // sizeof=0x3
 
 #endif //LIVERUSSIA_COLDATA_H

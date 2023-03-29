@@ -83,6 +83,7 @@ struct CBaseModelInfo {
     };
 
 };
+static_assert(sizeof(CBaseModelInfo) == 0x38, "Invalid");
 // sizeof=0x38
 
 
