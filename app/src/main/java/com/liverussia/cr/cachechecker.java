@@ -8,6 +8,12 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.liverussia.launcher.async.dto.response.LatestVersionInfoDto;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class cachechecker extends AppCompatActivity {
     TextView loading_text;
 
