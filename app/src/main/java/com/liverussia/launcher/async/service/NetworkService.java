@@ -10,7 +10,6 @@ import com.liverussia.launcher.async.dto.response.ServerImagesResponseDto;
 import com.liverussia.launcher.async.dto.response.SpinRouletteResponseDto;
 import com.liverussia.launcher.async.dto.response.UserInfoDto;
 import com.liverussia.launcher.async.dto.response.News;
-import com.liverussia.launcher.async.dto.response.Servers;
 
 import java.util.List;
 
@@ -41,7 +40,7 @@ public interface NetworkService {
     Call<ServerImagesResponseDto> getPossibleRoulettePrizes();
 
     @GET("https://files.liverussia.online/apk/test/last_apk_info.json")
-    Call<LatestVersionInfoDto> getLatestVersionInfoDto();
+    Call<LatestVersionInfoDto> getLastApkInfo();
 
     @POST("/api/v1/auth/android/refresh")
     Call<AuthenticationResponseDto> refreshTokens(@Body RefreshTokenRequestDto request);

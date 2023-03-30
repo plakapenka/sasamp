@@ -2104,11 +2104,21 @@ void CObject__Render_hook(CEntityGta* thiz)
 	CObject__Render(thiz);
 }
 
+bool(*LoadTextures)(uintptr_t* thiz, char* tex, int32_t ver);
+bool LoadTextures_hook(uintptr_t* thiz, char* tex, int32_t ver)
+{
+	Log("LoadTextures fx = %s", tex);
+
+	return LoadTextures(thiz, tex, ver);
+}
+
 #include "Scene.h"
 
 void InstallHooks()
 {
 	Log("InstallHooks");
+
+	CHook::InlineHook(g_libGTASA, 0x0046DF1C, &LoadTextures_hook, &LoadTextures);
 
 	Scene = *(CScene*)(g_libGTASA + 0x009FC938);
     CTimer::InjectHooks();

@@ -10,8 +10,6 @@ import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.liverussia.cr.R;
-import com.liverussia.cr.gui.util.Utils;
-import com.liverussia.launcher.ui.activity.MainActivity;
 
 import java.util.ArrayList;
 import java.util.List;

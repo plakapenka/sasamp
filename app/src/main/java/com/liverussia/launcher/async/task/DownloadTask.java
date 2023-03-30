@@ -1,28 +1,29 @@
 package com.liverussia.launcher.async.task;
 
+import static com.liverussia.launcher.config.Config.FILE_INFO_URL;
+
+import android.app.Activity;
 import android.content.Context;
 import android.os.PowerManager;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.UiThread;
 import androidx.annotation.WorkerThread;
 
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
-import com.liverussia.launcher.utils.MainUtils;
-import com.liverussia.launcher.ui.activity.LoaderActivity;
 import com.liverussia.launcher.async.domain.AsyncTaskResult;
-import com.liverussia.launcher.async.listener.OnAsyncCriticalErrorListener;
-import com.liverussia.launcher.async.listener.OnAsyncSuccessListener;
 import com.liverussia.launcher.async.dto.response.FileInfo;
 import com.liverussia.launcher.async.dto.response.GameFileInfoDto;
 import com.liverussia.launcher.async.dto.response.LatestVersionInfoDto;
-import com.liverussia.launcher.domain.enums.DownloadType;
+import com.liverussia.launcher.async.listener.OnAsyncCriticalErrorListener;
+import com.liverussia.launcher.async.listener.OnAsyncSuccessListener;
 import com.liverussia.launcher.error.apiException.ApiException;
 import com.liverussia.launcher.error.apiException.ErrorContainer;
-import com.liverussia.launcher.service.ActivityService;
-import com.liverussia.launcher.service.impl.ActivityServiceImpl;
+import com.liverussia.launcher.utils.MainUtils;
 import com.techyourchance.threadposter.BackgroundThreadPoster;
 import com.techyourchance.threadposter.UiThreadPoster;
 
@@ -55,13 +56,11 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import javax.net.ssl.SSLException;
 
-import static com.liverussia.launcher.config.Config.FILE_INFO_URL;
-
 public class DownloadTask implements Listener<TaskStatus> {
 
-    private final LoaderActivity loaderActivity;
-    private final ProgressBar progressBar;
-    private final ActivityService activityService;
+    private final Activity loaderActivity;
+    private final LinearProgressIndicator progressBar;
+    TextView progressText;
 
     private OnAsyncSuccessListener onAsyncSuccessListener;
     private OnAsyncCriticalErrorListener onAsyncCriticalErrorListener;
@@ -76,29 +75,29 @@ public class DownloadTask implements Listener<TaskStatus> {
     private final UiThreadPoster uiThreadPoster;
     private final BackgroundThreadPoster backgroundThreadPoster;
 
-    public DownloadTask(LoaderActivity loaderActivity, ProgressBar progressBar) {
+    public DownloadTask(Activity loaderActivity, LinearProgressIndicator progressBar, TextView progressText) {
         this.loaderActivity = loaderActivity;
         this.progressBar = progressBar;
+        this.progressText = progressText;
     }
 
     {
-        activityService = new ActivityServiceImpl();
         uiThreadPoster = new UiThreadPoster();
         backgroundThreadPoster = new BackgroundThreadPoster();
     }
 
     public void download() {
-        configureProgressBar();
+        //configureProgressBar();
         backgroundThreadPoster.post(this::downloadGameFiles);
     }
 
     public void reloadCache() {
-        configureProgressBar();
+        //configureProgressBar();
         backgroundThreadPoster.post(this::reloadGameFiles);
     }
 
     public void updateApk() {
-        configureProgressBar();
+      //  configureProgressBar();
         backgroundThreadPoster.post(this::downloadApk);
     }
 
@@ -358,17 +357,6 @@ public class DownloadTask implements Listener<TaskStatus> {
 
     @UiThread
     private void publishProgress(int progress) {
-        if (DownloadType.LOAD_ALL_CACHE.equals(MainUtils.getType()) || DownloadType.RELOAD_OR_ADD_PART_OF_CACHE.equals(MainUtils.getType())) {
-            loaderActivity.getLoading().setText("Загрузка файлов игры...");
-            loaderActivity.getLoadingPercent().setText(progress + "%");
-            loaderActivity.getFileName().setText(formatFileSize(fileLengthMin.longValue())+" из "+formatFileSize(fileLengthFull));
-        }
-
-        if (DownloadType.UPDATE_APK.equals(MainUtils.getType())) {
-            loaderActivity.getLoading().setText("Обновление...");
-            loaderActivity.getLoadingPercent().setText(progress + "%");
-            loaderActivity.getFileName().setText(formatFileSize(fileLengthMin.longValue())+" из "+formatFileSize(fileLengthFull));
-        }
 
         progressBar.setProgress(progress);
     }
@@ -378,16 +366,14 @@ public class DownloadTask implements Listener<TaskStatus> {
     public void onAsyncFinished(AsyncTaskResult<TaskStatus> result) {
 
         if (isInternetDisableException(result.getException())) {
-            loaderActivity.getRepeatLoadButton().setVisibility(View.VISIBLE);
-            loaderActivity.getLoading().setText("Ошибка соединения...");
+//            loaderActivity.getRepeatLoadButton().setVisibility(View.VISIBLE);
+//            loaderActivity.getLoading().setText("Ошибка соединения...");
             return;
         }
 
         loaderActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mWakeLock.release();
-        loaderActivity.getLoading().setVisibility(View.INVISIBLE);
-        loaderActivity.getLoadingPercent().setVisibility(View.INVISIBLE);
-        progressBar.setVisibility(View.INVISIBLE);
+
 
         if (result.getException() != null) {
             ApiException apiException = result.getException();
@@ -411,7 +397,7 @@ public class DownloadTask implements Listener<TaskStatus> {
                 .map(ErrorContainer::getMessage)
                 .orElse(StringUtils.EMPTY);
 
-        activityService.showMessage(errorMessage, loaderActivity);
+        Toast.makeText(loaderActivity, errorMessage, Toast.LENGTH_SHORT).show();
     }
 
     private void onAsyncErrorDo() {
@@ -465,11 +451,11 @@ public class DownloadTask implements Listener<TaskStatus> {
         progressBar.setVisibility(View.VISIBLE);
         progressBar.setIndeterminate(false);
         progressBar.setMax(100);
-        loaderActivity.getLoading().setText("Загрузка файлов игры...");
+        progressText.setText("Загрузка файлов игры...");
     }
 
     public void repeatLoad() {
-        loaderActivity.getRepeatLoadButton().setVisibility(View.INVISIBLE);
+       // loaderActivity.getRepeatLoadButton().setVisibility(View.INVISIBLE);
         backgroundThreadPoster.post(() -> downloadAndSaveFilesAfterFailed(new ArrayList<>(files)));
     }
 }

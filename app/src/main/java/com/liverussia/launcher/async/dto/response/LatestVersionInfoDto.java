@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class LatestVersionInfoDto {
-    private String version;
+    public String version;
 
     private String link;
 

@@ -7,7 +7,7 @@
     android:background="#8D0A7FA5"
     android:orientation="horizontal"
     android:theme="@style/Theme.Material3.Dark.NoActionBar"
-    tools:context=".cachechecker">
+    tools:context=".StartActivity">
 
     <TextView
         android:id="@+id/loading_text"
@@ -17,12 +17,12 @@
         android:fontFamily="@font/visby_round_cf_extra_bold"
         android:text="Проверка обновлений ..."
         android:textColor="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/linearProgressIndicator"
+        app:layout_constraintBottom_toTopOf="@+id/progressIndicator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.progressindicator.LinearProgressIndicator
-        android:id="@+id/linearProgressIndicator"
+        android:id="@+id/progressIndicator"
         android:layout_width="@dimen/_200sdp"
         android:layout_height="wrap_content"
         android:indeterminate="true"

@@ -1,24 +1,21 @@
 package com.liverussia.launcher.async.task;
 
-import android.util.Log;
+import static com.liverussia.launcher.config.Config.FILE_INFO_URL;
+
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import androidx.annotation.UiThread;
 import androidx.annotation.WorkerThread;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
-import com.liverussia.launcher.ui.dialogs.DialogProgress;
 import com.liverussia.launcher.async.domain.AsyncTaskResult;
-import com.liverussia.launcher.async.listener.OnAsyncCriticalErrorListener;
-import com.liverussia.launcher.async.listener.OnAsyncSuccessListenerWithResponse;
 import com.liverussia.launcher.async.dto.response.FileInfo;
 import com.liverussia.launcher.async.dto.response.GameFileInfoDto;
+import com.liverussia.launcher.async.listener.OnAsyncCriticalErrorListener;
+import com.liverussia.launcher.async.listener.OnAsyncSuccessListenerWithResponse;
 import com.liverussia.launcher.error.apiException.ApiException;
 import com.liverussia.launcher.error.apiException.ErrorContainer;
-import com.liverussia.launcher.service.ActivityService;
-import com.liverussia.launcher.service.impl.ActivityServiceImpl;
 import com.techyourchance.threadposter.BackgroundThreadPoster;
 import com.techyourchance.threadposter.UiThreadPoster;
 
@@ -29,30 +26,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.liverussia.launcher.config.Config.FILE_INFO_URL;
-
 public class CacheChecker implements Listener<FileInfo[]> {
 
     private final FragmentActivity activity;
 
-    private final ActivityService activityService;
     private final UiThreadPoster uiThreadPoster;
     private final BackgroundThreadPoster backgroundThreadPoster;
 
-    private DialogProgress dialogProgress;
     private OnAsyncSuccessListenerWithResponse<FileInfo[]> onAsyncSuccessListener;
     private OnAsyncCriticalErrorListener onAsyncCriticalErrorListener;
 
@@ -61,9 +48,7 @@ public class CacheChecker implements Listener<FileInfo[]> {
     public CacheChecker(FragmentActivity activity) {
         this.activity = activity;
     }
-
     {
-        activityService = new ActivityServiceImpl();
         uiThreadPoster = new UiThreadPoster();
         backgroundThreadPoster = new BackgroundThreadPoster();
     }
@@ -81,24 +66,11 @@ public class CacheChecker implements Listener<FileInfo[]> {
     }
 
     public void checkIsAllCacheFilesExist() {
-        uiThreadPoster.post(() -> startProgressBar());
         backgroundThreadPoster.post(() -> checkIsFilesExist());
     }
 
     public void validateCache() {
-        uiThreadPoster.post(() -> startProgressBar());
         backgroundThreadPoster.post(() -> checkFilesHash());
-    }
-
-    @UiThread
-    private void startProgressBar() {
-        activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-
-        activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-        dialogProgress = new DialogProgress();
-        dialogProgress.show(activity.getSupportFragmentManager(), "progressDialog");
     }
 
     @WorkerThread
@@ -232,13 +204,6 @@ public class CacheChecker implements Listener<FileInfo[]> {
     public void onAsyncFinished(AsyncTaskResult<FileInfo[]> result) {
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        //dialogProgress.dismiss();
-        // test ы
-        Fragment prev = activity.getSupportFragmentManager().findFragmentByTag("fragment_dialog");
-        if (prev != null) {
-            DialogFragment df = (DialogFragment) prev;
-            df.dismiss();
-        }
 
         if (result.getException() != null) {
             ApiException apiException = result.getException();
@@ -255,7 +220,7 @@ public class CacheChecker implements Listener<FileInfo[]> {
                 .map(ErrorContainer::getMessage)
                 .orElse(StringUtils.EMPTY);
 
-        activityService.showMessage(errorMessage, activity);
+        Toast.makeText(activity, errorMessage, Toast.LENGTH_SHORT).show();
     }
 
     private void onAsyncErrorDo() {
