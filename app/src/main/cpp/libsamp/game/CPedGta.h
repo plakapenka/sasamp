@@ -10,23 +10,36 @@
 #include "game/Core/CVector2D.h"
 #include "CVehicleGta.h"
 #include "game/Enums/ePedState.h"
+#include "game/Enums/AnimationEnums.h"
+#include "game/Enums/eWeaponType.h"
+
+enum eMoveState : uint32_t {
+    PEDMOVE_NONE = 0,
+    PEDMOVE_STILL,
+    PEDMOVE_TURN_L,
+    PEDMOVE_TURN_R,
+    PEDMOVE_WALK,
+    PEDMOVE_JOG,
+    PEDMOVE_RUN,
+    PEDMOVE_SPRINT
+};
 
 class CVehicleGta;
 
 #pragma pack(1)
 struct CPedGta : CPhysicalGta
 {
-    uint8_t m_PedAudioEntity[348];
-    uint8_t m_PedSpeechAudioEntity[256];
-    uint8_t m_PedWeaponAudioEntity[168];
-    CPedIntelligence* pPedIntelligence; // 1084-1088
+    uint8_t m_PedAudioEntity[0x15c];
+    uint8_t m_PedSpeechAudioEntity[0x100];
+    uint8_t m_PedWeaponAudioEntity[0xa8];
+    CPedIntelligence* pPedIntelligence;
     uintptr_t *m_pPlayerData;
     uint8_t m_nCreatedBy;
     char                field_485[3];
     ePedState m_nPedState;			// 1096-1100	;Action
-    uint32_t m_eMoveState;
-    uint8_t m_storedCollPoly[44];
-    uint32_t m_distTravelledSinceLastHeightCheck;
+    eMoveState m_eMoveState;
+    uint8_t m_storedCollPoly[0x2c];
+    float m_distTravelledSinceLastHeightCheck;
     union {
         /* https://github.com/multitheftauto/mtasa-blue/blob/master/Client/game_sa/CPedSA.h */
         struct {
@@ -167,38 +180,37 @@ struct CPedGta : CPhysicalGta
             unsigned int bTestForShotInVehicle : 1;
             unsigned int bUsedForReplay : 1; // This ped is controlled by replay and should be removed when replay is done.
         };
-        uint8_t m_nPedFlags[16];
+        uint8_t m_nPedFlags[0x10];
     };
     uintptr_t *m_apBones[19];
-    uint32_t m_motionAnimGroup;
+    AssocGroupId m_motionAnimGroup;
     CVector2D m_extractedVelocity;
-    uint8_t m_acquaintances[20];
-    uintptr_t m_pWeaponClump;
-    uintptr_t m_pWeaponFlashFrame;
-    uintptr_t m_pGogglesClump;
-    uintptr_t m_pbGogglesEffect;
+    uint8_t m_acquaintances[0x14];
+    uintptr_t *m_pWeaponClump;
+    uintptr_t *m_pWeaponFlashFrame;
+    uintptr_t *m_pGogglesClump;
+    bool *m_pbGogglesEffect;
     uint16_t m_nGunFlashBlendAmount;
     uint16_t m_nGunFlashBlendOutRate;
     uint16_t m_nGunFlashBlendAmount2;
     uint16_t m_nGunFlashBlendOutRate2;
-    uint8_t m_ik[32];
+    uint8_t m_ik[0x20];
     uint32_t m_nAntiSpazTimer;
-    uint32_t m_eMoveStateAnim;
-    uint32_t m_eStoredMoveState;
-
+    eMoveState m_eMoveStateAnim;
+    eMoveState m_eStoredMoveState;
     float fHealth;
     float fMaxHealth;
     float fArmour;
-    float fAim;
+    uint32_t DontUseSmallerRemovalRange;
     CVector2D m_vecCurrentVelocity;
     float m_fCurrentRotation;
     float m_fAimingRotation;
     float m_fHeadingChangeRate;
     float m_fHeadingChangeRateAccel;
-    uintptr_t *m_pGroundPhysical;
+    CPhysicalGta *m_pGroundPhysical;
     CVector m_vecGroundOffset;
     CVector m_vecGroundNormal;
-    uintptr_t *m_pEntityStandingOn;
+    CEntityGta *m_pEntityStandingOn;
     float m_fHitHeadHeight;
     CVehicleGta *pVehicle;			// 1420-1424	;pVehicle
     CVehicleGta *m_pMyAccidentVehicle;
@@ -206,15 +218,45 @@ struct CPedGta : CPhysicalGta
     uint32_t dwPedType;
     uintptr_t *m_pPedStats;
     CWeaponGta WeaponSlots[13];
-    uint32_t m_eStoredWeapon;
-    uint32_t m_eDelayedWeapon;
+    eWeaponType m_eStoredWeapon;
+    eWeaponType m_eDelayedWeapon;
     uint32_t m_delayedAmmo;
-    uint8_t byteCurWeaponSlot; // 1816-1817
-    uint8_t skip4[23];
-    uint32_t pFireObject;	 // 1840-1844
-    uint8_t skip5[44];
-    uint32_t  dwWeaponUsed; // 1888-1892
-    uintptr_t pdwDamageEntity; // 1892-1896
+    int8_t byteCurWeaponSlot; // 1816-1817
+    uint8_t m_nShootRate;
+    uint16_t m_nShootingAccuracy;
+    CEntityGta *m_pEntLockOnTarget;
+    CEntityGta *m_pEntMagnetizeTarget;
+    CVector m_vecWeaponPrevPos;
+    uint8_t m_nWeaponSkill;
+    uint8_t m_nExtraMeleeCombo;
+    uint8_t m_nExtraMeleeComboFlags;
+    uint8_t BleedingFrames;
+    uintptr_t *m_pFire;
+    float FireDamageMultiplier;
+    CEntityGta *m_pEntLookEntity;
+    float m_fLookHeading;
+    int32_t WeaponModelInHand;
+    uint32_t m_nUnconsciousTimer;
+    uint32_t m_nLookTimer;
+    uint32_t m_nAttackTimer;
+    uint32_t m_nTimeOfDeath;
+    uint16_t m_nLimbRemoveIndex;
+    uint16_t m_MoneyCarried;
+    float m_wobble;
+    float m_wobbleSpeed;
+    uint32_t LastDamagedWeaponType;
+    CEntityGta *pLastDamageEntity;
+    uint32_t LastDamagedTime;
+    CVector m_vecAttachOffset;
+    uint32_t m_nAttachLookDirn;
+    float m_fAttachHeadingLimit;
+    float m_fAttachVerticalLimit;
+    int32_t m_nOriginalWeaponAmmo;
+    uintptr_t *m_pCoverPoint;
+    uintptr_t *m_pLastEntryExit;
+    float fRemoveRangeMultiplier;
+    uint32_t StreamedScriptBrainToLoad;
+    uint32_t LastTalkSfx;
 };
-
+static_assert(sizeof(CPedGta) == 0x7a4, "Invalid");
 #endif //LIVERUSSIA_CPEDGTA_H

@@ -90,5 +90,5 @@ struct CPhysicalGta : CEntityGta
     float m_lightingFromPointLights;
     uintptr_t *m_pRealTimeShadow;
 };
-
+static_assert(sizeof(CPhysicalGta) == 0x13c, "Invalid");
 #endif LIVERUSSIA_CPHYSICALGTA_H

@@ -968,7 +968,7 @@ void CPlayerPed::FireInstant() {
 void CPlayerPed::ResetDamageEntity()
 {
 	Log("ResetDamageEntity");
-	m_pPed->pdwDamageEntity = 0;
+	m_pPed->m_pDamageEntity = 0;
 }
 
 // 0.3.7
@@ -1443,7 +1443,7 @@ void CPlayerPed::SetMoveAnim(int iAnimGroup)
 		}
 		Log("animgrp %d loaded", iAnimGroup);
 	}
-	m_pPed->m_motionAnimGroup = iAnimGroup;
+	m_pPed->m_motionAnimGroup = static_cast<AssocGroupId>(iAnimGroup);
 
 //	uintptr_t ped = (uintptr_t)m_pPed;
 //	*(int*)(ped + 1244) = iAnimGroup;
@@ -1532,9 +1532,9 @@ PLAYERID CPlayerPed::FindDeathResponsiblePlayer()
 
 	if(m_pPed)
 	{
-		if(m_pPed->pdwDamageEntity)
+		if(m_pPed->m_pDamageEntity)
 		{
-			PlayerIDWhoKilled = pPlayerPool->FindRemotePlayerIDFromGtaPtr((CPedGta *)m_pPed->pdwDamageEntity);
+			PlayerIDWhoKilled = pPlayerPool->FindRemotePlayerIDFromGtaPtr((CPedGta *)m_pPed->m_pDamageEntity);
 			if(PlayerIDWhoKilled != INVALID_PLAYER_ID)
 			{
 				// killed by another player with a weapon, this is all easy.
@@ -1542,9 +1542,9 @@ PLAYERID CPlayerPed::FindDeathResponsiblePlayer()
 			}
 			else
 			{
-				if(pVehiclePool->findSampIdFromGtaPtr((CVehicleGta *) m_pPed->pdwDamageEntity) != INVALID_VEHICLE_ID)
+				if(pVehiclePool->findSampIdFromGtaPtr((CVehicleGta *) m_pPed->m_pDamageEntity) != INVALID_VEHICLE_ID)
 				{
-					CVehicleGta *pGtaVehicle = (CVehicleGta *)m_pPed->pdwDamageEntity;
+					CVehicleGta *pGtaVehicle = (CVehicleGta *)m_pPed->m_pDamageEntity;
 					PlayerIDWhoKilled = pPlayerPool->FindRemotePlayerIDFromGtaPtr((CPedGta *)pGtaVehicle->pDriver);
 
 					if(PlayerIDWhoKilled != INVALID_PLAYER_ID)

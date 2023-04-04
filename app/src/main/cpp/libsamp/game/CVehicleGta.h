@@ -8,6 +8,7 @@
 #include "CPhysicalGta.h"
 #include "tHandlingData.h"
 #include "CPedGta.h"
+#include "Enums/eVehicleType.h"
 
 struct CVehicleGta : CPhysicalGta
 {
@@ -175,19 +176,68 @@ struct CVehicleGta : CPhysicalGta
     uint8_t PedsPositionForRoadBlock;
     uint8_t NumPedsForRoadBlock[4];
     float   m_fDirtLevel; // Dirt level of vehicle body texture: 0.0f=fully clean, 15.0f=maximum dirt visible
-    unsigned char m_nCurrentGear;
+    uint8_t m_nCurrentGear;
     uint8_t skip11[3];
     float   m_fGearChangeCount; // used as parameter for cTransmission::CalculateDriveAcceleration, but doesn't change
     float   m_fWheelSpinForAudio;
     float fHealth;				// 1224-1228	;fHealth
     CVehicleGta* m_pTowingVehicle;
     CVehicleGta* pTrailer;			// 1232 - 1236 - trailer
-    uint8_t skip12[48];
+    uint8_t skip13[3];
+    bool m_bFireAutoFlare;
+    CEntityGta *pBombOwner;
+    uint32_t DontUseSmallerRemovalRange;
+    uint32_t TimeOfLastShotFired;
+    uint32_t m_nTimeOfDeath;
+    uint16_t GetOutOfCarTimer;
+    uint16_t DelayedExplosion;
+    CEntityGta *pDelayedExplosionInflictor;
+    float LastFrontHeight;
+    float LastRearHeight;
+    uint8_t NumOilSpillsToDo;
+    uint8_t skip14[3]; // wtf?
+    float OilSpillLastX;
+    float OilSpillLastY;
     uint32_t dwDoorsLocked;
-    uint32_t m_nProjectileWeaponFiringTime; // manual-aimed projectiles for hunter, lock-on projectile for hydra
-    uint32_t m_nAdditionalProjectileWeaponFiringTime; // manual-aimed projectiles for hydra
-    uint32_t m_nTimeForMinigunFiring; // minigun on hunter
-    unsigned char m_nLastWeaponDamageType; // see eWeaponType, -1 if no damage
+    uint32_t m_LastTimePrimaryFired;
+    uint32_t m_LastTimeSecondaryFired;
+    uint32_t m_LastTimeGunFired;
+    int8_t LastDamagedWeaponType;
+    uint8_t skip15[3]; // wtf?
+    CEntityGta *pLastDamageEntity;
+    uint8_t m_nRadioStation;
+    uint8_t m_nRainHitCount;
+    uint8_t m_nSoundIndex;
+    uint8_t m_SelectedWeapon;
+    uint32_t m_cHorn;
+    uint8_t m_nHornPattern;
+    uint8_t m_NoHornCount;
+    uint8_t ComedyControlsState;
+    uint8_t m_hassleStatus;
+
+    uint8_t StoredCollPolys[0x58]; // CStoredCollPoly StoredCollPolys[2];
+    uint8_t m_storedCollisionLighting[4];
+    uintptr_t *m_fxSysEngOverheat;
+    uintptr_t *m_fxSysEngFire;
+    uintptr_t *m_fxSysHeliDust;
+    union {
+        uint8_t m_nRenderLightsFlags;
+        struct {
+            uint8_t m_bRightFront : 1;
+            uint8_t m_bLeftFront : 1;
+            uint8_t m_bRightRear : 1;
+            uint8_t m_bLeftRear : 1;
+        } m_renderLights;
+    };
+    uint8_t skip16[3]; // wtf?
+    RwTexture*   m_pCustomCarPlate;
+    float        m_fRawSteerAngle; // AKA m_fSteeringLeftRight
+    eVehicleType m_nVehicleType;    // Theory by forkerer:
+    eVehicleType m_nVehicleSubType; // Hack to have stuff be 2 classes at once, like vortex which can act like a car and a boat
+    const char* m_remapTxdName;
+    const char* m_newRemapTxdName;
+    RwTexture *m_pRemapTexture;
 };
+static_assert(sizeof(CVehicleGta) == 0x5b4, "Invalid");
 
 #endif //LIVERUSSIA_CVEHICLEGTA_H
