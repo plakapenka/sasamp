@@ -30,7 +30,7 @@ void CSettings::toDefaults(int iCategory)
 	fclose(pFile);
 
 	save(iCategory);
-	LoadSettings(m_Settings.szNickName);
+	LoadSettings();
 
 	CHUD::ChangeChatHeight(m_Settings.iChatMaxMessages);
 	CHUD::ChangeChatTextSize(m_Settings.iChatFontSize);
@@ -45,17 +45,10 @@ void CSettings::save(int iIgnoreCategory)
 
 	ini_table_s *config = ini_table_create();
 
-	ini_table_create_entry(config, "client", "name", m_Settings.szNickName);
-	ini_table_create_entry(config, "client", "password", m_Settings.szPassword);
-	ini_table_create_entry(config, "client", "player_password", m_Settings.player_password);
-	
-	ini_table_create_entry_as_int(config, "client", "autologin", m_Settings.szAutoLogin);
-
 	ini_table_create_entry_as_int(config, "gui", "hparmourtext", m_Settings.iHPArmourText);
 	ini_table_create_entry_as_int(config, "gui", "damageinformer", m_Settings.iIsEnableDamageInformer);
 	ini_table_create_entry_as_int(config, "gui", "text3dinveh", m_Settings.iIsEnable3dTextInVehicle);
 
-	ini_table_create_entry_as_int(config, "client", "server", m_Settings.szServer);
 	ini_table_create_entry_as_int(config, "client", "debug", m_Settings.szDebug);
 	ini_table_create_entry_as_int(config, "client", "headmove", m_Settings.szHeadMove);
 	ini_table_create_entry_as_int(config, "client", "dl", m_Settings.szDL);
@@ -87,13 +80,8 @@ void CSettings::save(int iIgnoreCategory)
 
 extern bool g_bIsTestMode;
 extern void ApplyFPSPatch(uint8_t fps);
-void CSettings::LoadSettings(const char *szNickName, int iChatLines)
+void CSettings::LoadSettings(int iChatLines)
 {
-	char tempNick[40];
-	if (szNickName)
-	{
-		strcpy(tempNick, szNickName);
-	}
 
 	Log("Loading settings..");
 
@@ -109,18 +97,9 @@ void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 		return;
 	}
 
-	snprintf(m_Settings.szNickName, sizeof(m_Settings.szNickName), "__android_%d%d", rand() % 1000, rand() % 1000);
-	memset(m_Settings.szPassword, 0, sizeof(m_Settings.szPassword));
-	memset(m_Settings.player_password, 0, sizeof(m_Settings.player_password));
-
 	snprintf(m_Settings.szFont, sizeof(m_Settings.szFont), "visby-round-cf-extra-bold.ttf");
 
 	std::string szName = ini_table_get_entry(config, "client", "name");
-	const char *szPassword = ini_table_get_entry(config, "client", "password");
-	const char *pPassword = ini_table_get_entry(config, "client", "player_password");
-
-	m_Settings.szAutoLogin = ini_table_get_entry_as_int(config, "client", "autologin", 0);
-	m_Settings.szServer = ini_table_get_entry_as_int(config, "client", "server", 0);
 
 	m_Settings.szDebug = ini_table_get_entry_as_int(config, "client", "debug", 0);
 	CDebugInfo::SetDrawFPS(CSettings::m_Settings.szDebug);
@@ -133,32 +112,12 @@ void CSettings::LoadSettings(const char *szNickName, int iChatLines)
 
 	std::string szFontName = ini_table_get_entry(config, "gui", "Font");
 
-	if(pPassword)
-	{
-		strcpy(m_Settings.player_password, pPassword);
-	}
-	if ( !szName.empty() )
-	{
-		strcpy(m_Settings.szNickName, szName.c_str());
-	}
-	if (szPassword)
-	{
-		strcpy(m_Settings.szPassword, szPassword);
-	}
 	if ( !szFontName.empty() )
 	{
 		strcpy(m_Settings.szFont, szFontName.c_str());
 	}
 
-	ClearBackslashN(m_Settings.szNickName, sizeof(m_Settings.szNickName));
-	ClearBackslashN(m_Settings.szPassword, sizeof(m_Settings.szPassword));
 	ClearBackslashN(m_Settings.szFont, sizeof(m_Settings.szFont));
-	ClearBackslashN(m_Settings.player_password, sizeof(m_Settings.player_password));
-
-	if (szNickName)
-	{
-		strcpy(m_Settings.szNickName, tempNick);
-	}
 
 	m_Settings.fFontSize = ini_table_get_entry_as_float(config, "gui", "FontSize", 30.0f);
 	m_Settings.iChatFontSize = ini_table_get_entry_as_int(config, "gui", "ChatFontSize", -1);

@@ -9,7 +9,6 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.text.Html;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -32,7 +31,6 @@ import com.liverussia.cr.core.Samp;
 import com.liverussia.cr.gui.util.Utils;
 import com.liverussia.launcher.domain.enums.StorageElements;
 import com.liverussia.launcher.storage.Storage;
-import com.nvidia.devtech.NvEventQueueActivity;
 import com.liverussia.cr.R;
 import com.skydoves.progressview.ProgressView;
 
@@ -40,11 +38,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.UnsupportedEncodingException;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -809,9 +804,9 @@ public class HudManager {
     public void initServerLogo() {
         activity.runOnUiThread(() -> {
 
-            String serverColor = Storage.getProperty(StorageElements.SERVER_COLOR, activity);
-            String serverName = Storage.getProperty(StorageElements.SERVER_NAME, activity);
-            String serverMulti = Storage.getProperty(StorageElements.SERVER_MULTI, activity);
+            String serverColor = Storage.getString(StorageElements.SERVER_COLOR, activity);
+            String serverName = Storage.getString(StorageElements.SERVER_NAME, activity);
+            String serverMulti = Storage.getString(StorageElements.SERVER_MULTI, activity);
 
             ImageView img = activity.findViewById(R.id.hud_logo_img);
             TextView text = activity.findViewById(R.id.hud_logo_text);

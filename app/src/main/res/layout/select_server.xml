@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/select_server_main_layout"
+    android:visibility="gone"
+    android:theme="@style/Theme.Material3.Dark.NoActionBar"
+    android:background="@color/blue_">
+
+
+    <ImageView
+        android:id="@+id/select_server_back"
+        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+        android:layout_width="@dimen/_30sdp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_40sdp"
+        android:layout_marginTop="16dp"
+        android:adjustViewBounds="true"
+        android:src="@drawable/arrow_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="выберите сервер"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:includeFontPadding="false"
+        android:textSize="@dimen/_11sdp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/select_server_back"
+        app:layout_constraintStart_toEndOf="@+id/select_server_back"
+        app:layout_constraintTop_toTopOf="@+id/select_server_back" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/select_server_recycle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/select_server_back"
+        app:layout_constraintTop_toBottomOf="@+id/select_server_back" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1338,6 +1338,13 @@ void CGame__Process_hook()
 	if (!once)
 	{
 		CCustomPlateManager::Initialise();
+
+		// hide load
+		JNIEnv* env = g_pJavaWrapper->GetEnv();
+		jclass clazz = env->GetObjectClass(g_pJavaWrapper->activity);
+		jmethodID method = env->GetStaticMethodID(clazz, "hideBackGroundSplash", "()V");
+		env->CallStaticVoidMethod(clazz, method);
+
 		once = true;
 	}
 
@@ -2078,8 +2085,6 @@ uintptr_t* ConvertBufferToObject_hook(uint8_t* fileBuffer, int32_t modelId)
 	return ConvertBufferToObject(fileBuffer, modelId);
 }
 
-#include "../java_systems/LoadingScreen.h"
-
 void (*CRenderer__RenderEverythingBarRoads)();
 void CRenderer__RenderEverythingBarRoads_hook()
 {
@@ -2150,7 +2155,7 @@ void InstallHooks()
 //
 //	CHook::InlineHook(g_libGTASA, 0x0032217C, &CEventHandler__HandleEvents_hook, &CEventHandler__HandleEvents);
 
-	CHook::Redirect(g_libGTASA, 0x0043AF78, &LoadingScreen::gtaLoadingScreenTick);
+//	CHook::Redirect(g_libGTASA, 0x0043AF78, &LoadingScreen::gtaLoadingScreenTick);
 //
 	CHook::Redirect(g_libGTASA, 0x003F646C, &Render2dStuff);
 

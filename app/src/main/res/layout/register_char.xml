@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/reg_char_main_layout"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
+    android:background="@color/blue_"
+    android:visibility="gone">
+
+    <ImageView
+        android:id="@+id/reg_char_back"
+        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+        android:layout_width="@dimen/_30sdp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_40sdp"
+        android:layout_marginTop="16dp"
+        android:adjustViewBounds="true"
+        android:src="@drawable/arrow_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/register_char_caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:includeFontPadding="false"
+        android:text="создание персонажа"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_11sdp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/reg_char_back"
+        app:layout_constraintStart_toEndOf="@+id/reg_char_back"
+        app:layout_constraintTop_toTopOf="@+id/reg_char_back" />
+
+    <TextView
+        android:id="@+id/textView15"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Имя персонажа"
+        app:layout_constraintBottom_toTopOf="@+id/reg_char_first_name"
+        app:layout_constraintStart_toStartOf="@+id/reg_char_first_name" />
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/reg_char_first_name"
+        android:layout_width="@dimen/_200sdp"
+        android:layout_height="@dimen/_50sdp"
+        android:hint="Например, Leonid"
+        android:imeOptions="flagNoExtractUi"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/reg_char_back"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Фамилия персонажа"
+        app:layout_constraintBottom_toTopOf="@+id/reg_char_last_name"
+        app:layout_constraintStart_toStartOf="@+id/reg_char_last_name" />
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/reg_char_last_name"
+        android:layout_width="@dimen/_200sdp"
+        android:layout_height="@dimen/_50sdp"
+        android:layout_marginStart="50dp"
+        android:imeOptions="flagNoExtractUi"
+        android:hint="Например, Litvinenko"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/reg_char_first_name"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/reg_char_sex_caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Пол персонажа"
+        app:layout_constraintStart_toStartOf="@+id/radioGroup"
+        app:layout_constraintTop_toBottomOf="@+id/reg_char_first_name" />
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="@dimen/_100sdp"
+        android:layout_height="@dimen/_50sdp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="@+id/reg_char_first_name"
+        app:layout_constraintTop_toBottomOf="@+id/reg_char_sex_caption">
+
+        <RadioButton
+            android:id="@+id/reg_char_sex_male"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24dp"
+            android:layout_weight="1"
+            android:text="Мужской" />
+
+        <RadioButton
+            android:id="@+id/reg_char_sex_female"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24dp"
+            android:layout_weight="1"
+            android:text="Женский" />
+
+    </RadioGroup>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/reg_char_reg_butt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/_40sdp"
+        android:backgroundTint="@color/yellow"
+        android:textColor="@color/white"
+        android:text="Готово"
+        app:layout_constraintBottom_toBottomOf="@+id/radioGroup"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

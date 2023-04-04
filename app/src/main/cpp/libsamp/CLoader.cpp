@@ -11,9 +11,7 @@
 #include "java_systems/CSpeedometr.h"
 #include "java_systems/CDonate.h"
 #include "java_systems/CEditobject.h"
-#include "java_systems/CAuthorization.h"
 #include "java_systems/CChooseSpawn.h"
-#include "java_systems/LoadingScreen.h"
 
 int CLoader::tick = 0;
 
@@ -31,8 +29,8 @@ void CLoader::initCrashLytics()
     firebase::crashlytics::SetCustomKey("build data", __DATE__);
     firebase::crashlytics::SetCustomKey("build time", __TIME__);
 
-    firebase::crashlytics::SetUserId(CSettings::m_Settings.szNickName);
-    firebase::crashlytics::SetCustomKey("Nick", CSettings::m_Settings.szNickName);
+   // firebase::crashlytics::SetUserId(CSettings::m_Settings.szNickName);
+   /// firebase::crashlytics::SetCustomKey("Nick", CSettings::m_Settings.szNickName);
 
     uintptr_t libsamp = CUtil::FindLibrary("libsamp.so");
     uintptr_t libc = CUtil::FindLibrary("libc.so");
@@ -57,7 +55,7 @@ void CLoader::loadSetting()
 
 void *CLoader::loadSettingThread(void *p)
 {
-    CSettings::LoadSettings(nullptr);
+    CSettings::LoadSettings();
 
     pthread_exit(nullptr);
 }
@@ -76,13 +74,8 @@ void CLoader::initJavaClasses(JavaVM* pjvm)
     CEditobject::clazz = env->FindClass("com/liverussia/cr/gui/AttachEdit");
     CEditobject::clazz = (jclass) env->NewGlobalRef( CEditobject::clazz );
 
-    CAuthorization::clazz = env->FindClass("com/liverussia/cr/gui/AuthorizationManager");
-    CAuthorization::clazz = (jclass) env->NewGlobalRef(CAuthorization::clazz);
-
     CChooseSpawn::clazz = env->FindClass("com/liverussia/cr/gui/ChooseSpawn");
     CChooseSpawn::clazz = (jclass) env->NewGlobalRef(CChooseSpawn::clazz);
 
-    LoadingScreen::clazz = env->FindClass("com/liverussia/cr/gui/InGameLoadingScreen");
-    LoadingScreen::clazz = (jclass) env->NewGlobalRef(LoadingScreen::clazz);
 }
 

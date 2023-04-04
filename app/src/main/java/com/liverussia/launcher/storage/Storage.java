@@ -1,5 +1,7 @@
 package com.liverussia.launcher.storage;
 
+import static com.liverussia.cr.core.Samp.activity;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -18,6 +20,14 @@ public class Storage {
         editor.apply();
     }
 
+    public static void remove(String value) {
+        SharedPreferences sharedPreferences = activity.getSharedPreferences(STORAGE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.remove(value);
+        editor.apply();
+    }
+
     public static void addProperty(StorageElements element, Boolean value, Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(STORAGE_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -26,9 +36,58 @@ public class Storage {
         editor.apply();
     }
 
-    public static String getProperty(StorageElements element, Context context) {
+    public static String getString(StorageElements element, Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(STORAGE_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getString(element.getValue(), null);
+    }
+    ////////////////
+    public static String getString(String element) {
+        SharedPreferences sharedPreferences = activity.getSharedPreferences(STORAGE_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getString(element, null);
+    }
+    public static boolean getBool(String element) {
+        SharedPreferences sharedPreferences = activity.getSharedPreferences(STORAGE_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getBoolean(element, false);
+    }
+    public static void setInt(String element, int value) {
+        SharedPreferences sharedPreferences = activity.getSharedPreferences(STORAGE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putInt(element, value);
+        editor.apply();
+    }
+    public static void setString(String element, String value) {
+        SharedPreferences sharedPreferences = activity.getSharedPreferences(STORAGE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putString(element, value);
+        editor.apply();
+    }
+    public static void setBool(String element, Boolean value) {
+        SharedPreferences sharedPreferences = activity.getSharedPreferences(STORAGE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putBoolean(element, value);
+        editor.apply();
+    }
+
+    public static int getInt(String element) {
+        SharedPreferences sharedPreferences = activity.getSharedPreferences(STORAGE_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getInt(element, 0);
+    }
+    public static void setProperty(Context context, String element, String value) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(STORAGE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putString(element, value);
+        editor.apply();
+    }
+    public static void setProperty(Context context, String element, int value) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(STORAGE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putInt(element, value);
+        editor.apply();
     }
 
     public static Boolean getBooleanProperty(StorageElements element, Context context) {

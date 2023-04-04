@@ -249,6 +249,7 @@ void Weather(RPCParameters *rpcParams)
 
 void RequestSpawn(RPCParameters *rpcParams)
 {
+	Log("RequestSpawn");
 	unsigned char * Data = reinterpret_cast<unsigned char *>(rpcParams->input);
 	int iBitLength = rpcParams->numberOfBitsOfData;
 

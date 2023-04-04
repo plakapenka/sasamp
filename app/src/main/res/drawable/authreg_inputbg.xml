@@ -1,8 +1,0 @@
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_pressed="false">
-        <shape android:shape="rectangle">
-            <corners android:radius="@dimen/_6sdp"/>
-            <gradient android:startColor="#90004768" android:endColor="#48004768"/>
-        </shape>
-    </item>
-</layer-list>

@@ -104,11 +104,7 @@
 #define RPC_TECH_INSPECT	68
 #define RPC_UPDATE_SATIETY 	69
 #define RPC_SHOW_DONATE 	70
-
-
-// Packet 252
-#define RPC_TOGGLE_LOGIN (1)
-#define RPC_TOGGLE_REGISTER (2)
+#define PRC_AUTHORIZATION 	73
 
 // Packet 253
 #define RPC_TOGGLE_CHOOSE_SPAWN (2)
@@ -150,13 +146,8 @@ public:
 	void SendChatMessage(const char* szMsg);
 	void SendChatCommand(const char* szMsg);
 	void SendCustomPacket(uint8_t packet, uint8_t RPC, uint8_t Quantity);
-	void SendCustomCasinoChipPacket(uint8_t packet, uint8_t RPC, uint8_t type, uint8_t button, uint32_t money);
 	void SendCustomPacketFuelData(uint8_t packet, uint8_t RPC, uint8_t fueltype, uint32_t fuel);
-	void SendLoginPacket(const char password[]);
-	void SendCheckClientPacket(const char password[]);
-	void SendSpeedTurnPacket(uint8_t turnId, uint8_t state);
-	void SendRegisterPacket(char *password, char *mail, uint8_t sex, uint8_t skin);
-	void SendRegisterSkinPacket(uint32_t skinId);
+//	void SendCheckClientPacket(const char password[]);
 
 	void SetMapIcon(uint8_t byteIndex, float fX, float fY, float fZ, uint8_t byteIcon, int iColor, int style);
 	void DisableMapIcon(uint8_t byteIndex);
@@ -192,7 +183,6 @@ private:
 	void Packet_TrailerSync(Packet* p);
 	void Packet_CustomRPC(Packet* p);
 	void Packet_SpecialCustomRPC(Packet* p);
-	void Packet_AuthRPC(Packet* p);
 
 public:
 	char m_szHostName[0xFF];

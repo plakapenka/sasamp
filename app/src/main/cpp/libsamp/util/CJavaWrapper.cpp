@@ -62,7 +62,6 @@ void CJavaWrapper::ShowClientSettings()
 #include "chatwindow.h"
 #include "java_systems/CMedic.h"
 #include "java_systems/CSpeedometr.h"
-#include "java_systems/CAuthorization.h"
 #include "java_systems/CChooseSpawn.h"
 
 void CJavaWrapper::ShowFuelStation(int type, int price1, int price2, int price3, int price4, int price5, int maxCount)
@@ -254,38 +253,6 @@ void CJavaWrapper::UpdateAutoShop(const char name[], int price, int count, float
 	env->DeleteLocalRef(j_name);
 }
 
-void CJavaWrapper::ShowRegistration(char *nick, int id) 
-{
-	pGame->isRegistrationActive = true;
-	JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-
-    jstring jNick = env->NewStringUTF(nick);
-
-	env->CallVoidMethod(this->activity, this->s_showRegistration, jNick, id);
-	env->DeleteLocalRef(jNick);
-
-	g_pJavaWrapper->RegisterSkinValue = 1;
-}
-
-void CJavaWrapper::HideRegistration() 
-{
-	pGame->isRegistrationActive = false;
-	JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return;
-	}
-	env->CallVoidMethod(this->activity, this->s_hideRegistration);
-}
-
 void CJavaWrapper::ClearScreen()
 {
 	Log("ClearScreen");
@@ -294,9 +261,7 @@ void CJavaWrapper::ClearScreen()
 	ShowMiningGame3(false);
 	ToggleShopStoreManager(false);
 	CHUD::hideTargetNotify();
-	CAuthorization::hide();
 	CChooseSpawn::hide();
-	HideRegistration();
 	CSpeedometr::hide();
 	HideArmyGame();
 	this->ToggleAutoShop(false);
@@ -360,9 +325,6 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
     s_showSamwill = env->GetMethodID(nvEventClass, "showSamwill", "()V");
 
 	s_showMenu = env->GetMethodID(nvEventClass, "showMenu", "()V");
-
-	s_showRegistration = env->GetMethodID(nvEventClass, "showRegistration", "(Ljava/lang/String;I)V");
-	s_hideRegistration = env->GetMethodID(nvEventClass, "hideRegistration", "()V");
 
 	j_toggleAutoShop = env->GetMethodID(nvEventClass, "toggleAutoShop", "(Z)V");
 
@@ -512,92 +474,7 @@ Java_com_liverussia_cr_gui_AutoShop_sendAutoShopButton(JNIEnv *env, jobject thiz
 	bsSend.Write(button);
 	pNetGame->GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE_SEQUENCED, 0);
 }
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_RegistrationManager_onRegisterChooseSkinClick(JNIEnv *env, jobject thiz,
-																		 jint choosesex) {
-	g_pJavaWrapper->RegisterSexMale = choosesex;
-	pGame->ToggleHUDElement(0, false);
-	CPlayerPed *pPlayer = pGame->FindPlayerPed();
-	CCamera *pCamera = pGame->GetCamera();
 
-	pNetGame->SendRegisterSkinPacket(g_pJavaWrapper->ChangeRegisterSkin(g_pJavaWrapper->RegisterSkinValue));
-
-	if(pPlayer->IsInVehicle())
-		pPlayer->RemoveFromVehicleAndPutAt(-82.9753, 966.7605, 1597.9788);
-	else
-		pPlayer->TeleportTo(-82.9753, 966.7605, 1597.9788);
-
-	pPlayer->ForceTargetRotation(90.0f);
-
-	if (pPlayer && pCamera)
-	{
-		pPlayer->SetInterior(2);
-		pCamera->SetPosition(-85.068267, 966.699584, 1598.421997, 0.0f, 0.0f, 0.0f);
-		pCamera->LookAtPoint(-80.124114, 967.120971, 1597.807373, 2);
-	}
-}
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_RegistrationManager_onRegisterSkinBackClick(JNIEnv *env, jobject thiz) {
-	g_pJavaWrapper->RegisterSkinValue--;
-	if (g_pJavaWrapper->RegisterSexMale == 1) // man
-	{
-		if (g_pJavaWrapper->RegisterSkinValue < 1)
-		{
-			g_pJavaWrapper->RegisterSkinValue = 9;
-		}
-	}
-	else if (g_pJavaWrapper->RegisterSexMale == 2) // woman
-	{
-		if (g_pJavaWrapper->RegisterSkinValue < 1)
-		{
-			g_pJavaWrapper->RegisterSkinValue = 4;
-		}
-	}
-	//CChatWindow::AddDebugMessage("chooseskinvalue: %d, chooseskinid: %d", g_pJavaWrapper->RegisterSkinValue, g_pJavaWrapper->ChangeRegisterSkin(g_pJavaWrapper->RegisterSkinValue));
-	pNetGame->SendRegisterSkinPacket(g_pJavaWrapper->ChangeRegisterSkin(g_pJavaWrapper->RegisterSkinValue));
-}
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_RegistrationManager_onRegisterSkinNextClick(JNIEnv *env, jobject thiz) {
-	g_pJavaWrapper->RegisterSkinValue++;
-	if (g_pJavaWrapper->RegisterSexMale == 1) // man
-	{
-		if (g_pJavaWrapper->RegisterSkinValue > 9)
-		{
-			g_pJavaWrapper->RegisterSkinValue = 1;
-		}
-	}
-	else if (g_pJavaWrapper->RegisterSexMale == 2) // woman
-	{
-		if (g_pJavaWrapper->RegisterSkinValue > 4)
-		{
-			g_pJavaWrapper->RegisterSkinValue = 1;
-		}
-	}
-	//CChatWindow::AddDebugMessage("chooseskinvalue: %d, chooseskinid: %d", g_pJavaWrapper->RegisterSkinValue, g_pJavaWrapper->ChangeRegisterSkin(g_pJavaWrapper->RegisterSkinValue));
-	pNetGame->SendRegisterSkinPacket(g_pJavaWrapper->ChangeRegisterSkin(g_pJavaWrapper->RegisterSkinValue));
-}
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_RegistrationManager_onRegisterClick(JNIEnv *env, jobject thiz,
-															   jstring password, jstring mail,
-															   jint sex) {
-	const char *inputPassword = env->GetStringUTFChars(password, nullptr);
-	const char *inputMail = env->GetStringUTFChars(mail, nullptr);
-
-	if(pNetGame) {
-		pNetGame->SendRegisterPacket((char*)inputPassword, (char*)inputMail, sex, g_pJavaWrapper->RegisterSkinId);
-	}
-
-	pGame->ToggleHUDElement(0, false);
-
-	Log("onRegisterPlayClick: inputPassword - %s, inputMail - %s, ChooseSex - %d", inputPassword, inputMail, sex);
-
-	env->ReleaseStringUTFChars(password, inputPassword);
-	env->ReleaseStringUTFChars(mail, inputMail);
-}
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liverussia_cr_gui_SamwillManager_onSamwillHideGame(JNIEnv *env, jobject thiz,

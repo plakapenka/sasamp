@@ -3,20 +3,13 @@ package com.liverussia.cr.gui.util;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.text.Html;
 import android.text.Spanned;
-import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
-import androidx.annotation.ColorInt;
-import androidx.annotation.Dimension;
-import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -38,6 +31,10 @@ public class Utils {
             view.setVisibility(View.VISIBLE);
             view.invalidate();
         }
+    }
+
+    public static boolean isEmailValid(String email){
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
     public static void HideLayout(View view, boolean isAnim) {

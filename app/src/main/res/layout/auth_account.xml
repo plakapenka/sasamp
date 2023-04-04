@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/menu_bg_blur_1"
+    android:visibility="gone"
+    android:id="@+id/auth_layout"
+    android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/auth_process"
+        android:layout_width="@dimen/_50sdp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:indeterminate="true"
+        app:indicatorColor="@color/yellow"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="@dimen/_300sdp"
+        android:layout_height="@dimen/_230sdp"
+        android:background="#99FFFFFF"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/login_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="16dp"
+            android:hint="E-mail"
+            android:imeOptions="flagNoExtractUi"
+            app:layout_constraintBottom_toTopOf="@+id/login_password"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="flagNoExtractUi"
+                android:inputType="textEmailAddress" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/login_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="16dp"
+            android:hint="Пароль"
+            app:endIconMode="password_toggle"
+            app:layout_constraintBottom_toTopOf="@+id/login_loginButt"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="flagNoExtractUi"
+                android:inputType="textPassword" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/login_loginButt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+
+            android:layout_marginBottom="8dp"
+            android:backgroundTint="@color/blue_"
+            android:text="Войти"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_10sdp"
+            app:cornerRadius="@dimen/_5sdp"
+            app:layout_constraintBottom_toTopOf="@+id/login_recoverypass"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/login_recoverypass"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="Забыли пароль?"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toTopOf="@+id/auth_regButt"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/auth_regButt"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_30sdp"
+            android:background="#4CAF50"
+            android:fontFamily="@font/din_pro_medium"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+            android:gravity="center"
+            android:text="регистрация"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,13 +5,12 @@
 static struct stSettings
 {
 	// client
-	char szNickName[MAX_PLAYER_NAME+1];
+	char szNickName[MAX_PLAYER_NAME+1] {0};
 	char player_password[66];
 	char szPassword[66];
-	int szAutoLogin;
+//	int szAutoLogin;
 	int iIsEnableDamageInformer;
 	int iIsEnable3dTextInVehicle;
-	int szServer;
 	int szDebug;
 	int szHeadMove;
 	int szDL;
@@ -31,6 +30,10 @@ static struct stSettings
 	int iOutfitGuns;
 	int isTestMode;
 	int iHPArmourText;
+
+	char cHost[35];
+	int iPort;
+
 };
 
 static class CSettings
@@ -41,7 +44,7 @@ public:
 
 	static static void save(int iIgnoreCategory = 0);
 
-	static void LoadSettings(const char* szNickName, int iChatLines = -1);
+	static void LoadSettings(int iChatLines = -1);
 
 	static stSettings m_Settings;
 };

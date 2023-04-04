@@ -1,56 +1,62 @@
 package com.liverussia.launcher.async.service;
 
-import com.liverussia.launcher.async.dto.request.LoginRequestDto;
-import com.liverussia.launcher.async.dto.request.RefreshTokenRequestDto;
-import com.liverussia.launcher.async.dto.response.AuthenticationResponseDto;
+import com.liverussia.startMenu.chooseChar.CharData;
+import com.liverussia.startMenu.servers_list.ServerData;
 import com.liverussia.launcher.async.dto.response.LatestVersionInfoDto;
-import com.liverussia.launcher.async.dto.response.LoaderSliderInfoResponseDto;
-import com.liverussia.launcher.async.dto.response.MonitoringData;
-import com.liverussia.launcher.async.dto.response.ServerImagesResponseDto;
-import com.liverussia.launcher.async.dto.response.SpinRouletteResponseDto;
-import com.liverussia.launcher.async.dto.response.UserInfoDto;
-import com.liverussia.launcher.async.dto.response.News;
+import com.liverussia.launcher.async.dto.response.LoginGameResponse;
 
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
-import retrofit2.http.Body;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
-import retrofit2.http.Header;
 import retrofit2.http.POST;
 
 public interface NetworkService {
 
-    @GET("https://files.liverussia.online/launcher/data.php")
-    Call<MonitoringData> getMonitoringData();
-
-    //  @GET("https://files.liverussia.online/servers1.php")
-    //Call<List<Servers>> getServers();
-
-    @GET("https://files.liverussia.online/historyforlauncher/history.json")
-    Call<List<News>> getNews();
-
-    @GET("https://files.liverussia.online/loader_slider/texts.json")
-    Call<LoaderSliderInfoResponseDto> getLoaderSliderInfo();
-
-    @GET("https://files.liverussia.online/donate/services/urls.json")
-    Call<ServerImagesResponseDto> getDonateServices();
-
-    @GET("https://files.liverussia.online/roulette/prizes/urls.json")
-    Call<ServerImagesResponseDto> getPossibleRoulettePrizes();
+    @GET("https://files.liverussia.online/game_api/data.php")
+    Call<List<ServerData>> getServersList();
 
     @GET("https://files.liverussia.online/apk/test/last_apk_info.json")
     Call<LatestVersionInfoDto> getLastApkInfo();
 
-    @POST("/api/v1/auth/android/refresh")
-    Call<AuthenticationResponseDto> refreshTokens(@Body RefreshTokenRequestDto request);
+    @POST("/game_api/register_char.php")
+    @FormUrlEncoded
+    Call<String> registerChar(
+            @Field("serverId") int servid,
+            @Field("user_login") String login,
+            @Field("user_pass") String pass,
+            @Field("sex") int sex,
+            @Field("firstName") String firstName,
+            @Field("lastName") String lastName
+    );
 
-    @POST("/api/v1/auth/android/login")
-    Call<AuthenticationResponseDto> loginUser(@Body LoginRequestDto loginRequestDto);
+    @POST("/game_api/transfer_char.php")
+    @FormUrlEncoded
+    Call<String> transferChar(
+            @Field("serverId") int servid,
+            @Field("user_login") String login,
+            @Field("user_pass") String password,
+            @Field("nick") String nick,
+            @Field("pass") String pass
+    );
 
-    @GET("/api/v1/android/user/info")
-    Call<UserInfoDto> updateUserInfo(@Header("Authorization") String token);
+    @POST("/game_api/register_acc.php")
+    @FormUrlEncoded
+    Call<String> registerAccount(
+            @Field("email") String email,
+            @Field("password") String password
+    );
 
-    @POST("/api/v1/android/user/roulette/spin")
-    Call<SpinRouletteResponseDto> spinRoulette(@Header("Authorization") String token);
+    @POST("/game_api/auth.php")
+    @FormUrlEncoded
+    Call<LoginGameResponse> gameLogin(@Field("email") String email, @Field("password") String password);
+
+    @POST("/game_api/get_chars_list.php")
+    @FormUrlEncoded
+    Call<List<CharData>> getChars(@Field("login") String email, @Field("pass") String password, @Field("servId") int servId);
 }

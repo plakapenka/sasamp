@@ -24,8 +24,6 @@
         <include layout="@layout/casino_dice" />
         <include layout="@layout/speedometer"/>
         <include layout="@layout/menu_action_dialog" />
-        <include layout="@layout/registration" />
-        <include layout="@layout/authorization" />
         <include layout="@layout/choosespawn" />
         <include layout="@layout/sawmill" />
         <include layout="@layout/oilfactory" />
@@ -54,6 +52,7 @@
 
     </FrameLayout>
 
-    <include layout="@layout/serverselect" />
+    <include layout="@layout/background_splash"/>
+    <include layout="@layout/game_menu_start" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

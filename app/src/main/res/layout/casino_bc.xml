@@ -45,7 +45,7 @@
             android:id="@+id/textView34"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/visby_chat"
+            android:fontFamily="@font/visby_round_cf_extra_bold"
             android:shadowColor="@color/black"
             android:shadowRadius="5"
             android:text="последние исходы:"

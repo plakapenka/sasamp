@@ -15,7 +15,7 @@
         android:textSize="@dimen/_8sdp"
         android:textColor="#c2ddf8"
         android:includeFontPadding="false"
-        android:fontFamily="@font/visby_chat"
+        android:fontFamily="@font/visby_round_cf_extra_bold"
         android:text=" Platinum VIP.Благодарим "
         />
     <TextView
@@ -27,7 +27,7 @@
         android:textSize="@dimen/_8sdp"
         android:textColor="#a9c4e4"
         android:includeFontPadding="false"
-        android:fontFamily="@font/visby_chat"
+        android:fontFamily="@font/visby_round_cf_extra_bold"
         android:text=" Platinum VIP.Благодарим "/>
 
 </FrameLayout>

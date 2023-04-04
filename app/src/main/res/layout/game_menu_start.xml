@@ -1,0 +1,104 @@
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/loadscreen_main_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/menu_bg_1"
+    android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
+    android:visibility="visible">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/menu_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="154dp"
+        tools:layout_editor_absoluteY="83dp">
+
+
+        <TextView
+            android:id="@+id/login_change_server"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:fontFamily="@font/din_pro_black"
+            android:includeFontPadding="false"
+            android:textSize="@dimen/_9sdp"
+            android:text="Сервер: Москва"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toTopOf="@+id/game_menu_start_play_butt"
+            app:layout_constraintEnd_toEndOf="@+id/game_menu_start_play_butt"
+            app:layout_constraintStart_toStartOf="@+id/game_menu_start_play_butt" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/login_login_layout"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="@+id/game_menu_start_play_butt"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/login_user_icon"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:src="@drawable/user_icon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/login_login_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:fontFamily="@font/visby_round_cf_extra_bold"
+                android:includeFontPadding="false"
+                android:text="plakapenok1@gmail.com"
+                android:textSize="@dimen/_10sdp"
+                android:textColor="@color/white"
+                app:layout_constraintBottom_toBottomOf="@+id/login_user_icon"
+                app:layout_constraintStart_toEndOf="@+id/login_user_icon"
+                app:layout_constraintTop_toTopOf="@+id/login_user_icon" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/change_user"
+            android:layout_width="wrap_content"
+            android:padding="@dimen/_5sdp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="#AB000000"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:text="Выход"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/login_login_layout"
+            app:layout_constraintTop_toBottomOf="@+id/login_login_layout" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/game_menu_start_play_butt"
+            android:layout_width="@dimen/_120sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_marginStart="@dimen/_30sdp"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="@color/yellow"
+            android:text="играть"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_15sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <include layout="@layout/auth_account"/>
+    <include layout="@layout/select_server"/>
+    <include layout="@layout/select_char"/>
+    <include layout="@layout/register_char"/>
+    <include layout="@layout/register_char_old"/>
+    <include layout="@layout/reg_account"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

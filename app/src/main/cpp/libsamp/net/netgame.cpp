@@ -303,10 +303,6 @@ void CNetGame::UpdateNetwork()
 				Packet_CustomRPC(pkt);
 				break;
 
-			case PACKET_AUTH:
-				Packet_AuthRPC(pkt);
-				break;
-
 			case PACKET_SPECIALCUSTOM:
 				Packet_SpecialCustomRPC(pkt);
 				break;
@@ -342,70 +338,8 @@ void CNetGame::Packet_TrailerSync(Packet* p)
 
 #include "..//game/CCustomPlateManager.h"
 #include "java_systems/CDuelsGui.h"
-#include "java_systems/CAuthorization.h"
 #include "java_systems/CChooseSpawn.h"
 
-
-void CNetGame::Packet_AuthRPC(Packet *p)
-{
-	RakNet::BitStream bs((unsigned char *)p->data, p->length, false);
-	uint8_t packetID;
-	uint32_t rpcID;
-	bs.Read(packetID);
-	bs.Read(rpcID);
-	// CChatWindow::AddDebugMessage("packet: %d rpc: %d", packetID, rpcID);
-
-	switch (rpcID)
-	{
-		case RPC_TOGGLE_LOGIN:
-		{
-			uint32_t toggle, ip_match, timepassed, email_acvive;
-			bs.Read(toggle);
-			bs.Read(ip_match);
-			bs.Read(timepassed);
-			bs.Read(email_acvive);
-
-			if (toggle == 1) {
-				CPlayerPool *pPlayerPool = GetPlayerPool();
-				if (pPlayerPool) {
-					CAuthorization::show(pPlayerPool->GetLocalPlayerName(),
-													  pPlayerPool->GetLocalPlayerID(),
-													  (bool) ip_match,
-													  (bool) CSettings::m_Settings.szAutoLogin,
-													  (bool) email_acvive
-					);
-
-					if (CSettings::m_Settings.szAutoLogin && ip_match && timepassed) {
-						SendLoginPacket(CSettings::m_Settings.player_password);
-					}
-				}
-			}
-			else if (toggle == 0)
-			{
-				CAuthorization::hide();
-			}
-			break;
-		}
-		case RPC_TOGGLE_REGISTER:
-		{
-			uint32_t toggle;
-			bs.Read(toggle);
-			if (toggle == 1)
-			{
-				CPlayerPool *pPlayerPool = GetPlayerPool();
-				if (pPlayerPool)
-				{
-					g_pJavaWrapper->ShowRegistration(pPlayerPool->GetLocalPlayerName(), pPlayerPool->GetLocalPlayerID());
-				}
-			}
-			else if (toggle == 0)
-			{
-				g_pJavaWrapper->HideRegistration();
-			}
-			break;
-		}
-	}
-}
 
 void CNetGame::Packet_SpecialCustomRPC(Packet *p)
 {
@@ -743,23 +677,23 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			packetMedGame(p);
 			break;
 		}
-		case RPC_CHECK_CLIENT:
-		{
-			char recievKey[17];
-			uint16_t recievKey_len;
-			bs.Read(recievKey_len);
-			bs.Read(recievKey, recievKey_len);
-
-			recievKey[recievKey_len] = '\0';
-
-			char key_with_salt[recievKey_len+ strlen(AUTH_SALT)+1];
-			strcpy(key_with_salt, recievKey);
-			strcat(key_with_salt, AUTH_SALT);
-
-			SendCheckClientPacket(sha256(key_with_salt).c_str());
-			break;
-
-		}
+//		case RPC_CHECK_CLIENT:
+//		{
+//			char recievKey[17];
+//			uint16_t recievKey_len;
+//			bs.Read(recievKey_len);
+//			bs.Read(recievKey, recievKey_len);
+//
+//			recievKey[recievKey_len] = '\0';
+//
+//			char key_with_salt[recievKey_len+ strlen(AUTH_SALT)+1];
+//			strcpy(key_with_salt, recievKey);
+//			strcat(key_with_salt, AUTH_SALT);
+//
+//			SendCheckClientPacket(sha256(key_with_salt).c_str());
+//			break;
+//
+//		}
 		case RPC_SHOW_OILGAME:
 		{
 			uint8_t toggle;
@@ -1378,33 +1312,21 @@ void CNetGame::ShutDownForGameRestart()
 	GameResetRadarColors();
 	pGame->SetGravity(m_fGravity);
 }
-
-void CNetGame::SendCheckClientPacket(const char password[])
-{
-	uint8_t packet = ID_CUSTOM_RPC;
-	uint8_t RPC = RPC_CHECK_CLIENT;
-	uint16_t bytePasswordLen = strlen(password);
-	RakNet::BitStream bsSend;
-	bsSend.Write(packet);
-	bsSend.Write(RPC);
-	bsSend.Write(bytePasswordLen);
-	bsSend.Write(password, bytePasswordLen);
-	GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE, 0);
-
-	//CChatWindow::AddDebugMessage("key: %s", password);
-}
-
-void CNetGame::SendSpeedTurnPacket(uint8_t turnId, uint8_t state)
-{
-	uint8_t packet = ID_CUSTOM_RPC;
-	uint8_t RPC = 47;
-	RakNet::BitStream bsSend;
-	bsSend.Write(packet);
-	bsSend.Write(RPC);
-	bsSend.Write(turnId);
-	bsSend.Write(state);
-	GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, UNRELIABLE_SEQUENCED, 0);
-}
+//
+//void CNetGame::SendCheckClientPacket(const char password[])
+//{
+//	uint8_t packet = ID_CUSTOM_RPC;
+//	uint8_t RPC = RPC_CHECK_CLIENT;
+//	uint16_t bytePasswordLen = strlen(password);
+//	RakNet::BitStream bsSend;
+//	bsSend.Write(packet);
+//	bsSend.Write(RPC);
+//	bsSend.Write(bytePasswordLen);
+//	bsSend.Write(password, bytePasswordLen);
+//	GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE, 0);
+//
+//	//CChatWindow::AddDebugMessage("key: %s", password);
+//}
 
 void CNetGame::SendCustomPacket(uint8_t packet, uint8_t RPC, uint8_t Quantity)
 {
@@ -1415,17 +1337,6 @@ void CNetGame::SendCustomPacket(uint8_t packet, uint8_t RPC, uint8_t Quantity)
 	GetRakClient()->Send(&bsSend, HIGH_PRIORITY, RELIABLE, 0);
 }
 
-void CNetGame::SendRegisterSkinPacket(uint32_t skinId)
-{
-	uint8_t packet = PACKET_AUTH;
-	uint8_t RPC = 3;
-	RakNet::BitStream bsSend;
-	bsSend.Write(packet);
-	bsSend.Write(RPC);
-	bsSend.Write(skinId);
-	GetRakClient()->Send(&bsSend, SYSTEM_PRIORITY, RELIABLE, 0);
-}
-
 void CNetGame::SendCustomPacketFuelData(uint8_t packet, uint8_t RPC, uint8_t fueltype, uint32_t fuel)
 {
 	RakNet::BitStream bsSend;
@@ -1433,40 +1344,6 @@ void CNetGame::SendCustomPacketFuelData(uint8_t packet, uint8_t RPC, uint8_t fue
 	bsSend.Write(RPC);
 	bsSend.Write(fueltype);
 	bsSend.Write(fuel);
-	GetRakClient()->Send(&bsSend, HIGH_PRIORITY, RELIABLE, 0);
-}
-
-void CNetGame::SendLoginPacket(const char password[])
-{
-	uint8_t packet = PACKET_AUTH;
-	uint8_t RPC = RPC_TOGGLE_LOGIN;
-	uint8_t bytePasswordLen = strlen(password);
-	RakNet::BitStream bsSend;
-	bsSend.Write(packet);
-	bsSend.Write(RPC);
-	bsSend.Write(bytePasswordLen);
-	bsSend.Write(password, bytePasswordLen);
-	GetRakClient()->Send(&bsSend, HIGH_PRIORITY, RELIABLE, 0);
-
-	strcpy(CSettings::m_Settings.player_password, password);
-    CSettings::save();
-}
-
-void CNetGame::SendRegisterPacket(char *password, char *mail, uint8_t sex, uint8_t skin)
-{
-	uint8_t packet = PACKET_AUTH;
-	uint8_t RPC = RPC_TOGGLE_REGISTER;
-	uint8_t bytePasswordLen = strlen(password);
-	uint8_t byteMailLen = strlen(mail);
-	RakNet::BitStream bsSend;
-	bsSend.Write(packet);
-	bsSend.Write(RPC);
-	bsSend.Write(bytePasswordLen);
-	bsSend.Write(byteMailLen);
-	bsSend.Write(password, bytePasswordLen);
-	bsSend.Write(mail, byteMailLen);
-	bsSend.Write(sex);
-	bsSend.Write(skin);
 	GetRakClient()->Send(&bsSend, HIGH_PRIORITY, RELIABLE, 0);
 }
 
@@ -1636,8 +1513,15 @@ void CNetGame::Packet_ConnectionSucceeded(Packet* pkt)
 	bsSend.Write(byteClientverLen);
 	bsSend.Write(SAMP_VERSION, byteClientverLen);
 
-	m_pRakClient->RPC(&RPC_ClientJoin, &bsSend, HIGH_PRIORITY, RELIABLE, 0, false, UNASSIGNED_NETWORK_ID, NULL);
+	m_pRakClient->RPC(&RPC_ClientJoin, &bsSend, HIGH_PRIORITY, RELIABLE_ORDERED, 0, false, UNASSIGNED_NETWORK_ID, NULL);
 	Log("Packet_ConnectionSucceeded");
+
+	// auth
+	RakNet::BitStream bsSendTwo;
+	bsSendTwo.Write((uint8_t) ID_CUSTOM_RPC);
+	bsSendTwo.Write((uint8_t) PRC_AUTHORIZATION);
+
+	pNetGame->GetRakClient()->Send(&bsSendTwo, HIGH_PRIORITY, RELIABLE_ORDERED, 0);
 }
 void CNetGame::Packet_PlayerSync(Packet* pkt)
 {
