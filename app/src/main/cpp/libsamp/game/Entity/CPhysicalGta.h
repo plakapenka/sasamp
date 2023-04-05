@@ -5,7 +5,7 @@
 #ifndef LIVERUSSIA_CPHYSICALGTA_H
 #define LIVERUSSIA_CPHYSICALGTA_H
 
-#include "game/Entity/CEntityGta.h"
+#include "CEntityGta.h"
 
 #pragma pack(1)
 struct CPhysicalGta : CEntityGta

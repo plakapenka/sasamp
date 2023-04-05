@@ -71,5 +71,5 @@ struct CEntityGta : CPlaceableGta
     uint8_t m_nType;
     uint8_t m_nStatus;
 };
-
+static_assert(sizeof(CEntityGta) == 0x3c, "Invalid");
 #endif //LIVERUSSIA_CENTITYGTA_H

@@ -5,7 +5,7 @@
 #ifndef LIVERUSSIA_CVEHICLEGTA_H
 #define LIVERUSSIA_CVEHICLEGTA_H
 
-#include "CPhysicalGta.h"
+#include "game/Entity/CPhysicalGta.h"
 #include "tHandlingData.h"
 #include "game/Entity/Ped/CPedGta.h"
 #include "Enums/VehicleType.h"
