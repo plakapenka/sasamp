@@ -21,7 +21,6 @@ extern "C"
 #include "chatwindow.h"
 #include "../util/patch.h"
 #include "java_systems/CSpeedometr.h"
-#include "../CSkyBox.h"
 
 extern CGame* pGame;
 extern CPlayerPed *g_pCurrentFiredPed;
@@ -787,8 +786,25 @@ int mpg123_param_hook(void* mh, int key, long val, int ZERO, double fval) {
 	return mpg123_param(mh, key, val | (0x2000 | 0x200 | 0x100 | 0x40), ZERO, fval);
 }
 
+#include "Timer.h"
+#include "game/Collision/Collision.h"
+#include "game/Collision/ColStore.h"
+#include "FileLoader.h"
+
+void InjectHooks()
+{
+	Log("InjectHooks");
+
+	CTimer::InjectHooks();
+	CCollision::InjectHooks();
+	CColStore::InjectHooks();
+	CQuadTreeNode::InjectHooks();
+	CFileLoader::InjectHooks();
+}
+
 void InstallSpecialHooks()
 {
+	InjectHooks();
 	Log("InstallSpecialHooks");
 
 	// Just a fuzzy seek. Tell MPG123 to not load useless data
@@ -1197,7 +1213,6 @@ void CVehicle__ResetAfterRender_hook(uintptr_t thiz)
 #include "..//gui/CFontInstance.h"
 #include "..//gui/CFontRenderer.h"
 #include "CCustomPlateManager.h"
-#include "Timer.h"
 
 void (*CGame__Process)();
 void CGame__Process_hook()
@@ -2085,30 +2100,6 @@ uintptr_t* ConvertBufferToObject_hook(uint8_t* fileBuffer, int32_t modelId)
 	return ConvertBufferToObject(fileBuffer, modelId);
 }
 
-void (*CRenderer__RenderEverythingBarRoads)();
-void CRenderer__RenderEverythingBarRoads_hook()
-{
-	CSkyBox::Process();
-
-	CRenderer__RenderEverythingBarRoads();
-}
-
-void(*CObject__Render)(CEntityGta*);
-void CObject__Render_hook(CEntityGta* thiz)
-{
-	// 0051ABB0 + 1
-	// 004353FE + 1
-	// 004352C4 + 1
-
-	if (CSkyBox::GetSkyObject())
-	{
-		if (CSkyBox::GetSkyObject()->m_pEntity == thiz && !CSkyBox::IsNeedRender())
-			return;
-	}
-
-	CObject__Render(thiz);
-}
-
 bool(*LoadTextures)(uintptr_t* thiz, char* tex, int32_t ver);
 bool LoadTextures_hook(uintptr_t* thiz, char* tex, int32_t ver)
 {
@@ -2126,7 +2117,7 @@ void InstallHooks()
 	CHook::InlineHook(g_libGTASA, 0x0046DF1C, &LoadTextures_hook, &LoadTextures);
 
 	Scene = *(CScene*)(g_libGTASA + 0x009FC938);
-    CTimer::InjectHooks();
+
 
 	//CHook::InlineHook(g_libGTASA, 0x002D2FD0, &ConvertBufferToObject_hook, &ConvertBufferToObject);
 
@@ -2228,3 +2219,4 @@ void InstallHooks()
 
 	HookCPad();
 }
+

@@ -147,15 +147,6 @@ struct VehicleAudioPropertiesStruct
 	float field_16;			// 16: + 32
 };
 
-struct CRect
-{
-public:
-	float left;          // x1
-	float bottom;        // y1
-	float right;         // x2
-	float top;           // y2
-};
-
 #pragma pack(push, 1)
 
 #pragma pack(1)
