@@ -1,6 +1,6 @@
 #pragma once
 
-#include "game/Enums/eCamMode.h"
+#include "game/Enums/CamMode.h"
 
 enum class eSwitchType : uint16_t {
 	NONE,

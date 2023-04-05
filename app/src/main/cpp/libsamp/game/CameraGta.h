@@ -7,7 +7,7 @@
 
 
 #include "CPlaceableGta.h"
-#include "game/Enums/eCamMode.h"
+#include "game/Enums/CamMode.h"
 #include "Cam.h"
 #include "QueuedMode.h"
 #include "game/RW/rwcore.h"

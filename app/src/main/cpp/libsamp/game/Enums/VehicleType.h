@@ -2,8 +2,8 @@
 // Created by plaka on 28.03.2023.
 //
 
-#ifndef LIVERUSSIA_EVEHICLETYPE_H
-#define LIVERUSSIA_EVEHICLETYPE_H
+#ifndef LIVERUSSIA_VEHICLETYPE_H
+#define LIVERUSSIA_VEHICLETYPE_H
 
 enum eVehicleType : int32_t {
     VEHICLE_TYPE_IGNORE      = -1,
@@ -21,4 +21,4 @@ enum eVehicleType : int32_t {
     VEHICLE_TYPE_TRAILER     = 11
 };
 
-#endif //LIVERUSSIA_EVEHICLETYPE_H
+#endif //LIVERUSSIA_VEHICLETYPE_H

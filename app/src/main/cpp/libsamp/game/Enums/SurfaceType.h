@@ -2,8 +2,8 @@
 // Created by plaka on 23.03.2023.
 //
 
-#ifndef LIVERUSSIA_ESURFACETYPE_H
-#define LIVERUSSIA_ESURFACETYPE_H
+#ifndef LIVERUSSIA_SURFACETYPE_H
+#define LIVERUSSIA_SURFACETYPE_H
 
 
 #include <cstdint>
@@ -193,4 +193,4 @@ enum eSurfaceType : uint8_t {
     NUM_FUCKING_SURFACES = 194
 };
 
-#endif //LIVERUSSIA_ESURFACETYPE_H
+#endif //LIVERUSSIA_SURFACETYPE_H

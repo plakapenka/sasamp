@@ -7,7 +7,7 @@
 
 
 #include "ClumpModelInfo.h"
-#include "../Enums/eWeaponType.h"
+#include "../Enums/WeaponType.h"
 
 class CWeaponModelInfo : public CClumpModelInfo {
 public:

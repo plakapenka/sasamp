@@ -8,7 +8,7 @@
 #include "CPhysicalGta.h"
 #include "tHandlingData.h"
 #include "CPedGta.h"
-#include "Enums/eVehicleType.h"
+#include "Enums/VehicleType.h"
 
 struct CVehicleGta : CPhysicalGta
 {

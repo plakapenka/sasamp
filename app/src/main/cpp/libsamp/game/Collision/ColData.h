@@ -5,7 +5,7 @@
 #ifndef LIVERUSSIA_COLDATA_H
 #define LIVERUSSIA_COLDATA_H
 
-#include "../Enums/eSurfaceType.h"
+#include "../Enums/SurfaceType.h"
 
 struct tColLighting {
     union {

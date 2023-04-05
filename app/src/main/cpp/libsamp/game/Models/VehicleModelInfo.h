@@ -8,10 +8,10 @@
 
 #include "ClumpModelInfo.h"
 #include "../RW/rwlpcore.h"
-#include "../Enums/eVehicleClass.h"
+#include "../Enums/VehicleClass.h"
 #include "../Core/Vector.h"
 #include "../Core/Quaternion.h"
-#include "game/Enums/eVehicleType.h"
+#include "game/Enums/VehicleType.h"
 
 union tVehicleCompsUnion {
     unsigned int m_nComps;

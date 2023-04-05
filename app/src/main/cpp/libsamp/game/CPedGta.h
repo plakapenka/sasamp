@@ -9,9 +9,9 @@
 #include "CPedIntelligence.h"
 #include "game/Core/Vector2D.h"
 #include "CVehicleGta.h"
-#include "game/Enums/ePedState.h"
+#include "game/Enums/PedState.h"
 #include "game/Enums/AnimationEnums.h"
-#include "game/Enums/eWeaponType.h"
+#include "game/Enums/WeaponType.h"
 
 enum eMoveState : uint32_t {
     PEDMOVE_NONE = 0,

@@ -5,7 +5,7 @@
 #ifndef LIVERUSSIA_COLSURFACE_H
 #define LIVERUSSIA_COLSURFACE_H
 
-#include "../Enums/eSurfaceType.h"
+#include "../Enums/SurfaceType.h"
 #include "ColData.h"
 
 struct CColSurface {

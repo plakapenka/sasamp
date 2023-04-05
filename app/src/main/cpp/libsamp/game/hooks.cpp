@@ -2,7 +2,7 @@
 #include "RW/RenderWare.h"
 #include <sstream>
 #include "game.h"
-#include "game/Enums/ePedState.h"
+#include "game/Enums/PedState.h"
 
 #include "../net/netgame.h"
 #include "../gui/gui.h"

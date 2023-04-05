@@ -6,10 +6,10 @@
 
 #include "..//CDebugInfo.h"
 #include "util/patch.h"
-#include "game/Enums/ePedState.h"
+#include "game/Enums/PedState.h"
 #include "CWorld.h"
 #include "game/RW/rtanim.h"
-#include "game/Enums/eWeaponType.h"
+#include "game/Enums/WeaponType.h"
 #include "StreamingInfo.h"
 #include "game/Enums/AnimationEnums.h"
 #include "game/Models/ModelInfo.h"

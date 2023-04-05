@@ -8,7 +8,7 @@
 
 #include "CVehicleGta.h"
 #include "Core/Vector.h"
-#include "Enums/eCamMode.h"
+#include "Enums/CamMode.h"
 
 struct CCam {
 public:

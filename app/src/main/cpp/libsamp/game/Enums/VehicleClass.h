@@ -2,8 +2,8 @@
 // Created by plaka on 21.02.2023.
 //
 
-#ifndef LIVERUSSIA_EVEHICLECLASS_H
-#define LIVERUSSIA_EVEHICLECLASS_H
+#ifndef LIVERUSSIA_VEHICLECLASS_H
+#define LIVERUSSIA_VEHICLECLASS_H
 
 enum eVehicleClass : int8_t {
     VEHICLE_CLASS_IGNORE = -1,
@@ -21,4 +21,4 @@ enum eVehicleClass : int8_t {
     VEHICLE_CLASS_BICYCLE,
 };
 
-#endif //LIVERUSSIA_EVEHICLECLASS_H
+#endif //LIVERUSSIA_VEHICLECLASS_H
