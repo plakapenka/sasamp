@@ -109,32 +109,15 @@ struct CBaseModelInfo {
         struct RpAtomic *m_pRwAtomic;
     };
 
-    // Those further ones are completely inlined in final version, not present at all in android version;
-    CVehicleModelInfo* AsVehicleModelInfoPtr() { return reinterpret_cast<CVehicleModelInfo*>(this); }
-    CPedModelInfo*     AsPedModelInfoPtr()     { return reinterpret_cast<CPedModelInfo*>(this); }
-    CWeaponModelInfo*  AsWeaponModelInfoPtr()  { return reinterpret_cast<CWeaponModelInfo*>(this); }
-
     [[nodiscard]] CColModel* GetColModel() const { return m_pColModel; }
-
     [[nodiscard]] bool GetIsDrawLast() const { return bDrawLast; }
     [[nodiscard]] bool HasBeenPreRendered() const { return bHasBeenPreRendered; }
     [[nodiscard]] bool HasComplexHierarchy() const { return bHasComplexHierarchy; }
     [[nodiscard]] bool IsBackfaceCulled() const { return bIsBackfaceCulled; }
     [[nodiscard]] bool IsLod() const { return bIsLod; }
     [[nodiscard]] bool IsRoad() const { return bIsRoad; }
-    void SetHasBeenPreRendered(int32_t bPreRendered) { bHasBeenPreRendered = bPreRendered; }
-    void SetIsLod(bool bLod) { bIsLod = bLod; }
-    void SetOwnsColModel(bool bOwns) { bDoWeOwnTheColModel = bOwns; }
-    void IncreaseAlpha() {
-        if (m_nAlpha >= 239)
-            m_nAlpha = 255;
-        else
-            m_nAlpha += 16;
-    };
-    [[nodiscard]] auto GetModelName() const noexcept { return m_nKey; }
-    void SetModelName(const char* modelName) { m_nKey = CKeyGen::GetUppercaseKey(modelName); }
 };
-//static_assert(sizeof(CBaseModelInfo) == 0x38, "Invalid");
+static_assert(sizeof(CBaseModelInfo) == 0x38, "Invalid");
 // sizeof=0x38
 
 
