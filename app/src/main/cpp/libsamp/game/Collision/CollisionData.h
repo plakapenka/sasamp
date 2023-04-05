@@ -12,6 +12,7 @@
 #include "ColTriangle.h"
 #include "ColTrianglePlane.h"
 #include "ColDisk.h"
+#include "../Core/Link.h"
 
 class CCollisionData {
 public:
@@ -46,6 +47,9 @@ public:
     CVector*        m_pTriCompressedShadVectorArray;       // 0x28
     CColTriangle*   m_pShadTriangleArray;      // 0x2C
     int32_t*        m_modelSec;
+
+public:
+    CLink<CCollisionData*>* GetLinkPtr();
 };
 static_assert(sizeof(CCollisionData) == 0x34, "Invalid size CCollisionData");
 
