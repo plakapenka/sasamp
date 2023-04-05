@@ -6,6 +6,7 @@
 #define LIVERUSSIA_CLUMPMODELINFO_H
 
 #include "BaseModelInfo.h"
+#include "../RW/rwcore.h"
 
 struct tCompSearchStructById {
     int32_t m_nId;

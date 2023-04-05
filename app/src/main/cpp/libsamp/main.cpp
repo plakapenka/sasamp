@@ -498,7 +498,7 @@ Java_com_liverussia_startMenu_GameMenuStart_connectToServer(JNIEnv *env, jobject
     CSettings::m_Settings.iPort = port;
 
     if(port == 7707)
-        strcpy(CSettings::m_Settings.szPassword, "abc");
+        strcpy(CSettings::m_Settings.szPassword, "qwe");
     else
         strcpy(CSettings::m_Settings.szPassword, "");
 }

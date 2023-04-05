@@ -7,10 +7,11 @@
 
 
 #include "BaseModelInfo.h"
-#include "game/CStore.h"
 #include "PedModelInfo.h"
 #include "AtomicModelInfo.h"
 #include "VehicleModelInfo.h"
+
+#include "../Core/Store.h"
 
 class CModelInfo {
 

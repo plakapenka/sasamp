@@ -4,7 +4,7 @@
 
 #include "ModelInfo.h"
 #include "util/patch.h"
-#include "AtomicModelInfo.h"
+
 
 CBaseModelInfo *CModelInfo::ms_modelInfoPtrs[NUM_MODEL_INFOS];
 

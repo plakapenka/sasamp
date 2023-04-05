@@ -789,7 +789,6 @@ int mpg123_param_hook(void* mh, int key, long val, int ZERO, double fval) {
 #include "Timer.h"
 #include "game/Collision/Collision.h"
 #include "game/Collision/ColStore.h"
-#include "FileLoader.h"
 
 void InjectHooks()
 {
@@ -799,7 +798,6 @@ void InjectHooks()
 	CCollision::InjectHooks();
 	CColStore::InjectHooks();
 	CQuadTreeNode::InjectHooks();
-	CFileLoader::InjectHooks();
 }
 
 void InstallSpecialHooks()
