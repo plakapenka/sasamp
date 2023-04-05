@@ -887,7 +887,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 		}
 		case RPC_CUSTOM_VISUALS:
 		{
-			uint16_t vehId;
+			VEHICLEID vehicleId;
 			uint8_t bLightsColor[3];
 			int8_t bWheelAlignX;
 			int8_t bWheelAlignY;
@@ -903,7 +903,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			memset(szText, 0, 30);
 			memset(szRegion, 0, 10);
 
-			bs.Read(vehId);
+			bs.Read(vehicleId);
 			bs.Read(bLightsColor[0]);
 			bs.Read(bLightsColor[1]);
 			bs.Read(bLightsColor[2]);
@@ -920,25 +920,11 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			bs.Read(bPlateType);
 
 			bs.Read(bLen);
-			if (bLen >= sizeof(szText) - 1)
-			{
-				return;
-			}
 			bs.Read(&szText[0], bLen);
 
 			bs.Read(bLen);
-			if (bLen >= sizeof(szRegion) - 1)
-			{
-				return;
-			}
 			bs.Read(&szRegion[0], bLen);
 
-			bs.Read(bLen);
-			if (bLen >= sizeof(szText) - 1)
-			{
-				return;
-			}
-			bs.Read(&szText[0], bLen);
 
 			uint8_t bShadowColor[3];
 			uint8_t bShadowSizeX, bShadowSizeY;
@@ -953,16 +939,11 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			bs.Read(bShadowSizeY);
 			bs.Read(bLen);
 
-			if (bLen >= sizeof(szName) + 1)
-			{
-				return;
-			}
-
 			bs.Read(szName, bLen);
 
 			if (GetVehiclePool())
 			{
-				CVehicle* pVeh = GetVehiclePool()->GetAt(vehId);
+				CVehicle* pVeh = GetVehiclePool()->GetAt(vehicleId);
 				if (pVeh)
 				{
 
@@ -1008,7 +989,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 					//CChatWindow::AddDebugMessage("%d %d %d %d %d", bToner[0], bToner[1], bToner[2], bVinyls[0], bVinyls[1]);
 					if (bPlateType)
 					{
-						CCustomPlateManager::PushPlate(vehId, (uint32_t)bPlateType, szText, szRegion);
+						CCustomPlateManager::PushPlate(vehicleId, (uint32_t)bPlateType, szText, szRegion);
 					}
 				}
 			}

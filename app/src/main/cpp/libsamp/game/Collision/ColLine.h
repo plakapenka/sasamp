@@ -6,8 +6,8 @@
 #define LIVERUSSIA_COLLINE_H
 
 
-#include "../Core/CVector.h"
-#include "../Core/CMatrix.h"
+#include "../Core/Vector.h"
+#include "../Core/Matrix.h"
 
 class CColLine {
 public:

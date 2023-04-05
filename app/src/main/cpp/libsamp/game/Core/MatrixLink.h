@@ -6,7 +6,7 @@
 #define LIVERUSSIA_MATRIXLINK_H
 
 
-#include "CMatrix.h"
+#include "Matrix.h"
 
 class CPlaceable;
 

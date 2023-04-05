@@ -6,7 +6,7 @@
 #define LIVERUSSIA_LINES_H
 
 
-#include "Core/CVector.h"
+#include "Core/Vector.h"
 #include "rgba.h"
 #include "game/RW/rwcore.h"
 

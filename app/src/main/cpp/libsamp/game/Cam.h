@@ -7,7 +7,7 @@
 
 
 #include "CVehicleGta.h"
-#include "Core/CVector.h"
+#include "Core/Vector.h"
 #include "Enums/eCamMode.h"
 
 struct CCam {

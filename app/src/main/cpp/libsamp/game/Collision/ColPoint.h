@@ -6,7 +6,7 @@
 #define LIVERUSSIA_COLPOINT_H
 
 
-#include "../Core/CVector.h"
+#include "../Core/Vector.h"
 #include "ColData.h"
 
 class CColPoint {

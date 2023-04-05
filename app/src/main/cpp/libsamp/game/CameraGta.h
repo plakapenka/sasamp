@@ -13,7 +13,7 @@
 #include "game/RW/rwcore.h"
 #include "CamPathSplines.h"
 #include "RW/rwcore.h"
-#include "Core/CMatrix.h"
+#include "Core/Matrix.h"
 #include "main.h"
 
 enum class eFadeFlag : uint16_t {

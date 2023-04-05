@@ -4,7 +4,7 @@
 #pragma once
 #include "../util/CJavaWrapper.h"
 #include "game/common.h"
-#include "game/Core/CVector2D.h"
+#include "game/Core/Vector2D.h"
 
 
 #ifndef LIVERUSSIA_HUD_H

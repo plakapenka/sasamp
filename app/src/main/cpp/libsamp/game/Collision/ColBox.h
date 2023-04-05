@@ -7,7 +7,7 @@
 
 
 #include "ColData.h"
-#include "../Core/CVector.h"
+#include "../Core/Vector.h"
 #include "Box.h"
 #include "ColSurface.h"
 

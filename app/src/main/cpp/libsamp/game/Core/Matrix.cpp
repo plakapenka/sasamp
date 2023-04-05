@@ -2,7 +2,7 @@
 // Created by plaka on 23.03.2023.
 //
 
-#include "CMatrix.h"
+#include "Matrix.h"
 
 //
 //uint8_t* CMatrix::EulerIndices1 = (uint8_t*)0x866D9C;

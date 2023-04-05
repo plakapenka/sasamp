@@ -2,8 +2,8 @@
 // Created by plaka on 23.03.2023.
 //
 
-#include "CVector2D.h"
-#include "CVector.h"
+#include "Vector2D.h"
+#include "Vector.h"
 #include "game/CGeneral.h"
 
 CVector2D::CVector2D(const CVector& v3) :

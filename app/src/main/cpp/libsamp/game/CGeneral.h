@@ -8,7 +8,7 @@
 
 #include <cstdlib>
 #include <functional>
-#include "game/Core/CVector2D.h"
+#include "game/Core/Vector2D.h"
 
 //! If you see this value, USE THE FLOAT VERSION of `GetRandomNumberInRange`
 constexpr float RAND_MAX_FLOAT_RECIPROCAL = 1.0f / static_cast<float>(RAND_MAX);   // 1.0 / 32767.0 == 1.0 / RAND_MAX       = 0.0000305185094

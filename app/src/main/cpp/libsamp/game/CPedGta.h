@@ -7,7 +7,7 @@
 
 #include "CWeaponGta.h"
 #include "CPedIntelligence.h"
-#include "game/Core/CVector2D.h"
+#include "game/Core/Vector2D.h"
 #include "CVehicleGta.h"
 #include "game/Enums/ePedState.h"
 #include "game/Enums/AnimationEnums.h"

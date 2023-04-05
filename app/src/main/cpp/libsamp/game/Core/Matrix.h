@@ -2,11 +2,11 @@
 // Created by plaka on 23.03.2023.
 //
 
-#ifndef LIVERUSSIA_CMATRIX_H
-#define LIVERUSSIA_CMATRIX_H
+#ifndef LIVERUSSIA_MATRIX_H
+#define LIVERUSSIA_MATRIX_H
 
 
-#include "CVector.h"
+#include "Vector.h"
 #include "Quaternion.h"
 
 enum eMatrixEulerFlags : uint32_t {
@@ -204,4 +204,4 @@ CMatrix  Lerp(CMatrix from, CMatrix to, float t);
 
 static_assert(sizeof(CMatrix) == 0x48, "Invalid");
 
-#endif //LIVERUSSIA_CMATRIX_H
+#endif //LIVERUSSIA_MATRIX_H

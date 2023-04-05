@@ -7,7 +7,7 @@
 #include "CSkyBox.h"
 
 #include "game/game.h"
-#include "game/core/CVector.h"
+#include "game/core/Vector.h"
 
 #include "net/netgame.h"
 #include "gui/gui.h"

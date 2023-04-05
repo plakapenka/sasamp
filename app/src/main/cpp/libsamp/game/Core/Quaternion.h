@@ -1,7 +1,7 @@
 #pragma once
 
 #include "game/RW/rtquat.h"
-#include "CVector.h"
+#include "Vector.h"
 
 class CQuaternion {
 public:

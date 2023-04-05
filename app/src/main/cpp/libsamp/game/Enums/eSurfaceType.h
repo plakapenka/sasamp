@@ -6,6 +6,8 @@
 #define LIVERUSSIA_ESURFACETYPE_H
 
 
+#include <cstdint>
+
 enum eSurfaceType : uint8_t {
     SURFACE_DEFAULT = 0,
     SURFACE_TARMAC = 1,

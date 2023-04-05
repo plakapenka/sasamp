@@ -2,10 +2,10 @@
 // Created by plaka on 30.01.2023.
 //
 
-#include "CVector.h"
-#include "CVector2D.h"
+#include "Vector.h"
+#include "Vector2D.h"
 #include "../CGeneral.h"
-#include "CMatrix.h"
+#include "Matrix.h"
 #include <cmath>
 
 #include <numeric>

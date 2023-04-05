@@ -6,7 +6,7 @@
 #define LIVERUSSIA_SPHERE_H
 
 
-#include "../Core/CVector.h"
+#include "../Core/Vector.h"
 #include "../rgba.h"
 
 class CSphere {

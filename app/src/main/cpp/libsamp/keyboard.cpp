@@ -326,7 +326,7 @@ void CKeyBoard::Close()
 #include "java_systems/CTab.h"
 #include "java_systems/CDuelsGui.h"
 #include "util/patch.h"
-#include "game/Core/CVector.h"
+#include "game/Core/Vector.h"
 #include "game/Models/ModelInfo.h"
 
 bool CKeyBoard::OnTouchEvent(int type, bool multi, int x, int y)

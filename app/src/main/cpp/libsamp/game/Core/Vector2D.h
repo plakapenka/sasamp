@@ -2,8 +2,8 @@
 // Created by plaka on 23.02.2023.
 //
 
-#ifndef LIVERUSSIA_CVECTOR2D_H
-#define LIVERUSSIA_CVECTOR2D_H
+#ifndef LIVERUSSIA_VECTOR2D_H
+#define LIVERUSSIA_VECTOR2D_H
 
 #include <valarray>
 #include <span>
@@ -208,4 +208,4 @@ static CVector2D Normalized2D(CVector2D v) { v.Normalise(); return v; }
 static auto abs(const CVector2D& v2d) {
     return CVector2D{ std::abs(v2d.x), std::abs(v2d.y) };
 }
-#endif //LIVERUSSIA_CVECTOR2D_H
+#endif //LIVERUSSIA_VECTOR2D_H

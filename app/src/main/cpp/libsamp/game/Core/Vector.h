@@ -2,11 +2,11 @@
 // Created by plaka on 30.01.2023.
 //
 
-#ifndef LIVERUSSIA_CVECTOR_H
-#define LIVERUSSIA_CVECTOR_H
+#ifndef LIVERUSSIA_VECTOR_H
+#define LIVERUSSIA_VECTOR_H
 
 #include "game/RW/rwlpcore.h"
-#include "CVector2D.h"
+#include "Vector2D.h"
 
 class CMatrix;
 
@@ -242,4 +242,4 @@ CVector Multiply3x3(const CVector& v, const CMatrix& m);
 CVector MultiplyMatrixWithVector(const CMatrix& mat, const CVector& vec);
 
 
-#endif //LIVERUSSIA_CVECTOR_H
+#endif //LIVERUSSIA_VECTOR_H
