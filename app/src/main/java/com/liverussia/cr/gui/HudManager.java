@@ -803,24 +803,24 @@ public class HudManager {
 
     public void initServerLogo() {
         activity.runOnUiThread(() -> {
-
-            String serverColor = Storage.getString(StorageElements.SERVER_COLOR, activity);
-            String serverName = Storage.getString(StorageElements.SERVER_NAME, activity);
-            String serverMulti = Storage.getString(StorageElements.SERVER_MULTI, activity);
-
-            ImageView img = activity.findViewById(R.id.hud_logo_img);
-            TextView text = activity.findViewById(R.id.hud_logo_text);
-
-            int mainColor = Color.parseColor(serverColor);
-            img.setColorFilter(mainColor, PorterDuff.Mode.SRC_ATOP);
-            text.setTextColor(mainColor);
-            text.setText(serverName.concat(" "));
-
-            if (StringUtils.isNotBlank(serverMulti)) {
-                TextView multiText = activity.findViewById(R.id.hud_logo_multi_text);
-                multiText.setVisibility(View.VISIBLE);
-                multiText.setText(serverMulti.concat(" "));
-            }
+//
+//            String serverColor = Storage.getString(StorageElements.SERVER_COLOR, activity);
+//            String serverName = Storage.getString(StorageElements.SERVER_NAME, activity);
+//            String serverMulti = Storage.getString(StorageElements.SERVER_MULTI, activity);
+//
+//            ImageView img = activity.findViewById(R.id.hud_logo_img);
+//            TextView text = activity.findViewById(R.id.hud_logo_text);
+//
+//            int mainColor = Color.parseColor(serverColor);
+//            img.setColorFilter(mainColor, PorterDuff.Mode.SRC_ATOP);
+//            text.setTextColor(mainColor);
+//            text.setText(serverName.concat(" "));
+//
+//            if (StringUtils.isNotBlank(serverMulti)) {
+//                TextView multiText = activity.findViewById(R.id.hud_logo_multi_text);
+//                multiText.setVisibility(View.VISIBLE);
+//                multiText.setText(serverMulti.concat(" "));
+//            }
         });
     }
     void toggleServerLogo(boolean toggle)

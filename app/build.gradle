@@ -23,8 +23,8 @@ android {
 
         multiDexEnabled false
         applicationId "com.liverussia.cr"
-        versionName "205"
-        versionCode 205
+        versionName "206"
+        versionCode 206
         vectorDrawables.useSupportLibrary = true
 
         lintOptions {

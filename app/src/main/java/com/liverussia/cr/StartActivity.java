@@ -1,5 +1,6 @@
 package com.liverussia.cr;
 
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 import static com.liverussia.launcher.config.Config.DOWNLOAD_DIRECTORY_NAME;
 import static com.liverussia.launcher.config.Config.LIVE_RUSSIA_RESOURCE_SERVER_URL;
 import static com.liverussia.launcher.config.Config.UPDATED_APK_PATH;

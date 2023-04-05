@@ -1,10 +1,12 @@
 package com.liverussia.launcher.async.task;
 
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 import static com.liverussia.launcher.config.Config.FILE_INFO_URL;
 
 import android.app.Activity;
 import android.content.Context;
 import android.os.PowerManager;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -78,6 +80,7 @@ public class DownloadTask implements Listener<TaskStatus> {
     public DownloadTask(Activity loaderActivity, LinearProgressIndicator progressBar, TextView progressText) {
         this.loaderActivity = loaderActivity;
         this.progressBar = progressBar;
+     //   progressBar.setIndeterminate(false);
         this.progressText = progressText;
     }
 
@@ -87,17 +90,17 @@ public class DownloadTask implements Listener<TaskStatus> {
     }
 
     public void download() {
-        //configureProgressBar();
+        configureProgressBar();
         backgroundThreadPoster.post(this::downloadGameFiles);
     }
 
     public void reloadCache() {
-        //configureProgressBar();
+        configureProgressBar();
         backgroundThreadPoster.post(this::reloadGameFiles);
     }
 
     public void updateApk() {
-      //  configureProgressBar();
+        configureProgressBar();
         backgroundThreadPoster.post(this::downloadApk);
     }
 
@@ -139,6 +142,7 @@ public class DownloadTask implements Listener<TaskStatus> {
 
     @WorkerThread
     private void reloadGameFiles() {
+
         List<FileInfo> filesInfo = MainUtils.FILES_TO_RELOAD;
         fileLengthFull = calculateSize(filesInfo);
         fileLengthMin = new AtomicLong(0);
@@ -448,7 +452,7 @@ public class DownloadTask implements Listener<TaskStatus> {
         PowerManager pm = (PowerManager) loaderActivity.getSystemService(Context.POWER_SERVICE);
         mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, getClass().getName());
         mWakeLock.acquire();
-        progressBar.setVisibility(View.VISIBLE);
+     //   progressBar.setVisibility(View.VISIBLE);
         progressBar.setIndeterminate(false);
         progressBar.setMax(100);
         progressText.setText("Загрузка файлов игры...");

@@ -1,7 +1,9 @@
 package com.liverussia.launcher.async.task;
 
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 import static com.liverussia.launcher.config.Config.FILE_INFO_URL;
 
+import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -161,7 +163,9 @@ public class CacheChecker implements Listener<FileInfo[]> {
                 .concat("/")
                 .concat(filePath)
         );
-        return !file.exists() || /*file.length() != fileInfo.getSize() || */file.lastModified() < fileInfo.getVer();
+        Log.d(TAG, String.format("files %s == %d == %d", file.getPath(),file.length(), fileInfo.getSize()));
+        //return false;
+        return !file.exists() || file.length() != fileInfo.getSize() || file.lastModified() < fileInfo.getVer();
     }
 
     private GameFileInfoDto getGameFilesInfo() {
