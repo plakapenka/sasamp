@@ -10,6 +10,12 @@
 
 #define rwMAXTEXTURECOORDS 8
 
+#define RpAtomicGetGeometryMacro(_atomic)                               \
+    ((_atomic)->geometry)
+
+#define RpAtomicGetFrameMacro(_atomic)                                  \
+    ((RwFrame *) rwObjectGetParent(_atomic))
+
 struct RpLight
 {
     RwObjectHasFrame    object; /**< object */
@@ -169,5 +175,13 @@ RpLight* RpLightCreate(RwInt32 type);
 RpWorld* RpWorldRemoveLight(RpWorld* world, RpLight* light);
 RpWorld* RpWorldAddLight(RpWorld* world, RpLight* light);
 RwBool RpLightDestroy(RpLight* light);
+RwBool RpAtomicDestroy(RpAtomic* atomic);
+RwBool RpClumpDestroy(RpClump* clump);
+
+#define RpAtomicGetGeometry(_atomic) \
+    RpAtomicGetGeometryMacro(_atomic)
+
+#define RpAtomicGetFrame(_atomic) \
+    RpAtomicGetFrameMacro(_atomic)
 
 #endif //LIVERUSSIA_RPWORLD_H

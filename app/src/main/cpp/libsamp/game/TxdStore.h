@@ -24,7 +24,7 @@ typedef CPool<TxdDef> CTxdPool;
 
 class CTxdStore {
 public:
-    static CTxdPool*&           ms_pTxdPool;
+    static CTxdPool*            ms_pTxdPool;
     static RwTexDictionary*&    ms_pStoredTxd;
     static int32_t&             ms_lastSlotFound;
     // variables list is not finished. Need to make CPools before.
@@ -32,6 +32,8 @@ public:
     static int16_t (&defaultTxds)[4];
 
 public:
+    static void InjectHooks();
+
     static bool PluginAttach();
     static void Initialise();
     static void Shutdown();

@@ -8,6 +8,14 @@
 #include "Streaming.h"
 #include "game/RW/RenderWare.h"
 #include "game/Core/KeyGen.h"
+#include "util/patch.h"
+
+CTxdPool* CTxdStore::ms_pTxdPool = nullptr;
+
+void CTxdStore::InjectHooks() {
+    CHook::Write(g_libGTASA + 0x00679A64, &CTxdStore::ms_pTxdPool);
+}
+
 
 // initialise txd store
 // 0x731F20

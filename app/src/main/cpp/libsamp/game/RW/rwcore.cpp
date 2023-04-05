@@ -2,6 +2,7 @@
 // Created by plaka on 23.03.2023.
 //
 
+#include <cassert>
 #include "rwcore.h"
 #include "../../main.h"
 
@@ -70,4 +71,9 @@ RwCamera* RwCameraSetFarClipPlane(RwCamera* camera, RwReal farClip) {
 
 RwCamera* RwCameraSetNearClipPlane(RwCamera* camera, RwReal nearClip) {
     return ((RwCamera*(__cdecl *)(RwCamera*, RwReal))(g_libGTASA + 0x001D5A38 + 1))(camera, nearClip);
+}
+
+RwBool RwFrameDestroy(RwFrame* frame) {
+    assert(frame);
+    return ((RwBool(__cdecl *)(RwFrame*))(g_libGTASA + 0x001D83EC + 1))(frame);
 }

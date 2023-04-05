@@ -24,5 +24,13 @@ RpWorld* RpWorldAddLight(RpWorld* world, RpLight* light) {
 }
 
 RwBool RpLightDestroy(RpLight* light) {
-    return ((RwBool(__cdecl *)(RpLight*))(g_libGTASA + 0x00216EF4))(light);
+    return ((RwBool(__cdecl *)(RpLight*))(g_libGTASA + 0x00216EF4 + 1))(light);
+}
+
+RwBool RpAtomicDestroy(RpAtomic* atomic) {
+    return ((RwBool(__cdecl *)(RpAtomic*))(g_libGTASA + 0x0021416C + 1))(atomic);
+}
+
+RwBool RpClumpDestroy(RpClump* clump) {
+    return ((RwBool(__cdecl *)(RpClump*))(g_libGTASA + 0x0021458C + 1))(clump);
 }

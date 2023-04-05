@@ -736,3 +736,4 @@ RwFrame* RwFrameCreate();
 RwInt32 RwTexDictionaryRegisterPlugin(RwInt32 size, RwUInt32 pluginID, RwPluginObjectConstructor constructCB, RwPluginObjectDestructor destructCB, RwPluginObjectCopy copyCB);
 RwCamera* RwCameraSetFarClipPlane(RwCamera* camera, RwReal farClip);
 RwCamera* RwCameraSetNearClipPlane(RwCamera* camera, RwReal nearClip);
+RwBool RwFrameDestroy(RwFrame* frame);
