@@ -4,7 +4,7 @@
 #include "game/RW/rwcore.h"
 #include "game/RW/rwlpcore.h"
 #include "game/Core/Quaternion.h"
-#include "CEntityGta.h"
+#include "game/Entity/CEntityGta.h"
 
 constexpr float E              = 2.71828f;          // e
 constexpr float E_CONST        = 0.577f;            // Euler-Mascheroni constant

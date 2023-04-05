@@ -6,7 +6,7 @@
 #define LIVERUSSIA_CAMERAGTA_H
 
 
-#include "CPlaceableGta.h"
+#include "game/Entity/CPlaceableGta.h"
 #include "game/Enums/CamMode.h"
 #include "Cam.h"
 #include "QueuedMode.h"

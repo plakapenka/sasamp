@@ -688,7 +688,7 @@ bool CLocalPlayer::Spawn()
 	Log("CLocalPlayer::Spawn");
 //	if(!m_bHasSpawnInfo) return false;
 
-	m_pPlayerPed->m_pPed->m_nPedState = PEDSTATE_NONE;
+	m_pPlayerPed->m_pPed->m_nPedState = PED_NONE;
 	*(uint8_t*)(g_libGTASA + 0x007A1F11) = 0;
 
 	m_pPlayerPed->SetInterior(0);

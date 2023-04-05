@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CEntityGta.h"
+#include "game/Entity/CEntityGta.h"
 
 class CEntity
 {

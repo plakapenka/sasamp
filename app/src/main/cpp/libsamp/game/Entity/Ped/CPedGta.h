@@ -5,13 +5,13 @@
 #ifndef LIVERUSSIA_CPEDGTA_H
 #define LIVERUSSIA_CPEDGTA_H
 
-#include "CWeaponGta.h"
-#include "CPedIntelligence.h"
-#include "game/Core/Vector2D.h"
-#include "CVehicleGta.h"
-#include "game/Enums/PedState.h"
-#include "game/Enums/AnimationEnums.h"
-#include "game/Enums/WeaponType.h"
+#include "../../CWeaponGta.h"
+#include "../../CPedIntelligence.h"
+#include "../../Core/Vector2D.h"
+#include "../../CVehicleGta.h"
+#include "../../Enums/PedState.h"
+#include "../../Enums/AnimationEnums.h"
+#include "../../Enums/WeaponType.h"
 
 enum eMoveState : uint32_t {
     PEDMOVE_NONE = 0,

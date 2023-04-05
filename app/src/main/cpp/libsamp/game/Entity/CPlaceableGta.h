@@ -5,9 +5,9 @@
 #ifndef LIVERUSSIA_CPLACEABLEGTA_H
 #define LIVERUSSIA_CPLACEABLEGTA_H
 
-#include "game/Core/Quaternion.h"
-#include "CSimpleTransform.h"
-#include "game/Core/MatrixLink.h"
+#include "../Core/Quaternion.h"
+#include "../CSimpleTransform.h"
+#include "../Core/MatrixLink.h"
 
 #pragma pack(1)
 struct CPlaceableGta

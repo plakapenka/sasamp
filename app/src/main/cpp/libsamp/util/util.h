@@ -2,7 +2,7 @@
 
 
 #include "game/CVehicleGta.h"
-#include "game/CPedGta.h"
+#include "game/Entity/Ped/CPedGta.h"
 
 static class CUtil {
 public:

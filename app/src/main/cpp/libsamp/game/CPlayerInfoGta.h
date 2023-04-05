@@ -3,7 +3,7 @@
 //
 
 #include <cstdint>
-#include "CPedGta.h"
+#include "game/Entity/Ped/CPedGta.h"
 
 #ifndef LIVERUSSIA_CPLAYERINFOGTA_H
 #define LIVERUSSIA_CPLAYERINFOGTA_H
