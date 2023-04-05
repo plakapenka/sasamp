@@ -60,8 +60,6 @@ android {
         }
         debug {
             debuggable true
-            jniDebuggable true
-
         }
         all {
             minifyEnabled false
