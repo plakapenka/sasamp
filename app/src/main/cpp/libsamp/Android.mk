@@ -1,4 +1,8 @@
 LOCAL_PATH := $(call my-dir)
+include $(CLEAR_VARS)
+LOCAL_MODULE    := libGTASA
+LOCAL_SRC_FILES := libGTASA.so
+include $(PREBUILT_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 
@@ -25,7 +29,6 @@ FILE_LIST += $(wildcard $(LOCAL_PATH)/vendor/RakNet/*.cpp)
 FILE_LIST += $(wildcard $(LOCAL_PATH)/vendor/RakNet/SAMP/*.cpp)
 FILE_LIST += $(wildcard $(LOCAL_PATH)/vendor/imgui/*.cpp)
 FILE_LIST += $(wildcard $(LOCAL_PATH)/vendor/hash/*.cpp)
-
 
 LOCAL_SRC_FILES := $(FILE_LIST:$(LOCAL_PATH)/%=%)
 

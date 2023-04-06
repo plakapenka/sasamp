@@ -138,6 +138,7 @@ public class Samp extends GTASA
       //  new Colors(this);
 
         vibrator = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
+
     }
 
     public void goVibrate(int milliseconds){
@@ -161,7 +162,6 @@ public class Samp extends GTASA
     public void showSamwill() { runOnUiThread(() -> { mSamwillManager.Show(); }); }
 
     public void ExitGame(){
-        // выход считается крашем ((
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(false);
 
         finishAndRemoveTask();

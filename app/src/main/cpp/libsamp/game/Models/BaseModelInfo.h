@@ -109,6 +109,11 @@ struct CBaseModelInfo {
         struct RpAtomic *m_pRwAtomic;
     };
 
+    // Those further ones are completely inlined in final version, not present at all in android version;
+    CVehicleModelInfo* AsVehicleModelInfoPtr() { return reinterpret_cast<CVehicleModelInfo*>(this); }
+    CPedModelInfo*     AsPedModelInfoPtr()     { return reinterpret_cast<CPedModelInfo*>(this); }
+    CWeaponModelInfo*  AsWeaponModelInfoPtr()  { return reinterpret_cast<CWeaponModelInfo*>(this); }
+
     [[nodiscard]] CColModel* GetColModel() const { return m_pColModel; }
     [[nodiscard]] bool GetIsDrawLast() const { return bDrawLast; }
     [[nodiscard]] bool HasBeenPreRendered() const { return bHasBeenPreRendered; }
@@ -116,6 +121,28 @@ struct CBaseModelInfo {
     [[nodiscard]] bool IsBackfaceCulled() const { return bIsBackfaceCulled; }
     [[nodiscard]] bool IsLod() const { return bIsLod; }
     [[nodiscard]] bool IsRoad() const { return bIsRoad; }
+    void SetHasBeenPreRendered(int32_t bPreRendered) { bHasBeenPreRendered = bPreRendered; }
+    void SetIsLod(bool bLod) { bIsLod = bLod; }
+    void SetOwnsColModel(bool bOwns) { bDoWeOwnTheColModel = bOwns; }
+    void IncreaseAlpha() {
+        if (m_nAlpha >= 239)
+            m_nAlpha = 255;
+        else
+            m_nAlpha += 16;
+    };
+    [[nodiscard]] auto GetModelName() const noexcept { return m_nKey; }
+    void SetModelName(const char* modelName) { m_nKey = CKeyGen::GetUppercaseKey(modelName); }
+
+    [[nodiscard]] bool IsSwayInWind1()         const { return nSpecialType == eModelInfoSpecialType::TREE; }               // 0x0800
+    [[nodiscard]] bool IsSwayInWind2()         const { return nSpecialType == eModelInfoSpecialType::PALM; }               // 0x1000
+    [[nodiscard]] bool SwaysInWind()           const { return IsSwayInWind1() || IsSwayInWind2(); }
+    [[nodiscard]] bool IsGlassType1()          const { return nSpecialType == eModelInfoSpecialType::GLASS_TYPE_1; }       // 0x2000
+    [[nodiscard]] bool IsGlassType2()          const { return nSpecialType == eModelInfoSpecialType::GLASS_TYPE_2; }       // 0x2800
+    [[nodiscard]] bool IsGlass()               const { return IsGlassType1() || IsGlassType2(); }
+    [[nodiscard]] bool IsTagModel()            const { return nSpecialType == eModelInfoSpecialType::TAG; }                // 0x3000
+    [[nodiscard]] bool IsGarageDoor()          const { return nSpecialType == eModelInfoSpecialType::GARAGE_DOOR; }        // 0x3800
+    [[nodiscard]] bool IsBreakableStatuePart() const { return nSpecialType == eModelInfoSpecialType::BREAKABLE_STATUE; }
+    [[nodiscard]] bool IsCrane()               const { return nSpecialType == eModelInfoSpecialType::CRANE; }              // 0x4800
 };
 static_assert(sizeof(CBaseModelInfo) == 0x38, "Invalid");
 // sizeof=0x38

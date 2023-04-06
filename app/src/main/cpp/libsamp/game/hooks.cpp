@@ -789,15 +789,17 @@ int mpg123_param_hook(void* mh, int key, long val, int ZERO, double fval) {
 #include "Timer.h"
 #include "game/Collision/Collision.h"
 #include "game/Collision/ColStore.h"
+#include "TxdStore.h"
 
 void InjectHooks()
 {
 	Log("InjectHooks");
-
+	CModelInfo::InjectHooks();
 	CTimer::InjectHooks();
 	CCollision::InjectHooks();
 	CColStore::InjectHooks();
 	CQuadTreeNode::InjectHooks();
+	CTxdStore::InjectHooks();
 }
 
 void InstallSpecialHooks()
@@ -2155,8 +2157,6 @@ void InstallHooks()
 	CHook::InlineHook(g_libGTASA, 0x00443F30, &CRadar__DrawRadarGangOverlay_hook, &CRadar__DrawRadarGangOverlay);
 //
 //	CHook::CodeInject(g_libGTASA + 0x2D99F4, (uintptr_t)PickupPickUp_hook, 1);
-
-	CModelInfo::InstallHooks();
 
 	// attached objects
 	CHook::InlineHook(g_libGTASA, 0x00428410, &CWorld_ProcessPedsAfterPreRender_hook, &CWorld_ProcessPedsAfterPreRender);

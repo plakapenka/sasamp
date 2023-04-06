@@ -12,7 +12,7 @@ CStore<CPedModelInfo, CModelInfo::NUM_PED_MODEL_INFOS> CModelInfo::ms_pedModelIn
 CStore<CAtomicModelInfo, CModelInfo::NUM_ATOMIC_MODEL_INFOS> CModelInfo::ms_atomicModelInfoStore;
 CStore<CVehicleModelInfo, CModelInfo::NUM_VEHICLE_MODEL_INFOS> CModelInfo::ms_vehicleModelInfoStore;
 
-void CModelInfo::InstallHooks()
+void CModelInfo::InjectHooks()
 {
     CHook::Write(g_libGTASA + 0x00676A34, &CModelInfo::ms_atomicModelInfoStore);
     CHook::Write(g_libGTASA + 0x006773CC, &CModelInfo::ms_pedModelInfoStore);

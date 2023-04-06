@@ -163,8 +163,6 @@ public class CacheChecker implements Listener<FileInfo[]> {
                 .concat("/")
                 .concat(filePath)
         );
-        Log.d(TAG, String.format("files %s == %d == %d", file.getPath(),file.length(), fileInfo.getSize()));
-        //return false;
         return !file.exists() || file.length() != fileInfo.getSize() || file.lastModified() < fileInfo.getVer();
     }
 

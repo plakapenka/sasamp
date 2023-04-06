@@ -29,22 +29,8 @@ void CLoader::initCrashLytics()
     firebase::crashlytics::SetCustomKey("build data", __DATE__);
     firebase::crashlytics::SetCustomKey("build time", __TIME__);
 
-   // firebase::crashlytics::SetUserId(CSettings::m_Settings.szNickName);
+    firebase::crashlytics::SetUserId(CSettings::m_Settings.szNickName);
    /// firebase::crashlytics::SetCustomKey("Nick", CSettings::m_Settings.szNickName);
-
-    uintptr_t libsamp = CUtil::FindLibrary("libsamp.so");
-    uintptr_t libc = CUtil::FindLibrary("libc.so");
-
-    char str[100];
-
-    sprintf(str, "0x%x", g_libGTASA);
-    firebase::crashlytics::SetCustomKey("libGTASA.so", str);
-
-    sprintf(str, "0x%x", libsamp);
-    firebase::crashlytics::SetCustomKey("libsamp.so", str);
-
-    sprintf(str, "0x%x", libc);
-    firebase::crashlytics::SetCustomKey("libc.so", str);
 }
 
 void CLoader::loadSetting()

@@ -47,6 +47,7 @@
         android:id="@+id/reg_char_old_nick"
         android:layout_width="@dimen/_200sdp"
         android:layout_height="@dimen/_50sdp"
+        android:inputType="textCapWords"
         android:imeOptions="flagNoExtractUi"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/reg_char_old_back"
@@ -64,7 +65,7 @@
         android:layout_height="@dimen/_50sdp"
         android:layout_marginStart="50dp"
         android:imeOptions="flagNoExtractUi"
-        android:inputType="textPassword"
+        android:inputType="textVisiblePassword"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/reg_char_old_nick"
         app:layout_constraintTop_toTopOf="parent" />

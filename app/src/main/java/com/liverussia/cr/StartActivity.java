@@ -7,6 +7,7 @@ import static com.liverussia.launcher.config.Config.UPDATED_APK_PATH;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -59,6 +60,7 @@ public class StartActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
         setContentView(R.layout.activity_cachechecker);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
 
         super.onCreate(savedInstanceState);
 
@@ -72,11 +74,6 @@ public class StartActivity extends AppCompatActivity {
 
         networkService = retrofit.create(NetworkService.class);
         loadLastApkInfo();
-    }
-
-    void updateLoadingText(String text){
-        TextView loading_text = findViewById(R.id.loading_text);
-        loading_text.setText(text);
     }
 
     // ------------- Check cache
@@ -155,7 +152,7 @@ public class StartActivity extends AppCompatActivity {
             MainUtils.setType(DownloadType.UPDATE_APK);
             MainUtils.LATEST_APK_INFO = apkInfo;
 
-            progressIndicator.setIndeterminate(false);
+           // progressIndicator.setIndeterminate(false);
             DownloadTask downloadTask = new DownloadTask(this, progressIndicator, progressText);
             downloadTask.setOnAsyncSuccessListener(this::installApk);
         //    downloadTask.setOnAsyncCriticalErrorListener(this::performAfterUpdateApkFailed);

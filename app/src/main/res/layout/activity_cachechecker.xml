@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#8D0A7FA5"
+    android:background="#0A7FA5"
     android:orientation="horizontal"
     android:theme="@style/Theme.Material3.Dark.NoActionBar"
     tools:context=".StartActivity">

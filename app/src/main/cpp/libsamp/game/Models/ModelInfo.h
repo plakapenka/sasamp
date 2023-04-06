@@ -19,7 +19,7 @@ public:
     static constexpr int32_t NUM_MODEL_INFOS = 30000;
     static CBaseModelInfo* ms_modelInfoPtrs[NUM_MODEL_INFOS];
 
-    static void InstallHooks();
+    static void InjectHooks();
 
     static constexpr int32_t NUM_PED_MODEL_INFOS = 350;
     static CStore<CPedModelInfo, NUM_PED_MODEL_INFOS> ms_pedModelInfoStore;

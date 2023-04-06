@@ -8,6 +8,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.liverussia.cr.R;
 import com.liverussia.startMenu.auth.Authorization;
 import com.liverussia.startMenu.chooseChar.CharsList;
@@ -23,7 +24,7 @@ public class GameMenuStart {
     Authorization authorization;
 
     MaterialButton game_menu_start_play_butt;
-    ConstraintLayout loadscreen_main_layout;
+    ConstraintLayout menu_layout;
 
     native void connectToServer(String nick, String ip, int port);
 
@@ -31,7 +32,7 @@ public class GameMenuStart {
         this.activity = activity;
 
         authorization = new Authorization(this);
-        loadscreen_main_layout = activity.findViewById(R.id.loadscreen_main_layout);
+        menu_layout = activity.findViewById(R.id.menu_layout);
 
         login_change_server = activity.findViewById(R.id.login_change_server);
         login_change_server.setOnClickListener(view -> {
@@ -69,6 +70,11 @@ public class GameMenuStart {
             else
                 change_user.setVisibility(View.GONE);
         });
+
+        // включить крашлитик обратно
+        FirebaseCrashlytics.getInstance().deleteUnsentReports();
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true);
+
     }
 
 
@@ -93,8 +99,9 @@ public class GameMenuStart {
 
         if(Storage.getString("nickname") != null)
         {
+            activity.findViewById(R.id.startmenu_main_layout).setVisibility(View.GONE);
+
             // connect
-            loadscreen_main_layout.setVisibility(View.GONE);
             connectToServer(
                     Storage.getString("nickname"),
                     Storage.getString("selectedServerIp"),

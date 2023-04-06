@@ -455,7 +455,7 @@ public class DownloadTask implements Listener<TaskStatus> {
      //   progressBar.setVisibility(View.VISIBLE);
         progressBar.setIndeterminate(false);
         progressBar.setMax(100);
-        progressText.setText("Загрузка файлов игры...");
+        progressText.setText("Загрузка обновлений...");
     }
 
     public void repeatLoad() {
