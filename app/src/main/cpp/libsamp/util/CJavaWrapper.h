@@ -19,23 +19,7 @@ class CJavaWrapper
 
 	jmethodID s_ShowClientSettings;
 
-	jmethodID s_showOilFactoryGame;
-	jmethodID s_showArmyGame;
-	jmethodID s_hideArmyGame;
-
-	jmethodID s_showFuelStation;
-
-	jmethodID s_ToggleShopStoreManager;
-
-	jmethodID s_showGunShopManager;
-	jmethodID s_hideGunShopManager;
-
-	jmethodID s_showSamwill;
-
 	jmethodID s_showMenu;
-
-	jmethodID j_toggleAutoShop;
-	jmethodID j_updateAutoShop;
 
 	jmethodID s_setPauseState;
 
@@ -47,51 +31,14 @@ public:
 
 	void ShowClientSettings();
 
-	void ShowOilFactoryGame();
-	void ShowArmyGame(int quantity);
-	void HideArmyGame();
-
-	void ShowFuelStation(int type, int price1, int price2, int price3, int price4, int price5, int maxCount);
-
-	void ToggleShopStoreManager(bool toggle, int type = 0, int price = 0);
-
-	void ShowGunShopManager();
-	void HideGunShopManager();
-
-	void ShowSamwill();
-
 	void ShowMenu();
 
-	void TempToggleCasinoDice(bool toggle);
-	void ShowCasinoDice(bool show, int tableID, int tableBet, int tableBank, int money, char player1name[], int player1stat, char player2name[], int player2stat, char player3name[], int player3stat, char player4name[], int player4stat, char player5name[], int player5stat);
-
 	void SetPauseState(bool a1);
-
-	uint32_t ChangeRegisterSkin(int skin);
-
-	int RegisterSexMale;
-	int RegisterSkinValue;
-	int RegisterSkinId;
 
 	CJavaWrapper(JNIEnv* env, jobject activity);
 	~CJavaWrapper();
 
-	void UpdateAutoShop(const char name[], int price, int count, float maxspeed, float acceleration, int gear);
-
-	void ToggleAutoShop(bool toggle);
-
 	void ClearScreen();
-
-	jobject jCasinoDice;
-	jobject jCasino_LuckyWheel;
-
-    void ShowCasinoLuckyWheel(int count, int time);
-
-    void ShowMiningGame1(bool toggle);
-
-	void ShowMiningGame2(bool toggle);
-
-    void ShowMiningGame3(bool toggle);
 
 	void ExitGame();
 

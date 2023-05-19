@@ -129,8 +129,6 @@ public:
 	bool isCasinoDiceActive = false;
 	bool isAutoShopActive = false;
 	bool isCasinoWheelActive = false;
-	bool isShowMedicGame = false;
-	bool isRegistrationActive = false;
 	bool isShopStoreActive = false;
 	bool isHornActive = false;
 	bool isBanJump = false;

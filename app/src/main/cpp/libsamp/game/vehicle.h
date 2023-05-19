@@ -2,23 +2,6 @@
 
 #include "entity.h"
 
-enum E_CUSTOM_COMPONENTS
-{
-	ccBumperF = 0,
-	ccBumperR,
-	ccFenderF,
-	ccFenderR,
-	ccSpoiler,
-	ccExhaust,
-	ccRoof,
-	ccTaillights,
-	ccHeadlights,
-	ccDiffuser,
-	ccSplitter,
-	ccExtra,
-	ccMax
-};
-
 enum E_HANDLING_PARAMS
 {
 	hpMaxSpeed,

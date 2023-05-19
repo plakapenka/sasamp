@@ -74,26 +74,6 @@ CVehicle::CVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRota
 	m_bIsLocked = false;
 	m_dwMarkerID = 0;
 	m_bIsInvulnerable = false;
-	uint8_t defComp = 0;
-	BIT_SET(defComp, 0);
-	for (int i = 0; i < E_CUSTOM_COMPONENTS::ccMax; i++)
-	{
-		if (i == E_CUSTOM_COMPONENTS::ccExtra)
-		{
-			uint16_t defComp_extra = 0;
-			BIT_SET(defComp_extra, EXTRA_COMPONENT_BOOT);
-			BIT_SET(defComp_extra, EXTRA_COMPONENT_BONNET);
-			BIT_SET(defComp_extra, EXTRA_COMPONENT_DEFAULT_DOOR);
-			BIT_SET(defComp_extra, EXTRA_COMPONENT_WHEEL);
-			BIT_SET(defComp_extra, EXTRA_COMPONENT_BUMP_REAR);
-			BIT_SET(defComp_extra, EXTRA_COMPONENT_BUMP_FRONT);
-			SetComponentVisible(i, defComp_extra);
-		}
-		else
-		{
-			SetComponentVisible(i, (uint16_t)defComp);
-		}
-	}
 
 	for (size_t i = 0; i < MAX_REPLACED_TEXTURES; i++)
 	{
@@ -695,36 +675,6 @@ void CVehicle::RemoveComponent(uint16_t uiComponent)
 	if (GamePool_Vehicle_GetAt(m_dwGTAId))
 	{
 		ScriptCommand(&remove_component, m_dwGTAId, component);
-	}
-}
-
-void CVehicle::SetComponentVisible(uint8_t group, uint16_t components)
-{
-
-	if (group == E_CUSTOM_COMPONENTS::ccExtra)
-	{
-		for (int i = 0; i < 16; i++)
-		{
-			std::string szName = GetComponentNameByIDs(group, i);
-			SetComponentVisibleInternal(szName.c_str(), false);
-
-			if (BIT_CHECK(components, i))
-			{
-				SetComponentVisibleInternal(szName.c_str(), true);
-			}
-		}
-	}
-	else
-	{
-		for (int i = 0; i < 8; i++)
-		{
-			std::string szName = GetComponentNameByIDs(group, i);
-			SetComponentVisibleInternal(szName.c_str(), false);
-			if (BIT_CHECK(components, i))
-			{
-				SetComponentVisibleInternal(szName.c_str(), true);
-			}
-		}
 	}
 }
 
@@ -1397,78 +1347,6 @@ void CVehicle::SetComponentVisibleInternal(const char* szComponent, bool bVisibl
 			}
 		}
 	}
-}
-
-std::string CVehicle::GetComponentNameByIDs(uint8_t group, int subgroup)
-{
-
-	if (group == E_CUSTOM_COMPONENTS::ccExtra && subgroup >= EXTRA_COMPONENT_BOOT)
-	{
-		switch (subgroup)
-		{
-			case EXTRA_COMPONENT_BOOT:
-				return std::string("boot_dummy");
-			case EXTRA_COMPONENT_BONNET:
-				return std::string("bonnet_dummy");
-			case EXTRA_COMPONENT_BUMP_REAR:
-				return std::string("bump_rear_dummy");
-			case EXTRA_COMPONENT_DEFAULT_DOOR:
-				return std::string("door_lf_dummy");
-			case EXTRA_COMPONENT_WHEEL:
-				return std::string("wheel_lf_dummy");
-			case EXTRA_COMPONENT_BUMP_FRONT:
-				return std::string("bump_front_dummy");
-		}
-	}
-
-	std::string retn;
-
-	switch (group)
-	{
-		case E_CUSTOM_COMPONENTS::ccBumperF:
-			retn += "bumberF_";
-			break;
-		case E_CUSTOM_COMPONENTS::ccBumperR:
-			retn += "bumberR_";
-			break;
-		case E_CUSTOM_COMPONENTS::ccFenderF:
-			retn += "fenderF_";
-			break;
-		case E_CUSTOM_COMPONENTS::ccFenderR:
-			retn += "fenderR_";
-			break;
-		case E_CUSTOM_COMPONENTS::ccSpoiler:
-			retn += "spoiler_";
-			break;
-		case E_CUSTOM_COMPONENTS::ccExhaust:
-			retn += "exhaust_";
-			break;
-		case E_CUSTOM_COMPONENTS::ccRoof:
-			retn += "roof_";
-			break;
-		case E_CUSTOM_COMPONENTS::ccTaillights:
-			retn += "taillights_";
-			break;
-		case E_CUSTOM_COMPONENTS::ccHeadlights:
-			retn += "headlights_";
-			break;
-		case E_CUSTOM_COMPONENTS::ccDiffuser:
-			retn += "diffuser_";
-			break;
-		case E_CUSTOM_COMPONENTS::ccSplitter:
-			retn += "splitter_";
-			break;
-		case E_CUSTOM_COMPONENTS::ccExtra:
-			retn += "ext_";
-			break;
-		default:
-			retn = std::string("err");
-			break;
-	}
-
-	retn += ('0' + (char)subgroup);
-
-	return retn;
 }
 
 void CVehicle::CopyGlobalSuspensionLinesToPrivate()

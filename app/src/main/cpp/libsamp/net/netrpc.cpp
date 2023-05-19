@@ -436,7 +436,6 @@ void WorldVehicleAdd(RPCParameters *rpcParams)
 	NEW_VEHICLE NewVehicle;
 	bsData.Read((char *)&NewVehicle,sizeof(NEW_VEHICLE));
 
-	Log("New color = %d", NewVehicle.cColor1);
 	//if(NewVehicle.iVehicleType < 400 || NewVehicle.iVehicleType > 611) return;
 	if (!pVehiclePool->New(&NewVehicle))
 		return;

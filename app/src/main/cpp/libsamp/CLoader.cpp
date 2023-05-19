@@ -9,9 +9,7 @@
 #include "crashlytics.h"
 #include "CSettings.h"
 #include "java_systems/CSpeedometr.h"
-#include "java_systems/CDonate.h"
 #include "java_systems/CEditobject.h"
-#include "java_systems/CChooseSpawn.h"
 
 int CLoader::tick = 0;
 
@@ -54,14 +52,8 @@ void CLoader::initJavaClasses(JavaVM* pjvm)
     CSpeedometr::clazz = env->FindClass("com/sasamp/cr/gui/Speedometer");
     CSpeedometr::clazz = (jclass) env->NewGlobalRef( CSpeedometr::clazz );
 
-    CDonate::clazz = env->FindClass("com/sasamp/cr/gui/donate/Donate");
-    CDonate::clazz = (jclass) env->NewGlobalRef( CDonate::clazz );
-
     CEditobject::clazz = env->FindClass("com/sasamp/cr/gui/AttachEdit");
     CEditobject::clazz = (jclass) env->NewGlobalRef( CEditobject::clazz );
-
-    CChooseSpawn::clazz = env->FindClass("com/sasamp/cr/gui/ChooseSpawn");
-    CChooseSpawn::clazz = (jclass) env->NewGlobalRef(CChooseSpawn::clazz);
 
 }
 

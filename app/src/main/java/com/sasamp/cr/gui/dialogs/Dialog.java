@@ -49,10 +49,8 @@ public class Dialog {
     private final ConstraintLayout mMainLayout;
     private final ScrollView mMsgBoxLayout;
     private final ConstraintLayout mRightBtn;
-    private ConstraintLayout casino_dice_main_layout;
     private ArrayList<String> mRowsList;
     private Activity activity;
-    boolean old_casino_layout_state;
 
     native void init();
     native void sendResponse(int button, int id, int item, byte[] str);
@@ -61,7 +59,6 @@ public class Dialog {
         init();
 
         activity = aactivity;
-        casino_dice_main_layout = activity.findViewById(R.id.casino_dice_main_layout);
         this.mMainLayout = activity.findViewById(R.id.sd_dialog_main);
         this.mCaption = (TextView) activity.findViewById(R.id.sd_dialog_caption);
         this.mContent = (TextView) activity.findViewById(R.id.sd_dialog_text);
@@ -111,10 +108,6 @@ public class Dialog {
         }
         activity.runOnUiThread(() -> {
             clearDialogData();
-            if (casino_dice_main_layout.getVisibility() == View.VISIBLE) {
-                old_casino_layout_state = true;
-                casino_dice_main_layout.setVisibility(View.GONE);
-            }
 
             this.mCurrentDialogId = dialogId;
             this.mCurrentDialogTypeId = dialogTypeId;
@@ -184,11 +177,7 @@ public class Dialog {
     public void sendDialogResponse(int btnId)
     {
         String text = "";
-        if(old_casino_layout_state)
-        {
-            old_casino_layout_state = false;
-            casino_dice_main_layout.setVisibility(View.VISIBLE);
-        }
+
         if (    mCurrentDialogTypeId == DIALOG_STYLE_INPUT ||
                 mCurrentDialogTypeId == DIALOG_STYLE_PASSWORD||
                 mCurrentDialogTypeId == DIALOG_STYLE_INPUT_NUMBER)

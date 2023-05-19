@@ -10,7 +10,6 @@
 #include "../CSettings.h"
 #include "../util/CJavaWrapper.h"
 #include "java_systems/CHUD.h"
-#include "java_systems/CInventory.h"
 #include "game/StreamingInfo.h"
 
 extern CGame *pGame;
@@ -175,16 +174,9 @@ extern bool g_uiHeadMoveEnabled;
 
 #include "..//game/CWeaponsOutFit.h"
 #include "java_systems/CEditobject.h"
-#include "java_systems/casino/CChip.h"
-#include "java_systems/CAucContainer.h"
 #include "util/patch.h"
-#include "java_systems/CAdminRecon.h"
-#include "java_systems/CMedic.h"
 #include "java_systems/CTab.h"
-#include "java_systems/CDailyReward.h"
 #include "java_systems/CDialog.h"
-#include "java_systems/CTechInspect.h"
-#include "java_systems/casino/CBaccarat.h"
 #include "game/CWorld.h"
 
 CAMERA_AIM* caAim = new CAMERA_AIM();
@@ -467,10 +459,8 @@ bool CLocalPlayer::Process()
 	////////////////////////////
 	bool needDrawableHud = true;
 	if(CDialog::bIsShow || pGame->isCasinoDiceActive || CTab::bIsShow || pGame->isAutoShopActive
-	   || pGame->isCasinoWheelActive || !m_pPlayerPed || pGame->isRegistrationActive || pGame->isShopStoreActive ||
-	   CMedic::bIsShow || CInventory::bIsToggle || bFirstSpawn || CEditobject::bIsToggle || CChip::bIsShow
-	   || CAucContainer::bIsShow || CAdminRecon::bIsToggle || CHUD::bIsCamEditGui || CDailyReward::bIsShow ||
-	   CTechInspect::bIsShow || CBaccarat::bIsShow)
+	   || pGame->isCasinoWheelActive || !m_pPlayerPed || pGame->isShopStoreActive ||
+	   bFirstSpawn || CEditobject::bIsToggle || CHUD::bIsCamEditGui )
 	{
 		needDrawableHud = false;
 	}

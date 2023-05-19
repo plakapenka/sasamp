@@ -19,34 +19,11 @@
         tools:ignore="MissingConstraints">
 
 <!--        <View android:id="@+id/dark_screen" android:background="#ff000000" android:visibility="visible" android:layout_width="fill_parent" android:layout_height="fill_parent" android:alpha="0.0" />-->
-        <include layout="@layout/dailyreward" />
         <include layout="@layout/hud" />
-        <include layout="@layout/casino_dice" />
         <include layout="@layout/speedometer"/>
         <include layout="@layout/menu_action_dialog" />
-        <include layout="@layout/choosespawn" />
-        <include layout="@layout/sawmill" />
-        <include layout="@layout/oilfactory" />
-        <include layout="@layout/armygame" />
-        <include layout="@layout/fuelstation" />
-        <include layout="@layout/shopstoreselect" />
-        <include layout="@layout/gunshop" />
-        <include layout="@layout/pre_death" />
-        <include layout="@layout/autoshop" />
-        <include layout="@layout/casino_lucky_wheel" />
-        <include layout="@layout/hassle_tab"/>
-        <include layout="@layout/furniture_factory" />
-        <include layout="@layout/inventory" />
-        <include layout="@layout/mine_1" />
-        <include layout="@layout/mine_2" />
-        <include layout="@layout/mine_3" />
+        <include layout="@layout/tab"/>
         <include layout="@layout/attachedit" />
-        <include layout="@layout/casino_chip" />
-        <include layout="@layout/auc_container" />
-        <include layout="@layout/admin_recon" />
-        <include layout="@layout/casino_bc" />
-            <include layout="@layout/technical_inspection" />
-            <include layout="@layout/donate"/>
             <include layout="@layout/sd_dialog" />
             <include layout="@layout/notification" />
 

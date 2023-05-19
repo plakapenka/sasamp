@@ -73,8 +73,6 @@
 #define RPC_SHOW_AUTOSHOP 35
 #define RPC_UPDATE_AUTOSHOP 36
 #define RPC_CLICK_AUTOSHOP 37
-#define RPC_FUELSTATION_BUY 38
-#define RPC_FUELSTATION_SEND 39
 #define RPC_TOGGLE_ACCESSORIES_MENU 40
 #define RPC_TOGGLE_CLOTHING_MENU 41
 #define RPC_SHOPSTORE_BUTTON 42
@@ -182,7 +180,6 @@ private:
 	void Packet_BulletSync(Packet* pkt);
 	void Packet_TrailerSync(Packet* p);
 	void Packet_CustomRPC(Packet* p);
-	void Packet_SpecialCustomRPC(Packet* p);
 
 public:
 	char m_szHostName[0xFF];
@@ -213,44 +210,13 @@ public:
 	bool 		m_bInstagib;
 	int 		m_iLagCompensation;
 	int 		m_iVehicleFriendlyFire;
-    static void Packet_FurnitureFactory(Packet* p);
-
-	static void packetMafiaWar(Packet *p);
-
-	static void packetInventoryToggle(Packet *p);
-
-    static void packetInventoryUpdateItem(Packet *p);
-	static void packetInventoryUpdateCarryng(Packet *p);
-
-	static void packetInventoryItemActive(Packet *p);
-
-	static void packetCasinoChip(Packet *p);
-
-    static void packetAucContainer(Packet *p);
 
 	static void packetSalary(Packet *p);
 
-	static void packetAdminRecon(Packet *p);
-
-	void packetPreDeath(Packet *p);
-
-	static void packetMedGame(Packet *p);
-
-	static void packetCasinoBaccarat(Packet *p);
-
-    static void packetKillList(Packet *p);
-
-	static void packetDuelsKillsLeft(Packet *p);
-
-	static void packetDailyRewards(Packet *p);
-
 	static void packetNotification(Packet *p);
-
-	static void packetTechInspect(Packet *p);
 
 	static void packetUpdateSatiety(Packet *p);
 
-	static void packetShowDonat(Packet *p);
 };
 
 extern CNetGame *pNetGame;

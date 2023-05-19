@@ -1000,7 +1000,4 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="TouchTargetSizeCheck" />
 
-    <include layout="@layout/duels_hud" />
-<!--    <include layout="@layout/gametext"/>-->
-
 </androidx.constraintlayout.widget.ConstraintLayout>

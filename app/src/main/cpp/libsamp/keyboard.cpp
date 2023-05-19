@@ -9,8 +9,6 @@
 #include "vendor/imgui/fonts.h"
 #include "net/netgame.h"
 #include "java_systems/CHUD.h"
-#include "java_systems/CAdminRecon.h"
-#include "java_systems/casino/CBaccarat.h"
 #include "java_systems/CSpeedometr.h"
 #include "gui/gui.h"
 
@@ -282,9 +280,7 @@ void CKeyBoard::Open()
 	//g_pJavaWrapper->HideVoice();
 
 	if(pNetGame->m_GreenZoneState) CHUD::toggleGreenZone(false);
-	if(CAdminRecon::bIsToggle) CAdminRecon::tempToggle(false);
-	if(pGame->isCasinoDiceActive)g_pJavaWrapper->TempToggleCasinoDice(false);
-	if(CBaccarat::bIsShow) CBaccarat::tempToggle(false);
+
 	CHUD::toggleServerLogo(false);
 
 	if(CSpeedometr::bIsShow) CSpeedometr::tempToggle(false);
@@ -311,9 +307,6 @@ void CKeyBoard::Close()
 	{
 		CHUD::toggleGps(true);
 	}
-	if(pGame->isCasinoDiceActive)g_pJavaWrapper->TempToggleCasinoDice(true);
-	if(CBaccarat::bIsShow) CBaccarat::tempToggle(true);
-	if(CAdminRecon::bIsToggle) CAdminRecon::tempToggle(true);
 	if(pNetGame->m_GreenZoneState) CHUD::toggleGreenZone(true);
 
 	CHUD::ToggleChatInput(false);
@@ -324,7 +317,6 @@ void CKeyBoard::Close()
 #include "chatwindow.h"
 #include "CDebugInfo.h"
 #include "java_systems/CTab.h"
-#include "java_systems/CDuelsGui.h"
 #include "util/patch.h"
 #include "game/Core/Vector.h"
 

@@ -303,9 +303,6 @@ void CNetGame::UpdateNetwork()
 				Packet_CustomRPC(pkt);
 				break;
 
-			case PACKET_SPECIALCUSTOM:
-				Packet_SpecialCustomRPC(pkt);
-				break;
 		}
 
 		m_pRakClient->DeallocatePacket(pkt);
@@ -337,52 +334,6 @@ void CNetGame::Packet_TrailerSync(Packet* p)
 
 
 #include "..//game/CCustomPlateManager.h"
-#include "java_systems/CDuelsGui.h"
-#include "java_systems/CChooseSpawn.h"
-
-
-void CNetGame::Packet_SpecialCustomRPC(Packet *p)
-{
-	RakNet::BitStream bs((unsigned char *)p->data, p->length, false);
-	uint8_t packetID;
-	uint32_t rpcID;
-	bs.Read(packetID);
-	bs.Read(rpcID);
-	// CChatWindow::AddDebugMessage("packet: %d rpc: %d", packetID, rpcID);
-
-	switch (rpcID)
-	{
-
-		case RPC_TOGGLE_CHOOSE_SPAWN:
-		{
-			uint8_t toggle;
-			uint8_t organization;
-			uint8_t station;
-			uint8_t exit;
-			uint8_t garage;
-			uint8_t house;
-
-			bs.Read(toggle);
-			bs.Read(organization);
-			bs.Read(station);
-			bs.Read(exit);
-			bs.Read(garage);
-			bs.Read(house);
-
-			// CChatWindow::AddDebugMessage("toggle: %d organization: %d station: %d exit: %d garage: %d house: %d", toggle, organization, station, exit, garage, house);
-
-			if (toggle == 1)
-			{
-				CChooseSpawn::show(organization, station, exit, garage, house);
-			}
-			else if (toggle == 0)
-			{
-				CChooseSpawn::hide();
-			}
-			break;
-		}
-	}
-}
 
 void CNetGame::Packet_CustomRPC(Packet* p)
 {
@@ -392,6 +343,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 	uint32_t rpcID;
 	bs.Read(packetID);
 	bs.Read(rpcID);
+	Log("Custom packet = %d", rpcID);
 	//CChatWindow::AddDebugMessage("p %d rpc %d", packetID, rpcID);
 	switch (rpcID)
 	{
@@ -404,38 +356,6 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			Log("%d - %d", gg, tt);
             break;
 		}
-		case RPC_INVENTAR_CARRYNG: {
-			packetInventoryUpdateCarryng(p);
-			break;
-		}
-		case RPC_ITEM_MATRIX: {
-			packetInventoryUpdateItem(p);
-			break;
-		}
-		case RPC_ITEM_ACTIVETOGGLE: {
-            packetInventoryItemActive(p);
-			break;
-		}
-		case RPC_SHOW_CASINO_BUY_CHIP: {
-			packetCasinoChip(p);
-			break;
-		}
-		case RPC_KILL_LIST: {
-			packetKillList(p);
-			break;
-		}
-		case RPC_TECH_INSPECT: {
-			packetTechInspect(p);
-			break;
-		}
-		case RPC_DAILY_REWARDS: {
-			packetDailyRewards(p);
-			break;
-		}
-		case RPC_SHOW_DONATE: {
-			packetShowDonat(p);
-			break;
-		}
 		case RPC_UPDATE_SATIETY: {
 			packetUpdateSatiety(p);
 			break;
@@ -444,18 +364,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			packetNotification(p);
 			break;
 		}
-		case RPC_DUELS_SHOW_KILL_LEFT: {
-			packetDuelsKillsLeft(p);
-			break;
-		}
-		case RPC_CLEAR_KILL_LIST: {
-            CDuelsGui::clearKillList();
-			break;
-		}
-		case RPC_UPDATE_BACCARAT: {
-			packetCasinoBaccarat(p);
-			break;
-		}
+
 		case RPC_SET_MONEY: {
 			uint32_t money;
 			bs.Read(money);
@@ -465,43 +374,10 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			CHUD::UpdateMoney();
 			break;
 		}
-		case RPC_SHOW_CONTEINER_AUC: {
-            packetAucContainer(p);
-			break;
-		}
-		case RPC_INVENTAR_SHOWHIDE: {
-			packetInventoryToggle(p);
-			break;
-		}
+
 		case RPC_SHOW_SALARY:
 		{
 			packetSalary(p);
-			break;
-		}
-		case RPC_ADMIN_RECON:
-		{
-			packetAdminRecon(p);
-			break;
-		}
-		case RPC_MAFIA_WAR:
-		{
-            packetMafiaWar(p);
-			break;
-		}
-		case RPC_CASINO_LUCKY_WHEEL_MENU:
-		{
-			uint32_t count;
-			uint32_t time;
-
-			bs.Read(count);
-			bs.Read(time);
-
-			g_pJavaWrapper->ShowCasinoLuckyWheel(count, time);
-			break;
-		}
-		case RPC_SHOW_FACTORY_GAME:
-		{
-			Packet_FurnitureFactory(p);
 			break;
 		}
 		case RPC_SEND_BUFFER:
@@ -515,67 +391,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			g_pJavaWrapper->SendBuffer(text);
 			break;
 		}
-		case RPC_SHOW_DICE_TABLE:
-		{
-			const int MAX_PLAYERS_CASINO_DICE = 5;
 
-			char playerName[MAX_PLAYERS_CASINO_DICE][25] = {"--", "--", "--", "--", "--"};
-			uint8_t toggle;
-			uint8_t tableID;
-			uint32_t bet;
-			uint32_t bank;
-			uint16_t playerID[MAX_PLAYERS_CASINO_DICE];
-			uint8_t playerStat[MAX_PLAYERS_CASINO_DICE];
-
-			bs.Read(toggle);
-
-			pGame->isCasinoDiceActive = toggle;
-			if(toggle == 0)
-			{
-				g_pJavaWrapper->ShowCasinoDice(false, 0, 0, 0, 0, "--", 0, "--", 0, "--", 0, "--", 0, "--", 0);
-				return;
-			}
-			bs.Read(tableID);
-			bs.Read(bet);
-			bs.Read(bank);
-
-			CPlayerPool *pPlayerPool = GetPlayerPool();
-			for(int i = 0; i < MAX_PLAYERS_CASINO_DICE; i++)
-			{
-				bs.Read(playerID[i]);
-				bs.Read(playerStat[i]);
-
-
-                if(playerID[i] == INVALID_PLAYER_ID)
-                {
-                    strcpy(playerName[i], "--");
-				//	continue;
-                }
-				else if(playerID[i] == pPlayerPool->GetLocalPlayerID())
-				{
-
-					strcpy(playerName[i], pPlayerPool->GetLocalPlayerName());
-				//	continue;
-				}
-				else
-				{
-					if (pPlayerPool)
-					{
-						if(pPlayerPool->m_pPlayers[playerID[i]])
-						{
-							strcpy(playerName[i], pPlayerPool->GetPlayerName(playerID[i]));
-						}
-						else
-						{
-							strcpy(playerName[i], "--");
-						}
-					}
-				}
-			}
-			int money = CHUD::iLocalMoney;
-			g_pJavaWrapper->ShowCasinoDice(toggle, tableID, bet, bank, money, playerName[0], playerStat[0], playerName[1], playerStat[1], playerName[2], playerStat[2], playerName[3], playerStat[3], playerName[4], playerStat[4]);
-			break;
-		}
 		case RPC_OPEN_SETTINGS:
 		{
 			g_pJavaWrapper->ShowClientSettings();
@@ -607,23 +423,6 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 
 			break;
 		}
-		case RPC_SHOW_ARMY_GAME:
-		{
-			uint8_t toggle;
-			uint8_t quantity;
-			bs.Read(toggle);
-			bs.Read(quantity);
-
-			if (toggle == 1)
-			{
-				g_pJavaWrapper->ShowArmyGame(quantity);
-			}
-			else
-			{
-				g_pJavaWrapper->HideArmyGame();
-			}
-			break;
-		}
 		case RPC_SHOW_TD_BUS:
 		{
 			uint8_t toggle;
@@ -640,41 +439,6 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 				CHUD::hideBusInfo();
 			}
 
-			break;
-		}
-		case RPC_SHOW_MINING_GAME:
-		{
-			uint8_t toggle;
-			uint32_t type;
-
-			bs.Read(toggle);
-			bs.Read(type);
-
-			if(type == 0)
-			{
-				g_pJavaWrapper->ShowMiningGame1(toggle);
-				return;
-			}
-			if(type == 1)
-			{
-				g_pJavaWrapper->ShowMiningGame2(toggle);
-				return;
-			}
-			if(type == 2)
-			{
-				g_pJavaWrapper->ShowMiningGame3(toggle);
-				return;
-			}
-			break;
-		}
-		case RPC_PRE_DEATH:
-		{
-			packetPreDeath(p);
-			break;
-		}
-		case RPC_MED_GAME:
-		{
-			packetMedGame(p);
 			break;
 		}
 //		case RPC_CHECK_CLIENT:
@@ -694,17 +458,6 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 //			break;
 //
 //		}
-		case RPC_SHOW_OILGAME:
-		{
-			uint8_t toggle;
-			bs.Read(toggle);
-
-			if (toggle == 1)
-			{
-				g_pJavaWrapper->ShowOilFactoryGame();
-			}
-			break;
-		}
 		case RPC_CUSTOM_SET_LEVEL:
 		{
 			uint8_t current;
@@ -748,125 +501,12 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			}
 			break;
 		}
-		case RPC_TOGGLE_SAMWILL_GAME:
-		{
-			uint8_t value;
-			bs.Read(value);
-
-			if (value == 1)
-			{
-				g_pJavaWrapper->ShowSamwill();
-			}
-			break;
-		}
 		case RPC_VIBRATE:
 		{
 			uint32_t value;
 			bs.Read(value);
 
 			g_pJavaWrapper->Vibrate(value);
-			break;
-		}
-		case RPC_GUNSTORE_TOGGLE:
-		{
-			uint8_t toggle;
-			bs.Read(toggle);
-
-			if (toggle == 1)
-			{
-				g_pJavaWrapper->ShowGunShopManager();
-			}
-			else
-			{
-				g_pJavaWrapper->HideGunShopManager();
-			}
-
-			break;
-		}
-		case RPC_TOGGLE_ACCESSORIES_MENU:
-		{
-			uint8_t toggle;
-			uint32_t price;
-			bs.Read(toggle);
-
-			if(!toggle)
-			{
-				g_pJavaWrapper->ToggleShopStoreManager(toggle);
-			}
-			bs.Read(price);
-
-			g_pJavaWrapper->ToggleShopStoreManager(toggle, 0, price);
-			break;
-		}
-		case RPC_TOGGLE_CLOTHING_MENU:
-		{
-			uint8_t toggle;
-			uint32_t price;
-			bs.Read(toggle);
-			if(!toggle)
-			{
-				g_pJavaWrapper->ToggleShopStoreManager(toggle);
-			}
-			bs.Read(price);
-
-			g_pJavaWrapper->ToggleShopStoreManager(toggle, 1, price);
-			break;
-		}
-		case RPC_FUELSTATION_BUY:
-		{
-			uint8_t type;
-			uint32_t price1;
-			uint32_t price2;
-			uint32_t price3;
-			uint32_t price4;
-			uint32_t price5;
-			uint32_t maxCount;
-
-			bs.Read(type);
-			bs.Read(price1);
-			bs.Read(price2);
-			bs.Read(price3);
-			bs.Read(price4);
-			bs.Read(price5);
-			bs.Read(maxCount);
-
-			g_pJavaWrapper->ShowFuelStation(type, price1, price2, price3, price4, price5, maxCount);
-
-			break;
-		}
-		case RPC_SHOW_AUTOSHOP:
-		{
-			uint32_t toggle;
-			bs.Read(toggle);
-
-			g_pJavaWrapper->ToggleAutoShop((bool)toggle);
-
-			break;
-		}
-		case RPC_UPDATE_AUTOSHOP:
-		{
-			uint32_t price;
-			uint32_t count;
-			float maxspeed;
-			float acceleration;
-			uint8_t len;
-			uint8_t gear;
-
-
-			char name[256];
-
-			bs.Read(len);
-			bs.Read(name, len);
-			name[len] = '\0';
-			bs.Read(price);
-			bs.Read(count);
-			bs.Read(maxspeed);
-			bs.Read(acceleration);
-			bs.Read(gear);
-
-			char utf8[200];
-			cp1251_to_utf8(utf8, name);
-			g_pJavaWrapper->UpdateAutoShop(utf8, price, count, maxspeed, acceleration, gear);
 			break;
 		}
 		case RPC_CUSTOM_HANDLING_DEFAULTS:
@@ -1020,36 +660,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			}
 			break;
 		}
-		case RPC_CUSTOM_COMPONENT:
-		{
-			uint16_t veh, extra_comp;
-			uint8_t comp;
-			bs.Read(veh);
-			CVehicle* pVehicle = nullptr;
 
-			if (m_pVehiclePool)
-			{
-				pVehicle = m_pVehiclePool->GetAt(veh);
-			}
-			if (!pVehicle)
-			{
-				return;
-			}
-			for (int i = 0; i < E_CUSTOM_COMPONENTS::ccMax; i++)
-			{
-				if (i == E_CUSTOM_COMPONENTS::ccExtra)
-				{
-					bs.Read(extra_comp);
-					pVehicle->SetComponentVisible(i, (uint16_t)extra_comp);
-				}
-				else
-				{
-					bs.Read(comp);
-					pVehicle->SetComponentVisible(i, (uint16_t)comp);
-				}
-			}
-			break;
-		}
 		case RPC_STREAM_CREATE:
 		{
 			char str[255];

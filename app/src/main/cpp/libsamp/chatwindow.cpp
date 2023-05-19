@@ -147,7 +147,6 @@ uint32_t g_uiBorderedText = 1;
 #include "CDebugInfo.h"
 #include "CLocalisation.h"
 #include "game/CCustomPlateManager.h"
-#include "java_systems/CInventory.h"
 #include <fcntl.h>
 
 

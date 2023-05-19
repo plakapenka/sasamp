@@ -441,43 +441,6 @@ void CNetGame::packetSalary(Packet* p)
     CHUD::UpdateSalary(salary, lvl, exp);
 }
 
-void CNetGame::packetMafiaWar(Packet* p)
-{
-    RakNet::BitStream bs((unsigned char*)p->data, p->length, false);
-    uint8_t packetID;
-    uint32_t rpcID;
-    uint16_t time, attack_score, def_score;
-
-    bs.Read(packetID);
-    bs.Read(rpcID);
-    bs.Read(time);
-    bs.Read(attack_score);
-    bs.Read(def_score);
-
-    CHUD::updateOpgWarLayout(time, attack_score, def_score);
-}
-
-void CHUD::updateOpgWarLayout(int time, int attack_score, int def_score)
-{
-    JNIEnv* env = g_pJavaWrapper->GetEnv();
-
-    jclass clazz = env->GetObjectClass(thiz);
-    jmethodID UpdateOpgWarLayout = env->GetMethodID(clazz, "updateOpgWarLayout", "(III)V");
-
-    if(CKeyBoard::IsOpen())
-    {
-        env->CallVoidMethod(thiz, UpdateOpgWarLayout, 0, 0, 0);
-        return;
-    }
-
-    env->CallVoidMethod(thiz, UpdateOpgWarLayout, time, attack_score, def_score);
-
-    if(!time){
-        bIsShowMafiaWar = false;
-    }
-    else bIsShowMafiaWar = true;
-}
-
 void CHUD::UpdateSalary(int salary, int lvl, float exp)
 {
     JNIEnv* env = g_pJavaWrapper->GetEnv();

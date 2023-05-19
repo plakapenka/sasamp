@@ -100,9 +100,6 @@ public class HudManager {
     ConstraintLayout damage_informer_give_layout;
     TextView damage_informer_take;
 
-    // damage
-    TextView death_anounce_text;
-
     private int cursorPos = 0;
     private final int INVALID = -1;
     private final int ME_BUTTON = 0;
@@ -148,9 +145,6 @@ public class HudManager {
 
     public HudManager(Activity aactivity) {
         activity = aactivity;
-
-        // kill anounce
-        death_anounce_text = activity.findViewById(R.id.death_anounce_text);
 
         camera_mode_butt = activity.findViewById(R.id.camera_mode_butt);
         camera_mode_butt.setOnClickListener(view -> {

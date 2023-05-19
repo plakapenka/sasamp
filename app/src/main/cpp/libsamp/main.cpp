@@ -28,7 +28,6 @@ char *g_pszStorage = nullptr;
 #include "CServerManager.h"
 #include "CLocalisation.h"
 #include "java_systems/CHUD.h"
-#include "java_systems/CInventory.h"
 #include "gui/gui.h"
 
 const cryptor::string_encryptor encLib = cryptor::create("libsamp.so", 11);
@@ -83,8 +82,6 @@ void InitSAMP(JNIEnv *pEnv, jobject thiz) {
     CLoader::loadSetting();
 
     g_pJavaWrapper = new CJavaWrapper(pEnv, thiz);
-
-    CLoader::initCrashLytics();
 
     CWeaponsOutFit::ParseDatFile();
 }
@@ -413,7 +410,7 @@ void Log(const char *fmt, ...) {
     vsnprintf(buffer, sizeof(buffer), fmt, arg);
     va_end(arg);
 
-    firebase::crashlytics::Log(buffer);
+    //firebase::crashlytics::Log(buffer);
     __android_log_write(ANDROID_LOG_INFO, "AXL", buffer);
 
     //if(pDebug) pDebug->AddMessage(buffer);
@@ -440,7 +437,7 @@ void CrashLog(const char *fmt, ...) {
     vsnprintf(buffer, sizeof(buffer), fmt, arg);
     va_end(arg);
 
-    firebase::crashlytics::Log(buffer);
+    //firebase::crashlytics::Log(buffer);
     __android_log_write(ANDROID_LOG_FATAL, "AXL", buffer);
 
     static FILE *flLog = nullptr;
