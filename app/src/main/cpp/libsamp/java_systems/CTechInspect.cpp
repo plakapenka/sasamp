@@ -64,12 +64,12 @@ void CNetGame::packetTechInspect(Packet* p)
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_TechIspect_init(JNIEnv *env, jobject thiz) {
+Java_com_ssmp_cr_gui_TechIspect_init(JNIEnv *env, jobject thiz) {
     CTechInspect::thiz = env->NewGlobalRef(thiz);
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_TechIspect_sendClick(JNIEnv *env, jobject thiz)
+Java_com_ssmp_cr_gui_TechIspect_sendClick(JNIEnv *env, jobject thiz)
 {
     CTechInspect::bIsShow = false;
 
@@ -84,6 +84,6 @@ Java_com_liverussia_cr_gui_TechIspect_sendClick(JNIEnv *env, jobject thiz)
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_TechIspect_exit(JNIEnv *env, jobject thiz) {
+Java_com_ssmp_cr_gui_TechIspect_exit(JNIEnv *env, jobject thiz) {
     CTechInspect::bIsShow = false;
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.liverussia.cr">
+    package="com.ssmp.cr">
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -45,7 +45,7 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:icon">
         <activity
-            android:name=".StartActivity"
+            android:name="com.ssmp.cr.StartActivity"
             android:exported="true"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar">
@@ -59,7 +59,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.liverussia.cr.provider"
+            android:authorities="com.ssmp.cr.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -68,7 +68,7 @@
         </provider>
 
         <activity
-            android:name=".core.Samp"
+            android:name="com.ssmp.cr.core.Samp"
             android:exported="true"
             android:fitsSystemWindows="true"
             android:hardwareAccelerated="true"

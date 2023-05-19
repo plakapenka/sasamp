@@ -91,7 +91,7 @@ void CSpeedometr::update()
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_Speedometer_sendClick(JNIEnv *env, jobject thiz, jint click_id) {
+Java_com_ssmp_cr_gui_Speedometer_sendClick(JNIEnv *env, jobject thiz, jint click_id) {
     switch(click_id)
     {
         case CSpeedometr::BUTTON_ENGINE:
@@ -145,7 +145,7 @@ Java_com_liverussia_cr_gui_Speedometer_sendClick(JNIEnv *env, jobject thiz, jint
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_tunings_Colors_color_1change(JNIEnv *env, jobject thiz, jint type,
+Java_com_ssmp_cr_gui_tunings_Colors_color_1change(JNIEnv *env, jobject thiz, jint type,
                                                         jint r, jint g, jint b) {
     if(!pNetGame)
         return;

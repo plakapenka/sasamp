@@ -26,7 +26,7 @@
 			custom:layout_constraintStart_toStartOf="parent"
 			custom:layout_constraintTop_toTopOf="parent" />
 
-		<com.liverussia.cr.gui.util.SeekArc
+		<com.ssmp.cr.gui.util.SeekArc
 			android:id="@+id/speed_line"
 			android:layout_width="0dp"
 			android:layout_height="@dimen/_80sdp"

@@ -46,7 +46,7 @@ void CChooseSpawn::hide()
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_ChooseSpawn_clickEnter(JNIEnv *env, jobject thiz, jint spawn_id) {
+Java_com_ssmp_cr_gui_ChooseSpawn_clickEnter(JNIEnv *env, jobject thiz, jint spawn_id) {
     pNetGame->SendCustomPacket(253, 2, spawn_id);
     Log("SendChooseSpawn: SpawnId - %d", spawn_id);
 }

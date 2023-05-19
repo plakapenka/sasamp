@@ -48,13 +48,13 @@ void CChip::OpenChipBuySell(bool isSell, int balance){
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_Casino_Init(JNIEnv *env, jobject thiz) {
+Java_com_ssmp_cr_gui_Casino_Init(JNIEnv *env, jobject thiz) {
     jCasino = env->NewGlobalRef(thiz);
 }
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_Casino_ClickChipButton(JNIEnv *env, jobject thiz, jint button_id,
+Java_com_ssmp_cr_gui_Casino_ClickChipButton(JNIEnv *env, jobject thiz, jint button_id,
                                                   jlong input, jboolean sell_or_buy) {
     CChip::bIsShow = false;
 

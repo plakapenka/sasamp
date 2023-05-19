@@ -2321,11 +2321,11 @@ bool ProcessLocalCommands(const char str[])
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_HudManager_SendChatButton(JNIEnv *env, jobject thiz, jint button_id) {
+Java_com_ssmp_cr_gui_HudManager_SendChatButton(JNIEnv *env, jobject thiz, jint button_id) {
 	CKeyBoard::dop_butt = button_id;
 }
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_com_liverussia_cr_gui_HudManager_isAndroidKeyboard(JNIEnv *env, jobject thiz) {
+Java_com_ssmp_cr_gui_HudManager_isAndroidKeyboard(JNIEnv *env, jobject thiz) {
     return CSettings::Get().iAndroidKeyboard;
 }

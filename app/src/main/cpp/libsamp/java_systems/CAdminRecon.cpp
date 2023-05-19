@@ -81,12 +81,12 @@ void CNetGame::packetAdminRecon(Packet* p)
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_AdminRecon_init(JNIEnv *env, jobject thiz) {
+Java_com_ssmp_cr_gui_AdminRecon_init(JNIEnv *env, jobject thiz) {
     j_mAdminRecon = env->NewGlobalRef(thiz);
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_AdminRecon_clickButton(JNIEnv *env, jobject thiz, jint button_id) {
+Java_com_ssmp_cr_gui_AdminRecon_clickButton(JNIEnv *env, jobject thiz, jint button_id) {
     switch (button_id) {
         case CAdminRecon::Buttons::EXIT_BUTTON:{
             pNetGame->SendChatCommand("/reoff");

@@ -48,12 +48,6 @@ uint32_t colors[MAX_SCHEMAS][2] = {
 };
 unsigned int color_scheme = 0;
 
-void LoadSplashTexture()
-{
-
-	splashTexture = CUtil::LoadTextureFromDB("txd", "hud_bg");
-}
-
 void RenderBackgroundHud()
 {
 	if (CHUD::bIsShow)

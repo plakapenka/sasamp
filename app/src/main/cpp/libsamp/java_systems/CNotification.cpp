@@ -74,7 +74,7 @@ void CNetGame::packetNotification(Packet* p)
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_Notification_sendClick(JNIEnv *env, jobject thiz, jint action_id,
+Java_com_ssmp_cr_gui_Notification_sendClick(JNIEnv *env, jobject thiz, jint action_id,
                                                   jint button_id) {
     uint8_t packet = ID_CUSTOM_RPC;
     uint8_t RPC = RPC_SHOW_ACTION_LABEL;
@@ -87,6 +87,6 @@ Java_com_liverussia_cr_gui_Notification_sendClick(JNIEnv *env, jobject thiz, jin
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_Notification_init(JNIEnv *env, jobject thiz) {
+Java_com_ssmp_cr_gui_Notification_init(JNIEnv *env, jobject thiz) {
     CNotification::thiz = env->NewGlobalRef(thiz);
 }

@@ -21,7 +21,7 @@
 #-renamesourcefileattribute SourceFile
 -dontobfuscate
 
--keepclasseswithmembernames class com.nvidia.devtech.*, com.wardrumstudios.utils.*, com.liverussia.*
+-keepclasseswithmembernames class com.nvidia.devtech.*, com.wardrumstudios.utils.*, com.ssmp.*
 
 -keep public class com.nvidia.devtech.NvEventQueueActivity {
               *; }

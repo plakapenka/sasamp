@@ -881,7 +881,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.liverussia.cr.gui.util.FadingEdgeLayout
+        <com.ssmp.cr.gui.util.FadingEdgeLayout
             android:id="@+id/chat_fade_box"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_73sdp"
@@ -906,7 +906,7 @@
                 app:stackFromEnd="true">
 
             </com.factor.bouncy.BouncyRecyclerView>
-        </com.liverussia.cr.gui.util.FadingEdgeLayout>
+        </com.ssmp.cr.gui.util.FadingEdgeLayout>
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/chat_input_layout"
             android:layout_width="match_parent"

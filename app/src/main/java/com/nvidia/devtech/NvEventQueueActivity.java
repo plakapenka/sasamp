@@ -22,11 +22,9 @@
 package com.nvidia.devtech;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -44,7 +42,6 @@ import android.view.Display;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
-import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewParent;
@@ -54,8 +51,8 @@ import android.widget.FrameLayout;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentActivity;
 
-import com.liverussia.cr.R;
-import com.liverussia.cr.core.DialogClientSettings;
+import com.ssmp.cr.R;
+import com.ssmp.cr.core.DialogClientSettings;
 
 import java.io.FileInputStream;
 import java.io.IOException;

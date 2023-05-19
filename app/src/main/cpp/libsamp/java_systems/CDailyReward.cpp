@@ -42,12 +42,12 @@ void CNetGame::packetDailyRewards(Packet* p)
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_DailyReward_init(JNIEnv *env, jobject thiz) {
+Java_com_ssmp_cr_gui_DailyReward_init(JNIEnv *env, jobject thiz) {
     CDailyReward::thiz = env->NewGlobalRef(thiz);
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_DailyReward_click(JNIEnv *env, jobject thiz) {
+Java_com_ssmp_cr_gui_DailyReward_click(JNIEnv *env, jobject thiz) {
     uint8_t packet = ID_CUSTOM_RPC;
     uint8_t RPC = RPC_DAILY_REWARDS;
 
@@ -59,6 +59,6 @@ Java_com_liverussia_cr_gui_DailyReward_click(JNIEnv *env, jobject thiz) {
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_DailyReward_hide(JNIEnv *env, jobject thiz) {
+Java_com_ssmp_cr_gui_DailyReward_hide(JNIEnv *env, jobject thiz) {
     CDailyReward::bIsShow = false;
 }

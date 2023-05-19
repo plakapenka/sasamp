@@ -101,12 +101,12 @@ void CNetGame::packetMedGame(Packet* p) {
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_PreDeath_init(JNIEnv *env, jobject thiz) {
+Java_com_ssmp_cr_gui_PreDeath_init(JNIEnv *env, jobject thiz) {
     CMedic::thiz = env->NewGlobalRef(thiz);
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_PreDeath_medicMiniGameExit(JNIEnv *env, jobject thiz, jint type_id) {
+Java_com_ssmp_cr_gui_PreDeath_medicMiniGameExit(JNIEnv *env, jobject thiz, jint type_id) {
     CMedic::bIsShow = false;
 
     uint8_t packet = ID_CUSTOM_RPC;
@@ -121,7 +121,7 @@ Java_com_liverussia_cr_gui_PreDeath_medicMiniGameExit(JNIEnv *env, jobject thiz,
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_PreDeath_medicPreDeathExit(JNIEnv *env, jobject thiz, jint button_id) {
+Java_com_ssmp_cr_gui_PreDeath_medicPreDeathExit(JNIEnv *env, jobject thiz, jint button_id) {
     CMedic::bIsShow = false;
 
     uint8_t packet = ID_CUSTOM_RPC;

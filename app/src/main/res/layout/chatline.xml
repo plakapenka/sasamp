@@ -6,7 +6,7 @@
 
     android:id="@+id/chat_line">
 
-    <com.liverussia.cr.gui.util.StrokedTextView
+    <com.ssmp.cr.gui.util.StrokedTextView
         android:id="@+id/chat_line_shadow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

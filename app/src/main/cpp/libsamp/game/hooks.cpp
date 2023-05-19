@@ -44,6 +44,7 @@ extern bool g_bIsTestMode;
 
 bool isEncrypted(const char *szArch)
 {
+    return false;
     if(g_bIsTestMode)return false;
 	//return false;
     for (const auto & i : encrArch)
@@ -191,35 +192,7 @@ void (*InitialiseRenderWare)();
 void InitialiseRenderWare_hook()
 {
 
-
-	CHook::NOP(g_libGTASA + 0x0046F576, 2);
-	CHook::NOP(g_libGTASA + 0x0046F588, 2); // mobile
-	CHook::NOP(g_libGTASA + 0x0046F592, 2); // txd
-	CHook::NOP(g_libGTASA + 0x0046F59C, 2); // gta3
-	CHook::NOP(g_libGTASA + 0x0046F5A6, 2); // gta_int
-
-	// cutscene
-//	CHook::NOP(g_libGTASA + 0x0046F5B0, 2); // cutscene
-//	CHook::RET(g_libGTASA + 0x0038FE64); // CCutsceneMgr::LoadCutsceneData
-//
-//	CHook::NOP(g_libGTASA + 0x0046F5C6, 2); // player
-	CHook::NOP(g_libGTASA + 0x0046F5D2, 2); // menu
-
 	TextureDatabaseRuntime::Load("samp", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_DXT);
-
-	TextureDatabaseRuntime::Load("mobile", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_DXT);
-	TextureDatabaseRuntime::Load("txd", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_DXT);
-	TextureDatabaseRuntime::Load("gta3", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_DXT);
-	TextureDatabaseRuntime::Load("gta_int", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_DXT);
-	TextureDatabaseRuntime::Load("menu", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_DXT);
-
-	//skins
-	TextureDatabase* skins = TextureDatabaseRuntime::Load("skins", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
-	TextureDatabaseRuntime::Register(skins);
-
-    // cars
-	TextureDatabase* cars = TextureDatabaseRuntime::Load("cars", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_Default);
-	TextureDatabaseRuntime::Register(cars);
 
 	InitialiseRenderWare();
 }
@@ -285,8 +258,7 @@ void CStreaming_InitImageList_hook()
 	*(uint32_t*)&ms_files[380] = 0;
 
 	CStreaming::AddImageToList("TEXDB\\GTA3.IMG", true);
-	CStreaming::AddImageToList("TEXDB\\SKINS.IMG", true);
-    CStreaming::AddImageToList("TEXDB\\CARS.IMG", true);
+    CStreaming::AddImageToList("TEXDB\\GTA_INT.IMG", true);
 	CStreaming::AddImageToList("TEXDB\\SAMPCOL.IMG", true);
 	CStreaming::AddImageToList("TEXDB\\SAMP.IMG", true);
 
@@ -1352,7 +1324,7 @@ void CGame__Process_hook()
 	static bool once = false;
 	if (!once)
 	{
-		CCustomPlateManager::Initialise();
+		//CCustomPlateManager::Initialise();
 
 		// hide load
 		JNIEnv* env = g_pJavaWrapper->GetEnv();
@@ -1363,7 +1335,7 @@ void CGame__Process_hook()
 		once = true;
 	}
 
-	CCustomPlateManager::Process();
+//	CCustomPlateManager::Process();
 
 //	CGame__Process();
 }
@@ -2100,24 +2072,13 @@ uintptr_t* ConvertBufferToObject_hook(uint8_t* fileBuffer, int32_t modelId)
 	return ConvertBufferToObject(fileBuffer, modelId);
 }
 
-bool(*LoadTextures)(uintptr_t* thiz, char* tex, int32_t ver);
-bool LoadTextures_hook(uintptr_t* thiz, char* tex, int32_t ver)
-{
-	Log("LoadTextures fx = %s", tex);
-
-	return LoadTextures(thiz, tex, ver);
-}
-
 #include "Scene.h"
 
 void InstallHooks()
 {
 	Log("InstallHooks");
 
-	CHook::InlineHook(g_libGTASA, 0x0046DF1C, &LoadTextures_hook, &LoadTextures);
-
 	Scene = *(CScene*)(g_libGTASA + 0x009FC938);
-
 
 	//CHook::InlineHook(g_libGTASA, 0x002D2FD0, &ConvertBufferToObject_hook, &ConvertBufferToObject);
 

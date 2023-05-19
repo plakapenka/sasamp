@@ -6,12 +6,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 
-import com.liverussia.cr.BuildConfig;
 import com.nvidia.devtech.NvUtil;
 
 import java.io.File;
-import java.io.FileFilter;
-import java.util.regex.Pattern;
 
 public class WarMedia extends WarGamepad
 {

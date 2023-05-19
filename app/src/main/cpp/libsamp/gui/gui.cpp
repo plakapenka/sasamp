@@ -128,7 +128,7 @@ void CGUI::Render()
 	ImGui::NewFrame();
 
 	//RenderRakNetStatistics();
-	RenderBackgroundHud();
+	//RenderBackgroundHud();
 
 	if (pPlayerTags) pPlayerTags->Render();
 	

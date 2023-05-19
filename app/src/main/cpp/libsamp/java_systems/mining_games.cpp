@@ -15,7 +15,7 @@ jobject jMine3;
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_MineGame1_Init(JNIEnv *env, jobject thiz) {
+Java_com_ssmp_cr_gui_MineGame1_Init(JNIEnv *env, jobject thiz) {
     jMine1 = env->NewGlobalRef(thiz);
 }
 
@@ -48,14 +48,14 @@ void CJavaWrapper::ShowMiningGame3(bool toggle) {
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_MineGame2_Init(JNIEnv *env, jobject thiz) {
+Java_com_ssmp_cr_gui_MineGame2_Init(JNIEnv *env, jobject thiz) {
     jMine2 = env->NewGlobalRef(thiz);
 }
 
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_MineGame1_ExitMineGame(JNIEnv *env, jclass clazz, jint exittype) {
+Java_com_ssmp_cr_gui_MineGame1_ExitMineGame(JNIEnv *env, jclass clazz, jint exittype) {
     uint8_t packet = ID_CUSTOM_RPC;
     uint8_t RPC = RPC_SHOW_MINING_GAME;
     uint8_t button = exittype;
@@ -69,6 +69,6 @@ Java_com_liverussia_cr_gui_MineGame1_ExitMineGame(JNIEnv *env, jclass clazz, jin
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_MineGame3_Init(JNIEnv *env, jobject thiz) {
+Java_com_ssmp_cr_gui_MineGame3_Init(JNIEnv *env, jobject thiz) {
     jMine3 = env->NewGlobalRef(thiz);
 }

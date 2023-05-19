@@ -140,7 +140,7 @@ void CNetGame::packetCasinoBaccarat(Packet* p) {
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_CasinoBaccarat_sendAddBet(JNIEnv *env, jobject thiz, jint sum,
+Java_com_ssmp_cr_gui_CasinoBaccarat_sendAddBet(JNIEnv *env, jobject thiz, jint sum,
                                                      jint bettype) {
     RakNet::BitStream bsSend;
     bsSend.Write((uint8_t)ID_CUSTOM_RPC);
@@ -156,13 +156,13 @@ Java_com_liverussia_cr_gui_CasinoBaccarat_sendAddBet(JNIEnv *env, jobject thiz, 
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_CasinoBaccarat_init(JNIEnv *env, jobject thiz) {
+Java_com_ssmp_cr_gui_CasinoBaccarat_init(JNIEnv *env, jobject thiz) {
     CBaccarat::thiz = env->NewGlobalRef(thiz);
     CBaccarat::clazz = env->GetObjectClass(CBaccarat::thiz);
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_CasinoBaccarat_exit(JNIEnv *env, jobject thiz) {
+Java_com_ssmp_cr_gui_CasinoBaccarat_exit(JNIEnv *env, jobject thiz) {
     RakNet::BitStream bsSend;
     bsSend.Write((uint8_t)ID_CUSTOM_RPC);
     bsSend.Write((uint8_t)RPC_UPDATE_BACCARAT);
@@ -173,6 +173,6 @@ Java_com_liverussia_cr_gui_CasinoBaccarat_exit(JNIEnv *env, jobject thiz) {
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_CasinoBaccarat_close(JNIEnv *env, jobject thiz) {
+Java_com_ssmp_cr_gui_CasinoBaccarat_close(JNIEnv *env, jobject thiz) {
     // TODO: implement close()
 }

@@ -95,13 +95,13 @@ void CTab::setStat(int id, char name[], int score, int ping) {
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_tab_Tab_onTabClose(JNIEnv *env, jobject thiz) {
+Java_com_ssmp_cr_gui_tab_Tab_onTabClose(JNIEnv *env, jobject thiz) {
     CTab::toggle();
 }
 
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_tab_Tab_initTab(JNIEnv *env, jobject thiz) {
+Java_com_ssmp_cr_gui_tab_Tab_initTab(JNIEnv *env, jobject thiz) {
     CTab::thiz = env->NewGlobalRef(thiz);
 }

@@ -10,7 +10,6 @@
 void ApplyPatches();
 void ApplyInGamePatches();
 void InstallHooks();
-void LoadSplashTexture();
 void InitScripting();
 
 uint16_t *szGameTextMessage;
@@ -129,7 +128,6 @@ void *Init(void *p)
 {
 	ApplyPatches();
 	InstallHooks();
-	LoadSplashTexture();
 	GameAimSyncInit();
 
 	CGtaWidgets::init();

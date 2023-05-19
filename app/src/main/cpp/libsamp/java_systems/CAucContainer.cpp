@@ -47,12 +47,12 @@ void CAucContainer::show(int id, int type, int price){
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_AucContainer_Init(JNIEnv *env, jobject thiz) {
+Java_com_ssmp_cr_gui_AucContainer_Init(JNIEnv *env, jobject thiz) {
     jAucContainer = env->NewGlobalRef(thiz);
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_cr_gui_AucContainer_SendClick(JNIEnv *env, jobject thiz, jint button_id) {
+Java_com_ssmp_cr_gui_AucContainer_SendClick(JNIEnv *env, jobject thiz, jint button_id) {
     CAucContainer::bIsShow = false;
 
     RakNet::BitStream bsSend;
