@@ -89,13 +89,13 @@ void CDialog::rpcShowPlayerDialog(RPCParameters *rpcParams)
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_ssmp_cr_gui_dialogs_Dialog_init(JNIEnv *env, jobject thiz) {
+Java_com_sasamp_cr_gui_dialogs_Dialog_init(JNIEnv *env, jobject thiz) {
     CDialog::thiz = env->NewGlobalRef(thiz);
 }
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_ssmp_cr_gui_dialogs_Dialog_sendResponse(JNIEnv *env, jobject thiz, jint button, jint id, jint item, jbyteArray str)
+Java_com_sasamp_cr_gui_dialogs_Dialog_sendResponse(JNIEnv *env, jobject thiz, jint button, jint id, jint item, jbyteArray str)
 {
     jbyte* pMsg = env->GetByteArrayElements(str, nullptr);
     jsize length = env->GetArrayLength(str);

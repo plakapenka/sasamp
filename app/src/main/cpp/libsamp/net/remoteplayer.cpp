@@ -432,9 +432,6 @@ bool CRemotePlayer::Spawn(uint8_t byteTeam, unsigned int iSkin, CVector *vecPos,
 		if(byteFightingStyle != 4)
 			m_pPlayerPed->SetFightingStyle(byteFightingStyle);
 
-		if(byteTeam != ANIM_GROUP_NONE && byteTeam != 255)
-			m_pPlayerPed->SetMoveAnim(byteTeam);
-
 		SetState(PLAYER_STATE_SPAWNED);
 		return true;
 	}

@@ -18,12 +18,12 @@ jobject jFurnitureFactory = nullptr;
 extern "C"
 {
 JNIEXPORT void JNICALL
-Java_com_ssmp_cr_gui_Furniture_1factory_InitFurnitureFactory(JNIEnv *env, jobject thiz) {
+Java_com_sasamp_cr_gui_Furniture_1factory_InitFurnitureFactory(JNIEnv *env, jobject thiz) {
 jFurnitureFactory = env->NewGlobalRef(thiz);
 }
 
 JNIEXPORT void JNICALL
-Java_com_ssmp_cr_gui_Furniture_1factory_SendSucces(JNIEnv *env, jobject thiz,
+Java_com_sasamp_cr_gui_Furniture_1factory_SendSucces(JNIEnv *env, jobject thiz,
         jint button_id) {
     uint8_t packet = ID_CUSTOM_RPC;
     uint8_t RPC = RPC_SHOW_FACTORY_GAME;

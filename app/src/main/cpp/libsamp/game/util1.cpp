@@ -1888,11 +1888,6 @@ CPedGta* CUtil::GetPoolPed(int slot)
     return (( CPedGta* (*)(int))(g_libGTASA + 0x00483DB8 + 1))(slot);
 }
 
-int GamePool_Ped_GetIndex(CPedGta *pActor)
-{
-    return (( int (*)(CPedGta*))(g_libGTASA+0x00483DAA + 1))(pActor);
-}
-
 CVehicleGta* GamePool_Vehicle_GetAt(int iID)
 {
 	return (( CVehicleGta* (*)(int32_t))(g_libGTASA + 0x00483D9E + 1))(iID);

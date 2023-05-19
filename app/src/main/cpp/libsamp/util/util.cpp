@@ -17,7 +17,7 @@ RwTexture* CUtil::GetTexture(const char* name)
 	if (!result)
 	{
 		Log("Texture %s was not found", name);
-		result = TextureDatabaseRuntime::GetTexture("hud_bg");
+		result = TextureDatabaseRuntime::GetTexture("notex");
 	//	return nullptr;
 	}
 

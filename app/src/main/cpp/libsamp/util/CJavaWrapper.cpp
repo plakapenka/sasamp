@@ -419,7 +419,7 @@ CJavaWrapper* g_pJavaWrapper = nullptr;
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_ssmp_cr_gui_Casino_1LuckyWheel_ClickButt(JNIEnv *env, jobject thiz, jint button_id) {
+Java_com_sasamp_cr_gui_Casino_1LuckyWheel_ClickButt(JNIEnv *env, jobject thiz, jint button_id) {
 	pGame->isCasinoWheelActive = false;
 	if(button_id == 228)
 	{// Закрыл
@@ -439,7 +439,7 @@ Java_com_ssmp_cr_gui_Casino_1LuckyWheel_ClickButt(JNIEnv *env, jobject thiz, jin
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_ssmp_cr_core_Samp_playUrlSound(JNIEnv *env, jclass clazz, jstring url) {
+Java_com_sasamp_cr_core_Samp_playUrlSound(JNIEnv *env, jclass clazz, jstring url) {
 	const char *_url = env->GetStringUTFChars(url, nullptr);
 
 	pNetGame->GetStreamPool()->PlayIndividualStream(_url, BASS_STREAM_AUTOFREE);
@@ -448,7 +448,7 @@ Java_com_ssmp_cr_core_Samp_playUrlSound(JNIEnv *env, jclass clazz, jstring url) 
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_ssmp_cr_gui_OilFactoryManager_onOilFactoryGameClose(JNIEnv *env, jobject thiz,
+Java_com_sasamp_cr_gui_OilFactoryManager_onOilFactoryGameClose(JNIEnv *env, jobject thiz,
 																   jboolean success) {
 	uint8_t packet = ID_CUSTOM_RPC;
 	uint8_t RPC = RPC_SHOW_OILGAME;
@@ -462,7 +462,7 @@ Java_com_ssmp_cr_gui_OilFactoryManager_onOilFactoryGameClose(JNIEnv *env, jobjec
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_ssmp_cr_gui_AutoShop_sendAutoShopButton(JNIEnv *env, jobject thiz, jint button_id) {
+Java_com_sasamp_cr_gui_AutoShop_sendAutoShopButton(JNIEnv *env, jobject thiz, jint button_id) {
 	uint8_t packet = ID_CUSTOM_RPC;
 	uint8_t RPC = RPC_CLICK_AUTOSHOP;
 	uint8_t button = button_id;
@@ -477,35 +477,35 @@ Java_com_ssmp_cr_gui_AutoShop_sendAutoShopButton(JNIEnv *env, jobject thiz, jint
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_ssmp_cr_gui_SamwillManager_onSamwillHideGame(JNIEnv *env, jobject thiz,
+Java_com_sasamp_cr_gui_SamwillManager_onSamwillHideGame(JNIEnv *env, jobject thiz,
 															jint samwillpacket) {
 	pNetGame->SendCustomPacket(251, 20, samwillpacket);
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_ssmp_cr_gui_ArmyGameManager_onArmyGameClose(JNIEnv *env, jobject thiz) {
+Java_com_sasamp_cr_gui_ArmyGameManager_onArmyGameClose(JNIEnv *env, jobject thiz) {
 	pNetGame->SendCustomPacket(251, 45, 1);
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_ssmp_cr_gui_FuelStationManager_onFuelStationClick(JNIEnv *env, jobject thiz,
+Java_com_sasamp_cr_gui_FuelStationManager_onFuelStationClick(JNIEnv *env, jobject thiz,
 																 jint fueltype, jint fuelliters) {
 	pNetGame->SendCustomPacketFuelData(251, 39, fueltype, fuelliters);
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_ssmp_cr_gui_ShopStoreManager_onShopStoreClick(JNIEnv *env, jobject thiz,
+Java_com_sasamp_cr_gui_ShopStoreManager_onShopStoreClick(JNIEnv *env, jobject thiz,
 															 jint buttonid) {
 	pNetGame->SendCustomPacket(251, 42, buttonid);
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_ssmp_cr_gui_GunShopManager_onGunShopClick(JNIEnv *env, jobject thiz, jint weaponid) {
+Java_com_sasamp_cr_gui_GunShopManager_onGunShopClick(JNIEnv *env, jobject thiz, jint weaponid) {
 	pNetGame->SendCustomPacket(251, 44, weaponid);
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_ssmp_cr_gui_Menu_sendRPC(JNIEnv *env, jobject thiz, jint type, jbyteArray str,
+Java_com_sasamp_cr_gui_Menu_sendRPC(JNIEnv *env, jobject thiz, jint type, jbyteArray str,
 										jint action) {
 	switch(type) {
 		case 1:
@@ -559,7 +559,7 @@ Java_com_ssmp_cr_gui_Menu_sendRPC(JNIEnv *env, jobject thiz, jint type, jbyteArr
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_ssmp_cr_gui_CasinoDice_SendCasinoButt(JNIEnv *env, jobject thiz, jint button_id) {
+Java_com_sasamp_cr_gui_CasinoDice_SendCasinoButt(JNIEnv *env, jobject thiz, jint button_id) {
 	uint8_t packet = ID_CUSTOM_RPC;
 	uint8_t RPC = RPC_SHOW_DICE_TABLE;
 	uint8_t button = button_id;
@@ -573,7 +573,7 @@ Java_com_ssmp_cr_gui_CasinoDice_SendCasinoButt(JNIEnv *env, jobject thiz, jint b
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_ssmp_cr_core_Samp_togglePlayer(JNIEnv *env, jobject thiz, jint toggle) {
+Java_com_sasamp_cr_core_Samp_togglePlayer(JNIEnv *env, jobject thiz, jint toggle) {
 	if(toggle)
 		pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->TogglePlayerControllable(false, true);
 	else

@@ -100,6 +100,7 @@ struct stFile
 stFile* (*NvFOpen)(const char*, const char*, int, int);
 stFile* NvFOpen_hook(const char* r0, const char* r1, int r2, int r3)
 {
+	Log("file = %s", r1);
 	char path[0xFF] = { 0 };
 	sprintf(path, "%s%s", g_pszStorage, r1);
 
@@ -259,9 +260,9 @@ void CStreaming_InitImageList_hook()
 
 	CStreaming::AddImageToList("TEXDB\\GTA3.IMG", true);
     CStreaming::AddImageToList("TEXDB\\GTA_INT.IMG", true);
-	CStreaming::AddImageToList("TEXDB\\SAMPCOL.IMG", true);
-	CStreaming::AddImageToList("TEXDB\\SAMP.IMG", true);
 
+	CStreaming::AddImageToList("TEXDB\\SAMP.IMG", true);
+	CStreaming::AddImageToList("TEXDB\\SAMPCOL.IMG", true);
 }
 
 /* ====================================================== */
@@ -805,28 +806,28 @@ void InstallSpecialHooks()
 	CHook::InlineHook(g_libGTASA, 0x001E9148, &LoadFullTexture_hook, &LoadFullTexture);
 
 
-
-	//pvr
-	CHook::UnFuck(g_libGTASA + 0x001E87A0);
-	*(char*)(g_libGTASA + 0x1E87A0 + 12) = 'd';
-	*(char*)(g_libGTASA + 0x1E87A0 + 13) = 'x';
-	*(char*)(g_libGTASA + 0x1E87A0 + 14) = 't';
-
-	CHook::UnFuck(g_libGTASA + 0x001E8C04);
-	*(char*)(g_libGTASA + 0x001E8C04 + 12) = 'd';
-	*(char*)(g_libGTASA + 0x001E8C04 + 13) = 'x';
-	*(char*)(g_libGTASA + 0x001E8C04 + 14) = 't';
-
-	//etc
-	CHook::UnFuck(g_libGTASA + 0x001E878C);
-	*(char*)(g_libGTASA + 0x001E878C + 12) = 'd';
-	*(char*)(g_libGTASA + 0x001E878C + 13) = 'x';
-	*(char*)(g_libGTASA + 0x001E878C + 14) = 't';
-
-	CHook::UnFuck(g_libGTASA + 0x001E8BF4);
-	*(char*)(g_libGTASA + 0x001E8BF4 + 12) = 'd';
-	*(char*)(g_libGTASA + 0x001E8BF4 + 13) = 'x';
-	*(char*)(g_libGTASA + 0x001E8BF4 + 14) = 't';
+//
+//	//pvr
+//	CHook::UnFuck(g_libGTASA + 0x001E87A0);
+//	*(char*)(g_libGTASA + 0x1E87A0 + 12) = 'd';
+//	*(char*)(g_libGTASA + 0x1E87A0 + 13) = 'x';
+//	*(char*)(g_libGTASA + 0x1E87A0 + 14) = 't';
+//
+//	CHook::UnFuck(g_libGTASA + 0x001E8C04);
+//	*(char*)(g_libGTASA + 0x001E8C04 + 12) = 'd';
+//	*(char*)(g_libGTASA + 0x001E8C04 + 13) = 'x';
+//	*(char*)(g_libGTASA + 0x001E8C04 + 14) = 't';
+//
+//	//etc
+//	CHook::UnFuck(g_libGTASA + 0x001E878C);
+//	*(char*)(g_libGTASA + 0x001E878C + 12) = 'd';
+//	*(char*)(g_libGTASA + 0x001E878C + 13) = 'x';
+//	*(char*)(g_libGTASA + 0x001E878C + 14) = 't';
+//
+//	CHook::UnFuck(g_libGTASA + 0x001E8BF4);
+//	*(char*)(g_libGTASA + 0x001E8BF4 + 12) = 'd';
+//	*(char*)(g_libGTASA + 0x001E8BF4 + 13) = 'x';
+//	*(char*)(g_libGTASA + 0x001E8BF4 + 14) = 't';
 
 	CHook::InlineHook(g_libGTASA, 0x002671E2, &OS_FileRead_hook, &OS_FileRead);
 	CHook::InlineHook(g_libGTASA, 0x00266DB4, &NvFOpen_hook, & NvFOpen);
@@ -2077,6 +2078,7 @@ uintptr_t* ConvertBufferToObject_hook(uint8_t* fileBuffer, int32_t modelId)
 void InstallHooks()
 {
 	Log("InstallHooks");
+
 
 	Scene = *(CScene*)(g_libGTASA + 0x009FC938);
 

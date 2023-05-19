@@ -51,16 +51,16 @@ void CLoader::initJavaClasses(JavaVM* pjvm)
     JNIEnv* env = nullptr;
     pjvm->GetEnv((void**)& env, JNI_VERSION_1_6);
 
-    CSpeedometr::clazz = env->FindClass("com/ssmp/cr/gui/Speedometer");
+    CSpeedometr::clazz = env->FindClass("com/sasamp/cr/gui/Speedometer");
     CSpeedometr::clazz = (jclass) env->NewGlobalRef( CSpeedometr::clazz );
 
-    CDonate::clazz = env->FindClass("com/ssmp/cr/gui/donate/Donate");
+    CDonate::clazz = env->FindClass("com/sasamp/cr/gui/donate/Donate");
     CDonate::clazz = (jclass) env->NewGlobalRef( CDonate::clazz );
 
-    CEditobject::clazz = env->FindClass("com/ssmp/cr/gui/AttachEdit");
+    CEditobject::clazz = env->FindClass("com/sasamp/cr/gui/AttachEdit");
     CEditobject::clazz = (jclass) env->NewGlobalRef( CEditobject::clazz );
 
-    CChooseSpawn::clazz = env->FindClass("com/ssmp/cr/gui/ChooseSpawn");
+    CChooseSpawn::clazz = env->FindClass("com/sasamp/cr/gui/ChooseSpawn");
     CChooseSpawn::clazz = (jclass) env->NewGlobalRef(CChooseSpawn::clazz);
 
 }

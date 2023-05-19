@@ -62,7 +62,7 @@ void CInventory::updateItem(int matrixindex, int pos, bool active) {
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_ssmp_cr_gui_Inventory_InventoryInit(JNIEnv *env, jobject thiz) {
+Java_com_sasamp_cr_gui_Inventory_InventoryInit(JNIEnv *env, jobject thiz) {
     CInventory::thiz = env->NewGlobalRef(thiz);
 }
 
@@ -164,12 +164,12 @@ void CNetGame::packetInventoryUpdateItem(Packet* p)
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_ssmp_cr_gui_Inventory_switchToggle(JNIEnv *env, jobject thiz, jboolean toggle) {
+Java_com_sasamp_cr_gui_Inventory_switchToggle(JNIEnv *env, jobject thiz, jboolean toggle) {
     CInventory::bIsToggle = toggle;
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_ssmp_cr_gui_Inventory_sendSelectItem(JNIEnv *env, jobject thiz, jint matrindex,
+Java_com_sasamp_cr_gui_Inventory_sendSelectItem(JNIEnv *env, jobject thiz, jint matrindex,
                                                     jint pos) {
 
     RakNet::BitStream bsSend;
@@ -182,7 +182,7 @@ Java_com_ssmp_cr_gui_Inventory_sendSelectItem(JNIEnv *env, jobject thiz, jint ma
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_ssmp_cr_gui_Inventory_sendClickButton(JNIEnv *env, jobject thiz, jint buttonid) {
+Java_com_sasamp_cr_gui_Inventory_sendClickButton(JNIEnv *env, jobject thiz, jint buttonid) {
     RakNet::BitStream bsSend;
     bsSend.Write((uint8_t)ID_CUSTOM_RPC);
     bsSend.Write((uint8_t)RPC_INVENTAR_BUTTONS);

@@ -4,6 +4,7 @@
 
 #include "Streaming.h"
 #include "../util/patch.h"
+#include "game/Models/ModelInfo.h"
 
 int CStreaming::AddImageToList(const char* fileName, bool bNotPlayerImg)
 {
@@ -17,6 +18,9 @@ void CStreaming::RemoveAllUnusedModels()
 
 void CStreaming::RequestModel(int32_t index, int32_t flags)
 {
+    if(!CModelInfo::ms_modelInfoPtrs[index]) {
+        Log("invalid model %d", index);
+    }
     ((void (*) (int32_t, int32_t))(g_libGTASA + 0x002D299C + 1))(index, flags);
 }
 

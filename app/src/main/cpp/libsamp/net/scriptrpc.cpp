@@ -2,6 +2,7 @@
 #include "../game/game.h"
 #include "netgame.h"
 #include "game/StreamingInfo.h"
+#include "game/Models/ModelInfo.h"
 
 extern CGame *pGame;
 extern CNetGame *pNetGame;
@@ -137,28 +138,28 @@ void ScrSetFightingStyle(RPCParameters *rpcParams)
 void ScrSetPlayerTeam(RPCParameters *rpcParams)
 {
 	Log("RPC: ScrSetPlayerTeam");
-	auto * Data = reinterpret_cast<unsigned char *>(rpcParams->input);
-	int iBitLength = rpcParams->numberOfBitsOfData;
-
-	RakNet::BitStream bsData((unsigned char*)Data,(iBitLength/8)+1,false);
-
-	PLAYERID playerId;
-	uint8_t teamId;
-
-	bsData.Read(playerId);
-	bsData.Read(teamId);
-
-	if(teamId == 255)
-		return;
-
-	CPlayerPool *pPlayerPool = pNetGame->GetPlayerPool();
-	if(playerId == pPlayerPool->GetLocalPlayerID())
-		pPlayerPool->GetLocalPlayer()->GetPlayerPed()->SetMoveAnim(teamId);
-	else
-	{
-		if(pPlayerPool->m_pPlayers[playerId] && pPlayerPool->GetAt(playerId)->GetPlayerPed())
-			pPlayerPool->GetAt(playerId)->GetPlayerPed()->SetMoveAnim(teamId);
-	}
+//	auto * Data = reinterpret_cast<unsigned char *>(rpcParams->input);
+//	int iBitLength = rpcParams->numberOfBitsOfData;
+//
+//	RakNet::BitStream bsData((unsigned char*)Data,(iBitLength/8)+1,false);
+//
+//	PLAYERID playerId;
+//	uint8_t teamId;
+//
+//	bsData.Read(playerId);
+//	bsData.Read(teamId);
+//
+//	if(teamId == 255)
+//		return;
+//
+//	CPlayerPool *pPlayerPool = pNetGame->GetPlayerPool();
+//	if(playerId == pPlayerPool->GetLocalPlayerID())
+//		pPlayerPool->GetLocalPlayer()->GetPlayerPed()->SetMoveAnim(teamId);
+//	else
+//	{
+//		if(pPlayerPool->m_pPlayers[playerId] && pPlayerPool->GetAt(playerId)->GetPlayerPed())
+//			pPlayerPool->GetAt(playerId)->GetPlayerPed()->SetMoveAnim(teamId);
+//	}
 }
 
 void ScrSetPlayerSkin(RPCParameters *rpcParams)
@@ -1014,90 +1015,7 @@ void ScrCreateObject(RPCParameters* rpcParams)
 	{
 		pObject->AttachToVehicle(attachedVehicleID, &vecAttachedOffset, &vecAttachedRotation);
 	}
-	if (iMaterialCount > 0)
-	{
-		for (int i = 0; i < iMaterialCount; i++)
-		{
-			uint16_t modelId;
-			uint8_t libLength, texLength;
-			uint8_t id;
-			bsData.Read(id);
-			if (id == 2) continue;
-			uint8_t slot;
-			bsData.Read(slot);
-			bsData.Read(modelId);
 
-			bsData.Read(libLength);
-			char* str = new char[libLength + 1];
-			bsData.Read(str, libLength);
-			str[libLength] = 0;
-
-			bsData.Read(texLength);
-			char* tex = new char[texLength + 1];
-			bsData.Read(tex, texLength);
-			tex[texLength] = 0;
-
-			uint32_t col;
-			bsData.Read(col);
-
-			union color
-			{
-				uint32_t dwColor;
-				uint8_t cols[4];
-			};
-
-			color rightColor;
-			rightColor.dwColor = col;
-			uint8_t temp = rightColor.cols[0];
-			rightColor.cols[0] = rightColor.cols[2];
-			rightColor.cols[2] = temp;
-			col = rightColor.dwColor;
-
-			if (modelId < 0 || modelId > 20000)
-			{
-				modelId = 18631;
-			}
-			if (!pGame->IsModelLoaded(modelId))
-			{
-				CStreaming::RequestModel(modelId, STREAMING_GAME_REQUIRED);
-				CStreaming::LoadAllRequestedModels(false);
-				while (!pGame->IsModelLoaded(modelId)) sleep(1);
-			}
-			pObject->m_bMaterials = true;
-			pObject->m_pMaterials[slot].wModelID = modelId;
-			pObject->m_pMaterials[slot].pTex = (RwTexture*)GetTextureFromTXDStore(str, tex);
-			pObject->m_pMaterials[slot].m_bCreated = true;
-			pObject->m_pMaterials[slot].dwColor = col;
-			if (!strncmp(tex, "materialtext1", sizeof("materialtext1")))
-			{
-				tex = "MaterialText1";
-			}
-			if (!strncmp(tex, "sampblack", sizeof("sampblack")))
-			{
-				tex = "SAMPBlack";
-			}
-			if (!strncmp(tex, "carpet19-128x128", sizeof("carpet19-128x128")))
-			{
-				tex = "Carpet19-128x128";
-			}
-
-			if (!pObject->m_pMaterials[slot].pTex && strncmp(tex, "none", sizeof("none"))
-				&& strncmp(tex, "wall8", sizeof("wall8")))
-			{
-				pObject->m_pMaterials[slot].pTex = CUtil::LoadTextureFromDB("samp", tex);
-			}
-			if (!GetModelReferenceCount(modelId) && pGame->IsModelLoaded(modelId))
-			{
-				ScriptCommand(&release_model, modelId);
-			}
-			//bsData.Read(pObject->m_pMaterials[i].dwColor);
-//			if (!GetModelReferenceCount(modelId) && pGame->IsModelLoaded(modelId))
-//			{
-//				ScriptCommand(&release_model, modelId);
-//			}
-			//pGame->ReleaseModel(pMaterials[i].wModelID);
-		}
-	}
 
 	//LOGI("id: %d model: %d x: %f y: %f z: %f", wObjectID, ModelID, vecPos.x, vecPos.y, vecPos.z);
 	//LOGI("vecRot: %f %f %f", vecRot.x, vecRot.y, vecRot.z);
@@ -1498,96 +1416,17 @@ uintptr_t GetTextureFromTXDStore(const char* szTxd, const char* szTexture)
 	((int(*)(int, int))(g_libGTASA + 0x005D41D4 + 1))(iTXD, 0); // setCurrentTXD
 	uintptr_t tex = ((uintptr_t(*)(const char*, const char*))(g_libGTASA + 0x001DBA3C + 1))(szTexture, 0); // rwTextureRead
 	((int(*)())(g_libGTASA + 0x005D4214 + 1))(); // popCurrentTXD
+
+	if(!tex)
+		tex = reinterpret_cast<uintptr_t>(CUtil::LoadTextureFromDB("samp", "notex"));
+
 	return tex;
 
 }
 
 void ScrSetPlayerObjectMaterial(RPCParameters* rpcParams)
 {
-	unsigned char* Data = reinterpret_cast<unsigned char*>(rpcParams->input);
-	int iBitLength = rpcParams->numberOfBitsOfData;
 
-	uint16_t wObjectID;
-	int16_t modelId;
-	uint8_t materialType, matId, libLength, texLength;
-	RakNet::BitStream bsData(Data, (iBitLength / 8) + 1, false);
-	bsData.Read(wObjectID);
-	bsData.Read(materialType);
-	bsData.Read(matId);
-	if (materialType == 2) return;
-	bsData.Read(modelId);
-	bsData.Read(libLength);
-	char* str = new char[libLength + 1];
-	bsData.Read(str, libLength);
-	str[libLength] = 0;
-	bsData.Read(texLength);
-	char* tex = new char[texLength + 1];
-	bsData.Read(tex, texLength);
-	uint32_t col;
-	bsData.Read(col);
-	tex[texLength] = 0;
-	CObject* pObj = pNetGame->GetObjectPool()->GetAt(wObjectID);
-	if (!pObj) return;
-
-	union color
-	{
-		uint32_t dwColor;
-		uint8_t cols[4];
-	};
-
-	color rightColor;
-	rightColor.dwColor = col;
-	uint8_t temp = rightColor.cols[0];
-	rightColor.cols[0] = rightColor.cols[2];
-	rightColor.cols[2] = temp;
-	col = rightColor.dwColor;
-
-	if (modelId == -1)
-	{
-		pObj->m_bMaterials = true;
-		pObj->m_pMaterials[matId].m_bCreated = true;
-		pObj->m_pMaterials[matId].wModelID = 0xFFFF;
-		pObj->m_pMaterials[matId].pTex = nullptr;
-		pObj->m_pMaterials[matId].dwColor = col;
-		return;
-	}
-	if (modelId < 0 || modelId > 20000)
-	{
-		modelId = 18631;
-	}
-	if (!pGame->IsModelLoaded(modelId))
-	{
-		CStreaming::RequestModel(modelId, STREAMING_GAME_REQUIRED);
-		CStreaming::LoadAllRequestedModels(false);
-		while (!pGame->IsModelLoaded(modelId)) sleep(1);
-	}
-	pObj->m_bMaterials = true;
-	pObj->m_pMaterials[matId].m_bCreated = true;
-	pObj->m_pMaterials[matId].wModelID = modelId;
-	pObj->m_pMaterials[matId].pTex = (RwTexture*)GetTextureFromTXDStore(str, tex);
-	pObj->m_pMaterials[matId].dwColor = col;
-
-	if (!strncmp(tex, "materialtext1", sizeof("materialtext1")))
-	{
-		tex = "MaterialText1";
-	}
-	if (!strncmp(tex, "sampblack", sizeof("sampblack")))
-	{
-		tex = "SAMPBlack";
-	}
-	if (!strncmp(tex, "carpet19-128x128", sizeof("carpet19-128x128")))
-	{
-		tex = "Carpet19-128x128";
-	}
-	if (!pObj->m_pMaterials[matId].pTex && strncmp(tex, "none", sizeof("none"))
-		&& strncmp(tex, "wall8", sizeof("wall8")))
-	{
-		pObj->m_pMaterials[matId].pTex = CUtil::LoadTextureFromDB("samp", tex);
-	}
-	if (!GetModelReferenceCount(modelId) && pGame->IsModelLoaded(modelId))
-	{
-		ScriptCommand(&release_model, modelId);
-	}
 }
 
 void ScrSetVehicleZAngle(RPCParameters* rpcParams)

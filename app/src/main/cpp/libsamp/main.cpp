@@ -465,7 +465,7 @@ uint32_t GetTickCount() {
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_ssmp_cr_core_Samp_initSAMP(JNIEnv *env, jobject thiz, jstring game_path) {
+Java_com_sasamp_cr_core_Samp_initSAMP(JNIEnv *env, jobject thiz, jstring game_path) {
     const char *path = env->GetStringUTFChars(game_path, nullptr);
 
     g_pszStorage = new char[255];
@@ -486,7 +486,7 @@ Java_com_ssmp_cr_core_Samp_initSAMP(JNIEnv *env, jobject thiz, jstring game_path
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_liverussia_startMenu_GameMenuStart_connectToServer(JNIEnv *env, jobject thiz, jstring nick,
+Java_com_sasamp_startMenu_GameMenuStart_connectToServer(JNIEnv *env, jobject thiz, jstring nick,
                                                             jstring ip, jint port) {
     //CChatWindow::AddDebugMessage("{bbbbbb}?????? {ff0000}LIVE RUSSIA{bbbbbb} ???????");
 
@@ -497,8 +497,5 @@ Java_com_liverussia_startMenu_GameMenuStart_connectToServer(JNIEnv *env, jobject
     strcpy(CSettings::m_Settings.cHost, utfip);
     CSettings::m_Settings.iPort = port;
 
-    if(port == 7707)
-        strcpy(CSettings::m_Settings.szPassword, "qwe");
-    else
-        strcpy(CSettings::m_Settings.szPassword, "");
+    strcpy(CSettings::m_Settings.szPassword, "");
 }

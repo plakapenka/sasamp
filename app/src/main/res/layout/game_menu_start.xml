@@ -96,9 +96,6 @@
     <include layout="@layout/auth_account"/>
     <include layout="@layout/select_server"/>
     <include layout="@layout/select_char"/>
-    <include layout="@layout/register_char"/>
-    <include layout="@layout/register_char_old"/>
-    <include layout="@layout/reg_account"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

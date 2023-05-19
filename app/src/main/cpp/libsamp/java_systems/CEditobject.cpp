@@ -43,7 +43,7 @@ void CEditobject::StartEditAttachedObject(int slot)
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_ssmp_cr_gui_AttachEdit_Exit(JNIEnv *env, jobject thiz) {
+Java_com_sasamp_cr_gui_AttachEdit_Exit(JNIEnv *env, jobject thiz) {
     CPlayerPed* pPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed();
     int slot = CEditobject::iEditedSlot;
 
@@ -81,7 +81,7 @@ void CEditobject::SendOnEditAttach(int response, int index, int modelid, int bon
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_ssmp_cr_gui_AttachEdit_AttachClick(JNIEnv *env, jobject thiz, jint button_type,
+Java_com_sasamp_cr_gui_AttachEdit_AttachClick(JNIEnv *env, jobject thiz, jint button_type,
                                                   jboolean button_id) {
     CPlayerPed* pPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed();
     int slot = CEditobject::iEditedSlot;
@@ -147,7 +147,7 @@ Java_com_ssmp_cr_gui_AttachEdit_AttachClick(JNIEnv *env, jobject thiz, jint butt
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_ssmp_cr_gui_AttachEdit_Save(JNIEnv *env, jobject thiz) {
+Java_com_sasamp_cr_gui_AttachEdit_Save(JNIEnv *env, jobject thiz) {
     CPlayerPed* pPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed();
     int slot = CEditobject::iEditedSlot;
 

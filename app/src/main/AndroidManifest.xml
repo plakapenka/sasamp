@@ -44,7 +44,7 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:icon">
         <activity
-            android:name="com.ssmp.cr.StartActivity"
+            android:name="com.sasamp.cr.StartActivity"
             android:exported="true"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar">
@@ -58,7 +58,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.ssmp.cr.provider"
+            android:authorities="com.sasamp.cr.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -67,7 +67,7 @@
         </provider>
 
         <activity
-            android:name="com.ssmp.cr.core.Samp"
+            android:name="com.sasamp.cr.core.Samp"
             android:exported="true"
             android:fitsSystemWindows="true"
             android:hardwareAccelerated="true"

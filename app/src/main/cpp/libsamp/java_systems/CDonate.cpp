@@ -60,13 +60,13 @@ void CNetGame::packetShowDonat(Packet* p)
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_ssmp_cr_gui_donate_Donate_native_1hide(JNIEnv *env, jobject thiz) {
+Java_com_sasamp_cr_gui_donate_Donate_native_1hide(JNIEnv *env, jobject thiz) {
     env->DeleteGlobalRef(CDonate::thiz);
     CDonate::thiz = nullptr;
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_ssmp_cr_gui_donate_Donate_sendAction(JNIEnv *env, jobject thiz, jint action_id) {
+Java_com_sasamp_cr_gui_donate_Donate_sendAction(JNIEnv *env, jobject thiz, jint action_id) {
     uint8_t packet = ID_CUSTOM_RPC;
     uint8_t RPC = RPC_SHOW_DONATE;
 
@@ -79,7 +79,7 @@ Java_com_ssmp_cr_gui_donate_Donate_sendAction(JNIEnv *env, jobject thiz, jint ac
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_ssmp_cr_gui_donate_Donate_sendClickItem(JNIEnv *env, jobject thiz, jint action_type,
+Java_com_sasamp_cr_gui_donate_Donate_sendClickItem(JNIEnv *env, jobject thiz, jint action_type,
                                                        jint button_id, jint item_type,
                                                        jint item_id) {
     uint8_t packet = ID_CUSTOM_RPC;

@@ -51,8 +51,8 @@ import android.widget.FrameLayout;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentActivity;
 
-import com.ssmp.cr.R;
-import com.ssmp.cr.core.DialogClientSettings;
+import com.sasamp.cr.R;
+import com.sasamp.cr.core.DialogClientSettings;
 
 import java.io.FileInputStream;
 import java.io.IOException;

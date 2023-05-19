@@ -820,7 +820,7 @@ void HookCPad()
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_ssmp_cr_gui_HudManager_onWeaponChanged(JNIEnv *env, jobject thiz) {
+Java_com_sasamp_cr_gui_HudManager_onWeaponChanged(JNIEnv *env, jobject thiz) {
 	//pGame->FindPlayerPed()->SwitchWeapon();
 	if(!pGame->FindPlayerPed()) return;
 

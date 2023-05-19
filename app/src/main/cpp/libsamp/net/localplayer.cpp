@@ -80,7 +80,6 @@ CLocalPlayer::CLocalPlayer()
 		m_byteLastWeapon[i] = 0;
 		m_dwLastAmmo[i] = 0;
 	}
-	CStreaming::RequestModel(18646, STREAMING_GAME_REQUIRED);
 }
 
 CLocalPlayer::~CLocalPlayer()

@@ -20,7 +20,7 @@ android {
     //    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         multiDexEnabled false
-        applicationId "com.ssmp.cr"
+        applicationId "com.sasamp.cr"
         versionName "2.10"
         versionCode 209
         vectorDrawables.useSupportLibrary = true
@@ -63,7 +63,7 @@ android {
     }
 
     buildToolsVersion '33.0.1'
-    namespace 'com.ssmp.cr'
+    namespace 'com.sasamp.cr'
 
 }
 
