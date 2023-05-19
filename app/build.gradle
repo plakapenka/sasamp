@@ -21,7 +21,7 @@ android {
 
         multiDexEnabled false
         applicationId "com.ssmp.cr"
-        versionName "209"
+        versionName "2.10"
         versionCode 209
         vectorDrawables.useSupportLibrary = true
 
@@ -63,6 +63,7 @@ android {
     }
 
     buildToolsVersion '33.0.1'
+    namespace 'com.ssmp.cr'
 
 }
 
@@ -71,7 +72,7 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'com.google.android.material:material:1.9.0'
     implementation 'com.tuyenmonkey:mkloader:1.4.0'
     implementation group: 'org.ini4j', name: 'ini4j', version: '0.5.4'
 
