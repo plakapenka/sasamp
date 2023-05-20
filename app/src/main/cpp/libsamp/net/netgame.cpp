@@ -228,7 +228,6 @@ void CNetGame::UpdateNetwork()
 	while(pkt = m_pRakClient->Receive())
 	{
 		packetIdentifier = GetPacketID(pkt);
-
 		switch(packetIdentifier)
 		{
 			case ID_AUTH_KEY:
@@ -331,9 +330,6 @@ void CNetGame::Packet_TrailerSync(Packet* p)
 		pPlayer->StoreTrailerFullSyncData(&trSync);
 	}
 }
-
-
-#include "..//game/CCustomPlateManager.h"
 
 void CNetGame::Packet_CustomRPC(Packet* p)
 {
@@ -525,117 +521,7 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 
 			break;
 		}
-		case RPC_CUSTOM_VISUALS:
-		{
-			VEHICLEID vehicleId;
-			uint8_t bLightsColor[3];
-			int8_t bWheelAlignX;
-			int8_t bWheelAlignY;
-			int16_t sWheelOffsetXX;
-			int16_t sWheelOffsetXY;
-			uint8_t bToner[3];
-			uint8_t bVinyls[2];
-			uint16_t fWheelWidth;
 
-			uint8_t bPlateType, bLen;
-			char szText[30];
-			char szRegion[10];
-			memset(szText, 0, 30);
-			memset(szRegion, 0, 10);
-
-			bs.Read(vehicleId);
-			bs.Read(bLightsColor[0]);
-			bs.Read(bLightsColor[1]);
-			bs.Read(bLightsColor[2]);
-			bs.Read(fWheelWidth);
-			bs.Read(bWheelAlignX);
-			bs.Read(bWheelAlignY);
-			bs.Read(sWheelOffsetXX);
-			bs.Read(sWheelOffsetXY);
-			bs.Read(bToner[0]);
-			bs.Read(bToner[1]);
-			bs.Read(bToner[2]);
-			bs.Read(bVinyls[0]);
-			bs.Read(bVinyls[1]);
-			bs.Read(bPlateType);
-
-			bs.Read(bLen);
-			bs.Read(&szText[0], bLen);
-
-			bs.Read(bLen);
-			bs.Read(&szRegion[0], bLen);
-
-
-			uint8_t bShadowColor[3];
-			uint8_t bShadowSizeX, bShadowSizeY;
-			char szName[32];
-			
-			memset(szName, 0, sizeof(szName));
-
-			bs.Read(bShadowColor[0]);
-			bs.Read(bShadowColor[1]);
-			bs.Read(bShadowColor[2]);
-			bs.Read(bShadowSizeX);
-			bs.Read(bShadowSizeY);
-			bs.Read(bLen);
-
-			bs.Read(szName, bLen);
-
-			if (GetVehiclePool())
-			{
-				CVehicle* pVeh = GetVehiclePool()->GetAt(vehicleId);
-				if (pVeh)
-				{
-
-					pVeh->SetCustomShadow(bShadowColor[0], bShadowColor[1], bShadowColor[1], (float)bShadowSizeX / 10.0f, (float)bShadowSizeY / 10.0f, szName);
-
-					if (bLightsColor[0] != 0xFF || bLightsColor[1] != 0xFF || bLightsColor[2] != 0xFF)
-					{
-						pVeh->SetHeadlightsColor(bLightsColor[0], bLightsColor[1], bLightsColor[2]);
-					}
-
-					if (fWheelWidth)
-					{
-						pVeh->SetWheelWidth((float)fWheelWidth / 100.0f);
-					}
-
-					if (bWheelAlignX)
-					{
-						pVeh->SetWheelAlignment(0, (float)bWheelAlignX);
-					}
-
-					if (bWheelAlignY)
-					{
-						pVeh->SetWheelAlignment(1, (float)bWheelAlignY);
-					}
-
-					if (sWheelOffsetXX)
-					{
-						float fValueX = (float)((float)sWheelOffsetXX / 100.0f);
-						pVeh->SetWheelOffset(0, fValueX);
-						//pVeh->ProcessWheelsOffset();
-					}
-					if (sWheelOffsetXY)
-					{
-						float fValueX = (float)((float)sWheelOffsetXY / 100.0f);
-						pVeh->SetWheelOffset(1, fValueX);
-						//pVeh->ProcessWheelsOffset();
-					}
-
-					pVeh->ApplyToner(1, bToner[0]);
-					pVeh->ApplyToner(2, bToner[1]);
-					pVeh->ApplyToner(3, bToner[2]);
-					pVeh->ApplyVinyls(bVinyls[0], bVinyls[1]);
-					//CChatWindow::AddDebugMessage("%d %d %d %d %d", bToner[0], bToner[1], bToner[2], bVinyls[0], bVinyls[1]);
-					if (bPlateType)
-					{
-						CCustomPlateManager::PushPlate(vehicleId, (uint32_t)bPlateType, szText, szRegion);
-					}
-				}
-			}
-
-			break;
-		}
 		case RPC_CUSTOM_HANDLING:
 		{
 			uint16_t veh;

@@ -656,6 +656,7 @@ void CPlayerPed::PutDirectlyInVehicle(CVehicle *pVehicle, int iSeat)
 ////	mat.pos.z = pVehicle->entity.mat->pos.z;
 //	SetMatrix(mat);
 
+//	CHook::CallFunction<bool>(g_libGTASA + 0x0050AAC8 + 1, m_pPed, pVehicle->m_pVehicle, iSeat, iSeat==0);
 	if(iSeat == 0)
 	{
 		if(pVehicle->m_pVehicle->pDriver) return;
@@ -663,7 +664,7 @@ void CPlayerPed::PutDirectlyInVehicle(CVehicle *pVehicle, int iSeat)
 	}
 	else
 	{
-		iSeat--;
+		//iSeat--;
 		ScriptCommand(&put_actor_in_car2, m_dwGTAId, pVehicle->m_dwGTAId, iSeat);
 	}
 }

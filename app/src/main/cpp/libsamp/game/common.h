@@ -427,14 +427,7 @@ typedef struct _BULLET_DATA {
 } BULLET_DATA;
 
 
-#pragma pack(push, 4)
-
-
-#pragma pack(pop)
-
 #pragma pack(1)
-
-
 
 typedef struct _RECT
 {

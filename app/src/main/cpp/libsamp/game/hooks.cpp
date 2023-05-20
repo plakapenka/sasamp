@@ -100,7 +100,7 @@ struct stFile
 stFile* (*NvFOpen)(const char*, const char*, int, int);
 stFile* NvFOpen_hook(const char* r0, const char* r1, int r2, int r3)
 {
-	Log("file = %s", r1);
+//	Log("file = %s", r1);
 	char path[0xFF] = { 0 };
 	sprintf(path, "%s%s", g_pszStorage, r1);
 
@@ -435,62 +435,6 @@ void CStreaming__Init2_hook()
 	*(uint32_t*)(g_libGTASA + 0x00685FA0) = 0x20000000;
 }
 
-signed int (*OS_FileOpen)(unsigned int a1, int *a2, const char *a3, int a4);
-signed int OS_FileOpen_hook(unsigned int a1, int *a2, const char *a3, int a4)
-{
-	signed int retn = OS_FileOpen(a1, a2, a3, a4);
-
-	if (isEncrypted(a3))
-	{
-		lastOpenedFile = *a2;
-	}
-
-	return retn;
-}
-
-size_t (*OS_FileRead)(FILE *file, void *a2, size_t numBytes);
-size_t OS_FileRead_hook(FILE *file, void *a2, size_t numBytes)
-{
-
-    uintptr_t calledFrom = 0;
-    __asm__ volatile("mov %0, lr"
-    : "=r"(calledFrom));
-    calledFrom -= g_libGTASA;
-
-    if (calledFrom == 0x1E8142 + 1 && file == (void*)lastOpenedFile)
-    {
-        lastOpenedFile = 0;
-
-        AES_ctx ctx;
-		InitCTX(ctx, &g_iEncryptionKeyTXD[0]);
-
-        size_t retv = OS_FileRead(file, a2, numBytes);
-        int fileSize = numBytes;
-        int iters = fileSize / PART_SIZE_TXD;
-        uintptr_t pointer = (uintptr_t)a2;
-        for (int i = 0; i < iters; i++)
-        {
-            AES_CBC_decrypt_buffer(&ctx, (uint8_t *)pointer, PART_SIZE_TXD);
-            pointer += PART_SIZE_TXD;
-        }
-        return retv;
-    }
-    if (calledFrom == 0x001E91AE + 1)
-    {
-        int retn = OS_FileRead(file, a2, numBytes);
-
-        dwRLEDecompressSourceSize = *(uint32_t*)a2;
-
-        return retn;
-    }
-    else
-    {
-        int retn = OS_FileRead(file, a2, numBytes);
-
-        return retn;
-    }
-}
-
 extern char g_iLastBlock[512];
 unsigned int(*LoadFullTexture)(uintptr_t *thiz, unsigned int entryIndex);
 unsigned int LoadFullTexture_hook(uintptr_t *thiz, unsigned int entryIndex)
@@ -660,82 +604,6 @@ void CPlaceable_InitMatrixArray_hook()
 	CHook::CallFunction<void>(g_libGTASA + 0x00407FD4 + 1, g_libGTASA + 0x0095A988, 10000);
 }
 
-
-int (*CustomPipeRenderCB)(uintptr_t resEntry, uintptr_t object, uint8_t type, uint32_t flags);
-int CustomPipeRenderCB_hook(uintptr_t resEntry, uintptr_t object, uint8_t type, uint32_t flags)
-{
-	if (!resEntry)
-		return 0;
-	uint16_t size = *(uint16_t *)(resEntry + 26);
-	if (size)
-	{
-		RES_ENTRY_OBJ *arr = (RES_ENTRY_OBJ *)(resEntry + 28);
-		if (!arr)
-			return 0;
-		uint32_t validFlag = flags & 0x84;
-		for (int i = 0; i < size; i++)
-		{
-			if (!arr[i].validate)
-				break;
-			if (validFlag)
-			{
-				uintptr_t *v4 = *(uintptr_t **)(arr[i].validate);
-				if (!v4)
-					;
-				else
-				{
-					if ((uintptr_t)v4 > (uintptr_t)0xFFFFFF00)
-						return 0;
-					else
-					{
-						if (!*(uintptr_t **)v4)
-							return 0;
-					}
-				}
-			}
-		}
-	}
-
-	return CustomPipeRenderCB(resEntry, object, type, flags);
-}
-
-int (*rxOpenGLDefaultAllInOneRenderCB)(uintptr_t resEntry, uintptr_t object, uint8_t type, uint32_t flags);
-int rxOpenGLDefaultAllInOneRenderCB_hook(uintptr_t resEntry, uintptr_t object, uint8_t type, uint32_t flags)
-{
-	if (!resEntry)
-		return 0;
-	uint16_t size = *(uint16_t *)(resEntry + 26);
-	if (size)
-	{
-		RES_ENTRY_OBJ *arr = (RES_ENTRY_OBJ *)(resEntry + 28);
-		if (!arr)
-			return 0;
-		uint32_t validFlag = flags & 0x84;
-		for (int i = 0; i < size; i++)
-		{
-			if (!arr[i].validate)
-				break;
-			if (validFlag)
-			{
-				uintptr_t *v4 = *(uintptr_t **)(arr[i].validate);
-				if (!v4)
-					;
-				else
-				{
-					if ((uintptr_t)v4 > (uintptr_t)0xFFFFFF00)
-						return 0;
-					else
-					{
-						if (!*(uintptr_t **)v4)
-							return 0;
-					}
-				}
-			}
-		}
-	}
-	return rxOpenGLDefaultAllInOneRenderCB(resEntry, object, type, flags);
-}
-
 int (*CTextureDatabaseRuntime__GetEntry)(unsigned int *thiz, const char *name, bool *hasSibling);
 int CTextureDatabaseRuntime__GetEntry_hook(unsigned int *thiz, const char *name, bool *hasSibling)
 {
@@ -829,15 +697,13 @@ void InstallSpecialHooks()
 //	*(char*)(g_libGTASA + 0x001E8BF4 + 13) = 'x';
 //	*(char*)(g_libGTASA + 0x001E8BF4 + 14) = 't';
 
-	CHook::InlineHook(g_libGTASA, 0x002671E2, &OS_FileRead_hook, &OS_FileRead);
 	CHook::InlineHook(g_libGTASA, 0x00266DB4, &NvFOpen_hook, & NvFOpen);
 
 	CHook::InlineHook(g_libGTASA, 0x0046F570, &InitialiseRenderWare_hook, &InitialiseRenderWare);
 	CHook::InlineHook(g_libGTASA, 0x0029C06C, &MainMenuScreen__Update_hook, &MainMenuScreen__Update);
-	CHook::InlineHook(g_libGTASA, 0x00266A68, &OS_FileOpen_hook, &OS_FileOpen);
 
-	CHook::InlineHook(g_libGTASA, 0x00570C70, &cHandlingDataMgr__FindExactWord_hook, &cHandlingDataMgr__FindExactWord);
-	CHook::MethodHook(g_libGTASA, 0x0067125C, &cHandlingDataMgr__ConvertDataToGameUnits);
+	//CHook::InlineHook(g_libGTASA, 0x00570C70, &cHandlingDataMgr__FindExactWord_hook, &cHandlingDataMgr__FindExactWord);
+	//CHook::MethodHook(g_libGTASA, 0x0067125C, &cHandlingDataMgr__ConvertDataToGameUnits);
 
 	CHook::InlineHook(g_libGTASA, 0x0046BB04, &CStreaming__Init2_hook, &CStreaming__Init2);	// increase stream memory value
 	CHook::InlineHook(g_libGTASA, 0x0040C900, &CPools_Initialise_hook, &CPools_Initialise);
@@ -1033,11 +899,12 @@ RwFrame* CClumpModelInfo_GetFrameFromId_Post(RwFrame* pFrameResult, RpClump* pCl
 	uintptr_t calledFrom = 0;
 	__asm__ volatile ("mov %0, lr" : "=r" (calledFrom));
 	calledFrom -= g_libGTASA;
+	Log("callerfrom = %x", calledFrom);
 
-	if (calledFrom == 0x00515708                // CVehicle::SetWindowOpenFlag
-		|| calledFrom == 0x00515730             // CVehicle::ClearWindowOpenFlag
-		|| calledFrom == 0x00338698             // CVehicleModelInfo::GetOriginalCompPosition
-		|| calledFrom == 0x00338B2C)            // CVehicleModelInfo::CreateInstance
+	if (calledFrom == 0x0058C61C                // CVehicle::SetWindowOpenFlag
+		|| calledFrom == 0x0058C644             // CVehicle::ClearWindowOpenFlag
+		|| calledFrom == 0x003885EC             // CVehicleModelInfo::GetOriginalCompPosition
+		|| calledFrom == 0x00387A28)            // CVehicleModelInfo::CreateInstance
 		return nullptr;
 
 	for (uint i = 2; i < 40; i++)
@@ -1070,8 +937,7 @@ uintptr_t g_dwRenderQueueOffset;
 char* (*RenderQueue__ProcessCommand)(uintptr_t thiz, char* a2);
 char* RenderQueue__ProcessCommand_hook(uintptr_t thiz, char* a2)
 {
-	Log("%s", a2);
-	return RenderQueue__ProcessCommand(thiz, a2);
+
 	if (thiz && a2)
 	{
 		uintptr_t* dwRenderQueue = (uintptr_t*)thiz;
@@ -1088,104 +954,9 @@ char* RenderQueue__ProcessCommand_hook(uintptr_t thiz, char* a2)
 		return nullptr;
 	}
 }
-
-std::list<std::pair<unsigned int*, unsigned int>> resetEntriesVehicle;
-
-
-RpMaterial* CVehicle__SetupRenderMatCB(RpMaterial* material, void* data)
-{
-	if (material)
-	{
-		if (material->texture)
-		{
-			auto pVeh = (CVehicle*)data;
-
-			for (size_t i = 0; i < MAX_REPLACED_TEXTURES; i++)
-			{
-				if (pVeh->m_bReplaceTextureStatus[i])
-				{
-					if (!strcmp(&(material->texture->name[0]), &(pVeh->m_szReplacedTextures[i].szOld[0])))
-					{
-						if (pVeh->m_szReplacedTextures[i].pTexture)
-						{
-							resetEntriesVehicle.push_back(std::make_pair(reinterpret_cast<unsigned int*>(&(material->texture)), *reinterpret_cast<unsigned int*>(&(material->texture))));
-							material->texture = pVeh->m_szReplacedTextures[i].pTexture;
-							if (strstr(pVeh->m_szReplacedTextures[i].szOld, "ret_t"))
-							{
-								material->color.alpha = 255;
-							}
-						}
-					}
-				}
-			}
-//			RwRGBA color = material->color;
-//			int v11;
-//			v11 = *(DWORD *)&color & 0xFFFFFF;
-//			if(v11 == 0xFF3C)
-//			{ // first color
-//				resetEntriesVehicle.push_back(std::make_pair(reinterpret_cast<unsigned int*>(&(material->color)), *reinterpret_cast<unsigned int*>(&(material->color))));
-//				material->color.red = pVeh->color1.R;
-//				material->color.green = pVeh->color1.G;
-//				material->color.blue = pVeh->color1.B;
-//               // Log("%d", pVeh->m_byteColor1);
-//			}
-		}
-	}
-	return material;
-}
-
-uintptr_t CVehicle__SetupRenderCB(uintptr_t atomic, void* data)
-{
-	if (*(RpGeometry * *)(atomic + 24))
-	{
-		((RpGeometry * (*)(RpGeometry*, uintptr_t, void*))(g_libGTASA + 0x00215F30 + 1))(*(RpGeometry * *)(atomic + 24), (uintptr_t)CVehicle__SetupRenderMatCB, (void*)data); // RpGeometryForAllMaterials
-	}
-
-	return atomic;
-}
-
-void (*CVehicleModelInfo__SetEditableMaterials)(uintptr_t);
-void CVehicleModelInfo__SetEditableMaterials_hook(uintptr_t clump)
-{
-	RpClump *pClump = (RpClump *)clump;
-
-	if (pNetGame && pClump)
-	{
-		if (pNetGame->GetVehiclePool())
-		{
-			VEHICLEID vehId = pNetGame->GetVehiclePool()->FindIDFromRwObject((RwObject *)clump);
-			CVehicle *pVehicle = pNetGame->GetVehiclePool()->GetAt(vehId);
-			if (pVehicle)
-			{
-				if (pVehicle->m_bReplacedTexture)
-				{
-					// RpClump* RpClumpForAllAtomics(RpClump* clump, RpAtomicCallBack callback, void* pData);
-					((RpClump * (*)(RpClump *, uintptr_t, void *))(g_libGTASA + 0x00213D66 + 1))(pClump, (uintptr_t)CVehicle__SetupRenderCB, (void *)pVehicle); // RpClumpForAllAtomics
-				}
-			}
-		}
-	}
-
-	CVehicleModelInfo__SetEditableMaterials(clump);
-}
-
-void (*CVehicle__ResetAfterRender)(uintptr_t);
-void CVehicle__ResetAfterRender_hook(uintptr_t thiz)
-{
-
-	for (auto& p : resetEntriesVehicle)
-	{
-		*p.first = p.second;
-	}
-	resetEntriesVehicle.clear();
-
-	CVehicle__ResetAfterRender(thiz);
-}
-
 #include "CRenderTarget.h"
 #include "..//gui/CFontInstance.h"
 #include "..//gui/CFontRenderer.h"
-#include "CCustomPlateManager.h"
 
 void (*CGame__Process)();
 void CGame__Process_hook()
@@ -1388,240 +1159,6 @@ void MainMenuScreen__OnExit_hook()
 	//g_pJavaWrapper->ExitGame();
 
 	//return CGame__Shutdown();
-}
-
-// TODO: VEHICLE RESET SUSPENSION
-void (*CShadows__StoreCarLightShadow)(CVehicleGta* vehicle, int id, RwTexture* texture, CVector* posn, float frontX, float frontY, float sideX, float sideY, unsigned char red, unsigned char green, unsigned char blue, float maxViewAngle);
-void CShadows__StoreCarLightShadow_hook(CVehicleGta* vehicle, int id, RwTexture* texture, CVector* posn, float frontX, float frontY, float sideX, float sideY, unsigned char red, unsigned char green, unsigned char blue, float maxViewAngle)
-{
-	uint8_t r, g, b;
-	r = red;
-	g = green;
-	b = blue;
-	if (pNetGame)
-	{
-		if (pNetGame->GetVehiclePool())
-		{
-			uint16_t vehid = pNetGame->GetVehiclePool()->findSampIdFromGtaPtr(vehicle);
-			CVehicle* pVeh = pNetGame->GetVehiclePool()->GetAt(vehid);
-			if (pVeh)
-			{
-				pVeh->ProcessHeadlightsColor(r, g, b);
-			}
-		}
-	}
-
-	CShadows__StoreCarLightShadow(vehicle, id, texture, posn, frontX, frontY, sideX, sideY, r, g, b, maxViewAngle);
-}
-
-void CVehicle__DoHeadLightReflectionTwin(CVehicle* pVeh, CMatrix* matVehicle)
-{
-	CVehicleGta* v2; // r4
-	int v3; // r2
-	CMatrix* v4; // r5
-	float* v5; // r3
-	float v6; // s12
-	float v7; // s5
-	float* v8; // r2
-	float v9; // r0
-	float v10; // r1
-	float v11; // r2
-	float v12; // s14
-	float v13; // s11
-	float v14; // s15
-	float v15; // s13
-	float v16; // s10
-	float v17; // s12
-	float v18; // s15
-	float v19; // ST08_4
-
-
-	v2 = pVeh->m_pVehicle;
-	v3 = *((uintptr_t*)v2 + 5);
-	v4 = matVehicle;
-	v5 = *(float**)(CModelInfo::ms_modelInfoPtrs[v2->nModelIndex] + 116);
-	v6 = *v5;
-	v7 = v5[1];
-	if (v3)
-		v8 = (float*)(v3 + 48);
-	else
-		v8 = (float*)((char*)v2 + 4);
-	v9 = *v8;
-	v10 = v8[1];
-	v11 = v8[2];
-	v12 = *((float*)v4 + 5);
-	v13 = *((float*)v4 + 4);
-	v14 = (float)(v12 * v12) + (float)(v13 * v13);
-	if (v14 != 0.0)
-		v14 = 1.0 / sqrtf(v14);
-	v15 = v6 * 4.0;
-	v16 = (float)(v15 + v15) + 1.0;
-	v17 = v13 * v14;
-	v18 = v12 * v14;
-
-	v19 = v15 * v18;
-
-	CVector pos;
-	memcpy(&pos, &(v2->mat->pos), sizeof(CVector));
-	pos.z += 2.0f;
-
-	CShadows__StoreCarLightShadow(
-		v2,
-		(uintptr_t)v2 + 24,
-		pVeh->m_Shadow.pTexture,
-		&pos,
-		(float)(v15 + v15) * v17 * pVeh->m_Shadow.fSizeX,
-		(float)(v15 + v15) * v18 * pVeh->m_Shadow.fSizeX,
-		v19 * pVeh->m_Shadow.fSizeY,
-		-(float)(v15 * v17) * pVeh->m_Shadow.fSizeY,
-		pVeh->m_Shadow.r, pVeh->m_Shadow.g, pVeh->m_Shadow.b,
-		7.0f);
-}
-
-void (*CVehicle__DoHeadLightBeam)(CVehicleGta* vehicle, int32_t lightId, RwMatrix* matrix, bool isRight);
-void CVehicle__DoHeadLightBeam_hook(CVehicleGta* vehicle, int32_t lightId, RwMatrix* matrix, bool isRight)
-{
-	uint8_t r, g, b;
-	r = 0xFF;
-	g = 0xFF;
-	b = 0xFF;
-	if (pNetGame)
-	{
-		if (pNetGame->GetVehiclePool())
-		{
-			uint16_t vehid = pNetGame->GetVehiclePool()->findSampIdFromGtaPtr(vehicle);
-			CVehicle* pVeh = pNetGame->GetVehiclePool()->GetAt(vehid);
-			if (pVeh)
-			{
-				pVeh->ProcessHeadlightsColor(r, g, b);
-			}
-		}
-	}
-
-	*(uint8_t*)(g_libGTASA + 0x9BAA70) = r;
-	*(uint8_t*)(g_libGTASA + 0x9BAA71) = g;
-	*(uint8_t*)(g_libGTASA + 0x9BAA72) = b;
-
-	*(uint8_t*)(g_libGTASA + 0x9BAA94) = r;
-	*(uint8_t*)(g_libGTASA + 0x9BAA95) = g;
-	*(uint8_t*)(g_libGTASA + 0x9BAA96) = b;
-
-	*(uint8_t*)(g_libGTASA + 0x9BAB00) = r;
-	*(uint8_t*)(g_libGTASA + 0x9BAB01) = g;
-	*(uint8_t*)(g_libGTASA + 0x9BAB02) = b;
-
-	CVehicle__DoHeadLightBeam(vehicle, lightId, matrix, isRight);
-
-}
-
-static CVehicle* g_pLastProcessedVehicleMatrix = nullptr;
-static int g_iLastProcessedWheelVehicle = -1;
-
-void (*CMatrix__Rotate)(void* thiz, float a1, float a2, float a3);
-void CMatrix__Rotate_hook(void* thiz, float a1, float a2, float a3)
-{
-	uintptr_t dwRetAddr = 0;
-	__asm__ volatile ("mov %0, lr" : "=r" (dwRetAddr));
-	dwRetAddr -= g_libGTASA;
-
-	if (dwRetAddr == 0x003A9D76 + 1)
-	{
-		CMatrix__Rotate(thiz, a1, a2, a3);
-		return;
-	}
-
-	CMatrix__Rotate(thiz, a1, a2, a3);
-	if (g_pLastProcessedVehicleMatrix && g_iLastProcessedWheelVehicle != -1)
-	{
-		if (g_pLastProcessedVehicleMatrix->m_bWheelAlignmentX || g_pLastProcessedVehicleMatrix->m_bWheelAlignmentY)
-		{
-			if (g_iLastProcessedWheelVehicle == 2)
-			{
-				((void(*)(void*, float))(g_libGTASA + 0x003E8BE4 + 1))(thiz, 0.0f - g_pLastProcessedVehicleMatrix->m_fWheelAlignmentX); // CMatrix::RotateY
-			}
-			if (g_iLastProcessedWheelVehicle == 4)
-			{
-				((void(*)(void*, float))(g_libGTASA + 0x003E8BE4 + 1))(thiz, 0.0f - g_pLastProcessedVehicleMatrix->m_fWheelAlignmentY); // CMatrix::RotateY
-			}
-			if (g_iLastProcessedWheelVehicle == 5)
-			{
-				((void(*)(void*, float))(g_libGTASA + 0x003E8BE4 + 1))(thiz, g_pLastProcessedVehicleMatrix->m_fWheelAlignmentX); // CMatrix::RotateY
-			}
-			if (g_iLastProcessedWheelVehicle == 7)
-			{
-				((void(*)(void*, float))(g_libGTASA + 0x003E8BE4 + 1))(thiz, g_pLastProcessedVehicleMatrix->m_fWheelAlignmentY); // CMatrix::RotateY
-			}
-		}
-	}
-}
-
-void (*CMatrix__SetScale)(void* thiz, float x, float y, float z);
-void CMatrix__SetScale_hook(void* thiz, float x, float y, float z)
-{
-	if (g_pLastProcessedVehicleMatrix && g_iLastProcessedWheelVehicle != -1)
-	{
-		if (g_iLastProcessedWheelVehicle >= 2 || g_iLastProcessedWheelVehicle <= 7)
-		{
-			// front wheel
-			if (g_pLastProcessedVehicleMatrix->m_bWheelSize)
-			{
-				y *= g_pLastProcessedVehicleMatrix->m_fWheelSize * 1.3f;
-				z *= g_pLastProcessedVehicleMatrix->m_fWheelSize * 1.3f;
-			}
-			if (g_pLastProcessedVehicleMatrix->m_bWheelWidth)
-			{
-				x = g_pLastProcessedVehicleMatrix->m_fWheelWidth;
-			}
-		}
-	}
-
-	CMatrix__SetScale(thiz, x, y, z);
-}
-
-void (*CAutomobile__UpdateWheelMatrix)(CVehicleGta* thiz, int, int);
-void CAutomobile__UpdateWheelMatrix_hook(CVehicleGta* thiz, int nodeIndex, int flags)
-{
-	if (g_pLastProcessedVehicleMatrix)
-	{
-		g_iLastProcessedWheelVehicle = nodeIndex;
-	}
-
-	CAutomobile__UpdateWheelMatrix(thiz, nodeIndex, flags);
-}
-
-void (*CAutomobile__PreRender)(CVehicleGta* thiz);
-void CAutomobile__PreRender_hook(CVehicleGta* thiz)
-{
-	CVehicleModelInfo* pModelInfoStart = static_cast<CVehicleModelInfo *>(CModelInfo::ms_modelInfoPtrs[thiz->nModelIndex]);
-
-	float fOldFront = pModelInfoStart->m_fWheelSizeFront;
-	float fOldRear = pModelInfoStart->m_fWheelSizeRear;
-
-    if (pNetGame->GetVehiclePool()) {
-        uint16_t vehid = pNetGame->GetVehiclePool()->findSampIdFromGtaPtr(thiz);
-        auto pVeh = pNetGame->GetVehiclePool()->GetAt(vehid);
-        if (pVeh) {
-            pVeh->ProcessWheelsOffset();
-            g_pLastProcessedVehicleMatrix = pVeh;
-
-            if (pVeh->m_bWheelSize)
-			{
-				pModelInfoStart->m_fWheelSizeFront = pVeh->m_fWheelSize;
-				pModelInfoStart->m_fWheelSizeRear = pVeh->m_fWheelSize;
-            }
-            if (pVeh->m_bShadow && pVeh->m_Shadow.pTexture) {
-                CVehicle__DoHeadLightReflectionTwin(pVeh, pVeh->m_pVehicle->mat);
-            }
-        }
-    }
-
-	CAutomobile__PreRender(thiz);
-
-	pModelInfoStart->m_fWheelSizeFront = fOldFront;
-	pModelInfoStart->m_fWheelSizeRear = fOldRear;
-
-	g_pLastProcessedVehicleMatrix = nullptr;
-	g_iLastProcessedWheelVehicle = -1;
 }
 
 void (*CCam__Process)(uintptr_t);
@@ -2065,15 +1602,32 @@ uintptr_t* rpMaterialListDeinitialize_hook(RpMaterialList* matList)
 	return rpMaterialListDeinitialize(matList);
 }
 
-uintptr_t* (*ConvertBufferToObject)(uint8_t* fileBuffer, int32_t modelId);
-uintptr_t* ConvertBufferToObject_hook(uint8_t* fileBuffer, int32_t modelId)
-{
-	Log("ConvertBufferToObject = %d", modelId);
+#include "Scene.h"
 
-	return ConvertBufferToObject(fileBuffer, modelId);
+RwFrame* (*RwFrameAddChild)(RwFrame*, RwFrame*);
+RwFrame* RwFrameAddChild_hook(RwFrame* a1, RwFrame* a2)
+{
+	if (a2 && a1)
+	{
+		return RwFrameAddChild(a1, a2);
+	}
+	else
+		return nullptr;
 }
 
-#include "Scene.h"
+int (*_rwFreeListFreeReal)(int a1, unsigned int a2);
+int _rwFreeListFreeReal_hook(int a1, unsigned int a2)
+{
+	if (a1)
+	{
+		return _rwFreeListFreeReal(a1, a2);
+	}
+	else
+	{
+		return 0;
+	}
+}
+
 
 void InstallHooks()
 {
@@ -2082,14 +1636,13 @@ void InstallHooks()
 
 	Scene = *(CScene*)(g_libGTASA + 0x009FC938);
 
+	// vehicle crash wtf?
+	CHook::InlineHook(g_libGTASA, 0x001D84BC, &RwFrameAddChild_hook, &RwFrameAddChild);
+
 	//CHook::InlineHook(g_libGTASA, 0x002D2FD0, &ConvertBufferToObject_hook, &ConvertBufferToObject);
 
     // Fixing a crosshair by very stupid math ( JPATCH )
 	ms_fAspectRatio = (float*)(g_libGTASA + 0x00A26A90);
-
-	// skybox
-//	CHook::InlineHook(g_libGTASA, 0x00454F54, &CObject__Render_hook, &CObject__Render);
-//	CHook::InlineHook(g_libGTASA, 0x0040FD64, &CRenderer__RenderEverythingBarRoads_hook, &CRenderer__RenderEverythingBarRoads);
 
 	// не падать с мотоцикла
 	CHook::InlineHook(g_libGTASA, 0x0037573C, &CEventKnockOffBike__AffectsPed_hook, &CEventKnockOffBike__AffectsPed);
@@ -2128,34 +1681,19 @@ void InstallHooks()
 	CHook::InlineHook(g_libGTASA, 0x002176EC, &rpMaterialListDeinitialize_hook, &rpMaterialListDeinitialize);
 
 	// GetFrameFromID fix
-//	CHook::InlineHook(g_libGTASA, 0x00335CC0, &CClumpModelInfo_GetFrameFromId_hook, &CClumpModelInfo_GetFrameFromId);
+	CHook::InlineHook(g_libGTASA, 0x003856D0, &CClumpModelInfo_GetFrameFromId_hook, &CClumpModelInfo_GetFrameFromId);
 
 	// random crash fix
-//	CHook::InlineHook(g_libGTASA, 0x001D1F7E, &RenderQueue__ProcessCommand_hook, &RenderQueue__ProcessCommand);
+	CHook::InlineHook(g_libGTASA, 0x001D1F7E, &RenderQueue__ProcessCommand_hook, &RenderQueue__ProcessCommand);
 
 	// fix
-//	CHook::InlineHook(g_libGTASA, 0x001B9D74, &_rwFreeListFreeReal_hook, &_rwFreeListFreeReal);
+	CHook::InlineHook(g_libGTASA, 0x001E480C, &_rwFreeListFreeReal_hook, &_rwFreeListFreeReal);
 
-	CHook::InlineHook(g_libGTASA, 0x00388B54, &CVehicleModelInfo__SetEditableMaterials_hook, &CVehicleModelInfo__SetEditableMaterials);
-	CHook::InlineHook(g_libGTASA, 0x005823F0, &CVehicle__ResetAfterRender_hook, &CVehicle__ResetAfterRender);
-//
 	CHook::InlineHook(g_libGTASA, 0x003F4000, &CGame__Process_hook, &CGame__Process);
 
 	CHook::InlineHook(g_libGTASA, 0x0055BF10, &CAutomobile__ProcessEntityCollision_hook, &CAutomobile__ProcessEntityCollision);
 
 	CHook::InlineHook(g_libGTASA, 0x0029DEF8, &MainMenuScreen__OnExit_hook, &MainMenuScreen__OnExit);
-
-	// headlights color, wheel size, wheel align
-//	CHook::InlineHook(g_libGTASA, 0x005B9D38, &CShadows__StoreCarLightShadow_hook, &CShadows__StoreCarLightShadow);
-//	CHook::InlineHook(g_libGTASA, 0x00518EC4, &CVehicle__DoHeadLightBeam_hook, &CVehicle__DoHeadLightBeam);
-//
-	// размер колес
-	CHook::InlineHook(g_libGTASA, 0x00559D44, &CAutomobile__PreRender_hook, &CAutomobile__PreRender);
-	CHook::InlineHook(g_libGTASA, 0x00559534, &CAutomobile__UpdateWheelMatrix_hook, &CAutomobile__UpdateWheelMatrix);
-//	CHook::InlineHook(g_libGTASA, 0x003E8D48, &CMatrix__Rotate_hook, &CMatrix__Rotate);
-	CHook::InlineHook(g_libGTASA, 0x0044EFBE, &CMatrix__SetScale_hook, &CMatrix__SetScale);
-
-//	CHook::InlineHook(g_libGTASA, 0x003BF300, (uintptr_t)CCam__Process_hook, (uintptr_t*)& CCam__Process);
 
 	CHook::InlineHook(g_libGTASA, 0x003FB430, (uintptr_t)CPad__CycleCameraModeDownJustDown_hook, (uintptr_t*)& CPad__CycleCameraModeDownJustDown);
 

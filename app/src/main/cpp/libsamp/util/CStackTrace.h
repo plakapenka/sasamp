@@ -23,7 +23,7 @@ public:
     static void printBacktrace(ucontext_t *uContext)
     {
         CrashLog("------------ START BACKTRACE ------------");
-        for (auto i = 0; i < 1000; ++i)
+        for (auto i = 0; i < 100; ++i)
         {
             const auto address = *reinterpret_cast<uintptr_t*>(uContext->uc_mcontext.arm_sp + 4 * i);
 

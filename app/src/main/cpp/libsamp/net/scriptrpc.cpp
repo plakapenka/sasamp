@@ -829,19 +829,19 @@ void ScrNumberPlate(RPCParameters *rpcParams)
 {
 	Log("RPC: ScrNumberPlate");
 
-	unsigned char* Data = reinterpret_cast<unsigned char *>(rpcParams->input);
-	int iBitLength = rpcParams->numberOfBitsOfData;
-
-	RakNet::BitStream bsData((unsigned char*)Data,(iBitLength/8)+1,false);
-
-	VEHICLEID VehicleID;
-	char len;
-	char szNumberPlate[32+1];
-
-	/*bsData.Read(VehicleID);
-	bsData.Read(len);
-	bsData.Read(szNumberPlate, len);
-	szNumberPlate[len] = '\0';*/
+//	unsigned char* Data = reinterpret_cast<unsigned char *>(rpcParams->input);
+//	int iBitLength = rpcParams->numberOfBitsOfData;
+//
+//	RakNet::BitStream bsData((unsigned char*)Data,(iBitLength/8)+1,false);
+//
+//	VEHICLEID VehicleID;
+//	char len;
+//	char szNumberPlate[32+1];
+//
+//	/*bsData.Read(VehicleID);
+//	bsData.Read(len);
+//	bsData.Read(szNumberPlate, len);
+//	szNumberPlate[len] = '\0';*/
 }
 
 void ScrInterpolateCamera(RPCParameters *rpcParams)

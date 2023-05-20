@@ -40,13 +40,16 @@ CVehicle::CVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRota
 	}
 	m_bHasSiren = false;
 
-	ScriptCommand(&create_car, iType, fPosX, fPosY, fPosZ, &dwRetID);
+	m_pVehicle = CHook::CallFunction<CVehicleGta*>(g_libGTASA + 0x002EBE04 + 1, iType, CVector(fPosX, fPosY, fPosZ), false);
+	dwRetID = GamePool_Vehicle_GetIndex(m_pVehicle);
+	//ScriptCommand(&create_car, iType, fPosX, fPosY, fPosZ, &dwRetID);
 	ScriptCommand(&set_car_z_angle, dwRetID, fRotation);
 	ScriptCommand(&car_gas_tank_explosion, dwRetID, 0);
 	ScriptCommand(&set_car_hydraulics, dwRetID, 0);
 	ScriptCommand(&toggle_car_tires_vulnerable, dwRetID, 1);
 	ScriptCommand(&set_car_immunities, dwRetID, 0, 0, 0, 0, 0);
-	m_pVehicle = (CVehicleGta*)GamePool_Vehicle_GetAt(dwRetID);
+//	m_pVehicle = (CVehicleGta*)GamePool_Vehicle_G
+//	etAt(dwRetID);
 	m_pEntity = m_pVehicle;
 	m_dwGTAId = dwRetID;
 
@@ -75,15 +78,6 @@ CVehicle::CVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRota
 	m_dwMarkerID = 0;
 	m_bIsInvulnerable = false;
 
-	for (size_t i = 0; i < MAX_REPLACED_TEXTURES; i++)
-	{
-		m_bReplaceTextureStatus[i] = false;
-		memset(&(m_szReplacedTextures[i].szOld[0]), 0, MAX_REPLACED_TEXTURE_NAME);
-		m_szReplacedTextures[i].pTexture = nullptr;
-	}
-
-	m_bReplacedTexture = false;
-
 	bHasSuspensionLines = false;
 	m_pSuspensionLines = nullptr;
 	if (GetVehicleSubtype() == VEHICLE_SUBTYPE_CAR)
@@ -91,37 +85,19 @@ CVehicle::CVehicle(int iType, float fPosX, float fPosY, float fPosZ, float fRota
 		CopyGlobalSuspensionLinesToPrivate();
 	}
 
-	m_bHeadlightsColor = false;
-	m_bWheelSize = false;
-	m_bWheelWidth = false;
-	m_bWheelAlignmentX = false;
-	m_bWheelAlignmentY = false;
-
-	m_bWheelOffsetX = false;
-	m_bWheelOffsetY = false;
-	m_fWheelOffsetX = 0.0f;
-	m_fWheelOffsetY = 0.0f;
-	m_fNewOffsetX = 0.0f;
-	m_fNewOffsetY = 0.0f;
-	m_bWasWheelOffsetProcessedX = true;
-	m_bWasWheelOffsetProcessedY = true;
-	m_uiLastProcessedWheelOffset = 0;
-
-	m_bShadow = false;
-	m_Shadow.pTexture = nullptr;
-
-	RwFrame* pWheelLF = ((RwFrame * (*)(RpClump*, const char*))(g_libGTASA + 0x003856F4 + 1))(m_pVehicle->m_pRpClump, "wheel_lf_dummy"); // GetFrameFromname
-	RwFrame* pWheelRF = ((RwFrame * (*)(RpClump*, const char*))(g_libGTASA + 0x003856F4 + 1))(m_pVehicle->m_pRpClump, "wheel_rf_dummy"); // GetFrameFromname
-	RwFrame* pWheelRB = ((RwFrame * (*)(RpClump*, const char*))(g_libGTASA + 0x003856F4 + 1))(m_pVehicle->m_pRpClump, "wheel_rb_dummy"); // GetFrameFromname
-	RwFrame* pWheelLB = ((RwFrame * (*)(RpClump*, const char*))(g_libGTASA + 0x003856F4 + 1))(m_pVehicle->m_pRpClump, "wheel_lb_dummy"); // GetFrameFromname
-
-	if (pWheelLF && pWheelRF && pWheelRB && pWheelLB)
-	{
-		memcpy(&m_vInitialWheelMatrix[0], (const void*)&(pWheelLF->modelling), sizeof(RwMatrix));
-		memcpy(&m_vInitialWheelMatrix[1], (const void*)&(pWheelRF->modelling), sizeof(RwMatrix));
-		memcpy(&m_vInitialWheelMatrix[2], (const void*)&(pWheelRB->modelling), sizeof(RwMatrix));
-		memcpy(&m_vInitialWheelMatrix[3], (const void*)&(pWheelLB->modelling), sizeof(RwMatrix));
-	}
+//
+//	RwFrame* pWheelLF = ((RwFrame * (*)(RpClump*, const char*))(g_libGTASA + 0x003856F4 + 1))(m_pVehicle->m_pRpClump, "wheel_lf_dummy"); // GetFrameFromname
+//	RwFrame* pWheelRF = ((RwFrame * (*)(RpClump*, const char*))(g_libGTASA + 0x003856F4 + 1))(m_pVehicle->m_pRpClump, "wheel_rf_dummy"); // GetFrameFromname
+//	RwFrame* pWheelRB = ((RwFrame * (*)(RpClump*, const char*))(g_libGTASA + 0x003856F4 + 1))(m_pVehicle->m_pRpClump, "wheel_rb_dummy"); // GetFrameFromname
+//	RwFrame* pWheelLB = ((RwFrame * (*)(RpClump*, const char*))(g_libGTASA + 0x003856F4 + 1))(m_pVehicle->m_pRpClump, "wheel_lb_dummy"); // GetFrameFromname
+//
+//	if (pWheelLF && pWheelRF && pWheelRB && pWheelLB)
+//	{
+//		memcpy(&m_vInitialWheelMatrix[0], (const void*)&(pWheelLF->modelling), sizeof(RwMatrix));
+//		memcpy(&m_vInitialWheelMatrix[1], (const void*)&(pWheelRF->modelling), sizeof(RwMatrix));
+//		memcpy(&m_vInitialWheelMatrix[2], (const void*)&(pWheelRB->modelling), sizeof(RwMatrix));
+//		memcpy(&m_vInitialWheelMatrix[3], (const void*)&(pWheelLB->modelling), sizeof(RwMatrix));
+//	}
 }
 
 
@@ -134,21 +110,6 @@ CVehicle::~CVehicle()
 	m_pVehicle = GamePool_Vehicle_GetAt(m_dwGTAId);
 
 	if(!m_pVehicle)return;
-
-	m_bReplacedTexture = false;
-
-	for (size_t i = 0; i < MAX_REPLACED_TEXTURES; i++)
-	{
-		if (m_bReplaceTextureStatus[i] && m_szReplacedTextures[i].pTexture)
-		{
-			m_bReplaceTextureStatus[i] = false;
-			RwTextureDestroy(m_szReplacedTextures[i].pTexture);
-		}
-
-		m_bReplaceTextureStatus[i] = false;
-		memset(&(m_szReplacedTextures[i].szOld[0]), 0, MAX_REPLACED_TEXTURE_NAME);
-		m_szReplacedTextures[i].pTexture = nullptr;
-	}
 
 	if(IsTrailer()){
 		CVehiclePool* pVehiclePool = pNetGame->GetVehiclePool();
@@ -181,13 +142,6 @@ CVehicle::~CVehicle()
 
 	delete m_pCustomHandling;
 	m_pCustomHandling = nullptr;
-
-	if (m_bShadow) {
-		if (m_Shadow.pTexture) {
-			RwTextureDestroy(m_Shadow.pTexture);
-			m_Shadow.pTexture = nullptr;
-		}
-	}
 
 	if (bHasSuspensionLines && m_pSuspensionLines) {
 		delete[] m_pSuspensionLines;
@@ -371,6 +325,7 @@ void CVehicle::LinkToInterior(int iInterior)
 
 int32_t CVehicle::AddVehicleUpgrade(int32_t modelId)
 {
+	Log("AddVehicleUpgrade");
 	CStreaming::RequestModel(modelId, STREAMING_GAME_REQUIRED);
 	CStreaming::LoadAllRequestedModels(false);
 
@@ -827,8 +782,6 @@ void CVehicle::SetHandlingData(std::vector<SHandlingData>& vHandlingData)
 			}
 			case E_HANDLING_PARAMS::hpWheelSize:
 			{
-				m_bWheelSize = true;
-				m_fWheelSize = i.fValue;
 				bNeedRecalculate = true;
 				break;
 			}
@@ -837,15 +790,6 @@ void CVehicle::SetHandlingData(std::vector<SHandlingData>& vHandlingData)
 
 	float fOldFrontWheelSize = 0.0f;
 	float fOldRearWheelSize = 0.0f;
-
-	if (m_bWheelSize)
-	{
-		fOldFrontWheelSize = pModelInfoStart->m_fWheelSizeFront;
-		pModelInfoStart->m_fWheelSizeFront = m_fWheelSize;
-
-		fOldRearWheelSize = pModelInfoStart->m_fWheelSizeRear;
-		pModelInfoStart->m_fWheelSizeRear = m_fWheelSize;
-	}
 
 	/*CChatWindow::AddDebugMessage("AFTER");
 	CChatWindow::AddDebugMessage("mass %f", m_pCustomHandling->m_fMass);
@@ -862,12 +806,6 @@ void CVehicle::SetHandlingData(std::vector<SHandlingData>& vHandlingData)
 		((void (*)(CVehicleGta*))(g_libGTASA + 0x0054EC38 + 1))(m_pVehicle); // CAutomobile::SetupSuspensionLines
 
 		CopyGlobalSuspensionLinesToPrivate();
-	}
-
-	if (m_bWheelSize)
-	{
-		pModelInfoStart->m_fWheelSizeFront = fOldFrontWheelSize;
-		pModelInfoStart->m_fWheelSizeRear = fOldRearWheelSize;
 	}
 
 	if (bNeedRecalculate)
@@ -918,56 +856,6 @@ void CVehicle::ResetVehicleHandling()
 	Log("Reseted to defaults");
 }
 
-void CVehicle::ApplyVinyls(uint8_t bSlot1, uint8_t bSlot2)
-{
-	if (bSlot1 == 0)
-	{
-		RemoveTexture("remap_cbody_0");
-		return;
-	}
-	if (bSlot2 == 0)
-	{
-		RemoveTexture("remap_cbody_0");
-		return;
-	}
-
-	char szTex[MAX_REPLACED_TEXTURE_NAME];
-
-	if (bSlot1 != 255)
-	{
-		sprintf(&szTex[0], "v_cust_body_%d", bSlot1);
-		ApplyTexture("remap_cbody_0", &szTex[0]);
-	}
-
-	if (bSlot2 != 255)
-	{
-		sprintf(&szTex[0], "v_cust_body_%d", bSlot2);
-		ApplyTexture("remap_cbody_0", &szTex[0]);
-	}
-
-}
-
-void CVehicle::ApplyToner(uint8_t bSlot, uint8_t bID)
-{
-	char szOld[MAX_REPLACED_TEXTURE_NAME];
-	char szNew[MAX_REPLACED_TEXTURE_NAME];
-
-	if (bID == 0)
-	{
-		sprintf(&szOld[0], "remap_toner_%d", bSlot);
-		RemoveTexture(&szOld[0]);
-		return;
-	}
-	if (bID == 255)
-	{
-		return;
-	}
-
-	sprintf(&szOld[0], "remap_toner_%d", bSlot);
-	sprintf(&szNew[0], "v_cust_t_%d", bID);
-	ApplyTexture(&szOld[0], &szNew[0]);
-}
-
 RwObject* GetAllAtomicObjectCB(RwObject* object, void* data)
 {
 
@@ -983,289 +871,8 @@ void GetAllAtomicObjects(RwFrame* frame, std::vector<RwObject*>& result)
 	((uintptr_t(*)(RwFrame*, void*, uintptr_t))(g_libGTASA + 0x001D8858 + 1))(frame, (void*)GetAllAtomicObjectCB, (uintptr_t)& result);
 }
 
-void CVehicle::ApplyTexture(const char* szTexture, const char* szNew)
-{
-	if (IsRetextured(szTexture))
-	{
-		RemoveTexture(szTexture);
-	}
-
-	uint8_t bID = 255;
-	for (uint8_t i = 0; i < MAX_REPLACED_TEXTURES; i++)
-	{
-		if (m_bReplaceTextureStatus[i] == false)
-		{
-			bID = i;
-			break;
-		}
-	}
-
-	if (bID == 255)
-	{
-		return;
-	}
-
-	m_bReplaceTextureStatus[bID] = true;
-	strcpy(&(m_szReplacedTextures[bID].szOld[0]), szTexture);
-	m_szReplacedTextures[bID].pTexture = CUtil::LoadTextureFromDB("samp", szNew);
-
-	m_bReplacedTexture = true;
-}
-
-void CVehicle::ApplyTexture(const char* szTexture, RwTexture* pTexture)
-{
-	if (IsRetextured(szTexture))
-	{
-		RemoveTexture(szTexture);
-	}
-	//CChatWindow::AddDebugMessage("apply tex %s", szTexture);
-	uint8_t bID = 255;
-	for (uint8_t i = 0; i < MAX_REPLACED_TEXTURES; i++)
-	{
-		if (m_bReplaceTextureStatus[i] == false)
-		{
-			bID = i;
-			break;
-		}
-	}
-
-	if (bID == 255)
-	{
-		return;
-	}
-
-	m_bReplaceTextureStatus[bID] = true;
-	strcpy(&(m_szReplacedTextures[bID].szOld[0]), szTexture);
-	m_szReplacedTextures[bID].pTexture = pTexture;
-
-	m_bReplacedTexture = true;
-}
-
-void CVehicle::RemoveTexture(const char* szOldTexture)
-{
-	for (size_t i = 0; i < MAX_REPLACED_TEXTURES; i++)
-	{
-		if (m_bReplaceTextureStatus[i])
-		{
-			if (!strcmp(m_szReplacedTextures[i].szOld, szOldTexture))
-			{
-				m_bReplaceTextureStatus[i] = false;
-
-				if (m_szReplacedTextures[i].pTexture)
-				{
-					RwTextureDestroy(m_szReplacedTextures[i].pTexture);
-					m_szReplacedTextures[i].pTexture = nullptr;
-				}
-				break;
-			}
-		}
-	}
-}
-
-bool CVehicle::IsRetextured(const char* szOldTexture)
-{
-	for (size_t i = 0; i < MAX_REPLACED_TEXTURES; i++)
-	{
-		if (m_bReplaceTextureStatus[i])
-		{
-			if (!strcmp(m_szReplacedTextures[i].szOld, szOldTexture))
-			{
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
-void CVehicle::SetHeadlightsColor(uint8_t r, uint8_t g, uint8_t b)
-{
-	if (GetVehicleSubtype() != VEHICLE_SUBTYPE_CAR)
-	{
-		return;
-	}
-
-	m_bHeadlightsColor = true;
-	m_bHeadlightsR = r;
-	m_bHeadlightsG = g;
-	m_bHeadlightsB = b;
-}
-
-void CVehicle::ProcessHeadlightsColor(uint8_t& r, uint8_t& g, uint8_t& b)
-{
-	if (GetVehicleSubtype() != VEHICLE_SUBTYPE_CAR)
-	{
-		return;
-	}
-
-	if (m_bHeadlightsColor)
-	{
-		r = m_bHeadlightsR;
-		g = m_bHeadlightsG;
-		b = m_bHeadlightsB;
-	}
-}
-
-void CVehicle::SetWheelAlignment(int iWheel, float angle)
-{
-	if (!m_pVehicle || !m_dwGTAId)
-	{
-		return;
-	}
-
-	if (GetVehicleSubtype() != VEHICLE_SUBTYPE_CAR)
-	{
-		return;
-	}
-
-	if (iWheel == 0)
-	{
-		m_bWheelAlignmentX = true;
-		m_fWheelAlignmentX = (M_PI / 180.0f) * angle;
-	}
-	else
-	{
-		m_bWheelAlignmentY = true;
-		m_fWheelAlignmentY = (M_PI / 180.0f) * angle;
-	}
-}
-
-void CVehicle::SetWheelOffset(int iWheel, float offset)
-{
-	if (GetVehicleSubtype() != VEHICLE_SUBTYPE_CAR)
-	{
-		return;
-	}
-
-	//CChatWindow::AddDebugMessage("set for %d wheel %f offset", iWheel, offset);
-	if (iWheel == 0)
-	{
-		m_bWheelOffsetX = true;
-		m_fNewOffsetX = offset;
-		m_bWasWheelOffsetProcessedX = false;
-	}
-	else
-	{
-		m_bWheelOffsetY = true;
-		m_fNewOffsetY = offset;
-		m_bWasWheelOffsetProcessedY = false;
-	}
-
-	m_uiLastProcessedWheelOffset = GetTickCount();
-}
-
-void CVehicle::SetWheelWidth(float fValue)
-{
-	if (fValue == 20.0f)
-	{
-		m_bWheelWidth = false;
-		return;
-	}
-	m_bWheelWidth = true;
-	m_fWheelWidth = fValue;
-}
 
 RwMatrix* RwMatrixMultiplyByVector(CVector* out, RwMatrix* a2, CVector* in);
-
-void CVehicle::ProcessWheelsOffset()
-{
-	if (GetTickCount() - m_uiLastProcessedWheelOffset <= 30)
-	{
-		return;
-	}
-
-	if (!m_bWasWheelOffsetProcessedX)
-	{
-		if (m_bWheelOffsetX)
-		{
-			//CChatWindow::AddDebugMessage("setting wheel offset X");
-			RwFrame* pWheelLF = ((RwFrame * (*)(RpClump*, const char*))(g_libGTASA + 0x003856F4 + 1))(m_pVehicle->m_pRpClump, "wheel_lf_dummy"); // GetFrameFromname
-			RwFrame* pWheelRF = ((RwFrame * (*)(RpClump*, const char*))(g_libGTASA + 0x003856F4 + 1))(m_pVehicle->m_pRpClump, "wheel_rf_dummy"); // GetFrameFromname
-
-			/*if (m_fNewOffsetX)
-			{
-				ProcessWheelOffset(pWheelLF, true, 0.0f - m_fWheelOffsetX);
-				ProcessWheelOffset(pWheelRF, false, 0.0f - m_fWheelOffsetX);
-
-				m_fWheelOffsetX = m_fNewOffsetX;
-				m_fNewOffsetX = 0.0f;
-				//CChatWindow::AddDebugMessage("moved old X");
-			}*/
-			m_fWheelOffsetX = m_fNewOffsetX;
-
-			ProcessWheelOffset(pWheelLF, true, m_fWheelOffsetX, 0);
-			ProcessWheelOffset(pWheelRF, false, m_fWheelOffsetX, 1);
-
-		}
-		m_bWasWheelOffsetProcessedX = true;
-	}
-	if (!m_bWasWheelOffsetProcessedY)
-	{
-		if (m_bWheelOffsetY)
-		{
-			//CChatWindow::AddDebugMessage("setting wheel offset Y");
-			RwFrame* pWheelRB = ((RwFrame * (*)(RpClump*, const char*))(g_libGTASA + 0x003856F4 + 1))(m_pVehicle->m_pRpClump, "wheel_rb_dummy"); // GetFrameFromname
-			RwFrame* pWheelLB = ((RwFrame * (*)(RpClump*, const char*))(g_libGTASA + 0x003856F4 + 1))(m_pVehicle->m_pRpClump, "wheel_lb_dummy"); // GetFrameFromname
-
-			/*if (m_fNewOffsetY)
-			{
-				ProcessWheelOffset(pWheelRB, false, 0.0f - m_fWheelOffsetY);
-				ProcessWheelOffset(pWheelLB, true, 0.0f - m_fWheelOffsetY);
-				m_fWheelOffsetY = m_fNewOffsetY;
-				m_fNewOffsetY = 0.0f;
-
-				//CChatWindow::AddDebugMessage("moved old Y");
-			}*/
-			m_fWheelOffsetY = m_fNewOffsetY;
-			ProcessWheelOffset(pWheelRB, false, m_fWheelOffsetY, 2);
-			ProcessWheelOffset(pWheelLB, true, m_fWheelOffsetY, 3);
-		}
-		m_bWasWheelOffsetProcessedY = true;
-	}
-}
-
-void CVehicle::SetCustomShadow(uint8_t r, uint8_t g, uint8_t b, float fSizeX, float fSizeY, const char* szTex)
-{
-	if (fSizeX == 0.0f || fSizeY == 0.0f)
-	{
-		m_bShadow = false;
-
-		if (m_Shadow.pTexture)
-		{
-			RwTextureDestroy(m_Shadow.pTexture);
-			m_Shadow.pTexture = nullptr;
-		}
-
-		return;
-	}
-
-	m_bShadow = true;
-
-	m_Shadow.r = r;
-	m_Shadow.g = g;
-	m_Shadow.b = b;
-	m_Shadow.fSizeX = fSizeX;
-	m_Shadow.fSizeY = fSizeY;
-	m_Shadow.pTexture = CUtil::LoadTextureFromDB("samp", szTex);
-}
-
-void CVehicle::ProcessWheelOffset(RwFrame* pFrame, bool bLeft, float fValue, int iID)
-{
-	CVector vecOffset;
-	vecOffset.x = 0.0f - fValue;
-	vecOffset.y = 0.0f;
-	vecOffset.z = 0.0f;
-	if (bLeft)
-	{
-		vecOffset.x *= -1.0f;
-	}
-
-	CVector vecOut;
-	RwMatrixMultiplyByVector(&vecOut, &(m_vInitialWheelMatrix[iID]), &vecOffset);
-
-	pFrame->modelling.pos.x = vecOut.x;
-	pFrame->modelling.pos.y = vecOut.y;
-	pFrame->modelling.pos.z = vecOut.z;
-}
 
 void CVehicle::SetComponentAngle(bool bUnk, int iID, float angle)
 {

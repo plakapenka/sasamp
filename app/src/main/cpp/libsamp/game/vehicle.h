@@ -30,15 +30,6 @@ enum E_HANDLING_PARAMS
 #define EXTRA_COMPONENT_WHEEL			14
 #define EXTRA_COMPONENT_BUMP_FRONT		15
 
-#define MAX_REPLACED_TEXTURES	32
-#define MAX_REPLACED_TEXTURE_NAME	32
-
-struct SReplacedTexture
-{
-	char szOld[MAX_REPLACED_TEXTURE_NAME];
-	RwTexture* pTexture;
-};
-
 struct SCustomCarShadow
 {
 	RwTexture* pTexture;
@@ -102,14 +93,6 @@ public:
 	void SetHandlingData(std::vector<SHandlingData>& vHandlingData);
 	void ResetVehicleHandling();
 
-	void ApplyVinyls(uint8_t bSlot1, uint8_t bSlot2);
-	void ApplyToner(uint8_t bSlot, uint8_t bID);
-
-	void ApplyTexture(const char* szTexture, const char* szNew);
-	void ApplyTexture(const char* szTexture, RwTexture* pTexture);
-	void RemoveTexture(const char* szOldTexture);
-	bool IsRetextured(const char* szOldTexture);
-
 	void SetHeadlightsColor(uint8_t r, uint8_t g, uint8_t b);
 	void ProcessHeadlightsColor(uint8_t& r, uint8_t& g, uint8_t& b);
 	void SetWheelAlignment(int iWheel, float angle);
@@ -172,47 +155,9 @@ public:
 
 	tHandlingData* m_pCustomHandling;
 
-	SReplacedTexture m_szReplacedTextures[MAX_REPLACED_TEXTURES];
-	bool m_bReplaceTextureStatus[MAX_REPLACED_TEXTURES];
-	bool m_bReplacedTexture;
-
 	void* m_pSuspensionLines;
 	bool bHasSuspensionLines;
 
-	bool m_bHeadlightsColor;
-	uint8_t m_bHeadlightsR;
-	uint8_t m_bHeadlightsG;
-	uint8_t m_bHeadlightsB;
-
-	bool m_bWheelAlignmentX;
-	float m_fWheelAlignmentX;
-
-	bool m_bWheelAlignmentY;
-	float m_fWheelAlignmentY;
-
-	bool m_bWheelSize;
-	float m_fWheelSize;
-
-	bool m_bWheelWidth;
-	float m_fWheelWidth;
-
-	bool m_bWheelOffsetX;
-	float m_fWheelOffsetX;
-
-	bool m_bWheelOffsetY;
-	float m_fWheelOffsetY;
-
-	float m_fNewOffsetX;
-	float m_fNewOffsetY;
-
-	bool m_bWasWheelOffsetProcessedX;
-	bool m_bWasWheelOffsetProcessedY;
-	uint32_t m_uiLastProcessedWheelOffset;
-
-	RwMatrix m_vInitialWheelMatrix[4];
-
-	SCustomCarShadow m_Shadow;
-	bool m_bShadow;
 	//int bEngine;
 	int fDoorState;
 	//int bLights;

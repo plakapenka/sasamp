@@ -106,7 +106,6 @@ void CVehiclePool::Process()
 		pVehicle->ProcessMarkers();
 	}
 }
-#include "..//game/CCustomPlateManager.h"
 #include "chatwindow.h"
 
 bool CVehiclePool::New(NEW_VEHICLE *pNewVehicle)

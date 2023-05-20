@@ -146,7 +146,6 @@ uint32_t g_uiHeadMoveEnabled = 1;
 uint32_t g_uiBorderedText = 1;
 #include "CDebugInfo.h"
 #include "CLocalisation.h"
-#include "game/CCustomPlateManager.h"
 #include <fcntl.h>
 
 

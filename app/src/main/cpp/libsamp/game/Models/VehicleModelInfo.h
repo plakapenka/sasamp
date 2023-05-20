@@ -1,10 +1,7 @@
 //
 // Created by plaka on 21.02.2023.
 //
-
-#ifndef LIVERUSSIA_VEHICLEMODELINFO_H
-#define LIVERUSSIA_VEHICLEMODELINFO_H
-
+#pragma once
 
 #include "ClumpModelInfo.h"
 #include "../RW/rwlpcore.h"
@@ -51,6 +48,7 @@ public:
     int m_nParentComponentId;
 };
 
+#pragma pack(push, 1)
 struct CVehicleModelInfo : public CClumpModelInfo {
     RpMaterial*        m_pPlateMaterial; // 3C
     char               m_szPlateText[9]; // 40
@@ -100,6 +98,6 @@ struct CVehicleModelInfo : public CClumpModelInfo {
         unsigned int m_dwAnimBlockIndex;
     };
 };
+#pragma pack(pop)
 
-
-#endif //LIVERUSSIA_VEHICLEMODELINFO_H
+static_assert(sizeof(CVehicleModelInfo) == 0x3A8);
