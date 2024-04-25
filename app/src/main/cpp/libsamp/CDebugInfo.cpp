@@ -34,7 +34,7 @@ void CDebugInfo::Draw()
 	char szStrMem[256];
 	char szStrPos[256];
 	ImVec2 pos;
-	if (m_uiDrawDebug)
+	//if (m_uiDrawDebug)
 	{
 		snprintf(&szStr[0], 30, "FPS: %.0f / %d", CTimer::game_FPS, *(uint32_t*)(g_libGTASA + 0x009FC8FC + 0x0C));
 		pos = ImVec2(pGUI->ScaleX(40.0f), pGUI->ScaleY(1080.0f - pGUI->GetFontSize() * 10));
@@ -43,12 +43,19 @@ void CDebugInfo::Draw()
 
 		uint32_t msUsed = *(uint32_t*)(g_libGTASA + 0x00792B7C);
 		uint32_t msAvailable = *(uint32_t*)(g_libGTASA + 0x00685FA0);
+
+		//	CStreaming::ms_memoryAvailable = 50 * 1024 * 1024; // 50 MB
 		float percentUsed = ((float)msUsed/(float)msAvailable)*100;
-		snprintf(&szStrMem[0], 256, "MEM: %.1f/%.1f (%.1f %%)",
-				 (float)msUsed/ (1024*1024),
-				 (float)msAvailable / (1024*1024),
-				 percentUsed
-				 );
+
+		struct mallinfo memInfo = mallinfo();
+		int totalAllocatedMB  = memInfo.uordblks / (1024 * 1024);
+
+		snprintf(&szStrMem[0], 256, "MEM: %d mb ( stream %d/%d)",
+				 totalAllocatedMB,
+				 msUsed / (1024 * 1024),
+				 msAvailable / (1024 * 1024)
+		);
+		//Log("%s", szStrMem);
 		pos = ImVec2(pGUI->ScaleX(40.0f), pGUI->ScaleY(1080.0f - pGUI->GetFontSize() * 9));
 
 		pGUI->RenderText(pos, (ImU32)0xFFFFFFFF, true, &szStrMem[0]);

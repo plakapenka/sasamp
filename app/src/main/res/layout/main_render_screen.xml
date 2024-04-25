@@ -24,8 +24,7 @@
         <include layout="@layout/menu_action_dialog" />
         <include layout="@layout/tab"/>
         <include layout="@layout/attachedit" />
-            <include layout="@layout/sd_dialog" />
-            <include layout="@layout/notification" />
+        <include layout="@layout/sd_dialog" />
 
     </FrameLayout>
 

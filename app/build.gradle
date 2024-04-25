@@ -22,7 +22,7 @@ android {
         multiDexEnabled false
         applicationId "com.sasamp.cr"
         versionName "2.10"
-        versionCode 209
+        versionCode 211
         vectorDrawables.useSupportLibrary = true
 
         lintOptions {

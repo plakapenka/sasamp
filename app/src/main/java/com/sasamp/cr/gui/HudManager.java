@@ -86,13 +86,6 @@ public class HudManager {
     private View hide_chat;
     private ConstraintLayout chat_box;
 
-    // заработано
-    private ConstraintLayout salary_job_layout;
-    private TextView salary_job_salary_text;
-    private TextView salary_job_lvl_text;
-    private ProgressView salary_job_progress;
-    private TextView salary_job_exp_text;
-
     // damage inf
     Timer take_damage_timer;
     Timer give_damage_timer;
@@ -155,14 +148,6 @@ public class HudManager {
         damage_informer_give_text = activity.findViewById(R.id.damage_informer_give_text);
         damage_informer_take = activity.findViewById(R.id.damage_informer_take);
         damageSound = Samp.soundPool.load(activity.getApplication(), R.raw.hit, 0);
-
-        // == нотифай заработано
-        salary_job_layout = activity.findViewById(R.id.salary_job_layout);
-        salary_job_layout.setVisibility(View.GONE);
-        salary_job_salary_text = activity.findViewById(R.id.salary_job_salary_text);
-        salary_job_lvl_text = activity.findViewById(R.id.salary_job_lvl_text);
-        salary_job_progress = activity.findViewById(R.id.salary_job_progress);
-        salary_job_exp_text = activity.findViewById(R.id.salary_job_exp_text);
 
         initServerLogo();
 
@@ -827,72 +812,6 @@ public class HudManager {
             levelinfo.setText(strlevelinfo);
         });
     }
-
-    @SuppressLint("DefaultLocale")
-    public void UpdateSalary(int salary, int lvl, float exp) {
-        if(current_visual_salary > salary)
-        {
-            current_visual_salary = 0;
-        }
-        //current_visual_salary = 0;
-       // current_visual_salary = current_real_salary;
-        current_real_salary = salary;
-
-        activity.runOnUiThread(() -> {
-            salary_job_exp_text.setText(String.format("%.2f / 100", exp));
-            salary_job_lvl_text.setText(String.format("Ваш уровень работника: %d", lvl));
-
-            if (old_salary_exp > salary) {
-                salary_job_progress.setProgress(0);
-            }
-            salary_job_progress.setProgress(exp);
-
-            salary_job_layout.setVisibility(View.VISIBLE);
-        });
-        if(thread_update_salary != null && thread_update_salary.isAlive()){
-            thread_update_salary.interrupt();
-        }
-        if(salary == 0) {
-            current_visual_salary = 0;
-            activity.runOnUiThread(() -> salary_job_salary_text.setText("Заработано: 0 рублей"));
-
-        } else {
-            thread_update_salary = new Thread(runnable_update_salary_money);
-            thread_update_salary.start();
-        }
-        TimerTask task = new TimerTask() {
-            public void run() {
-                activity.runOnUiThread(() -> {
-                    salary_job_layout.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.popup_hide_to_top));
-                    salary_job_layout.setVisibility(View.GONE);
-                });
-            }
-        };
-        Timer timer = new Timer("Timer");
-
-        timer.schedule(task, 5000L);
-    }
-
-    Runnable runnable_update_salary_money = new Runnable() { // так вот такая вот хуйня ради маленького эффекта денег )
-        @Override
-        public void run() {
-            while (current_visual_salary < current_real_salary && !Thread.currentThread().isInterrupted()){
-                current_visual_salary ++;
-                activity.runOnUiThread(() -> {
-                    salary_job_salary_text.setText(String.format("Заработано: %s рублей", Samp.formatter.format(current_visual_salary)));
-                });
-
-                try {
-                    sleep(10);
-                } catch (InterruptedException e) {
-                    activity.runOnUiThread(() -> {
-                        salary_job_salary_text.setText(String.format("Заработано: %s рублей", Samp.formatter.format(current_real_salary)));
-                    });
-                    break;
-                }
-            }
-        }
-    };
 
 
     void showUpdateTargetNotify(int type, String text)

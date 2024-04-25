@@ -77,45 +77,45 @@ Java_com_sasamp_cr_gui_HudManager_HudInit(JNIEnv *env, jobject thiz) {
 
 void CHUD::toggleAll(bool toggle, bool withchat)
 {
-    if(toggle == bIsShow)
-    {
-        return;
-    }
-    if(pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->IsInVehicle())
-    {
-        if(!toggle)
-        {
-            if(CSpeedometr::bIsShow)
-            {
-                CSpeedometr::tempToggle(false);
-            }
-        }
-        else
-        {
-            if(CSpeedometr::bIsShow)
-            {
-                CSpeedometr::tempToggle(true);
-            }
-        }
-    }
-
-    bIsShow = toggle;
-
-    pGame->ToggleHUDElement(HUD_ELEMENT_BUTTONS, toggle);
-
-   // pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->TogglePlayerControllable(toggle, true);
-    pGame->ToggleHUDElement(HUD_ELEMENT_FPS, toggle);
-
-    JNIEnv *env = g_pJavaWrapper->GetEnv();
-
-    if (!env) {
-        Log("No env");
-        return;
-    }
-    jclass clazz = env->GetObjectClass(thiz);
-
-    jmethodID method = env->GetMethodID(clazz, "toggleAll", "(Z)V");
-    env->CallVoidMethod(thiz, method, toggle);
+//    if(toggle == bIsShow)
+//    {
+//        return;
+//    }
+//    if(pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->IsInVehicle())
+//    {
+//        if(!toggle)
+//        {
+//            if(CSpeedometr::bIsShow)
+//            {
+//                CSpeedometr::tempToggle(false);
+//            }
+//        }
+//        else
+//        {
+//            if(CSpeedometr::bIsShow)
+//            {
+//                CSpeedometr::tempToggle(true);
+//            }
+//        }
+//    }
+//
+//    bIsShow = toggle;
+//
+//    pGame->ToggleHUDElement(HUD_ELEMENT_BUTTONS, toggle);
+//
+//   // pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->TogglePlayerControllable(toggle, true);
+//    pGame->ToggleHUDElement(HUD_ELEMENT_FPS, toggle);
+//
+//    JNIEnv *env = g_pJavaWrapper->GetEnv();
+//
+//    if (!env) {
+//        Log("No env");
+//        return;
+//    }
+//    jclass clazz = env->GetObjectClass(thiz);
+//
+//    jmethodID method = env->GetMethodID(clazz, "toggleAll", "(Z)V");
+//    env->CallVoidMethod(thiz, method, toggle);
 
  //   *(uint8_t*)(g_libGTASA+0x7165E8) = 0;//дефолт худ офф
   //  ScriptCommand(&toggle_radar_blank, (int)toggle); // радар офф

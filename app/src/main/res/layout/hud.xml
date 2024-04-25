@@ -985,8 +985,6 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <include layout="@layout/salary_skill"/>
-
     <ImageView
         android:id="@+id/hide_chat"
         android:layout_width="@dimen/_15sdp"

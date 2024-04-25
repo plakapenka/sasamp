@@ -15,7 +15,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.sasamp.cr.R;
 import com.sasamp.cr.gui.HudManager;
 import com.sasamp.cr.gui.Menu;
-import com.sasamp.cr.gui.Notification;
 import com.sasamp.cr.gui.dialogs.Dialog;
 import com.sasamp.cr.gui.tab.Tab;
 import com.sasamp.startMenu.GameMenuStart;
@@ -77,9 +76,6 @@ public class Samp extends GTASA
         new Dialog(this);
         mMenu = new Menu(this);
 
-        // mInputManager = new InputManager(this);
-        //mHeightProvider = new HeightProvider(this).init(mRootFrame).setHeightListener(this);
-        new Notification(this);
       //  new Colors(this);
 
         vibrator = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
