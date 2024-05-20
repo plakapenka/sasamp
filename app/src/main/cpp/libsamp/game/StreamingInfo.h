@@ -61,7 +61,7 @@ public:
     size_t m_nCdSize;       // Size of resource (in sectors); m_nCdSize * STREAMING_BLOCK_SIZE = actual size in bytes
     eStreamingLoadState m_nLoadState;
 
-    static CStreamingInfo*& ms_pArrayBase;
+    static inline CStreamingInfo* ms_pArrayBase;
 
 public:
     void Init();

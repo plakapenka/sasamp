@@ -24,12 +24,12 @@ typedef CPool<TxdDef> CTxdPool;
 
 class CTxdStore {
 public:
-    static CTxdPool*            ms_pTxdPool;
-    static RwTexDictionary*&    ms_pStoredTxd;
-    static int32_t&             ms_lastSlotFound;
+    static inline CTxdPool*           ms_pTxdPool = nullptr;
+    static inline RwTexDictionary*    ms_pStoredTxd;
+    static inline int32_t             ms_lastSlotFound;
     // variables list is not finished. Need to make CPools before.
 
-    static int16_t (&defaultTxds)[4];
+    static inline int16_t defaultTxds[4];
 
 public:
     static void InjectHooks();

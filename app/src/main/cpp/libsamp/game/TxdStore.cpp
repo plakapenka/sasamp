@@ -10,8 +10,6 @@
 #include "game/Core/KeyGen.h"
 #include "util/patch.h"
 
-CTxdPool* CTxdStore::ms_pTxdPool = nullptr;
-
 void CTxdStore::InjectHooks() {
     CHook::Write(g_libGTASA + 0x00679A64, &CTxdStore::ms_pTxdPool);
 }
@@ -254,25 +252,17 @@ int32_t CTxdStore::GetNumRefs(int32_t index) {
 
 // 0x731D50
 void CTxdStore::SetupTxdParent(int32_t index) {
-    TxdDef* txdcur = ms_pTxdPool->GetAt(index);
-    if (!txdcur || txdcur->m_wParentIndex == -1)
-        return;
-    TxdDef* txdpar = ms_pTxdPool->GetAt(txdcur->m_wParentIndex);
-    if (!txdpar)
-        return;
 
-    SetTxdParent(txdcur->m_pRwDictionary, txdpar->m_pRwDictionary);
-    AddRef(txdcur->m_wParentIndex);
 }
 
 // 0x731720
 RwTexture* CTxdStore::TxdStoreFindCB(const char* name) {
-    RwTexDictionary* txd = RwTexDictionaryGetCurrent();
-    for (; txd; txd = GetTxdParent(txd)) {
-        RwTexture* tex = RwTexDictionaryFindNamedTexture(txd, name);
-        if (tex)
-            return tex;
-    }
+//    RwTexDictionary* txd = RwTexDictionaryGetCurrent();
+//    for (; txd; txd = GetTxdParent(txd)) {
+//        RwTexture* tex = RwTexDictionaryFindNamedTexture(txd, name);
+//        if (tex)
+//            return tex;
+//    }
     return nullptr;
 }
 

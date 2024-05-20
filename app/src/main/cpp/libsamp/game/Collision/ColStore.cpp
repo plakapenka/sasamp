@@ -97,8 +97,8 @@ int32_t CColStore::AddColSlot(const char* name)
 
 void CColStore::AddCollisionNeededAtPosn(const CVector& pos)
 {
-    ms_vecCollisionNeeded = pos;
-    ms_bCollisionNeeded = true;
+//    ms_vecCollisionNeeded = pos;
+//    ms_bCollisionNeeded = true;
 }
 
 void CColStore::AddRef(int32_t colNum)
@@ -140,33 +140,4 @@ void CColStore::RemoveColSlot(int32_t colSlot)
     delete def;
 }
 
-void CColStore::RemoveRef(int32_t colNum)
-{
-    auto* def = ms_pColPool->GetAt(colNum);
-    --def->m_nRefCount; // BUG: We don't check whether the GetAt returned nullptr, which it can
-}
-
-void SetIfCollisionIsRequired(const CVector2D& vecPos, void* data)
-{
-    auto* def = static_cast<ColDef*>(data);
-    if (!CColStore::ms_nRequiredCollisionArea && def->m_bInterior)
-        return;
-
-    if (!def->m_Area.IsPointInside(vecPos))
-        return;
-
-    def->m_bCollisionIsRequired = true;
-}
-
-void SetIfCollisionIsRequiredReducedBB(const CVector2D& vecPos, void* data)
-{
-    auto* def = static_cast<ColDef*>(data);
-    if (!def->m_Area.IsPointInside(vecPos, -80.0F))
-        return;
-
-    if (!CColStore::ms_nRequiredCollisionArea && def->m_bInterior)
-        return;
-
-    def->m_bCollisionIsRequired = true;
-}
 
