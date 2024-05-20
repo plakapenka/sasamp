@@ -100,7 +100,8 @@ struct stFile
 stFile* (*NvFOpen)(const char*, const char*, int, int);
 stFile* NvFOpen_hook(const char* r0, const char* r1, int r2, int r3)
 {
-//	Log("file = %s", r1);
+
+	Log("file = %s", r1);
 	char path[0xFF] = { 0 };
 	sprintf(path, "%s%s", g_pszStorage, r1);
 
@@ -193,7 +194,7 @@ void (*InitialiseRenderWare)();
 void InitialiseRenderWare_hook()
 {
 
-	TextureDatabaseRuntime::Load("samp", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_DXT);
+	//TextureDatabaseRuntime::Load("samp", false, TextureDatabaseRuntime::TextureDatabaseFormat::DF_DXT);
 
 	InitialiseRenderWare();
 }

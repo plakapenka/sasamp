@@ -64,12 +64,12 @@ public class StartActivity extends AppCompatActivity {
         progressIndicator = findViewById(R.id.progressIndicator);
         progressText = findViewById(R.id.loading_text);
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(LIVE_RUSSIA_RESOURCE_SERVER_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        networkService = retrofit.create(NetworkService.class);
+//        Retrofit retrofit = new Retrofit.Builder()
+//                .baseUrl(LIVE_RUSSIA_RESOURCE_SERVER_URL)
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build();
+//
+//        networkService = retrofit.create(NetworkService.class);
 
         startActivity(new Intent(this, Samp.class));
         this.finish();
