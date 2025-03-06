@@ -19,7 +19,7 @@ created time: 2015-11-30
 #include <unistd.h>
 
 #include "relocate.h"
-#include "inlineHook.h"
+#include "inlinehook.h"
 
 #ifndef PAGE_SIZE
 #define PAGE_SIZE 4096
