@@ -496,7 +496,7 @@ Java_com_sasamp_startMenu_GameMenuStart_connectToServer(JNIEnv *env, jobject thi
 
     strcpy(CSettings::m_Settings.szPassword, "");
 }*/
-JNIEXPORT void JNICALL //new logic fix
+/*JNIEXPORT void JNICALL //new logic fix 1
 Java_com_sasamp_startMenu_GameMenuStart_connectToServer(JNIEnv *env, jobject thiz, jstring nick,
                                                             jstring ip, jint port) {
     // Obter as strings UTF-8 de Java para C++
@@ -521,4 +521,51 @@ Java_com_sasamp_startMenu_GameMenuStart_connectToServer(JNIEnv *env, jobject thi
     // Liberar memória das strings UTF-8
     env->ReleaseStringUTFChars(ip, utfip);
     env->ReleaseStringUTFChars(nick, utfnick);
+}*/
+JNIEXPORT void JNICALL // new logic fix 2
+Java_com_sasamp_startMenu_GameMenuStart_connectToServer(JNIEnv *env, jobject thiz, jstring nick,
+                                                        jstring ip, jint port) {
+    Log("connectToServer chamado");
+
+    if (nick == nullptr || ip == nullptr) {
+        Log("Erro: nick ou ip é null");
+        return;
+    }
+
+    const char* utfip = env->GetStringUTFChars(ip, nullptr);
+    const char* utfnick = env->GetStringUTFChars(nick, nullptr);
+
+    if (utfip == nullptr) {
+        Log("Erro: utfip é null");
+    } else {
+        char ipLog[256];
+        snprintf(ipLog, sizeof(ipLog), "IP Recebido: %s", utfip);
+        Log(ipLog);
+    }
+
+    if (utfnick == nullptr) {
+        Log("Erro: utfnick é null");
+    } else {
+        char nickLog[256];
+        snprintf(nickLog, sizeof(nickLog), "Nick Recebido: %s", utfnick);
+        Log(nickLog);
+    }
+
+    char portLog[256];
+    snprintf(portLog, sizeof(portLog), "Porta Recebida: %d", port);
+    Log(portLog);
+
+    if (utfip != nullptr && utfnick != nullptr) {
+        strcpy(CSettings::m_Settings.szNickName, utfnick);
+        strcpy(CSettings::m_Settings.cHost, utfip);
+        CSettings::m_Settings.iPort = port;
+        strcpy(CSettings::m_Settings.szPassword, "");
+        Log("Configurações salvas com sucesso");
+    } else {
+        Log("Erro: não foi possível salvar configurações por valores nulos");
+    }
+
+    if (utfip) env->ReleaseStringUTFChars(ip, utfip);
+    if (utfnick) env->ReleaseStringUTFChars(nick, utfnick);
 }
+
