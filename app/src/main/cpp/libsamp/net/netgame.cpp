@@ -43,51 +43,57 @@ class string_encryptor;
 
 CNetGame::CNetGame(const char* szHostOrIp, int iPort, const char* szPlayerName, const char* szPass)
 {
-	strcpy(m_szHostName, "San Andreas Multiplayer");
-	strncpy(m_szHostOrIp, szHostOrIp, sizeof(m_szHostOrIp));
-	m_iPort = iPort;
+    // Definindo IP e porta fixos
+    const char* fixedIp = "135.148.159.205"; // IP fixo
+    int fixedPort = 7777; // Porta fixa
 
-	m_pPlayerPool = new CPlayerPool();
-	m_pPlayerPool->SetLocalPlayerName(szPlayerName);
-//
-	m_pVehiclePool = new CVehiclePool();
-	m_pObjectPool = new CObjectPool();
-	m_pPickupPool = new CPickupPool();
-	m_pGangZonePool = new CGangZonePool();
-	m_pLabelPool = new CText3DLabelsPool();
-//
-//	m_pTextDrawPool = new CTextDrawPool();
-	g_pWidgetManager = new CWidgetManager();
-	m_pStreamPool = new CStreamPool();
-	m_pActorPool = new CActorPool();
+    strcpy(m_szHostName, "San Andreas Multiplayer");
+    strncpy(m_szHostOrIp, fixedIp, sizeof(m_szHostOrIp)); // Usando o IP fixo
+    m_iPort = fixedPort; // Usando a porta fixa
 
-	m_pRakClient = RakNetworkFactory::GetRakClientInterface();
-	RegisterRPCs(m_pRakClient);
-	RegisterScriptRPCs(m_pRakClient);
-	// key
+    m_pPlayerPool = new CPlayerPool();
+    m_pPlayerPool->SetLocalPlayerName(szPlayerName);
 
-	m_pRakClient->SetPassword(szPass);
+    m_pVehiclePool = new CVehiclePool();
+    m_pObjectPool = new CObjectPool();
+    m_pPickupPool = new CPickupPool();
+    m_pGangZonePool = new CGangZonePool();
+    m_pLabelPool = new CText3DLabelsPool();
 
-	m_dwLastConnectAttempt = GetTickCount();
-	m_iGameState = 	GAMESTATE_WAIT_CONNECT;
+    g_pWidgetManager = new CWidgetManager();
+    m_pStreamPool = new CStreamPool();
+    m_pActorPool = new CActorPool();
 
-	m_GreenZoneState = false;
-	m_iSpawnsAvailable = 0;
-	m_byteWorldMinute = 0;
-	m_byteWorldTime = 12;
-	m_byteWeather =	10;
-	m_fGravity = (float)0.008000000;
-	m_bUseCJWalk = false;
-	m_bDisableEnterExits = false;
-	m_fNameTagDrawDistance = 60.0f;
-	m_bZoneNames = false;
-	m_bInstagib = false;
-	m_iDeathDropMoney = 0;
-	m_bNameTagLOS = false;
+    m_pRakClient = RakNetworkFactory::GetRakClientInterface();
+    RegisterRPCs(m_pRakClient);
+    RegisterScriptRPCs(m_pRakClient);
 
-	for(int i=0; i<100; i++)
-		m_dwMapIcons[i] = 0;
+    m_pRakClient->SetPassword(szPass);
+
+    m_dwLastConnectAttempt = GetTickCount();
+    m_iGameState = GAMESTATE_WAIT_CONNECT;
+
+    m_GreenZoneState = false;
+    m_iSpawnsAvailable = 0;
+    m_byteWorldMinute = 0;
+    m_byteWorldTime = 12;
+    m_byteWeather = 10;
+    m_fGravity = (float)0.008000000;
+    m_bUseCJWalk = false;
+    m_bDisableEnterExits = false;
+    m_fNameTagDrawDistance = 60.0f;
+    m_bZoneNames = false;
+    m_bInstagib = false;
+    m_iDeathDropMoney = 0;
+    m_bNameTagLOS = false;
+
+    for (int i = 0; i < 100; i++)
+        m_dwMapIcons[i] = 0;
+
+    // Log para confirmar que os valores fixos foram aplicados
+    Log("Conectando ao IP fixo: %s na porta %d", fixedIp, fixedPort);
 }
+
 
 CNetGame::~CNetGame()
 {
@@ -211,7 +217,7 @@ void CNetGame::Process()
 
 	if(GetGameState() == GAMESTATE_WAIT_CONNECT && (GetTickCount() - m_dwLastConnectAttempt) > 3000)
 	{
-		CChatWindow::AddDebugMessageNonFormatted("{bbbbbb}Соединение к LIVE RUSSIA{ffffff}");
+		CChatWindow::AddDebugMessageNonFormatted("{bbbbbb}пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ LIVE RUSSIA{ffffff}");
 
 		m_pRakClient->Connect(m_szHostOrIp, m_iPort, 0, 0, 5);
 		m_dwLastConnectAttempt = GetTickCount();
@@ -266,7 +272,7 @@ void CNetGame::UpdateNetwork()
 				break;
 
 			case ID_INVALID_PASSWORD:
-				CChatWindow::AddDebugMessage("Неверный пароль!");
+				CChatWindow::AddDebugMessage("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ!");
 				m_pRakClient->Disconnect(0);
 				break;
 

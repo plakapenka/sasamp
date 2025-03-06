@@ -47,6 +47,8 @@
 #include "RakSleep.h"
 #include "RouterInterface.h"
 #include "RakAssert.h"
+#include <netdb.h> //função
+#include <arpa/inet.h> //função
 
 #if !defined ( __APPLE__ ) && !defined ( __APPLE_CC__ )
 #include <malloc.h>
@@ -240,6 +242,26 @@ RakPeer::~RakPeer()
 // Returns:
 // False on failure (can't create socket or thread), true on success.
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//função 
+in_addr_t resolveAddress(const char* hostOrIP) {
+    struct in_addr addr;
+    if (inet_pton(AF_INET, hostOrIP, &addr) == 1) {
+        Log("Endereço é um IP direto: %s", hostOrIP);
+        return addr.s_addr;
+    } else {
+        Log("Tentando resolver hostname: %s", hostOrIP);
+        struct hostent* host = gethostbyname(hostOrIP);
+        if (host && host->h_addr_list[0]) {
+            addr = *(struct in_addr*)host->h_addr_list[0];
+            Log("Hostname resolvido para: %s", inet_ntoa(addr));
+            return addr.s_addr;
+        } else {
+            Log("Falha ao resolver hostname: %s", hostOrIP);
+            return INADDR_NONE;
+        }
+    }
+}
+
 bool RakPeer::Initialize( unsigned short maxConnections, unsigned short localPort, int _threadSleepTimer, const char *forceHostAddress )
 {
 	if (IsActive())
@@ -331,7 +353,8 @@ bool RakPeer::Initialize( unsigned short maxConnections, unsigned short localPor
 		if (forceHostAddress==0 || forceHostAddress[0]==0)
 			myPlayerId.binaryAddress = inet_addr( ipList[ 0 ] );
 		else
-			myPlayerId.binaryAddress = inet_addr( forceHostAddress );
+			//myPlayerId.binaryAddress = inet_addr( forceHostAddress );
+			myPlayerId.binaryAddress = resolveAddress(forceHostAddress);// função			
 #else
 		myPlayerId=UNASSIGNED_PLAYER_ID;
 #endif

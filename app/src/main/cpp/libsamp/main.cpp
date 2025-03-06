@@ -522,26 +522,17 @@ Java_com_sasamp_startMenu_GameMenuStart_connectToServer(JNIEnv *env, jobject thi
     env->ReleaseStringUTFChars(ip, utfip);
     env->ReleaseStringUTFChars(nick, utfnick);
 }*/
-JNIEXPORT void JNICALL // new logic fix 2
+JNIEXPORT void JNICALL
 Java_com_sasamp_startMenu_GameMenuStart_connectToServer(JNIEnv *env, jobject thiz, jstring nick,
                                                         jstring ip, jint port) {
     Log("connectToServer chamado");
 
-    if (nick == nullptr || ip == nullptr) {
-        Log("Erro: nick ou ip é null");
+    if (nick == nullptr) {
+        Log("Erro: nick é null");
         return;
     }
 
-    const char* utfip = env->GetStringUTFChars(ip, nullptr);
     const char* utfnick = env->GetStringUTFChars(nick, nullptr);
-
-    if (utfip == nullptr) {
-        Log("Erro: utfip é null");
-    } else {
-        char ipLog[256];
-        snprintf(ipLog, sizeof(ipLog), "IP Recebido: %s", utfip);
-        Log(ipLog);
-    }
 
     if (utfnick == nullptr) {
         Log("Erro: utfnick é null");
@@ -551,21 +542,29 @@ Java_com_sasamp_startMenu_GameMenuStart_connectToServer(JNIEnv *env, jobject thi
         Log(nickLog);
     }
 
+    // Defina IP e porta fixos
+    const char* fixedIP = "135.148.159.205";  // Coloque o IP fixo aqui
+    int fixedPort = 7777;                    // Coloque a porta fixa aqui
+
+    char ipLog[256];
+    snprintf(ipLog, sizeof(ipLog), "Usando IP Fixo: %s", fixedIP);
+    Log(ipLog);
+
     char portLog[256];
-    snprintf(portLog, sizeof(portLog), "Porta Recebida: %d", port);
+    snprintf(portLog, sizeof(portLog), "Usando Porta Fixa: %d", fixedPort);
     Log(portLog);
 
-    if (utfip != nullptr && utfnick != nullptr) {
+    if (utfnick != nullptr) {
         strcpy(CSettings::m_Settings.szNickName, utfnick);
-        strcpy(CSettings::m_Settings.cHost, utfip);
-        CSettings::m_Settings.iPort = port;
+        strcpy(CSettings::m_Settings.cHost, fixedIP);
+        CSettings::m_Settings.iPort = fixedPort;
         strcpy(CSettings::m_Settings.szPassword, "");
         Log("Configurações salvas com sucesso");
     } else {
         Log("Erro: não foi possível salvar configurações por valores nulos");
     }
 
-    if (utfip) env->ReleaseStringUTFChars(ip, utfip);
-    if (utfnick) env->ReleaseStringUTFChars(nick, utfnick);
+    if (utfnick) {
+        env->ReleaseStringUTFChars(nick, utfnick);
+    }
 }
-
