@@ -1636,23 +1636,31 @@ void InstallHooks()
 
 
 	Scene = *(CScene*)(g_libGTASA + 0x009FC938);
+	Log("InstallHooks line 1637");
 
 	// vehicle crash wtf?
 	CHook::InlineHook(g_libGTASA, 0x001D84BC, &RwFrameAddChild_hook, &RwFrameAddChild);
+	Log("InstallHooks line 1642");
 
 	//CHook::InlineHook(g_libGTASA, 0x002D2FD0, &ConvertBufferToObject_hook, &ConvertBufferToObject);
 
     // Fixing a crosshair by very stupid math ( JPATCH )
 	ms_fAspectRatio = (float*)(g_libGTASA + 0x00A26A90);
+	Log("InstallHooks line 1648");
 
 	// не падать с мотоцикла
 	CHook::InlineHook(g_libGTASA, 0x0037573C, &CEventKnockOffBike__AffectsPed_hook, &CEventKnockOffBike__AffectsPed);
+	Log("InstallHooks line 1652");
 
 	// Стрельба
 	CHook::InlineHook(g_libGTASA, 0x005DF748, &CWeapon__ProcessLineOfSight_hook, &CWeapon__ProcessLineOfSight);
+	Log("InstallHooks line 1657");
 	CHook::InlineHook(g_libGTASA, 0x55E090, &CBulletInfo_AddBullet_hook, &CBulletInfo_AddBullet);
+	Log("InstallHooks line 1659");
 	CHook::InlineHook(g_libGTASA, 0x56668C, &CWeapon__FireSniper_hook, &CWeapon__FireSniper);
+	Log("InstallHooks line 1661");
 	CHook::InlineHook(g_libGTASA, 0x00371B3C, &CPedDamageResponseCalculator__ComputeDamageResponse_hook, &CPedDamageResponseCalculator__ComputeDamageResponse);
+	Log("InstallHooks line 1652");
 	CHook::InlineHook(g_libGTASA, 0x005DC178, &CWeapon__FireInstantHit_hook, &CWeapon__FireInstantHit);
 	CHook::InlineHook(g_libGTASA, 0x00424B94, &CWorld__ProcessLineOfSight_hook, &CWorld__ProcessLineOfSight);
 

@@ -140,7 +140,7 @@ void MainLoop() {
 
     if (!pNetGame)
     {
-       // CChatWindow::AddDebugMessage("{bbbbbb}Êëèåíò {ff0000}LIVE RUSSIA{bbbbbb} çàïóùåí");
+       // CChatWindow::AddDebugMessage("{bbbbbb}ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ {ff0000}LIVE RUSSIA{bbbbbb} ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
         if(strlen(CSettings::m_Settings.szNickName) > 3) {
             pNetGame = new CNetGame(
                     CSettings::m_Settings.cHost,
@@ -482,7 +482,7 @@ Java_com_sasamp_cr_core_Samp_initSAMP(JNIEnv *env, jobject thiz, jstring game_pa
 }
 
 extern "C"
-JNIEXPORT void JNICALL
+/*JNIEXPORT void JNICALL
 Java_com_sasamp_startMenu_GameMenuStart_connectToServer(JNIEnv *env, jobject thiz, jstring nick,
                                                             jstring ip, jint port) {
     //CChatWindow::AddDebugMessage("{bbbbbb}?????? {ff0000}LIVE RUSSIA{bbbbbb} ???????");
@@ -495,4 +495,30 @@ Java_com_sasamp_startMenu_GameMenuStart_connectToServer(JNIEnv *env, jobject thi
     CSettings::m_Settings.iPort = port;
 
     strcpy(CSettings::m_Settings.szPassword, "");
+}*/
+JNIEXPORT void JNICALL //new logic fix
+Java_com_sasamp_startMenu_GameMenuStart_connectToServer(JNIEnv *env, jobject thiz, jstring nick,
+                                                            jstring ip, jint port) {
+    // Obter as strings UTF-8 de Java para C++
+    const char* utfip = env->GetStringUTFChars(ip, nullptr);
+    const char* utfnick = env->GetStringUTFChars(nick, nullptr);
+
+    // Verificar se as strings nÃ£o sÃ£o nulas antes de usÃ¡-las
+    if (utfip != nullptr && utfnick != nullptr) {
+        // Usar strncpy para evitar buffer overflow
+        strncpy(CSettings::m_Settings.szNickName, utfnick, sizeof(CSettings::m_Settings.szNickName) - 1);
+        CSettings::m_Settings.szNickName[sizeof(CSettings::m_Settings.szNickName) - 1] = '\0'; // Garantir terminaÃ§Ã£o nula
+
+        strncpy(CSettings::m_Settings.cHost, utfip, sizeof(CSettings::m_Settings.cHost) - 1);
+        CSettings::m_Settings.cHost[sizeof(CSettings::m_Settings.cHost) - 1] = '\0'; // Garantir terminaÃ§Ã£o nula
+
+        CSettings::m_Settings.iPort = port;
+
+        // Limpar senha
+        strcpy(CSettings::m_Settings.szPassword, "");
+    }
+
+    // Liberar memÃ³ria das strings UTF-8
+    env->ReleaseStringUTFChars(ip, utfip);
+    env->ReleaseStringUTFChars(nick, utfnick);
 }
