@@ -4,13 +4,13 @@ on:
   push:
     branches:
       - main
-      - master
+      - v_2_1
     paths:
       - '**'  # Qualquer arquivo em qualquer pasta
   pull_request:
     branches:
       - main
-      - master
+      - v_2_1
     paths:
       - '**'  # Qualquer arquivo em qualquer pasta
 
