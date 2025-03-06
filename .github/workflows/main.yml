@@ -5,10 +5,14 @@ on:
     branches:
       - main
       - master
+    paths:
+      - '**'  # Qualquer arquivo em qualquer pasta
   pull_request:
     branches:
       - main
       - master
+    paths:
+      - '**'  # Qualquer arquivo em qualquer pasta
 
 jobs:
   build:
@@ -30,7 +34,7 @@ jobs:
 
     - name: Compilar APK Debug
       run: ./gradlew assembleDebug
-      
+
     - name: Upload APKs
       uses: actions/upload-artifact@v4
       with:
