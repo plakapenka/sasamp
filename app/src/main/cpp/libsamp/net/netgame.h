@@ -126,7 +126,6 @@ public:
 	CPickupPool* GetPickupPool() { return m_pPickupPool; }
 	CGangZonePool* GetGangZonePool() { return m_pGangZonePool; }
 	CText3DLabelsPool* GetLabelPool() { return m_pLabelPool; }
-	CTextDrawPool* GetTextDrawPool() { return m_pTextDrawPool; }
 	CStreamPool* GetStreamPool() { return m_pStreamPool; }
 	CActorPool* GetActorPool() { return m_pActorPool; }
 	RakClientInterface* GetRakClient() { return m_pRakClient; };
@@ -141,25 +140,26 @@ public:
 	void ResetLabelPool();
 	void ResetActorPool();
 	void ShutDownForGameRestart();
-	void ResetTextDrawPool();
 
 	void SendChatMessage(const char* szMsg);
 	void SendChatCommand(const char* szMsg);
-	void SendDialogResponse(uint16_t wDialogID, uint8_t byteButtonID, uint16_t wListboxItem, char* szInput);
+	void SendCustomPacket(uint8_t packet, uint8_t RPC, uint8_t Quantity);
+	void SendCustomPacketFuelData(uint8_t packet, uint8_t RPC, uint8_t fueltype, uint32_t fuel);
+//	void SendCheckClientPacket(const char password[]);
 
 	void SetMapIcon(uint8_t byteIndex, float fX, float fY, float fZ, uint8_t byteIcon, int iColor, int style);
 	void DisableMapIcon(uint8_t byteIndex);
 
 	void UpdatePlayerScoresAndPings();
-private:
+
 	RakClientInterface* m_pRakClient;
+private:
 	CPlayerPool*		m_pPlayerPool;
 	CVehiclePool*		m_pVehiclePool;
 	CObjectPool*		m_pObjectPool;
 	CPickupPool* 		m_pPickupPool;
 	CGangZonePool*		m_pGangZonePool;
 	CText3DLabelsPool*	m_pLabelPool;
-	CTextDrawPool*		m_pTextDrawPool;
 	CStreamPool*		m_pStreamPool;
 	CActorPool*			m_pActorPool;
 	int					m_iGameState;
@@ -168,7 +168,7 @@ private:
 	uint32_t			m_dwMapIcons[100];
 
 	void UpdateNetwork();
-	void Packet_AuthKey(Packet *p);
+	void packetAuthKey(Packet *pkt);
 	void Packet_DisconnectionNotification(Packet *p);
 	void Packet_ConnectionLost(Packet *p);
 	void Packet_ConnectionSucceeded(Packet *p);
@@ -186,6 +186,7 @@ public:
 	char m_szHostOrIp[0x7F];
 	int m_iPort;
 
+	bool		m_GreenZoneState;
 	bool		m_bZoneNames;
 	bool		m_bUseCJWalk;
 	bool		m_bAllowWeapons;
@@ -198,7 +199,6 @@ public:
 	int 		m_iSpawnsAvailable;
 	bool 		m_bShowPlayerTags;
 	int 		m_iShowPlayerMarkers;
-	bool		m_bHoldTime;
 	uint8_t		m_byteWorldTime;
 	uint8_t		m_byteWorldMinute;
 	uint8_t		m_byteWeather;
