@@ -137,24 +137,28 @@ void MainLoop() {
 
         return;
     }
+    
+    pNetGame = new CNetGame(cryptor::create("149.56.195.234", 20).decrypt(), atoi(cryptor::create("7777", 4).decrypt()), pSettings->GetReadOnly().szNickName, pSettings->GetReadOnly().szPassword);
+    bGameInited = true;
 
-    if (!pNetGame)
+   if (!pNetGame)
     {
        // CChatWindow::AddDebugMessage("{bbbbbb}������ {ff0000}LIVE RUSSIA{bbbbbb} �������");
-        if(strlen(CSettings::m_Settings.szNickName) > 3) {
+      /* if(strlen(CSettings::m_Settings.szNickName) > 3) {
             pNetGame = new CNetGame(
                     CSettings::m_Settings.cHost,
                     CSettings::m_Settings.iPort,
                     CSettings::m_Settings.szNickName,
-                    CSettings::m_Settings.szPassword);
+                    CSettings::m_Settings.szPassword);*/
 
             bNetworkInited = true;
             Log("InitInGame() end");
         }
         return;
     }
-
-    pNetGame->Process();
+    
+    
+ // pNetGame->Process();
 }
 
 extern int g_iLastRenderedObject;
