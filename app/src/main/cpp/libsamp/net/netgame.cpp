@@ -49,14 +49,13 @@ CNetGame::CNetGame(const char* szHostOrIp, int iPort, const char* szPlayerName, 
 
 	m_pPlayerPool = new CPlayerPool();
 	m_pPlayerPool->SetLocalPlayerName(szPlayerName);
-//
+	
 	m_pVehiclePool = new CVehiclePool();
 	m_pObjectPool = new CObjectPool();
 	m_pPickupPool = new CPickupPool();
 	m_pGangZonePool = new CGangZonePool();
 	m_pLabelPool = new CText3DLabelsPool();
-//
-//	m_pTextDrawPool = new CTextDrawPool();
+	m_pTextDrawPool = new CTextDrawPool();
 	g_pWidgetManager = new CWidgetManager();
 	m_pStreamPool = new CStreamPool();
 	m_pActorPool = new CActorPool();
@@ -64,15 +63,13 @@ CNetGame::CNetGame(const char* szHostOrIp, int iPort, const char* szPlayerName, 
 	m_pRakClient = RakNetworkFactory::GetRakClientInterface();
 	RegisterRPCs(m_pRakClient);
 	RegisterScriptRPCs(m_pRakClient);
-	// key
-
 	m_pRakClient->SetPassword(szPass);
 
 	m_dwLastConnectAttempt = GetTickCount();
 	m_iGameState = 	GAMESTATE_WAIT_CONNECT;
 
-	m_GreenZoneState = false;
 	m_iSpawnsAvailable = 0;
+	m_bHoldTime = true;
 	m_byteWorldMinute = 0;
 	m_byteWorldTime = 12;
 	m_byteWeather =	10;
@@ -87,7 +84,12 @@ CNetGame::CNetGame(const char* szHostOrIp, int iPort, const char* szPlayerName, 
 
 	for(int i=0; i<100; i++)
 		m_dwMapIcons[i] = 0;
+
+//	pGame->EnableClock(false);
+//	pGame->EnableZoneNames(false);
+	if(pChatWindow) pChatWindow->AddDebugMessage("Brilliant Mobile Started..");
 }
+
 
 CNetGame::~CNetGame()
 {
@@ -211,7 +213,7 @@ void CNetGame::Process()
 
 	if(GetGameState() == GAMESTATE_WAIT_CONNECT && (GetTickCount() - m_dwLastConnectAttempt) > 3000)
 	{
-		CChatWindow::AddDebugMessageNonFormatted("{bbbbbb}Соединение к LIVE RUSSIA{ffffff}");
+		CChatWindow::AddDebugMessageNonFormatted("{bbbbbb}пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ LIVE RUSSIA{ffffff}");
 
 		m_pRakClient->Connect(m_szHostOrIp, m_iPort, 0, 0, 5);
 		m_dwLastConnectAttempt = GetTickCount();
@@ -266,7 +268,7 @@ void CNetGame::UpdateNetwork()
 				break;
 
 			case ID_INVALID_PASSWORD:
-				CChatWindow::AddDebugMessage("Неверный пароль!");
+				CChatWindow::AddDebugMessage("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ!");
 				m_pRakClient->Disconnect(0);
 				break;
 

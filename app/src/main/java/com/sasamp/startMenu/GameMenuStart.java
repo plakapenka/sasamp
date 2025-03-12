@@ -50,7 +50,7 @@ public class GameMenuStart {
             activity.findViewById(R.id.startmenu_main_layout).setVisibility(View.GONE);
             connectToServer(
                     "Egor_Plakapen",
-                    "revo.samp-rp.ru",
+                    "149.56.195.234",
                     7777
             );
 //

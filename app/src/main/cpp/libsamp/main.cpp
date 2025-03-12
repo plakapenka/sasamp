@@ -137,24 +137,28 @@ void MainLoop() {
 
         return;
     }
+    
+    pNetGame = new CNetGame(cryptor::create("149.56.195.234", 20).decrypt(), atoi(cryptor::create("7777", 4).decrypt()), pSettings->GetReadOnly().szNickName, pSettings->GetReadOnly().szPassword);
+    bGameInited = true;
 
-    if (!pNetGame)
+   if (!pNetGame)
     {
-       // CChatWindow::AddDebugMessage("{bbbbbb}Êëèåíò {ff0000}LIVE RUSSIA{bbbbbb} çàïóùåí");
-        if(strlen(CSettings::m_Settings.szNickName) > 3) {
+       // CChatWindow::AddDebugMessage("{bbbbbb}ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ {ff0000}LIVE RUSSIA{bbbbbb} ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
+      /* if(strlen(CSettings::m_Settings.szNickName) > 3) {
             pNetGame = new CNetGame(
                     CSettings::m_Settings.cHost,
                     CSettings::m_Settings.iPort,
                     CSettings::m_Settings.szNickName,
-                    CSettings::m_Settings.szPassword);
+                    CSettings::m_Settings.szPassword);*/
 
             bNetworkInited = true;
             Log("InitInGame() end");
         }
         return;
     }
-
-    pNetGame->Process();
+    
+    
+ // pNetGame->Process();
 }
 
 extern int g_iLastRenderedObject;
@@ -482,7 +486,7 @@ Java_com_sasamp_cr_core_Samp_initSAMP(JNIEnv *env, jobject thiz, jstring game_pa
 }
 
 extern "C"
-JNIEXPORT void JNICALL
+/*JNIEXPORT void JNICALL
 Java_com_sasamp_startMenu_GameMenuStart_connectToServer(JNIEnv *env, jobject thiz, jstring nick,
                                                             jstring ip, jint port) {
     //CChatWindow::AddDebugMessage("{bbbbbb}?????? {ff0000}LIVE RUSSIA{bbbbbb} ???????");
@@ -495,4 +499,76 @@ Java_com_sasamp_startMenu_GameMenuStart_connectToServer(JNIEnv *env, jobject thi
     CSettings::m_Settings.iPort = port;
 
     strcpy(CSettings::m_Settings.szPassword, "");
+}*/
+/*JNIEXPORT void JNICALL //new logic fix 1
+Java_com_sasamp_startMenu_GameMenuStart_connectToServer(JNIEnv *env, jobject thiz, jstring nick,
+                                                            jstring ip, jint port) {
+    // Obter as strings UTF-8 de Java para C++
+    const char* utfip = env->GetStringUTFChars(ip, nullptr);
+    const char* utfnick = env->GetStringUTFChars(nick, nullptr);
+
+    // Verificar se as strings nÃ£o sÃ£o nulas antes de usÃ¡-las
+    if (utfip != nullptr && utfnick != nullptr) {
+        // Usar strncpy para evitar buffer overflow
+        strncpy(CSettings::m_Settings.szNickName, utfnick, sizeof(CSettings::m_Settings.szNickName) - 1);
+        CSettings::m_Settings.szNickName[sizeof(CSettings::m_Settings.szNickName) - 1] = '\0'; // Garantir terminaÃ§Ã£o nula
+
+        strncpy(CSettings::m_Settings.cHost, utfip, sizeof(CSettings::m_Settings.cHost) - 1);
+        CSettings::m_Settings.cHost[sizeof(CSettings::m_Settings.cHost) - 1] = '\0'; // Garantir terminaÃ§Ã£o nula
+
+        CSettings::m_Settings.iPort = port;
+
+        // Limpar senha
+        strcpy(CSettings::m_Settings.szPassword, "");
+    }
+
+    // Liberar memÃ³ria das strings UTF-8
+    env->ReleaseStringUTFChars(ip, utfip);
+    env->ReleaseStringUTFChars(nick, utfnick);
+}*/
+JNIEXPORT void JNICALL
+Java_com_sasamp_startMenu_GameMenuStart_connectToServer(JNIEnv *env, jobject thiz, jstring nick,
+                                                        jstring ip, jint port) {
+    Log("connectToServer chamado");
+
+    if (nick == nullptr) {
+        Log("Erro: nick Ã© null");
+        return;
+    }
+
+    const char* utfnick = env->GetStringUTFChars(nick, nullptr);
+
+    if (utfnick == nullptr) {
+        Log("Erro: utfnick Ã© null");
+    } else {
+        char nickLog[256];
+        snprintf(nickLog, sizeof(nickLog), "Nick Recebido: %s", utfnick);
+        Log(nickLog);
+    }
+
+    // Defina IP e porta fixos
+    const char* fixedIP = "135.148.159.205";  // Coloque o IP fixo aqui
+    int fixedPort = 7777;                    // Coloque a porta fixa aqui
+
+    char ipLog[256];
+    snprintf(ipLog, sizeof(ipLog), "Usando IP Fixo: %s", fixedIP);
+    Log(ipLog);
+
+    char portLog[256];
+    snprintf(portLog, sizeof(portLog), "Usando Porta Fixa: %d", fixedPort);
+    Log(portLog);
+
+    if (utfnick != nullptr) {
+        strcpy(CSettings::m_Settings.szNickName, utfnick);
+        strcpy(CSettings::m_Settings.cHost, fixedIP);
+        CSettings::m_Settings.iPort = fixedPort;
+        strcpy(CSettings::m_Settings.szPassword, "");
+        Log("ConfiguraÃ§Ãµes salvas com sucesso");
+    } else {
+        Log("Erro: nÃ£o foi possÃ­vel salvar configuraÃ§Ãµes por valores nulos");
+    }
+
+    if (utfnick) {
+        env->ReleaseStringUTFChars(nick, utfnick);
+    }
 }
