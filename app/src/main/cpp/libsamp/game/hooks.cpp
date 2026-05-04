@@ -108,7 +108,7 @@ stFile* NvFOpen_hook(const char* r0, const char* r1, int r2, int r3)
 //	// ----------------------------
 	if(!strncmp(r1+12, "mainV1.scm", 10))
 	{
-		sprintf(path, "%smain.scm", g_pszStorage);
+		sprintf(path, "%s/samp/main.scm", g_pszStorage);
 		Log("Loading %s", path);
 	}
 	// ----------------------------
@@ -646,6 +646,7 @@ void InjectHooks()
 
 void InstallSpecialHooks()
 {
+	CHook::RET(g_libGTASA + 0x2BB740);
 	InjectHooks();
 	Log("InstallSpecialHooks");
 

@@ -79,7 +79,7 @@ void PrintBuildCrashInfo() {
 void InitSAMP(JNIEnv *pEnv, jobject thiz) {
     Log("Initializing SAMP..");
 
-    CLoader::loadSetting();
+    //CLoader::loadSetting();
 
     g_pJavaWrapper = new CJavaWrapper(pEnv, thiz);
 
@@ -135,6 +135,9 @@ void MainLoop() {
 
         CGame::bIsGameInited = true;
 
+		CPlayerPool::m_pLocalPlayer = new CLocalPlayer();
+	    CPlayerPool::m_pLocalPlayer->Spawn();
+	    //CPlayerPool::m_pLocalPlayer->GetPlayerPed()->TeleportTo(0, 0, 5);
         return;
     }
 
@@ -142,14 +145,14 @@ void MainLoop() {
     {
        // CChatWindow::AddDebugMessage("{bbbbbb}Клиент {ff0000}LIVE RUSSIA{bbbbbb} запущен");
         if(strlen(CSettings::m_Settings.szNickName) > 3) {
-            pNetGame = new CNetGame(
-                    CSettings::m_Settings.cHost,
-                    CSettings::m_Settings.iPort,
-                    CSettings::m_Settings.szNickName,
-                    CSettings::m_Settings.szPassword);
+//            pNetGame = new CNetGame(
+//                    CSettings::m_Settings.cHost,
+//                    CSettings::m_Settings.iPort,
+//                    CSettings::m_Settings.szNickName,
+//                    CSettings::m_Settings.szPassword);
 
             bNetworkInited = true;
-            Log("InitInGame() end");
+            //Log("InitInGame() end");
         }
         return;
     }

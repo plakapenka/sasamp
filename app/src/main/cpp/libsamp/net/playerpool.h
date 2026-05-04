@@ -68,10 +68,10 @@ public:
 
 // REMOTE
 CRemotePlayer	*m_pPlayers[MAX_PLAYERS]{nullptr};
+	static inline CLocalPlayer	*m_pLocalPlayer;
 private:
 	// LOCAL
 	PLAYERID		m_LocalPlayerID;
-	CLocalPlayer	*m_pLocalPlayer;
 	char			m_szLocalPlayerName[MAX_PLAYER_NAME+1];
 	int				m_iLocalPlayerScore;
 	uint32_t		m_dwLocalPlayerPing;

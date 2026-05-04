@@ -44,7 +44,7 @@ CGUI::CGUI()
 	m_vecScale.x = io.DisplaySize.x * MULT_X;
 	m_vecScale.y = io.DisplaySize.y * MULT_Y;
 	// font Size
-	m_fFontSize = ScaleY( CSettings::Get().fFontSize );
+	m_fFontSize = ScaleY( 30.f );
 
 	Log("GUI | Scale factor: %f, %f Font size: %f", m_vecScale.x, m_vecScale.y, m_fFontSize);
 
@@ -56,7 +56,7 @@ CGUI::CGUI()
 
 	// load fonts
 	char path[0xFF];
-	sprintf(path, "%sfonts/%s", g_pszStorage, CSettings::m_Settings.szFont);
+	sprintf(path, "%sfonts/visby-round-cf-extra-bold.ttf", g_pszStorage);
 	// cp1251 ranges
 	static const ImWchar ranges[] = 
 	{
@@ -69,7 +69,7 @@ CGUI::CGUI()
 		0x2110, 0x2130,
 		0
 	};
-	Log("GUI | Loading font: %s", CSettings::m_Settings.szFont);
+	Log("GUI | Loading font: %s", path);
 	m_pFont = io.Fonts->AddFontFromFileTTF(path, m_fFontSize, nullptr, ranges);
 	Log("GUI | ImFont pointer = 0x%X", m_pFont);
 

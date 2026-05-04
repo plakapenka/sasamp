@@ -43,9 +43,9 @@ typedef unsigned short RW_OBJECTID;
 typedef struct _PLAYER_SPAWN_INFO
 {
 	uint8_t byteTeam;
-	int iSkin;
+	int iSkin{10};
 	uint8_t unk;
-	CVector vecPos;
+	CVector vecPos{0, 0, 5};
 	float fRotation;
 	int iSpawnWeapons[3];
 	int iSpawnWeaponsAmmo[3];
@@ -241,7 +241,7 @@ private:
 
 	uint32_t			m_dwPassengerEnterExit;
 
-	PLAYER_SPAWN_INFO 	m_SpawnInfo;
+	PLAYER_SPAWN_INFO 	m_SpawnInfo{};
 	ONFOOT_SYNC_DATA 	m_OnFootData;
 	INCAR_SYNC_DATA 	m_InCarData;
 	PASSENGER_SYNC_DATA m_PassengerData;
@@ -266,3 +266,4 @@ private:
 	uint32_t 			m_dwLastUpdateHudButtons;
 
 };
+

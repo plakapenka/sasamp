@@ -4,7 +4,6 @@
 
 CPlayerPool::CPlayerPool()
 {
-	m_pLocalPlayer = new CLocalPlayer();
 
 	for(auto & m_pPlayer : m_pPlayers)
 	{
