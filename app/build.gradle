@@ -87,15 +87,15 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.13.0'
 
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.github.smarteist:autoimageslider:1.4.0'
+    implementation 'com.github.smarteist:Android-Image-Slider:1.4.0'
     implementation 'com.github.valkriaine:Bouncy:2.3'
     implementation("com.google.guava:guava:31.1-jre")
     api("com.google.guava:guava:31.1-jre")
     implementation("com.google.guava:guava:31.1-android")
     api("com.google.guava:guava:31.1-android")
 
-    compileOnly 'org.projectlombok:lombok:1.18.24'
-    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+    compileOnly 'org.projectlombok:lombok:1.18.34'
+    annotationProcessor 'org.projectlombok:lombok:1.18.34'
   //  implementation 'com.google.android.gms:play-services-safetynet:18.0.1' //
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
